@@ -62,6 +62,192 @@ def data_case_types():
 
 
 @pytest.fixture
+def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
+    return {
+        "count": 1,
+        "results": {
+            "cases": [
+                {
+                    "id": "094eed9a-23cc-478a-92ad-9a05ac17fad0",  # /PS-IGNORE
+                    "case_type": {
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "reference": {"key": "oiel", "value": "Open Individual Export Licence"},
+                        "type": {"key": "application", "value": "Application"},
+                        "sub_type": {"key": "open", "value": "Open Licence"},
+                    },
+                    "destinations": [],
+                    "destinations_flags": [],
+                    "flags": [
+                        {
+                            "id": "00000000-0000-0000-0000-000000000007",
+                            "name": "Firearms",
+                            "colour": "default",
+                            "label": None,
+                            "priority": 0,
+                            "removable_by": "Anyone",
+                        },
+                        {
+                            "id": "00000000-0000-0000-0000-000000000014",
+                            "name": "Enforcement Check Req",
+                            "colour": "default",
+                            "label": None,
+                            "priority": 0,
+                            "removable_by": "Anyone",
+                        },
+                    ],
+                    "goods_flags": [],
+                    "has_open_queries": False,
+                    "is_recently_updated": True,
+                    "organisation": {},
+                    "activity_updates": [
+                        {
+                            "id": "02cc3048-f893-4f0a-b37f-d066bc0b072a",  # /PS-IGNORE
+                            "created_at": "2023-02-02T17:30:05.184293Z",
+                            "user": {
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "first_name": "LITE",
+                                "last_name": "system",
+                                "type": "system",
+                                "team": "",
+                            },
+                            "text": "text line1\r\ntext line2\r\ntext line3\r\ntext line4\r\ntext line5",
+                            "additional_text": "additional line1\r\nadditional line2\r\nadditional line3\r\nadditional line4\r\nadditional line5",
+                        },
+                        {
+                            "id": "77d3c3d4-9761-403a-9942-a2fcc41aa35d",  # /PS-IGNORE
+                            "created_at": "2023-02-02T17:30:04.174597Z",
+                            "user": {
+                                "id": "2eb6e0fa-5a5b-4db1-96cc-dd1473e0c636",  # /PS-IGNORE
+                                "first_name": "Joe",
+                                "last_name": "Bloggs",
+                                "type": "exporter",
+                                "team": "",
+                            },
+                            "text": "applied for a licence.",
+                            "additional_text": "",
+                        },
+                    ],
+                    "assignments": {
+                        "9c4e66be-9f0f-451a-9c5f-d30e9c4bb69d": {  # /PS-IGNORE
+                            "email": "test@mail.com",  # /PS-IGNORE
+                            "first_name": "John",
+                            "last_name": "Smith",
+                            "queues": [{"id": "ee1a3870-73d7-4af3-b629-e28f2c2227d7", "name": "Initial Queue"}],
+                            "team_id": "00000000-0000-0000-0000-000000000001",
+                            "team_name": "Admin",
+                        },
+                        "9c4e66be-9f0f-451a-9c5f-d30e9c4bb69e": {  # /PS-IGNORE
+                            "email": "test2@mail.com",  # /PS-IGNORE
+                            "first_name": "Joe",
+                            "last_name": "Smith",
+                            "queues": [{"id": "ee1a3870-73d7-4af3-b629-e28f2c2227d7", "name": "Initial Queue"}],
+                            "team_id": "00000000-0000-0000-0000-000000000001",
+                            "team_name": "Admin",
+                        },
+                    },
+                    "queues": [
+                        {
+                            "countersigning_queue": None,
+                            "id": "ee1a3870-73d7-4af3-b629-e28f2c2227d7",
+                            "name": "Initial Queue",
+                            "team": {
+                                "alias": None,
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "is_ogd": False,
+                                "name": "Admin",
+                                "part_of_ecju": False,
+                            },
+                        },
+                        {
+                            "countersigning_queue": None,
+                            "id": "ee1a3870-73d7-4af3-b629-e28f2c2227d8",
+                            "name": "Another Queue",
+                            "team": {
+                                "alias": None,
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "is_ogd": False,
+                                "name": "Admin",
+                                "part_of_ecju": False,
+                            },
+                        },
+                    ],
+                    "case_officer": None,
+                    "reference_code": "GBOIEL/2020/0000045/P",
+                    "sla_days": 0,
+                    "sla_remaining_days": 60,
+                    "status": {"key": "submitted", "value": "Submitted"},
+                    "next_review_date": None,
+                    "licences": [],
+                    "submitted_at": "2023-01-16T14:53:09.826340Z",
+                },
+                {
+                    "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",  # /PS-IGNORE
+                    "case_type": {
+                        "id": "00000000-0000-0000-0000-000000000004",
+                        "reference": {"key": "siel", "value": "Standard Individual Export Licence"},
+                        "type": {"key": "application", "value": "Application"},
+                        "sub_type": {"key": "standard", "value": "Standard Licence"},
+                    },
+                    "destinations_flags": [],
+                    "flags": [
+                        {
+                            "id": "00000000-0000-0000-0000-000000000014",
+                            "name": "Enforcement Check Req",
+                            "alias": "ENF_CHECK_REQ",
+                            "colour": "default",
+                            "label": None,
+                            "priority": 0,
+                            "removable_by": "Anyone",
+                        }
+                    ],
+                    "goods_flags": [],
+                    "has_open_queries": False,
+                    "is_recently_updated": True,
+                    "assignments": {},
+                    "queues": [],
+                    "case_officer": None,
+                    "reference_code": "GBSIEL/2020/0002687/T",
+                    "sla_days": 2,
+                    "sla_remaining_days": 18,
+                    "status": {"key": "submitted", "value": "Submitted"},
+                    "next_review_date": None,
+                    "licences": [],
+                    "submitted_at": "2023-01-17T14:53:09.826340Z",
+                },
+            ],
+            "filters": {
+                "advice_types": [
+                    {"key": "approve", "value": "Approve"},
+                    {"key": "proviso", "value": "Proviso"},
+                    {"key": "refuse", "value": "Refuse"},
+                    {"key": "no_licence_required", "value": "No Licence Required"},
+                    {"key": "not_applicable", "value": "Not Applicable"},
+                    {"key": "conflicting", "value": "Conflicting"},
+                ],
+                "case_types": data_case_types,
+                "gov_users": [
+                    {"full_name": "John Smith", "id": gov_uk_user_id, "pending": False},
+                    {"full_name": "", "id": gov_uk_user_id, "pending": True},
+                ],
+                "statuses": mock_case_statuses["statuses"],
+                "is_system_queue": True,
+                "is_work_queue": False,
+                "queue": {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
+            },
+            "queues": [
+                {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
+                {"case_count": 2, "id": "00000000-0000-0000-0000-000000000002", "name": "Open cases"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000003", "name": "My team's cases"},
+                {"case_count": 0, "id": "00000000-0000-0000-0000-000000000004", "name": "New exporter amendments"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000005", "name": "My assigned cases"},
+                {"case_count": 1, "id": "00000000-0000-0000-0000-000000000006", "name": "My caseload"},
+            ],
+        },
+        "total_pages": 1,
+    }
+
+
+@pytest.fixture
 def open_case_pk(data_open_case):
     return data_open_case["case"]["id"]
 
