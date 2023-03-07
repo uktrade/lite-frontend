@@ -1,16 +1,13 @@
 from http import HTTPStatus
 
-from django.http import Http404, HttpResponseRedirect
-from django.views.generic import FormView, TemplateView
-from django.urls import reverse
-from django.shortcuts import redirect
-from django.utils.functional import cached_property
-from requests.exceptions import HTTPError
 import sentry_sdk
-
-from core import client
-from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
-from core.decorators import expect_status
+from django.conf import settings
+from django.http import Http404, HttpResponseRedirect
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.utils.functional import cached_property
+from django.views.generic import FormView, TemplateView
+from requests.exceptions import HTTPError
 
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
@@ -20,7 +17,10 @@ from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
+from core import client
 from core.auth.views import LoginRequiredMixin
+from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
+from core.decorators import expect_status
 
 
 class CaseContextMixin:
@@ -94,13 +94,24 @@ class CaseContextMixin:
         # P.S. the case here is needed for rendering the base
         # template (layouts/case.html) from which we are inheriting.
 
+        is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
         return {
             **context,
             **self.get_context(case=self.case),
             "case": self.case,
             "queue_pk": self.kwargs["queue_pk"],
             "caseworker": self.caseworker,
+            "is_lu_countersigning": (is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),
+            "ordered_countersign_advice": self.ordered_countersign_advice(),
         }
+
+    def ordered_countersign_advice(self):
+        """
+        Return a single countersignature per order value in order to filter out duplicates
+        for display in the templates
+        """
+        one_countersignature_per_order_value = {cs["order"]: cs for cs in self.case.get("countersign_advice", [])}
+        return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
 
 
 class BEISNuclearMixin:
@@ -404,6 +415,40 @@ class ViewCountersignedAdvice(AdviceDetailView):
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
         return context
+
+
+class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+    template_name = "advice/review_countersign.html"
+    form_class = forms.CountersignDecisionAdviceForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            raise Http404("LU Countersigning feature not enabled")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        advice = services.get_advice_to_countersign(self.case.advice, self.caseworker)
+        context["formset"] = forms.get_formset(self.form_class, len(advice))
+        context["advice_to_countersign"] = advice.values()
+        context["denial_reasons_display"] = self.denial_reasons_display
+        context["security_approvals_classified_display"] = self.security_approvals_classified_display
+        return context
+
+    def post(self, request, *args, **kwargs):
+        queue_id = str(kwargs["queue_pk"])
+        context = self.get_context_data()
+        advice = context["advice_to_countersign"]
+        formset = forms.get_formset(self.form_class, len(advice), data=request.POST)
+        if formset.is_valid():
+            services.countersign_decision_advice(request, self.case, queue_id, self.caseworker, formset.cleaned_data)
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response({**context, "formset": formset})
+
+    def get_success_url(self):
+        return reverse("cases:countersign_view", kwargs=self.kwargs)
 
 
 class CountersignEditAdviceView(ReviewCountersignView):

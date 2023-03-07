@@ -1,12 +1,15 @@
+from unittest.mock import patch
+
 import pytest
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
 import rules
 
-from caseworker.advice.services import FCDO_TEAM
+from caseworker.advice.services import FCDO_TEAM, LICENSING_UNIT_TEAM
 from core import client
 from core.builtins.custom_tags import filter_advice_by_user
+from unit_tests.caseworker.conftest import countersignatures
 
 
 @pytest.fixture(autouse=True)
@@ -262,3 +265,32 @@ def test_move_case_forward_permission(
     # Check if the MoveCaseForwardForm is rendered only when user has permission can_user_move_case_forward
     soup = BeautifulSoup(response.content, "html.parser")
     assert len(soup.find_all("form")) == (1 if is_user_case_advisor else 0)
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_lu_countersignatures_not_shown(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    final_advice,
+    url,
+    with_lu_countersigning_enabled,
+):
+    case_id = data_standard_case["case"]["id"]
+    team_id = final_advice["user"]["team"]["id"]
+    data_standard_case["case"]["advice"] = [final_advice]
+    data_standard_case["case"]["countersign_advice"] = countersignatures() + countersignatures(second_countersign=True)
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    countersignature_block = soup.find(id="countersignatures")
+
+    assert not countersignature_block

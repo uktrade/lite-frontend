@@ -100,7 +100,7 @@ def test_tau_home_noauth(client, url):
     assert response.status_code == 302
 
 
-def test_form(
+def test_form_without_allocated_user_hides_submit_button(
     authorized_client,
     url,
     data_standard_case,
@@ -111,10 +111,38 @@ def test_form(
     report_summary_prefix,
     report_summary_subject,
 ):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    edit_good = data_standard_case["case"]["data"]["goods"][1]
+    edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+    # Get the edit form
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert soup.find(id="submit-id-submit") is None
+
+
+def test_form(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+    report_summary_prefix,
+    report_summary_subject,
+    assign_user_to_case,
+    mock_gov_user,
+):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
     """
     # Remove assessment from a good
+    assign_user_to_case(mock_gov_user, data_standard_case)
+
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
@@ -199,6 +227,8 @@ def test_form(
 
     # Check comments
     assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
+
+    assert soup.find(id="submit-id-submit") is not None
 
     response = authorized_client.post(
         url,

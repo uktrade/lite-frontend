@@ -1,6 +1,11 @@
+{% load rules %}
+
 <div class="lite-buttons-row">
 	{% make_list queue.id case.id as button_params %}
-	{% govuk_link_button id='add-a-contact' text='cases.CasePage.AdditionalContactsTab.ADD_A_CONTACT_BUTTON' url='cases:add_additional_contact' url_param=button_params %}
+	{% test_rule 'can_user_add_contact' current_user case as can_user_add_contact %}
+	{% if can_user_add_contact %}
+		{% govuk_link_button id='add-a-contact' text='cases.CasePage.AdditionalContactsTab.ADD_A_CONTACT_BUTTON' url='cases:add_additional_contact' url_param=button_params %}
+	{% endif %}
 </div>
 
 {% if additional_contacts %}
