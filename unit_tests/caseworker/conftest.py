@@ -1660,3 +1660,15 @@ def mock_standard_case_with_assignments(requests_mock, data_standard_case, data_
         ]
     }
     return requests_mock.get(url=url, json=data_standard_case)
+
+
+@pytest.fixture
+def mock_standard_case_with_case_officer(requests_mock, data_standard_case, data_assignment, data_queue):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    data_standard_case["case"]["case_officer"] = {
+        "id": data_assignment["user"]["id"],
+        "first_name": data_assignment["user"]["first_name"],
+        "last_name": data_assignment["user"]["last_name"],
+        "email": data_assignment["user"]["email"],
+    }
+    return requests_mock.get(url=url, json=data_standard_case)
