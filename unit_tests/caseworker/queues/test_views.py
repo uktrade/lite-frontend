@@ -27,7 +27,7 @@ default_params = {
     "hidden": ["true"],
 }
 
-example_return_to_url = "www.example.com"
+example_return_to_url = "/example/endpoint"
 
 
 @pytest.fixture(autouse=True)
@@ -480,22 +480,37 @@ def post_to_step_user_assignment_with_return_to(post_to_step_factory, user_assig
     return post_to_step_factory(user_assignment_url)
 
 
-def test_case_assignment_case_adviser(
+@pytest.fixture
+def post_to_step_user_assignment_with_invalid_return_to(post_to_step_factory, user_assignment_url):
+    user_assignment_url = user_assignment_url + "&return_to=http://www.evil.com"
+    return post_to_step_factory(user_assignment_url)
+
+
+def test_case_assignment_case_adviser_with_return_to(
     mock_gov_users,
     mock_team_queue,
     mock_put_assignments,
     post_to_step_user_assignment_with_return_to,
 ):
-    data = {
-        "users": [gov_user_id],
-        "note": "foobar",
-    }
+    data = {"users": [gov_user_id]}
     response = post_to_step_user_assignment_with_return_to(
         CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
         data,
     )
     assert response.status_code == 302
     assert response.url == example_return_to_url
+
+
+def test_case_assignment_case_adviser_with_invalid_return_to(
+    post_to_step_user_assignment_with_invalid_return_to,
+):
+    data = {"users": [gov_user_id]}
+    response = post_to_step_user_assignment_with_invalid_return_to(
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
+        data,
+    )
+    assert response.status_code == 403
+    assert b"Invalid return_to parameter" in response.content
 
 
 @pytest.fixture
@@ -535,6 +550,18 @@ def test_case_assignment_case_officer_with_return_to(
     assert response.url == example_return_to_url
 
 
+def test_case_assignment_case_officer_with_invalid_return_to(authorized_client):
+    cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+    url = (
+        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={cases_ids[0]}&cases={cases_ids[1]}&return_to=http://www.evil.com"
+    )
+    data = {"users": gov_user_id}
+    response = authorized_client.post(url, data)
+    assert response.status_code == 403
+    assert b"Invalid return_to parameter" in response.content
+
+
 @pytest.mark.parametrize(
     "user_role_assigned, expected_url_name",
     (
@@ -543,7 +570,9 @@ def test_case_assignment_case_officer_with_return_to(
     ),
 )
 def test_case_assignment_select_role(authorized_client, mock_gov_user, user_role_assigned, expected_url_name):
-    url_params = f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}&return_to={example_return_to_url}"
+    url_params = (
+        f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}&return_to={parse.quote(example_return_to_url, safe='')}"
+    )
 
     url = reverse("queues:case_assignment_select_role", kwargs={"pk": queue_pk}) + url_params
     response = authorized_client.get(url)
