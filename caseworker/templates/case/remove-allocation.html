@@ -5,7 +5,11 @@
         <div class="govuk-grid-column-two-thirds">
             <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id %}">Back</a>
             <div>
-                <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Are you sure you want to remove {{case_officer_name}} as Licensing Unit case officer?</h2>
+                {% if adviser_identifier %}
+                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Are you sure you want to remove {{adviser_identifier}} as case adviser?</h2>
+                {% else %}
+                    <h2 class="govuk-heading-xl govuk-!-margin-bottom-3">Are you sure you want to remove {{case_officer_name}} as Licensing Unit case officer?</h2>
+                {% endif %}
                 <form method="post">{% csrf_token %}
                     {{ form.as_p }}
                     <input type="submit" class="govuk-button" value="Confirm and remove">

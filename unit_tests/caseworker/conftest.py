@@ -1675,18 +1675,6 @@ def mock_standard_case_with_case_officer(requests_mock, data_standard_case, data
 
 
 @pytest.fixture
-def mock_standard_case_with_case_officer_no_name(requests_mock, data_standard_case, data_assignment, data_queue):
-    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
-    data_standard_case["case"]["case_officer"] = {
-        "id": data_assignment["user"]["id"],
-        "first_name": "",
-        "last_name": "",
-        "email": data_assignment["user"]["email"],
-    }
-    return requests_mock.get(url=url, json=data_standard_case)
-
-
-@pytest.fixture
 def assign_user_to_case():
     def _assign_user_to_case(user, case):
         case["case"]["assigned_users"]["queue"] = [user["user"]]

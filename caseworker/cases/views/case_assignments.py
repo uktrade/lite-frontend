@@ -13,7 +13,7 @@ from caseworker.cases.services import get_case
 
 
 class CaseAssignmentRemove(LoginRequiredMixin, FormView):
-    template_name = "case/remove-case-assignment.html"
+    template_name = "case/remove-allocation.html"
     form_class = forms.CaseAssignmentRemove
 
     def _get_adviser(self, case, assignment_id):
@@ -67,7 +67,7 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
 
 
 class CaseOfficerRemove(LoginRequiredMixin, FormView):
-    template_name = "case/remove-case-officer.html"
+    template_name = "case/remove-allocation.html"
     form_class = forms.CaseOfficerRemove
 
     def _get_case_officer(self, case):
