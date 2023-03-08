@@ -194,7 +194,7 @@
 						<li>
                             <div class="app-case__summary-list__value__fullwidth">
 							    <a href="{% url 'users:user' user.id %}?return_to={{ CURRENT_PATH|urlencode }}&return_to_text={{ case.reference_code }}" class="govuk-link govuk-link--no-visited-state">{{ user|username }}</a>
-                                <a href="{% url 'cases:remove-case-assignment' queue.id case.id %}" class="govuk-link govuk-link--no-visited-state app-case__summary-list__value__item-action">Remove</a>
+                                <a href="{% url 'cases:remove-case-assignment' queue.id case.id %}?assignment_id={{user.assignment_id}}" class="govuk-link govuk-link--no-visited-state app-case__summary-list__value__item-action">Remove</a>
                             </div>
 						</li>
 					{% endfor %}
