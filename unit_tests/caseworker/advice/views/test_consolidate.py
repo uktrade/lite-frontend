@@ -1,4 +1,5 @@
 import copy
+import uuid
 
 import pytest
 
@@ -785,10 +786,10 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
 
 
 @pytest.mark.parametrize(
-    "team_alias, team_name",
+    "team_alias, team_name, flag",
     (
-        (services.LICENSING_UNIT_TEAM, "LU Team"),
-        (services.MOD_ECJU_TEAM, "MoD Team"),
+        (services.LICENSING_UNIT_TEAM, "LU Team", services.LU_COUNTERSIGN_REQUIRED),
+        (services.LICENSING_UNIT_TEAM, "LU Team", services.LU_SR_MGR_CHECK_REQUIRED),
     ),
 )
 def test_case_returned_info_for_rejection_countersignature(
@@ -800,19 +801,19 @@ def test_case_returned_info_for_rejection_countersignature(
     gov_user,
     team_alias,
     team_name,
+    flag,
 ):
-    advice = copy.deepcopy(consolidated_advice)
-    data_standard_case["case"]["advice"] = advice
+    data_standard_case["case"]["advice"] = consolidated_advice
     # A mix of accepted and rejected countersignatures
-    data_standard_case["case"]["countersign_advice"] = countersignatures(accepted=False) + countersignatures()
+    data_standard_case["case"]["countersign_advice"] = countersignatures(accepted=False)
     data_standard_case["case"]["all_flags"] = [
         {
             "colour": "default",
-            "id": "bbf29b42-0aae-4ebc-b77a-e502ddea30a8",
+            "id": str(uuid.uuid4()),
             "label": "",
             "level": "Destination",
             "name": "LU Countersign Required",
-            "alias": services.LU_COUNTERSIGN_REQUIRED,
+            "alias": flag,
             "priority": 0,
         },
         {
@@ -840,3 +841,11 @@ def test_case_returned_info_for_rejection_countersignature(
     assert len(response.context["rejected_lu_countersignatures"]) == 1
     assert not response.context["rejected_lu_countersignatures"][0]["outcome_accepted"]
     assert response.context["rejected_lu_countersignatures"][0]["reasons"] == "I disagree"
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    rejected_div = soup.find(id="rejected-countersignature")
+    countersignature_required_div = soup.find(id="countersign-required")
+    assert rejected_div is not None
+    assert countersignature_required_div is None
+    warning = rejected_div.find(class_="govuk-warning-text__text").text
+    assert "This case has been returned for editing by countersigner Testy McTest" in warning
