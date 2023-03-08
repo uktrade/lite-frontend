@@ -71,12 +71,9 @@ class CaseOfficerRemove(LoginRequiredMixin, FormView):
     form_class = forms.CaseOfficerRemove
 
     def _get_case_officer(self, case):
-        try:
-            if case["case_officer"]:
-                return case["case_officer"]
-            else:
-                raise Http404
-        except KeyError:
+        if case["case_officer"]:
+            return case["case_officer"]
+        else:
             raise Http404
 
     def _get_case_officer_name(self, case):

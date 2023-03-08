@@ -136,7 +136,6 @@ def test_case_assignments_remove_user_POST_error(
 def test_case_remove_case_officer_GET(
     authorized_client, data_queue, data_standard_case, mock_standard_case_with_case_officer, mock_queue
 ):
-
     case = data_standard_case
     url = reverse("cases:remove-case-officer", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
     response = authorized_client.get(url)
@@ -147,6 +146,17 @@ def test_case_remove_case_officer_GET(
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Are you sure you want to remove some user as Licensing Unit case officer?" in html.find("h2").get_text()
+
+
+def test_case_remove_case_officer_no_name_GET(
+    authorized_client, data_queue, data_standard_case, mock_standard_case_with_case_officer_no_name, mock_queue
+):
+    case = data_standard_case
+    url = reverse("cases:remove-case-officer", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    context = response.context
+    assert context["case_officer_name"] == "example@example.net"
 
 
 def test_case_POST_remove_case_officer_success(
