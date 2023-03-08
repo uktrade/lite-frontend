@@ -491,3 +491,38 @@ def test_form_report_summary_conditions(
         )
     else:
         assert soup.find("form").find(id="report_summary_prefix").attrs.get("value") is None
+
+
+def test_form_only_rendered_once(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+    report_summary_prefix,
+    report_summary_subject,
+    assign_user_to_case,
+    mock_gov_user,
+):
+    # This is to test a bug where we were rendering the form tag in the
+    # template but not suppressing it when crispy forms was rendering the form
+    # itself.
+    # This caused malformed HTML to be rendered by the browser and resulted in
+    # the submit button being rendered in the wrong place.
+
+    assign_user_to_case(mock_gov_user, data_standard_case)
+
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    edit_good = data_standard_case["case"]["data"]["goods"][1]
+    edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+    # Get the edit form
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    tau_form = soup.find(id="tau-form")
+    assert tau_form is not None
+    assert not tau_form.select("form")

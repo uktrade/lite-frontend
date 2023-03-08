@@ -502,3 +502,31 @@ def test_permission_move_case_forward_button(
         )
     else:
         assert len(forms) == 0
+
+
+def test_form_rendered_once(
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+    assign_user_to_case,
+):
+    # This is to ensure that we only render our own form and suppress crispy
+    # forms from rendering its own.
+    assign_user_to_case(mock_gov_user, data_standard_case)
+
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    tau_form = soup.find(id="tau-form")
+    assert tau_form is not None
+    assert not tau_form.select("form")
