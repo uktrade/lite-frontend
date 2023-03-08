@@ -73,6 +73,7 @@ MIDDLEWARE = [
     "core.middleware.ValidateReturnToMiddleware",
     "core.middleware.XRobotsTagMiddleware",
     "core.middleware.SessionTimeoutMiddleware",
+    "core.middleware.HttpErrorHandlerMiddleware",
 ]
 
 if not DEBUG:
