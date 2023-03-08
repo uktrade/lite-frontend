@@ -113,6 +113,16 @@ class CaseContextMixin:
         one_countersignature_per_order_value = {cs["order"]: cs for cs in self.case.get("countersign_advice", [])}
         return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
 
+    def rejected_countersign_advice(self):
+        """
+        Return a single rejected countersignature per order value (if there are any) in order to filter out duplicates
+        for display in the templates
+        """
+        one_countersignature_per_order_value = {
+            cs["order"]: cs for cs in self.case.get("countersign_advice", []) if not cs["outcome_accepted"]
+        }
+        return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
+
 
 class BEISNuclearMixin:
     def is_trigger_list_assessed(self, product):
@@ -599,6 +609,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             lu_countersign_flags.intersection(case_flag_aliases)
         )
 
+        rejected_lu_countersignatures = self.rejected_countersign_advice()
         finalise_case = user_team_alias == services.LICENSING_UNIT_TEAM and not lu_countersign_required
 
         return {
@@ -607,6 +618,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "nlr_products": nlr_products,
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
+            "rejected_lu_countersignatures": rejected_lu_countersignatures,
             "denial_reasons_display": self.denial_reasons_display,
         }
 

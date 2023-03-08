@@ -1,3 +1,5 @@
+import copy
+
 import pytest
 
 from bs4 import BeautifulSoup
@@ -7,6 +9,7 @@ from caseworker.advice import services
 from core import client
 from caseworker.advice import forms
 from caseworker.advice.services import FCDO_TEAM, LICENSING_UNIT_TEAM, MOD_CONSOLIDATE_TEAMS, MOD_ECJU_TEAM
+from unit_tests.caseworker.conftest import countersignatures
 
 
 @pytest.fixture
@@ -772,9 +775,68 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
+    assert response.context["lu_countersign_rejected"] == False
     if team_alias == services.LICENSING_UNIT_TEAM:
         assert response.context["lu_countersign_required"] == True
         assert response.context["finalise_case"] == False
     else:
         assert response.context["lu_countersign_required"] == False
         assert response.context["finalise_case"] == False
+
+
+@pytest.mark.parametrize(
+    "team_alias, team_name",
+    (
+        (services.LICENSING_UNIT_TEAM, "LU Team"),
+        (services.MOD_ECJU_TEAM, "MoD Team"),
+    ),
+)
+def test_case_returned_info_for_rejection_countersignature(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    view_consolidate_outcome_url,
+    consolidated_advice,
+    gov_user,
+    team_alias,
+    team_name,
+):
+    advice = copy.deepcopy(consolidated_advice)
+    data_standard_case["case"]["advice"] = advice
+    # A mix of accepted and rejected countersignatures
+    data_standard_case["case"]["countersign_advice"] = countersignatures(accepted=False) + countersignatures()
+    data_standard_case["case"]["all_flags"] = [
+        {
+            "colour": "default",
+            "id": "bbf29b42-0aae-4ebc-b77a-e502ddea30a8",
+            "label": "",
+            "level": "Destination",
+            "name": "LU Countersign Required",
+            "alias": services.LU_COUNTERSIGN_REQUIRED,
+            "priority": 0,
+        },
+        {
+            "colour": "default",
+            "id": "a7736911-f604-4256-b109-dadd2f6bc316",
+            "label": "",
+            "level": "Destination",
+            "name": "Green Countries",
+            "alias": None,
+            "priority": 20,
+        },
+    ]
+
+    gov_user["user"]["team"]["name"] = team_name
+    gov_user["user"]["team"]["alias"] = team_alias
+
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
+    )
+
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    assert len(response.context["rejected_lu_countersignatures"]) == 1
+    assert not response.context["rejected_lu_countersignatures"][0]["outcome_accepted"]
+    assert response.context["rejected_lu_countersignatures"][0]["reasons"] == "I disagree"

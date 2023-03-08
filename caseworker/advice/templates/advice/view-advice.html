@@ -57,7 +57,16 @@
             <div class="govuk-grid-row govuk-!-margin-top-6">
                 <div class="govuk-grid-column-three-quarters">
 
-                    {% if lu_countersign_required %}
+                    {% if lu_countersigning_rejected %}
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                <span class="govuk-warning-text__assistive">Warning</span>
+                                This case has been returned for editing by countersigner ???.
+                                When you have finished making changes, move case forward.
+                            </strong>
+                        </div>
+                    {% elif lu_countersign_required %}
                         <div class="govuk-warning-text">
                             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                             <strong class="govuk-warning-text__text">
