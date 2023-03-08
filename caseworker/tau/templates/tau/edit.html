@@ -20,7 +20,6 @@
             <div class="govuk-grid-column-one-third">
                 {{ cle_suggestions_json|json_script:"cle-suggestions-json" }}
                 <form id="tau-form" method="POST">
-                    {% csrf_token %}
                     <h1 class="govuk-heading-m tau__headline">Assessing {{good.good.name}}</h1>
                     {% crispy form %}
                     {% test_rule 'can_user_assess_products' current_user case as can_user_assess_products %}

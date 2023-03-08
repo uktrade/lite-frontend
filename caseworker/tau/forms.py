@@ -187,6 +187,7 @@ class TAUEditForm(forms.Form):
             self.fields[REPORT_SUMMARY_SUBJECT_KEY].widget.attrs["data-name"] = report_summary_subject_name
 
         self.helper = FormHelper()
+        self.helper.form_tag = False
 
         feature_flagged_regimes = []
         if settings.FEATURE_C6_REGIMES:
@@ -374,8 +375,6 @@ class TAUAssessmentForm(TAUEditForm):
             label="Select a product to begin. Or you can select multiple products to give them the same assessment.",
             error_messages={"required": "Select the products that you want to assess"},
         )
-
-        self.helper.form_tag = False
 
     def get_goods_choices(self, goods):
         return [
