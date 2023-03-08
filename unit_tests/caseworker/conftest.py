@@ -1662,3 +1662,11 @@ def mock_standard_case_with_assignments(requests_mock, data_standard_case, data_
         ]
     }
     return requests_mock.get(url=url, json=data_standard_case)
+
+
+@pytest.fixture
+def assign_user_to_case():
+    def _assign_user_to_case(user, case):
+        case["case"]["assigned_users"]["queue"] = [user["user"]]
+
+    return _assign_user_to_case

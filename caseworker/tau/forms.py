@@ -7,7 +7,6 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import (
     HTML,
     Layout,
-    Submit,
 )
 
 from core.forms.layouts import (
@@ -35,8 +34,6 @@ class TAUEditForm(forms.Form):
 
     MESSAGE_NO_CLC_MUTEX = "This is mutually exclusive with control list entries"
     MESSAGE_NO_CLC_REQUIRED = "Select a control list entry or select 'This product does not have a control list entry'"
-
-    SUBMIT_BUTTON_TEXT = "Submit"
 
     control_list_entries = forms.MultipleChoiceField(
         label="Add a control list entry or end-use control",
@@ -228,7 +225,6 @@ class TAUEditForm(forms.Form):
                 "None",
             ),
             "comment",
-            Submit("submit", self.SUBMIT_BUTTON_TEXT),
         ]
         self.helper.layout = Layout(*fields)
 
@@ -350,8 +346,6 @@ class TAUAssessmentForm(TAUEditForm):
 
     TODO: Delete ExportControlCharacteristicsForm after this goes live.
     """
-
-    SUBMIT_BUTTON_TEXT = "Save and continue"
 
     def __init__(
         self,

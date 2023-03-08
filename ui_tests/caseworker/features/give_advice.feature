@@ -227,6 +227,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
     And I go to my case list
     And I click the application previously created
+    And I assign myself to the case
+    And I go to my case list
+    And I click the application previously created
     And I click the recommendations and decision tab
     And I click "Review and combine"
     And I enter "reason for approving" as the reasons for approving
@@ -304,6 +307,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     # Scenario starts
     When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    And I assign myself to the case
     And I go to my case list
     And I click the application previously created
     Then for the first good I see "N/A" for "Control entry"
