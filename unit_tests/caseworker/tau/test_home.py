@@ -81,8 +81,11 @@ def test_home_content(
     mock_control_list_entries,
     mock_precedents_api,
     mock_gov_user,
+    assign_user_to_case,
 ):
     """GET /tau would return a case info panel"""
+    assign_user_to_case(mock_gov_user, data_standard_case)
+
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
@@ -118,6 +121,8 @@ def test_home_content(
     )
     assert edit_url == soup.find(id="assessed-products").find("tbody").find("a").attrs["href"]
 
+    assert soup.find(id="clear-assessments-button") is not None
+
     # The precedent for the unassessed product
 
     assert get_cells(soup, "table-precedents-1") == [
@@ -135,10 +140,61 @@ def test_home_content(
     assert response.context["current_user"] == mock_gov_user["user"]
 
 
+def test_home_content_without_allocated_user_hides_clear_assessment_button(
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    # Test elements of case info panel
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="clear-assessments-button") is None
+
+
 def test_tau_home_noauth(client, url):
     """GET /tau should return 302 with an unauthorised client"""
     response = client.get(url)
     assert response.status_code == 302
+
+
+def test_form_without_allocated_user_hides_submit_button(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_control_list_entries,
+    mock_precedents_api,
+    report_summary_subject,
+    assign_user_to_case,
+    mock_gov_user,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
+    )
+    # unassessed products should have 1 entry
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    unassessed_products = soup.find(id="unassessed-products").find_all("input")
+    assert len(unassessed_products) == 1
+    assert unassessed_products[0].attrs["value"] == good["id"]
+
+    assert soup.find(id="submit-id-submit") is None
 
 
 def test_form(
@@ -149,10 +205,13 @@ def test_form(
     mock_control_list_entries,
     mock_precedents_api,
     report_summary_subject,
+    assign_user_to_case,
+    mock_gov_user,
 ):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
     """
+    assign_user_to_case(mock_gov_user, data_standard_case)
 
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
@@ -167,6 +226,8 @@ def test_form(
     unassessed_products = soup.find(id="unassessed-products").find_all("input")
     assert len(unassessed_products) == 1
     assert unassessed_products[0].attrs["value"] == good["id"]
+
+    assert soup.find(id="submit-id-submit") is not None
 
     data = {
         "report_summary_subject": report_summary_subject["id"],
@@ -441,3 +502,31 @@ def test_permission_move_case_forward_button(
         )
     else:
         assert len(forms) == 0
+
+
+def test_form_rendered_once(
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+    assign_user_to_case,
+):
+    # This is to ensure that we only render our own form and suppress crispy
+    # forms from rendering its own.
+    assign_user_to_case(mock_gov_user, data_standard_case)
+
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    tau_form = soup.find(id="tau-form")
+    assert tau_form is not None
+    assert not tau_form.select("form")

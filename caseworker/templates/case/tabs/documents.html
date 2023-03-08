@@ -1,12 +1,18 @@
-{% load svg %}
+{% load rules svg %}
 
 <div class="lite-buttons-row">
-	<a id="button-attach-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:attach_documents' queue.id case.id %}">
-		{% lcs 'cases.CasePage.DocumentsTab.ATTACH_DOCUMENT_BUTTON' %}
-	</a>
-	<a id="button-generate-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:generate_document' queue.id case.id %}">
-		{% lcs 'cases.CasePage.DocumentsTab.GENERATE_DOCUMENT_BUTTON' %}
-	</a>
+	{% test_rule 'can_user_attach_document' current_user case as can_user_attach_document %}
+	{% if can_user_attach_document %}
+		<a id="button-attach-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:attach_documents' queue.id case.id %}">
+			{% lcs 'cases.CasePage.DocumentsTab.ATTACH_DOCUMENT_BUTTON' %}
+		</a>
+	{% endif %}
+	{% test_rule 'can_user_generate_document' current_user case as can_user_generate_document %}
+	{% if can_user_generate_document %}
+		<a id="button-generate-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:generate_document' queue.id case.id %}">
+			{% lcs 'cases.CasePage.DocumentsTab.GENERATE_DOCUMENT_BUTTON' %}
+		</a>
+	{% endif %}
 </div>
 
 {% if case_documents %}

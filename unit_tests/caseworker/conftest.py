@@ -1684,3 +1684,10 @@ def mock_standard_case_with_case_officer_no_name(requests_mock, data_standard_ca
         "email": data_assignment["user"]["email"],
     }
     return requests_mock.get(url=url, json=data_standard_case)
+
+
+def assign_user_to_case():
+    def _assign_user_to_case(user, case):
+        case["case"]["assigned_users"]["queue"] = [user["user"]]
+
+    return _assign_user_to_case
