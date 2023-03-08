@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   caseworker:
-    platform: linux/amd64
+    # platform: linux/amd64
     env_file:
       - ./caseworker.env
     environment:
@@ -21,7 +21,7 @@ services:
     tty: true
 
   exporter:
-    platform: linux/amd64
+    # platform: linux/amd64
     env_file:
       - ./exporter.env
     environment:
@@ -38,6 +38,42 @@ services:
       - lite
     stdin_open: true
     tty: true
+
+  chrome:
+    image: 'seleniarm/node-chromium:latest'
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    ports:
+      - "5900:5900"
+      - "7900:7900"
+    networks:
+      - lite
+  firefox:
+    image: selenium/node-firefox:latest
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+    networks:
+      - lite
+
+  selenium-hub:
+    image: selenium/hub:latest
+    container_name: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+    networks:
+      - lite
 
   frontend_assets_watcher:
     image: node:16.19-bullseye

@@ -1,7 +1,7 @@
 import base64
 
-from seleniumwire import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from _pytest.fixtures import fixture
 
@@ -11,16 +11,23 @@ def driver(request, api_client, environment):
     is_headless = request.config.getoption("--headless")
 
     chrome_options = webdriver.ChromeOptions()
-    if is_headless:
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--window-size=1920,1080")
+    # if is_headless:
+    #     chrome_options.add_argument("--headless")
+    #     chrome_options.add_argument("--window-size=1920,1080")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
     prefs = {"download.default_directory": "/tmp"}
     chrome_options.add_experimental_option("prefs", prefs)
 
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    desired_capabilities = DesiredCapabilities.CHROME.copy()
+    desired_capabilities["acceptInsecureCerts"] = True
+
+    driver = webdriver.Remote(
+        command_executor="http://host.docker.internal:4444/wd/hub",
+        options=chrome_options,
+        desired_capabilities=desired_capabilities,
+    )
     driver.implicitly_wait(20)
     driver.get("about:blank")
     driver.maximize_window()
