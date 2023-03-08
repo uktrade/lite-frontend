@@ -236,13 +236,6 @@ def test_get_decision_advices_by_countersigner(
     assert len(advices) == 1
 
 
-def put_request(rf, client, url, data=None):
-    request = rf.put(url, data if data else {})
-    request.session = client.session
-    request.requests_session = requests.Session()
-    return request
-
-
 def setup_requests_mock(requests_mock, client):
     requests_mock.requests_session = requests.Session()
     requests_mock.session = client.session
@@ -270,14 +263,9 @@ def test_update_countersign_decision_advice(
         "outcome_accepted": False,
         "rejected_reasons": "this part can be used in H bombs",
     }
-    countersign_data = {
-        "id": countersign_advice[0]["id"],
-        "outcome_accepted": data["outcome_accepted"],
-        "reasons": data["rejected_reasons"],
-    }
     countersign_advice_url = f"/cases/{case.id}/countersign-decision-advice/"
     setup_requests_mock(requests_mock, client)
-    requests_mock.put(countersign_advice_url, json={"countersign_advice": countersign_data})
+    requests_mock.put(countersign_advice_url, json={})
 
     update_countersign_decision_advice(requests_mock, case, current_user, data)
 
@@ -286,11 +274,14 @@ def test_update_countersign_decision_advice(
     assert len(history) == 1
     history = history[0]
     assert history.method == "PUT"
-    api_data = history.json()
-    assert len(history.json()) == 1
-    api_data = history.json()[0]
-    assert api_data["reasons"] == data["rejected_reasons"]
-    assert api_data["outcome_accepted"] == data["outcome_accepted"]
+    # only 1 of the 3 advices should be updated
+    assert history.json() == [
+        {
+            "id": countersign_advice[2]["id"],
+            "outcome_accepted": data["outcome_accepted"],
+            "reasons": data["rejected_reasons"],
+        }
+    ]
 
 
 def test_no_update_countersign_decision_advice_incorrect_user(

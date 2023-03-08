@@ -412,8 +412,9 @@ class ViewCountersignedAdvice(AdviceDetailView):
         advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
-        context["lu_can_edit"] = self.caseworker_id in services.get_countersigners_decision_advice(
-            self.case, self.caseworker
+        context["lu_can_edit"] = (
+            settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING
+            and self.caseworker_id in services.get_countersigners_decision_advice(self.case, self.caseworker)
         )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
@@ -458,9 +459,16 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
 
 
 class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            raise Http404("LU Countersigning feature not enabled")
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_data(self):
         advices = services.get_decision_advices_by_countersigner(self.case, self.caseworker)
-        # using single countersign advice object as currently no functionality to countersign individual pieces of advice
+        # given that there is currently no functionality to countersign individual pieces of advice
+        # the value of outcome_accepted on any single piece of advice is the same for the whole case
         advice = advices[0]
         reason_field = "approval_reasons" if advice.get("outcome_accepted") else "rejected_reasons"
         data = [{"outcome_accepted": advice.get("outcome_accepted"), reason_field: advice.get("reasons")}]
