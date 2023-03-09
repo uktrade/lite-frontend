@@ -613,7 +613,11 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
                 lu_countersign_flags.intersection(case_flag_aliases)
             )
 
-        finalise_case = user_team_alias == services.LICENSING_UNIT_TEAM and not lu_countersign_required
+        finalise_case = (
+            user_team_alias == services.LICENSING_UNIT_TEAM
+            and not lu_countersign_required
+            and not rejected_lu_countersignatures
+        )
 
         return {
             **super().get_context(**kwargs),

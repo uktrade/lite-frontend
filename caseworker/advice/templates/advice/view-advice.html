@@ -76,7 +76,7 @@
                     {% endif %}
 
                     {% if finalise_case %}
-                        <a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
+                        <a id="finalise-case-button" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
                             Finalise case
                         </a>
                     {% endif %}

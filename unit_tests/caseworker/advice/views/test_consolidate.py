@@ -1,4 +1,5 @@
 import copy
+import re
 import uuid
 
 import pytest
@@ -776,7 +777,7 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
-    assert response.context["lu_countersign_rejected"] == False
+    assert not response.context["rejected_lu_countersignatures"]
     if team_alias == services.LICENSING_UNIT_TEAM:
         assert response.context["lu_countersign_required"] == True
         assert response.context["finalise_case"] == False
@@ -849,3 +850,5 @@ def test_case_returned_info_for_rejection_countersignature(
     assert countersignature_required_div is None
     warning = rejected_div.find(class_="govuk-warning-text__text").text
     assert "This case has been returned for editing by countersigner Testy McTest" in warning
+
+    assert not soup.find(id="finalise-case-button")
