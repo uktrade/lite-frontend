@@ -154,7 +154,7 @@
 			{% if case.case_type.reference.key in "comp_c,comp_v" %}
 				{% lcs 'cases.CasePage.DetailsTab.INSPECTOR' %}
 			{% else %}
-				{% lcs 'cases.CasePage.DetailsTab.CASE_OFFICER' %}
+				Licensing Unit case officer
 			{% endif %}
 		</dt>
 		<dd class="app-case__summary-list__value">
@@ -170,9 +170,15 @@
 		</dd>
 		<dd class="app-case__summary-list__actions">
 			{% if not is_terminal %}
-				<a id="link-change-case-officer" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case_officer' queue.id case.id %}">
-					{% lcs 'generic.CHANGE' %}
-				</a>
+				{% if case.case_officer %}
+					<a id="link-case-officer-remove" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:remove-case-officer' queue.id case.id  %}?&return_to={{CURRENT_PATH|urlencode}}">
+						Remove
+					</a>
+				{% else %}
+					<a id="link-case-officer-add" class="govuk-link govuk-link--no-visited-state" href="{% url 'queues:case_assignments_case_officer' queue.id %}?cases={{ case.id }}&return_to={{CURRENT_PATH|urlencode}}">
+						Add Licensing Unit case officer
+					</a>
+				{% endif %}
 			{% endif %}
 		</dd>
 	</div>
