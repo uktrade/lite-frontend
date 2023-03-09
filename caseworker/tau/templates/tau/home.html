@@ -44,7 +44,6 @@
                 {% if unassessed_goods %}
                     {{ cle_suggestions_json|json_script:"cle-suggestions-json" }}
                     <form id="tau-form" action="." method="POST" {% if form.helper.attrs.enctype %}enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
-                        {% csrf_token %}
                         <div class="govuk-grid-column-two-thirds assessment-form__first-column">
                             {{ form.goods|as_crispy_field }}
                         </div>
