@@ -1,8 +1,11 @@
-{% load svg %}
+{% load rules svg %}
 
 <div class="lite-buttons-row">
 	{% make_list queue.id case.id as button_params %}
-	{% govuk_link_button id='new-query' text='cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' url='cases:new_ecju_query' url_param=button_params query_params="?query_type=ecju_query"%}
+	{% test_rule 'can_user_add_an_ejcu_query' current_user case as can_user_add_an_ejcu_query %}
+	{% if can_user_add_an_ejcu_query %}
+		{% govuk_link_button id='new-query' text='cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' url='cases:new_ecju_query' url_param=button_params query_params="?query_type=ecju_query"%}
+	{% endif %}
 	{% if case.case_type.reference.key in "comp_v,comp_c" %}
 		{% govuk_link_button id='new-pre-visit-questionnaire' text='cases.EcjuQueries.AddQuery.ADD_PRE_VISIT_QUESTIONNAIRE' url='cases:new_ecju_query' url_param=button_params query_params="?query_type=pre_visit_questionnaire"%}
 		{% govuk_link_button id='new-compliance-actions' text='cases.EcjuQueries.AddQuery.COMPLIANCE_ACTIONS' url='cases:new_ecju_query' url_param=button_params query_params="?query_type=compliance_actions"%}

@@ -22,9 +22,33 @@ def url(data_standard_case):
     )
 
 
-def setup_mock_api(requests_mock, data):
-    application_id = data["case"]["id"]
-    requests_mock.get(client._build_absolute_uri(f"/cases/{application_id}"), json=data)
+@pytest.fixture
+def mock_application(requests_mock):
+    def _setup_mock_application(data):
+        application_id = data["case"]["id"]
+        requests_mock.get(client._build_absolute_uri(f"/cases/{application_id}"), json=data)
+
+    return _setup_mock_application
+
+
+def test_user_in_context(
+    authorized_client,
+    data_standard_case_with_all_trigger_list_products_assessed,
+    mock_gov_user,
+    url,
+    mock_application,
+    assign_user_to_case,
+):
+    case = data_standard_case_with_all_trigger_list_products_assessed
+    mock_application(case)
+    assign_user_to_case(
+        mock_gov_user,
+        case,
+    )
+    response = authorized_client.get(url)
+    # "current_user" passed in from caseworker context processor
+    # used to test rule "can_user_change_case"
+    assert response.context["current_user"] == mock_gov_user["user"]
 
 
 def test_user_in_context(
@@ -44,12 +68,19 @@ def test_user_in_context(
 
 def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assessed(
     authorized_client,
-    requests_mock,
     url,
     data_standard_case_with_potential_trigger_list_product,
     mock_gov_beis_nuclear_user,
+    mock_application,
+    mock_gov_user,
+    assign_user_to_case,
 ):
-    setup_mock_api(requests_mock, data_standard_case_with_potential_trigger_list_product)
+    case = data_standard_case_with_potential_trigger_list_product
+    mock_application(case)
+    assign_user_to_case(
+        mock_gov_user,
+        case,
+    )
 
     response = authorized_client.get(url)
 
@@ -59,6 +90,9 @@ def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assess
     product_table = soup.find(id="assessed-products")
     assert product_table is None
 
+    make_recommendation_button = soup.find(id="make-recommendation-button")
+    assert make_recommendation_button is None
+
 
 def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     authorized_client,
@@ -66,9 +100,16 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     url,
     data_standard_case_with_all_trigger_list_products_assessed,
     mock_gov_beis_nuclear_user,
+    mock_application,
+    mock_gov_user,
+    assign_user_to_case,
 ):
-    data = data_standard_case_with_all_trigger_list_products_assessed
-    setup_mock_api(requests_mock, data)
+    case = data_standard_case_with_all_trigger_list_products_assessed
+    mock_application(data_standard_case_with_all_trigger_list_products_assessed)
+    assign_user_to_case(
+        mock_gov_user,
+        case,
+    )
 
     response = authorized_client.get(url)
 
@@ -79,4 +120,30 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     assert product_table is not None
 
     rows = product_table.tbody.find_all("tr")
-    assert len(rows) == len(data["case"]["data"]["goods"])
+    assert len(rows) == len(data_standard_case_with_all_trigger_list_products_assessed["case"]["data"]["goods"])
+
+    make_recommendation_button = soup.find(id="make-recommendation-button")
+    assert make_recommendation_button is not None
+
+
+def test_unallocated_user_does_not_see_assessed_products_or_make_recommendation(
+    authorized_client,
+    requests_mock,
+    url,
+    data_standard_case_with_all_trigger_list_products_assessed,
+    mock_gov_beis_nuclear_user,
+    mock_application,
+):
+    case = data_standard_case_with_all_trigger_list_products_assessed
+    mock_application(case)
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    product_table = soup.find(id="assessed-products")
+    assert product_table is None
+
+    make_recommendation_button = soup.find(id="make-recommendation-button")
+    assert make_recommendation_button is None

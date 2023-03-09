@@ -87,6 +87,11 @@ class Cases(LoginRequiredMixin, TemplateView):
 
     @property
     def filters(self):
+        gov_users = self.data["results"]["filters"]["gov_users"]
+        filtered_gov_users = [gov_user for gov_user in gov_users if not gov_user["pending"]]
+
+        self.data["results"]["filters"]["gov_users"] = filtered_gov_users
+
         return self.data["results"]["filters"]
 
     def get_params(self):
@@ -335,7 +340,8 @@ class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormVi
         return update_case_officer_on_cases(self.request, case_ids, user_id)
 
     def get_success_url(self):
-        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
+        default_success_url = reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
+        return self.request.GET.get("return_to", default_success_url)
 
     def get_context_data(self, *args, **kwargs):
         context = {

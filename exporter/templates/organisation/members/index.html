@@ -23,7 +23,7 @@
 			{% for user in data.results %}
 				<tr class="govuk-table__row">
 					<td class="govuk-table__header" scope="row">
-						{% if user.first_name %}
+						{% if not user.pending %}
 							{{ user.first_name }} {{ user.last_name }}
 						{% else %}
 							<strong class="govuk-tag govuk-tag--blue">

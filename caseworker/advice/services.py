@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from django.conf import settings
 from requests.exceptions import HTTPError
 
 from core import client
@@ -25,6 +26,8 @@ MOD_CONSOLIDATE_QUEUES = [
     "MOD_ECJU_REVIEW_AND_COMBINE",
 ]
 LU_POST_CIRC_FINALISE_QUEUE = "LU_POST_CIRC_FINALISE"
+LU_LICENSING_MANAGER_QUEUE = "LU_LICENSING_MANAGER_QUEUE"
+LU_SR_LICENSING_MANAGER_QUEUE = "LU_SR_LICENSING_MANAGER_QUEUE"
 
 # Teams
 BEIS_CHEMICAL = "BEIS_CHEMICAL"
@@ -49,6 +52,10 @@ LU_COUNTERSIGN_REQUIRED = "LU_COUNTER_REQUIRED"
 LU_SR_MGR_CHECK_REQUIRED = "LU_SENIOR_MANAGER_CHECK_REQUIRED"
 
 NSG_POTENTIAL_TRIGGER_LIST_REGIME = "NSG Potential Trigger List"
+
+# Countersigning
+FIRST_COUNTERSIGN = 1
+SECOND_COUNTERSIGN = 2
 
 
 def filter_nlr_products(products):
@@ -165,6 +172,10 @@ def group_advice_by_team(advice):
 def get_advice_to_countersign(advice, caseworker):
     advice_levels_to_countersign = [AdviceLevel.USER]
 
+    if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+        if caseworker["team"]["alias"] == LICENSING_UNIT_TEAM:
+            advice_levels_to_countersign = [AdviceLevel.FINAL]
+
     advice_by_team = filter_advice_by_users_team(advice, caseworker)
     user_advice = filter_advice_by_level(advice_by_team, advice_levels_to_countersign)
     grouped_user_advice = group_advice_by_user(user_advice)
@@ -180,6 +191,17 @@ def get_countersigners(advice_to_countersign):
         for advice in user_advice:
             if advice["countersigned_by"]:
                 countersigned_by.add(advice["countersigned_by"]["id"])
+    return countersigned_by
+
+
+def get_countersigners_decision_advice(case, caseworker):
+    """Get a set of user ids representing the users that have already
+    countersigned the advice on this case with accept/reject decision.
+    """
+    countersigned_by = set()
+    for advice in case.countersign_advice:
+        if advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]:
+            countersigned_by.add(advice["countersigned_user"]["id"])
     return countersigned_by
 
 
@@ -327,6 +349,41 @@ def countersign_advice(request, case, caseworker, formset_data):
     response.raise_for_status()
 
 
+def countersign_decision_advice(request, case, queue_id, caseworker, formset_data):
+    data = []
+    case_pk = case["id"]
+    order = FIRST_COUNTERSIGN  # common case
+
+    queue_alias = next((item["alias"] for item in case["queue_details"] if item["id"] == queue_id), None)
+    # in some case second countersign required
+    if queue_alias == LU_SR_LICENSING_MANAGER_QUEUE:
+        order = SECOND_COUNTERSIGN
+
+    advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
+    for index, (_, user_advice) in enumerate(advice_to_countersign.items()):
+        form_data = formset_data[index]
+        for advice in user_advice:
+            outcome_accepted = form_data["outcome_accepted"]
+            if outcome_accepted:
+                reasons = form_data["approval_reasons"]
+            else:
+                reasons = form_data["rejected_reasons"]
+
+            data.append(
+                {
+                    "order": order,
+                    "outcome_accepted": outcome_accepted,
+                    "reasons": reasons,
+                    "countersigned_user": caseworker["id"],
+                    "case": case_pk,
+                    "advice": advice["id"],
+                }
+            )
+
+    response = client.post(request, f"/cases/{case_pk}/countersign-decision-advice/", data)
+    response.raise_for_status()
+
+
 def move_case_forward(request, case_id, queue_id):
     """This utility function calls the /assigned-queues/ endpoint in the API.
     In turn, /assigned-queues/ runs the routing rules and moves the case forward.
@@ -414,8 +471,27 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
     elif team_alias in (MOD_ECJU_TEAM, LICENSING_UNIT_TEAM):
+
         consolidated_advice = get_consolidated_advice(case.advice, team_alias)
-        if queue_alias in (LU_POST_CIRC_FINALISE_QUEUE, *MOD_CASES_TO_REVIEW_QUEUES):
+
+        if queue_alias in (LU_LICENSING_MANAGER_QUEUE, LU_SR_LICENSING_MANAGER_QUEUE):
+            if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+                advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
+                countersigned_by = get_countersigners_decision_advice(case, caseworker)
+
+                if advice_to_countersign:
+                    if caseworker["id"] not in countersigned_by:
+                        # An individual countersigning advice on a case for the first time
+                        context["url"] = "cases:countersign_advice_view"
+                        context["countersign"] = True
+                        context["buttons"]["review_and_countersign"] = True
+                    else:
+                        # An individual accessing the case after giving countersigned advice
+                        context["url"] = "cases:countersign_view"
+                        context["buttons"]["edit_recommendation"] = True
+                        context["buttons"]["move_case_forward"] = True
+
+        elif queue_alias in (LU_POST_CIRC_FINALISE_QUEUE, *MOD_CASES_TO_REVIEW_QUEUES):
             if not consolidated_advice:
                 # An individual consolidating advice on a case for the first time
                 context["url"] = "cases:consolidate_advice_view"
