@@ -18,12 +18,16 @@ from caseworker.queues.views import CaseAssignmentsCaseAssigneeSteps
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
+gov_user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
+
 default_params = {
     "page": ["1"],
     "queue_id": ["00000000-0000-0000-0000-000000000001"],
     "selected_tab": ["all_cases"],
     "hidden": ["true"],
 }
+
+example_return_to_url = "/example/endpoint"
 
 
 @pytest.fixture(autouse=True)
@@ -205,7 +209,10 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
                     {"key": "conflicting", "value": "Conflicting"},
                 ],
                 "case_types": data_case_types,
-                "gov_users": [{"full_name": "John Smith", "id": gov_uk_user_id}],
+                "gov_users": [
+                    {"full_name": "John Smith", "id": gov_uk_user_id, "pending": False},
+                    {"full_name": "", "id": gov_uk_user_id, "pending": True},
+                ],
                 "statuses": mock_case_statuses["statuses"],
                 "is_system_queue": True,
                 "is_work_queue": False,
@@ -467,23 +474,92 @@ def test_case_assignment_case_office_no_user_selected(authorized_client, mock_go
     }
 
 
-def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_users):
+@pytest.fixture
+def post_to_step_user_assignment_with_return_to(post_to_step_factory, user_assignment_url):
+    user_assignment_url = user_assignment_url + f"&return_to={example_return_to_url}"
+    return post_to_step_factory(user_assignment_url)
+
+
+@pytest.fixture
+def post_to_step_user_assignment_with_invalid_return_to(post_to_step_factory, user_assignment_url):
+    user_assignment_url = user_assignment_url + "&return_to=http://www.evil.com"
+    return post_to_step_factory(user_assignment_url)
+
+
+def test_case_assignment_case_adviser_with_return_to(
+    mock_gov_users,
+    mock_team_queue,
+    mock_put_assignments,
+    post_to_step_user_assignment_with_return_to,
+):
+    data = {"users": [gov_user_id]}
+    response = post_to_step_user_assignment_with_return_to(
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
+        data,
+    )
+    assert response.status_code == 302
+    assert response.url == example_return_to_url
+
+
+def test_case_assignment_case_adviser_with_invalid_return_to(
+    post_to_step_user_assignment_with_invalid_return_to,
+):
+    data = {"users": [gov_user_id]}
+    response = post_to_step_user_assignment_with_invalid_return_to(
+        CaseAssignmentsCaseAssigneeSteps.SELECT_USERS,
+        data,
+    )
+    assert response.status_code == 403
+    assert b"Invalid return_to parameter" in response.content
+
+
+@pytest.fixture
+def mock_put_case_case_officer(requests_mock):
+    case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
+    return requests_mock.put(url=case_officer_put_url, json={})
+
+
+def test_case_assignment_case_officer(authorized_client, requests_mock, mock_gov_users, mock_put_case_case_officer):
     cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
     url = (
         reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
         + f"?cases={cases_ids[0]}&cases={cases_ids[1]}"
     )
-    case_officer_put_url = client._build_absolute_uri("/cases/cases-update-case-officer/")
-    mock_put_case_case_office = requests_mock.put(url=case_officer_put_url, json={})
 
-    data = {"users": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}
+    data = {"users": gov_user_id}
     response = authorized_client.post(url, data)
     assert response.status_code == 302
     assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
-    assert mock_put_case_case_office.last_request.json() == {
-        "gov_user_pk": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
+    assert mock_put_case_case_officer.last_request.json() == {
+        "gov_user_pk": gov_user_id,
         "case_ids": cases_ids,
     }
+
+
+def test_case_assignment_case_officer_with_return_to(
+    authorized_client, requests_mock, mock_gov_users, mock_put_case_case_officer
+):
+    cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+    url = (
+        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={cases_ids[0]}&cases={cases_ids[1]}&return_to={example_return_to_url}"
+    )
+    data = {"users": gov_user_id}
+    response = authorized_client.post(url, data)
+    assert response.status_code == 302
+    assert response.url == example_return_to_url
+
+
+def test_case_assignment_case_officer_with_invalid_return_to(authorized_client):
+    cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+    url = (
+        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
+        + f"?cases={cases_ids[0]}&cases={cases_ids[1]}&return_to=http://www.evil.com"
+    )
+    data = {"users": gov_user_id}
+    response = authorized_client.post(url, data)
+    assert response.status_code == 403
+    assert b"Invalid return_to parameter" in response.content
 
 
 @pytest.mark.parametrize(
@@ -494,7 +570,9 @@ def test_case_assignment_case_office(authorized_client, requests_mock, mock_gov_
     ),
 )
 def test_case_assignment_select_role(authorized_client, mock_gov_user, user_role_assigned, expected_url_name):
-    url_params = f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}"
+    url_params = (
+        f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}&return_to={parse.quote(example_return_to_url, safe='')}"
+    )
 
     url = reverse("queues:case_assignment_select_role", kwargs={"pk": queue_pk}) + url_params
     response = authorized_client.get(url)
@@ -819,7 +897,6 @@ def mock_users_team_queues_list(requests_mock, gov_uk_user_id, data_queue):
 
 @pytest.fixture
 def user_assignment_url(data_standard_case, data_queue):
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
     case = data_standard_case
     url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
     url = f"{url_base}?cases={case['case']['id']}"
@@ -848,9 +925,8 @@ def test_case_assignments_add_user_system_queue_submit_success(
     mock_standard_case_activity_filters,
     post_to_step_user_assignment,
 ):
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
     data = {
-        "users": [user_id],
+        "users": [gov_user_id],
         "note": "foobar",
     }
     # POST step 1
@@ -885,7 +961,7 @@ def test_case_assignments_add_user_system_queue_submit_success(
         "case_assignments": [
             {
                 "case_id": data_standard_case["case"]["id"],
-                "users": [user_id],
+                "users": [gov_user_id],
             }
         ],
         "note": "foobar",
@@ -913,7 +989,6 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     mock_standard_case_activity_filters,
     post_to_step_user_assignment,
 ):
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
     data = {
         "note": "foobar",
     }
@@ -926,7 +1001,7 @@ def test_case_assignments_add_user_system_queue_submit_validation_error(
     assert response.context["form"]["users"].errors == ["Select a user to allocate"]
 
     data = {
-        "users": [user_id],
+        "users": [gov_user_id],
         "note": "foobar",
     }
     # POST step 1 - valid
@@ -1004,10 +1079,8 @@ def test_case_assignments_add_user_team_queue_submit_success(
     mock_standard_case_activity_filters,
     post_to_step_user_assignment,
 ):
-
-    user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
     data = {
-        "users": [user_id],
+        "users": [gov_user_id],
         "note": "foobar",
     }
     response = post_to_step_user_assignment(
@@ -1025,7 +1098,7 @@ def test_case_assignments_add_user_team_queue_submit_success(
         "case_assignments": [
             {
                 "case_id": data_standard_case["case"]["id"],
-                "users": [user_id],
+                "users": [gov_user_id],
             }
         ],
         "note": "foobar",
@@ -1063,3 +1136,10 @@ def test_case_assignments_add_user_team_queue_submit_validation_error(
     )
     assert response.status_code == 200
     assert response.context["form"]["users"].errors == ["Select a user to allocate"]
+
+
+def test_filter_none_pending_gov_users(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    gov_users = response.context["data"]["results"]["filters"]["gov_users"]
+    assert gov_users == [{"full_name": "John Smith", "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "pending": False}]

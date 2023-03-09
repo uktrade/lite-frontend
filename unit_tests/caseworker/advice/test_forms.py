@@ -77,6 +77,36 @@ def test_countersign_advice_form_valid(data, valid_status):
 
 
 @pytest.mark.parametrize(
+    "data, valid_status, errors",
+    (
+        ({"outcome_accepted": True, "approval_reasons": "approved", "rejected_reasons": ""}, True, {}),
+        ({"outcome_accepted": False, "approval_reasons": "", "rejected_reasons": "rejected"}, True, {}),
+        (
+            {"outcome_accepted": "", "approval_reasons": "approved", "rejected_reasons": ""},
+            False,
+            {"outcome_accepted": ["Select yes if you agree with the recommendation"]},
+        ),
+        (
+            {"outcome_accepted": True, "approval_reasons": "", "rejected_reasons": ""},
+            False,
+            {"approval_reasons": ["Enter a reason for countersigning"]},
+        ),
+        (
+            {"outcome_accepted": False, "approval_reasons": "", "rejected_reasons": ""},
+            False,
+            {"rejected_reasons": ["Enter a message explaining why the case is being returned"]},
+        ),
+        ({}, False, {"outcome_accepted": ["Select yes if you agree with the recommendation"]}),
+    ),
+)
+def test_countersign_decision_advice_form_valid(data, valid_status, errors):
+    form = forms.CountersignDecisionAdviceForm(data=data)
+    assert form.is_valid() == valid_status
+    if not valid_status:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
     "data, valid_status",
     (
         ({"approval_reasons": "meets the requirements", "countries": ["GB"]}, True),
