@@ -2,11 +2,7 @@
 {% load get_denial_reason_display_values from advice_tags %}
 {% for team_advice in grouped_advice %}
     {% for user_advice in team_advice.advice %}
-    {% if is_lu_countersigning %}
-	<details class="govuk-details" data-module="govuk-details" open>
-    {% else %}
 	<details class="govuk-details" data-module="govuk-details">
-    {% endif %}
 		<summary class="govuk-details__summary">
 			<span class="govuk-details__summary-text govuk-!-font-weight-bold">
 				{{ team_advice.team.name }} {{ user_advice.decision }}
