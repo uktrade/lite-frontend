@@ -1,16 +1,20 @@
-import copy
-import re
-import uuid
-
 import pytest
-
 from bs4 import BeautifulSoup
 from django.urls import reverse
-from caseworker.advice import services
 
-from core import client
 from caseworker.advice import forms
-from caseworker.advice.services import FCDO_TEAM, LICENSING_UNIT_TEAM, MOD_CONSOLIDATE_TEAMS, MOD_ECJU_TEAM
+from caseworker.advice import services
+from caseworker.advice.services import (
+    FCDO_TEAM,
+    LICENSING_UNIT_TEAM,
+    MOD_CONSOLIDATE_TEAMS,
+    MOD_ECJU_TEAM,
+    MANPADS_ID,
+    AP_LANDMINE_ID,
+    LU_COUNTERSIGN_REQUIRED_ID,
+    LU_SR_MGR_CHECK_REQUIRED_ID,
+)
+from core import client
 from unit_tests.caseworker.conftest import countersignatures
 
 
@@ -62,6 +66,77 @@ def advice(current_user):
         }
         for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
     ]
+
+
+GREEN_COUNTRIES_ID = "64a4933b-555b-49fe-96da-25e0f121050f"
+FIREARMS_ID = "00000000-0000-0000-0000-000000000007"
+SMALL_ARMS_ID = "318d9c76-f772-4517-bda8-296cdf3191c0"
+
+FLAG_MAP = {
+    GREEN_COUNTRIES_ID: {
+        "id": GREEN_COUNTRIES_ID,
+        "name": "Green Countries",
+        "level": "Destination",
+        "colour": "green",
+        "label": "Green countries",
+        "priority": 20,
+        "alias": None,
+    },
+    MANPADS_ID: {
+        "id": MANPADS_ID,
+        "name": "Manpads",
+        "level": "Case",
+        "colour": "default",
+        "label": "",
+        "priority": 0,
+        "alias": None,
+    },
+    AP_LANDMINE_ID: {
+        "id": AP_LANDMINE_ID,
+        "name": "AP Landmine",
+        "level": "Case",
+        "colour": "default",
+        "label": "",
+        "priority": 0,
+        "alias": None,
+    },
+    LU_COUNTERSIGN_REQUIRED_ID: {
+        "id": LU_COUNTERSIGN_REQUIRED_ID,
+        "name": "LU Countersign Required",
+        "level": "Destination",
+        "colour": "default",
+        "label": "",
+        "priority": 0,
+        "alias": "LU_COUNTER_REQUIRED",
+    },
+    LU_SR_MGR_CHECK_REQUIRED_ID: {
+        "id": LU_SR_MGR_CHECK_REQUIRED_ID,
+        "name": "LU Senior Manager check required",
+        "level": "Destination",
+        "colour": "default",
+        "label": "",
+        "priority": 0,
+        "alias": "LU_SENIOR_MANAGER_CHECK_REQUIRED",
+    },
+    FIREARMS_ID: {
+        "id": FIREARMS_ID,
+        "name": "Firearms",
+        "level": "Case",
+        "colour": "default",
+        "label": None,
+        "priority": 0,
+        "alias": None,
+    },
+    SMALL_ARMS_ID: {
+        "id": SMALL_ARMS_ID,
+        "name": "Small Arms",
+        "level": "Good",
+        "colour": "default",
+        "label": "",
+        "priority": 0,
+        "alias": None,
+    },
+}
 
 
 @pytest.fixture
@@ -710,10 +785,16 @@ def test_consolidate_raises_exception_for_other_team(
 
 
 @pytest.mark.parametrize(
-    "team_alias, team_name",
+    "team_alias, team_name, flag",
     (
-        (services.LICENSING_UNIT_TEAM, "LU Team"),
-        (services.MOD_ECJU_TEAM, "MoD Team"),
+        (services.LICENSING_UNIT_TEAM, "LU Team", LU_COUNTERSIGN_REQUIRED_ID),
+        (services.LICENSING_UNIT_TEAM, "LU Team", LU_SR_MGR_CHECK_REQUIRED_ID),
+        (services.LICENSING_UNIT_TEAM, "LU Team", MANPADS_ID),
+        (services.LICENSING_UNIT_TEAM, "LU Team", AP_LANDMINE_ID),
+        (services.MOD_ECJU_TEAM, "MoD Team", LU_COUNTERSIGN_REQUIRED_ID),
+        (services.MOD_ECJU_TEAM, "MoD Team", LU_SR_MGR_CHECK_REQUIRED_ID),
+        (services.MOD_ECJU_TEAM, "MoD Team", MANPADS_ID),
+        (services.MOD_ECJU_TEAM, "MoD Team", AP_LANDMINE_ID),
     ),
 )
 def test_view_consolidate_approve_outcome_countersign_warning_message(
@@ -725,46 +806,11 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
     gov_user,
     team_alias,
     team_name,
+    flag,
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
-    data_standard_case["case"]["all_flags"] = [
-        {
-            "colour": "default",
-            "id": "318d9c76-f772-4517-bda8-296cdf3191c0",
-            "label": "",
-            "level": "Good",
-            "name": "Small Arms",
-            "alias": None,
-            "priority": 0,
-        },
-        {
-            "colour": "default",
-            "id": "bbf29b42-0aae-4ebc-b77a-e502ddea30a8",
-            "label": "",
-            "level": "Destination",
-            "name": "LU Countersign Required",
-            "alias": services.LU_COUNTERSIGN_REQUIRED,
-            "priority": 0,
-        },
-        {
-            "colour": "default",
-            "id": "a7736911-f604-4256-b109-dadd2f6bc316",
-            "label": "",
-            "level": "Destination",
-            "name": "Green Countries",
-            "alias": None,
-            "priority": 20,
-        },
-        {
-            "colour": "default",
-            "id": "00000000-0000-0000-0000-000000000007",
-            "label": None,
-            "level": "Case",
-            "name": "Firearms",
-            "alias": None,
-            "priority": 0,
-        },
-    ]
+    flags = [SMALL_ARMS_ID, GREEN_COUNTRIES_ID, FIREARMS_ID, flag]
+    data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
 
     gov_user["user"]["team"]["name"] = team_name
     gov_user["user"]["team"]["alias"] = team_alias
@@ -787,10 +833,12 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
 
 
 @pytest.mark.parametrize(
-    "team_alias, team_name, flag",
+    "team_alias, team_name, flags",
     (
-        (services.LICENSING_UNIT_TEAM, "LU Team", services.LU_COUNTERSIGN_REQUIRED),
-        (services.LICENSING_UNIT_TEAM, "LU Team", services.LU_SR_MGR_CHECK_REQUIRED),
+        (services.LICENSING_UNIT_TEAM, "LU Team", [LU_COUNTERSIGN_REQUIRED_ID, GREEN_COUNTRIES_ID]),
+        (services.LICENSING_UNIT_TEAM, "LU Team", [LU_SR_MGR_CHECK_REQUIRED_ID, GREEN_COUNTRIES_ID]),
+        (services.LICENSING_UNIT_TEAM, "LU Team", [MANPADS_ID, GREEN_COUNTRIES_ID]),
+        (services.LICENSING_UNIT_TEAM, "LU Team", [AP_LANDMINE_ID, GREEN_COUNTRIES_ID]),
     ),
 )
 def test_case_returned_info_for_rejection_countersignature(
@@ -802,31 +850,12 @@ def test_case_returned_info_for_rejection_countersignature(
     gov_user,
     team_alias,
     team_name,
-    flag,
+    flags,
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
-    # A mix of accepted and rejected countersignatures
+    # Rejected countersignature
     data_standard_case["case"]["countersign_advice"] = countersignatures(accepted=False)
-    data_standard_case["case"]["all_flags"] = [
-        {
-            "colour": "default",
-            "id": str(uuid.uuid4()),
-            "label": "",
-            "level": "Destination",
-            "name": "LU Countersign Required",
-            "alias": flag,
-            "priority": 0,
-        },
-        {
-            "colour": "default",
-            "id": "a7736911-f604-4256-b109-dadd2f6bc316",
-            "label": "",
-            "level": "Destination",
-            "name": "Green Countries",
-            "alias": None,
-            "priority": 20,
-        },
-    ]
+    data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
 
     gov_user["user"]["team"]["name"] = team_name
     gov_user["user"]["team"]["alias"] = team_alias
