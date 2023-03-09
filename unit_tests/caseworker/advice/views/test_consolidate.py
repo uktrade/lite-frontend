@@ -878,6 +878,6 @@ def test_case_returned_info_for_rejection_countersignature(
     assert rejected_div is not None
     assert countersignature_required_div is None
     warning = rejected_div.find(class_="govuk-warning-text__text").text
-    assert "This case has been returned for editing by countersigner Testy McTest" in warning
+    assert "This case has been returned for editing, by countersigner Testy McTest" in warning
 
     assert not soup.find(id="finalise-case-button")
