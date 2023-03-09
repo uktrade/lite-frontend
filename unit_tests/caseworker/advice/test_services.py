@@ -282,32 +282,3 @@ def test_update_countersign_decision_advice(
             "reasons": data["rejected_reasons"],
         }
     ]
-
-
-def test_no_update_countersign_decision_advice_incorrect_user(
-    advice,
-    data_standard_case,
-    current_user,
-    LU_team_user,
-    countersign_advice,
-    client,
-    requests_mock,
-):
-    case = Case(data_standard_case["case"])
-    # all advice belongs to a different user
-    countersign_advice[0]["countersigned_user"] = LU_team_user
-    countersign_advice[1]["countersigned_user"] = LU_team_user
-    countersign_advice[2]["countersigned_user"] = LU_team_user
-    case.countersign_advice = countersign_advice
-    case.advice = advice
-    data = {
-        "outcome_accepted": False,
-        "rejected_reasons": "this part can be used in H bombs",
-    }
-    countersign_advice_url = f"/cases/{case.id}/countersign-decision-advice/"
-    setup_requests_mock(requests_mock, client)
-    requests_mock.put(countersign_advice_url, json={})
-    response, status = update_countersign_decision_advice(requests_mock, case, current_user, data)
-
-    assert not requests_mock.called
-    assert status == 400

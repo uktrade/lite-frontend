@@ -483,8 +483,8 @@ class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
-        advice = context["advice_to_countersign"]
-        formset = forms.get_formset(self.form_class, len(advice), data=request.POST)
+        countersign_advice = services.get_decision_advices_by_countersigner(self.case, self.caseworker)
+        formset = forms.get_formset(self.form_class, len(countersign_advice), data=request.POST)
         if formset.is_valid():
             # single form item returned currently so using it to update decisions
             services.update_countersign_decision_advice(

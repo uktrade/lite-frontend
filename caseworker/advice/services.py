@@ -400,8 +400,6 @@ def update_countersign_decision_advice(request, case, caseworker, form_data):
     # not tracking id through process so currently unable to identify advice individually
     # retrieve countersign decision advices for countersigner and updating them with the same form data
     countersign_advices = get_decision_advices_by_countersigner(case, caseworker)
-    if len(countersign_advices) == 0:
-        return {"error": "countersigner decision advice not found"}, status.HTTP_400_BAD_REQUEST
     countersign_data = [
         {
             "id": countersign_advice["id"],
