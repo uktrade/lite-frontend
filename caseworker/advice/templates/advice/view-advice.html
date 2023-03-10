@@ -94,9 +94,7 @@
 	{% endif %}
 
     {% if case.advice %}
-        {% if not hide_advice %}
-            {% include "advice/other-recommendations.html" with case=case %}
-        {% endif %}
+        {% include "advice/other-recommendations.html" with case=case %}
     {% else %}
         <h2 class="govuk-heading-m">There are no recommendations for this case yet</h2>
     {% endif %}
