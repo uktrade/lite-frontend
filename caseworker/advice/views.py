@@ -465,31 +465,28 @@ class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def get_data(self):
-        advices = services.get_decision_advices_by_countersigner(self.case, self.caseworker)
-        # given that there is currently no functionality to countersign individual pieces of advice
-        # the value of outcome_accepted on any single piece of advice is the same for the whole case
-        advice = advices[0]
-        reason_field = "approval_reasons" if advice.get("outcome_accepted") else "rejected_reasons"
-        data = [{"outcome_accepted": advice.get("outcome_accepted"), reason_field: advice.get("reasons")}]
+    def get_data(self, countersign_advice):
+        data = []
+        for item in countersign_advice.values():
+            outcome_accepted = item[0].get("outcome_accepted")
+            reason_field = "approval_reasons" if outcome_accepted else "rejected_reasons"
+            data.append({"outcome_accepted": outcome_accepted, reason_field: item[0].get("reasons")})
         return data
 
     def get_context(self, **kwargs):
         context = super().get_context()
-        advice = context["advice_to_countersign"]
-        data = self.get_data()
-        context["formset"] = forms.get_formset(self.form_class, len(advice), initial=data)
+        countersign_advice = services.get_countersign_decision_advice_by_user(self.case, self.caseworker)
+        context["countersign_advice"] = countersign_advice
+        data = self.get_data(countersign_advice)
+        context["formset"] = forms.get_formset(self.form_class, len(countersign_advice), initial=data)
         return context
 
     def post(self, request, *args, **kwargs):
         context = self.get_context_data()
-        countersign_advice = services.get_decision_advices_by_countersigner(self.case, self.caseworker)
-        formset = forms.get_formset(self.form_class, len(countersign_advice), data=request.POST)
+        formset = forms.get_formset(self.form_class, len(context["countersign_advice"]), data=request.POST)
         if formset.is_valid():
             # single form item returned currently so using it to update decisions
-            services.update_countersign_decision_advice(
-                request, self.case, self.caseworker, form_data=formset.cleaned_data[0]
-            )
+            services.update_countersign_decision_advice(request, self.case, self.caseworker, formset.cleaned_data)
             return HttpResponseRedirect(self.get_success_url())
         else:
             return self.render_to_response({**context, "formset": formset})

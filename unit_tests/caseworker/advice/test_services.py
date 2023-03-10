@@ -267,14 +267,14 @@ def test_update_countersign_decision_advice(
     setup_requests_mock(requests_mock, client)
     requests_mock.put(countersign_advice_url, json={})
 
-    update_countersign_decision_advice(requests_mock, case, current_user, data)
+    update_countersign_decision_advice(requests_mock, case, current_user, [data])
 
     assert requests_mock.called
     history = [item for item in requests_mock.request_history if countersign_advice_url in item.url]
     assert len(history) == 1
     history = history[0]
     assert history.method == "PUT"
-    # only 1 of the 3 advices should be updated
+    # only 1 of the 3 advices should be updated/
     assert history.json() == [
         {
             "id": countersign_advice[2]["id"],
