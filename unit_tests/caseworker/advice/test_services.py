@@ -251,6 +251,7 @@ def test_update_countersign_decision_advice(
     countersign_advice,
     client,
     requests_mock,
+    with_lu_countersigning_enabled,
 ):
     case = Case(data_standard_case["case"])
     # incorrect team, advice not updated
