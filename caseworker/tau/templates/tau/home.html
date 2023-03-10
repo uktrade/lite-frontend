@@ -1,7 +1,6 @@
 {% extends 'layouts/case.html' %}
 
-{% load static custom_tags crispy_forms_tags advice_tags tau_tags %}
-{% load rules %}
+{% load advice_tags crispy_forms_tags custom_tags rules static tau_tags %}
 
 {% block header_tabs %}
     <div id="tab-bar" class="app-case-tab-bar">
@@ -45,7 +44,6 @@
                 {% if unassessed_goods %}
                     {{ cle_suggestions_json|json_script:"cle-suggestions-json" }}
                     <form id="tau-form" action="." method="POST" {% if form.helper.attrs.enctype %}enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
-                        {% csrf_token %}
                         <div class="govuk-grid-column-two-thirds assessment-form__first-column">
                             {{ form.goods|as_crispy_field }}
                         </div>
@@ -53,6 +51,10 @@
                         <div class="govuk-grid-column-one-third assessment-form__second-column">
                             <h1 class="govuk-heading-m assessment-form__headline"></h1>
                             {% crispy form %}
+                            {% test_rule 'can_user_assess_products' current_user case as can_user_assess_products %}
+                            {% if can_user_assess_products %}
+                                <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit" />
+                            {% endif %}
                         </div>
                     </form>
                 {% endif %}
@@ -64,7 +66,10 @@
                     <div class="govuk-grid-column-full">
                         <table id="assessed-products" class="govuk-table">
                             <h2 class="govuk-heading-m">Assessed products</h2>
-                            <a href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
+                            {% test_rule 'can_user_assess_products' current_user case as can_user_assess_products %}
+                            {% if can_user_assess_products %}
+                                <a id="clear-assessments-button" href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
+                            {% endif %}
                             <thead class="govuk-table__head">
                                 <tr class="govuk-table__row">
                                     <th scope="col" class="govuk-table__header">
@@ -93,7 +98,7 @@
                                                 {{ regime_entry.shortened_name|default:regime_entry.name }}<br>
                                             {% endfor %}
                                         </td>
-                                        <td class="govuk-table__cell">{{ good.report_summary }}</td>
+                                        <td class="govuk-table__cell">{{ good.report_summary|default:"" }}</td>
                                         <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
                                         <td class="govuk-table__cell">
                                             <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a>
