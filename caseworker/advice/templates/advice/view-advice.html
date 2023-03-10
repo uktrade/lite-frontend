@@ -56,12 +56,12 @@
         <div class="govuk-width-container">
             <div class="govuk-grid-row govuk-!-margin-top-6">
                 <div class="govuk-grid-column-three-quarters">
-                    {% if rejected_lu_countersignatures %}
+                    {% if is_lu_countersigning and rejected_lu_countersignatures %}
                         <div id="rejected-countersignature" class="govuk-warning-text">
                             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                             <strong class="govuk-warning-text__text">
                                 <span class="govuk-warning-text__assistive">Warning</span>
-                                This case has been returned for editing, by countersigner {{ rejected_lu_countersignatures.0.countersigned_user|full_name }}.
+                                This case has been returned for editing, by countersigner {{ rejected_lu_countersignatures.0.0.countersigned_user|full_name }}.
                                 When you have finished making changes, move case forward.
                             </strong>
                         </div>

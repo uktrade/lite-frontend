@@ -1,3 +1,4 @@
+from collections import defaultdict
 from http import HTTPStatus
 
 import sentry_sdk
@@ -115,13 +116,13 @@ class CaseContextMixin:
 
     def rejected_countersign_advice(self):
         """
-        Return a single rejected countersignature per order value (if there are any) in order to filter out duplicates
-        for display in the templates
+        Return all rejected countersignatures grouped per order value
         """
-        one_countersignature_per_order_value = {
-            cs["order"]: cs for cs in self.case.get("countersign_advice", []) if not cs["outcome_accepted"]
-        }
-        return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
+        rejected_countersignatures = defaultdict(list)
+        for cs in self.case.get("countersign_advice", []):
+            if not cs["outcome_accepted"]:
+                rejected_countersignatures[cs["order"]].append(cs)
+        return list(rejected_countersignatures.values())
 
 
 class BEISNuclearMixin:
@@ -602,27 +603,31 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         if user_team_alias in [services.LICENSING_UNIT_TEAM, services.MOD_ECJU_TEAM]:
             consolidated_advice = services.get_consolidated_advice(self.case.advice, user_team_alias)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
-        rejected_lu_countersignatures = self.rejected_countersign_advice()
+        lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED_ID, services.LU_SR_MGR_CHECK_REQUIRED_ID}
+        case_flag_ids = {flag["id"] for flag in self.case.all_flags}
+        rejected_lu_countersignatures = []
 
-        if rejected_lu_countersignatures:
-            lu_countersign_required = False
+        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
+            rejected_lu_countersignatures = self.rejected_countersign_advice()
+
+            if rejected_lu_countersignatures:
+                lu_countersign_required = False
+            else:
+                lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
+                    lu_countersign_flags.intersection(case_flag_ids)
+                )
+
+            finalise_case = (
+                user_team_alias == services.LICENSING_UNIT_TEAM
+                and not lu_countersign_required
+                and not rejected_lu_countersignatures
+            )
         else:
-            lu_countersign_flags = {
-                services.LU_COUNTERSIGN_REQUIRED_ID,
-                services.LU_SR_MGR_CHECK_REQUIRED_ID,
-                services.MANPADS_ID,
-                services.AP_LANDMINE_ID,
-            }
-            case_flag_ids = {flag["id"] for flag in self.case.all_flags}
             lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
                 lu_countersign_flags.intersection(case_flag_ids)
             )
-
-        finalise_case = (
-            user_team_alias == services.LICENSING_UNIT_TEAM
-            and not lu_countersign_required
-            and not rejected_lu_countersignatures
-        )
+            finalise_case = user_team_alias == services.LICENSING_UNIT_TEAM and not lu_countersign_required
 
         return {
             **super().get_context(**kwargs),
