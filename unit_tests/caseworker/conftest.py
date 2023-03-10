@@ -821,9 +821,11 @@ def final_advice(current_user, lu_team):
     }
 
 
-def countersignatures(good_with_advice_count=2, second_countersign=False, end_user=True, ultimate_end_user=True):
+def countersignatures(
+    good_with_advice_count=2, second_countersign=False, end_user=True, ultimate_end_user=True, accepted=True
+):
     first_countersignature = {
-        "reasons": "I concur",
+        "reasons": "I concur" if accepted else "I disagree",
         "countersigned_user": {
             "id": "654165",
             "first_name": "Testy",
@@ -836,11 +838,11 @@ def countersignatures(good_with_advice_count=2, second_countersign=False, end_us
                 "is_ogd": True,
             },
         },
-        "outcome_accepted": True,
+        "outcome_accepted": accepted,
         "order": 1,
     }
     second_countersignature = {
-        "reasons": "LGTM",
+        "reasons": "LGTM" if accepted else "Nope",
         "countersigned_user": {
             "id": "546544",
             "first_name": "Super",
@@ -853,7 +855,7 @@ def countersignatures(good_with_advice_count=2, second_countersign=False, end_us
                 "is_ogd": True,
             },
         },
-        "outcome_accepted": True,
+        "outcome_accepted": accepted,
         "order": 2,
     }
     countersignature = second_countersignature if second_countersign else first_countersignature

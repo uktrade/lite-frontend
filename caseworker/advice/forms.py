@@ -297,7 +297,7 @@ class MoveCaseForwardForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.layout = Layout(Submit("submit", "Move case forward"))
+        self.helper.layout = Layout(Submit("submit", "Move case forward", css_id="move-case-forward-button"))
 
 
 class BEISTriggerListFormBase(forms.Form):
