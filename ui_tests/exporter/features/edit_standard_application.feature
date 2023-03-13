@@ -5,10 +5,18 @@ Feature: I want to be able to edit and update an active application
   So that any additional information and/or corrected details can be updated on my application
 
 
-  Scenario: See edit button for standard application
+  Scenario: See edit button for submitted application
     Given I signin and go to exporter homepage and choose Test Org
     And I create a standard application via api
     And the status is set to "submitted"
+    When I go to the application detail page
+    Then I see the edit button
+
+
+  Scenario: See edit button for under_review application
+    Given I signin and go to exporter homepage and choose Test Org
+    And I create a standard application via api
+    And the status is set to "under_review"
     When I go to the application detail page
     Then I see the edit button
 

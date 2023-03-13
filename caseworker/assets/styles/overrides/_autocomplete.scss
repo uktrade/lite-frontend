@@ -3,6 +3,19 @@
         color: #fff;
     }
 }
-.lite-autocomplete__option {
-    min-height: 2ex;
+// The following selectors hide the blank option if it is the only
+// option in the dropdown.
+.lite-autocomplete__menu:has(.govuk-body:empty)  {
+    border: none;
+}
+.lite-autocomplete__option:has(.govuk-body:empty)  {
+    display: none;
+}
+.lite-autocomplete__option--focused {
+    div.govuk-body {
+        color: white;
+    }
+}
+.lite-autocomplete__hint {
+    padding-left: 3px;
 }
