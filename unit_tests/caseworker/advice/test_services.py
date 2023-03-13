@@ -1,4 +1,3 @@
-from caseworker.advice import services
 import pytest
 import requests
 from caseworker.advice.services import (
@@ -21,8 +20,8 @@ from caseworker.advice.services import (
     MOD_ECJU_TEAM,
     get_advice_tab_context,
     get_advice_to_countersign,
-    get_countersigners_decision_advice,
     get_decision_advices_by_countersigner,
+    get_countersign_decision_advice_by_user,
     update_countersign_decision_advice,
 )
 from caseworker.cases.objects import Case
@@ -106,6 +105,13 @@ def test_get_advice_for_countersign_with_post_circ_countersigning(
     for user_id, advice in countersign_advice.items():
         assert user_id == current_user["id"]
         assert len(advice) == 3
+
+
+def test_get_countersign_decision_advice_by_user_without_post_circ_countersigning(
+    mock_case, current_user, with_lu_countersigning_disabled
+):
+    countersign_advice = get_countersign_decision_advice_by_user(mock_case, current_user)
+    assert len(countersign_advice) == 0
 
 
 # fmt: off
