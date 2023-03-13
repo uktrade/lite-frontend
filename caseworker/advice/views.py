@@ -423,6 +423,10 @@ class ViewCountersignedAdvice(AdviceDetailView):
         advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
+        context["lu_can_edit"] = (
+            settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING
+            and self.caseworker_id in services.get_countersigners_decision_advice(self.case, self.caseworker)
+        )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
         return context
@@ -443,6 +447,9 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
         advice = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["formset"] = forms.get_formset(self.form_class, len(advice))
         context["advice_to_countersign"] = advice.values()
+        context["lu_can_edit"] = self.caseworker_id in services.get_countersigners_decision_advice(
+            self.case, self.caseworker
+        )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
         return context
@@ -460,6 +467,40 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
 
     def get_success_url(self):
         return reverse("cases:countersign_view", kwargs=self.kwargs)
+
+
+class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            raise Http404("LU Countersigning feature not enabled")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_data(self, countersign_advice):
+        data = []
+        for item in countersign_advice.values():
+            outcome_accepted = item[0].get("outcome_accepted")
+            reason_field = "approval_reasons" if outcome_accepted else "rejected_reasons"
+            data.append({"outcome_accepted": outcome_accepted, reason_field: item[0].get("reasons")})
+        return data
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        countersign_advice = services.get_countersign_decision_advice_by_user(self.case, self.caseworker)
+        context["countersign_advice"] = countersign_advice
+        data = self.get_data(countersign_advice)
+        context["formset"] = forms.get_formset(self.form_class, len(countersign_advice), initial=data)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        formset = forms.get_formset(self.form_class, len(context["countersign_advice"]), data=request.POST)
+        if formset.is_valid():
+            # single form item returned currently so using it to update decisions
+            services.update_countersign_decision_advice(request, self.case, self.caseworker, formset.cleaned_data)
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response({**context, "formset": formset})
 
 
 class CountersignEditAdviceView(ReviewCountersignView):

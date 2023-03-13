@@ -183,6 +183,20 @@ def get_advice_to_countersign(advice, caseworker):
     return grouped_user_advice
 
 
+def get_countersign_decision_advice_by_user(case, caseworker):
+    result = defaultdict(list)
+    if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+        return result
+
+    if caseworker["team"]["alias"] != LICENSING_UNIT_TEAM:
+        return result
+
+    for item in get_decision_advices_by_countersigner(case, caseworker):
+        result[item["countersigned_user"]["id"]].append(item)
+
+    return result
+
+
 def get_countersigners(advice_to_countersign):
     """Get a set of user ids representing the users that have already
     countersigned the advice supplied by `advice_to_countersign`.
@@ -204,6 +218,18 @@ def get_countersigners_decision_advice(case, caseworker):
         if advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]:
             countersigned_by.add(advice["countersigned_user"]["id"])
     return countersigned_by
+
+
+def get_decision_advices_by_countersigner(case, caseworker):
+    """Get users countersign advice on this case with accept/reject decision."""
+    advices = []
+    for advice in case.countersign_advice:
+        if (
+            advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]
+            and advice["countersigned_user"]["id"] == caseworker["id"]
+        ):
+            advices.append(advice)
+    return advices
 
 
 def get_advice_to_consolidate(advice, user_team_alias):
@@ -383,6 +409,28 @@ def countersign_decision_advice(request, case, queue_id, caseworker, formset_dat
 
     response = client.post(request, f"/cases/{case_pk}/countersign-decision-advice/", data)
     response.raise_for_status()
+
+
+def update_countersign_decision_advice(request, case, caseworker, formset_data):
+    data = []
+    case_pk = case["id"]
+    countersign_advice = get_countersign_decision_advice_by_user(case, caseworker)
+    for index, (_, countersign_advice_data) in enumerate(countersign_advice.items()):
+        form_data = formset_data[index]
+        data = [
+            {
+                "id": countersign_advice["id"],
+                "outcome_accepted": form_data["outcome_accepted"],
+                "reasons": form_data["approval_reasons"]
+                if form_data["outcome_accepted"]
+                else form_data["rejected_reasons"],
+            }
+            for countersign_advice in countersign_advice_data
+        ]
+
+    response = client.put(request, f"/cases/{case_pk}/countersign-decision-advice/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
 
 
 def move_case_forward(request, case_id, queue_id):
