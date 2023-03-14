@@ -68,23 +68,21 @@
                     </div>
                     {% endif %}
                     <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Reasons for approving">
-                        <div class="govuk-width-container">
-                            <div class="govuk-grid-row">
-                                <div class="govuk-grid-column-full govuk-!-padding-left-1">
-                                    {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
-                                        <h3 class="govuk-heading-s">Reasons for approving</h3>
-                                    {% elif decision_advice.decision == "Refuse" %}
-                                        <h3 class="govuk-heading-s">Reasons for refusing</h3>
+                        <div class="govuk-grid-row">
+                            <div class="govuk-grid-column-full">
+                                {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
+                                    <h3 class="govuk-heading-s">Reasons for approving</h3>
+                                {% elif decision_advice.decision == "Refuse" %}
+                                    <h3 class="govuk-heading-s">Reasons for refusing</h3>
+                                {% endif %}
+                                <div>
+                                    <p class="govuk-body">
+                                    {% if advice.text %}
+                                        {{ advice.text|linebreaks }}
+                                    {% else %}
+                                        No criteria concerns
                                     {% endif %}
-                                    <div>
-                                        <p class="govuk-body">
-                                        {% if advice.text %}
-                                            {{ advice.text|linebreaks }}
-                                        {% else %}
-                                            No criteria concerns
-                                        {% endif %}
-                                        </p>
-                                    </div>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -92,13 +90,11 @@
                 </div>
                 {% if decision_advice.decision == "Proviso" %}
                 <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Licence condition">
-                    <div class="govuk-width-container">
-                        <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-full govuk-!-padding-left-1">
-                                <h3 class="govuk-heading-s">Licence condition</h3>
-                                <div>
-                                    <p class="govuk-body">{{ advice.proviso|linebreaks }}</p>
-                                </div>
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+                            <h3 class="govuk-heading-s">Licence condition</h3>
+                            <div>
+                                <p class="govuk-body">{{ advice.proviso|linebreaks }}</p>
                             </div>
                         </div>
                     </div>
@@ -106,13 +102,11 @@
                 {% endif %}
                 {% if advice.note %}
                 <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Additional instructions">
-                    <div class="govuk-width-container">
-                        <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-full govuk-!-padding-left-1">
-                                <h3 class="govuk-heading-s">Additional instructions</h3>
-                                <div>
-                                    <p class="govuk-body">{{ advice.note|linebreaks }}</p>
-                                </div>
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full">
+                            <h3 class="govuk-heading-s">Additional instructions</h3>
+                            <div>
+                                <p class="govuk-body">{{ advice.note|linebreaks }}</p>
                             </div>
                         </div>
                     </div>
@@ -120,13 +114,11 @@
                 {% endif %}
                 {% if advice.footnote %}
                 <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Reporting footnote">
-                    <div class="govuk-width-container">
-                        <div class="govuk-grid-row">
-                            <div class="govuk-grid-column-full govuk-!-padding-left-1">
-                                <h3 class="govuk-heading-s">Reporting footnote</h3>
-                                <div>
-                                    <p class="govuk-body">{{ advice.footnote|linebreaks }}</p>
-                                </div>
+                    <div class="govuk-grid-row">
+                        <div class="govuk-grid-column-full govuk-!-padding-left-1">
+                            <h3 class="govuk-heading-s">Reporting footnote</h3>
+                            <div>
+                                <p class="govuk-body">{{ advice.footnote|linebreaks }}</p>
                             </div>
                         </div>
                     </div>
