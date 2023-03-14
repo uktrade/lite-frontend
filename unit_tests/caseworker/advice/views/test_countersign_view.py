@@ -11,7 +11,7 @@ from django.urls import reverse
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 from core import client
 from caseworker.advice import services
-from unit_tests.caseworker.conftest import countersignatures
+from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 
 @pytest.fixture(autouse=True)
@@ -51,7 +51,7 @@ def test_single_lu_countersignature(
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = countersignatures(4)
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice([final_advice])
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
@@ -82,7 +82,9 @@ def test_double_lu_countersignature(
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = countersignatures() + countersignatures(second_countersign=True)
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        [final_advice], accepted=[True, True]
+    )
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
@@ -96,7 +98,7 @@ def test_double_lu_countersignature(
 
     counter_sigs = countersignature_block.find_all("div", recursive=False)
     assert len(counter_sigs) == 2
-    assert counter_sigs[0].find(class_="govuk-heading-m").text == "Countersigned by Super Visor"
-    assert counter_sigs[0].find(class_="govuk-body").text == "LGTM"
-    assert counter_sigs[1].find(class_="govuk-heading-m").text == "Countersigned by Testy McTest"
-    assert counter_sigs[1].find(class_="govuk-body").text == "I concur"
+    assert counter_sigs[0].find(class_="govuk-heading-m").text == "Countersigned by Testy McTest"
+    assert counter_sigs[0].find(class_="govuk-body").text == "I concur"
+    assert counter_sigs[1].find(class_="govuk-heading-m").text == "Countersigned by Super Visor"
+    assert counter_sigs[1].find(class_="govuk-body").text == "LGTM"
