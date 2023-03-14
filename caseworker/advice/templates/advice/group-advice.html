@@ -56,42 +56,40 @@
                     </tbody>
                 </table>
                 {% with decision_advice.advice.0.advice as advice %}
-                <!-- <div class="govuk-grid-row"> -->
-                    <div>
-                        {% if advice.countersigned_by %}
-                        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 border-1-black">
-                            <div class="govuk-grid-row">
-                                <div>
-                                    <h2 class="govuk-heading-m">Countersigned by {{ advice.countersigned_by|full_name }}</h2>
-                                    <p class="govuk-body">{{ advice.countersign_comments }}</p>
-                                </div>
+                <div>
+                    {% if advice.countersigned_by %}
+                    <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 border-1-black">
+                        <div class="govuk-grid-row">
+                            <div>
+                                <h2 class="govuk-heading-m">Countersigned by {{ advice.countersigned_by|full_name }}</h2>
+                                <p class="govuk-body">{{ advice.countersign_comments }}</p>
                             </div>
                         </div>
-                        {% endif %}
-                        <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Reasons for approving">
-                            <div class="govuk-width-container">
-                                <div class="govuk-grid-row">
-                                    <div class="govuk-grid-column-full govuk-!-padding-left-1">
-                                        {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
-                                            <h3 class="govuk-heading-s">Reasons for approving</h3>
-                                        {% elif decision_advice.decision == "Refuse" %}
-                                            <h3 class="govuk-heading-s">Reasons for refusing</h3>
+                    </div>
+                    {% endif %}
+                    <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Reasons for approving">
+                        <div class="govuk-width-container">
+                            <div class="govuk-grid-row">
+                                <div class="govuk-grid-column-full govuk-!-padding-left-1">
+                                    {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
+                                        <h3 class="govuk-heading-s">Reasons for approving</h3>
+                                    {% elif decision_advice.decision == "Refuse" %}
+                                        <h3 class="govuk-heading-s">Reasons for refusing</h3>
+                                    {% endif %}
+                                    <div>
+                                        <p class="govuk-body">
+                                        {% if advice.text %}
+                                            {{ advice.text|linebreaks }}
+                                        {% else %}
+                                            No criteria concerns
                                         {% endif %}
-                                        <div>
-                                            <p class="govuk-body">
-                                            {% if advice.text %}
-                                                {{ advice.text|linebreaks }}
-                                            {% else %}
-                                                No criteria concerns
-                                            {% endif %}
-                                            </p>
-                                        </div>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                <!-- </div> -->
+                </div>
                 {% if decision_advice.decision == "Proviso" %}
                 <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Licence condition">
                     <div class="govuk-width-container">
