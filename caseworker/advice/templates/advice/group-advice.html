@@ -56,20 +56,20 @@
                     </tbody>
                 </table>
                 {% with decision_advice.advice.0.advice as advice %}
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-three-quarters">
+                <!-- <div class="govuk-grid-row"> -->
+                    <div>
                         {% if advice.countersigned_by %}
-                        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
+                        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 border-1-black">
                             <div class="govuk-grid-row">
-                                <div class="govuk-grid-column-three-quarters">
+                                <div>
                                     <h2 class="govuk-heading-m">Countersigned by {{ advice.countersigned_by|full_name }}</h2>
                                     <p class="govuk-body">{{ advice.countersign_comments }}</p>
                                 </div>
                             </div>
                         </div>
                         {% endif %}
-                        <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Reasons for approving">
-                            <div class="govuk-cookie-banner__message govuk-width-container">
+                        <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Reasons for approving">
+                            <div class="govuk-width-container">
                                 <div class="govuk-grid-row">
                                     <div class="govuk-grid-column-full govuk-!-padding-left-1">
                                         {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
@@ -77,7 +77,7 @@
                                         {% elif decision_advice.decision == "Refuse" %}
                                             <h3 class="govuk-heading-s">Reasons for refusing</h3>
                                         {% endif %}
-                                        <div class="govuk-cookie-banner__content">
+                                        <div>
                                             <p class="govuk-body">
                                             {% if advice.text %}
                                                 {{ advice.text|linebreaks }}
@@ -91,14 +91,14 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                <!-- </div> -->
                 {% if decision_advice.decision == "Proviso" %}
-                <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Licence condition">
-                    <div class="govuk-cookie-banner__message govuk-width-container">
+                <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Licence condition">
+                    <div class="govuk-width-container">
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-full govuk-!-padding-left-1">
                                 <h3 class="govuk-heading-s">Licence condition</h3>
-                                <div class="govuk-cookie-banner__content">
+                                <div>
                                     <p class="govuk-body">{{ advice.proviso|linebreaks }}</p>
                                 </div>
                             </div>
@@ -107,12 +107,12 @@
                 </div>
                 {% endif %}
                 {% if advice.note %}
-                <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Additional instructions">
-                    <div class="govuk-cookie-banner__message govuk-width-container">
+                <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Additional instructions">
+                    <div class="govuk-width-container">
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-full govuk-!-padding-left-1">
                                 <h3 class="govuk-heading-s">Additional instructions</h3>
-                                <div class="govuk-cookie-banner__content">
+                                <div>
                                     <p class="govuk-body">{{ advice.note|linebreaks }}</p>
                                 </div>
                             </div>
@@ -121,12 +121,12 @@
                 </div>
                 {% endif %}
                 {% if advice.footnote %}
-                <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Reporting footnote">
-                    <div class="govuk-cookie-banner__message govuk-width-container">
+                <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Reporting footnote">
+                    <div class="govuk-width-container">
                         <div class="govuk-grid-row">
                             <div class="govuk-grid-column-full govuk-!-padding-left-1">
                                 <h3 class="govuk-heading-s">Reporting footnote</h3>
-                                <div class="govuk-cookie-banner__content">
+                                <div>
                                     <p class="govuk-body">{{ advice.footnote|linebreaks }}</p>
                                 </div>
                             </div>
