@@ -1,3 +1,4 @@
+from collections import defaultdict
 from http import HTTPStatus
 
 import sentry_sdk
@@ -112,6 +113,16 @@ class CaseContextMixin:
         """
         one_countersignature_per_order_value = {cs["order"]: cs for cs in self.case.get("countersign_advice", [])}
         return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
+
+    def rejected_countersign_advice(self):
+        """
+        Return all rejected countersignatures grouped per order value
+        """
+        rejected_countersignatures = defaultdict(list)
+        for cs in self.case.get("countersign_advice", []):
+            if not cs["outcome_accepted"]:
+                rejected_countersignatures[cs["order"]].append(cs)
+        return list(rejected_countersignatures.values())
 
 
 class BEISNuclearMixin:
@@ -470,9 +481,7 @@ class CountersignAdviceView(AdviceView):
 
 class ConsolidateAdviceView(AdviceView):
     def get_context(self, **kwargs):
-        # For LU, we do not want to show the advice summary
-        hide_advice = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
-        return {**super().get_context(**kwargs), "consolidate": True, "hide_advice": hide_advice}
+        return {**super().get_context(**kwargs), "consolidate": True}
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -594,14 +603,31 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         if user_team_alias in [services.LICENSING_UNIT_TEAM, services.MOD_ECJU_TEAM]:
             consolidated_advice = services.get_consolidated_advice(self.case.advice, user_team_alias)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
+        lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED_ID, services.LU_SR_MGR_CHECK_REQUIRED_ID}
+        case_flag_ids = {flag["id"] for flag in self.case.all_flags}
+        rejected_lu_countersignatures = []
 
-        lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED, services.LU_SR_MGR_CHECK_REQUIRED}
-        case_flag_aliases = {flag["alias"] for flag in self.case.all_flags}
-        lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
-            lu_countersign_flags.intersection(case_flag_aliases)
-        )
+        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
+            rejected_lu_countersignatures = self.rejected_countersign_advice()
 
-        finalise_case = user_team_alias == services.LICENSING_UNIT_TEAM and not lu_countersign_required
+            if rejected_lu_countersignatures:
+                lu_countersign_required = False
+            else:
+                lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
+                    lu_countersign_flags.intersection(case_flag_ids)
+                )
+
+            finalise_case = (
+                user_team_alias == services.LICENSING_UNIT_TEAM
+                and not lu_countersign_required
+                and not rejected_lu_countersignatures
+            )
+        else:
+            lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
+                lu_countersign_flags.intersection(case_flag_ids)
+            )
+            finalise_case = user_team_alias == services.LICENSING_UNIT_TEAM and not lu_countersign_required
 
         return {
             **super().get_context(**kwargs),
@@ -609,6 +635,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "nlr_products": nlr_products,
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
+            "rejected_lu_countersignatures": rejected_lu_countersignatures,
             "denial_reasons_display": self.denial_reasons_display,
         }
 

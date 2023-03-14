@@ -56,9 +56,17 @@
         <div class="govuk-width-container">
             <div class="govuk-grid-row govuk-!-margin-top-6">
                 <div class="govuk-grid-column-three-quarters">
-
-                    {% if lu_countersign_required %}
-                        <div class="govuk-warning-text">
+                    {% if is_lu_countersigning and rejected_lu_countersignatures %}
+                        <div id="rejected-countersignature" class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                <span class="govuk-warning-text__assistive">Warning</span>
+                                This case has been returned for editing, by countersigner {{ rejected_lu_countersignatures.0.0.countersigned_user|full_name }}.
+                                When you have finished making changes, move case forward.
+                            </strong>
+                        </div>
+                    {% elif lu_countersign_required %}
+                        <div id="countersign-required" class="govuk-warning-text">
                             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                             <strong class="govuk-warning-text__text">
                             <span class="govuk-warning-text__assistive">Warning</span>
@@ -68,7 +76,7 @@
                     {% endif %}
 
                     {% if finalise_case %}
-                        <a role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
+                        <a id="finalise-case-button" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
                             Finalise case
                         </a>
                     {% endif %}
@@ -94,9 +102,7 @@
 	{% endif %}
 
     {% if case.advice %}
-        {% if not hide_advice %}
-            {% include "advice/other-recommendations.html" with case=case %}
-        {% endif %}
+        {% include "advice/other-recommendations.html" with case=case %}
     {% else %}
         <h2 class="govuk-heading-m">There are no recommendations for this case yet</h2>
     {% endif %}

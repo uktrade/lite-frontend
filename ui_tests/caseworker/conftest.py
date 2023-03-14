@@ -877,11 +877,23 @@ def add_cle_value(driver, control_code):  # noqa
 
 @when("I assign myself to the case")
 def i_assign_myself_to_case(driver, internal_info):  # noqa
+    case_page = CasePage(driver)
+    if case_page.get_assigned_case_officer() != "Not assigned":
+        # remove case officer before I assign myself
+        i_remove_case_officer_from_case(driver)
     # go to Assign case officer page
-    CasePage(driver).click_assign_case_officer()
+    case_page = CasePage(driver)
+    case_page.click_assign_case_officer()
     # search for myself
     case_officer_page = CaseOfficerPage(driver)
     case_officer_page.search(internal_info["email"])
     # search for myself
     case_officer_page.select_first_user()
+    functions.click_submit(driver)
+
+
+@when("I remove case officer from the case")
+def i_remove_case_officer_from_case(driver):  # noqa
+    # go to remove case officer page
+    CasePage(driver).click_remove_case_officer()
     functions.click_submit(driver)

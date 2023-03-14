@@ -1,51 +1,23 @@
+import pytest
+
 from unittest import mock
 
-import pytest
-from django.conf import settings
 from authlib.oauth2 import OAuth2Error
 
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import status
 from rest_framework.response import Response
+
 from requests.models import Response as RResponse
 
-from core import middleware
-
-
-def test_no_cache_middleware(rf):
-    request = rf.get("/")
-    get_response = mock.Mock(return_value=Response())
-    instance = middleware.NoCacheMiddleware(get_response)
-    response = instance(request)
-    assert response["Cache-Control"] == "max-age=0, no-cache, no-store, must-revalidate, private"
-
-
-@pytest.mark.parametrize(
-    "url,response_code",
-    [
-        ("?return_to=hello", status.HTTP_200_OK),
-        ("?return_to=hello/", status.HTTP_200_OK),
-        ("?return_to=/hello", status.HTTP_200_OK),
-        ("?return_to=/hello/", status.HTTP_200_OK),
-        ("?return_to=http://example.com", status.HTTP_403_FORBIDDEN),
-        ("?return_to=http://example.com/", status.HTTP_403_FORBIDDEN),
-        ("?return_to=https://example.com/", status.HTTP_403_FORBIDDEN),
-        ('?return_to=javascript:alert("hello!")', status.HTTP_403_FORBIDDEN),
-        # Protocol-relative URL
-        ("?return_to=////example.com", status.HTTP_403_FORBIDDEN),
-        ("?return_to=///example.com", status.HTTP_403_FORBIDDEN),
-        ("?return_to=//example.com", status.HTTP_403_FORBIDDEN),
-    ],
-)
-def test_validate_return_to_middleware(rf, url, response_code):
-    request = rf.get(url)
-    get_response = mock.Mock(return_value=Response())
-    response = middleware.ValidateReturnToMiddleware(get_response)(request)
-    assert response.status_code == response_code
+from core.middleware import AuthBrokerTokenIntrospectionMiddleware
 
 
 @mock.patch("core.middleware.cache")
-def test_sso_introspection_middleware_success(mock_cache, rf):
+def test_sso_introspection_middleware_success(
+    mock_cache,
+    rf,
+    settings,
+):
     # Set up mock request and response
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
@@ -57,7 +29,7 @@ def test_sso_introspection_middleware_success(mock_cache, rf):
     mock_cache.set = mock.Mock()
     mock_cache.get = mock.Mock(return_value=None)
     # Instantiate and call the middleware
-    instance = middleware.AuthBrokerTokenIntrospectionMiddleware(get_response)
+    instance = AuthBrokerTokenIntrospectionMiddleware(get_response)
     # We should get a 200 and the token should be cached
     response = instance(request)
     assert response.status_code == status.HTTP_200_OK
@@ -100,7 +72,7 @@ def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf)
     # Mock cache
     mock_cache.get = mock.Mock(return_value=None)
     # Call the middleware
-    instance = middleware.AuthBrokerTokenIntrospectionMiddleware(get_response)
+    instance = AuthBrokerTokenIntrospectionMiddleware(get_response)
     response = instance(request)
     assert response.status_code == status.HTTP_302_FOUND
 
@@ -118,18 +90,6 @@ def test_sso_introspection_middleware_oauth_error(mock_cache, rf):
     # Mock cache
     mock_cache.get = mock.Mock(return_value=None)
     # Call the middleware
-    instance = middleware.AuthBrokerTokenIntrospectionMiddleware(get_response)
+    instance = AuthBrokerTokenIntrospectionMiddleware(get_response)
     response = instance(request)
     assert response.status_code == status.HTTP_302_FOUND
-
-
-def test_x_robots_tag_middleware(rf):
-    # Set up mock request and response
-    request = rf.get("/")
-    get_response = mock.Mock(return_value=Response())
-    # Instantiate and call the middleware
-    instance = middleware.XRobotsTagMiddleware(get_response)
-    # We should get a 200 and the token should be cached
-    response = instance(request)
-    assert response.status_code == status.HTTP_200_OK
-    assert response.headers["x-robots-tag"] == "noindex,nofollow"
