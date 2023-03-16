@@ -1,4 +1,3 @@
-from collections import defaultdict
 from http import HTTPStatus
 
 import sentry_sdk
