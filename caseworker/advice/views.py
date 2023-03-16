@@ -111,7 +111,7 @@ class CaseContextMixin:
         for display in the templates
         """
         one_countersignature_per_order_value = {cs["order"]: cs for cs in self.case.get("countersign_advice", [])}
-        return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"])
+        return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
 
     def rejected_countersign_advice(self):
         """

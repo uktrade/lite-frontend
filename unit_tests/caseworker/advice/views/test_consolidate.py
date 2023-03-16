@@ -982,10 +982,10 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
     countersignature_div = soup.find(id="countersignatures")
     assert rejected_div is None
     assert countersignature_div is not None
-    assert "Countersigned by Testy McTest" in countersignature_div.find_all("h2")[0].text
-    assert "I concur" in countersignature_div.find_all("p")[0].text
-    assert "Countersigned by Super Visor" in countersignature_div.find_all("h2")[1].text
-    assert "LGTM" in countersignature_div.find_all("p")[1].text
+    assert "Countersigned by Super Visor" in countersignature_div.find_all("h2")[0].text
+    assert "LGTM" in countersignature_div.find_all("p")[0].text
+    assert "Countersigned by Testy McTest" in countersignature_div.find_all("h2")[1].text
+    assert "I concur" in countersignature_div.find_all("p")[1].text
     assert soup.find(id="finalise-case-button")
 
 

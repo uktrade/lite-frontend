@@ -98,7 +98,7 @@ def test_double_lu_countersignature(
 
     counter_sigs = countersignature_block.find_all("div", recursive=False)
     assert len(counter_sigs) == 2
-    assert counter_sigs[0].find(class_="govuk-heading-m").text == "Countersigned by Testy McTest"
-    assert counter_sigs[0].find(class_="govuk-body").text == "I concur"
-    assert counter_sigs[1].find(class_="govuk-heading-m").text == "Countersigned by Super Visor"
-    assert counter_sigs[1].find(class_="govuk-body").text == "LGTM"
+    assert counter_sigs[0].find(class_="govuk-heading-m").text == "Countersigned by Super Visor"
+    assert counter_sigs[0].find(class_="govuk-body").text == "LGTM"
+    assert counter_sigs[1].find(class_="govuk-heading-m").text == "Countersigned by Testy McTest"
+    assert counter_sigs[1].find(class_="govuk-body").text == "I concur"
