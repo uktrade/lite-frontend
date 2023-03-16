@@ -1,11 +1,9 @@
 import pytest
 from unittest.mock import patch
 
-from copy import deepcopy
 from django.urls import reverse
 
 from core import client
-
 from caseworker.advice import forms, services
 
 
@@ -24,6 +22,124 @@ def mock_get_team_advice(requests_mock, standard_case_pk):
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case, mock_denial_reasons, mock_post_team_advice, mock_get_team_advice):
     yield
+
+
+@pytest.fixture
+def consolidated_advice(current_user):
+    current_user["team"]["id"] = "2132131d-2432-423424"
+    current_user["team"]["alias"] = services.LICENSING_UNIT_TEAM
+
+    return [
+        {
+            "id": "a9206652-93be-4480-97cf-d7d52ba6e2b5",
+            "user": current_user,
+            "type": {"key": "approve", "value": "Approve"},
+            "text": "meets the requirements",
+            "note": "",
+            "level": "final",
+            "footnote": None,
+            "footnote_required": None,
+            "good": None,
+            "end_user_id": "953f330f-4956-4e9f-9b87-7c07b5dc3abc",
+            "ultimate_end_user_id": None,
+            "consignee_id": None,
+            "third_party_id": None,
+            "proviso": "some conditions",
+            "pv_grading": None,
+            "collated_pv_grading": None,
+            "countersign_comments": "",
+            "countersigned_by_id": None,
+        },
+        {
+            "id": "78833712-fc78-4a52-8616-37a72bfb1e2a",
+            "user": current_user,
+            "type": {"key": "approve", "value": "Approve"},
+            "text": "meets the requirements",
+            "note": "",
+            "level": "final",
+            "footnote": None,
+            "footnote_required": None,
+            "good_id": None,
+            "goods_type_id": None,
+            "country_id": None,
+            "end_user_id": None,
+            "ultimate_end_user_id": None,
+            "consignee_id": "500abd5e-9c9c-4649-bcb4-e5156b39a715",
+            "third_party_id": None,
+            "proviso": "some conditions",
+            "pv_grading": None,
+            "collated_pv_grading": None,
+            "countersign_comments": "",
+            "countersigned_by_id": None,
+        },
+        {
+            "id": "e6c1dbc5-4a39-48ad-84fd-c5d566c3b258",
+            "user": current_user,
+            "type": {"key": "approve", "value": "Approve"},
+            "text": "meets the requirements",
+            "note": "",
+            "level": "final",
+            "footnote": None,
+            "footnote_required": None,
+            "good_id": None,
+            "goods_type_id": None,
+            "country_id": None,
+            "end_user_id": None,
+            "ultimate_end_user_id": "e2ad9d86-c0b3-4560-a8e5-0d7e4cabac4f",
+            "consignee_id": None,
+            "third_party_id": None,
+            "proviso": "some conditions",
+            "pv_grading": None,
+            "collated_pv_grading": None,
+            "countersign_comments": "",
+            "countersigned_by_id": None,
+        },
+        {
+            "id": "da4149af-bee6-4d80-b647-f0b4027c9a0b",
+            "case_id": "79b2a7f2-3cc1-40ef-a0c7-2517e1aff9a8",
+            "user": current_user,
+            "type": {"key": "approve", "value": "Approve"},
+            "text": "meets the requirements",
+            "note": "",
+            "level": "final",
+            "footnote": None,
+            "footnote_required": None,
+            "good_id": None,
+            "goods_type_id": None,
+            "country_id": None,
+            "end_user_id": None,
+            "ultimate_end_user_id": None,
+            "consignee_id": None,
+            "third_party_id": "cdb3e406-2760-47a4-ac08-06da333c20c9",
+            "proviso": "some conditions",
+            "pv_grading": None,
+            "collated_pv_grading": None,
+            "countersign_comments": "",
+            "countersigned_by_id": None,
+        },
+        {
+            "id": "1f8611f2-1e5a-4dbc-bbbe-776db26f8d24",
+            "user": current_user,
+            "type": {"key": "approve", "value": "Approve"},
+            "text": "meets the requirements",
+            "note": "",
+            "level": "final",
+            "footnote": None,
+            "footnote_required": None,
+            "good_id": "55b1e712-7031-47cb-a613-53ebbdc887ed",
+            "goods_type_id": None,
+            "country_id": None,
+            "end_user_id": None,
+            "ultimate_end_user_id": None,
+            "consignee_id": None,
+            "third_party_id": None,
+            "proviso": "some conditions",
+            "pv_grading": None,
+            "collated_pv_grading": None,
+            "countersign_comments": "",
+            "countersigned_by_id": None,
+        },
+    ]
 
 
 @pytest.fixture
@@ -209,3 +325,111 @@ def test_edit_advice_get(
     form = response.context["form"]
     # The final advice was approval advice so we should see an approval form
     assert isinstance(form, forms.ConsolidateApprovalForm)
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_consolidated_advice_approve_by_lu_put(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    consolidated_advice,
+):
+
+    case_data = data_standard_case
+    case_data["case"]["advice"] = consolidated_advice
+
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
+
+    data = {"approval_reasons": "meets the requirements updated", "proviso": "updated conditions"}
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    history = requests_mock.request_history.pop()
+    assert history.method == "PUT"
+    assert history.json() == [
+        {
+            "id": "a9206652-93be-4480-97cf-d7d52ba6e2b5",
+            "text": data["approval_reasons"],
+            "proviso": data["proviso"],
+        },
+        {
+            "id": "78833712-fc78-4a52-8616-37a72bfb1e2a",
+            "text": data["approval_reasons"],
+            "proviso": data["proviso"],
+        },
+        {
+            "id": "e6c1dbc5-4a39-48ad-84fd-c5d566c3b258",
+            "text": data["approval_reasons"],
+            "proviso": data["proviso"],
+        },
+        {
+            "id": "da4149af-bee6-4d80-b647-f0b4027c9a0b",
+            "text": data["approval_reasons"],
+            "proviso": data["proviso"],
+        },
+        {
+            "id": "1f8611f2-1e5a-4dbc-bbbe-776db26f8d24",
+            "text": data["approval_reasons"],
+            "proviso": data["proviso"],
+        },
+    ]
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_consolidated_advice_refuse_by_lu_put(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    consolidated_advice,
+):
+    for item in consolidated_advice:
+        item["type"] = {"key": "refuse", "value": "Refuse"}
+
+    case_data = data_standard_case
+    case_data["case"]["advice"] = consolidated_advice
+
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
+
+    data = {"refusal_reasons": "updating the decision to refuse", "denial_reasons": ["1", "2", "5"]}
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    history = requests_mock.request_history.pop()
+    assert history.method == "PUT"
+    assert history.json() == [
+        {
+            "id": "a9206652-93be-4480-97cf-d7d52ba6e2b5",
+            "text": data["refusal_reasons"],
+            "denial_reasons": data["denial_reasons"],
+        },
+        {
+            "id": "78833712-fc78-4a52-8616-37a72bfb1e2a",
+            "text": data["refusal_reasons"],
+            "denial_reasons": data["denial_reasons"],
+        },
+        {
+            "id": "e6c1dbc5-4a39-48ad-84fd-c5d566c3b258",
+            "text": data["refusal_reasons"],
+            "denial_reasons": data["denial_reasons"],
+        },
+        {
+            "id": "da4149af-bee6-4d80-b647-f0b4027c9a0b",
+            "text": data["refusal_reasons"],
+            "denial_reasons": data["denial_reasons"],
+        },
+        {
+            "id": "1f8611f2-1e5a-4dbc-bbbe-776db26f8d24",
+            "text": data["refusal_reasons"],
+            "denial_reasons": data["denial_reasons"],
+        },
+    ]
