@@ -315,3 +315,32 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
         }
         for advice in consolidated_advice
     ]
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_consolidated_advice_by_LU_error_from_API(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    consolidated_advice,
+):
+
+    case_data = data_standard_case
+    case_data["case"]["advice"] = consolidated_advice
+
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    requests_mock.put(
+        client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"),
+        json={"errors": ["Failed to put"]},
+        status_code=400,
+    )
+
+    data = {"approval_reasons": "meets the requirements updated", "proviso": "updated conditions"}
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 200
+    assert "Failed to put" in response.content.decode("utf-8")
