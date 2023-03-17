@@ -56,14 +56,24 @@
         <div class="govuk-width-container">
             <div class="govuk-grid-row govuk-!-margin-top-6">
                 <div class="govuk-grid-column-three-quarters">
-                    {% if is_lu_countersigning and rejected_lu_countersignatures %}
+                    {% if is_lu_countersigning and rejected_lu_countersignature %}
                         <div id="rejected-countersignature" class="govuk-warning-text">
                             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                             <strong class="govuk-warning-text__text">
                                 <span class="govuk-warning-text__assistive">Warning</span>
-                                This case has been returned for editing, by countersigner {{ rejected_lu_countersignatures.0.0.countersigned_user|full_name }}.
+                                This case has been returned for editing, by countersigner {{ rejected_lu_countersignature.countersigned_user|full_name }}.
                                 When you have finished making changes, move case forward.
                             </strong>
+                        </div>
+                        <div id="rejected-countersignature-detail">
+                            <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
+                                <div class="govuk-grid-row">
+                                    <div class="govuk-grid-column-three-quarters">
+                                        <h2 class="govuk-heading-m">Reason for returning</h2>
+                                        <p class="govuk-body">{{ rejected_lu_countersignature.reasons }}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     {% elif lu_countersign_required %}
                         <div id="countersign-required" class="govuk-warning-text">

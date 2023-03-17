@@ -821,58 +821,53 @@ def final_advice(current_user, lu_team):
     }
 
 
-def countersignatures(
-    good_with_advice_count=2, second_countersign=False, end_user=True, ultimate_end_user=True, accepted=True
-):
-    first_countersignature = {
-        "reasons": "I concur" if accepted else "I disagree",
-        "countersigned_user": {
-            "id": "654165",
-            "first_name": "Testy",
-            "last_name": "McTest",
-            "team": {
-                "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
-                "name": "LU Team",
-                "alias": LICENSING_UNIT_TEAM,
-                "part_of_ecju": False,
-                "is_ogd": True,
+def countersignatures_for_advice(all_advice, accepted=[True]):
+    def first_countersignature(advice):
+        return {
+            "reasons": "I concur" if accepted[0] else "I disagree",
+            "countersigned_user": {
+                "id": "654165",
+                "first_name": "Testy",
+                "last_name": "McTest",
+                "team": {
+                    "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+                    "name": "LU Team",
+                    "alias": LICENSING_UNIT_TEAM,
+                    "part_of_ecju": False,
+                    "is_ogd": True,
+                },
             },
-        },
-        "outcome_accepted": accepted,
-        "order": 1,
-    }
-    second_countersignature = {
-        "reasons": "LGTM" if accepted else "Nope",
-        "countersigned_user": {
-            "id": "546544",
-            "first_name": "Super",
-            "last_name": "Visor",
-            "team": {
-                "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
-                "name": "LU Team",
-                "alias": LICENSING_UNIT_TEAM,
-                "part_of_ecju": False,
-                "is_ogd": True,
+            "outcome_accepted": accepted[0],
+            "order": 1,
+            "advice": advice,
+        }
+
+    def second_countersignature(advice):
+        return {
+            "reasons": "LGTM" if accepted[1] else "Nope",
+            "countersigned_user": {
+                "id": "546544",
+                "first_name": "Super",
+                "last_name": "Visor",
+                "team": {
+                    "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+                    "name": "LU Team",
+                    "alias": LICENSING_UNIT_TEAM,
+                    "part_of_ecju": False,
+                    "is_ogd": True,
+                },
             },
-        },
-        "outcome_accepted": accepted,
-        "order": 2,
-    }
-    countersignature = second_countersignature if second_countersign else first_countersignature
+            "outcome_accepted": accepted[1],
+            "order": 2,
+            "advice": advice,
+        }
+
     out = []
 
-    if end_user:
-        out.append(
-            {**countersignature, **{"advice": {"good": None, "end_user": str(uuid.uuid4()), "ultimate_end_user": None}}}
-        )
-    if ultimate_end_user:
-        out.append(
-            {**countersignature, **{"advice": {"good": None, "end_user": None, "ultimate_end_user": str(uuid.uuid4())}}}
-        )
-    for i in range(good_with_advice_count):
-        out.append(
-            {**countersignature, **{"advice": {"good": str(uuid.uuid4()), "end_user": None, "ultimate_end_user": None}}}
-        )
+    for adv in all_advice:
+        for i, acceptance in enumerate(accepted):
+            countersignature = [first_countersignature, second_countersignature][i](adv)
+            out.append(countersignature)
 
     return out
 
