@@ -1,5 +1,8 @@
 import pytest
 import requests
+
+from unittest.mock import patch
+
 from caseworker.advice.services import (
     BEIS_CHEMICAL_CASES_TO_REVIEW,
     BEIS_NUCLEAR_CASES_TO_REVIEW,
@@ -23,6 +26,7 @@ from caseworker.advice.services import (
     get_decision_advices_by_countersigner,
     get_countersign_decision_advice_by_user,
     update_countersign_decision_advice,
+    update_advice,
 )
 from caseworker.cases.objects import Case
 from uuid import uuid4
@@ -289,3 +293,44 @@ def test_update_countersign_decision_advice(
             "reasons": data["rejected_reasons"],
         }
     ]
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_update_advice_by_team_other_than_LU_raises_error(
+    mock_get_gov_user,
+    advice,
+    data_standard_case,
+    current_user,
+    requests_mock,
+):
+    case = Case(data_standard_case["case"])
+    case.advice = advice
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "34344324-34234-432", "alias": FCDO_TEAM}}},
+        None,
+    )
+
+    with pytest.raises(NotImplementedError):
+        update_advice(requests_mock, case, current_user, "approve", {}, "final-advice")
+
+    with pytest.raises(NotImplementedError):
+        update_advice(requests_mock, case, current_user, "refuse", {}, "final-advice")
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_update_advice_not_supported_advice_type_raises_error(
+    mock_get_gov_user,
+    advice,
+    data_standard_case,
+    current_user,
+    requests_mock,
+):
+    case = Case(data_standard_case["case"])
+    case.advice = advice
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "34344324-34234-432", "alias": LICENSING_UNIT_TEAM}}},
+        None,
+    )
+
+    with pytest.raises(NotImplementedError):
+        update_advice(requests_mock, case, current_user, "no_licence_required", {}, "final-advice")

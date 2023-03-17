@@ -630,6 +630,30 @@ class ConsolidateEditView(ReviewConsolidateView):
         kwargs["data"] = self.request.POST or self.get_data()
         return kwargs
 
+    def form_valid(self, form):
+        user_team_alias = self.caseworker["team"]["alias"]
+
+        # A new method added to API to support update of 'final' level advice
+        # hence only LU can use these methods at the moment
+        if user_team_alias != services.LICENSING_UNIT_TEAM:
+            return super().form_valid(form)
+
+        level = "final-advice"
+        try:
+            if isinstance(form, forms.ConsolidateApprovalForm):
+                services.update_advice(
+                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
+                )
+            if isinstance(form, forms.RefusalAdviceForm):
+                services.update_advice(
+                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
+                )
+        except HTTPError as e:
+            errors = e.response.json()["errors"]
+            form.add_error(None, errors)
+            return super().form_invalid(form)
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_success_url(self):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
