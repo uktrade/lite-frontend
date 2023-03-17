@@ -1,4 +1,3 @@
-from collections import defaultdict
 from http import HTTPStatus
 
 import sentry_sdk
@@ -116,13 +115,13 @@ class CaseContextMixin:
 
     def rejected_countersign_advice(self):
         """
-        Return all rejected countersignatures grouped per order value
+        Return rejected countersignature. Due to the routing, there should only ever be one
+        rejection (case will be returned to edit the advice once a rejection has occurred.
         """
-        rejected_countersignatures = defaultdict(list)
         for cs in self.case.get("countersign_advice", []):
             if not cs["outcome_accepted"]:
-                rejected_countersignatures[cs["order"]].append(cs)
-        return list(rejected_countersignatures.values())
+                return cs
+        return None
 
 
 class BEISNuclearMixin:
@@ -670,13 +669,13 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED_ID, services.LU_SR_MGR_CHECK_REQUIRED_ID}
         case_flag_ids = {flag["id"] for flag in self.case.all_flags}
-        rejected_lu_countersignatures = []
+        rejected_lu_countersignature = None
 
         if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
             lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
-            rejected_lu_countersignatures = self.rejected_countersign_advice()
+            rejected_lu_countersignature = self.rejected_countersign_advice()
 
-            if rejected_lu_countersignatures:
+            if rejected_lu_countersignature:
                 lu_countersign_required = False
             else:
                 lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
@@ -686,7 +685,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             finalise_case = (
                 user_team_alias == services.LICENSING_UNIT_TEAM
                 and not lu_countersign_required
-                and not rejected_lu_countersignatures
+                and not rejected_lu_countersignature
             )
         else:
             lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
@@ -700,7 +699,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "nlr_products": nlr_products,
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
-            "rejected_lu_countersignatures": rejected_lu_countersignatures,
+            "rejected_lu_countersignature": rejected_lu_countersignature,
             "denial_reasons_display": self.denial_reasons_display,
         }
 
