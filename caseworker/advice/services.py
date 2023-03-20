@@ -349,6 +349,41 @@ def post_refusal_advice(request, case, data, level="user-advice"):
     return response.json(), response.status_code
 
 
+def update_advice(request, case, caseworker, advice_type, data, level):
+    user_team_alias = caseworker["team"]["alias"]
+    if user_team_alias != LICENSING_UNIT_TEAM:
+        raise NotImplementedError(f"Implement approval advice update for {user_team_alias}")
+
+    team_advice = filter_advice_by_level(case.advice, ["final"])
+    consolidated_advice = filter_advice_by_team(team_advice, user_team_alias)
+
+    json = []
+    if advice_type == "approve" or advice_type == "proviso":
+        json = [
+            {
+                "id": advice["id"],
+                "text": data["approval_reasons"],
+                "proviso": data["proviso"],
+            }
+            for advice in consolidated_advice
+        ]
+    elif advice_type == "refuse":
+        json = [
+            {
+                "id": advice["id"],
+                "text": data["refusal_reasons"],
+                "denial_reasons": data["denial_reasons"],
+            }
+            for advice in consolidated_advice
+        ]
+    else:
+        raise NotImplementedError(f"Implement advice update for advice type {advice_type}")
+
+    response = client.put(request, f"/cases/{case['id']}/{level}/", json)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def delete_user_advice(request, case_pk):
     response = client.delete(request, f"/cases/{case_pk}/user-advice/")
     response.raise_for_status()

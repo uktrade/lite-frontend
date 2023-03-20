@@ -1,4 +1,3 @@
-from collections import defaultdict
 from http import HTTPStatus
 
 import sentry_sdk
@@ -116,13 +115,13 @@ class CaseContextMixin:
 
     def rejected_countersign_advice(self):
         """
-        Return all rejected countersignatures grouped per order value
+        Return rejected countersignature. Due to the routing, there should only ever be one
+        rejection (case will be returned to edit the advice once a rejection has occurred.
         """
-        rejected_countersignatures = defaultdict(list)
         for cs in self.case.get("countersign_advice", []):
             if not cs["outcome_accepted"]:
-                rejected_countersignatures[cs["order"]].append(cs)
-        return list(rejected_countersignatures.values())
+                return cs
+        return None
 
 
 class BEISNuclearMixin:
@@ -631,6 +630,30 @@ class ConsolidateEditView(ReviewConsolidateView):
         kwargs["data"] = self.request.POST or self.get_data()
         return kwargs
 
+    def form_valid(self, form):
+        user_team_alias = self.caseworker["team"]["alias"]
+
+        # A new method added to API to support update of 'final' level advice
+        # hence only LU can use these methods at the moment
+        if user_team_alias != services.LICENSING_UNIT_TEAM:
+            return super().form_valid(form)
+
+        level = "final-advice"
+        try:
+            if isinstance(form, forms.ConsolidateApprovalForm):
+                services.update_advice(
+                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
+                )
+            if isinstance(form, forms.RefusalAdviceForm):
+                services.update_advice(
+                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
+                )
+        except HTTPError as e:
+            errors = e.response.json()["errors"]
+            form.add_error(None, errors)
+            return super().form_invalid(form)
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_success_url(self):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
@@ -646,13 +669,13 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED_ID, services.LU_SR_MGR_CHECK_REQUIRED_ID}
         case_flag_ids = {flag["id"] for flag in self.case.all_flags}
-        rejected_lu_countersignatures = []
+        rejected_lu_countersignature = None
 
         if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
             lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
-            rejected_lu_countersignatures = self.rejected_countersign_advice()
+            rejected_lu_countersignature = self.rejected_countersign_advice()
 
-            if rejected_lu_countersignatures:
+            if rejected_lu_countersignature:
                 lu_countersign_required = False
             else:
                 lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
@@ -662,7 +685,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             finalise_case = (
                 user_team_alias == services.LICENSING_UNIT_TEAM
                 and not lu_countersign_required
-                and not rejected_lu_countersignatures
+                and not rejected_lu_countersignature
             )
         else:
             lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
@@ -676,7 +699,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "nlr_products": nlr_products,
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
-            "rejected_lu_countersignatures": rejected_lu_countersignatures,
+            "rejected_lu_countersignature": rejected_lu_countersignature,
             "denial_reasons_display": self.denial_reasons_display,
         }
 

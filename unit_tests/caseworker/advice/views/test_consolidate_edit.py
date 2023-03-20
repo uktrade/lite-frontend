@@ -1,11 +1,10 @@
 import pytest
 from unittest.mock import patch
+from uuid import uuid4
 
-from copy import deepcopy
 from django.urls import reverse
 
 from core import client
-
 from caseworker.advice import forms, services
 
 
@@ -24,6 +23,43 @@ def mock_get_team_advice(requests_mock, standard_case_pk):
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case, mock_denial_reasons, mock_post_team_advice, mock_get_team_advice):
     yield
+
+
+def get_advice_subjects(case):
+    case_data = case["case"]["data"]
+    parties = [
+        ("consignee", case_data["consignee"]["id"]),
+        ("end_user", case_data["end_user"]["id"]),
+        ("ultimate_end_user", case_data["ultimate_end_users"][0]["id"]),
+    ]
+    goods = [("good", good["id"]) for good in case["case"]["data"]["goods"]]
+
+    return parties + goods
+
+
+@pytest.fixture
+def consolidated_advice(data_standard_case, current_user):
+    current_user["team"]["id"] = "2132131d-2432-423424"
+    current_user["team"]["alias"] = services.LICENSING_UNIT_TEAM
+    subjects = get_advice_subjects(data_standard_case)
+
+    return [
+        {
+            "id": str(uuid4()),
+            "user": current_user,
+            "type": {"key": "approve", "value": "Approve"},
+            "text": "meets the requirements",
+            "note": "",
+            "level": "final",
+            "footnote": None,
+            "footnote_required": None,
+            subject_type: subject_id,
+            "proviso": "some conditions",
+            "countersign_comments": "",
+            "countersigned_by_id": None,
+        }
+        for subject_type, subject_id in subjects
+    ]
 
 
 @pytest.fixture
@@ -209,3 +245,102 @@ def test_edit_advice_get(
     form = response.context["form"]
     # The final advice was approval advice so we should see an approval form
     assert isinstance(form, forms.ConsolidateApprovalForm)
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_consolidated_advice_approve_by_lu_put(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    consolidated_advice,
+):
+
+    case_data = data_standard_case
+    case_data["case"]["advice"] = consolidated_advice
+
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
+
+    data = {"approval_reasons": "meets the requirements updated", "proviso": "updated conditions"}
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    history = requests_mock.request_history.pop()
+    assert history.method == "PUT"
+    assert history.json() == [
+        {
+            "id": advice["id"],
+            "text": data["approval_reasons"],
+            "proviso": data["proviso"],
+        }
+        for advice in consolidated_advice
+    ]
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_consolidated_advice_refuse_by_lu_put(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    consolidated_advice,
+):
+    for item in consolidated_advice:
+        item["type"] = {"key": "refuse", "value": "Refuse"}
+
+    case_data = data_standard_case
+    case_data["case"]["advice"] = consolidated_advice
+
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
+
+    data = {"refusal_reasons": "updating the decision to refuse", "denial_reasons": ["1", "2", "5"]}
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    history = requests_mock.request_history.pop()
+    assert history.method == "PUT"
+    assert history.json() == [
+        {
+            "id": advice["id"],
+            "text": data["refusal_reasons"],
+            "denial_reasons": data["denial_reasons"],
+        }
+        for advice in consolidated_advice
+    ]
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_consolidated_advice_by_LU_error_from_API(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    consolidated_advice,
+):
+
+    case_data = data_standard_case
+    case_data["case"]["advice"] = consolidated_advice
+
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    requests_mock.put(
+        client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"),
+        json={"errors": ["Failed to put"]},
+        status_code=400,
+    )
+
+    data = {"approval_reasons": "meets the requirements updated", "proviso": "updated conditions"}
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 200
+    assert "Failed to put" in response.content.decode("utf-8")

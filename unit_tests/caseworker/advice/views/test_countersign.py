@@ -8,7 +8,7 @@ from django.urls import reverse
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 from core import client
 from caseworker.advice import services
-from unit_tests.caseworker.conftest import countersignatures
+from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 
 @pytest.fixture(autouse=True)
@@ -295,7 +295,7 @@ def test_lu_countersign_get_shows_previous_countersignature(
     # Set up advice on the case
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = countersignatures()
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice([final_advice])
     # Setup mock API requests
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
