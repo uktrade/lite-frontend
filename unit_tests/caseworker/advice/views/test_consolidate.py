@@ -1,7 +1,10 @@
 import pytest
+from unittest.mock import patch
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
+from caseworker.cases.objects import Case
+from caseworker.advice.views import ViewConsolidatedAdviceView
 from caseworker.advice import forms
 from caseworker.advice import services
 from caseworker.advice.services import (
@@ -987,6 +990,95 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
     assert "Countersigned by Testy McTest" in countersignature_div.find_all("h2")[1].text
     assert "I concur" in countersignature_div.find_all("p")[1].text
     assert soup.find(id="finalise-case-button")
+
+
+@pytest.mark.parametrize(
+    ("team_alias", "flags_list", "accepted", "expected_value_finalise_case"),
+    [
+        (services.LICENSING_UNIT_TEAM, [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID]], [False], False),
+        (services.LICENSING_UNIT_TEAM, [FLAG_MAP[AP_LANDMINE_ID]], [False], False),
+        (services.LICENSING_UNIT_TEAM, [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID]], [True], True),
+        (services.LICENSING_UNIT_TEAM, [FLAG_MAP[AP_LANDMINE_ID]], [True], True),
+        (
+            services.LICENSING_UNIT_TEAM,
+            [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID], FLAG_MAP[LU_SR_MGR_CHECK_REQUIRED_ID]],
+            [True, False],
+            False,
+        ),
+        (
+            services.LICENSING_UNIT_TEAM,
+            [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID], FLAG_MAP[MANPADS_ID]],
+            [True, False],
+            False,
+        ),
+        (
+            services.LICENSING_UNIT_TEAM,
+            [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID], FLAG_MAP[LU_SR_MGR_CHECK_REQUIRED_ID]],
+            [True, True],
+            True,
+        ),
+        (
+            services.LICENSING_UNIT_TEAM,
+            [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID], FLAG_MAP[MANPADS_ID]],
+            [True, True],
+            True,
+        ),
+        (services.FCDO_TEAM, [FLAG_MAP[GREEN_COUNTRIES_ID]], None, False),
+    ],
+)
+def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    view_consolidate_outcome_url,
+    consolidated_advice,
+    LU_team_user,
+    FCDO_team_user,
+    with_lu_countersigning_enabled,
+    team_alias,
+    flags_list,
+    accepted,
+    expected_value_finalise_case,
+):
+    """
+    Test cases
+    1. LM rejects:
+      (a) LM flag only
+      (b) AP flag only
+    2. LM accepts; no SLM check needed
+      (a) LM flag only
+      (b) AP flag only
+    3. LM accepts; SLM rejects
+      (a) LM flag and SLM flag
+      (b) LM flag and Manpads flag
+    4. LM accepts; SLM accepts
+      (a) LM flag and SLM flag
+      (b) LM flag and Manpads flag
+    5. non-LU user e.g. FCDO
+    """
+    data_standard_case["case"]["advice"] = consolidated_advice
+    data_standard_case["case"]["countersign_advice"] = (
+        countersignatures_for_advice(consolidated_advice, accepted=accepted) if accepted else None
+    )
+    data_standard_case["case"]["all_flags"] = flags_list
+
+    if team_alias == services.LICENSING_UNIT_TEAM:
+        gov_user = {"user": LU_team_user}
+    elif team_alias == services.FCDO_TEAM:
+        gov_user = {"user": FCDO_team_user}
+    else:
+        gov_user = None
+
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
+    )
+
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert bool(soup.find(id="finalise-case-button")) is expected_value_finalise_case
 
 
 @pytest.mark.parametrize(
