@@ -28,14 +28,14 @@ def enforcement_audit(driver, internal_url, context):
 
 
 @then(parsers.parse('the file "{filename}" is downloaded'))
-def enforcement_file_download_check(filename):
-    assert filename in os.listdir("/tmp")
+def enforcement_file_download_check(filename, tmp_download_path):
+    assert filename in os.listdir(tmp_download_path)
 
 
 @then("an XML file is downloaded onto my device")
-def xml_file_downloaded(driver):
+def xml_file_downloaded(driver, tmp_download_path):
     i = 10
-    EU_XML_PATH = "/tmp/enforcement_check.xml"
+    EU_XML_PATH = f"{tmp_download_path}enforcement_check.xml"
     while not os.path.exists(EU_XML_PATH) and i > 0:
         time.sleep(0.1)
         i -= 1
@@ -44,8 +44,8 @@ def xml_file_downloaded(driver):
 
 
 @then(parsers.parse('the downloaded file should include "{party_type}" "{tag}" as "{value}"'))
-def enforcement_file_content_check(party_type, tag, value):
-    tree = ET.parse("/tmp/enforcement_check.xml")
+def enforcement_file_content_check(party_type, tag, value, tmp_download_path):
+    tree = ET.parse(f"{tmp_download_path}enforcement_check.xml")
     root = tree.getroot()
 
     # get values of all party_types as the file can contain multiple entries
@@ -55,8 +55,8 @@ def enforcement_file_content_check(party_type, tag, value):
 
 
 @when(parsers.parse('I include "{party_type}" details and generate import file'))
-def generate_enforcement_check_import_file(party_type):
-    tree = ET.parse("/tmp/enforcement_check.xml")
+def generate_enforcement_check_import_file(party_type, tmp_download_path):
+    tree = ET.parse(f"{tmp_download_path}enforcement_check.xml")
     root = tree.getroot()
 
     # get values of all party_types as the file can contain multiple entries
@@ -82,13 +82,13 @@ def generate_enforcement_check_import_file(party_type):
 
     import_xml_string += "</SPIRE_UPLOAD_FILE>\n"
 
-    with open("/tmp/enforcement_check_import.xml", "w") as f:
+    with open(f"{tmp_download_path}enforcement_check_import.xml", "w") as f:
         f.write(import_xml_string)
 
 
 @then(parsers.parse('for FLAG the file has "{flag_value}"'))
-def enforcement_file_content_check(flag_value):
-    tree = ET.parse("/tmp/enforcement_check_import.xml")
+def enforcement_file_content_check(flag_value, tmp_download_path):
+    tree = ET.parse(f"{tmp_download_path}enforcement_check_import.xml")
     root = tree.getroot()
 
     # get values of all party_types as the file can contain multiple entries
@@ -97,9 +97,9 @@ def enforcement_file_content_check(flag_value):
 
 
 @then(parsers.parse('for "{import_tag}" the file has the "{party_type}" data "{export_tag}" number from export file'))
-def compare_import_tags_with_export_tags(import_tag, party_type, export_tag):
+def compare_import_tags_with_export_tags(import_tag, party_type, export_tag, tmp_download_path):
     # Extract ELA_ID, SH_ID from the export xml file for given party
-    tree = ET.parse("/tmp/enforcement_check.xml")
+    tree = ET.parse(f"{tmp_download_path}enforcement_check.xml")
     root = tree.getroot()
 
     data = []
@@ -110,7 +110,7 @@ def compare_import_tags_with_export_tags(import_tag, party_type, export_tag):
             }
         )
 
-    tree = ET.parse("/tmp/enforcement_check_import.xml")
+    tree = ET.parse(f"{tmp_download_path}enforcement_check_import.xml")
     root = tree.getroot()
 
     # compare the values in the file to be imported for the given party
@@ -124,10 +124,10 @@ def import_enforcement_xml(driver, import_eu_btn_text):
 
 
 @when("I attach the file above")
-def i_attach_updated_file(driver):  # noqa
+def i_attach_updated_file(driver, tmp_download_path):  # noqa
     file_input = driver.find_element(by=By.NAME, value="file")
     file_input.clear()
-    file_input.send_keys("/tmp/enforcement_check_import.xml")
+    file_input.send_keys(f"{tmp_download_path}enforcement_check_import.xml")
     upload_btn = driver.find_element(by=By.XPATH, value="//button[@type='submit']")
     upload_btn.click()
 
@@ -148,10 +148,9 @@ def application_removed_from_queue(driver, queue):
 
 
 @when("I cleanup the temporary files created")
-def clean_temporary_files():
-    download_dir = "/tmp"
-    for file in [f for f in os.listdir(download_dir) if f.endswith(".xml")]:
+def clean_temporary_files(tmp_download_path):
+    for file in [f for f in os.listdir(tmp_download_path) if f.endswith(".xml")]:
         try:
-            os.remove(f"{download_dir}/{file}")
+            os.remove(f"{tmp_download_path}/{file}")
         except OSError:
             pass

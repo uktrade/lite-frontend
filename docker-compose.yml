@@ -10,6 +10,7 @@ services:
     build: .
     volumes:
       - .:/app
+      - downloads:/tmp/downloads
     ports:
       - 8200:8200
     expose:
@@ -29,6 +30,7 @@ services:
     build: .
     volumes:
       - .:/app
+      - downloads:/tmp/downloads
     ports:
       - 8300:8300
     expose:
@@ -53,6 +55,9 @@ services:
       - "7900:7900"
     networks:
       - lite
+    volumes:
+      - downloads:/tmp/downloads
+
   firefox:
     image: selenium/node-firefox:latest
     shm_size: 2gb
@@ -93,3 +98,6 @@ services:
 networks:
   lite:
     external: true
+
+volumes:
+  downloads:

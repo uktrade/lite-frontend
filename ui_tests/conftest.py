@@ -1,4 +1,6 @@
 import os
+from pathlib import Path
+import pytest
 
 import tests_common.tools.helpers as utils
 
@@ -101,3 +103,10 @@ def pytest_exception_interact(node, report):
         driver = node.funcargs.get("driver")
         if driver:
             utils.save_screenshot(driver=driver, name=node.name)
+
+
+@pytest.fixture(scope="session")
+def tmp_download_path():
+    download_path = Path("/tmp/downloads/")
+    download_path.mkdir(exist_ok=True)
+    return str(download_path)
