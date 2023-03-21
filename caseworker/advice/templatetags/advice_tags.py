@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django import template
 
 from caseworker.advice import constants, services
@@ -55,6 +57,19 @@ def get_item(dict, key):
 @register.filter
 def countersigned_user_team(advice):
     return f"{advice['countersigned_by']['team']['name']}"
+
+
+@register.filter
+def countersignatures_for_advice(case, advice):
+    advice_ids = {ad["id"] for ad in advice}
+    countersignatures_grouped_by_order = defaultdict(list)
+    for cs in case.get("countersign_advice", []):
+        if cs.get("advice", {}).get("id") in advice_ids:
+            countersignatures_grouped_by_order[cs["order"]].append(cs)
+    return [
+        countersignatures_grouped_by_order[order]
+        for order in sorted(list(countersignatures_grouped_by_order.keys()), reverse=True)
+    ]
 
 
 @register.filter
