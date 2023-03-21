@@ -110,44 +110,35 @@
         </div>
         {% endif %}
         {% if decision == 'approve' or decision == 'proviso' %}
-        <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Reason for approving">
-            <div class="govuk-cookie-banner__message govuk-width-container">
-                <div class="govuk-grid-row">
+        <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Reason for approving">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
                     <h2 class="govuk-heading-m">Reason for approving</h2>
-                    <div class="govuk-cookie-banner__content">
-                        <p class="govuk-body">{{ advice.0.text|linebreaks }}</p>
-                    </div>
+                    <p class="govuk-body">{{ advice.0.text|linebreaks }}</p>
+
                     {% if advice.0.proviso %}
                     <h2 class="govuk-heading-m">Licence condition</h2>
-                    <div class="govuk-cookie-banner__content">
-                        <p class="govuk-body">{{ advice.0.proviso|linebreaks }}</p>
-                    </div>
+                    <p class="govuk-body">{{ advice.0.proviso|linebreaks }}</p>
                     {% endif %}
 
                     {% if advice.0.note %}
                     <h2 class="govuk-heading-m">Additional instructions</h2>
-                    <div class="govuk-cookie-banner__content">
-                        <p class="govuk-body">{{ advice.0.note|linebreaks }}</p>
-                    </div>
+                    <p class="govuk-body">{{ advice.0.note|linebreaks }}</p>
                     {% endif %}
 
                     {% if advice.0.footnote %}
                     <h2 class="govuk-heading-m">Reporting footnote</h2>
-                    <div class="govuk-cookie-banner__content">
-                        <p class="govuk-body">{{ advice.0.footnote|linebreaks }}</p>
-                    </div>
+                    <p class="govuk-body">{{ advice.0.footnote|linebreaks }}</p>
                     {% endif %}
                 </div>
             </div>
         </div>
         {% elif decision == 'refuse' %}
-        <div class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Reason for refusing">
-            <div class="govuk-cookie-banner__message govuk-width-container">
-              <div class="govuk-grid-row">
+        <div class="recommendation-and-decision" data-nosnippet role="region" aria-label="Reason for refusing">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-full">
                 <h2 class="govuk-heading-m">Reason for refusing</h2>
-                <div class="govuk-cookie-banner__content">
                 <p class="govuk-body">{{ advice.0.text|linebreaks }}</p>
-                </div>
               </div>
             </div>
         </div>
