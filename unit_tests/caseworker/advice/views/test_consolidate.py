@@ -15,7 +15,7 @@ from caseworker.advice.services import (
     LU_SR_MGR_CHECK_REQUIRED_ID,
 )
 from core import client
-from unit_tests.caseworker.conftest import countersignatures
+from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 
 @pytest.fixture
@@ -820,7 +820,7 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
-    assert not response.context["rejected_lu_countersignatures"]
+    assert not response.context["rejected_lu_countersignature"]
     if team_alias == services.LICENSING_UNIT_TEAM:
         assert response.context["lu_countersign_required"] is True
         assert response.context["finalise_case"] is False
@@ -838,7 +838,7 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
         ([AP_LANDMINE_ID, GREEN_COUNTRIES_ID]),
     ),
 )
-def test_case_returned_info_for_rejection_countersignature(
+def test_case_returned_info_for_first_countersignature_rejection(
     requests_mock,
     authorized_client,
     data_standard_case,
@@ -850,7 +850,9 @@ def test_case_returned_info_for_rejection_countersignature(
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
     # Rejected countersignature
-    data_standard_case["case"]["countersign_advice"] = countersignatures(accepted=False)
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        consolidated_advice, accepted=[False]
+    )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
 
     gov_user["user"]["team"]["name"] = "LU Team"
@@ -864,18 +866,85 @@ def test_case_returned_info_for_rejection_countersignature(
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
-    assert len(response.context["rejected_lu_countersignatures"]) > 0
-    assert len(response.context["rejected_lu_countersignatures"][0]) > 0
-    assert not response.context["rejected_lu_countersignatures"][0][0]["outcome_accepted"]
-    assert response.context["rejected_lu_countersignatures"][0][0]["reasons"] == "I disagree"
+    assert response.context["rejected_lu_countersignature"]
+    assert not response.context["rejected_lu_countersignature"]["outcome_accepted"]
+    assert response.context["rejected_lu_countersignature"]["reasons"] == "I disagree"
 
     soup = BeautifulSoup(response.content, "html.parser")
     rejected_div = soup.find(id="rejected-countersignature")
+    rejected_detail_div = soup.find(id="rejected-countersignature-detail")
     countersignature_required_div = soup.find(id="countersign-required")
+    countersignature_div = soup.find(id="countersignatures")
     assert rejected_div is not None
+    assert rejected_detail_div is not None
     assert countersignature_required_div is None
+    assert countersignature_div is None
     warning = rejected_div.find(class_="govuk-warning-text__text").text
     assert "This case has been returned for editing, by countersigner Testy McTest" in warning
+    rejected_by = rejected_detail_div.find("h2").text
+    assert "Reason for returning" in rejected_by
+    rejected_detail = rejected_detail_div.find("p").text
+    assert "I disagree" in rejected_detail
+
+    assert not soup.find(id="finalise-case-button")
+
+
+@pytest.mark.parametrize(
+    "flags",
+    (
+        ([LU_COUNTERSIGN_REQUIRED_ID, GREEN_COUNTRIES_ID]),
+        ([LU_SR_MGR_CHECK_REQUIRED_ID, GREEN_COUNTRIES_ID]),
+        ([MANPADS_ID, GREEN_COUNTRIES_ID]),
+        ([AP_LANDMINE_ID, GREEN_COUNTRIES_ID]),
+    ),
+)
+def test_case_returned_info_for_second_countersignature_rejection(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    view_consolidate_outcome_url,
+    consolidated_advice,
+    gov_user,
+    flags,
+    with_lu_countersigning_enabled,
+):
+    data_standard_case["case"]["advice"] = consolidated_advice
+    # Rejected countersignature
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        consolidated_advice, accepted=[True, False]
+    )
+    data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
+
+    gov_user["user"]["team"]["name"] = "LU Team"
+    gov_user["user"]["team"]["alias"] = services.LICENSING_UNIT_TEAM
+
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
+    )
+
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    assert response.context["rejected_lu_countersignature"]
+    assert not response.context["rejected_lu_countersignature"]["outcome_accepted"]
+    assert response.context["rejected_lu_countersignature"]["reasons"] == "Nope"
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    rejected_div = soup.find(id="rejected-countersignature")
+    rejected_detail_div = soup.find(id="rejected-countersignature-detail")
+    countersignature_required_div = soup.find(id="countersign-required")
+    countersignature_div = soup.find(id="countersignatures")
+    assert rejected_div is not None
+    assert rejected_detail_div is not None
+    assert countersignature_required_div is None
+    assert countersignature_div is None
+    warning = rejected_div.find(class_="govuk-warning-text__text").text
+    assert "This case has been returned for editing, by countersigner Super Visor" in warning
+    rejected_by = rejected_detail_div.find("h2").text
+    assert "Reason for returning" in rejected_by
+    rejected_detail = rejected_detail_div.find("p").text
+    assert "Nope" in rejected_detail
 
     assert not soup.find(id="finalise-case-button")
 
@@ -891,7 +960,9 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
     # Rejected countersignature
-    data_standard_case["case"]["countersign_advice"] = countersignatures(accepted=True)
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        consolidated_advice, accepted=[True, True]
+    )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[GREEN_COUNTRIES_ID]]
 
     gov_user["user"]["team"]["name"] = "LU Team"
@@ -904,14 +975,27 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
-    assert len(response.context["rejected_lu_countersignatures"]) == 0
+    assert not response.context["rejected_lu_countersignature"]
 
     soup = BeautifulSoup(response.content, "html.parser")
     rejected_div = soup.find(id="rejected-countersignature")
+    countersignature_div = soup.find(id="countersignatures")
     assert rejected_div is None
+    assert countersignature_div is not None
+    assert "Countersigned by Super Visor" in countersignature_div.find_all("h2")[0].text
+    assert "LGTM" in countersignature_div.find_all("p")[0].text
+    assert "Countersigned by Testy McTest" in countersignature_div.find_all("h2")[1].text
+    assert "I concur" in countersignature_div.find_all("p")[1].text
     assert soup.find(id="finalise-case-button")
 
 
+@pytest.mark.parametrize(
+    "accepted_countersignatures",
+    (
+        [False],
+        [True, False],
+    ),
+)
 def test_rejection_countersignature_not_displayed_if_feature_flag_off(
     requests_mock,
     authorized_client,
@@ -920,10 +1004,13 @@ def test_rejection_countersignature_not_displayed_if_feature_flag_off(
     consolidated_advice,
     gov_user,
     with_lu_countersigning_disabled,
+    accepted_countersignatures,
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
     # Rejected countersignature
-    data_standard_case["case"]["countersign_advice"] = countersignatures(accepted=False)
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        consolidated_advice, accepted=accepted_countersignatures
+    )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in [LU_COUNTERSIGN_REQUIRED_ID, GREEN_COUNTRIES_ID]]
 
     gov_user["user"]["team"]["name"] = "LU Team"
@@ -936,7 +1023,7 @@ def test_rejection_countersignature_not_displayed_if_feature_flag_off(
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
-    assert len(response.context["rejected_lu_countersignatures"]) == 0
+    assert not response.context["rejected_lu_countersignature"]
 
     soup = BeautifulSoup(response.content, "html.parser")
     rejected_div = soup.find(id="rejected-countersignature")

@@ -8,7 +8,7 @@ from django.urls import reverse
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 from core import client
 from caseworker.advice import services
-from unit_tests.caseworker.conftest import countersignatures
+from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 
 @pytest.fixture(autouse=True)
@@ -80,14 +80,19 @@ def test_countersign_approve_all_put(
     assert history.method == "PUT"
     assert history.json() == [
         {
-            "id": "b32d7dfa-a90d-4b37-adac-db231d4b83be",
+            "id": "825bddc9-4e6c-4a26-8231-9c0500b037a6",
             "countersigned_by": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
             "countersign_comments": "reason0",
         },
         {
+            "id": "b32d7dfa-a90d-4b37-adac-db231d4b83be",
+            "countersigned_by": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+            "countersign_comments": "reason1",
+        },
+        {
             "id": "c9a96d84-6a6b-421d-bbbb-b12b9577d46e",
             "countersigned_by": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-            "countersign_comments": "reason0",
+            "countersign_comments": "reason1",
         },
     ]
 
@@ -290,7 +295,7 @@ def test_lu_countersign_get_shows_previous_countersignature(
     # Set up advice on the case
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = countersignatures()
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice([final_advice])
     # Setup mock API requests
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
