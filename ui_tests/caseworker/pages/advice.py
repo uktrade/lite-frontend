@@ -138,33 +138,31 @@ class RecommendationsAndDecisionPage(BasePage):
     def get_reasons_for_approving(self):
         return self.driver.find_element(
             by=By.XPATH,
-            value="//p[preceding-sibling::*[self::h2 or self::h3]"
-            "[contains(text(), 'Reason for approving') or contains(text(), 'Reasons for approving')]][2]",
+            value="//p[preceding-sibling::*[self::h2 or self::h3][contains(text(), 'Reason for approving') or contains(text(), 'Reasons for approving')]][2]",
         ).text
 
     def get_reasons_for_refusal(self):
         return self.driver.find_element(
             by=By.XPATH,
-            value="//p[preceding-sibling::*[self::h2 or self::h3]"
-            "[contains(text(), 'Reason for refusing') or contains(text(), 'Reasons for refusing')]][2]",
+            value="//p[preceding-sibling::*[self::h2 or self::h3][contains(text(), 'Reason for refusing') or contains(text(), 'Reasons for refusing')]][2]",
         ).text
 
     def get_licence_condition(self):
         return self.driver.find_element(
             by=By.XPATH,
-            value="//p[preceding-sibling::*[self::h2 or self::h3]" "[contains(text(), 'Licence condition')]][2]",
+            value="//p[preceding-sibling::*[self::h2 or self::h3][contains(text(), 'Licence condition')]][2]",
         ).text
 
     def get_instructions_for_exporter(self):
         return self.driver.find_element(
             by=By.XPATH,
-            value="//p[preceding-sibling::*[self::h2 or self::h3]" "[contains(text(), 'Additional instructions')]][2]",
+            value="//p[preceding-sibling::*[self::h2 or self::h3][contains(text(), 'Additional instructions')]][2]",
         ).text
 
     def get_reporting_footnote(self):
         return self.driver.find_element(
             by=By.XPATH,
-            value="//p[preceding-sibling::*[self::h2 or self::h3]" "[contains(text(), 'Reporting footnote')]][2]",
+            value="//p[preceding-sibling::*[self::h2 or self::h3][contains(text(), 'Reporting footnote')]][2]",
         ).text
 
     def get_refusal_criteria(self):
