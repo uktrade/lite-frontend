@@ -1,4 +1,3 @@
-from collections import defaultdict
 from http import HTTPStatus
 
 import sentry_sdk
@@ -116,13 +115,13 @@ class CaseContextMixin:
 
     def rejected_countersign_advice(self):
         """
-        Return all rejected countersignatures grouped per order value
+        Return rejected countersignature. Due to the routing, there should only ever be one
+        rejection (case will be returned to edit the advice once a rejection has occurred.
         """
-        rejected_countersignatures = defaultdict(list)
         for cs in self.case.get("countersign_advice", []):
             if not cs["outcome_accepted"]:
-                rejected_countersignatures[cs["order"]].append(cs)
-        return list(rejected_countersignatures.values())
+                return cs
+        return None
 
 
 class BEISNuclearMixin:
@@ -423,6 +422,10 @@ class ViewCountersignedAdvice(AdviceDetailView):
         advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
+        context["lu_can_edit"] = (
+            settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING
+            and self.caseworker_id in services.get_countersigners_decision_advice(self.case, self.caseworker)
+        )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
         return context
@@ -443,6 +446,9 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
         advice = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["formset"] = forms.get_formset(self.form_class, len(advice))
         context["advice_to_countersign"] = advice.values()
+        context["lu_can_edit"] = self.caseworker_id in services.get_countersigners_decision_advice(
+            self.case, self.caseworker
+        )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
         return context
@@ -460,6 +466,40 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
 
     def get_success_url(self):
         return reverse("cases:countersign_view", kwargs=self.kwargs)
+
+
+class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            raise Http404("LU Countersigning feature not enabled")
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_data(self, countersign_advice):
+        data = []
+        for item in countersign_advice.values():
+            outcome_accepted = item[0].get("outcome_accepted")
+            reason_field = "approval_reasons" if outcome_accepted else "rejected_reasons"
+            data.append({"outcome_accepted": outcome_accepted, reason_field: item[0].get("reasons")})
+        return data
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        countersign_advice = services.get_countersign_decision_advice_by_user(self.case, self.caseworker)
+        context["countersign_advice"] = countersign_advice
+        data = self.get_data(countersign_advice)
+        context["formset"] = forms.get_formset(self.form_class, len(countersign_advice), initial=data)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        formset = forms.get_formset(self.form_class, len(context["countersign_advice"]), data=request.POST)
+        if formset.is_valid():
+            # single form item returned currently so using it to update decisions
+            services.update_countersign_decision_advice(request, self.case, self.caseworker, formset.cleaned_data)
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response({**context, "formset": formset})
 
 
 class CountersignEditAdviceView(ReviewCountersignView):
@@ -590,6 +630,30 @@ class ConsolidateEditView(ReviewConsolidateView):
         kwargs["data"] = self.request.POST or self.get_data()
         return kwargs
 
+    def form_valid(self, form):
+        user_team_alias = self.caseworker["team"]["alias"]
+
+        # A new method added to API to support update of 'final' level advice
+        # hence only LU can use these methods at the moment
+        if user_team_alias != services.LICENSING_UNIT_TEAM:
+            return super().form_valid(form)
+
+        level = "final-advice"
+        try:
+            if isinstance(form, forms.ConsolidateApprovalForm):
+                services.update_advice(
+                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
+                )
+            if isinstance(form, forms.RefusalAdviceForm):
+                services.update_advice(
+                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
+                )
+        except HTTPError as e:
+            errors = e.response.json()["errors"]
+            form.add_error(None, errors)
+            return super().form_invalid(form)
+        return HttpResponseRedirect(self.get_success_url())
+
     def get_success_url(self):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
@@ -605,13 +669,13 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED_ID, services.LU_SR_MGR_CHECK_REQUIRED_ID}
         case_flag_ids = {flag["id"] for flag in self.case.all_flags}
-        rejected_lu_countersignatures = []
+        rejected_lu_countersignature = None
 
         if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
             lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
-            rejected_lu_countersignatures = self.rejected_countersign_advice()
+            rejected_lu_countersignature = self.rejected_countersign_advice()
 
-            if rejected_lu_countersignatures:
+            if rejected_lu_countersignature:
                 lu_countersign_required = False
             else:
                 lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
@@ -621,7 +685,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             finalise_case = (
                 user_team_alias == services.LICENSING_UNIT_TEAM
                 and not lu_countersign_required
-                and not rejected_lu_countersignatures
+                and not rejected_lu_countersignature
             )
         else:
             lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
@@ -635,7 +699,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "nlr_products": nlr_products,
             "finalise_case": finalise_case,
             "lu_countersign_required": lu_countersign_required,
-            "rejected_lu_countersignatures": rejected_lu_countersignatures,
+            "rejected_lu_countersignature": rejected_lu_countersignature,
             "denial_reasons_display": self.denial_reasons_display,
         }
 

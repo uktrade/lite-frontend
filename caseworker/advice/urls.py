@@ -20,6 +20,11 @@ urlpatterns = [
         views.ReviewCountersignDecisionAdviceView.as_view(),
         name="countersign_decision_review",
     ),
+    path(
+        "countersign/decision/edit-advice/",
+        views.EditCountersignDecisionAdviceView.as_view(),
+        name="countersign_decision_edit",
+    ),
     path("consolidate/", views.ConsolidateAdviceView.as_view(), name="consolidate_advice_view"),
     path("consolidate/review/<advice_type>/", views.ReviewConsolidateView.as_view()),
     path("consolidate/review/", views.ReviewConsolidateView.as_view(), name="consolidate_review"),
