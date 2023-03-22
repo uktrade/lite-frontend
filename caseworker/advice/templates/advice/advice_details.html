@@ -88,7 +88,7 @@
             {% if not rejected_lu_countersignature %}
                 <div id="countersignatures">
                     {% for countersign_advice in ordered_countersign_advice %}
-                        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
+                        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 countersigned-by">
                             <div class="govuk-grid-row">
                                 <div class="govuk-grid-column-three-quarters">
                                     <h2 class="govuk-heading-m">Countersigned by {{ countersign_advice.countersigned_user|full_name }}</h2>
@@ -100,7 +100,7 @@
                 </div>
             {% endif %}
         {% elif advice.0.countersigned_by %}
-        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
+        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 countersigned-by">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-three-quarters">
                     <h2 class="govuk-heading-m">Countersigned by {{ advice.0.countersigned_by|full_name }}</h2>
