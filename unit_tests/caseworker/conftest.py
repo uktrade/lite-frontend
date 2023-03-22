@@ -1,3 +1,4 @@
+import copy
 import re
 import os
 import uuid
@@ -8,6 +9,7 @@ from django.conf import settings
 from django.test import Client
 import rules
 
+from caseworker.advice import services
 from core import client
 from core.helpers import convert_value_to_query_param
 from caseworker.advice.services import LICENSING_UNIT_TEAM
@@ -696,6 +698,40 @@ def refusal_advice(current_user):
             "ultimate_end_user": None,
             "consignee": None,
             "third_party": None,
+        }
+    ]
+
+
+@pytest.fixture
+def fcdo_countersigned_advice(current_user):
+    user = copy.deepcopy(current_user)
+    user["team"]["alias"] = services.FCDO_TEAM
+    return [
+        {
+            "id": "22edfc3a-74c0-4d86-8998-5e40fcbd6527",
+            "text": "FCDO says this is fine",
+            "note": "FCDO notes",
+            "type": {"key": "proviso", "value": "Proviso"},
+            "denial_reasons": [],
+            "level": "team",
+            "proviso": "no conditions",
+            "footnote": None,
+            "user": user,
+            "created_at": "2021-10-17T23:23:30.421294+01:00",
+            "good": "73152304-6026-4cc0-a3d7-0a93048ecdce",
+            "country": None,
+            "end_user": None,
+            "ultimate_end_user": None,
+            "consignee": None,
+            "third_party": None,
+            "countersigned_by": {
+                "email": "fcdo.user@example.com",
+                "first_name": "FCDO",
+                "id": "cecf7570-550e-4e8d-9a57-040514a7f534",
+                "last_name": "User",
+                "role_name": "Super User",
+            },
+            "countersign_comments": "FCDO countersigner approves this advice",
         }
     ]
 
