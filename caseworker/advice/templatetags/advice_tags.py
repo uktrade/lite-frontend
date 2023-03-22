@@ -61,6 +61,11 @@ def countersigned_user_team(advice):
 
 @register.filter
 def countersignatures_for_advice(case, advice):
+    """
+    This filters a case returning all LU countersignatures
+    on that case (grouped by countersignature reverse order)
+    that are attached to the advice passed as the parameter.
+    """
     advice_ids = {ad["id"] for ad in advice}
     countersignatures_grouped_by_order = defaultdict(list)
     for cs in case.get("countersign_advice", []):
