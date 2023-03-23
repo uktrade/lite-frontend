@@ -357,7 +357,7 @@ def test_edit_consolidated_advice_by_LU_error_from_API(
     "advice_type, expected_title",
     (
         ("FCDO", "Countersigned by FCDO User"),
-        ("FCDO", "Countersigned by FCDO User"),
+        ("MOD", "Countersigned by MOD User"),
     ),
 )
 @patch("caseworker.advice.views.get_gov_user")
