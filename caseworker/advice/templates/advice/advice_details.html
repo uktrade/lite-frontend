@@ -97,15 +97,6 @@
                                 </div>
                             </div>
                         </div>
-                            {% elif show_rejected_countersignatures %}
-                            <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
-                                <div class="govuk-grid-row">
-                                    <div class="govuk-grid-column-three-quarters">
-                                        <h2 class="govuk-heading-m">Rejected by {{ countersign_advice.0.countersigned_user|full_name }}</h2>
-                                        <p class="govuk-body">{{ countersign_advice.0.reasons }}</p>
-                                    </div>
-                                </div>
-                            </div>
                         {% endif %}
                     {% endfor %}
                 </div>
