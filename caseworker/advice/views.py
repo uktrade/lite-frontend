@@ -121,7 +121,7 @@ class CaseContextMixin:
         rejection (case will be returned to edit the advice once a rejection has occurred.
         """
         for cs in self.case.get("countersign_advice", []):
-            if not cs["outcome_accepted"]:
+            if cs["valid"] is True and cs["outcome_accepted"] is False:
                 return cs
         return None
 

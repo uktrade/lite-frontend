@@ -886,8 +886,7 @@ def test_case_returned_info_for_first_countersignature_rejection(
     assert "This case has been returned for editing, by countersigner Testy McTest" in warning
     rejected_by = rejected_detail_div.find("h2").text
     assert "Reason for returning" in rejected_by
-    rejected_detail = rejected_detail_div.find("p").text
-    assert "I disagree" in rejected_detail
+    assert "I disagree" in rejected_detail_div.find("p").text
 
     assert not soup.find(id="finalise-case-button")
 

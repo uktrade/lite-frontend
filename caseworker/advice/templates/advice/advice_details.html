@@ -89,7 +89,7 @@
                 <div class="countersignatures">
                     {% for countersign_advice in case|countersignatures_for_advice:advice  %}
                         {%  if countersign_advice.0.outcome_accepted %}
-                        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 countersigned-by">
+                        <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 countersigned-by" style="border: 1px solid black;">
                             <div class="govuk-grid-row">
                                 <div class="govuk-grid-column-three-quarters">
                                     <h2 class="govuk-heading-m">{% if countersign_advice.0.order == 1 %}Countersigned{% elif countersign_advice.0.order == 2 %}Senior countersigned{% endif %} by {{ countersign_advice.0.countersigned_user|full_name }}</h2>

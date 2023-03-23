@@ -12,7 +12,7 @@ import rules
 from caseworker.advice import services
 from core import client
 from core.helpers import convert_value_to_query_param
-from caseworker.advice.services import LICENSING_UNIT_TEAM
+from caseworker.advice.services import LICENSING_UNIT_TEAM, FIRST_COUNTERSIGN, SECOND_COUNTERSIGN
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
 second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
@@ -908,7 +908,8 @@ def countersignatures_for_advice(all_advice, accepted=[True]):
                 },
             },
             "outcome_accepted": accepted[0],
-            "order": 1,
+            "order": FIRST_COUNTERSIGN,
+            "valid": True,
             "advice": advice,
         }
 
@@ -928,7 +929,8 @@ def countersignatures_for_advice(all_advice, accepted=[True]):
                 },
             },
             "outcome_accepted": accepted[1],
-            "order": 2,
+            "order": SECOND_COUNTERSIGN,
+            "valid": True,
             "advice": advice,
         }
 
@@ -951,7 +953,8 @@ def countersignature_two():
             "last_name": "Visor",
         },
         "outcome_accepted": True,
-        "order": 2,
+        "valid": True,
+        "order": SECOND_COUNTERSIGN,
     }
     good_id = "3268e0b3-5fa2-46c3-9b20-3620b74f1c44"
     end_user_id = "bd394902-a86e-45f1-8dd2-6b9a11c218a3"
