@@ -43,15 +43,24 @@ def pytest_configure(config):
 
 
 def pytest_addoption(parser):
-    env = str(os.environ.get("ENVIRONMENT"))
-    if env == "None":
-        env = "dev"
     parser.addoption("--headless", action="store_true", default=False)
     parser.addoption(
         "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
     )
     parser.addoption(
         "--step-verbose", action="store_true", default=STEP_VERBOSE, help="Gives extra info for every step"
+    )
+    parser.addoption("--exporter_url", action="store", default=f"http://exporter:8300/", help="url")
+    parser.addoption("--internal_url", action="store", default="http://caseworker:8200/", help="url")
+    lite_api_url = os.environ.get(
+        "LOCAL_LITE_API_URL",
+        os.environ.get("LITE_API_URL"),
+    )
+    parser.addoption(
+        "--lite_api_url",
+        action="store",
+        default=lite_api_url,
+        help="url",
     )
     parser.addoption("--sso_sign_in_url", action="store", default="https://sso.trade.uat.uktrade.io/login/", help="url")
 
@@ -67,4 +76,4 @@ def pytest_exception_interact(node, report):
 def tmp_download_path():
     download_path = Path("/tmp/downloads/")
     download_path.mkdir(exist_ok=True)
-    return str(download_path)
+    return download_path

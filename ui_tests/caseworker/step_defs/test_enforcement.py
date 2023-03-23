@@ -1,4 +1,4 @@
-import os
+import pytest
 import time
 
 from pytest_bdd import when, scenarios, then, parsers
@@ -29,38 +29,52 @@ def enforcement_audit(driver, internal_url, context):
 
 @then(parsers.parse('the file "{filename}" is downloaded'))
 def enforcement_file_download_check(filename, tmp_download_path):
-    assert filename in os.listdir(tmp_download_path)
+    file_path = tmp_download_path / filename
+    assert file_path.exists()
+
+
+@pytest.fixture
+def enforcement_check_xml_file_path(tmp_download_path):
+    return tmp_download_path / "enforcement_check.xml"
 
 
 @then("an XML file is downloaded onto my device")
-def xml_file_downloaded(driver, tmp_download_path):
+def xml_file_downloaded(driver, enforcement_check_xml_file_path):
     i = 10
-    EU_XML_PATH = f"{tmp_download_path}enforcement_check.xml"
-    while not os.path.exists(EU_XML_PATH) and i > 0:
+    while not enforcement_check_xml_file_path.exists() and i > 0:
         time.sleep(0.1)
         i -= 1
 
-    assert os.path.exists(EU_XML_PATH)
+    assert enforcement_check_xml_file_path.exists()
+
+
+@pytest.fixture
+def enforcement_check_xml_tree(enforcement_check_xml_file_path):
+    tree = ET.parse(str(enforcement_check_xml_file_path))
+    return tree.getroot()
 
 
 @then(parsers.parse('the downloaded file should include "{party_type}" "{tag}" as "{value}"'))
-def enforcement_file_content_check(party_type, tag, value, tmp_download_path):
-    tree = ET.parse(f"{tmp_download_path}enforcement_check.xml")
-    root = tree.getroot()
-
+def enforcement_file_content_check(party_type, tag, value, enforcement_check_xml_tree):
     # get values of all party_types as the file can contain multiple entries
-    nodes = root.findall(f".//STAKEHOLDER[SH_TYPE='{party_type}']")
+    nodes = enforcement_check_xml_tree.findall(f".//STAKEHOLDER[SH_TYPE='{party_type}']")
     party_values = set([child.text for node in nodes for child in node if child.tag == tag])
     assert value in party_values
 
 
-@when(parsers.parse('I include "{party_type}" details and generate import file'))
-def generate_enforcement_check_import_file(party_type, tmp_download_path):
-    tree = ET.parse(f"{tmp_download_path}enforcement_check.xml")
-    root = tree.getroot()
+@pytest.fixture
+def enforcement_check_import_xml_file_path(tmp_download_path):
+    return tmp_download_path / "enforcement_check_import.xml"
 
+
+@when(parsers.parse('I include "{party_type}" details and generate import file'))
+def generate_enforcement_check_import_file(
+    party_type,
+    enforcement_check_xml_tree,
+    enforcement_check_import_xml_file_path,
+):
     # get values of all party_types as the file can contain multiple entries
-    nodes = root.findall(f".//STAKEHOLDER[SH_TYPE='{party_type}']")
+    nodes = enforcement_check_xml_tree.findall(f".//STAKEHOLDER[SH_TYPE='{party_type}']")
     assert len(nodes) >= 1
     code1_list = []
     code2_list = []
@@ -82,39 +96,38 @@ def generate_enforcement_check_import_file(party_type, tmp_download_path):
 
     import_xml_string += "</SPIRE_UPLOAD_FILE>\n"
 
-    with open(f"{tmp_download_path}enforcement_check_import.xml", "w") as f:
+    with open(enforcement_check_import_xml_file_path, "w") as f:
         f.write(import_xml_string)
 
 
-@then(parsers.parse('for FLAG the file has "{flag_value}"'))
-def enforcement_file_content_check(flag_value, tmp_download_path):
-    tree = ET.parse(f"{tmp_download_path}enforcement_check_import.xml")
-    root = tree.getroot()
+@pytest.fixture
+def enforcement_check_import_xml_tree(enforcement_check_import_xml_file_path):
+    tree = ET.parse(str(enforcement_check_import_xml_file_path))
+    return tree.getroot()
 
+
+@then(parsers.parse('for FLAG the file has "{flag_value}"'))
+def enforcement_file_content_check(flag_value, enforcement_check_import_xml_tree):
     # get values of all party_types as the file can contain multiple entries
-    for node in root.findall(f".//SPIRE_RETURNS/FLAG"):
+    for node in enforcement_check_import_xml_tree.findall(f".//SPIRE_RETURNS/FLAG"):
         assert node.text == flag_value
 
 
 @then(parsers.parse('for "{import_tag}" the file has the "{party_type}" data "{export_tag}" number from export file'))
-def compare_import_tags_with_export_tags(import_tag, party_type, export_tag, tmp_download_path):
+def compare_import_tags_with_export_tags(
+    import_tag, party_type, export_tag, enforcement_check_xml_tree, enforcement_check_import_xml_tree
+):
     # Extract ELA_ID, SH_ID from the export xml file for given party
-    tree = ET.parse(f"{tmp_download_path}enforcement_check.xml")
-    root = tree.getroot()
-
     data = []
-    for node in root.findall(f".//STAKEHOLDER[SH_TYPE='{party_type}']"):
+    for node in enforcement_check_xml_tree.findall(f".//STAKEHOLDER[SH_TYPE='{party_type}']"):
         data.append(
             {
                 f"{export_tag}": node.find(f".//{export_tag}").text,
             }
         )
 
-    tree = ET.parse(f"{tmp_download_path}enforcement_check_import.xml")
-    root = tree.getroot()
-
     # compare the values in the file to be imported for the given party
-    for index, node in enumerate(root.findall(f".//SPIRE_RETURNS/{import_tag}")):
+    for index, node in enumerate(enforcement_check_import_xml_tree.findall(f".//SPIRE_RETURNS/{import_tag}")):
         assert node.text == data[index][export_tag]
 
 
@@ -124,10 +137,10 @@ def import_enforcement_xml(driver, import_eu_btn_text):
 
 
 @when("I attach the file above")
-def i_attach_updated_file(driver, tmp_download_path):  # noqa
+def i_attach_updated_file(driver, enforcement_check_import_xml_file_path):  # noqa
     file_input = driver.find_element(by=By.NAME, value="file")
     file_input.clear()
-    file_input.send_keys(f"{tmp_download_path}enforcement_check_import.xml")
+    file_input.send_keys(str(enforcement_check_import_xml_file_path))
     upload_btn = driver.find_element(by=By.XPATH, value="//button[@type='submit']")
     upload_btn.click()
 
@@ -149,8 +162,8 @@ def application_removed_from_queue(driver, queue):
 
 @when("I cleanup the temporary files created")
 def clean_temporary_files(tmp_download_path):
-    for file in [f for f in os.listdir(tmp_download_path) if f.endswith(".xml")]:
+    for file in tmp_download_path.glob("*.xml"):
         try:
-            os.remove(f"{tmp_download_path}/{file}")
-        except OSError:
+            file.unlink()
+        except FileNotFoundError:
             pass

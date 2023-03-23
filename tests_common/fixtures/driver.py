@@ -1,6 +1,3 @@
-import base64
-import os
-
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from webdriver_manager.chrome import ChromeDriverManager
@@ -17,8 +14,8 @@ def driver(request, api_client, environment, tmp_download_path):
     # This path is shared between different containers with different users and
     # permissions.
     # We are allowing anyone to read and write to this to handle this mix.
-    os.chmod(tmp_download_path, 0o777)
-    prefs = {"download.default_directory": tmp_download_path}
+    tmp_download_path.chmod(0o777)
+    prefs = {"download.default_directory": str(tmp_download_path)}
     chrome_options.add_experimental_option("prefs", prefs)
 
     desired_capabilities = DesiredCapabilities.CHROME.copy()
