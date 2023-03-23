@@ -2,10 +2,6 @@ import base64
 import os
 
 
-AUTH_USER_NAME = os.environ.get("AUTH_USER_NAME")
-AUTH_USER_PASSWORD = os.environ.get("AUTH_USER_PASSWORD")
-
-
 class BasicAuthenticator:
     def __init__(self, username: str, password: str):
         credentials = f"{username}:{password}"
