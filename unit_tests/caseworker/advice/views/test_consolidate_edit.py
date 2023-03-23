@@ -353,6 +353,13 @@ def test_edit_consolidated_advice_by_LU_error_from_API(
     assert "Failed to put" in response.content.decode("utf-8")
 
 
+@pytest.mark.parametrize(
+    "advice_type, expected_title",
+    (
+        ("FCDO", "Countersigned by FCDO User"),
+        ("FCDO", "Countersigned by FCDO User"),
+    ),
+)
 @patch("caseworker.advice.views.get_gov_user")
 def test_edit_advice_get_displays_correct_counteradvice(
     mock_get_gov_user,
@@ -362,6 +369,9 @@ def test_edit_advice_get_displays_correct_counteradvice(
     refusal_advice,
     url,
     fcdo_countersigned_advice,
+    mod_countersigned_advice,
+    advice_type,
+    expected_title,
 ):
     team = services.LICENSING_UNIT_TEAM
     mock_get_gov_user.return_value = ({"user": {"team": {"id": TEAM_ID, "alias": team}}}, None)
@@ -378,8 +388,9 @@ def test_edit_advice_get_displays_correct_counteradvice(
     # Add some new-style countersignatures to the case.
     case_data["case"]["countersign_advice"] = countersignatures_for_advice(case_data["case"]["advice"], accepted=[True])
 
-    # Add FCDO advice with old-style countersignature
-    case_data["case"]["advice"] += fcdo_countersigned_advice
+    # Add FCDO/MOD advice with old-style countersignature
+    fcdo_or_mod_advice = {"FCDO": fcdo_countersigned_advice, "MOD": mod_countersigned_advice}[advice_type]
+    case_data["case"]["advice"] += fcdo_or_mod_advice
 
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
@@ -387,5 +398,5 @@ def test_edit_advice_get_displays_correct_counteradvice(
 
     # Assert the correct countersignature is displayed.
     assert len(countersignatures) == 1
-    assert countersignatures[0].find("h2").text == "Countersigned by FCDO User"
-    assert countersignatures[0].find("p").text == fcdo_countersigned_advice[0]["countersign_comments"]
+    assert countersignatures[0].find("h2").text == expected_title
+    assert countersignatures[0].find("p").text == fcdo_or_mod_advice[0]["countersign_comments"]
