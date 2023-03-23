@@ -134,3 +134,38 @@ def test_single_lu_rejected_countersignature(
     assert len(rejected_counter_sigs) == 1
     assert rejected_counter_sigs[0].find("h2").text == "Countersigner Testy McTest disagrees with this recommendation"
     assert rejected_counter_sigs[0].find("p").text == "I disagree"
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_lu_rejected_senior_countersignature(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    final_advice,
+    url,
+    with_lu_countersigning_enabled,
+):
+    case_id = data_standard_case["case"]["id"]
+    team_id = final_advice["user"]["team"]["id"]
+    data_standard_case["case"]["advice"] = [final_advice]
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        [final_advice], accepted=[True, False]
+    )
+    requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    response = authorized_client.get(url)
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert response.status_code == 200
+
+    counter_sigs = soup.find_all(class_=["countersigned-by", "rejected-countersignature"])
+    assert len(counter_sigs) == 2
+    # We expect the senior countersignature at the top.
+    assert counter_sigs[0].find("h2").text == "Senior countersigner Super Visor disagrees with this recommendation"
+    assert counter_sigs[0].find("p").text == "Nope"
+    assert counter_sigs[1].find("h2").text == "Countersigned by Testy McTest"
+    assert counter_sigs[1].find("p").text == "I concur"

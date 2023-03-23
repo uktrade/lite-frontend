@@ -304,7 +304,7 @@ def test_lu_countersign_edit_get_shows_previous_countersignature(
 
     response = authorized_client.get(countersign_decision_edit_url)
     soup = BeautifulSoup(response.content, "html.parser")
-    countersignature_block = soup.find(id="countersignatures")
+    countersignature_block = soup.find(class_="countersignatures")
     assert response.status_code == 200
 
     counter_sigs = countersignature_block.find_all("div", recursive=False)

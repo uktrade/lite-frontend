@@ -877,7 +877,7 @@ def test_case_returned_info_for_first_countersignature_rejection(
     rejected_div = soup.find(id="rejected-countersignature")
     rejected_detail_div = soup.find(id="rejected-countersignature-detail")
     countersignature_required_div = soup.find(id="countersign-required")
-    countersignature_div = soup.find(id="countersignatures")
+    countersignature_div = soup.find(class_="countersignatures")
     assert rejected_div is not None
     assert rejected_detail_div is not None
     assert countersignature_required_div is None
@@ -937,7 +937,7 @@ def test_case_returned_info_for_second_countersignature_rejection(
     rejected_div = soup.find(id="rejected-countersignature")
     rejected_detail_div = soup.find(id="rejected-countersignature-detail")
     countersignature_required_div = soup.find(id="countersign-required")
-    countersignature_div = soup.find(id="countersignatures")
+    countersignature_div = soup.find(class_="countersignatures")
     assert rejected_div is not None
     assert rejected_detail_div is not None
     assert countersignature_required_div is None
@@ -982,10 +982,10 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
 
     soup = BeautifulSoup(response.content, "html.parser")
     rejected_div = soup.find(id="rejected-countersignature")
-    countersignature_div = soup.find(id="countersignatures")
+    countersignature_div = soup.find(class_="countersignatures")
     assert rejected_div is None
     assert countersignature_div is not None
-    assert "Countersigned by Super Visor" in countersignature_div.find_all("h2")[0].text
+    assert "Senior countersigned by Super Visor" in countersignature_div.find_all("h2")[0].text
     assert "LGTM" in countersignature_div.find_all("p")[0].text
     assert "Countersigned by Testy McTest" in countersignature_div.find_all("h2")[1].text
     assert "I concur" in countersignature_div.find_all("p")[1].text
