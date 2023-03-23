@@ -52,13 +52,6 @@ def api_client(request, exporter_info, internal_info, api_url, context, environm
     base_url = api_url.rstrip("/")
     request_data = build_request_data(exporter_user=exporter_info, gov_user=internal_info)
     api_client = ApiClient(base_url, request_data, {})
-
-    if environment("BASIC_AUTH_ENABLED", default="False") == "True":
-        hosts = environment("BROWSER_HOSTS").replace("${ENVIRONMENT}", environment("ENVIRONMENT")).split(",")
-        for host in hosts:
-            api_client.auth_basic(environment("AUTH_USER_NAME"), environment("AUTH_USER_PASSWORD"))
-            response = api_client.session.request("GET", f"https://{host}{environment('ENDPOINT')}")
-            response.raise_for_status()
     return api_client
 
 

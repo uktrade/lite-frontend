@@ -39,19 +39,6 @@ def driver(request, api_client, environment, tmp_download_path):
     driver.get("about:blank")
     driver.maximize_window()
 
-    if environment("BASIC_AUTH_ENABLED", default="False") == "True":
-        auth = (
-            base64.encodebytes(f"{environment('AUTH_USER_NAME')}:{environment('AUTH_USER_PASSWORD')}".encode())
-            .decode()
-            .strip()
-        )
-
-        def interceptor(req):
-            if req.host.endswith("uktrade.digital"):
-                req.headers["Authorization"] = f"Basic {auth}"
-
-        driver.request_interceptor = interceptor
-
     yield driver
 
     driver.close()

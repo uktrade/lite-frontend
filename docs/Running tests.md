@@ -19,7 +19,7 @@ cp ci.exporter.env exporter.env
 cp ci.api.env api.env
 ```
 - Fill the env files with appropriate values from Vault. Including vars with export statements.
-  
+
 ```
 # Common
 export AUTHBROKER_CLIENT_ID=
@@ -30,7 +30,6 @@ export AWS_SECRET_ACCESS_KEY=
 export AWS_STORAGE_BUCKET_NAME=
 export AUTH_USER_NAME=
 export AUTH_USER_PASSWORD=
-export BASIC_AUTH_ENABLED=
 export ENDPOINT=
 export TEST_SSO_EMAIL=
 export TEST_SSO_PASSWORD=

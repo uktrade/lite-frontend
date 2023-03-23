@@ -4,7 +4,6 @@ import os
 
 AUTH_USER_NAME = os.environ.get("AUTH_USER_NAME")
 AUTH_USER_PASSWORD = os.environ.get("AUTH_USER_PASSWORD")
-BASIC_AUTH_ENABLED = os.environ.get("BASIC_AUTH_ENABLED")
 
 
 class BasicAuthenticator:
