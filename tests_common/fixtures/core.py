@@ -48,8 +48,7 @@ def internal_info(request, environment, worker_id):
 
 
 @fixture(scope="session")
-def api_client(request, exporter_info, internal_info, context, environment):
-    api_url = request.config.getoption("--lite_api_url")
+def api_client(request, exporter_info, internal_info, api_url, context, environment):
     base_url = api_url.rstrip("/")
     request_data = build_request_data(exporter_user=exporter_info, gov_user=internal_info)
     api_client = ApiClient(base_url, request_data, {})
