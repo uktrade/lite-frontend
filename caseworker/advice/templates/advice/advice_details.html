@@ -85,35 +85,23 @@
 <div class="govuk-grid-row govuk-details">
     <div class="govuk-grid-column-three-quarters">
         {% if is_lu_countersigning and case|countersignatures_for_advice:advice %}
-            {% if not rejected_lu_countersignature %}
-                <div id="countersignatures">
+            {% if show_rejected_countersignatures or not rejected_lu_countersignature %}
+                <div class="countersignatures">
                     {% for countersign_advice in case|countersignatures_for_advice:advice  %}
                         {%  if countersign_advice.0.outcome_accepted %}
                         <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 countersigned-by">
                             <div class="govuk-grid-row">
                                 <div class="govuk-grid-column-three-quarters">
-                                    <h2 class="govuk-heading-m">
-                                        {% if countersign_advice.0.order == 1 %}
-                                            Countersigned
-                                        {% elif countersign_advice.0.order == 1 %}
-                                            Senior countersigned
-                                        {% endif %}
-                                        by {{ countersign_advice.0.countersigned_user|full_name }}</h2>
+                                    <h2 class="govuk-heading-m">{% if countersign_advice.0.order == 1 %}Countersigned{% elif countersign_advice.0.order == 2 %}Senior countersigned{% endif %} by {{ countersign_advice.0.countersigned_user|full_name }}</h2>
                                     <p class="govuk-body">{{ countersign_advice.0.reasons }}</p>
                                 </div>
                             </div>
                         </div>
                         {% elif show_rejected_countersignatures %}
-                            <div class="govuk-!-padding-4 govuk-!-margin-bottom-2" style="border: 1px solid black;">
+                            <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 rejected-countersignature" style="border: 1px solid black;">
                                 <div class="govuk-grid-row">
                                     <div class="govuk-grid-column-three-quarters">
-                                        <h2 class="govuk-heading-m">
-                                            {% if countersign_advice.0.order == 1 %}
-                                                Countersigner
-                                            {% elif countersign_advice.0.order == 1 %}
-                                                Senior countersigner
-                                            {% endif %}
-                                            {{ countersign_advice.0.countersigned_user|full_name }} disagrees with this recommendation</h2>
+                                        <h2 class="govuk-heading-m">{% if countersign_advice.0.order == 1 %}Countersigner{% elif countersign_advice.0.order == 2 %}Senior countersigner{% endif %} {{ countersign_advice.0.countersigned_user|full_name }} disagrees with this recommendation</h2>
                                         <p class="govuk-body">{{ countersign_advice.0.reasons }}</p>
                                     </div>
                                 </div>
