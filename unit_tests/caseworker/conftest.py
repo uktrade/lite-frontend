@@ -891,57 +891,62 @@ def final_advice(current_user, lu_team):
     }
 
 
-def countersignatures_for_advice(all_advice, accepted=[True]):
-    def first_countersignature(advice):
+def countersignatures_for_advice(all_advice, data):
+    """
+    Generate countersignatures for the required order, decision specified in `data`
+    """
+    countersignatures = []
+
+    def lu_licensing_mgr():
         return {
-            "reasons": "I concur" if accepted[0] else "I disagree",
-            "countersigned_user": {
-                "id": "654165",
-                "first_name": "Testy",
-                "last_name": "McTest",
-                "team": {
-                    "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
-                    "name": "LU Team",
-                    "alias": LICENSING_UNIT_TEAM,
-                    "part_of_ecju": False,
-                    "is_ogd": True,
-                },
+            "id": "654165",
+            "first_name": "Testy",
+            "last_name": "McTest",
+            "team": {
+                "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+                "name": "LU Team",
+                "alias": LICENSING_UNIT_TEAM,
+                "part_of_ecju": False,
+                "is_ogd": True,
             },
-            "outcome_accepted": accepted[0],
-            "order": FIRST_COUNTERSIGN,
-            "valid": True,
-            "advice": advice,
         }
 
-    def second_countersignature(advice):
+    def lu_sr_licensing_mgr():
         return {
-            "reasons": "LGTM" if accepted[1] else "Nope",
-            "countersigned_user": {
-                "id": "546544",
-                "first_name": "Super",
-                "last_name": "Visor",
-                "team": {
-                    "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
-                    "name": "LU Team",
-                    "alias": LICENSING_UNIT_TEAM,
-                    "part_of_ecju": False,
-                    "is_ogd": True,
-                },
+            "id": "546544",
+            "first_name": "Super",
+            "last_name": "Visor",
+            "team": {
+                "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+                "name": "LU Team",
+                "alias": LICENSING_UNIT_TEAM,
+                "part_of_ecju": False,
+                "is_ogd": True,
             },
-            "outcome_accepted": accepted[1],
-            "order": SECOND_COUNTERSIGN,
-            "valid": True,
-            "advice": advice,
         }
 
-    out = []
+    for item in data:
+        reasons = ""
+        countersigned_user = None
+        if item["order"] == services.FIRST_COUNTERSIGN:
+            reasons = "I concur" if item["outcome_accepted"] else "I disagree"
+            countersigned_user = lu_licensing_mgr()
+        elif item["order"] == services.SECOND_COUNTERSIGN:
+            reasons = "LGTM" if item["outcome_accepted"] else "Nope"
+            countersigned_user = lu_sr_licensing_mgr()
+        for advice in all_advice:
+            countersignatures.append(
+                {
+                    "order": item["order"],
+                    "valid": item.get("valid", True),
+                    "outcome_accepted": item["outcome_accepted"],
+                    "reasons": reasons,
+                    "countersigned_user": countersigned_user,
+                    "advice": advice,
+                }
+            )
 
-    for adv in all_advice:
-        for i, acceptance in enumerate(accepted):
-            countersignature = [first_countersignature, second_countersignature][i](adv)
-            out.append(countersignature)
-
-    return out
+    return countersignatures
 
 
 @pytest.fixture

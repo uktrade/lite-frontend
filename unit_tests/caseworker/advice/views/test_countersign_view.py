@@ -1,16 +1,12 @@
-import copy
-from unittest.mock import patch
-
 import pytest
 
-from copy import deepcopy
+from unittest.mock import patch
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
-from caseworker.advice.services import LICENSING_UNIT_TEAM
+from caseworker.advice.services import LICENSING_UNIT_TEAM, FIRST_COUNTERSIGN, SECOND_COUNTERSIGN
 from core import client
-from caseworker.advice import services
 from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 
@@ -51,7 +47,12 @@ def test_single_lu_countersignature(
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice([final_advice])
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        [final_advice],
+        [
+            {"order": FIRST_COUNTERSIGN, "outcome_accepted": True},
+        ],
+    )
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
@@ -85,7 +86,11 @@ def test_double_lu_countersignature(
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
     data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
-        [final_advice], accepted=[True, True]
+        [final_advice],
+        [
+            {"order": FIRST_COUNTERSIGN, "outcome_accepted": True},
+            {"order": SECOND_COUNTERSIGN, "outcome_accepted": True},
+        ],
     )
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (
@@ -121,7 +126,12 @@ def test_single_lu_rejected_countersignature(
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice([final_advice], accepted=[False])
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        [final_advice],
+        [
+            {"order": FIRST_COUNTERSIGN, "outcome_accepted": False},
+        ],
+    )
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},
@@ -158,7 +168,11 @@ def test_lu_rejected_senior_countersignature(
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
     data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
-        [final_advice], accepted=[True, False]
+        [final_advice],
+        [
+            {"order": FIRST_COUNTERSIGN, "outcome_accepted": True},
+            {"order": SECOND_COUNTERSIGN, "outcome_accepted": False},
+        ],
     )
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (

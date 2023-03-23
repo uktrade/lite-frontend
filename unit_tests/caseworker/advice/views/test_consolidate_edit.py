@@ -386,7 +386,12 @@ def test_edit_advice_get_displays_correct_counteradvice(
     case_data["case"]["advice"] += more_advice
 
     # Add some new-style countersignatures to the case.
-    case_data["case"]["countersign_advice"] = countersignatures_for_advice(case_data["case"]["advice"], accepted=[True])
+    case_data["case"]["countersign_advice"] = countersignatures_for_advice(
+        case_data["case"]["advice"],
+        [
+            {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
+        ],
+    )
 
     # Add FCDO/MOD advice with old-style countersignature
     fcdo_or_mod_advice = {"FCDO": fcdo_countersigned_advice, "MOD": mod_countersigned_advice}[advice_type]

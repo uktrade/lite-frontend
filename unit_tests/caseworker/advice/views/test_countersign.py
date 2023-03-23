@@ -295,7 +295,9 @@ def test_lu_countersign_get_shows_previous_countersignature(
     # Set up advice on the case
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
-    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice([final_advice])
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        [final_advice], [{"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True}]
+    )
     # Setup mock API requests
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": team_id, "alias": LICENSING_UNIT_TEAM}}},

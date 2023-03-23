@@ -3,8 +3,6 @@ from unittest.mock import patch
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
-from caseworker.cases.objects import Case
-from caseworker.advice.views import ViewConsolidatedAdviceView
 from caseworker.advice import forms
 from caseworker.advice import services
 from caseworker.advice.services import (
@@ -397,6 +395,11 @@ def consolidated_advice(current_user, team1_user):
             "countersign_comments": "",
         },
     ]
+
+
+@pytest.fixture
+def advice_for_lu_countersign(consolidated_advice):
+    return [item for item in consolidated_advice if item["level"] == "final"]
 
 
 def to_refusal_advice(advice):
@@ -846,15 +849,16 @@ def test_case_returned_info_for_first_countersignature_rejection(
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
-    consolidated_advice,
+    advice_for_lu_countersign,
     gov_user,
     flags,
     with_lu_countersigning_enabled,
 ):
-    data_standard_case["case"]["advice"] = consolidated_advice
+    data_standard_case["case"]["advice"] = advice_for_lu_countersign
     # Rejected countersignature
+    countersigning_data = [{"order": services.FIRST_COUNTERSIGN, "outcome_accepted": False}]
     data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
-        consolidated_advice, accepted=[False]
+        advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
 
@@ -905,15 +909,18 @@ def test_case_returned_info_for_second_countersignature_rejection(
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
-    consolidated_advice,
+    advice_for_lu_countersign,
     gov_user,
     flags,
     with_lu_countersigning_enabled,
 ):
-    data_standard_case["case"]["advice"] = consolidated_advice
-    # Rejected countersignature
+    data_standard_case["case"]["advice"] = advice_for_lu_countersign
+    countersigning_data = [
+        {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
+        {"order": services.SECOND_COUNTERSIGN, "outcome_accepted": False},
+    ]
     data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
-        consolidated_advice, accepted=[True, False]
+        advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
 
@@ -956,14 +963,17 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
-    consolidated_advice,
+    advice_for_lu_countersign,
     gov_user,
     with_lu_countersigning_enabled,
 ):
-    data_standard_case["case"]["advice"] = consolidated_advice
-    # Rejected countersignature
+    data_standard_case["case"]["advice"] = advice_for_lu_countersign
+    countersigning_data = [
+        {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
+        {"order": services.SECOND_COUNTERSIGN, "outcome_accepted": True},
+    ]
     data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
-        consolidated_advice, accepted=[True, True]
+        advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[GREEN_COUNTRIES_ID]]
 
@@ -992,37 +1002,69 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
 
 
 @pytest.mark.parametrize(
-    ("team_alias", "flags_list", "accepted", "expected_value_finalise_case"),
+    ("team_alias", "flags_list", "countersigning_data", "expected_value_finalise_case"),
     [
-        (services.LICENSING_UNIT_TEAM, [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID]], [False], False),
-        (services.LICENSING_UNIT_TEAM, [FLAG_MAP[AP_LANDMINE_ID]], [False], False),
-        (services.LICENSING_UNIT_TEAM, [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID]], [True], True),
-        (services.LICENSING_UNIT_TEAM, [FLAG_MAP[AP_LANDMINE_ID]], [True], True),
+        (
+            services.LICENSING_UNIT_TEAM,
+            [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID]],
+            [{"order": services.FIRST_COUNTERSIGN, "outcome_accepted": False}],
+            False,
+        ),
+        (
+            services.LICENSING_UNIT_TEAM,
+            [FLAG_MAP[AP_LANDMINE_ID]],
+            [{"order": services.FIRST_COUNTERSIGN, "outcome_accepted": False}],
+            False,
+        ),
+        (
+            services.LICENSING_UNIT_TEAM,
+            [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID]],
+            [{"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True}],
+            True,
+        ),
+        (
+            services.LICENSING_UNIT_TEAM,
+            [FLAG_MAP[AP_LANDMINE_ID]],
+            [{"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True}],
+            True,
+        ),
         (
             services.LICENSING_UNIT_TEAM,
             [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID], FLAG_MAP[LU_SR_MGR_CHECK_REQUIRED_ID]],
-            [True, False],
+            [
+                {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
+                {"order": services.SECOND_COUNTERSIGN, "outcome_accepted": False},
+            ],
             False,
         ),
         (
             services.LICENSING_UNIT_TEAM,
             [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID], FLAG_MAP[MANPADS_ID]],
-            [True, False],
+            [
+                {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
+                {"order": services.SECOND_COUNTERSIGN, "outcome_accepted": False},
+            ],
             False,
         ),
         (
             services.LICENSING_UNIT_TEAM,
             [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID], FLAG_MAP[LU_SR_MGR_CHECK_REQUIRED_ID]],
-            [True, True],
+            [
+                {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
+                {"order": services.SECOND_COUNTERSIGN, "outcome_accepted": True},
+            ],
             True,
         ),
         (
             services.LICENSING_UNIT_TEAM,
             [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID], FLAG_MAP[MANPADS_ID]],
-            [True, True],
+            [
+                {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
+                {"order": services.SECOND_COUNTERSIGN, "outcome_accepted": True},
+            ],
             True,
         ),
-        (services.FCDO_TEAM, [FLAG_MAP[GREEN_COUNTRIES_ID]], None, False),
+        (services.FCDO_TEAM, [FLAG_MAP[GREEN_COUNTRIES_ID]], [], False),
     ],
 )
 def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
@@ -1030,13 +1072,13 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
-    consolidated_advice,
+    advice_for_lu_countersign,
     LU_team_user,
     FCDO_team_user,
     with_lu_countersigning_enabled,
     team_alias,
     flags_list,
-    accepted,
+    countersigning_data,
     expected_value_finalise_case,
 ):
     """
@@ -1055,9 +1097,9 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
       (b) LM flag and Manpads flag
     5. non-LU user e.g. FCDO
     """
-    data_standard_case["case"]["advice"] = consolidated_advice
-    data_standard_case["case"]["countersign_advice"] = (
-        countersignatures_for_advice(consolidated_advice, accepted=accepted) if accepted else None
+    data_standard_case["case"]["advice"] = advice_for_lu_countersign
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = flags_list
 
@@ -1081,10 +1123,15 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
 
 
 @pytest.mark.parametrize(
-    "accepted_countersignatures",
+    "countersigning_data",
     (
-        [False],
-        [True, False],
+        [
+            {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": False},
+        ],
+        [
+            {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
+            {"order": services.SECOND_COUNTERSIGN, "outcome_accepted": False},
+        ],
     ),
 )
 def test_rejection_countersignature_not_displayed_if_feature_flag_off(
@@ -1092,15 +1139,15 @@ def test_rejection_countersignature_not_displayed_if_feature_flag_off(
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
-    consolidated_advice,
+    advice_for_lu_countersign,
     gov_user,
     with_lu_countersigning_disabled,
-    accepted_countersignatures,
+    countersigning_data,
 ):
-    data_standard_case["case"]["advice"] = consolidated_advice
+    data_standard_case["case"]["advice"] = advice_for_lu_countersign
     # Rejected countersignature
     data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
-        consolidated_advice, accepted=accepted_countersignatures
+        advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in [LU_COUNTERSIGN_REQUIRED_ID, GREEN_COUNTRIES_ID]]
 
