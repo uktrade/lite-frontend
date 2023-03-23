@@ -684,20 +684,13 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
 
 
 def test_view_consolidate_approve_outcome(
-    requests_mock,
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
     consolidated_advice,
-    gov_user,
+    mock_gov_lu_user,
 ):
     data_standard_case["case"]["advice"] = consolidated_advice
-    gov_user["user"]["team"]["name"] = "Licensing Unit"
-    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
@@ -723,21 +716,13 @@ def test_view_consolidate_approve_outcome(
 
 
 def test_view_consolidate_refuse_outcome(
-    requests_mock,
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
     consolidated_refusal_outcome,
-    gov_user,
+    mock_gov_lu_user,
 ):
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
-    gov_user["user"]["team"]["name"] = "Licensing Unit"
-    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
@@ -845,12 +830,11 @@ def test_view_consolidate_approve_outcome_countersign_warning_message(
     ),
 )
 def test_case_returned_info_for_first_countersignature_rejection(
-    requests_mock,
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
     advice_for_lu_countersign,
-    gov_user,
+    mock_gov_lu_user,
     flags,
     with_lu_countersigning_enabled,
 ):
@@ -861,14 +845,6 @@ def test_case_returned_info_for_first_countersignature_rejection(
         advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
-
-    gov_user["user"]["team"]["name"] = "LU Team"
-    gov_user["user"]["team"]["alias"] = services.LICENSING_UNIT_TEAM
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
@@ -905,12 +881,11 @@ def test_case_returned_info_for_first_countersignature_rejection(
     ),
 )
 def test_case_returned_info_for_second_countersignature_rejection(
-    requests_mock,
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
     advice_for_lu_countersign,
-    gov_user,
+    mock_gov_lu_user,
     flags,
     with_lu_countersigning_enabled,
 ):
@@ -923,14 +898,6 @@ def test_case_returned_info_for_second_countersignature_rejection(
         advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
-
-    gov_user["user"]["team"]["name"] = "LU Team"
-    gov_user["user"]["team"]["alias"] = services.LICENSING_UNIT_TEAM
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
@@ -959,12 +926,11 @@ def test_case_returned_info_for_second_countersignature_rejection(
 
 
 def test_finalise_button_shown_if_no_rejected_countersignatures(
-    requests_mock,
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
     advice_for_lu_countersign,
-    gov_user,
+    mock_gov_lu_user,
     with_lu_countersigning_enabled,
 ):
     data_standard_case["case"]["advice"] = advice_for_lu_countersign
@@ -976,14 +942,6 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
         advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[GREEN_COUNTRIES_ID]]
-
-    gov_user["user"]["team"]["name"] = "LU Team"
-    gov_user["user"]["team"]["alias"] = services.LICENSING_UNIT_TEAM
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
@@ -1135,12 +1093,11 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
     ),
 )
 def test_rejection_countersignature_not_displayed_if_feature_flag_off(
-    requests_mock,
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
     advice_for_lu_countersign,
-    gov_user,
+    mock_gov_lu_user,
     with_lu_countersigning_disabled,
     countersigning_data,
 ):
@@ -1150,14 +1107,6 @@ def test_rejection_countersignature_not_displayed_if_feature_flag_off(
         advice_for_lu_countersign, countersigning_data
     )
     data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in [LU_COUNTERSIGN_REQUIRED_ID, GREEN_COUNTRIES_ID]]
-
-    gov_user["user"]["team"]["name"] = "LU Team"
-    gov_user["user"]["team"]["alias"] = services.LICENSING_UNIT_TEAM
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
 
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
