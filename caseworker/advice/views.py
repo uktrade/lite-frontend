@@ -418,6 +418,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
+        context["show_rejected_countersignatures"] = True
 
         return context
 
