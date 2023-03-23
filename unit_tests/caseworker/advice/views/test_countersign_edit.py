@@ -40,7 +40,7 @@ def countersign_advice(data_standard_case, advice_for_countersign, current_user)
             "reasons": "I concur",
             "countersigned_user": current_user,
             "case": data_standard_case["case"]["id"],
-            "advice": item["id"],
+            "advice": item,
         }
         for item in advice_for_countersign
     ]

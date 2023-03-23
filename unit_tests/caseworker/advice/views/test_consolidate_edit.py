@@ -1,11 +1,18 @@
+import copy
+from copy import deepcopy
+
 import pytest
 from unittest.mock import patch
 from uuid import uuid4
 
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
 from caseworker.advice import forms, services
+from unit_tests.caseworker.conftest import countersignatures_for_advice
+
+TEAM_ID = "34344324-34234-432"
 
 
 @pytest.fixture
@@ -230,7 +237,7 @@ def test_edit_advice_get(
     refusal_advice,
     url,
 ):
-    mock_get_gov_user.return_value = ({"user": {"team": {"id": "34344324-34234-432", "alias": team}}}, None)
+    mock_get_gov_user.return_value = ({"user": {"team": {"id": TEAM_ID, "alias": team}}}, None)
     case_data = data_standard_case
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     # Add conflicting user advice
@@ -261,7 +268,7 @@ def test_edit_consolidated_advice_approve_by_lu_put(
     case_data["case"]["advice"] = consolidated_advice
 
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        {"user": {"team": {"id": TEAM_ID, "alias": services.LICENSING_UNIT_TEAM}}},
         None,
     )
     requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
@@ -297,7 +304,7 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
     case_data["case"]["advice"] = consolidated_advice
 
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        {"user": {"team": {"id": TEAM_ID, "alias": services.LICENSING_UNIT_TEAM}}},
         None,
     )
     requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
@@ -331,7 +338,7 @@ def test_edit_consolidated_advice_by_LU_error_from_API(
     case_data["case"]["advice"] = consolidated_advice
 
     mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "34344324-34234-432", "alias": services.LICENSING_UNIT_TEAM}}},
+        {"user": {"team": {"id": TEAM_ID, "alias": services.LICENSING_UNIT_TEAM}}},
         None,
     )
     requests_mock.put(
@@ -344,3 +351,52 @@ def test_edit_consolidated_advice_by_LU_error_from_API(
     response = authorized_client.post(url, data=data)
     assert response.status_code == 200
     assert "Failed to put" in response.content.decode("utf-8")
+
+
+@pytest.mark.parametrize(
+    "advice_type, expected_title",
+    (
+        ("FCDO", "Countersigned by FCDO User"),
+        ("MOD", "Countersigned by MOD User"),
+    ),
+)
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_advice_get_displays_correct_counteradvice(
+    mock_get_gov_user,
+    authorized_client,
+    data_standard_case,
+    standard_case_with_advice,
+    refusal_advice,
+    url,
+    fcdo_countersigned_advice,
+    mod_countersigned_advice,
+    advice_type,
+    expected_title,
+):
+    team = services.LICENSING_UNIT_TEAM
+    mock_get_gov_user.return_value = ({"user": {"team": {"id": TEAM_ID, "alias": team}}}, None)
+    case_data = data_standard_case
+    case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
+    # Add final advice
+    for advice in standard_case_with_advice["advice"]:
+        advice["level"] = "final"
+        advice["user"]["team"]["alias"] = team
+    more_advice = copy.deepcopy(standard_case_with_advice["advice"])
+    more_advice[0]["id"] = "d8cbfd81-290d-4c98-958b-621c0876dffc"
+    case_data["case"]["advice"] += more_advice
+
+    # Add some new-style countersignatures to the case.
+    case_data["case"]["countersign_advice"] = countersignatures_for_advice(case_data["case"]["advice"], accepted=[True])
+
+    # Add FCDO/MOD advice with old-style countersignature
+    fcdo_or_mod_advice = {"FCDO": fcdo_countersigned_advice, "MOD": mod_countersigned_advice}[advice_type]
+    case_data["case"]["advice"] += fcdo_or_mod_advice
+
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    countersignatures = soup.find_all(class_="countersignature-block")
+
+    # Assert the correct countersignature is displayed.
+    assert len(countersignatures) == 1
+    assert countersignatures[0].find("h2").text == expected_title
+    assert countersignatures[0].find("p").text == fcdo_or_mod_advice[0]["countersign_comments"]

@@ -102,16 +102,7 @@ class CaseContextMixin:
             "queue_pk": self.kwargs["queue_pk"],
             "caseworker": self.caseworker,
             "is_lu_countersigning": (is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),
-            "ordered_countersign_advice": self.ordered_countersign_advice(),
         }
-
-    def ordered_countersign_advice(self):
-        """
-        Return a single countersignature per order value in order to filter out duplicates
-        for display in the templates
-        """
-        one_countersignature_per_order_value = {cs["order"]: cs for cs in self.case.get("countersign_advice", [])}
-        return sorted(one_countersignature_per_order_value.values(), key=lambda cs: cs["order"], reverse=True)
 
     def rejected_countersign_advice(self):
         """
@@ -428,6 +419,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
+
         return context
 
 
