@@ -61,6 +61,10 @@ run_ui_tests:
 	PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker ${ADDITIONAL_PYTEST_UI_TEST_ARGS}
 	PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter ${ADDITIONAL_PYTEST_UI_TEST_ARGS}
 
+run_docker_ui_tests:
+	docker-compose exec caseworker bash -c "PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker ${ADDITIONAL_PYTEST_UI_TEST_ARGS}"
+	docker-compose exec exporter bash -c "PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter ${ADDITIONAL_PYTEST_UI_TEST_ARGS}"
+
 run_all_unit_tests:
 	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest ./unit_tests/caseworker --cov=. --cov-config=.coveragerc --cov-report=html
 	PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest ./unit_tests/exporter --cov=. --cov-config=.coveragerc --cov-report=html

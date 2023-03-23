@@ -31,7 +31,7 @@ def driver(request, api_client, environment, tmp_download_path):
         driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
     else:
         driver = webdriver.Remote(
-            command_executor="http://host.docker.internal:4444/wd/hub",
+            command_executor="http://selenium-hub:4444/wd/hub",
             options=chrome_options,
             desired_capabilities=desired_capabilities,
         )

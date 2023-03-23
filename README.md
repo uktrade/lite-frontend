@@ -192,6 +192,45 @@ Finally, to run a UI test on the command line (will run an exporter and casework
 PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/exporter
 PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/caseworker/
 ```
+## Ui Tests with Docker
+All env variables above apply
+
+Assuming you already have an instance of the api and frontend running using docker-compose you can either:
+
+Run the tests from the frontend directory:
+```
+make run_docker_ui_tests
+```
+
+to do this manually:
+```
+docker-compose exec caseworker bash -c "PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker ${ADDITIONAL_PYTEST_UI_TEST_ARGS}"
+docker-compose exec exporter bash -c "PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter ${ADDITIONAL_PYTEST_UI_TEST_ARGS}"
+```
+
+Connect to the box and run the tests:
+**caseworker**
+```
+docker-compose exec caseworker bash
+PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker ${ADDITIONAL_PYTEST_UI_TEST_ARGS}
+```
+**exporter**
+```
+docker-compose exec exporter bash
+PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter ${ADDITIONAL_PYTEST_UI_TEST_ARGS}
+```
+
+${ADDITIONAL_PYTEST_UI_TEST_ARGS} is always set to --headless in the docker-compose so if you'd like to run without headless simply run:
+
+```
+PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker
+PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter
+```
+or
+```
+docker-compose exec caseworker bash -c "PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker"
+docker-compose exec exporter bash -c "PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter"
+```
 
 ## Javascript/SCSS
 
