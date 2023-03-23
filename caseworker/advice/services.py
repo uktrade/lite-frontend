@@ -53,6 +53,8 @@ LU_SR_MGR_CHECK_REQUIRED_ID = "3e30f39c-ed82-41e9-b180-493a9fd0f169"  # /PS-IGNO
 MANPADS_ID = "a6bf56e8-dda7-491c-aa43-0edf249beca4"  # /PS-IGNORE
 AP_LANDMINE_ID = "b8000761-14fa-4a6c-8532-6d21db337c2d"  # /PS-IGNORE
 
+LU_COUNTERSIGN_FLAGS = {LU_COUNTERSIGN_REQUIRED_ID, LU_SR_MGR_CHECK_REQUIRED_ID}
+
 NSG_POTENTIAL_TRIGGER_LIST_REGIME = "NSG Potential Trigger List"
 
 # Countersigning
@@ -130,6 +132,10 @@ def filter_advice_by_teams(all_advice, teams_list):
         advice_from_teams.extend(filter_advice_by_team(all_advice, team_alias))
 
     return advice_from_teams
+
+
+def filter_countersign_advice_by_order(countersign_advice, order):
+    return [advice for advice in countersign_advice if advice["order"] == order]
 
 
 def get_my_advice(advice, caseworker):
@@ -555,7 +561,6 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
     elif team_alias in (MOD_ECJU_TEAM, LICENSING_UNIT_TEAM):
-
         consolidated_advice = get_consolidated_advice(case.advice, team_alias)
 
         if queue_alias in (LU_LICENSING_MANAGER_QUEUE, LU_SR_LICENSING_MANAGER_QUEUE):

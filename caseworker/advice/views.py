@@ -202,7 +202,6 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
     def get_context_data(self, **kwargs):
@@ -653,46 +652,78 @@ class ConsolidateEditView(ReviewConsolidateView):
 class ViewConsolidatedAdviceView(AdviceView, FormView):
     form_class = forms.MoveCaseForwardForm
 
+    def get_lu_finalise_case(self, lu_countersign_required, rejected_lu_countersignature):
+        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            finalise_case = (not lu_countersign_required) and (not rejected_lu_countersignature)
+        else:
+            finalise_case = not lu_countersign_required
+        return finalise_case
+
+    def get_lu_countersign_required(self, rejected_lu_countersignature):
+        case_flag_ids = {flag["id"] for flag in self.case.all_flags}
+        lu_countersign_flags = services.LU_COUNTERSIGN_FLAGS
+
+        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
+
+            countersign_orders = []
+            countersign_required = case_flag_ids.intersection(lu_countersign_flags)
+            if countersign_required:
+                countersign_orders = [services.FIRST_COUNTERSIGN]
+            senior_manager_countersign_required = case_flag_ids.intersection(
+                {services.LU_SR_MGR_CHECK_REQUIRED_ID, services.MANPADS_ID}
+            )
+            if senior_manager_countersign_required:
+                countersign_orders = [services.FIRST_COUNTERSIGN, services.SECOND_COUNTERSIGN]
+
+            if rejected_lu_countersignature:
+                lu_countersign_required = False
+            else:
+                countersign_advice = self.case.get("countersign_advice", [])
+                are_all_countersign_orders_accepted = []
+                for order in countersign_orders:
+                    filtered_countersign_advice = services.filter_countersign_advice_by_order(countersign_advice, order)
+                    are_all_countersign_orders_accepted.append(
+                        len(filtered_countersign_advice) > 0
+                        and all(item["outcome_accepted"] for item in filtered_countersign_advice)
+                    )
+
+                lu_countersign_required = not all(are_all_countersign_orders_accepted)
+        else:
+            lu_countersign_required = bool(lu_countersign_flags.intersection(case_flag_ids))
+
+        return lu_countersign_required
+
+    def get_rejected_lu_countersignature(self):
+        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            return self.rejected_countersign_advice()
+        else:
+            return None
+
     def get_context(self, **kwargs):
         user_team_alias = self.caseworker["team"]["alias"]
         consolidated_advice = []
         if user_team_alias in [services.LICENSING_UNIT_TEAM, services.MOD_ECJU_TEAM]:
             consolidated_advice = services.get_consolidated_advice(self.case.advice, user_team_alias)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
-        lu_countersign_flags = {services.LU_COUNTERSIGN_REQUIRED_ID, services.LU_SR_MGR_CHECK_REQUIRED_ID}
-        case_flag_ids = {flag["id"] for flag in self.case.all_flags}
-        rejected_lu_countersignature = None
 
-        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-            lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
-            rejected_lu_countersignature = self.rejected_countersign_advice()
+        rejected_lu_countersignature = False
+        lu_countersign_required = False
+        finalise_case = False
 
-            if rejected_lu_countersignature:
-                lu_countersign_required = False
-            else:
-                lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
-                    lu_countersign_flags.intersection(case_flag_ids)
-                )
-
-            finalise_case = (
-                user_team_alias == services.LICENSING_UNIT_TEAM
-                and not lu_countersign_required
-                and not rejected_lu_countersignature
-            )
-        else:
-            lu_countersign_required = user_team_alias == services.LICENSING_UNIT_TEAM and bool(
-                lu_countersign_flags.intersection(case_flag_ids)
-            )
-            finalise_case = user_team_alias == services.LICENSING_UNIT_TEAM and not lu_countersign_required
+        if user_team_alias == services.LICENSING_UNIT_TEAM:
+            rejected_lu_countersignature = self.get_rejected_lu_countersignature()
+            lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
+            finalise_case = self.get_lu_finalise_case(lu_countersign_required, rejected_lu_countersignature)
 
         return {
             **super().get_context(**kwargs),
             "consolidated_advice": consolidated_advice,
             "nlr_products": nlr_products,
-            "finalise_case": finalise_case,
-            "lu_countersign_required": lu_countersign_required,
-            "rejected_lu_countersignature": rejected_lu_countersignature,
             "denial_reasons_display": self.denial_reasons_display,
+            "rejected_lu_countersignature": rejected_lu_countersignature,
+            "lu_countersign_required": lu_countersign_required,
+            "finalise_case": finalise_case,
         }
 
     def form_valid(self, form):
