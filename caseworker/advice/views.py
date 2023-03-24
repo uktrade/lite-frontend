@@ -411,6 +411,18 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
 class ViewCountersignedAdvice(AdviceDetailView):
     template_name = "advice/view_countersign.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
+        is_lu_countersigning = ((is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),)
+        if is_in_lu_team:
+            rejected_lu_countersignature = self.get_rejected_lu_countersignature()
+            if rejected_lu_countersignature and is_lu_countersigning:
+                kwargs["move_case_button_label"] = "Move case back"
+
+        return kwargs
+
     def can_edit(self, advice_to_countersign):
         """Determine of the current user can edit the countersign comments.
         This will be the case if the current user made those comments.
