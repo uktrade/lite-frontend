@@ -67,6 +67,8 @@ def test_single_lu_countersignature(
     assert len(counter_sigs) == 1
     assert counter_sigs[0].find(class_="govuk-heading-m").text == "Countersigned by Testy McTest"
     assert counter_sigs[0].find(class_="govuk-body").text == "I concur"
+    rejected_warning = soup.find(id="rejected-countersignature")
+    assert not rejected_warning
 
 
 @patch("caseworker.advice.views.get_gov_user")
@@ -102,6 +104,8 @@ def test_double_lu_countersignature(
     assert counter_sigs[0].find(class_="govuk-body").text == "LGTM"
     assert counter_sigs[1].find(class_="govuk-heading-m").text == "Countersigned by Testy McTest"
     assert counter_sigs[1].find(class_="govuk-body").text == "I concur"
+    rejected_warning = soup.find(id="rejected-countersignature")
+    assert not rejected_warning
 
 
 @patch("caseworker.advice.views.get_gov_user")
@@ -134,6 +138,10 @@ def test_single_lu_rejected_countersignature(
     assert len(rejected_counter_sigs) == 1
     assert rejected_counter_sigs[0].find("h2").text == "Countersigner Testy McTest disagrees with this recommendation"
     assert rejected_counter_sigs[0].find("p").text == "I disagree"
+    rejected_warning = soup.find(id="rejected-countersignature")
+    assert rejected_warning
+    assert "This case will be returned to the case officer's queue." in rejected_warning.text
+    assert "It will come back for countersigning once they have reviewed and moved it forward." in rejected_warning.text
 
 
 @patch("caseworker.advice.views.get_gov_user")
@@ -169,3 +177,7 @@ def test_lu_rejected_senior_countersignature(
     assert counter_sigs[0].find("p").text == "Nope"
     assert counter_sigs[1].find("h2").text == "Countersigned by Testy McTest"
     assert counter_sigs[1].find("p").text == "I concur"
+    rejected_warning = soup.find(id="rejected-countersignature")
+    assert rejected_warning
+    assert "This case will be returned to the case officer's queue." in rejected_warning.text
+    assert "It will come back for countersigning once they have reviewed and moved it forward." in rejected_warning.text
