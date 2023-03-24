@@ -35,7 +35,8 @@ def countersign_advice(data_standard_case, advice_for_countersign, current_user)
     return [
         {
             "id": str(uuid4()),
-            "order": 1,
+            "valid": True,
+            "order": services.FIRST_COUNTERSIGN,
             "outcome_accepted": True,
             "reasons": "I concur",
             "countersigned_user": current_user,

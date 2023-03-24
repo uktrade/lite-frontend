@@ -135,7 +135,7 @@ def filter_advice_by_teams(all_advice, teams_list):
 
 
 def filter_countersign_advice_by_order(countersign_advice, order):
-    return [advice for advice in countersign_advice if advice["order"] == order]
+    return [advice for advice in countersign_advice if advice["valid"] is True and advice["order"] == order]
 
 
 def get_my_advice(advice, caseworker):
@@ -221,7 +221,7 @@ def get_countersigners_decision_advice(case, caseworker):
     """
     countersigned_by = set()
     for advice in case.countersign_advice:
-        if advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]:
+        if advice["valid"] is True and advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]:
             countersigned_by.add(advice["countersigned_user"]["id"])
     return countersigned_by
 

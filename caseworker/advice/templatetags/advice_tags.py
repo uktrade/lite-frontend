@@ -69,7 +69,7 @@ def countersignatures_for_advice(case, advice):
     advice_ids = {ad["id"] for ad in advice}
     countersignatures_grouped_by_order = defaultdict(list)
     for cs in case.get("countersign_advice", []):
-        if cs.get("advice", {}).get("id") in advice_ids:
+        if cs["valid"] is True and cs.get("advice", {}).get("id") in advice_ids:
             countersignatures_grouped_by_order[cs["order"]].append(cs)
     return [
         countersignatures_grouped_by_order[order]
