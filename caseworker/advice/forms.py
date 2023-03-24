@@ -294,10 +294,10 @@ class FCDORefusalAdviceForm(RefusalAdviceForm):
 
 
 class MoveCaseForwardForm(forms.Form):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, move_case_button_label="Move case forward", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.layout = Layout(Submit("submit", "Move case forward", css_id="move-case-forward-button"))
+        self.helper.layout = Layout(Submit("submit", move_case_button_label, css_id="move-case-forward-button"))
 
 
 class BEISTriggerListFormBase(forms.Form):

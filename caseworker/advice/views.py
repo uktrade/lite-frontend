@@ -83,6 +83,12 @@ class CaseContextMixin:
             if (dest["id"], self.caseworker["team"]["id"]) not in advised_on.items()
         }
 
+    def get_rejected_lu_countersignature(self):
+        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
+            return self.rejected_countersign_advice()
+        else:
+            return None
+
     def get_context(self, **kwargs):
         return {}
 
@@ -95,6 +101,10 @@ class CaseContextMixin:
         # template (layouts/case.html) from which we are inheriting.
 
         is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
+        rejected_lu_countersignature = None
+        if is_in_lu_team:
+            rejected_lu_countersignature = self.get_rejected_lu_countersignature()
+
         return {
             **context,
             **self.get_context(case=self.case),
@@ -102,6 +112,7 @@ class CaseContextMixin:
             "queue_pk": self.kwargs["queue_pk"],
             "caseworker": self.caseworker,
             "is_lu_countersigning": (is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),
+            "rejected_lu_countersignature": rejected_lu_countersignature,
         }
 
     def rejected_countersign_advice(self):
@@ -400,6 +411,18 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
 class ViewCountersignedAdvice(AdviceDetailView):
     template_name = "advice/view_countersign.html"
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
+        is_lu_countersigning = ((is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),)
+        if is_in_lu_team:
+            rejected_lu_countersignature = self.get_rejected_lu_countersignature()
+            if rejected_lu_countersignature and is_lu_countersigning:
+                kwargs["move_case_button_label"] = "Move case back"
+
+        return kwargs
+
     def can_edit(self, advice_to_countersign):
         """Determine of the current user can edit the countersign comments.
         This will be the case if the current user made those comments.
@@ -418,6 +441,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
+        context["show_rejected_countersignatures"] = True
 
         return context
 
@@ -694,12 +718,6 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
 
         return lu_countersign_required
 
-    def get_rejected_lu_countersignature(self):
-        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-            return self.rejected_countersign_advice()
-        else:
-            return None
-
     def get_context(self, **kwargs):
         user_team_alias = self.caseworker["team"]["alias"]
         consolidated_advice = []
@@ -707,7 +725,6 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             consolidated_advice = services.get_consolidated_advice(self.case.advice, user_team_alias)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
 
-        rejected_lu_countersignature = False
         lu_countersign_required = False
         finalise_case = False
 
@@ -721,7 +738,6 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "consolidated_advice": consolidated_advice,
             "nlr_products": nlr_products,
             "denial_reasons_display": self.denial_reasons_display,
-            "rejected_lu_countersignature": rejected_lu_countersignature,
             "lu_countersign_required": lu_countersign_required,
             "finalise_case": finalise_case,
         }
