@@ -269,6 +269,19 @@
 				$("#case-flags").css({"opacity": 1 - (scrollPosition / 10), "transform": "translateY(" + -(30 - padding) + "px)", "margin-top": paddingFlags + "px"});
 			}
 		});
+
+		var title = document.title;
+
+		function setTitle(){
+			var title_heading = $(".lite-tabs__tab--selected")[0].text.trim();
+			document.title= `${title_heading} ${title}`;
+		}
+
+		$(".lite-tabs__tab").click(function(){
+			setTitle();
+		})
+		setTitle();
+
 	</script>
 	{% if has_future_next_review_date and not is_system_queue %}
 		<script src="{% static 'javascripts/assign_queue.js' %}"></script>
