@@ -125,7 +125,11 @@
 				{%if documents or good.is_document_sensitive  %}
 					<div class="govuk-inset-text">
 					{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
-						Use <a href="https://www.spire.trade.gov.uk">SPIRE</a> to raise a control list classification (CLC) query if you're not sure whether your product is on the control list.
+						Use <a href="https://www.spire.trade.gov.uk">SPIRE</a>
+						<div class="govuk-visually-hidden">
+							&nbsp;(the online export licensing system)
+						</div>
+						 to raise a control list classification (CLC) query if you're not sure whether your product is on the control list.
 					{% else %}
 							If you're not sure it's a controlled product, <a href="{% url 'goods:raise_goods_query' good.id %}" class="govuk-link govuk-link--no-visited-state">raise a control list classification query</a>.
 					{% endif %}
