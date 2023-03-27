@@ -6,6 +6,29 @@ from lite_content.lite_internal_frontend.strings import letter_templates
 from lite_forms.components import Form, RadioButtonsImage, Option, BackLink, TextArea, Custom, HelpSection
 
 
+def select_template_no_edit_form(kwargs, post_url, templates, back_url):
+    return Form(
+        title=letter_templates.LetterTemplatesPage.PickTemplate.TITLE,
+        questions=[
+            RadioButtonsImage(
+                name="template",
+                options=[
+                    Option(
+                        template["id"],
+                        template["name"],
+                        img_url=f"/assets/images/letter_templates/{template['layout']['filename']}.png",
+                    )
+                    for template in templates["results"]
+                ],
+            )
+        ],
+        back_link=BackLink(url=back_url),
+        default_button_name=GenerateDocumentsPage.EditTextForm.BUTTON,
+        post_url=reverse_lazy(post_url, kwargs=kwargs),
+        container="case",
+    )
+
+
 def select_template_form(templates, back_url):
     return Form(
         title=letter_templates.LetterTemplatesPage.PickTemplate.TITLE,

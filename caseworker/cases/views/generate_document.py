@@ -6,6 +6,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from caseworker.cases.forms.generate_document import (
+    select_template_no_edit_form,
     select_template_form,
     edit_document_text_form,
     select_addressee_form,
@@ -103,6 +104,23 @@ class GenerateDecisionDocument(LoginRequiredMixin, GenerateDocument):
         self.back_url = reverse_lazy(
             "cases:finalise_documents", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]}
         )
+        if len(self.templates["results"]) == 1:
+            self.default_template = self.templates["results"][0]["id"]
+            return FormGroup(
+                [
+                    select_template_no_edit_form(
+                        {
+                            "queue_pk": self.kwargs["queue_pk"],
+                            "pk": self.kwargs["pk"],
+                            "tpk": self.default_template,
+                            "decision_key": self.kwargs["decision_key"],
+                        },
+                        post_url="cases:finalise_document_preview",
+                        templates=self.templates,
+                        back_url=self.back_url,
+                    )
+                ]
+            )
         return FormGroup(
             [
                 select_template_form(self.templates, back_url=self.back_url),
@@ -137,7 +155,7 @@ class PreviewDocument(LoginRequiredMixin, TemplateView):
         template_id = str(kwargs["tpk"])
         case_id = str(kwargs["pk"])
         addressee = request.POST.get("addressee", "")
-        text = request.POST.get(TEXT)
+        text = request.POST.get(TEXT, "")
 
         preview, status_code = get_generated_document_preview(
             request, case_id, template=template_id, text=quote(text), addressee=addressee
