@@ -35,7 +35,8 @@ def countersign_advice(data_standard_case, advice_for_countersign, current_user)
     return [
         {
             "id": str(uuid4()),
-            "order": 1,
+            "valid": True,
+            "order": services.FIRST_COUNTERSIGN,
             "outcome_accepted": True,
             "reasons": "I concur",
             "countersigned_user": current_user,
@@ -304,7 +305,7 @@ def test_lu_countersign_edit_get_shows_previous_countersignature(
 
     response = authorized_client.get(countersign_decision_edit_url)
     soup = BeautifulSoup(response.content, "html.parser")
-    countersignature_block = soup.find(id="countersignatures")
+    countersignature_block = soup.find(class_="countersignatures")
     assert response.status_code == 200
 
     counter_sigs = countersignature_block.find_all("div", recursive=False)

@@ -33,6 +33,16 @@
         <div class="govuk-grid-row">
             <br>
             <div class="govuk-grid-column-two-thirds">
+                {% if is_lu_countersigning and rejected_lu_countersignature %}
+                    <div id="rejected-countersignature" class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            This case will be returned to the case officer's queue.
+                            It will come back for countersigning once they have reviewed and moved it forward.
+                        </strong>
+                    </div>
+                {% endif %}
                 <h1 class="govuk-heading-xl">View recommendation</h1>
                 {% if lu_can_edit and buttons.edit_recommendation %}
                 <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:countersign_decision_edit' queue_pk case.id %}">
