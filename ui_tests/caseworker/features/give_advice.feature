@@ -241,7 +241,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click save
     And I click "Generate"
     And I select the template "SIEL template"
-    And I click continue
     And I click preview
     Then I see the licence number on the SIEL licence preview
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
@@ -289,7 +288,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click save
     And I click "Generate"
     And I select the template "Refusal letter template"
-    And I click continue
     And I click preview
     Then I see the application reference on the document preview
     When I click continue
@@ -327,7 +325,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then the document name should be "No Licence Required"
     When I click "Generate"
     And I select the template "No licence required letter template"
-    And I click continue
     And I click preview
     Then I see the application reference on the document preview
     And I see the product name under name on the document preview
