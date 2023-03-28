@@ -5,7 +5,7 @@ import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
-from caseworker.advice.services import FCDO_TEAM, LICENSING_UNIT_TEAM
+from caseworker.advice.services import FCDO_TEAM, LICENSING_UNIT_TEAM, FIRST_COUNTERSIGN, SECOND_COUNTERSIGN
 from core import client
 from core.builtins.custom_tags import filter_advice_by_user
 from unit_tests.caseworker.conftest import countersignatures_for_advice
@@ -280,7 +280,11 @@ def test_lu_countersignatures_not_shown(
     team_id = final_advice["user"]["team"]["id"]
     data_standard_case["case"]["advice"] = [final_advice]
     data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
-        [final_advice], accepted=[True, True]
+        [final_advice],
+        [
+            {"order": FIRST_COUNTERSIGN, "outcome_accepted": True},
+            {"order": SECOND_COUNTERSIGN, "outcome_accepted": True},
+        ],
     )
     requests_mock.get(client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case)
     mock_get_gov_user.return_value = (
