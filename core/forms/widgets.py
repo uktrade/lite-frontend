@@ -5,6 +5,10 @@ class Autocomplete(widgets.Select):
     template_name = "forms/autocomplete_field.html"
 
 
+class CountryAutoComplete(widgets.Select):
+    template_name = "forms/autocomplete_country.html"
+
+
 class GridmultipleSelect(widgets.ChoiceWidget):
     allow_multiple_selected = True
     input_type = "checkbox"

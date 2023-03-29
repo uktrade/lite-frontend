@@ -6,7 +6,7 @@ from django.core.validators import MaxLengthValidator
 from django.urls import reverse_lazy
 
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
-from core.forms.widgets import Autocomplete
+from core.forms.widgets import Autocomplete, CountryAutoComplete
 from exporter.core.constants import CaseTypes
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
@@ -261,7 +261,9 @@ class PartyAddressForm(forms.Form):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
-        self.fields["country"].widget = Autocomplete(attrs={"id": "country-autocomplete", "nonce": request.csp_nonce})
+        self.fields["country"].widget = CountryAutoComplete(
+            attrs={"id": "country-autocomplete", "nonce": request.csp_nonce}
+        )
 
         countries = get_countries(request)
         country_choices = [(country["id"], country["name"]) for country in countries]

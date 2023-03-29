@@ -52,6 +52,7 @@
     "eslint": "^8.8.0",
     "events": "^3.3.0",
     "fetch-polyfill": "^0.8.2",
+    "govuk-country-and-territory-autocomplete": "^1.0.2",
     "govuk-frontend": "^3.13.0",
     "highlight-within-textarea": "^2.0.5",
     "jquery": "^3.6.0",
