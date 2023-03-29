@@ -6,7 +6,6 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 
 from caseworker.cases.forms.generate_document import (
-    select_template_no_edit_form,
     select_template_form,
     edit_document_text_form,
     select_addressee_form,
@@ -108,16 +107,17 @@ class GenerateDecisionDocument(LoginRequiredMixin, GenerateDocument):
             self.default_template = self.templates["results"][0]["id"]
             return FormGroup(
                 [
-                    select_template_no_edit_form(
-                        {
+                    select_template_form(
+                        templates=self.templates,
+                        back_url=self.back_url,
+                        default_button_name="Preview",
+                        post_url="cases:finalise_document_preview",
+                        _kwargs={
                             "queue_pk": self.kwargs["queue_pk"],
                             "pk": self.kwargs["pk"],
                             "tpk": self.default_template,
                             "decision_key": self.kwargs["decision_key"],
                         },
-                        post_url="cases:finalise_document_preview",
-                        templates=self.templates,
-                        back_url=self.back_url,
                     )
                 ]
             )
