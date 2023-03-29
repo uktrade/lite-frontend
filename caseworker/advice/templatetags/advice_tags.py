@@ -66,6 +66,8 @@ def countersignatures_for_advice(case, advice):
     on that case (grouped by countersignature reverse order)
     that are attached to the advice passed as the parameter.
     """
+    if not isinstance(advice, list):
+        advice = [advice]
     advice_ids = {ad["id"] for ad in advice}
     countersignatures_grouped_by_order = defaultdict(list)
     for cs in case.get("countersign_advice", []):
