@@ -2,7 +2,11 @@ import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
 import debounce from "lodash.debounce";
 
-const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
+const initAutocompleteField = (
+  summaryFieldType,
+  summaryFieldPluralised,
+  getDefaultValue
+) => {
   const originalInput = document.querySelector(
     `#report_summary_${summaryFieldType}`
   );
@@ -46,10 +50,7 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
       }
     },
     // Check the following is actually required:
-    defaultValue:
-      "subject" == summaryFieldType
-        ? originalInput.dataset.name
-        : originalInput.dataset.name || "",
+    defaultValue: getDefaultValue(originalInput),
     showNoOptionsFound: true,
     autoselect: true,
     confirmOnBlur: true,
@@ -57,8 +58,16 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
 };
 
 const initARS = () => {
-  initAutocompleteField("prefix", "prefixes");
-  initAutocompleteField("subject", "subjects");
+  initAutocompleteField(
+    "prefix",
+    "prefixes",
+    (originalInput) => originalInput.dataset.name || ""
+  );
+  initAutocompleteField(
+    "subject",
+    "subjects",
+    (originalInput) => originalInput.dataset.name
+  );
 };
 
 export default initARS;
