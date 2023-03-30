@@ -39,11 +39,10 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
       },
     },
     onConfirm: (confirmed) => {
-      if (confirmed) {
-        originalInput.value = confirmed.id;
-      } else if (summaryFieldType === "prefix") {
-        originalInput.value = "";
+      if (!confirmed) {
+        return;
       }
+      originalInput.value = confirmed.id;
     },
     // Check the following is actually required:
     defaultValue:
