@@ -5,7 +5,6 @@ import debounce from "lodash.debounce";
 const initAutocompleteField = (
   summaryFieldType,
   summaryFieldPluralised,
-  onConfirm,
   getDefaultValue
 ) => {
   const originalInput = document.querySelector(
@@ -15,6 +14,7 @@ const initAutocompleteField = (
   autocompleteContainer.id = `report_summary_${summaryFieldType}_container`;
   originalInput.parentElement.appendChild(autocompleteContainer);
   originalInput.style = "display:none";
+  let nameInput;
   accessibleAutocomplete({
     element: document.querySelector(
       `#report_summary_${summaryFieldType}_container`
@@ -43,36 +43,30 @@ const initAutocompleteField = (
         `;
       },
     },
-    onConfirm: (confirmed) => onConfirm(originalInput, confirmed),
-    // Check the following is actually required:
+    onConfirm: (confirmed) => {
+      if (!confirmed && !nameInput.value) {
+        originalInput.value = "";
+      } else if (confirmed) {
+        originalInput.value = confirmed.id;
+      }
+    },
     defaultValue: getDefaultValue(originalInput),
     showNoOptionsFound: true,
     autoselect: true,
     confirmOnBlur: true,
   });
+  nameInput = document.querySelector(`#_report_summary_${summaryFieldType}`);
 };
 
 const initARS = () => {
   initAutocompleteField(
     "prefix",
     "prefixes",
-    (originalInput, confirmed) => {
-      if (confirmed) {
-        originalInput.value = confirmed.id;
-      } else {
-        originalInput.value = "";
-      }
-    },
     (originalInput) => originalInput.dataset.name || ""
   );
   initAutocompleteField(
     "subject",
     "subjects",
-    (originalInput, confirmed) => {
-      if (confirmed) {
-        originalInput.value = confirmed.id;
-      }
-    },
     (originalInput) => originalInput.dataset.name
   );
 };
