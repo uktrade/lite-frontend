@@ -5,6 +5,7 @@ import debounce from "lodash.debounce";
 const initAutocompleteField = (
   summaryFieldType,
   summaryFieldPluralised,
+  onConfirm,
   getDefaultValue
 ) => {
   const originalInput = document.querySelector(
@@ -42,13 +43,7 @@ const initAutocompleteField = (
         `;
       },
     },
-    onConfirm: (confirmed) => {
-      if (confirmed) {
-        originalInput.value = confirmed.id;
-      } else if (summaryFieldType === "prefix") {
-        originalInput.value = "";
-      }
-    },
+    onConfirm: (confirmed) => onConfirm(originalInput, confirmed),
     // Check the following is actually required:
     defaultValue: getDefaultValue(originalInput),
     showNoOptionsFound: true,
@@ -61,11 +56,23 @@ const initARS = () => {
   initAutocompleteField(
     "prefix",
     "prefixes",
+    (originalInput, confirmed) => {
+      if (confirmed) {
+        originalInput.value = confirmed.id;
+      } else {
+        originalInput.value = "";
+      }
+    },
     (originalInput) => originalInput.dataset.name || ""
   );
   initAutocompleteField(
     "subject",
     "subjects",
+    (originalInput, confirmed) => {
+      if (confirmed) {
+        originalInput.value = confirmed.id;
+      }
+    },
     (originalInput) => originalInput.dataset.name
   );
 };
