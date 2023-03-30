@@ -17,7 +17,7 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
     id: `_report_summary_${summaryFieldType}`,
     source: debounce((query, populateResults) => {
       if (!query) {
-        populateResults([{ id: null, name: "" }]);
+        populateResults([{ id: "BLANK", name: "" }]);
         return;
       }
       fetch(`/tau/report_summary/${summaryFieldType}?name=${query}`)

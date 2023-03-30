@@ -9,7 +9,9 @@
     border: none;
 }
 .lite-autocomplete__option:has(.govuk-body:empty)  {
-    display: none;
+    padding-bottom: 0;
+    padding-top: 0;
+    min-height: 0;
 }
 .lite-autocomplete__option--focused {
     div.govuk-body {
