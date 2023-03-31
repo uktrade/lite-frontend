@@ -2,7 +2,11 @@ import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
 import debounce from "lodash.debounce";
 
-const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
+const initAutocompleteField = (
+  summaryFieldType,
+  summaryFieldPluralised,
+  getDefaultValue
+) => {
   const originalInput = document.querySelector(
     `#report_summary_${summaryFieldType}`
   );
@@ -10,6 +14,7 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
   autocompleteContainer.id = `report_summary_${summaryFieldType}_container`;
   originalInput.parentElement.appendChild(autocompleteContainer);
   originalInput.style = "display:none";
+  let nameInput;
   accessibleAutocomplete({
     element: document.querySelector(
       `#report_summary_${summaryFieldType}_container`
@@ -39,25 +44,31 @@ const initAutocompleteField = (summaryFieldType, summaryFieldPluralised) => {
       },
     },
     onConfirm: (confirmed) => {
-      if (!confirmed) {
-        return;
+      if (!confirmed && !nameInput.value) {
+        originalInput.value = "";
+      } else if (confirmed) {
+        originalInput.value = confirmed.id;
       }
-      originalInput.value = confirmed.id;
     },
-    // Check the following is actually required:
-    defaultValue:
-      "subject" == summaryFieldType
-        ? originalInput.dataset.name
-        : originalInput.dataset.name || "",
+    defaultValue: getDefaultValue(originalInput),
     showNoOptionsFound: true,
     autoselect: true,
     confirmOnBlur: true,
   });
+  nameInput = document.querySelector(`#_report_summary_${summaryFieldType}`);
 };
 
 const initARS = () => {
-  initAutocompleteField("prefix", "prefixes");
-  initAutocompleteField("subject", "subjects");
+  initAutocompleteField(
+    "prefix",
+    "prefixes",
+    (originalInput) => originalInput.dataset.name || ""
+  );
+  initAutocompleteField(
+    "subject",
+    "subjects",
+    (originalInput) => originalInput.dataset.name
+  );
 };
 
 export default initARS;
