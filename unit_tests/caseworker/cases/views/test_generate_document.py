@@ -1,12 +1,8 @@
 import pytest
-from pytest_django.asserts import assertTemplateUsed
 from django.urls import reverse
 from core import client
 from uuid import uuid4
 from bs4 import BeautifulSoup
-
-
-from caseworker.cases.views.generate_document import GenerateDecisionDocument
 
 
 @pytest.fixture(autouse=True)
