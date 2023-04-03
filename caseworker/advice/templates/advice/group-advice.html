@@ -57,7 +57,7 @@
                     </tbody>
                 </table>
                 {% with decision_advice.advice.0.advice as advice %}
-                {% if is_lu_countersigning and case|countersignatures_for_advice:advice %}
+                {% if is_lu_countersigning %}
                     {% for countersign_advice in case|countersignatures_for_advice:advice  %}
                         {%  if countersign_advice.0.valid and countersign_advice.0.outcome_accepted %}
                             <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 countersigned-by">
