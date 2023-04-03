@@ -1,4 +1,5 @@
 {% extends 'layouts/base.html' %}
+{% load svg static %}
 
 {% block back_link %}{% endblock %}
 
@@ -82,4 +83,8 @@
 	{% else %}
 		{% include "includes/notice.html" with text="organisations.OrganisationsPage.ACTIVE_FILTER_NO_ORGANISATIONS" %}
 	{% endif %}
+{% endblock %}
+
+{% block javascript %}
+	<script src="{% static 'javascripts/organisations.js' %}"></script>
 {% endblock %}

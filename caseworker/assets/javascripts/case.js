@@ -108,11 +108,23 @@ window.addEventListener("scroll", function (e) {
 
 var title = document.title;
 
+var titleMap = {
+  details: "Case details",
+  contacts: "Add a contact to this case",
+  licences: "View any licences on this case",
+  queries: "Manage requests for information for this case",
+  documents: "Attach or generate a document for this case",
+  "notes and timeline": "View notes and timeline for this case",
+  "recommendations and decision": "Make or edit a recommendation for this case",
+  "product assessment": "Make or edit product assessments for this case",
+};
+
 var setTitle = function () {
   var title_heading = document
     .getElementsByClassName("lite-tabs__tab--selected")[0]
-    .text.trim();
-  document.title = `${title_heading} ${title}`;
+    .text.trim()
+    .toLowerCase();
+  document.title = `${titleMap[title_heading]} - ${title}`;
 };
 var elements = document.getElementsByClassName("lite-tabs__tab");
 

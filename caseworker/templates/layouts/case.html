@@ -192,6 +192,7 @@
 
 {% block javascript %}
 	<script src="{% static 'javascripts/case.js' %}"></script>
+	<script src="{% static 'javascripts/case.js' %}"></script>
 	<script nonce="{{ request.csp_nonce }}">
 		function openGoodModal(goodId, goodTitle) {
 			popupCenter({url: `/queues/{{ queue.id }}/cases/{{ case.id }}/good/${goodId}/`, title: goodTitle, w: 300, h: 500});
