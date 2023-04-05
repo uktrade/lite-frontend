@@ -91,12 +91,11 @@ class Cases:
     def manage_case_status(self, draft_id, status="withdrawn"):
         draft_id_to_change = draft_id or self.api_client.context["draft_id"]
         response = self.api_client.make_request(
-            method="PUT",
-            url="/applications/" + draft_id_to_change + "/status/",
+            method="PATCH",
+            url=f"/cases/{draft_id_to_change}/",
             headers=self.api_client.gov_headers,
             body={"status": status},
         )
-
         return response.status_code
 
     def finalise_case(self, draft_id, action, additional_data=None):
