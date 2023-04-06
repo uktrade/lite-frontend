@@ -218,7 +218,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
 
 
-  @skip @lu_consolidate_advice
+  @lu_consolidate_advice
   Scenario: LU consolidate advice journey
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -237,7 +237,24 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click submit recommendation
     Then I see "reason for approving" as the reasons for approving
     And I see "licence condition" as the licence condition
-    When I click "Finalise case"
+    And I see countersign required warning message
+    When I click move case forward
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Review and countersign"
+    And I agree with outcome and provide "licensing manager approved" as countersign comments
+    And I click submit recommendation
+    Then I see "licensing manager approved" as countersign comments
+    When I click move case forward
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Finalise case"
     And I click save
     And I click "Generate"
     And I select the template "SIEL template"
@@ -298,7 +315,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the case is not assigned to any queues
 
 
-  @skip @lu_nlr_advice
+  @lu_nlr_advice
   Scenario: LU NLR advice journey
     # Setup
     Given I sign in to SSO or am signed into SSO
@@ -322,7 +339,24 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click submit recommendation
     Then I see "reason for approving" as the reasons for approving
     And I see "licence condition" as the licence condition
-    When I click "Finalise case"
+    And I see countersign required warning message
+    When I click move case forward
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Review and countersign"
+    And I agree with outcome and provide "licensing manager approved" as countersign comments
+    And I click submit recommendation
+    Then I see "licensing manager approved" as countersign comments
+    When I click move case forward
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Finalise case"
     And I click save
     Then the document name should be "No Licence Required"
     When I click "Generate"
@@ -336,40 +370,51 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
 
-  @skip @lu_countersign
+  @lu_countersign
   Scenario: LU countersign
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     When I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
-    And I go to my case list
-    And I click the application previously created
-    And I assign myself to the case
-    Then I see the application destinations
-    When I click edit flags on the last destination
-    And I set a "LU Countersign Required" flag
-    And I click I'm done
-    And I click on details
-    And I enter "Decision has been made with reasons" as the countersign note
-    And I click submit
-    And I go to application previously created
-    And I assign myself to the case
-    Then I see the case status is now "Under final review"
-    When I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Senior licensing manager countersigning"
-    And I go to my case list
-    And I click the application previously created
-    And I assign myself to the case
-    Then I click on Notes and timeline
-    Then I should see "Decision has been made with reasons" appear in the timeline
-    When I click on "Details" tab
-    And I click I'm done
-    And I click submit
-    Then I don't see previously created application
-    When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
     And I go to my case list
     And I click the application previously created
-    Then I see the case status is now "Under final review"
-    And I see the case is assigned to "Licensing Unit Post-circulation Cases to Finalise"
+    And I assign myself to the case
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Review and combine"
+    And I enter "reason for approving" as the reasons for approving
+    And I enter "licence condition" as the licence condition
+    And I click submit recommendation
+    Then I see "reason for approving" as the reasons for approving
+    And I see "licence condition" as the licence condition
+    And I see countersign required warning message
+    When I click move case forward
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Review and countersign"
+    And I agree with outcome and provide "licensing manager approved" as countersign comments
+    And I click submit recommendation
+    Then I see "licensing manager approved" as countersign comments
+    When I click move case forward
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Finalise case"
+    And I click save
+    And I click "Generate"
+    And I select the template "SIEL template"
+    And I click continue
+    And I click preview
+    Then I see the licence number on the SIEL licence preview
+    And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
+    When I click continue
+    And I click save and publish to exporter
+    Then I see the case status is now "Finalised"
+    And I see the case is not assigned to any queues
