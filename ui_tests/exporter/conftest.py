@@ -702,9 +702,15 @@ def get_file_upload_path(filename):  # noqa
 
 @given(parsers.parse('I create "{decision}" final advice'))  # noqa
 def final_advice(context, decision, api_test_client):  # noqa
-    api_test_client.cases.create_final_advice(
+    advice = api_test_client.cases.create_final_advice(
         context.case_id, [{"type": decision, "text": "abc", "note": "", "good": context.goods[0]["good"]["id"]}]
     )
+    context.final_advice = advice
+
+
+@given(parsers.parse("I countersign the advice"))  # noqa
+def countersign_advice(context, decision, api_test_client):  # noqa
+    api_test_client.cases.countersign_advice(context.case_id, context.final_advice)
 
 
 @given("I remove the flags to finalise the licence")  # noqa
@@ -718,6 +724,11 @@ def i_remove_all_flags(context, api_test_client):  # noqa
 @given("I put the test user in the admin team")
 def put_test_user_in_admin_team(api_test_client):  # noqa
     api_test_client.gov_users.put_test_user_in_team("Admin")
+
+
+@given(parsers.parse('I put the test user in the "{team_name}" team'))
+def put_test_user_in_specified_team(api_test_client, team_name):  # noqa
+    api_test_client.gov_users.put_test_user_in_team(team_name)
 
 
 @given(parsers.parse('I create a licence for my application with "{decision}" decision document'))  # noqa
