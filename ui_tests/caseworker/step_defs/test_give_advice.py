@@ -217,3 +217,26 @@ def enter_case_note_text(driver, text, context):
 @then(parsers.parse('I see the case is assigned to "{queue}"'))  # noqa
 def case_not_assigned_to_any_queue(driver, queue):  # noqa
     assert CasePage(driver).get_assigned_queues() == queue
+
+
+@then("I see countersign required warning message")
+def lu_countersign_warning_message(driver):  # noqa
+    countersign_warning_message = (
+        "This case requires countersigning. Moving this case on will pass it to the countersigning work queue."
+    )
+    assert countersign_warning_message in RecommendationsAndDecisionPage(driver).get_lu_countersign_warning_message()
+
+
+@when(parsers.parse('I agree with outcome and provide "{comments}" as countersign comments'))  # noqa
+def agree_with_outcome(driver, comments):  # noqa
+    RecommendationsAndDecisionPage(driver).agree_with_outcome_and_countersign(comments)
+
+
+@when(parsers.parse('I disagree with outcome and provide "{comments}" as countersign comments'))  # noqa
+def disagree_with_outcome(driver, comments):  # noqa
+    RecommendationsAndDecisionPage(driver).disagree_with_outcome_and_countersign(comments)
+
+
+@then(parsers.parse('I see "{comments}" as countersign comments'))
+def check_countersign_comments(driver, comments):  # noqa
+    assert RecommendationsAndDecisionPage(driver).get_countersign_comments() == comments
