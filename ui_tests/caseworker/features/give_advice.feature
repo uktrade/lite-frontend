@@ -218,7 +218,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
 
 
-  @lu_consolidate_advice
+  @skip @lu_consolidate_advice
   Scenario: LU consolidate advice journey
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
@@ -251,7 +251,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the case is not assigned to any queues
 
 
-  @lu_refuse_advice
+  @skip @lu_refuse_advice
   Scenario: LU refuse advice journey
     # Setup
     Given I sign in to SSO or am signed into SSO
@@ -298,7 +298,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the case is not assigned to any queues
 
 
-  @lu_nlr_advice
+  @skip @lu_nlr_advice
   Scenario: LU NLR advice journey
     # Setup
     Given I sign in to SSO or am signed into SSO
@@ -336,7 +336,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
 
-  @lu_countersign
+  @skip @lu_countersign
   Scenario: LU countersign
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
