@@ -91,12 +91,11 @@ class Cases:
     def manage_case_status(self, draft_id, status="withdrawn"):
         draft_id_to_change = draft_id or self.api_client.context["draft_id"]
         response = self.api_client.make_request(
-            method="PUT",
-            url="/applications/" + draft_id_to_change + "/status/",
+            method="PATCH",
+            url=f"/cases/{draft_id_to_change}/",
             headers=self.api_client.gov_headers,
             body={"status": status},
         )
-
         return response.status_code
 
     def finalise_case(self, draft_id, action, additional_data=None):
@@ -137,9 +136,30 @@ class Cases:
         )
 
     def create_final_advice(self, case_id, data):
-        self.api_client.make_request(
+        resp = self.api_client.make_request(
             method="POST",
             url="/cases/" + case_id + "/final-advice/",
+            headers=self.api_client.gov_headers,
+            body=data,
+        )
+        return resp.json()["advice"]
+
+    def countersign_advice(self, case_id, advice):
+        gov_user_id = self.api_client.context["gov_user_id"]
+        data = [
+            {
+                "order": 1,
+                "outcome_accepted": True,
+                "reasons": "Agree with the original outcome",
+                "countersigned_user": gov_user_id,
+                "advice": ad["id"],
+                "case": case_id,
+            }
+            for ad in advice
+        ]
+        self.api_client.make_request(
+            method="POST",
+            url="/cases/" + case_id + "/countersign-decision-advice/",
             headers=self.api_client.gov_headers,
             body=data,
         )

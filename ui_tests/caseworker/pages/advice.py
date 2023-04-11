@@ -174,3 +174,24 @@ class RecommendationsAndDecisionPage(BasePage):
                 value="//tbody/tr",
             )
         ]
+
+    def get_lu_countersign_warning_message(self):
+        element = self.driver.find_element(by=By.ID, value="countersign-required")
+        return element.text
+
+    def agree_with_outcome_and_countersign(self, comments):
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='True']").click()
+        textarea = self.driver.find_element(by=By.CLASS_NAME, value="govuk-textarea")
+        textarea.clear()
+        textarea.send_keys(comments)
+
+    def disagree_with_outcome_and_countersign(self, comments):
+        self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='False']").click()
+        textarea = self.driver.find_element(by=By.CLASS_NAME, value="govuk-textarea")
+        textarea.clear()
+        textarea.send_keys(comments)
+
+    def get_countersign_comments(self):
+        countersign_div = self.driver.find_element(by=By.CLASS_NAME, value="countersignatures")
+        comments = countersign_div.find_element(by=By.CLASS_NAME, value="govuk-body")
+        return comments.text
