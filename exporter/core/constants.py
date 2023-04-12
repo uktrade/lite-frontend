@@ -224,7 +224,7 @@ class PartyDocumentType:
 
 
 class ProductSecurityFeatures:
-    TITLE = "Does the product include security features to protect information?"
+    TITLE = "Does the product include cryptography or other information security features?"
     SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
     NO = "No"
 

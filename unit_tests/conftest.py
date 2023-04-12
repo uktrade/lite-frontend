@@ -1787,7 +1787,7 @@ def standard_complete_item_expected_product_summary():
         (
             "uses-information-security",
             "No",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "has-product-document",
@@ -1930,7 +1930,7 @@ def standard_component_accessory_expected_product_summary():
         (
             "uses-information-security",
             "No",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "has-product-document",
@@ -2207,7 +2207,7 @@ def standard_technology_expected_product_summary():
         (
             "security-features",
             "Yes",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "security-feature-details",

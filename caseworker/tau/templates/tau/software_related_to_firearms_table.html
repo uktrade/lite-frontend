@@ -21,7 +21,7 @@
         </tr>
       {% endif %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Does the product include security features to protect information?</td>
+        <td class="govuk-table__header">Does the product include cryptography or other information security features?</td>
         <td class="govuk-table__cell">{{ good.uses_information_security|yesno|capfirst }}</td>
       </tr>
       {% if good.information_security_details %}
