@@ -2,6 +2,7 @@ import datetime
 
 from django.shortcuts import render
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
 from core.constants import CaseStatusEnum, SecurityClassifiedApprovalsType
@@ -89,7 +90,7 @@ class CaseView(TemplateView):
     slices = None
     additional_context = {}
 
-    @property
+    @cached_property
     def caseworker(self):
         user, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
         return user["user"]
