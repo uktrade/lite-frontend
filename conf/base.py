@@ -287,9 +287,13 @@ if FEATURE_DEBUG_TOOLBAR_ON:
         "debug_toolbar.panels.profiling.ProfilingPanel",
         "debug_toolbar.panels.redirects.RedirectsPanel",
     ]
-    INTERNAL_IPS = [
-        "127.0.0.1",
-    ]
+
+    def show_toolbar(request):
+        return True
+
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": show_toolbar,
+    }
 
     index = MIDDLEWARE.index("django.middleware.gzip.GZipMiddleware")
     MIDDLEWARE.insert(index + 1, "debug_toolbar.middleware.DebugToolbarMiddleware")
