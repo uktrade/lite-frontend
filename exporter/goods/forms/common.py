@@ -630,8 +630,8 @@ class ProductUnitQuantityAndValueForm(BaseForm):
 
 class ProductUsesInformationSecurityForm(BaseForm):
     class Layout:
-        TITLE = "Does the product include security features to protect information?"
-        SUBTITLE = "For example, authentication, encryption or any other information security controls."
+        TITLE = "Does the product include cryptography or other information security features?"
+        SUBTITLE = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
 
     uses_information_security = forms.TypedChoiceField(
         choices=(
@@ -649,7 +649,7 @@ class ProductUsesInformationSecurityForm(BaseForm):
     information_security_details = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
-        label="Provide details of the information security features",
+        label="Provide details of the cryptography or information security features",
     )
 
     def get_layout_fields(self):
