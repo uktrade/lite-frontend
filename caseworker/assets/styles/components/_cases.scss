@@ -433,6 +433,12 @@ $case-header-text-colour: govuk-colour('white');
   z-index: 0;
 }
 
+@media screen and (min-width: 900px) {
+  .app-case__status {
+    white-space: nowrap;
+  }
+}
+
 .app-case__flags-bar {
   margin-top: govuk-spacing(4);
   display: flex;

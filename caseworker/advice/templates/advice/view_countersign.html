@@ -46,7 +46,7 @@
                 <h1 class="govuk-heading-xl">View recommendation</h1>
                 {% if lu_can_edit and buttons.edit_recommendation %}
                 <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:countersign_decision_edit' queue_pk case.id %}">
-                    Edit countersigning comment
+                    Edit message to case officer
                 </a>
                 {% elif can_edit and buttons.edit_recommendation %}
                 <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:countersign_edit' queue_pk case.id %}">
