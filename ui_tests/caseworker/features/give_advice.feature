@@ -268,7 +268,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the case is not assigned to any queues
 
 
-  @skip @lu_refuse_advice
+  @lu_refuse_advice
   Scenario: LU refuse advice journey
     # Setup
     Given I sign in to SSO or am signed into SSO
@@ -290,6 +290,20 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I enter "reason for this refusal" as the reasons for refusal
     And I click submit recommendation
     And I click move case forward
+    When I go to my profile page
+    And I change my team to "MOD-ECJU" and default queue to "Review and combine"
+    And I go to my case list
+    Then I should see my case in the cases list
+    When I click the application previously created
+    And I assign myself to the case
+    And I click the recommendations and decision tab
+    And I click "Review and combine"
+    And I click refuse
+    And I click continue
+    And I select refusal criteria "1a, 1b, 1c, 1d, 1e, 1f"
+    And I enter "reason for this refusal" as the reasons for refusal
+    And I click submit recommendation
+    And I click move case forward
     # Scenario starts
     When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
@@ -302,6 +316,25 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I select refusal criteria "1a, 1b, 1c, 1d, 1e, 1f"
     And I enter "reason for this refusal" as the reasons for refusal
     And I click submit recommendation
+    Then I see "reason for this refusal" as the reasons for refusal
+    And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
+    And I see countersign required warning message
+    When I click move case forward
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
+    And I click "Review and countersign"
+    And I agree with outcome and provide "licensing manager approved" as countersign comments
+    And I click submit recommendation
+    Then I see "licensing manager approved" as countersign comments
+    When I click move case forward
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    And I go to my case list
+    And I click the application previously created
+    And I click the recommendations and decision tab
     And I click "Finalise case"
     And I click save
     And I click "Generate"
