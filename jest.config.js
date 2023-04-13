@@ -8,6 +8,9 @@ module.exports = {
   // The test environment that will be used for testing
   testEnvironment: "jsdom",
 
-  // A map from regular expressions to paths to transformers
-  // transform: undefined,
+  "automock": false,
+
+  "setupFiles": [
+    "./setupJest.js"
+  ]
 };
