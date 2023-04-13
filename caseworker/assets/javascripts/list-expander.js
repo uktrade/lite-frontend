@@ -23,17 +23,18 @@ class ListExpander {
         return;
       }
       $li.classList.add("expander__expand-list__item__hidden");
+      $li.setAttribute("aria-hidden", "false");
     });
   }
 
   createExpandButton() {
     this.$el.insertAdjacentHTML(
       "beforeend",
-      `<button class="expander__expand-button" type="button" aria-label="Show more"></button>`
+      `<button class="expander__expand-button" type="button" aria-hidden="true"></button>`
     );
     this.$expandButton = this.$el.querySelector(".expander__expand-button");
     this.$expandButton.innerHTML =
-      `<span>` + this.visibleElems + ` of ` + this.liElems.length + `</span>`;
+      this.visibleElems + ` of ` + this.liElems.length;
     this.$expandButton.addEventListener("click", (evt) =>
       this.handleExpandButtonClick(evt)
     );
