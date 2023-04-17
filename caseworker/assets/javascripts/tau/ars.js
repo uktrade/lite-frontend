@@ -71,4 +71,6 @@ const initARS = () => {
   );
 };
 
+export { initAutocompleteField };
+
 export default initARS;
