@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
+from django.conf import settings
 
 from formtools.wizard.storage.session import SessionStorage
 
@@ -1136,6 +1137,7 @@ class GoodsDetailSummaryCheckYourAnswers(LoginRequiredMixin, TemplateView):
             "is_user_rfd": is_user_rfd,
             "application_status_draft": application["status"]["key"] in ["draft", constants.APPLICANT_EDITING],
             "organisation_documents": documents,
+            # "FEATURE_C7_NCSC_ENABLED": settings.FEATURE_C7_NCSC_ENABLED
         }
 
 

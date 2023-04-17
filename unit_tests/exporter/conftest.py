@@ -372,7 +372,7 @@ def complete_item_summary(good_id):
         (
             "uses-information-security",
             "No",
-            "Does the product include cryptography or other information security features?",
+            "Does the product include security features to protect information?",
         ),
         (
             "has-product-document",
@@ -481,7 +481,7 @@ def component_accessory_summary(good_id):
         (
             "uses-information-security",
             "No",
-            "Does the product include cryptography or other information security features?",
+            "Does the product include security features to protect information?",
         ),
         (
             "has-product-document",
@@ -582,7 +582,7 @@ def technology_summary(good_id):
         (
             "security-features",
             "Yes",
-            "Does the product include cryptography or other information security features?",
+            "Does the product include security features to protect information?",
         ),
         (
             "security-feature-details",

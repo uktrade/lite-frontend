@@ -3,6 +3,7 @@ from datetime import datetime
 from django.views.generic import FormView
 from django.urls import reverse
 from django.shortcuts import redirect
+from django.conf import settings
 
 from core.auth.views import LoginRequiredMixin
 
@@ -168,4 +169,5 @@ class EditSecurityApprovalDetails(
         ctx = super().get_context_data(form, **kwargs)
         ctx["back_link_url"] = self.get_success_url()
         ctx["title"] = form.Layout.TITLE
+        # ctx['FEATURE_C7_NCSC_ENABLED'] = settings.FEATURE_C7_NCSC_ENABLED
         return ctx
