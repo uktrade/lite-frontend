@@ -11,7 +11,7 @@ from ui_tests.caseworker.pages.BasePage import BasePage
 
 
 class AddDenialRecordsPage(BasePage):
-    CSV_FILE_LOCATION = "/tmp/example-denials.csv"
+    CSV_FILE_LOCATION = "/tmp/downloads/example-denials.csv"
 
     def download_example_csv_file(self):
         WebDriverWait(self.driver, 30).until(
