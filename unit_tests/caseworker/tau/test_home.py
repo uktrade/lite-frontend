@@ -41,6 +41,11 @@ def setup(
     yield
 
 
+@pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_C7_NCSC_ENABLED = True
+
+
 @pytest.fixture
 def url(data_standard_case):
     return reverse(
@@ -248,6 +253,7 @@ def test_form(
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
         "is_good_controlled": False,
         "regime_entries": [],
+        "is_ncsc_military_information_security": False,
     }
 
 
@@ -325,7 +331,6 @@ def test_form_regime_entries(
 
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
-
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
         "report_summary_subject": report_summary_subject["id"],
@@ -335,6 +340,7 @@ def test_form_regime_entries(
         "objects": ["8b730c06-ab4e-401c-aeb0-32b3c92e912c"],
         "is_good_controlled": False,
         "regime_entries": regime_entries,
+        "is_ncsc_military_information_security": False,
     }
 
 
