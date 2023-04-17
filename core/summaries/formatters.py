@@ -16,7 +16,11 @@ from core.constants import (
 )
 from exporter.goods.forms.common import ProductMilitaryUseForm
 from exporter.goods.forms.goods import ProductDeclaredAtCustomsForm
+from django.conf import settings
 
+uses_information_security = "Does the product include security features to protect information?"
+if settings.FEATURE_C7_NCSC_ENABLED:
+    uses_information_security = "Does the product include cryptography or other information security features?"
 
 FIREARM_LABELS = {
     "firearm-type": "Select the type of firearm product",
@@ -71,7 +75,7 @@ COMPLETE_ITEM_LABELS = {
     "pv-grading-issuing-authority": "Name and address of the issuing authority",
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
-    "uses-information-security": "Does the product include cryptography or other information security features?",
+    "uses-information-security": uses_information_security,
     "uses-information-security-details": "Provide details of the information security features",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
@@ -132,7 +136,7 @@ COMPONENT_ACCESSORY_LABELS = {
     "pv-grading-issuing-authority": "Name and address of the issuing authority",
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
-    "uses-information-security": "Does the product include cryptography or other information security features?",
+    "uses-information-security": uses_information_security,
     "uses-information-security-details": "Provide details of the information security features",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
@@ -461,7 +465,7 @@ TECHNOLOGY_LABELS = {
     "pv-grading-issuing-authority": "Name and address of the issuing authority",
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
-    "security-features": "Does the product include cryptography or other information security features?",
+    "security-features": uses_information_security,
     "security-feature-details": "Provide details of the information security features",
     "declared-at-customs": "Will the product be declared at customs?",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
