@@ -1,5 +1,6 @@
 {% load parse_date from spire_tags %}
 {% load get_denial_reason_display_values from advice_tags %}
+{% load countersignatures_for_advice from advice_tags %}
 {% for team_advice in grouped_advice %}
     {% for user_advice in team_advice.advice %}
 	<details class="govuk-details" data-module="govuk-details">
@@ -56,7 +57,20 @@
                     </tbody>
                 </table>
                 {% with decision_advice.advice.0.advice as advice %}
-                {% if advice.countersigned_by %}
+                {% if is_lu_countersigning %}
+                    {% for countersign_advice in case|countersignatures_for_advice:advice  %}
+                        {%  if countersign_advice.0.valid and countersign_advice.0.outcome_accepted %}
+                            <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 countersigned-by">
+                                <div class="govuk-grid-row">
+                                    <div class="govuk-grid-column-three-quarters">
+                                        <h2 class="govuk-heading-m">{% if countersign_advice.0.order == 1 %}Countersigned{% elif countersign_advice.0.order == 2 %}Senior countersigned{% endif %} by {{ countersign_advice.0.countersigned_user|full_name }}</h2>
+                                        <p class="govuk-body">{{ countersign_advice.0.reasons }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% elif advice.countersigned_by %}
                 <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 countersigned-by">
                     <div class="govuk-grid-row">
                         <div class="govuk-grid-column-full">
