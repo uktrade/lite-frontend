@@ -330,6 +330,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             "report_summary_prefix": good["report_summary_prefix"]["id"] if good["report_summary_prefix"] else "",
             "report_summary_subject": good["report_summary_subject"]["id"] if good["report_summary_subject"] else "",
             "comment": good["comment"],
+            "is_ncsc_military_information_security": good["is_ncsc_military_information_security"],
             **self.get_regime_entries_form_data(good),
         }
         return form_kwargs
