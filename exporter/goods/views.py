@@ -203,7 +203,6 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
             "error": kwargs.get("error"),
             "text": kwargs.get("text", ""),
             "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
-            # "FEATURE_C7_NCSC_ENABLED": settings.FEATURE_C7_NCSC_ENABLED,
             "from_preexisting_url": from_preexisting_url,
             "application_id": application_id,
         }

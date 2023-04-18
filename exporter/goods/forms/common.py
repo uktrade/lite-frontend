@@ -632,7 +632,7 @@ class ProductUnitQuantityAndValueForm(BaseForm):
 class ProductUsesInformationSecurityForm(BaseForm):
     class Layout:
         TITLE = "Does the product include security features to protect information?"
-        SUBTITLE = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
+        SUBTITLE = "For example, authentication, encryption or any other information security controls."
         if settings.FEATURE_C7_NCSC_ENABLED:
             TITLE = "Does the product include cryptography or other information security features?"
             SUBTITLE = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
@@ -661,6 +661,7 @@ class ProductUsesInformationSecurityForm(BaseForm):
     )
 
     def get_layout_fields(self):
+        ctx = {"FEATURE_C7_NCSC_ENABLED": settings.FEATURE_C7_NCSC_ENABLED}
         return (
             ConditionalRadios(
                 "uses_information_security",
@@ -672,7 +673,7 @@ class ProductUsesInformationSecurityForm(BaseForm):
             ),
             HTML.details(
                 "Help with security features",
-                render_to_string("goods/forms/common/help_with_security_features.html"),
+                render_to_string("goods/forms/common/help_with_security_features.html", context=ctx),
             ),
         )
 

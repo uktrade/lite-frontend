@@ -80,7 +80,7 @@ def test_component_accessory_product_details_context(
         (
             "uses-information-security",
             "No",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "has-product-document",

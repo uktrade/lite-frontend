@@ -371,7 +371,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
             "summary": summary,
             "organisation_documents": self.organisation_documents,
             "cle_suggestions_json": get_cle_suggestions_json([good]),
-            # "FEATURE_C7_NCSC_ENABLED": settings.FEATURE_C7_NCSC_ENABLED
         }
 
     def form_valid(self, form):

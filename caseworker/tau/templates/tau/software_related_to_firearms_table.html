@@ -21,11 +21,7 @@
         </tr>
       {% endif %}
       <tr class="govuk-table__row">
-        {% if FEATURE_C7_NCSC_ENABLED %}
-        <td class="govuk-table__header">Does the product include cryptography or other information security features?</td>
-        {% else %}
         <td class="govuk-table__header">Does the product include security features to protect information?</td>
-        {% endif %}
         <td class="govuk-table__cell">{{ good.uses_information_security|yesno|capfirst }}</td>
       </tr>
       {% if good.information_security_details %}
