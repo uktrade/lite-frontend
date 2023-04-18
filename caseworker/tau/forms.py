@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 
 from requests.exceptions import HTTPError
 
@@ -189,23 +188,6 @@ class TAUEditForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
-        feature_flagged_regimes = []
-        if settings.FEATURE_C6_REGIMES:
-            feature_flagged_regimes = [
-                ConditionalCheckboxesQuestion(
-                    "Chemical Weapons Convention",
-                    "cwc_entries",
-                ),
-                ConditionalCheckboxesQuestion(
-                    "Nuclear Suppliers Group",
-                    "nsg_entries",
-                ),
-                ConditionalCheckboxesQuestion(
-                    "Australia Group",
-                    "ag_entries",
-                ),
-            ]
-
         fields = [
             "control_list_entries",
             HTML.p("Or"),
@@ -222,7 +204,18 @@ class TAUEditForm(forms.Form):
                     "Missile Technology Control Regime",
                     "mtcr_entries",
                 ),
-                *feature_flagged_regimes,
+                ConditionalCheckboxesQuestion(
+                    "Chemical Weapons Convention",
+                    "cwc_entries",
+                ),
+                ConditionalCheckboxesQuestion(
+                    "Nuclear Suppliers Group",
+                    "nsg_entries",
+                ),
+                ConditionalCheckboxesQuestion(
+                    "Australia Group",
+                    "ag_entries",
+                ),
                 "None",
             ),
             "comment",
