@@ -44,9 +44,15 @@ describe("List expander", () => {
 
     const item1 = getByText(div, "Item 1");
     expect(item1).not.toHaveClass("expander__expand-list__item__hidden");
+    expect(item1).not.toHaveAttribute("aria-hidden");
 
     const item2 = getByText(div, "Item 2");
     expect(item2).toHaveClass("expander__expand-list__item__hidden");
+    expect(item2).toHaveAttribute("aria-hidden", "false");
+
+    const expandButton = div.querySelector("button");
+    expect(expandButton).toHaveAttribute("aria-hidden", "true");
+    expect(expandButton).toBeInTheDocument();
   });
 
   test("Expander with no hidden elements has no visible expand button", () => {
