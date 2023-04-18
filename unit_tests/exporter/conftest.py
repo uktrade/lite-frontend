@@ -26,6 +26,11 @@ def pytest_configure(config):
 
 
 @pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_C7_NCSC_ENABLED = True
+
+
+@pytest.fixture(autouse=True)
 def upload_handler():
     settings.FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.MemoryFileUploadHandler"]
 
@@ -372,7 +377,7 @@ def complete_item_summary(good_id):
         (
             "uses-information-security",
             "No",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "has-product-document",
@@ -481,7 +486,7 @@ def component_accessory_summary(good_id):
         (
             "uses-information-security",
             "No",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "has-product-document",
@@ -582,12 +587,12 @@ def technology_summary(good_id):
         (
             "security-features",
             "Yes",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "security-feature-details",
             "security features",
-            "Provide details of the information security features",
+            "Provide details of the cryptography or information security features",
         ),
         (
             "declared-at-customs",

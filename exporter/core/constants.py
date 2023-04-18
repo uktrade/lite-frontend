@@ -226,9 +226,11 @@ class PartyDocumentType:
 
 class ProductSecurityFeatures:
     TITLE = "Does the product include security features to protect information?"
+    SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
     if settings.FEATURE_C7_NCSC_ENABLED:
         TITLE = "Does the product include cryptography or other information security features?"
-    SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
+        SECURITY_FEATURE_DETAILS = "Provide details of the cryptography or information security features"
+
     NO = "No"
 
 
