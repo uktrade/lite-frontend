@@ -132,7 +132,7 @@ class Cases(LoginRequiredMixin, TemplateView):
         except KeyError:
             destinations = []
 
-        unique_destinations = [dict(t) for t in {tuple(destination["country"].items()) for destination in destinations}]
+        unique_destinations = [dict(t) for t in {tuple(destination.items()) for destination in destinations}]
         return unique_destinations
 
     def _limit_lines(self, text, limit):
