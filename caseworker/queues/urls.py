@@ -16,6 +16,11 @@ urlpatterns = [
         name="case_assignment_select_role",
     ),
     path(
+        "<uuid:pk>/case-assignment-assign-to-me/",
+        case_assignments.CaseAssignmentAllocateToMe.as_view(),
+        name="case_assignment_assign_to_me",
+    ),
+    path(
         "<uuid:pk>/case-assignments-assign-case-officer/",
         case_assignments.CaseAssignmentsCaseOfficer.as_view(),
         name="case_assignments_case_officer",

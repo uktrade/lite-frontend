@@ -1,12 +1,16 @@
-import re
 import pytest
-from uuid import uuid4
-
+from bs4 import BeautifulSoup
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
-from bs4 import BeautifulSoup
 
 from core import client
+
+
+@pytest.fixture
+def mock_add_assignment(requests_mock, data_standard_case, mock_gov_user, data_queue):
+    queue_id = data_queue["id"]
+    url = client._build_absolute_uri(f"/queues/{queue_id}/case-assignments/")
+    return requests_mock.put(url=url, json={})
 
 
 @pytest.fixture
@@ -137,7 +141,7 @@ def test_case_assignments_remove_user_POST_error(
     "first_name, last_name, expected_case_officer_name",
     (
         ("some", "user", "some user"),
-        ("", "", "example@example.net"),
+        ("", "", "example@example.net"),  # /PS-IGNORE
     ),
 )
 def test_case_remove_case_officer_GET(
@@ -247,3 +251,36 @@ def test_case_remove_officer_POST_404(authorized_client, data_queue, data_standa
     )
     response = authorized_client.get(url)
     assert response.status_code == 404
+
+
+def test_case_assign_me(
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    data_assignment,
+    mock_gov_user,
+    mock_add_assignment,
+    mock_standard_case,
+    mock_standard_case_ecju_queries,
+    mock_standard_case_documents,
+    mock_standard_case_additional_contacts,
+    mock_standard_case_activity_filters,
+    mock_queue,
+    mock_standard_case_assigned_queues,
+):
+    case = data_standard_case
+    url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    data = {
+        "queue_id": data_queue["id"],
+        "user": mock_gov_user["user"]["id"],
+        "case": case["case"]["id"],
+        "return_to": case_url,
+    }
+
+    response = authorized_client.post(url, data=data, follow=True)
+    assert response.status_code == 200
+
+    html = BeautifulSoup(response.content, "html.parser")
+    success_message = html.find(class_="app-snackbar__content")
+    assert "You have been successfully added as case adviser" in success_message.text

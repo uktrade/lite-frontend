@@ -551,6 +551,10 @@ $case-header-text-colour: govuk-colour('white');
     margin-left: govuk-spacing(8);
   }
 
+  &__action-form {
+    display: inline-block;
+  }
+
   &__action {
     @include govuk-font($size: 19);
     background-color: govuk-colour('white');
@@ -559,6 +563,8 @@ $case-header-text-colour: govuk-colour('white');
     margin-left: govuk-spacing(4);
     padding: govuk-spacing(2) govuk-spacing(4);
     text-decoration: none;
+    border: 0;
+    display: inline-block;
 
     &:hover {
       background-color: govuk-colour("light-grey");
