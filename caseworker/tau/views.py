@@ -7,7 +7,6 @@ from django.shortcuts import redirect
 from django.views.generic import FormView, View, TemplateView
 from django.utils.functional import cached_property
 from django.urls import reverse
-from django.conf import settings
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
