@@ -4,15 +4,16 @@ from core.helpers import convert_parameters_to_query_params
 
 def get_licences(
     request,
-    page=1,
     licence_type="licence",
+    page=None,
     reference=None,
     clc=None,
     country=None,
     end_user=None,
     active_only=None,
 ):
-    response = client.get(request, "/licences/" + convert_parameters_to_query_params(locals()))
+    url = "/licences/" + convert_parameters_to_query_params(locals())
+    response = client.get(request, url)
     return response.json()
 
 
@@ -23,7 +24,7 @@ def get_licence(request, pk):
 
 def get_nlr_letters(
     request,
-    page=1,
+    page=None,
     reference=None,
     clc=None,
     country=None,
