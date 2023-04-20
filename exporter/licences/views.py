@@ -82,7 +82,11 @@ class ListOpenAndStandardLicences(AbstractListView):
         filter_bar = filters.get_licences_filters(
             licence_type=self.object_name, control_list_entries=self.control_list, countries=self.countries
         )
-        licences = get_licences(self.request, licence_type="licence")
+        licences = get_licences(
+            self.request,
+            licence_type="licence",
+            **self.params,
+        )
 
         context = super().get_context_data(data=licences, filters=filter_bar, **kwargs)
         context.update(
