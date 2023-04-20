@@ -1,5 +1,5 @@
 from django.http import Http404
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from django.utils.functional import cached_property
 
 from lite_content.lite_internal_frontend.cases import CasesListPage
@@ -7,6 +7,7 @@ from lite_content.lite_internal_frontend.cases import CasesListPage
 from core.auth.views import LoginRequiredMixin
 from core.exceptions import ServiceError
 
+from caseworker.queues.views.forms import CasesFiltersForm
 from caseworker.cases.helpers.filters import case_filters_bar
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
@@ -23,12 +24,13 @@ from caseworker.queues.services import (
 from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 
 
-class Cases(LoginRequiredMixin, TemplateView):
+class Cases(LoginRequiredMixin, FormView):
     """
     Homepage
     """
 
     template_name = "queues/cases.html"
+    form_class = CasesFiltersForm
 
     @cached_property
     def queue(self):
@@ -184,6 +186,9 @@ class Cases(LoginRequiredMixin, TemplateView):
         case["unique_destinations"] = self._transform_destinations(case)
         case["queue_assignments"] = self._transform_queue_assignments(case)
         case["activity_updates"] = self._transform_activity_updates(case)
+
+    def get_form(self):
+        return CasesFiltersForm(self.request, self.filters, **self.get_form_kwargs())
 
     def get_context_data(self, *args, **kwargs):
 

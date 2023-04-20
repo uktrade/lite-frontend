@@ -1,0 +1,14 @@
+<fieldset {% if fieldset.css_id %}id="{{ fieldset.css_id }}"{% endif %}
+    {% if fieldset.css_class or form_style %}class="{{ fieldset.css_class }}{% if form_style %} {{ form_style }}{% endif %}"{% endif %}
+    {{ fieldset.flat_attrs|safe }}>
+    {% if legend %}
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">{{ legend|safe }}</span>
+            </summary>
+            <div class="govuk-details__text">
+                {{ fields|safe }}
+            </div>
+        </details>
+    {% endif %}
+</fieldset>
