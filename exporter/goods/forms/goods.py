@@ -753,16 +753,13 @@ class ProductSecurityFeaturesForm(BaseForm):
     class Layout:
         TITLE = ProductSecurityFeatures.TITLE
 
-    label = "For example, authentication, encryption or any other information security controls."
-    if settings.FEATURE_C7_NCSC_ENABLED:
-        label = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
     has_security_features = forms.TypedChoiceField(
         choices=(
             (True, "Yes"),
             (False, "No"),
         ),
         coerce=coerce_str_to_bool,
-        label=label,
+        label=ProductSecurityFeatures.SUBTITLE,
         widget=forms.RadioSelect,
         error_messages={
             "required": "Select yes if the product include security features to protect information",
@@ -776,7 +773,6 @@ class ProductSecurityFeaturesForm(BaseForm):
     )
 
     def get_layout_fields(self):
-        ctx = {"FEATURE_C7_NCSC_ENABLED": settings.FEATURE_C7_NCSC_ENABLED}
         return (
             ConditionalRadios(
                 "has_security_features",
@@ -788,7 +784,7 @@ class ProductSecurityFeaturesForm(BaseForm):
             ),
             HTML.details(
                 "Help with security features",
-                render_to_string("goods/forms/common/help_with_security_features.html", context=ctx),
+                f'<p class="govuk-body">{ProductSecurityFeatures.HELP_TEXT}</p>',
             ),
         )
 
