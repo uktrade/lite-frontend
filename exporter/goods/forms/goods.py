@@ -753,9 +753,6 @@ class ProductSecurityFeaturesForm(BaseForm):
     class Layout:
         TITLE = ProductSecurityFeatures.TITLE
 
-    label = "For example, authentication, encryption or any other information security controls."
-    if settings.FEATURE_C7_NCSC_ENABLED:
-        label = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
     has_security_features = forms.TypedChoiceField(
         choices=(
             (True, "Yes"),
@@ -776,7 +773,6 @@ class ProductSecurityFeaturesForm(BaseForm):
     )
 
     def get_layout_fields(self):
-        ctx = {"FEATURE_C7_NCSC_ENABLED": settings.FEATURE_C7_NCSC_ENABLED}
         return (
             ConditionalRadios(
                 "has_security_features",
