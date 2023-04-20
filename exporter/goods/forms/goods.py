@@ -7,7 +7,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.db import models
-from django.conf import settings
 
 from core.builtins.custom_tags import default_na, linkify
 from core.constants import ComponentAccessoryChoices, ProductCategories

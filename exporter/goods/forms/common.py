@@ -7,7 +7,6 @@ from django import forms
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
-from django.conf import settings
 
 from core.forms.layouts import (
     ConditionalRadiosQuestion,
@@ -648,10 +647,6 @@ class ProductUsesInformationSecurityForm(BaseForm):
         },
     )
 
-    security_label = "Provide details of the information security features"
-    if settings.FEATURE_C7_NCSC_ENABLED:
-        security_label = "Provide details of the cryptography or information security features"
-
     information_security_details = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
@@ -659,7 +654,6 @@ class ProductUsesInformationSecurityForm(BaseForm):
     )
 
     def get_layout_fields(self):
-        ctx = {"FEATURE_C7_NCSC_ENABLED": settings.FEATURE_C7_NCSC_ENABLED}
         return (
             ConditionalRadios(
                 "uses_information_security",
