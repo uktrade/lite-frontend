@@ -7,6 +7,7 @@ from django import forms
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.conf import settings
 
 from core.forms.layouts import (
     ConditionalRadiosQuestion,
@@ -632,6 +633,9 @@ class ProductUsesInformationSecurityForm(BaseForm):
     class Layout:
         TITLE = "Does the product include security features to protect information?"
         SUBTITLE = "For example, authentication, encryption or any other information security controls."
+        if settings.FEATURE_C7_NCSC_ENABLED:
+            TITLE = "Does the product include cryptography or other information security features?"
+            SUBTITLE = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
 
     uses_information_security = forms.TypedChoiceField(
         choices=(
@@ -646,13 +650,18 @@ class ProductUsesInformationSecurityForm(BaseForm):
         },
     )
 
+    security_label = "Provide details of the information security features"
+    if settings.FEATURE_C7_NCSC_ENABLED:
+        security_label = "Provide details of the cryptography or information security features"
+
     information_security_details = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
-        label="Provide details of the information security features",
+        label=security_label,
     )
 
     def get_layout_fields(self):
+        ctx = {"FEATURE_C7_NCSC_ENABLED": settings.FEATURE_C7_NCSC_ENABLED}
         return (
             ConditionalRadios(
                 "uses_information_security",
@@ -664,7 +673,7 @@ class ProductUsesInformationSecurityForm(BaseForm):
             ),
             HTML.details(
                 "Help with security features",
-                render_to_string("goods/forms/common/help_with_security_features.html"),
+                render_to_string("goods/forms/common/help_with_security_features.html", context=ctx),
             ),
         )
 

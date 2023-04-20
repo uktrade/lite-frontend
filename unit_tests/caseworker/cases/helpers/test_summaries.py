@@ -17,7 +17,6 @@ from caseworker.cases.helpers.summaries import (
     complete_item_summary,
     complete_item_product_on_application_summary,
 )
-
 from unit_tests.helpers import merge_summaries
 
 

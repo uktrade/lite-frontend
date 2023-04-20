@@ -36,6 +36,11 @@ def pytest_configure(config):
     settings.MOCK_SSO_USER_LAST_NAME = "user"
 
 
+@pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_C7_NCSC_ENABLED = True
+
+
 @pytest.fixture
 def gov_uk_user_id():
     return "2a43805b-c082-47e7-9188-c8b3e1a83cb0"

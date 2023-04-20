@@ -17,7 +17,6 @@ from core.constants import (
 from exporter.goods.forms.common import ProductMilitaryUseForm
 from exporter.goods.forms.goods import ProductDeclaredAtCustomsForm
 
-
 FIREARM_LABELS = {
     "firearm-type": "Select the type of firearm product",
     "firearm-category": "Firearm category",
@@ -71,8 +70,8 @@ COMPLETE_ITEM_LABELS = {
     "pv-grading-issuing-authority": "Name and address of the issuing authority",
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
-    "uses-information-security": "Does the product include security features to protect information?",
-    "uses-information-security-details": "Provide details of the information security features",
+    "uses-information-security": "Does the product include cryptography or other information security features?",
+    "uses-information-security-details": "Provide details of the cryptography or information security features",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
     "product-description": "Describe the product and what it is designed to do",
@@ -132,8 +131,8 @@ COMPONENT_ACCESSORY_LABELS = {
     "pv-grading-issuing-authority": "Name and address of the issuing authority",
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
-    "uses-information-security": "Does the product include security features to protect information?",
-    "uses-information-security-details": "Provide details of the information security features",
+    "uses-information-security": "Does the product include cryptography or other information security features?",
+    "uses-information-security-details": "Provide details of the cryptography or information security features",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
     "product-description": "Describe the product and what it is designed to do",
@@ -461,8 +460,8 @@ TECHNOLOGY_LABELS = {
     "pv-grading-issuing-authority": "Name and address of the issuing authority",
     "pv-grading-details-reference": "Reference",
     "pv-grading-details-date-of-issue": "Date of issue",
-    "security-features": "Does the product include security features to protect information?",
-    "security-feature-details": "Provide details of the information security features",
+    "security-features": "Does the product include cryptography or other information security features?",
+    "security-feature-details": "Provide details of the cryptography or information security features",
     "declared-at-customs": "Will the product be declared at customs?",
     "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
     "no-product-document-explanation": "Explain why you are not able to upload a product document",
