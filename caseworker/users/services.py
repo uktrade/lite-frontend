@@ -39,7 +39,11 @@ def get_gov_users(request, params=None, convert_to_options=False):
 
 def get_gov_user(request, pk=None):
     if pk:
-        response = client.get(request, f"/gov-users/{pk}")
+        if not hasattr(request, "cached_get_gov_user_response_by_pk"):
+            request.cached_get_gov_user_response_by_pk = {}
+        if not request.cached_get_gov_user_response_by_pk.get(pk):
+            request.cached_get_gov_user_response_by_pk[pk] = client.get(request, f"/gov-users/{pk}")
+        response = request.cached_get_gov_user_response_by_pk[pk]
     else:
         if not hasattr(request, "cached_get_gov_user_response"):
             request.cached_get_gov_user_response = client.get(request, "/gov-users/" + "me/")
