@@ -1,5 +1,6 @@
 from core.constants import GoodsTypeCategory
 from lite_content.lite_exporter_frontend import applications
+from django.conf import settings
 
 DATE_FORMAT = "%Y-%m-%d"
 PAGE_DATE_FORMAT = "%d %B %Y"
@@ -226,6 +227,10 @@ class PartyDocumentType:
 class ProductSecurityFeatures:
     TITLE = "Does the product include security features to protect information?"
     SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
+    if settings.FEATURE_C7_NCSC_ENABLED:
+        TITLE = "Does the product include cryptography or other information security features?"
+        SECURITY_FEATURE_DETAILS = "Provide details of the cryptography or information security features"
+
     NO = "No"
 
 

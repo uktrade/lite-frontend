@@ -41,7 +41,7 @@ from core.summaries.reducers import (
     component_accessory_reducer,
 )
 from core.summaries.utils import pick_fields
-
+from django.conf import settings
 
 FIREARM_FIELDS = (
     "firearm-type",
@@ -284,6 +284,16 @@ COMPLETE_ITEM_ON_APPLICATION_FIELDS = (
 )
 
 
+def c7_feature_flag(items):
+    if not settings.FEATURE_C7_NCSC_ENABLED:
+        new_items = {
+            "uses_information_security": "Does the product include security features to protect information?",
+            "uses_information_security_details": "Provide details of the information security features",
+        }
+        items.update(new_items)
+    return items
+
+
 def complete_item_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
@@ -295,7 +305,7 @@ def complete_item_summary(good, additional_formatters=None):
     }
     summary = pick_fields(summary, COMPLETE_ITEM_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, COMPLETE_ITEM_LABELS)
+    summary = add_labels(summary, c7_feature_flag(COMPLETE_ITEM_LABELS))
 
     return summary
 
