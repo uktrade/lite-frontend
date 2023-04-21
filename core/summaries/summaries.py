@@ -287,10 +287,13 @@ COMPLETE_ITEM_ON_APPLICATION_FIELDS = (
 def c7_feature_flag(items):
     if not settings.FEATURE_C7_NCSC_ENABLED:
         new_items = {
-            "uses_information_security": "Does the product include security features to protect information?",
-            "uses_information_security_details": "Provide details of the information security features",
+            "uses-information-security": "Does the product include security features to protect information?",
+            "uses-information-security-details": "Provide details of the information security features",
+            "security-features": "Does the product include security features to protect information?",
+            "security-feature-details": "Provide details of the information security features",
         }
         items.update(new_items)
+
     return items
 
 
@@ -394,7 +397,7 @@ def technology_summary(good, additional_formatters=None):
     }
     summary = pick_fields(summary, TECHNOLOGY_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, TECHNOLOGY_LABELS)
+    summary = add_labels(summary, c7_feature_flag(TECHNOLOGY_LABELS))
 
     return summary
 
@@ -437,7 +440,7 @@ def component_accessory_summary(good, additional_formatters=None):
     }
     summary = pick_fields(summary, COMPONENT_ACCESSORY_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, COMPONENT_ACCESSORY_LABELS)
+    summary = add_labels(summary, c7_feature_flag(COMPONENT_ACCESSORY_LABELS))
 
     return summary
 
