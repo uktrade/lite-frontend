@@ -71,6 +71,7 @@
 				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
 			{% endif %}
 		{% else %}
+        <div class="table-customiser">
 		<table id="table-cases" class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -79,12 +80,18 @@
 							<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
 					{% endif %}
-					<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.UPDATES' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
+					<th class="govuk-table__header govuk-table__cell--tight table-customiser__static" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
+					<th class="govuk-table__header app-table__header--skeleton table-customiser__static" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton table-customiser__default" scope="col">Time elapsed</th>
+					<th class="govuk-table__header app-table__header--skeleton table-customiser__default" scope="col">{% lcs 'cases.CasesListPage.Table.UPDATES' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton table-customiser__default" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide table-customiser__default" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide table-customiser__default" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">CLEs</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">Regimes</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">Report Summaries</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">Goods Value</th>
+					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">Goods</th>
 				</tr>
 			</thead>
 
@@ -94,6 +101,7 @@
 				{% endfor %}
 			</tbody>
 		</table>
+        </div>
 		{% endif %}
 	</form>
 

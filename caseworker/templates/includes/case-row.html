@@ -1,3 +1,4 @@
+{% load humanize %}
 {% load svg %}
 
 <tr class="govuk-table__row" id="{{ case.id }}">
@@ -56,6 +57,12 @@
 		</address>
 		<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.status.value }}</p>
 	</td>
+
+	{# time elapsed #}
+	<td class="govuk-table__cell">
+        {{case.submitted_at|timesince}}
+	</td>
+
 
     {# case updates #}
 	<td class="govuk-table__cell lite-mobile-hide">
@@ -164,5 +171,42 @@
 		{% else %}
 			<p class="app-information-bar">No flags set</p>
 		{% endif %}
+	</td>
+
+	{# CLEs #}
+	<td class="govuk-table__cell lite-mobile-hide">
+		{{case.goods_summary.cles|join:" "|default:"-"}}
+	</td>
+
+	{# Regimes #}
+	<td class="govuk-table__cell lite-mobile-hide">
+		{{case.goods_summary.regimes|join:" "|default:"-"}}
+	</td>
+
+	{# Report summaries #}
+	<td class="govuk-table__cell lite-mobile-hide">
+		<ol class="govuk-list  destinations__list">
+			{% for report_summary in case.goods_summary.report_summaries %}
+				<li>
+                    {{report_summary}}
+				</li>
+			{% endfor %}
+		</ol>
+	</td>
+
+	{# Goods value #}
+	<td class="govuk-table__cell lite-mobile-hide">
+		£{{case.goods_summary.total_value|intcomma}}
+	</td>
+
+	{# Goods #}
+	<td class="govuk-table__cell lite-mobile-hide">
+		<ol class="govuk-list  destinations__list">
+			{% for good in case.goods %}
+				<li>
+					{{good.name}} ({{good.quantity}})
+				</li>
+			{% endfor %}
+		</ol>
 	</td>
 </tr>

@@ -21,6 +21,7 @@ import initRegimeEntries from "./regime-entries.js";
 import initDestinationsList from "./show-hide-destinations.js";
 import { initCaseNotes } from "./case-notes";
 import { initExpanders } from "./list-expander";
+import { initTableCustomisers } from "./table-customiser";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
@@ -40,4 +41,5 @@ $(document).ready(function () {
   initDestinationsList();
   initCaseNotes();
   initExpanders();
+  initTableCustomisers();
 });
