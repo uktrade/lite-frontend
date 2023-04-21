@@ -209,4 +209,27 @@
 			{% endfor %}
 		</ol>
 	</td>
+
+	{# Denials #}
+	<td class="govuk-table__cell lite-mobile-hide">
+		<ol class="govuk-list destinations__list">
+			{% for denial in case.denials %}
+				<li>
+                    {{denial.name}} ({{denial.reference}} {{denial.category|upper}})
+				</li>
+			{% endfor %}
+            {% if not case.denials %}-{% endif %}
+		</ol>
+	</td>
+
+	<td class="govuk-table__cell lite-mobile-hide">
+		<ol class="govuk-list destinations__list">
+            {% if not case.ecju_queries %}
+                -
+            {% else %}
+                {{case.ecju_queries|length}}
+            {% endif %}
+		</ol>
+	</td>
+
 </tr>
