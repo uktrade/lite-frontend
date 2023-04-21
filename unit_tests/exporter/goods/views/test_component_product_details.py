@@ -77,7 +77,11 @@ def test_component_accessory_product_details_context(
         ("pv-grading-issuing-authority", "Government entity", "Name and address of the issuing authority"),
         ("pv-grading-details-reference", "GR123", "Reference"),
         ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
-        ("uses-information-security", "No", "Does the product include security features to protect information?"),
+        (
+            "uses-information-security",
+            "No",
+            "Does the product include cryptography or other information security features?",
+        ),
         (
             "has-product-document",
             "Yes",

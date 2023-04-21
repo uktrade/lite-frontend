@@ -758,7 +758,7 @@ class ProductSecurityFeaturesForm(BaseForm):
             (False, "No"),
         ),
         coerce=coerce_str_to_bool,
-        label="For example, authentication, encryption or any other information security controls.",
+        label=ProductSecurityFeatures.SUBTITLE,
         widget=forms.RadioSelect,
         error_messages={
             "required": "Select yes if the product include security features to protect information",
@@ -783,7 +783,7 @@ class ProductSecurityFeaturesForm(BaseForm):
             ),
             HTML.details(
                 "Help with security features",
-                render_to_string("goods/forms/common/help_with_security_features.html"),
+                f'<p class="govuk-body">{ProductSecurityFeatures.HELP_TEXT}</p>',
             ),
         )
 

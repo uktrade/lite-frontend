@@ -24,6 +24,7 @@ from exporter.core.services import (
     get_units,
 )
 from exporter.core.validators import PastDateValidator
+from exporter.core.constants import ProductSecurityFeatures
 
 
 class ProductNameForm(BaseForm):
@@ -630,8 +631,8 @@ class ProductUnitQuantityAndValueForm(BaseForm):
 
 class ProductUsesInformationSecurityForm(BaseForm):
     class Layout:
-        TITLE = "Does the product include security features to protect information?"
-        SUBTITLE = "For example, authentication, encryption or any other information security controls."
+        TITLE = ProductSecurityFeatures.TITLE
+        SUBTITLE = ProductSecurityFeatures.TITLE
 
     uses_information_security = forms.TypedChoiceField(
         choices=(
@@ -649,7 +650,7 @@ class ProductUsesInformationSecurityForm(BaseForm):
     information_security_details = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs={"rows": 4}),
-        label="Provide details of the information security features",
+        label=ProductSecurityFeatures.SECURITY_FEATURE_DETAILS,
     )
 
     def get_layout_fields(self):
@@ -664,7 +665,7 @@ class ProductUsesInformationSecurityForm(BaseForm):
             ),
             HTML.details(
                 "Help with security features",
-                render_to_string("goods/forms/common/help_with_security_features.html"),
+                f'<p class="govuk-body">{ProductSecurityFeatures.HELP_TEXT}</p>',
             ),
         )
 
