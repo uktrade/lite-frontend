@@ -7,6 +7,7 @@ from django.urls import reverse
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
     settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
+    settings.FEATURE_C7_NCSC_ENABLED = True
 
 
 @pytest.fixture
