@@ -62,7 +62,9 @@ class TableCustomiser {
     }
     this.$el.insertAdjacentHTML(
       "afterbegin",
-      `<ul>` + customiserOptions + `</ul>`
+      `<div class="table-customiser__options"><button class="govuk-button govuk-button--secondary table-customiser__show">Customise</button><ul class="table-customiser__choices table-customiser__choices__hidden">` +
+        customiserOptions +
+        `</ul></div>`
     );
 
     this.$el
@@ -72,6 +74,23 @@ class TableCustomiser {
           this.handleOptionClick(evt)
         );
       });
+    this.$customiserShowButton = this.$el.querySelector(
+      "button.table-customiser__show"
+    );
+    this.$customiserShowButton.addEventListener("click", (evt) =>
+      this.showOptions(evt)
+    );
+    this.$customiserChoices = this.$el.querySelector(
+      "ul.table-customiser__choices"
+    );
+  }
+
+  showOptions(evt) {
+    evt.preventDefault();
+    this.$customiserChoices.classList.remove(
+      "table-customiser__choices__hidden"
+    );
+    this.$customiserShowButton.remove();
   }
 
   handleOptionClick(evt) {
