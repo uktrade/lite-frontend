@@ -758,7 +758,7 @@ class ProductSecurityFeaturesForm(BaseForm):
             (False, "No"),
         ),
         coerce=coerce_str_to_bool,
-        label=ProductSecurityFeatures.SUBTITLE,
+        label=ProductSecurityFeatures.HAS_SECURITY_FEATURES,
         widget=forms.RadioSelect,
         error_messages={
             "required": "Select yes if the product include security features to protect information",

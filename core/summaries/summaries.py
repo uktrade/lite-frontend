@@ -41,7 +41,6 @@ from core.summaries.reducers import (
     component_accessory_reducer,
 )
 from core.summaries.utils import pick_fields
-from django.conf import settings
 
 FIREARM_FIELDS = (
     "firearm-type",
@@ -284,19 +283,6 @@ COMPLETE_ITEM_ON_APPLICATION_FIELDS = (
 )
 
 
-def constant_feature_flag_toggle(items):
-    if not settings.FEATURE_C7_NCSC_ENABLED:
-        new_items = {
-            "uses-information-security": "Does the product include security features to protect information?",
-            "uses-information-security-details": "Provide details of the information security features",
-            "security-features": "Does the product include security features to protect information?",
-            "security-feature-details": "Provide details of the information security features",
-        }
-        items.update(new_items)
-
-    return items
-
-
 def complete_item_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
@@ -308,7 +294,7 @@ def complete_item_summary(good, additional_formatters=None):
     }
     summary = pick_fields(summary, COMPLETE_ITEM_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, constant_feature_flag_toggle(COMPLETE_ITEM_LABELS))
+    summary = add_labels(summary, COMPLETE_ITEM_LABELS)
 
     return summary
 
@@ -397,7 +383,7 @@ def technology_summary(good, additional_formatters=None):
     }
     summary = pick_fields(summary, TECHNOLOGY_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, constant_feature_flag_toggle(TECHNOLOGY_LABELS))
+    summary = add_labels(summary, TECHNOLOGY_LABELS)
 
     return summary
 
@@ -440,7 +426,7 @@ def component_accessory_summary(good, additional_formatters=None):
     }
     summary = pick_fields(summary, COMPONENT_ACCESSORY_FIELDS)
     summary = format_values(summary, formatters)
-    summary = add_labels(summary, constant_feature_flag_toggle(COMPONENT_ACCESSORY_LABELS))
+    summary = add_labels(summary, COMPONENT_ACCESSORY_LABELS)
 
     return summary
 

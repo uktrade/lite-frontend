@@ -1,6 +1,5 @@
 from core.constants import GoodsTypeCategory
 from lite_content.lite_exporter_frontend import applications
-from django.conf import settings
 
 DATE_FORMAT = "%Y-%m-%d"
 PAGE_DATE_FORMAT = "%d %B %Y"
@@ -225,18 +224,11 @@ class PartyDocumentType:
 
 
 class ProductSecurityFeatures:
-    TITLE = "Does the product include security features to protect information?"
-    SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
-    SUBTITLE = "For example, authentication, encryption or any other information security controls."
+    TITLE = "Does the product include cryptography or other information security features?"
+    SECURITY_FEATURE_DETAILS = "Provide details of the cryptography or information security features"
+    HAS_SECURITY_FEATURES = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
     HELP_TEXT = """Information security features include cryptography, authentication, and cryptanalytic functions.
-    They are often found in communication, wireless or internet-based products."""
-    if settings.FEATURE_C7_NCSC_ENABLED:
-        TITLE = "Does the product include cryptography or other information security features?"
-        SECURITY_FEATURE_DETAILS = "Provide details of the cryptography or information security features"
-        SUBTITLE = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
-        HELP_TEXT = """Information security features include cryptography, authentication, and cryptanalytic functions.
-        They are often found in communication, wireless or internet-based products, digital forensics and surveillance tools."""
-
+    They are often found in communication, wireless or internet-based products, digital forensics and surveillance tools."""
     NO = "No"
 
 
