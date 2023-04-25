@@ -9,7 +9,6 @@ from core.summaries.summaries import (
     firearm_on_application_summary,
     get_summary_type_for_good,
     get_summary_type_for_good_on_application,
-    constant_feature_flag_toggle,
 )
 
 
@@ -26,18 +25,6 @@ def test_firearm_on_application_summary(data_standard_case, standard_firearm_exp
     product_summary = firearm_on_application_summary(good_on_application, [])
 
     assert product_summary == standard_firearm_expected_product_on_application_summary
-
-
-def test_constant_feature_flag_toggle():
-    items = {}
-    results = constant_feature_flag_toggle(items)
-    expected = {
-        "uses-information-security": "Does the product include security features to protect information?",
-        "uses-information-security-details": "Provide details of the information security features",
-        "security-features": "Does the product include security features to protect information?",
-        "security-feature-details": "Provide details of the information security features",
-    }
-    assert results == expected
 
 
 @pytest.mark.parametrize(
