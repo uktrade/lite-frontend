@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
+from caseworker.queues.forms import CaseAssignmentsAllocateToMeForm
 from core.constants import CaseStatusEnum, SecurityClassifiedApprovalsType
 
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
@@ -124,6 +125,20 @@ class CaseView(TemplateView):
             and datetime.datetime.strptime(self.case.next_review_date, "%Y-%m-%d").date() > timezone.localtime().date()
             else False
         )
+
+        allocate_to_me_form = (
+            None
+            if self.queue["is_system_queue"]
+            else CaseAssignmentsAllocateToMeForm(
+                initial={
+                    "queue_id": self.queue["id"],
+                    "user_id": self.caseworker["id"],
+                    "case_id": self.case["id"],
+                    "return_to": self.request.build_absolute_uri(),
+                }
+            )
+        )
+
         return {
             "tabs": self.tabs if self.tabs else self.get_tabs(),
             "current_tab": self.kwargs["tab"],
@@ -150,6 +165,7 @@ class CaseView(TemplateView):
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "has_future_next_review_date": future_next_review_date,
             "user": self.caseworker,
+            "allocate_to_me_form": allocate_to_me_form,
             **self.additional_context,
         }
 

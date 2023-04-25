@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-from django.views import View
 from django.views.generic import FormView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
@@ -45,17 +44,19 @@ class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
         return super().get_context_data(*args, **context, **kwargs)
 
 
-class CaseAssignmentAllocateToMe(LoginRequiredMixin, View):
-    def post(self, request, *args, **kwargs):
-        queue_id = request.POST.get("queue_id", None)
-        user_id = request.POST.get("user")
-        case_id = request.POST.get("case")
+class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = forms.CaseAssignmentsAllocateToMeForm
 
-        put_queue_case_assignments(request, queue_id, [case_id], [user_id], "Allocated self to the case")
-        messages.success(request, f"You have been successfully added as case adviser")
+    def form_valid(self, form):
+        data = form.cleaned_data
+        put_queue_case_assignments(
+            self.request, data["queue_id"], [data["case_id"]], [data["user_id"]], "Allocated self to the case"
+        )
+        messages.success(self.request, f"You have been successfully added as case adviser")
+        self.success_url = data["return_to"]
 
-        default_success_url = reverse("queues:cases", kwargs={"queue_pk": queue_id})
-        return redirect(request.POST.get("return_to", default_success_url))
+        return super().form_valid(form)
 
 
 class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormView):

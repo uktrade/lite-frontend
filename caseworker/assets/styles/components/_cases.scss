@@ -572,6 +572,10 @@ $case-header-text-colour: govuk-colour('white');
   }
 }
 
+#allocate-to-me-button {
+  cursor: pointer;
+}
+
 .app-case__slice__controls {
   display: flex;
   justify-content: flex-end;

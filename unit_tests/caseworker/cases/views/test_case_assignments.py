@@ -273,8 +273,8 @@ def test_case_assign_me(
     case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     data = {
         "queue_id": data_queue["id"],
-        "user": mock_gov_user["user"]["id"],
-        "case": case["case"]["id"],
+        "user_id": mock_gov_user["user"]["id"],
+        "case_id": case["case"]["id"],
         "return_to": case_url,
     }
 

@@ -2,6 +2,7 @@
 
 {% load svg static %}
 {% load rules %}
+{% load crispy_forms_tags %}
 
 {% block body_classes %}app-template__case-body{% endblock %}
 
@@ -125,17 +126,14 @@
                        href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}&return_to={{ CURRENT_PATH }}"
                     >Allocate case</a>
                     {% if not queue.is_system_queue %}
-                        <form action="{% url 'queues:case_assignment_assign_to_me' queue.id %}" method="post"
-                              class="app-case-warning-banner__action-form">
-                            {% csrf_token %}
-                            <input type="hidden" name="queue_id" value="{{ queue.id }}" />
-                            <input type="hidden" name="return_to" value="{{ CURRENT_PATH  }}" />
-                            <input type="hidden" name="user" value="{{ current_user.id }}" />
-                            <input type="hidden" name="case" value="{{ case.id  }}" />
-                            <button type="submit" name="status"
-                                    id="allocate-to-me-button"
-                                    class="app-case-warning-banner__action"
-                            >Allocate to me</button>
+                    <form action="{% url 'queues:case_assignment_assign_to_me' queue.id %}" method="post"
+                          class="app-case-warning-banner__action-form">
+                        {% csrf_token %}
+                        {{ allocate_to_me_form|crispy }}
+                        <button type="submit" name="status"
+                                id="allocate-to-me-button"
+                                class="app-case-warning-banner__action"
+                        >Allocate to me</button>
                         </form>
                     {% endif %}
 				</span>
