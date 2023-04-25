@@ -840,6 +840,7 @@ def data_standard_case(
                             "is_deactivated": False,
                         },
                         "is_onward_exported": False,
+                        "is_ncsc_military_information_security": False,
                     },
                     {
                         "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
@@ -899,6 +900,7 @@ def data_standard_case(
                         "report_summary_subject": report_summary_subject,
                         "audit_trail": [],
                         "good_application_internal_documents": [],
+                        "is_ncsc_military_information_security": False,
                     },
                 ],
                 "have_you_been_informed": "no",
@@ -1787,12 +1789,12 @@ def standard_complete_item_expected_product_summary():
         (
             "uses-information-security",
             "No",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "has-product-document",
             "Yes",
-            "Do you have a document that shows what your product is and what it’s designed to do?",
+            "Do you have a document that shows what your product is and what it’s " "designed to do?",
         ),
         (
             "is-document-sensitive",
@@ -1930,7 +1932,7 @@ def standard_component_accessory_expected_product_summary():
         (
             "uses-information-security",
             "No",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "has-product-document",
@@ -2207,12 +2209,12 @@ def standard_technology_expected_product_summary():
         (
             "security-features",
             "Yes",
-            "Does the product include security features to protect information?",
+            "Does the product include cryptography or other information security features?",
         ),
         (
             "security-feature-details",
             "security features",
-            "Provide details of the information security features",
+            "Provide details of the cryptography or information security features",
         ),
         (
             "declared-at-customs",

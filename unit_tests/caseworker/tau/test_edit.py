@@ -52,7 +52,7 @@ def setup(
 
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
-    settings.FEATURE_C6_REGIMES = True
+    settings.FEATURE_C7_NCSC_ENABLED = True
 
 
 @pytest.fixture(autouse=True)
@@ -251,6 +251,7 @@ def test_form(
         "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
         "is_good_controlled": False,
         "regime_entries": [],
+        "is_ncsc_military_information_security": False,
     }
 
 
@@ -326,6 +327,7 @@ def test_form_no_regime_entries(
         "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
         "is_good_controlled": False,
         "regime_entries": [],
+        "is_ncsc_military_information_security": False,
     }
 
 
@@ -415,6 +417,7 @@ def test_form_regime_entries(
         "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
         "is_good_controlled": False,
         "regime_entries": regime_entries,
+        "is_ncsc_military_information_security": False,
     }
 
 
@@ -526,3 +529,20 @@ def test_form_only_rendered_once(
     tau_form = soup.find(id="tau-form")
     assert tau_form is not None
     assert not tau_form.select("form")
+
+
+def test_c7_is_ncsc_military_information_security_field_feature_flagged(
+    authorized_client,
+    url,
+    data_standard_case,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+    settings,
+):
+
+    # Get the edit form and check if is_ncsc_military_information_security is hidden
+    settings.FEATURE_C7_NCSC_ENABLED = False
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("form").find(id="id_is_ncsc_military_information_security") is None

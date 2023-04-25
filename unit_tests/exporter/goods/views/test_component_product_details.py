@@ -28,6 +28,8 @@ def mock_good_get(requests_mock, data_standard_case):
             "item_category": {
                 "key": ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY,
             },
+            "uses_information_security": "true",
+            "information_security_details": "Information security details",
         }
     )
     del good["good"]["firearm_details"]
@@ -77,7 +79,16 @@ def test_component_accessory_product_details_context(
         ("pv-grading-issuing-authority", "Government entity", "Name and address of the issuing authority"),
         ("pv-grading-details-reference", "GR123", "Reference"),
         ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
-        ("uses-information-security", "No", "Does the product include security features to protect information?"),
+        (
+            "uses-information-security",
+            "Yes",
+            "Does the product include cryptography or other information security features?",
+        ),
+        (
+            "uses-information-security-details",
+            "Information security details",
+            "Provide details of the cryptography or information security features",
+        ),
         (
             "has-product-document",
             "Yes",

@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 
 from requests.exceptions import HTTPError
 
@@ -19,6 +18,7 @@ from caseworker.regimes.enums import Regimes
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
 from ..report_summary.services import get_report_summary_prefix, get_report_summary_subject
+from django.conf import settings
 
 REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
 REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
@@ -127,7 +127,11 @@ class TAUEditForm(forms.Form):
         required=False,
         widget=forms.RadioSelect,
     )
-
+    is_ncsc_military_information_security = forms.BooleanField(
+        label="Yes, refer to NCSC for a recommendation",
+        help_text="Are there potential cryptography or information security features?",
+        required=False,
+    )
     comment = forms.CharField(
         label="Add an assessment note (optional)",
         required=False,
@@ -189,23 +193,6 @@ class TAUEditForm(forms.Form):
         self.helper = FormHelper()
         self.helper.form_tag = False
 
-        feature_flagged_regimes = []
-        if settings.FEATURE_C6_REGIMES:
-            feature_flagged_regimes = [
-                ConditionalCheckboxesQuestion(
-                    "Chemical Weapons Convention",
-                    "cwc_entries",
-                ),
-                ConditionalCheckboxesQuestion(
-                    "Nuclear Suppliers Group",
-                    "nsg_entries",
-                ),
-                ConditionalCheckboxesQuestion(
-                    "Australia Group",
-                    "ag_entries",
-                ),
-            ]
-
         fields = [
             "control_list_entries",
             HTML.p("Or"),
@@ -222,11 +209,24 @@ class TAUEditForm(forms.Form):
                     "Missile Technology Control Regime",
                     "mtcr_entries",
                 ),
-                *feature_flagged_regimes,
+                ConditionalCheckboxesQuestion(
+                    "Chemical Weapons Convention",
+                    "cwc_entries",
+                ),
+                ConditionalCheckboxesQuestion(
+                    "Nuclear Suppliers Group",
+                    "nsg_entries",
+                ),
+                ConditionalCheckboxesQuestion(
+                    "Australia Group",
+                    "ag_entries",
+                ),
                 "None",
             ),
             "comment",
         ]
+        if settings.FEATURE_C7_NCSC_ENABLED:
+            fields.insert(len(fields) - 1, "is_ncsc_military_information_security")
         self.helper.layout = Layout(*fields)
 
     def validate_single_regime_choice(self, cleaned_data, selected_regimes, regime, field_name, error_message):

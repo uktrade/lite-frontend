@@ -152,6 +152,23 @@ def test_cases_home_page_case_search_API_error(authorized_client, mock_cases_sea
     assert exception.user_message == "A problem occurred. Please try again later"
 
 
+def test_cases_home_page_control_list_entries_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    control_list_entry_filter_input = html.find(id="control_list_entry")
+    assert control_list_entry_filter_input.attrs["type"] == "text"
+    assert control_list_entry_filter_input.attrs["name"] == "control_list_entry"
+
+    url = reverse("queues:cases") + "?control_list_entry=ML1"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "control_list_entry": ["ml1"],
+    }
+
+
 def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases") + "?is_trigger_list=True"
     authorized_client.get(url)
