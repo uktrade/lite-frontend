@@ -52,13 +52,15 @@ const initCountryAutocompleteField = async (getDefaultValue) => {
   nameInput = document.querySelector("#_id_country");
 };
 
-const initRegimeEntryAutocompleteField = (getDefaultValue) => {
+const initRegimeEntryAutocompleteField = async (getDefaultValue) => {
   const originalInput = document.querySelector("#id_regime_entry");
   const autocompleteContainer = document.createElement("div");
   autocompleteContainer.id = "filter_regime_entry_container";
   originalInput.parentElement.appendChild(autocompleteContainer);
   originalInput.style = "display:none";
   let nameInput;
+  const regimeEntriesData = await fetch("/api/regime-entries/")
+    .then((response) => response.json());
   accessibleAutocomplete({
     element: document.querySelector("#filter_regime_entry_container"),
     id: "_id_regime_entry",
@@ -67,14 +69,11 @@ const initRegimeEntryAutocompleteField = (getDefaultValue) => {
         populateResults([{ id: null, name: "" }]);
         return;
       }
-      fetch("/api/regime-entries/")
-        .then((response) => response.json())
-        .then((results) =>
-          results.filter((obj) =>
-            obj.name.toLowerCase().includes(query.toLowerCase())
-          )
+      populateResults(
+        regimeEntriesData.filter((obj) =>
+          obj.name.toLowerCase().includes(query.toLowerCase())
         )
-        .then((results) => populateResults(results));
+      );
     }, 300),
     cssNamespace: "lite-autocomplete",
     name: "_id_regime_entry",
