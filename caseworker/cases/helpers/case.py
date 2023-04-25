@@ -81,16 +81,7 @@ class Slices:
     FREEDOM_OF_INFORMATION = Slice("case/slices/freedom-of-information.html", "Freedom of Information")
 
 
-class CaseView(TemplateView):
-    case_id = None
-    case: Case = None
-    queue_id = None
-    queue = None
-    permissions = None
-    tabs = None
-    slices = None
-    additional_context = {}
-
+class CaseworkerMixin:
     @cached_property
     def caseworker(self):
         user, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
@@ -101,6 +92,36 @@ class CaseView(TemplateView):
 
     def is_lu_user(self):
         return self.caseworker["team"]["alias"] == LU_ALIAS
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        allocate_to_me_form = (
+            None
+            if self.queue["is_system_queue"]
+            else CaseAssignmentsAllocateToMeForm(
+                initial={
+                    "queue_id": self.queue_id,
+                    "user_id": self.caseworker["id"],
+                    "case_id": self.case_id,
+                    "return_to": self.request.build_absolute_uri(),
+                }
+            )
+        )
+        return {
+            **context,
+            "allocate_to_me_form": allocate_to_me_form,
+        }
+
+
+class CaseView(CaseworkerMixin, TemplateView):
+    case_id = None
+    case: Case = None
+    queue_id = None
+    queue = None
+    permissions = None
+    tabs = None
+    slices = None
+    additional_context = {}
 
     def is_only_on_post_circ_queue(self):
         queue_alias = tuple(queue.get("alias") for queue in self.case.queue_details)
@@ -126,20 +147,10 @@ class CaseView(TemplateView):
             else False
         )
 
-        allocate_to_me_form = (
-            None
-            if self.queue["is_system_queue"]
-            else CaseAssignmentsAllocateToMeForm(
-                initial={
-                    "queue_id": self.queue["id"],
-                    "user_id": self.caseworker["id"],
-                    "case_id": self.case["id"],
-                    "return_to": self.request.build_absolute_uri(),
-                }
-            )
-        )
+        context = super().get_context_data()
 
         return {
+            **context,
             "tabs": self.tabs if self.tabs else self.get_tabs(),
             "current_tab": self.kwargs["tab"],
             "slices": [Slices.SUMMARY, *self.slices],
@@ -165,7 +176,6 @@ class CaseView(TemplateView):
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "has_future_next_review_date": future_next_review_date,
             "user": self.caseworker,
-            "allocate_to_me_form": allocate_to_me_form,
             **self.additional_context,
         }
 

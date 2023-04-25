@@ -11,6 +11,7 @@ from requests.exceptions import HTTPError
 
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
+from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
@@ -336,7 +337,7 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return context
 
 
-class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclearMixin, TemplateView):
+class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclearMixin, CaseworkerMixin, TemplateView):
     template_name = "advice/view-advice.html"
 
     @property
