@@ -74,7 +74,17 @@ class Cases(LoginRequiredMixin, FormView):
             if key != "flags[]":
                 params[key] = value
 
-        params["flags"] = self.request.GET.getlist("flags[]", [])
+        # this is essentially decomposing date fields
+        # API expects individual fields for day, month, year for these filters
+        # Crispy form gives us "submitted_from_{0..2}" so they mapped to day, month, year
+        for param in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
+            for index,field in [(0, "day"), (1, "month"), (2, "year"),]:
+                key = f"{param}_{index}"
+                if key in params:
+                    updated_key = f"{param}_{field}"
+                    params[updated_key] = params.pop(key, "")
+
+        params["flags"] = self.request.GET.getlist("flags", [])
 
         params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
 

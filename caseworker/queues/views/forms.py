@@ -1,10 +1,11 @@
 from django import forms
 
+from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Field, Fieldset, Submit
 
 from core.forms.utils import coerce_str_to_bool
-from caseworker.core.services import get_countries, get_regime_entries
+from caseworker.flags.services import get_flags
 
 SLA_DAYS_RANGE = 99
 
@@ -59,6 +60,22 @@ class CasesFiltersForm(forms.Form):
         label="Filter by regime entry",
         required=False,
     )
+    submitted_from = DateInputField(
+        label="Filter by submitted from date",
+        required=False,
+    )
+    submitted_to = DateInputField(
+        label="Filter by submitted to date",
+        required=False,
+    )
+    finalised_from = DateInputField(
+        label="Filter by finalised from date",
+        required=False,
+    )
+    finalised_to = DateInputField(
+        label="Filter by finalised to date",
+        required=False,
+    )
 
     def __init__(self, request, filters_data, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -80,6 +97,7 @@ class CasesFiltersForm(forms.Form):
         sla_sorted_choices = [("", "Select"), ("ascending", "Ascending"), ("descending", "Descending")]
         nca_choices = [(True, "Filter by Nuclear Cooperation Agreement"), (False, "No")]
         trigger_list_guidelines_choices = [(True, "Yes"), (False, "No")]
+        flags_choices = [(flag["id"], flag["name"]) for flag in get_flags(request, disable_pagination=True)]
 
         self.fields["case_type"] = forms.ChoiceField(
             choices=case_type_choices,
@@ -150,6 +168,13 @@ class CasesFiltersForm(forms.Form):
             widget=forms.CheckboxInput(attrs={"class": "govuk-checkboxes--small"}),
             required=False,
         )
+        self.fields["flags"] = forms.MultipleChoiceField(
+            label="Filter by flags",
+            choices=flags_choices,
+            required=False,
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "flags"}),
+        )
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -169,9 +194,17 @@ class CasesFiltersForm(forms.Form):
                 Field.select("min_sla_days_remaining"),
                 Field.select("sla_days_elapsed"),
                 Field.select("sla_days_elapsed_sort_order"),
+                Field("submitted_from"),
+                Field("submitted_to"),
+                Field("finalised_from"),
+                Field("finalised_to"),
+                Field.text("party_name"),
+                Field.text("party_address"),
+                Field.text("goods_related_description"),
                 Field.text("country"),
                 Field.text("control_list_entry"),
                 Field.text("regime_entry"),
+                Field.select("flags"),
                 Field("is_nca_applicable"),
                 Field("is_trigger_list"),
                 legend="Advanced filters",
