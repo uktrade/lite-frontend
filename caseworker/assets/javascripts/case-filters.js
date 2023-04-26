@@ -2,6 +2,9 @@ import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
 import debounce from "lodash.debounce";
 
+import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
+
+
 const initCountryAutocompleteField = async (getDefaultValue) => {
   const originalInput = document.querySelector("#id_country");
   const autocompleteContainer = document.createElement("div");
@@ -101,6 +104,19 @@ const initRegimeEntryAutocompleteField = async (getDefaultValue) => {
   nameInput = document.querySelector("#_id_regime_entry");
 };
 
+export default function initFlagsFiltersField() {
+    const flagsField = document.getElementById("flags");
+    if (!flagsField)
+        return;
+
+    const flagsTokenField = progressivelyEnhanceMultipleSelectField(
+        flagsField, (option) => {
+            return { id: option.value, name: option.label, classes: [] };
+        }
+    );
+  }
+
+
 const initCaseFilters = () => {
   initCountryAutocompleteField(
     (originalInput) => originalInput.dataset.name || ""
@@ -108,6 +124,8 @@ const initCaseFilters = () => {
   initRegimeEntryAutocompleteField(
     (originalInput) => originalInput.dataset.name || ""
   );
+
+  initFlagsFiltersField();
 };
 
 initCaseFilters();
