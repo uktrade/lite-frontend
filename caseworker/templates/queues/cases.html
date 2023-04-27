@@ -58,13 +58,11 @@
 		{% endfor %}
 	</div>
 
-	<div class="govuk-grid-row govuk-!-padding-bottom-6">
+	<div class="govuk-grid-row">
 		<p id="text-case-count" class="lite-filters__hint-text">{{ data.count }} case{{ data.count|pluralize }}</p>
 	</div>
 
 	{% include 'queues/case-filters.html' %}
-
-	{% include 'filters.html' %}
 
 	{% include 'queues/search-tabs.html' %}
 

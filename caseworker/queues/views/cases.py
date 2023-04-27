@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from django.http import Http404
-from django.views.generic import TemplateView, FormView
+from django.views.generic import FormView
 from django.utils.functional import cached_property
 
 from lite_content.lite_internal_frontend.cases import CasesListPage

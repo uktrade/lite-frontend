@@ -2,9 +2,10 @@ from django import forms
 
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Field, Fieldset, Submit
+from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit
 
 from core.forms.utils import coerce_str_to_bool
+from core.forms.widgets import CheckboxInputSmall
 from caseworker.flags.services import get_flags
 
 SLA_DAYS_RANGE = 99
@@ -95,9 +96,13 @@ class CasesFiltersForm(forms.Form):
         ]
         sla_days_choices = [("", "Select")] + [(i, i) for i in range(SLA_DAYS_RANGE)]
         sla_sorted_choices = [("", "Select"), ("ascending", "Ascending"), ("descending", "Descending")]
-        nca_choices = [(True, "Filter by Nuclear Cooperation Agreement"), (False, "No")]
-        trigger_list_guidelines_choices = [(True, "Yes"), (False, "No")]
+        nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
+        trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in get_flags(request, disable_pagination=True)]
+
+        clear_filters_link = """
+            <a href="/" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>
+        """
 
         self.fields["case_type"] = forms.ChoiceField(
             choices=case_type_choices,
@@ -154,20 +159,6 @@ class CasesFiltersForm(forms.Form):
             choices=sla_sorted_choices,
             required=False,
         )
-        self.fields["is_nca_applicable"] = forms.TypedChoiceField(
-            choices=nca_choices,
-            coerce=coerce_str_to_bool,
-            label="Filter by Nuclear Cooperation Agreement",
-            widget=forms.CheckboxInput(attrs={"class": "govuk-checkboxes--small"}),
-            required=False,
-        )
-        self.fields["is_trigger_list"] = forms.TypedChoiceField(
-            choices=trigger_list_guidelines_choices,
-            coerce=coerce_str_to_bool,
-            label="Filter by Trigger List",
-            widget=forms.CheckboxInput(attrs={"class": "govuk-checkboxes--small"}),
-            required=False,
-        )
         self.fields["flags"] = forms.MultipleChoiceField(
             label="Filter by flags",
             choices=flags_choices,
@@ -175,14 +166,31 @@ class CasesFiltersForm(forms.Form):
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
         )
+        self.fields["is_nca_applicable"] = forms.TypedChoiceField(
+            choices=nca_choices,
+            coerce=coerce_str_to_bool,
+            label="",
+            widget=CheckboxInputSmall(),
+            required=False,
+        )
+        self.fields["is_trigger_list"] = forms.TypedChoiceField(
+            choices=trigger_list_guidelines_choices,
+            coerce=coerce_str_to_bool,
+            label="",
+            widget=CheckboxInputSmall(),
+            required=False,
+        )
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            "case_reference",
-            "case_type",
-            "status",
-            "case_officer",
-            "assigned_user",
+            Fieldset(
+                "case_reference",
+                "case_type",
+                "status",
+                "case_officer",
+                "assigned_user",
+                css_class="basic-filter-fields",
+            ),
             AdvancedFiltersFieldset(
                 Field.text("exporter_application_reference"),
                 Field.text("organisation_name"),
@@ -208,5 +216,11 @@ class CasesFiltersForm(forms.Form):
                 Field("is_nca_applicable"),
                 Field("is_trigger_list"),
                 legend="Advanced filters",
+                css_class="advanced-group",
+            ),
+            Fieldset(
+                Submit("submit", "Apply filters"),
+                HTML(clear_filters_link),
+                css_class="case-filter-actions",
             ),
         )

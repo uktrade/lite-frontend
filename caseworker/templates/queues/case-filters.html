@@ -1,19 +1,21 @@
 {% load svg static %}
 {% load crispy_forms_tags %}
 
+<div class="lite-js-only">
+	<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+		{% svg 'plus' %}
+		Show filters
+	</a>
+	<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+		{% svg 'minus' %}
+		Hide filters
+	</a>
+</div>
 
 <form method="get">
-    <div>
+    <div class="case-filters">
         <div class="case-filter-fields">
             {% crispy form %}
-        </div>
-        <div class="case-filter-actions">
-            <button type="submit" class="govuk-button">
-                Apply filters
-            </button>
-            <a href="/" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">
-                Clear filters
-            </a>
         </div>
     </div>
 </form>

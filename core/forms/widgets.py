@@ -10,3 +10,9 @@ class GridmultipleSelect(widgets.ChoiceWidget):
     input_type = "checkbox"
     template_name = "forms/checkbox_select.html"
     option_template_name = "forms/checkbox_option.html"
+
+
+class CheckboxInputSmall(widgets.ChoiceWidget):
+    input_type = "checkbox"
+    template_name = "forms/checkbox_select.html"
+    option_template_name = "forms/checkbox_option.html"
