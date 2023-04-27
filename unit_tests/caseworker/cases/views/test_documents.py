@@ -29,14 +29,23 @@ def test_case_page_renders_documents_template(authorized_client, data_standard_c
     assertTemplateUsed("cases/tabs/documents.html")
 
 
-def test_case_page_unallocated_user_does_not_see_document_actions(authorized_client, data_standard_case, queue_pk):
+def test_case_page_unallocated_user_can_see_attach_document_action(authorized_client, data_standard_case, queue_pk):
     url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
 
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
 
     attach_document_button = soup.find(id="button-attach-document")
-    assert attach_document_button is None
+    assert attach_document_button is not None
+
+
+def test_case_page_unallocated_user_cannot_see_generate_document_action(
+    authorized_client, data_standard_case, queue_pk
+):
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
+
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
 
     generate_document_button = soup.find(id="button-generate-document")
     assert generate_document_button is None
