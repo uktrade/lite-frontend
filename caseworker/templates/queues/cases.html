@@ -61,7 +61,10 @@
 
 	{% include 'filters.html' %}
 
-	{% include 'queues/search-tabs.html' %}
+    <div class="table-customiser">
+        <div class="table-customiser__header">
+	    {% include 'queues/search-tabs.html' %}
+        </div>
 
 	<form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
 		{% if not data.results.cases %}
@@ -71,7 +74,6 @@
 				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
 			{% endif %}
 		{% else %}
-        <div class="table-customiser">
 		<table id="table-cases" class="govuk-table">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
@@ -103,9 +105,9 @@
 				{% endfor %}
 			</tbody>
 		</table>
-        </div>
 		{% endif %}
 	</form>
+    </div>
 
 	{% pagination %}
 

@@ -53,19 +53,27 @@ class TableCustomiser {
     let customiserOptions = ``;
     for (const [key, value] of Object.entries(this.customisableColumns)) {
       let checkbox =
-        `<input type="checkbox" class="table-customiser__option" name="` +
+        `<div class="govuk-checkboxes__item"><input type="checkbox" class="table-customiser__option govuk-checkboxes__input" name="` +
         key +
         `" ` +
         (value.visible ? "checked" : "") +
-        `>`;
-      customiserOptions += `<li>` + key + checkbox + `</li>`;
+        ` id="` +
+        key +
+        `"> <label class="govuk-label govuk-checkboxes__label" for="` +
+        key +
+        `">` +
+        key +
+        `</label></div>`;
+      customiserOptions += `<li>` + checkbox + `</li>`;
     }
-    this.$el.insertAdjacentHTML(
-      "afterbegin",
-      `<div class="table-customiser__options"><button class="govuk-button govuk-button--secondary table-customiser__show">Customise</button><ul class="table-customiser__choices table-customiser__choices__hidden">` +
-        customiserOptions +
-        `</ul></div>`
-    );
+    this.$el
+      .querySelector(".table-customiser__header")
+      .insertAdjacentHTML(
+        "beforeend",
+        `<details class="table-customiser__options govuk-details"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">Customise table columns</span></summary><div class="govuk-details__text"><ul class="table-customiser__choices">` +
+          customiserOptions +
+          `</ul></div></details>`
+      );
 
     this.$el
       .querySelectorAll("input.table-customiser__option")
@@ -74,23 +82,9 @@ class TableCustomiser {
           this.handleOptionClick(evt)
         );
       });
-    this.$customiserShowButton = this.$el.querySelector(
-      "button.table-customiser__show"
-    );
-    this.$customiserShowButton.addEventListener("click", (evt) =>
-      this.showOptions(evt)
-    );
     this.$customiserChoices = this.$el.querySelector(
       "ul.table-customiser__choices"
     );
-  }
-
-  showOptions(evt) {
-    evt.preventDefault();
-    this.$customiserChoices.classList.remove(
-      "table-customiser__choices__hidden"
-    );
-    this.$customiserShowButton.remove();
   }
 
   handleOptionClick(evt) {
