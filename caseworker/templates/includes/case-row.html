@@ -175,12 +175,12 @@
 
 	{# CLEs #}
 	<td class="govuk-table__cell lite-mobile-hide">
-		{{case.goods_summary.cles|join:" "|default:"-"}}
+		{{case.goods_summary.cles|join:"<br>"}}
 	</td>
 
 	{# Regimes #}
 	<td class="govuk-table__cell lite-mobile-hide">
-		{{case.goods_summary.regimes|join:" "|default:"-"}}
+		{{case.goods_summary.regimes|join:" "}}
 	</td>
 
 	{# Report summaries #}
@@ -212,14 +212,9 @@
 
 	{# Denials #}
 	<td class="govuk-table__cell lite-mobile-hide">
-		<ol class="govuk-list destinations__list">
-			{% for denial in case.denials %}
-				<li>
-                    {{denial.name}} ({{denial.reference}} {{denial.category|upper}})
-				</li>
-			{% endfor %}
-            {% if not case.denials %}-{% endif %}
-		</ol>
+        {% if case.denials %}
+            <a href="{% url 'cases:case' queue.id case.id %}details/#denial-matches" class="govuk-link govuk-link--no-visited-state">{{case.denials|length}} denials</a>
+        {% endif %}
 	</td>
 
 	<td class="govuk-table__cell lite-mobile-hide">

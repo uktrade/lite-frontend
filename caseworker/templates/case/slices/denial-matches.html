@@ -1,6 +1,6 @@
 {% with denial_matches=denial_matches|default:case.data.denial_matches %}
     {% if denial_matches %}
-        <h2 class="govuk-heading-m">Denial matches</h2>
+        <h2 class="govuk-heading-m" id="denial-matches">Denial matches</h2>
         {% if not hide_controls %}
         <form method="post" data-enable-on-checkboxes="#table-denial-matches">
             {% csrf_token %}
