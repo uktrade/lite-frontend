@@ -32,6 +32,7 @@ ipython = "*"
 python-dotenv = "*"
 ipdb = "*"
 pytest-mock = "*"
+django-requests-debug-toolbar = "*"
 
 [packages]
 beautifulsoup4 = "~=4.8.2"

@@ -121,13 +121,13 @@ def data_list_licences():
 
 @pytest.fixture(autouse=True)
 def mock_list_licences(requests_mock, data_list_licences):
-    url = _build_absolute_uri("/licences/?page=1")
+    url = _build_absolute_uri("/licences/")
     return requests_mock.get(url=url, json=data_list_licences)
 
 
 @pytest.fixture(autouse=True)
 def mock_list_no_licence_required(data_list_no_licence_required, requests_mock):
-    url = _build_absolute_uri("/licences/nlrs/?page=1")
+    url = _build_absolute_uri("/licences/nlrs/")
     return requests_mock.get(url=url, json=data_list_no_licence_required)
 
 
@@ -144,40 +144,97 @@ def client(authorized_client, mock_control_list_entries, mock_countries, mock_pv
     return authorized_client
 
 
-def test_open_and_standard_licences(client, data_list_licences):
+@pytest.fixture
+def list_open_standard_licences_url():
+    return reverse("licences:list-open-and-standard-licences")
+
+
+def test_open_and_standard_licences(client, data_list_licences, list_open_standard_licences_url, mock_list_licences):
     expected_filters = ["reference", "clc", "country", "end_user", "active_only", "licence_type"]
     session = client.session
     session["organisation_name"] = "test company"
     session.save()
 
-    response = client.get(reverse("licences:list-open-and-standard-licences"))
+    response = client.get(list_open_standard_licences_url)
     assert response.status_code == 200
+    assert len(mock_list_licences.request_history) == 1
+    assert mock_list_licences.last_request.qs == {"licence_type": ["licence"]}
     assert response.context_data["data"] == data_list_licences
     assert [item.name for item in response.context_data["filters"].filters] == expected_filters
 
 
-def test_open_general_licences(client, data_list_open_general_licences):
+def test_open_and_standard_licences_paging(client, list_open_standard_licences_url, mock_list_licences):
+    session = client.session
+    session["organisation_name"] = "test company"
+    session.save()
+
+    response = client.get(f"{list_open_standard_licences_url}?page=2")
+    assert response.status_code == 200
+    assert len(mock_list_licences.request_history) == 1
+    assert mock_list_licences.last_request.qs == {
+        "licence_type": ["licence"],
+        "page": ["2"],
+    }
+
+
+def test_open_general_licences(client, data_list_open_general_licences, mock_list_open_general_licences):
     expected_filters = ["name", "case_type", "control_list_entry", "country", "site", "active_only", "licence_type"]
 
     response = client.get(reverse("licences:list-open-general-licences"))
     assert response.status_code == 200
+    assert len(mock_list_open_general_licences.request_history) == 1
+    assert mock_list_open_general_licences.last_request.qs == {
+        "convert_to_options": ["false"],
+        "disable_pagination": ["true"],
+        "registered": ["true"],
+    }
     assert response.context_data["data"] == data_list_open_general_licences
     assert [item.name for item in response.context_data["filters"].filters] == expected_filters
 
 
-def test_no_licenece_required(client, data_list_no_licence_required):
+@pytest.fixture
+def list_no_licence_required_url():
+    return reverse("licences:list-no-licence-required")
+
+
+def test_no_licence_required(
+    client, data_list_no_licence_required, list_no_licence_required_url, mock_list_no_licence_required
+):
     expected_filters = ["reference", "clc", "country", "end_user", "licence_type"]
 
-    response = client.get(reverse("licences:list-no-licence-required"))
+    response = client.get(list_no_licence_required_url)
     assert response.status_code == 200
+    assert len(mock_list_no_licence_required.request_history) == 1
+    assert mock_list_no_licence_required.last_request.qs == {}
     assert response.context_data["data"] == data_list_no_licence_required
     assert [item.name for item in response.context_data["filters"].filters] == expected_filters
 
 
-def test_clearances(client, data_list_licences):
+def test_no_licence_required_paging(client, list_no_licence_required_url, mock_list_no_licence_required):
+    response = client.get(f"{list_no_licence_required_url}?page=2")
+    assert response.status_code == 200
+    assert len(mock_list_no_licence_required.request_history) == 1
+    assert mock_list_no_licence_required.last_request.qs == {"page": ["2"]}
+
+
+@pytest.fixture
+def list_clearances_url():
+    return reverse("licences:list-clearances")
+
+
+def test_clearances(client, data_list_licences, list_clearances_url, mock_list_licences):
     expected_filters = ["reference", "clc", "country", "end_user", "active_only", "licence_type"]
 
-    response = client.get(reverse("licences:list-clearances"))
+    response = client.get(list_clearances_url)
     assert response.status_code == 200
+    assert len(mock_list_licences.request_history) == 1
+    assert mock_list_licences.last_request.qs == {"licence_type": ["clearance"]}
     assert response.context_data["data"] == data_list_licences
     assert [item.name for item in response.context_data["filters"].filters] == expected_filters
+
+
+def test_clearances_paging(client, list_clearances_url, mock_list_licences):
+    response = client.get(f"{list_clearances_url}?page=2")
+    assert response.status_code == 200
+    assert len(mock_list_licences.request_history) == 1
+    assert mock_list_licences.last_request.qs == {"licence_type": ["clearance"], "page": ["2"]}

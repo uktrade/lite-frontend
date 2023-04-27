@@ -42,7 +42,6 @@ from core.summaries.reducers import (
 )
 from core.summaries.utils import pick_fields
 
-
 FIREARM_FIELDS = (
     "firearm-type",
     "firearm-category",

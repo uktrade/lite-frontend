@@ -224,8 +224,11 @@ class PartyDocumentType:
 
 
 class ProductSecurityFeatures:
-    TITLE = "Does the product include security features to protect information?"
-    SECURITY_FEATURE_DETAILS = "Provide details of the information security features"
+    TITLE = "Does the product include cryptography or other information security features?"
+    SECURITY_FEATURE_DETAILS = "Provide details of the cryptography or information security features"
+    HAS_SECURITY_FEATURES = "For example, authentication, encryption, cryptanalysis, digital anti-tamper, or any other information security features."
+    HELP_TEXT = """Information security features include cryptography, authentication, and cryptanalytic functions.
+    They are often found in communication, wireless or internet-based products, digital forensics and surveillance tools."""
     NO = "No"
 
 
