@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import Http404
 from django.views.generic import TemplateView, FormView
 from django.utils.functional import cached_property
@@ -76,13 +78,23 @@ class Cases(LoginRequiredMixin, FormView):
 
         # this is essentially decomposing date fields
         # API expects individual fields for day, month, year for these filters
-        # Crispy form gives us "submitted_from_{0..2}" so they mapped to day, month, year
+        # Crispy form gives us "submitted_from_{0..2}" so they are mapped to day, month, year
+        # Usually this is done in clean() but it doesn't get called as we are not posting anything
         for param in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
-            for index,field in [(0, "day"), (1, "month"), (2, "year"),]:
+            date_str = ""
+            date_tokens = []
+            for index, field in [(0, "day"), (1, "month"), (2, "year")]:
                 key = f"{param}_{index}"
                 if key in params:
                     updated_key = f"{param}_{field}"
-                    params[updated_key] = params.pop(key, "")
+                    params[updated_key] = params.get(key, "")
+                    date_tokens.append(params[updated_key])
+
+            # We need to save compressed date values to show the current filter value
+            if date_tokens and all(date_tokens):
+                date_str = "-".join(date_tokens)
+                date_obj = datetime.strptime(date_str, "%d-%m-%Y").date()
+                params[param] = date_obj
 
         params["flags"] = self.request.GET.getlist("flags", [])
 
