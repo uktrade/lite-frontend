@@ -1,11 +1,11 @@
-class TableCustomiser {
+class Customiser {
   constructor($el) {
     this.$el = $el;
     let $headers = this.$el.querySelectorAll("th");
     let $rows = this.$el.querySelectorAll("tr");
     this.customisableColumns = {};
     $headers.forEach(($header, columnIndex, obj) => {
-      if ($header.classList.contains("table-customiser__static")) {
+      if ($header.classList.contains("customiser__static")) {
         return;
       }
 
@@ -19,7 +19,7 @@ class TableCustomiser {
       });
 
       let visible = false;
-      if ($header.classList.contains("table-customiser__default")) {
+      if ($header.classList.contains("customiser__default")) {
         visible = true;
       }
       this.customisableColumns[columnIdentifier] = {
@@ -53,7 +53,7 @@ class TableCustomiser {
     let customiserOptions = ``;
     for (const [key, value] of Object.entries(this.customisableColumns)) {
       let checkbox =
-        `<div class="govuk-checkboxes__item"><input type="checkbox" class="table-customiser__option govuk-checkboxes__input" name="` +
+        `<div class="govuk-checkboxes__item"><input type="checkbox" class="customiser__option govuk-checkboxes__input" name="` +
         key +
         `" ` +
         (value.visible ? "checked" : "") +
@@ -67,24 +67,22 @@ class TableCustomiser {
       customiserOptions += `<li>` + checkbox + `</li>`;
     }
     this.$el
-      .querySelector(".table-customiser__header")
+      .querySelector(".customiser__header")
       .insertAdjacentHTML(
         "beforeend",
-        `<details class="table-customiser__options govuk-details lite-mobile-hide"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">Customise table columns</span></summary><div class="govuk-details__text"><ul class="table-customiser__choices">` +
+        `<details class="customiser__options govuk-details lite-mobile-hide"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">Customise table columns</span></summary><div class="govuk-details__text"><ul class="customiser__choices">` +
           customiserOptions +
           `</ul></div></details>`
       );
 
     this.$el
-      .querySelectorAll("input.table-customiser__option")
+      .querySelectorAll("input.customiser__option")
       .forEach(($checkbox, index, obj) => {
         $checkbox.addEventListener("click", (evt) =>
           this.handleOptionClick(evt)
         );
       });
-    this.$customiserChoices = this.$el.querySelector(
-      "ul.table-customiser__choices"
-    );
+    this.$customiserChoices = this.$el.querySelector("ul.customiser__choices");
   }
 
   handleOptionClick(evt) {
@@ -99,17 +97,17 @@ class TableCustomiser {
       preferences[key] = value.visible;
     }
     window.localStorage.setItem(
-      "table-customiser-preferences",
+      "customiser-preferences",
       JSON.stringify(preferences)
     );
   }
 
   loadPreferences() {
-    if (!window.localStorage.getItem("table-customiser-preferences")) {
+    if (!window.localStorage.getItem("customiser-preferences")) {
       return;
     }
     const preferences = JSON.parse(
-      window.localStorage.getItem("table-customiser-preferences")
+      window.localStorage.getItem("customiser-preferences")
     );
     for (const [key, value] of Object.entries(preferences)) {
       if (key in this.customisableColumns) {
@@ -119,10 +117,10 @@ class TableCustomiser {
   }
 }
 
-const initTableCustomisers = () => {
+const initCustomisers = () => {
   document
-    .querySelectorAll(".table-customiser")
-    .forEach(($el) => new TableCustomiser($el).init());
+    .querySelectorAll(".customiser")
+    .forEach(($el) => new Customiser($el).init());
 };
 
-export { initTableCustomisers, TableCustomiser };
+export { initCustomisers, Customiser };
