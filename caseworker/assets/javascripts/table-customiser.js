@@ -70,7 +70,7 @@ class TableCustomiser {
       .querySelector(".table-customiser__header")
       .insertAdjacentHTML(
         "beforeend",
-        `<details class="table-customiser__options govuk-details"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">Customise table columns</span></summary><div class="govuk-details__text"><ul class="table-customiser__choices">` +
+        `<details class="table-customiser__options govuk-details lite-mobile-hide"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">Customise table columns</span></summary><div class="govuk-details__text"><ul class="table-customiser__choices">` +
           customiserOptions +
           `</ul></div></details>`
       );
@@ -112,7 +112,9 @@ class TableCustomiser {
       window.localStorage.getItem("table-customiser-preferences")
     );
     for (const [key, value] of Object.entries(preferences)) {
-      this.customisableColumns[key].visible = value;
+      if (key in this.customisableColumns) {
+        this.customisableColumns[key].visible = value;
+      }
     }
   }
 }
