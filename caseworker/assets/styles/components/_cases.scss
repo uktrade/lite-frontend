@@ -600,3 +600,7 @@ $case-header-text-colour: govuk-colour('white');
     overflow: hidden;
   }
 }
+
+.case-table-container {
+    overflow-x: scroll;
+}
