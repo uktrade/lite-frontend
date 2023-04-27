@@ -197,6 +197,9 @@ class Cases(LoginRequiredMixin, FormView):
         case["queue_assignments"] = self._transform_queue_assignments(case)
         case["activity_updates"] = self._transform_activity_updates(case)
 
+    def get_initial(self):
+        return self.get_params()
+
     def get_form(self):
         return CasesFiltersForm(self.request, self.filters, **self.get_form_kwargs())
 

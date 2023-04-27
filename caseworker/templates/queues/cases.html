@@ -58,15 +58,11 @@
 		{% endfor %}
 	</div>
 
-	<p id="text-case-count" class="lite-filters__hint-text">{{ data.count }} case{{ data.count|pluralize }}</p>
-
-	<div class="govuk-grid-row">
-		<div class="govuk-grid-column-two-thirds">
-			<form method="get">
-				{% crispy form %}
-			</form>
-		</div>
+	<div class="govuk-grid-row govuk-!-padding-bottom-6">
+		<p id="text-case-count" class="lite-filters__hint-text">{{ data.count }} case{{ data.count|pluralize }}</p>
 	</div>
+
+	{% include 'queues/case-filters.html' %}
 
 	{% include 'filters.html' %}
 
