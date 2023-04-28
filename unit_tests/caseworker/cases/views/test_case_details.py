@@ -103,17 +103,14 @@ def test_case_details_with_no_destinations(
 
 
 @pytest.mark.parametrize(
-    "is_system_queue,is_user_assigned",
+    "is_system_queue",
     (
-        (True, True),
-        (True, False),
-        (False, True),
-        (False, False),
+        True,
+        False,
     ),
 )
-def test_case_assign_me_button(
+def test_case_assign_me_button_when_user_is_already_assigned(
     is_system_queue,
-    is_user_assigned,
     authorized_client,
     data_queue,
     data_standard_case,
@@ -121,11 +118,10 @@ def test_case_assign_me_button(
     assign_user_to_case,
 ):
     data_queue["is_system_queue"] = is_system_queue
-    if is_user_assigned:
-        assign_user_to_case(
-            mock_gov_user,
-            data_standard_case,
-        )
+    assign_user_to_case(
+        mock_gov_user,
+        data_standard_case,
+    )
 
     case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(case_url)
@@ -133,10 +129,31 @@ def test_case_assign_me_button(
     html = BeautifulSoup(response.content, "html.parser")
     needs_allocation = html.find(id="allocation-warning")
 
-    if is_user_assigned:
-        assert not needs_allocation
-    else:
-        assert "You need to allocate yourself or someone else to this case to work on it" in needs_allocation.text
-        assert needs_allocation.find(id="allocate-case-link").text == "Allocate case"
-        if not is_system_queue:
-            assert needs_allocation.find(id="allocate-to-me-button").text == "Allocate to me"
+    assert not needs_allocation
+
+
+@pytest.mark.parametrize(
+    "is_system_queue",
+    (
+        True,
+        False,
+    ),
+)
+def test_case_assign_me_button_when_user_is_not_assigned(
+    is_system_queue,
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    mock_gov_user,
+):
+    data_queue["is_system_queue"] = is_system_queue
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    needs_allocation = html.find(id="allocation-warning")
+
+    assert "You need to allocate yourself or someone else to this case to work on it" in needs_allocation.text
+    assert needs_allocation.find(id="allocate-case-link").text == "Allocate case"
+    if not is_system_queue:
+        assert needs_allocation.find(id="allocate-to-me-button").text == "Allocate to me"

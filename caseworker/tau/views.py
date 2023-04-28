@@ -22,12 +22,12 @@ from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
 
-from .forms import TAUAssessmentForm, TAUEditForm
-from .services import get_first_precedents
-from .summaries import get_good_on_application_tau_summary
-from .utils import get_cle_suggestions_json
-from ..cases.helpers.case import CaseworkerMixin
-from ..queues.services import get_queue
+from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
+from caseworker.tau.services import get_first_precedents
+from caseworker.tau.summaries import get_good_on_application_tau_summary
+from caseworker.tau.utils import get_cle_suggestions_json
+from caseworker.cases.helpers.case import CaseworkerMixin
+from caseworker.queues.services import get_queue
 
 TAU_ALIAS = "TAU"
 
