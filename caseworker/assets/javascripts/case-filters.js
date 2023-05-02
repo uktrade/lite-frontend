@@ -10,16 +10,18 @@ const initCountryAutocompleteField = async () => {
   autocompleteContainer.id = "filter_country_container";
   originalInput.parentElement.appendChild(autocompleteContainer);
   originalInput.style = "display:none";
-  const countryData = null;
   let nameInput;
-  const getCountryData = async () => {
-    if (countryData) {
-      return countryData;
-    }
-    return await fetch("/api/countries/")
+  const countryData = await fetch("/api/countries/")
       .then((response) => response.json())
       .then((results) => results["countries"]);
-  };
+  const getDefaultValue = (originalInput) => {
+    const results = countryData.filter((obj) => obj.id == originalInput.value);
+    if (results.length) {
+        return results[0].name;
+    }
+    return originalInput.dataset.name || "";
+  }
+
   accessibleAutocomplete({
     element: document.querySelector("#filter_country_container"),
     id: "_id_country",
@@ -29,7 +31,7 @@ const initCountryAutocompleteField = async () => {
         return;
       }
       populateResults(
-        (await getCountryData()).filter((obj) =>
+        countryData.filter((obj) =>
           obj.name.toLowerCase().includes(query.toLowerCase())
         )
       );
@@ -52,9 +54,7 @@ const initCountryAutocompleteField = async () => {
         originalInput.value = confirmed.id;
       }
     },
-    defaultValue: (await getCountryData()).filter((obj) => {
-      return obj.id === originalInput.value;
-    })[0].name,
+    defaultValue: getDefaultValue(originalInput),
     showNoOptionsFound: true,
     autoselect: true,
     confirmOnBlur: true,
