@@ -113,8 +113,9 @@
 }
 
 .case-filter-actions {
-	position: relative;
 	padding-bottom: govuk-spacing(4) 0;
+    background-color: govuk-colour("light-grey");
+    width: 100vw;
 	z-index: 0;
 
     &:before {
