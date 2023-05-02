@@ -62,7 +62,7 @@ const initCountryAutocompleteField = async () => {
   nameInput = document.querySelector("#_id_country");
 };
 
-const initRegimeEntryAutocompleteField = async (getDefaultValue) => {
+const initRegimeEntryAutocompleteField = async () => {
   const originalInput = document.querySelector("#id_regime_entry");
   const autocompleteContainer = document.createElement("div");
   autocompleteContainer.id = "filter_regime_entry_container";
@@ -72,6 +72,13 @@ const initRegimeEntryAutocompleteField = async (getDefaultValue) => {
   const regimeEntriesData = await fetch("/api/regime-entries/").then(
     (response) => response.json()
   );
+  const getDefaultValue = (originalInput) => {
+    const results = regimeEntriesData.filter((obj) => obj.pk == originalInput.value);
+    if (results.length) {
+        return results[0].name;
+    }
+    return originalInput.dataset.name || "";
+  }
   accessibleAutocomplete({
     element: document.querySelector("#filter_regime_entry_container"),
     id: "_id_regime_entry",
@@ -101,7 +108,7 @@ const initRegimeEntryAutocompleteField = async (getDefaultValue) => {
     },
     onConfirm: (confirmed) => {
       if (confirmed) {
-        originalInput.value = confirmed.id;
+        originalInput.value = confirmed.pk;
       }
     },
     defaultValue: getDefaultValue(originalInput),
@@ -153,9 +160,7 @@ function showHideFilters() {
 
 const initCaseFilters = () => {
   initCountryAutocompleteField();
-  initRegimeEntryAutocompleteField(
-    (originalInput) => originalInput.dataset.name || ""
-  );
+  initRegimeEntryAutocompleteField();
 
   initFlagsFiltersField();
 
