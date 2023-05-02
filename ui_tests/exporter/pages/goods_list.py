@@ -33,19 +33,19 @@ class GoodsListPage(BasePage):
         self.driver.find_element(by=By.ID, value=self.BUTTON_ADD_A_GOOD_ID).click()
 
     def filter_by_description(self, description: str):
-        functions.try_open_filters(self.driver)
+        functions.open_case_filters(self.driver)
         self.driver.find_element(by=By.ID, value=self.INPUT_DESCRIPTION_FILTER_ID).clear()
         self.driver.find_element(by=By.ID, value=self.INPUT_DESCRIPTION_FILTER_ID).send_keys(description)
         self.driver.find_element(by=By.ID, value=self.BUTTON_APPLY_FILTERS).click()
 
     def filter_by_control_list_entry(self, control_list_entry: str):
-        functions.try_open_filters(self.driver)
+        functions.open_case_filters(self.driver)
         self.driver.find_element(by=By.ID, value=self.INPUT_CONTROL_LIST_ENTRY_FILTER_ID).clear()
         self.driver.find_element(by=By.ID, value=self.INPUT_CONTROL_LIST_ENTRY_FILTER_ID).send_keys(control_list_entry)
         self.driver.find_element(by=By.ID, value=self.BUTTON_APPLY_FILTERS).click()
 
     def filter_by_part_number(self, part_number: str):
-        functions.try_open_filters(self.driver)
+        functions.open_case_filters(self.driver)
         self.driver.find_element(by=By.ID, value=self.INPUT_PART_NUMBER_FILTER_ID).clear()
         self.driver.find_element(by=By.ID, value=self.INPUT_PART_NUMBER_FILTER_ID).send_keys(part_number)
         self.driver.find_element(by=By.ID, value=self.BUTTON_APPLY_FILTERS).click()

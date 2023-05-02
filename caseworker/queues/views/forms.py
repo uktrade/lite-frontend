@@ -19,6 +19,7 @@ class CasesFiltersForm(forms.Form):
 
     case_reference = forms.CharField(
         label="Filter by case reference",
+        widget=forms.TextInput(attrs={"id": "case_reference"}),
         required=False,
     )
     exporter_application_reference = forms.CharField(
@@ -107,6 +108,7 @@ class CasesFiltersForm(forms.Form):
         self.fields["case_type"] = forms.ChoiceField(
             choices=case_type_choices,
             label="Filter by type",
+            widget=forms.Select(attrs={"id": "case_type"}),
         )
 
         self.fields["status"] = forms.ChoiceField(
@@ -219,7 +221,7 @@ class CasesFiltersForm(forms.Form):
                 css_class="advanced-group",
             ),
             Fieldset(
-                Submit("submit", "Apply filters"),
+                Submit("submit", "Apply filters", css_id="button-apply-filters"),
                 HTML(clear_filters_link),
                 css_class="case-filter-actions",
             ),
