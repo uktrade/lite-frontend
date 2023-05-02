@@ -76,6 +76,11 @@
 		{% else %}
         <div class="case-table-container">
 		<table id="table-cases" class="govuk-table">
+
+			{% if not queue.is_system_queue %}
+				<col/>
+			{% endif %}
+
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					{% if not queue.is_system_queue %}
@@ -85,18 +90,18 @@
 					{% endif %}
 					<th class="govuk-table__header govuk-table__cell--tight customiser__static" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
 					<th class="govuk-table__header app-table__header--skeleton customiser__static" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton customiser__default" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton customiser__default" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton customiser__default" scope="col">{% lcs 'cases.CasesListPage.Table.UPDATES' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">Products</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">Control list entries</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">Report summaries</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">Regimes</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">Total value</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">Queries</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">Denial matches</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">Intended end use</th>
-					<th class="govuk-table__header app-table__header--skeleton customiser__default" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable customiser__default" data-customiser-key="destinations" data-customiser-label="Destinations" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable customiser__default" data-customiser-key="case-allocation" data-customiser-label="Case allocation" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable customiser__default" data-customiser-key="case-updates" data-customiser-label="Case updates" scope="col">{% lcs 'cases.CasesListPage.Table.UPDATES' %}</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable" data-customiser-key="products" data-customiser-label="Products" scope="col">Products</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable" data-customiser-key="cles" data-customiser-label="Control list entries" scope="col">Control list entries</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable" data-customiser-key="report-summaries" data-customiser-label="Report summaries" scope="col">Report summaries</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable" data-customiser-key="regimes" data-customiser-label="Regimes" scope="col">Regimes</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable" data-customiser-key="total-value" data-customiser-label="Total value" scope="col">Total value</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable" data-customiser-key="queries" data-customiser-label="Queries" scope="col">Queries</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable" data-customiser-key="denial-matches" data-customiser-label="Denial matches" scope="col">Denial matches</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable" data-customiser-key="intended-end-use" data-customiser-label="Intended end use" scope="col">Intended end use</th>
+					<th class="govuk-table__header app-table__header--skeleton customiser__toggleable customiser__default" data-customiser-key="flags" data-customiser-label="Flags" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
 				</tr>
 			</thead>
 

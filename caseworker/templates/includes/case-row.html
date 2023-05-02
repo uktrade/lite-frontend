@@ -59,7 +59,7 @@
 	</td>
 
 	{# destinations #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__destinations">
 		<ol class="govuk-list destinations__list">
 			{% for country in case.unique_destinations %}
 				<li>
@@ -70,7 +70,7 @@
 	</td>
 
 	{# 	Case allocation #}
-	<td class="govuk-table__cell lite-mobile-hide expander" data-expander-visible-elems="3">
+	<td class="govuk-table__cell lite-mobile-hide expander customiser__additional__case-allocation" data-expander-visible-elems="3">
 		<ul class="app-assignments__list expander__expand-list">
 			{% if case.case_officer.first_name and case.case_officer.last_name %}
 			   <li class="app-assignments__item expander__expand-list__item">
@@ -125,7 +125,7 @@
 	</td>
 
     {# case updates #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__case-updates">
 		<ul class="app-updates__list">
 			{% if case.activity_updates %}
 				{% for update in case.activity_updates %}
@@ -159,7 +159,7 @@
 	</td>
 
 	{# Products #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__products">
 		<ol class="govuk-list  destinations__list">
 			{% for good in case.goods %}
 				<li>
@@ -170,12 +170,12 @@
 	</td>
 
 	{# CLEs #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__cles">
 		{{case.goods_summary.cles|join:"<br>"}}
 	</td>
 
 	{# Report summaries #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__report-summaries">
 		<ol class="govuk-list  destinations__list">
 			{% for report_summary in case.goods_summary.report_summaries %}
 				<li>
@@ -186,31 +186,31 @@
 	</td>
 
 	{# Regimes #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__regimes">
 		{{case.goods_summary.regimes|join:" "}}
 	</td>
 
 	{# Total value #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__total-value">
 		£{{case.goods_summary.total_value|floatformat:2|intcomma}}
 	</td>
 
 	{# Queries #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__queries">
         {% if case.ecju_queries %}
             <a href="{% url 'cases:case' queue.id case.id %}ecju-queries/" class="govuk-link govuk-link--no-visited-state">{{case.ecju_queries|length}} queries</a>
         {% endif %}
 	</td>
 
 	{# Denial matches #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__denial-matches">
         {% if case.denials %}
             <a href="{% url 'cases:case' queue.id case.id %}details/#denial-matches" class="govuk-link govuk-link--no-visited-state">{{case.denials|length}} denials</a>
         {% endif %}
 	</td>
 
 	{# intended end use #}
-	<td class="govuk-table__cell lite-mobile-hide">
+	<td class="govuk-table__cell lite-mobile-hide customiser__additional__intended-end-use">
         {% if case.intended_end_use %}
             {{case.intended_end_use|truncatechars:200}}
         {% endif %}
@@ -220,7 +220,7 @@
 	</td>
 
 	{# application flags #}
-	<td class="govuk-table__cell lite-tablet-hide">
+	<td class="govuk-table__cell lite-tablet-hide customiser__additional__flags">
 		{% if case.flags or case.destinations_flags or case.goods_flags %}
 			{% include 'includes/case-row-flags.html' with flags=case.flags destinations_flags=case.destinations_flags goods_flags=case.goods_flags %}
 		{% else %}

@@ -1,30 +1,27 @@
 class Customiser {
   constructor($el) {
     this.$el = $el;
-    let $headers = this.$el.querySelectorAll("th");
-    let $rows = this.$el.querySelectorAll("tr");
-    this.customisableColumns = {};
-    $headers.forEach(($header, columnIndex, obj) => {
-      if ($header.classList.contains("customiser__static")) {
+    let $toggleableElems = this.$el.querySelectorAll(".customiser__toggleable");
+
+    this.toggleableElems = {};
+    $toggleableElems.forEach(($toggleableElem, index, obj) => {
+      if ($toggleableElem.classList.contains("customiser__static")) {
         return;
       }
 
-      const columnIdentifier = $header.textContent;
-      let $columns = [];
-      $rows.forEach(($row, rowIndex, obj) => {
-        const column = $row.querySelectorAll("td")[columnIndex];
-        if (column) {
-          $columns.push(column);
-        }
-      });
+      const key = $toggleableElem.getAttribute("data-customiser-key");
+      const label = $toggleableElem.getAttribute("data-customiser-label");
 
       let visible = false;
-      if ($header.classList.contains("customiser__default")) {
+      if ($toggleableElem.classList.contains("customiser__default")) {
         visible = true;
       }
-      this.customisableColumns[columnIdentifier] = {
-        headerElement: $headers[columnIndex],
-        columnElements: $columns,
+      const additionalElemClass = ".customiser__additional__" + key;
+      let additionalElems = $el.querySelectorAll(additionalElemClass);
+      this.toggleableElems[key] = {
+        element: $toggleableElem,
+        additionalElements: additionalElems,
+        label: label,
         visible: visible,
       };
     });
@@ -32,37 +29,42 @@ class Customiser {
 
   init() {
     this.loadPreferences();
-    this.showHideColumns();
+    this.showHideElems();
     this.buildCustomiser();
   }
 
-  showHideColumns() {
-    for (const [key, value] of Object.entries(this.customisableColumns)) {
-      this.setColumnVisibility(value, value.visible);
+  showHideElems() {
+    for (const [key, value] of Object.entries(this.toggleableElems)) {
+      this.setElemVisibility(value.element, value.visible);
+      value.additionalElements.forEach((element, index, obj) => {
+        this.setElemVisibility(element, value.visible);
+      });
     }
   }
 
-  setColumnVisibility(value, visible) {
-    value["headerElement"].hidden = !visible;
-    value["columnElements"].forEach(($column) => {
-      $column.hidden = !visible;
-    });
+  setElemVisibility(element, visible) {
+    if (visible) {
+      element.classList.remove("customiser__hidden");
+    } else {
+      element.classList.add("customiser__hidden");
+    }
   }
 
   buildCustomiser() {
     let customiserOptions = ``;
-    for (const [key, value] of Object.entries(this.customisableColumns)) {
+    for (const [key, value] of Object.entries(this.toggleableElems)) {
+      const label = value.label;
       let checkbox =
         `<div class="govuk-checkboxes__item"><input type="checkbox" class="customiser__option govuk-checkboxes__input" name="` +
         key +
         `" ` +
         (value.visible ? "checked" : "") +
-        ` id="` +
+        ` id="customiser__option__` +
         key +
-        `"> <label class="govuk-label govuk-checkboxes__label" for="` +
+        `"> <label class="govuk-label govuk-checkboxes__label" for="customiser__option__` +
         key +
         `">` +
-        key +
+        label +
         `</label></div>`;
       customiserOptions += `<li>` + checkbox + `</li>`;
     }
@@ -86,14 +88,14 @@ class Customiser {
   }
 
   handleOptionClick(evt) {
-    this.customisableColumns[evt.target.name].visible = evt.target.checked;
-    this.showHideColumns();
+    this.toggleableElems[evt.target.name].visible = evt.target.checked;
+    this.showHideElems();
     this.storePreferences();
   }
 
   storePreferences() {
     let preferences = {};
-    for (const [key, value] of Object.entries(this.customisableColumns)) {
+    for (const [key, value] of Object.entries(this.toggleableElems)) {
       preferences[key] = value.visible;
     }
     window.localStorage.setItem(
@@ -110,8 +112,8 @@ class Customiser {
       window.localStorage.getItem("customiser-preferences")
     );
     for (const [key, value] of Object.entries(preferences)) {
-      if (key in this.customisableColumns) {
-        this.customisableColumns[key].visible = value;
+      if (key in this.toggleableElems) {
+        this.toggleableElems[key].visible = value;
       }
     }
   }
