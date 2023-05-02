@@ -146,6 +146,7 @@ function showHideFilters() {
           $(this).val() != "Select" &&
           $(this).val() != "blank" &&
           $(this).attr("type") != "hidden" &&
+          $(this).attr("type") != "submit" &&
           ($(this).attr("type") != "checkbox" ||
             ($(this).attr("type") == "checkbox" && $(this).attr("checked")))
         ) {
