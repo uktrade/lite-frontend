@@ -27,6 +27,7 @@ urlpatterns = [
     path("tau/report_summary/", include("caseworker.report_summary.urls")),
     path("search/", include("caseworker.search.urls")),
     path("search/proof-of-concept/", include("caseworker.search.proof_of_concept.urls")),
+    path("bookmarks/", include("caseworker.bookmarks.urls")),
 ]
 
 

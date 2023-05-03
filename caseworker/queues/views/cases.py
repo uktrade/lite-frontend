@@ -7,6 +7,7 @@ from django.http import Http404
 from django.views.generic import FormView
 from django.utils.functional import cached_property
 
+from caseworker.bookmarks.forms import AddBookmark
 from lite_content.lite_internal_frontend.cases import CasesListPage
 
 from core.auth.views import LoginRequiredMixin
@@ -241,8 +242,13 @@ class Cases(LoginRequiredMixin, FormView):
         kwargs["queue"] = self.queue
         return kwargs
 
-    def get_context_data(self, *args, **kwargs):
 
+    def fetch_bookmarks(self):
+        from core import client
+        return client.get(self.request, "/cases/bookmarks/")
+        
+
+    def get_context_data(self, *args, **kwargs):
         try:
             updated_queue = [
                 queue for queue in self.data["results"]["queues"] if queue["id"] == UPDATED_CASES_QUEUE_ID
@@ -254,6 +260,10 @@ class Cases(LoginRequiredMixin, FormView):
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
+        bookmarks = self.fetch_bookmarks().json()
+        return_to = self.request.build_absolute_uri()
+        save_filter_form = AddBookmark(initial={"return_to": return_to})
+
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,
@@ -264,6 +274,9 @@ class Cases(LoginRequiredMixin, FormView):
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
             "show_updated_cases_banner": show_updated_cases_banner,
             "tab_data": self._tab_data(),
+            "bookmarks": bookmarks,
+            "return_to": return_to,
+            "save_filter_form": save_filter_form,
         }
 
         return super().get_context_data(*args, **context, **kwargs)

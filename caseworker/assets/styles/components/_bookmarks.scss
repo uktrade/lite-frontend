@@ -1,0 +1,19 @@
+#bookmark-links {
+  display: block;
+}
+
+.current-bookmark {
+  background-color: aliceblue;
+}
+
+.delete-bookmark {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1d70b8;
+  text-decoration: underline;
+}
+
+.delete-bookmark:hover {
+  color: #4c2c92;
+}
