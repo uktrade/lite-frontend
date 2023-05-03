@@ -22,11 +22,12 @@ from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
 
-from .forms import TAUAssessmentForm, TAUEditForm
-from .services import get_first_precedents
-from .summaries import get_good_on_application_tau_summary
-from .utils import get_cle_suggestions_json
-
+from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
+from caseworker.tau.services import get_first_precedents
+from caseworker.tau.summaries import get_good_on_application_tau_summary
+from caseworker.tau.utils import get_cle_suggestions_json
+from caseworker.cases.helpers.case import CaseworkerMixin
+from caseworker.queues.services import get_queue
 
 TAU_ALIAS = "TAU"
 
@@ -41,6 +42,10 @@ class TAUMixin(CaseTabsMixin):
     @cached_property
     def queue_id(self):
         return str(self.kwargs["queue_pk"])
+
+    @cached_property
+    def queue(self):
+        return get_queue(self.request, self.queue_id)
 
     @cached_property
     def case(self):
@@ -181,7 +186,7 @@ def get_regime_entries_payload_data(form_cleaned_data):
     return entries
 
 
-class TAUHome(LoginRequiredMixin, TAUMixin, FormView):
+class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
     """This renders a placeholder home page for TAU 2.0."""
 
     template_name = "tau/home.html"

@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
+from caseworker.cases.helpers.case import CaseworkerMixin
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.cases.services import (
@@ -15,7 +16,7 @@ from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
 
 
-class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, TemplateView):
+class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, TemplateView):
     template_name = "activities/notes-and-timeline.html"
 
     @cached_property

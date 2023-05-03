@@ -1,3 +1,4 @@
+from django.forms.widgets import HiddenInput
 from storages.backends.s3boto3 import S3Boto3StorageFile
 
 from django import forms
@@ -256,3 +257,10 @@ class CaseAssignmentQueueForm(BaseForm):
             HTML(render_to_string("forms/filter_radios.html")),
             "queue",
         )
+
+
+class CaseAssignmentsAllocateToMeForm(forms.Form):
+    queue_id = forms.CharField(widget=HiddenInput)
+    user_id = forms.CharField(widget=HiddenInput)
+    case_id = forms.CharField(widget=HiddenInput)
+    return_to = forms.CharField(widget=HiddenInput)
