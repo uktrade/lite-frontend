@@ -180,9 +180,8 @@ def group_advice_by_team(advice):
 def get_advice_to_countersign(advice, caseworker):
     advice_levels_to_countersign = [AdviceLevel.USER]
 
-    if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-        if caseworker["team"]["alias"] == LICENSING_UNIT_TEAM:
-            advice_levels_to_countersign = [AdviceLevel.FINAL]
+    if caseworker["team"]["alias"] == LICENSING_UNIT_TEAM:
+        advice_levels_to_countersign = [AdviceLevel.FINAL]
     advice_by_team = filter_advice_by_users_team(advice, caseworker)
     user_advice = filter_advice_by_level(advice_by_team, advice_levels_to_countersign)
     grouped_user_advice = group_advice_by_user(user_advice)
@@ -191,8 +190,6 @@ def get_advice_to_countersign(advice, caseworker):
 
 def get_countersign_decision_advice_by_user(case, caseworker):
     result = defaultdict(list)
-    if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-        return result
 
     if caseworker["team"]["alias"] != LICENSING_UNIT_TEAM:
         return result
@@ -564,21 +561,20 @@ def get_advice_tab_context(case, caseworker, queue_id):
         consolidated_advice = get_consolidated_advice(case.advice, team_alias)
 
         if queue_alias in (LU_LICENSING_MANAGER_QUEUE, LU_SR_LICENSING_MANAGER_QUEUE):
-            if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-                advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
-                countersigned_by = get_countersigners_decision_advice(case, caseworker)
+            advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
+            countersigned_by = get_countersigners_decision_advice(case, caseworker)
 
-                if advice_to_countersign:
-                    if caseworker["id"] not in countersigned_by:
-                        # An individual countersigning advice on a case for the first time
-                        context["url"] = "cases:countersign_advice_view"
-                        context["countersign"] = True
-                        context["buttons"]["review_and_countersign"] = True
-                    else:
-                        # An individual accessing the case after giving countersigned advice
-                        context["url"] = "cases:countersign_view"
-                        context["buttons"]["edit_recommendation"] = True
-                        context["buttons"]["move_case_forward"] = True
+            if advice_to_countersign:
+                if caseworker["id"] not in countersigned_by:
+                    # An individual countersigning advice on a case for the first time
+                    context["url"] = "cases:countersign_advice_view"
+                    context["countersign"] = True
+                    context["buttons"]["review_and_countersign"] = True
+                else:
+                    # An individual accessing the case after giving countersigned advice
+                    context["url"] = "cases:countersign_view"
+                    context["buttons"]["edit_recommendation"] = True
+                    context["buttons"]["move_case_forward"] = True
 
         elif queue_alias in (LU_POST_CIRC_FINALISE_QUEUE, *MOD_CASES_TO_REVIEW_QUEUES):
             if not consolidated_advice:

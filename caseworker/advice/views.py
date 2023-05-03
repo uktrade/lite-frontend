@@ -84,10 +84,7 @@ class CaseContextMixin:
         }
 
     def get_rejected_lu_countersignature(self):
-        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-            return self.rejected_countersign_advice()
-        else:
-            return None
+        return self.rejected_countersign_advice()
 
     def get_context(self, **kwargs):
         return {}
@@ -111,7 +108,7 @@ class CaseContextMixin:
             "case": self.case,
             "queue_pk": self.kwargs["queue_pk"],
             "caseworker": self.caseworker,
-            "is_lu_countersigning": (is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),
+            "is_lu_countersigning": is_in_lu_team,
             "rejected_lu_countersignature": rejected_lu_countersignature,
         }
 
@@ -415,7 +412,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         kwargs = super().get_form_kwargs()
 
         is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
-        is_lu_countersigning = ((is_in_lu_team and settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING),)
+        is_lu_countersigning = (is_in_lu_team,)
         if is_in_lu_team:
             rejected_lu_countersignature = self.get_rejected_lu_countersignature()
             if rejected_lu_countersignature and is_lu_countersigning:
@@ -435,9 +432,8 @@ class ViewCountersignedAdvice(AdviceDetailView):
         advice_to_countersign = services.get_advice_to_countersign(self.case.advice, self.caseworker)
         context["advice_to_countersign"] = advice_to_countersign.values()
         context["can_edit"] = self.can_edit(advice_to_countersign)
-        context["lu_can_edit"] = (
-            settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING
-            and self.caseworker_id in services.get_countersigners_decision_advice(self.case, self.caseworker)
+        context["lu_can_edit"] = self.caseworker_id in services.get_countersigners_decision_advice(
+            self.case, self.caseworker
         )
         context["denial_reasons_display"] = self.denial_reasons_display
         context["current_tab"] = "cases:countersign_view"
@@ -451,9 +447,6 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
     form_class = forms.CountersignDecisionAdviceForm
 
     def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-            raise Http404("LU Countersigning feature not enabled")
-
         return super().dispatch(request, *args, **kwargs)
 
     def get_context(self, **kwargs):
@@ -485,9 +478,6 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
 
 class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
     def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-            raise Http404("LU Countersigning feature not enabled")
-
         return super().dispatch(request, *args, **kwargs)
 
     def get_data(self, countersign_advice):
@@ -677,44 +667,38 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
     form_class = forms.MoveCaseForwardForm
 
     def get_lu_finalise_case(self, lu_countersign_required, rejected_lu_countersignature):
-        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-            finalise_case = (not lu_countersign_required) and (not rejected_lu_countersignature)
-        else:
-            finalise_case = not lu_countersign_required
+        finalise_case = (not lu_countersign_required) and (not rejected_lu_countersignature)
         return finalise_case
 
     def get_lu_countersign_required(self, rejected_lu_countersignature):
         case_flag_ids = {flag["id"] for flag in self.case.all_flags}
         lu_countersign_flags = services.LU_COUNTERSIGN_FLAGS
 
-        if settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING:
-            lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
+        lu_countersign_flags.update({services.MANPADS_ID, services.AP_LANDMINE_ID})
 
-            countersign_orders = []
-            countersign_required = case_flag_ids.intersection(lu_countersign_flags)
-            if countersign_required:
-                countersign_orders = [services.FIRST_COUNTERSIGN]
-            senior_manager_countersign_required = case_flag_ids.intersection(
-                {services.LU_SR_MGR_CHECK_REQUIRED_ID, services.MANPADS_ID}
-            )
-            if senior_manager_countersign_required:
-                countersign_orders = [services.FIRST_COUNTERSIGN, services.SECOND_COUNTERSIGN]
+        countersign_orders = []
+        countersign_required = case_flag_ids.intersection(lu_countersign_flags)
+        if countersign_required:
+            countersign_orders = [services.FIRST_COUNTERSIGN]
+        senior_manager_countersign_required = case_flag_ids.intersection(
+            {services.LU_SR_MGR_CHECK_REQUIRED_ID, services.MANPADS_ID}
+        )
+        if senior_manager_countersign_required:
+            countersign_orders = [services.FIRST_COUNTERSIGN, services.SECOND_COUNTERSIGN]
 
-            if rejected_lu_countersignature:
-                lu_countersign_required = False
-            else:
-                countersign_advice = self.case.get("countersign_advice", [])
-                are_all_countersign_orders_accepted = []
-                for order in countersign_orders:
-                    filtered_countersign_advice = services.filter_countersign_advice_by_order(countersign_advice, order)
-                    are_all_countersign_orders_accepted.append(
-                        len(filtered_countersign_advice) > 0
-                        and all(item["outcome_accepted"] for item in filtered_countersign_advice)
-                    )
-
-                lu_countersign_required = not all(are_all_countersign_orders_accepted)
+        if rejected_lu_countersignature:
+            lu_countersign_required = False
         else:
-            lu_countersign_required = bool(lu_countersign_flags.intersection(case_flag_ids))
+            countersign_advice = self.case.get("countersign_advice", [])
+            are_all_countersign_orders_accepted = []
+            for order in countersign_orders:
+                filtered_countersign_advice = services.filter_countersign_advice_by_order(countersign_advice, order)
+                are_all_countersign_orders_accepted.append(
+                    len(filtered_countersign_advice) > 0
+                    and all(item["outcome_accepted"] for item in filtered_countersign_advice)
+                )
+
+            lu_countersign_required = not all(are_all_countersign_orders_accepted)
 
         return lu_countersign_required
 
