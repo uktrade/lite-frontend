@@ -52,7 +52,7 @@ class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
         data = form.cleaned_data
         self.allocate_to_me(data)
         messages.success(self.request, f"You have been successfully added as case adviser")
-        self.success_url = self.request.headers.get("Referer", data["return_to"])
+        self.success_url = data["return_to"]
 
         return super().form_valid(form)
 

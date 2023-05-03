@@ -23,7 +23,13 @@
 			$("#" + $(this).attr("id") + "-content").addClass("app-case-tab-view--visible");
 			$(this).addClass("lite-tabs__tab--selected");
 			$(this).find(".lite-tabs__tab-notification").hide();
-			window.history.pushState({}, null, $(this).attr("href"));
+            let tabURL = $(this).attr("href");
+            window.history.pushState({}, null, tabURL);
+            let return_to_field = $("#id_return_to");
+            if (return_to_field){
+                return_to_field[0].value = tabURL;
+            }
+
 			$(".lite-tabs__container--fade").removeClass("lite-tabs__container--fade");
 
 			if ($(this).parent().hasClass("lite-tabs__tab-group")) {
