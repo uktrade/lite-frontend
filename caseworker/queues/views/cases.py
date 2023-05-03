@@ -1,5 +1,8 @@
 from datetime import datetime
 
+from dateutil import parser
+from decimal import Decimal
+
 from django.http import Http404
 from django.views.generic import FormView
 from django.utils.functional import cached_property
@@ -203,10 +206,30 @@ class Cases(LoginRequiredMixin, FormView):
 
         return all_assignments
 
+    def _transform_goods(self, case):
+        goods_summary = {
+            "cles": set(),
+            "regimes": set(),
+            "report_summaries": set(),
+            "total_value": Decimal(),
+        }
+        for good in case["goods"]:
+            goods_summary["cles"].update(good["cles"])
+            goods_summary["regimes"].update(good["regimes"])
+            if good["report_summary_subject"]:
+                report_summary = good["report_summary_subject"]
+                if good["report_summary_prefix"]:
+                    report_summary = f"{good['report_summary_prefix']} {report_summary}"
+                goods_summary["report_summaries"].add(report_summary)
+            goods_summary["total_value"] += Decimal(good["value"])
+        return goods_summary
+
     def transform_case(self, case):
         case["unique_destinations"] = self._transform_destinations(case)
         case["queue_assignments"] = self._transform_queue_assignments(case)
         case["activity_updates"] = self._transform_activity_updates(case)
+        case["goods_summary"] = self._transform_goods(case)
+        case["submitted_at"] = parser.parse(case["submitted_at"])
 
     def get_initial(self):
         return self.get_params()
