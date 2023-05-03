@@ -10,6 +10,7 @@ from core import client
 from core.exceptions import ServiceError
 
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
+from caseworker.queues.views.forms import CasesFiltersForm
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
@@ -113,14 +114,13 @@ def test_cases_home_page_view_context(authorized_client):
         "sla_circumference",
         "data",
         "queue",
-        "filters",
         "is_all_cases_queue",
         "enforcement_check",
         "updated_cases_banner_queue_id",
     ]
     response = authorized_client.get(reverse("queues:cases"))
-    assert len(response.context["filters"].filters) == 6
-    assert len(response.context["filters"].advanced_filters) == 23
+    assert isinstance(response.context["form"], CasesFiltersForm)
+    assert len(response.context["form"].fields) == 29
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200

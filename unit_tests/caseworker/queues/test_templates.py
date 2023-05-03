@@ -70,7 +70,7 @@ def test_cases_with_flags(data_standard_case, rf, client):
     request.requests_session = requests.Session()
 
     context["data"] = {"results": {"cases": [case]}}
-    context["form"] = CasesFiltersForm(request, filters)
+    context["form"] = CasesFiltersForm(request, True, filters)
 
     html = render_to_string("queues/cases.html", context)
     soup = BeautifulSoup(html, "html.parser")
@@ -97,7 +97,7 @@ def test_cases_without_flags(data_standard_case, rf, client):
     request.requests_session = requests.Session()
 
     context["data"] = {"results": {"cases": [case]}}
-    context["form"] = CasesFiltersForm(request, filters)
+    context["form"] = CasesFiltersForm(request, True, filters)
 
     html = render_to_string("queues/cases.html", context)
     soup = BeautifulSoup(html, "html.parser")

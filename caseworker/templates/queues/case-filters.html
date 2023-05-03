@@ -2,14 +2,14 @@
 {% load crispy_forms_tags %}
 
 <div class="lite-js-only">
-	<a href="#" id="show-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+	<button id="show-filters-link" class="lite-button--link lite-filter-toggle-link">
 		{% svg 'plus' %}
 		Show filters
-	</a>
-	<a href="#" id="hide-filters-link" class="govuk-link govuk-link--no-visited-state lite-filter-toggle-link">
+    </button>
+	<button id="hide-filters-link" class="lite-button--link lite-filter-toggle-link">
 		{% svg 'minus' %}
 		Hide filters
-	</a>
+    </button>
 </div>
 
 <form method="get">

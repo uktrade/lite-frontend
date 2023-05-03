@@ -6,7 +6,7 @@
 	box-sizing: border-box;
 	z-index: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     grid-gap: govuk-spacing(2);
 
 	@include govuk-media-query($from: tablet) {
@@ -38,9 +38,18 @@
 		margin-right: 0;
 		max-width: 100%!important;
 	}
-	.govuk-input--width-20 {
+
+    .govuk-input--width-20 {
 		max-width: 100%;
 	}
+
+    .govuk-checkboxes__label {
+        &::before {
+            background: govuk-colour("white");
+        }
+
+        text-align: left;
+    }
 }
 
 .advanced-group {

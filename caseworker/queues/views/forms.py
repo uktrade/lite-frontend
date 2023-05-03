@@ -23,7 +23,7 @@ class CasesFiltersForm(forms.Form):
         required=False,
     )
     exporter_application_reference = forms.CharField(
-        label="Filter by exporter application reference",
+        label="Filter by exporter reference",
         required=False,
     )
     organisation_name = forms.CharField(
@@ -79,31 +79,25 @@ class CasesFiltersForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, request, filters_data, *args, **kwargs):
+    def get_field_choices(self, filters_data, field):
+        return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
+
+    def __init__(self, request, system_queue, filters_data, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        case_type_choices = [("", "Select")] + [
-            (choice["key"], choice["value"]) for choice in filters_data["case_types"]
-        ]
-        case_status_choices = [("", "Select")] + [
-            (choice["key"], choice["value"]) for choice in filters_data["statuses"]
-        ]
+        case_type_choices = self.get_field_choices(filters_data, "case_types")
+        case_status_choices = self.get_field_choices(filters_data, "statuses")
+        advice_type_choices = self.get_field_choices(filters_data, "advice_types")
         gov_user_choices = [("", "Select"), ("not_assigned", "Not assigned")] + [
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
 
-        advice_type_choices = [("", "Select")] + [
-            (choice["key"], choice["value"]) for choice in filters_data["advice_types"]
-        ]
         sla_days_choices = [("", "Select")] + [(i, i) for i in range(SLA_DAYS_RANGE)]
         sla_sorted_choices = [("", "Select"), ("ascending", "Ascending"), ("descending", "Descending")]
         nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in get_flags(request, disable_pagination=True)]
-
-        clear_filters_link = """
-            <a href="/" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>
-        """
+        hidden_cases_choices = [(True, "Show hidden cases, including cases with open ECJU queries.")]
 
         self.fields["case_type"] = forms.ChoiceField(
             choices=case_type_choices,
@@ -182,6 +176,13 @@ class CasesFiltersForm(forms.Form):
             widget=CheckboxInputSmall(),
             required=False,
         )
+        self.fields["hidden"] = forms.TypedChoiceField(
+            choices=hidden_cases_choices,
+            coerce=coerce_str_to_bool,
+            label="",
+            widget=CheckboxInputSmall(),
+            required=False,
+        )
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -191,6 +192,7 @@ class CasesFiltersForm(forms.Form):
                 "status",
                 "case_officer",
                 "assigned_user",
+                "hidden" if not system_queue else None,
                 css_class="basic-filter-fields",
             ),
             AdvancedFiltersFieldset(
@@ -222,7 +224,9 @@ class CasesFiltersForm(forms.Form):
             ),
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),
-                HTML(clear_filters_link),
+                HTML(
+                    '<a href="/" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>'
+                ),
                 css_class="case-filter-actions",
             ),
         )

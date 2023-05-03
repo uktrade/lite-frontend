@@ -10,7 +10,6 @@ from core.auth.views import LoginRequiredMixin
 from core.exceptions import ServiceError
 
 from caseworker.queues.views.forms import CasesFiltersForm
-from caseworker.cases.helpers.filters import case_filters_bar
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
@@ -212,8 +211,12 @@ class Cases(LoginRequiredMixin, FormView):
     def get_initial(self):
         return self.get_params()
 
-    def get_form(self):
-        return CasesFiltersForm(self.request, self.filters, **self.get_form_kwargs())
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        kwargs["filters_data"] = self.filters
+        kwargs["system_queue"] = self._is_system_queue()
+        return kwargs
 
     def get_context_data(self, *args, **kwargs):
 
@@ -233,7 +236,6 @@ class Cases(LoginRequiredMixin, FormView):
             "sla_circumference": SLA_CIRCUMFERENCE,
             "data": self.data,
             "queue": self.queue,  # Used for showing current queue
-            "filters": case_filters_bar(self.request, self.filters, self._is_system_queue()),
             "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
