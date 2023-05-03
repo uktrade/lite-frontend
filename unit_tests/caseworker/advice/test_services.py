@@ -96,9 +96,7 @@ def countersign_advice(data_standard_case, advice_for_countersign, current_user)
     ]
 
 
-def test_get_advice_for_countersign_with_post_circ_countersigning(
-    current_user, advice_for_countersign, with_lu_countersigning_enabled
-):
+def test_get_advice_for_countersign_with_post_circ_countersigning(current_user, advice_for_countersign):
     countersign_advice = get_advice_to_countersign(advice_for_countersign, current_user)
     for user_id, advice in countersign_advice.items():
         assert user_id == current_user["id"]
@@ -170,7 +168,6 @@ def test_get_countersign_advice_tab_context(
     current_user,
     countersign_advice,
     test_data,
-    with_lu_countersigning_enabled,
 ):
     has_advice, advice_level, countersigned, team_alias, queue_alias, url, buttons = test_data
     queue_detail = data_standard_case["case"]["queue_details"][0]
@@ -221,7 +218,6 @@ def test_update_countersign_decision_advice(
     countersign_advice,
     client,
     requests_mock,
-    with_lu_countersigning_enabled,
 ):
     case = Case(data_standard_case["case"])
     # incorrect team, advice not updated

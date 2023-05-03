@@ -660,7 +660,6 @@ def test_case_returned_info_for_first_countersignature_rejection(
     mock_gov_lu_user,
     flags,
     countersigning_data,
-    with_lu_countersigning_enabled,
 ):
     data_standard_case["case"]["advice"] = advice_for_lu_countersign
     # Rejected countersignature
@@ -779,7 +778,6 @@ def test_case_returned_info_for_second_countersignature_rejection(
     mock_gov_lu_user,
     flags,
     countersigning_data,
-    with_lu_countersigning_enabled,
 ):
     data_standard_case["case"]["advice"] = advice_for_lu_countersign
     data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
@@ -834,7 +832,6 @@ def test_finalise_button_shown_if_no_rejected_countersignatures(
     view_consolidate_outcome_url,
     advice_for_lu_countersign,
     mock_gov_lu_user,
-    with_lu_countersigning_enabled,
 ):
     data_standard_case["case"]["advice"] = advice_for_lu_countersign
     countersigning_data = [
@@ -936,7 +933,6 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
     advice_for_lu_countersign,
     LU_team_user,
     FCDO_team_user,
-    with_lu_countersigning_enabled,
     team_alias,
     flags_list,
     countersigning_data,

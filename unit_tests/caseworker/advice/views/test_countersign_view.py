@@ -42,7 +42,6 @@ def test_single_lu_countersignature(
     data_standard_case,
     final_advice,
     url,
-    with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
@@ -80,7 +79,6 @@ def test_double_lu_countersignature(
     data_standard_case,
     final_advice,
     url,
-    with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
@@ -133,7 +131,6 @@ def test_single_lu_rejected_countersignature(
     data_standard_case,
     final_advice,
     url,
-    with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
@@ -199,7 +196,6 @@ def test_lu_rejected_senior_countersignature(
     data_standard_case,
     final_advice,
     url,
-    with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]

@@ -101,7 +101,6 @@ def test_lu_countersign_decision_edit_post_form_errors(
     advice_for_countersign,
     current_user,
     countersign_advice,
-    with_lu_countersigning_enabled,
     countersign_decision_edit_url,
 ):
     case_id = standard_case_with_advice["id"]
@@ -188,7 +187,6 @@ def test_lu_countersign_decision_edit_post_success(
     advice_for_countersign,
     current_user,
     countersign_advice,
-    with_lu_countersigning_enabled,
     countersign_decision_edit_url,
     queue_details,
     outcome_accepted,
@@ -267,7 +265,6 @@ def test_lu_countersign_edit_get_shows_previous_countersignature(
     advice_for_countersign,
     current_user,
     countersign_advice,
-    with_lu_countersigning_enabled,
     countersign_decision_edit_url,
 ):
     case_id = standard_case_with_advice["id"]

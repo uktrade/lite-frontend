@@ -3,6 +3,14 @@ import pytest
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 
 
+<<<<<<< HEAD
+=======
+# @pytest.fixture
+# def with_lu_countersigning_disabled(settings):
+#     settings.FEATURE_LU_POST_CIRC_COUNTERSIGNING = False
+
+
+>>>>>>> 8254ff74a (Remove refs to with_lu_countersigning_enabled)
 def advice_base_fields():
     return {
         "proviso": None,
