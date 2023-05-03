@@ -8,7 +8,11 @@ from django.urls import reverse
 from caseworker.flags.services import get_flags
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
+<<<<<<< HEAD
 from core.forms.layouts import ExpandingFieldset
+from caseworker.flags.services import get_flags
+=======
+>>>>>>> Add delete and display bookmark functionality
 
 SLA_DAYS_RANGE = 99
 
@@ -233,10 +237,8 @@ class CasesFiltersForm(forms.Form):
                 Field("is_nca_applicable"),
                 Field("is_trigger_list"),
                 legend="Advanced filters",
-                css_id="advanced-filter-fields",
                 css_class="advanced-group",
                 text_div_css_class="advanced-filter-fields",
-                details_id="advanced-filter-details",
             ),
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),

@@ -8,7 +8,11 @@ import pytest
 from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
+<<<<<<< HEAD
 from django.utils import timezone
+import rules
+=======
+>>>>>>> Add delete and display bookmark functionality
 
 from caseworker.advice import services
 from core import client
@@ -553,8 +557,8 @@ def mock_notifications(requests_mock):
 
 @pytest.fixture
 def mock_new_mentions_count(requests_mock):
-    url = client._build_absolute_uri("/cases/user-case-note-mentions-new-count/")
-    data = {"count": 5}
+    url = client._build_absolute_uri("/cases/user-case-note-mentions/")
+    data = {"mentions": [{}, {}]}
     requests_mock.get(url=url, json=data)
     yield data
 

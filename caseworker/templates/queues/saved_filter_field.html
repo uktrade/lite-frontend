@@ -1,0 +1,11 @@
+{% load i18n crispy_forms_field crispy_forms_gds %}
+
+<div class="saved-filter-field">
+{% if field.label %}
+    <label for="{{ field.id_for_label }}">
+        {{ field.label|safe }}
+    </label>
+{% endif %}
+
+{% crispy_gds_field field %}
+</div>
