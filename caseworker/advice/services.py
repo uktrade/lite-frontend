@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-from django.conf import settings
 from requests.exceptions import HTTPError
 
 from core import client

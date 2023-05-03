@@ -1,7 +1,6 @@
 from http import HTTPStatus
 
 import sentry_sdk
-from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
