@@ -615,51 +615,6 @@ def test_consolidate_raises_exception_for_other_team(
 
 
 @pytest.mark.parametrize(
-    "team_alias, team_name, flag",
-    (
-        (services.LICENSING_UNIT_TEAM, "LU Team", LU_COUNTERSIGN_REQUIRED_ID),
-        (services.LICENSING_UNIT_TEAM, "LU Team", LU_SR_MGR_CHECK_REQUIRED_ID),
-        (services.MOD_ECJU_TEAM, "MoD Team", LU_COUNTERSIGN_REQUIRED_ID),
-        (services.MOD_ECJU_TEAM, "MoD Team", LU_SR_MGR_CHECK_REQUIRED_ID),
-    ),
-)
-def test_view_consolidate_approve_outcome_countersign_warning_message(
-    requests_mock,
-    authorized_client,
-    data_standard_case,
-    view_consolidate_outcome_url,
-    consolidated_advice,
-    gov_user,
-    team_alias,
-    team_name,
-    flag,
-    with_lu_countersigning_disabled,
-):
-    data_standard_case["case"]["advice"] = consolidated_advice
-    flags = [SMALL_ARMS_ID, GREEN_COUNTRIES_ID, FIREARMS_ID, flag]
-    data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in flags]
-
-    gov_user["user"]["team"]["name"] = team_name
-    gov_user["user"]["team"]["alias"] = team_alias
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
-
-    response = authorized_client.get(view_consolidate_outcome_url)
-    assert response.status_code == 200
-
-    assert not response.context["rejected_lu_countersignature"]
-    if team_alias == services.LICENSING_UNIT_TEAM:
-        assert response.context["lu_countersign_required"] is True
-        assert response.context["finalise_case"] is False
-    else:
-        assert response.context["lu_countersign_required"] is False
-        assert response.context["finalise_case"] is False
-
-
-@pytest.mark.parametrize(
     "flags, countersigning_data",
     (
         (
@@ -1026,42 +981,3 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert bool(soup.find(id="finalise-case-button")) is expected_value_finalise_case
-
-
-@pytest.mark.parametrize(
-    "countersigning_data",
-    (
-        [
-            {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": False},
-        ],
-        [
-            {"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True},
-            {"order": services.SECOND_COUNTERSIGN, "outcome_accepted": False},
-        ],
-    ),
-)
-def test_rejection_countersignature_not_displayed_if_feature_flag_off(
-    authorized_client,
-    data_standard_case,
-    view_consolidate_outcome_url,
-    advice_for_lu_countersign,
-    mock_gov_lu_user,
-    with_lu_countersigning_disabled,
-    countersigning_data,
-):
-    data_standard_case["case"]["advice"] = advice_for_lu_countersign
-    # Rejected countersignature
-    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
-        advice_for_lu_countersign, countersigning_data
-    )
-    data_standard_case["case"]["all_flags"] = [FLAG_MAP[k] for k in [LU_COUNTERSIGN_REQUIRED_ID, GREEN_COUNTRIES_ID]]
-
-    response = authorized_client.get(view_consolidate_outcome_url)
-    assert response.status_code == 200
-    assert not response.context["rejected_lu_countersignature"]
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    rejected_div = soup.find(id="rejected-countersignature")
-    countersignature_required_div = soup.find(id="countersign-required")
-    assert rejected_div is None
-    assert countersignature_required_div is not None
