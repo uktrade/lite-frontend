@@ -632,7 +632,7 @@ class ProductUnitQuantityAndValueForm(BaseForm):
 class ProductUsesInformationSecurityForm(BaseForm):
     class Layout:
         TITLE = ProductSecurityFeatures.TITLE
-        SUBTITLE = ProductSecurityFeatures.TITLE
+        SUBTITLE = ProductSecurityFeatures.HAS_SECURITY_FEATURES
 
     uses_information_security = forms.TypedChoiceField(
         choices=(
