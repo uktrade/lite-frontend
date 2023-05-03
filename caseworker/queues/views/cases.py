@@ -1,4 +1,5 @@
 from dateutil import parser
+from decimal import Decimal
 
 from django.http import Http404
 from django.views.generic import TemplateView
@@ -187,7 +188,7 @@ class Cases(LoginRequiredMixin, TemplateView):
             "cles": set(),
             "regimes": set(),
             "report_summaries": set(),
-            "total_value": 0.0,
+            "total_value": Decimal(),
         }
         for good in case["goods"]:
             goods_summary["cles"].update(good["cles"])
@@ -197,7 +198,7 @@ class Cases(LoginRequiredMixin, TemplateView):
                 if good["report_summary_prefix"]:
                     report_summary = f"{good['report_summary_prefix']} {report_summary}"
                 goods_summary["report_summaries"].add(report_summary)
-            goods_summary["total_value"] += good["value"]
+            goods_summary["total_value"] += Decimal(good["value"])
         return goods_summary
 
     def transform_case(self, case):
