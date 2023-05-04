@@ -23,7 +23,7 @@
 		transform: translateX(-50vw);
 		background-color: govuk-colour("light-grey");
 		border-width: 2px 0;
-		border-style: solid top left right;
+        border-style: solid solid none solid;
 		border-color: darken(govuk-colour("light-grey"), 2%);
 		z-index: -1;
 	}
@@ -112,7 +112,7 @@
 		max-width: 100%!important;
 	}
     .govuk-checkboxes__label {
-        &::before {
+        &:before {
             background: govuk-colour("white");
         }
 
@@ -122,10 +122,9 @@
 }
 
 .case-filter-actions {
-	padding-bottom: govuk-spacing(4) 0;
-    background-color: govuk-colour("light-grey");
-    width: 100vw;
 	z-index: 0;
+    @include govuk-font($size: 19);
+    position: relative;
 
     &:before {
 		content: "";
@@ -138,7 +137,6 @@
         width: 100vw;
         transform: translateX(-50vw);
 		border-width: 2px 0;
-		border-style: solid left right bottom;
 		border-color: darken(govuk-colour("light-grey"), 2%);
     }
 
