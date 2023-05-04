@@ -1,0 +1,25 @@
+.customiser {
+
+    &__choices {
+        list-style: none;
+        padding-left: 0;
+
+        > li {
+            padding: 0.5rem 0;
+        }
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    &__options {
+        padding: 15px 0px;
+    }
+
+    &__toggleable--hidden {
+        display: none;
+    }
+
+}
