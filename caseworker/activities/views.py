@@ -61,11 +61,15 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
             )
             for team in sorted_teams
         ]
-
         return team_filters
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        for key in list(self.request.GET.keys()):
+            if key == "mentions":
+                # add to contex the list of CaseNotes with mentions.
+                pass
 
         return {
             **context,
