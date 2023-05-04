@@ -113,7 +113,7 @@ def test_is_user_case_officer(data, mock_gov_user, expected_result):
         ),
     ),
 )
-def test_user_can_change_case_and_move_case_forward_rule(data, mock_gov_user, expected_result):
+def test_user_assignment_based_rules(data, mock_gov_user, expected_result):
     for rule_name in (
         "can_user_change_case",
         "can_user_move_case_forward",
@@ -122,8 +122,56 @@ def test_user_can_change_case_and_move_case_forward_rule(data, mock_gov_user, ex
         "can_user_make_recommendation",
         "can_user_assess_products",
         "can_user_add_an_ejcu_query",
-        "can_user_attach_document",
         "can_user_generate_document",
         "can_user_add_contact",
     ):
         assert rules.test_rule(rule_name, mock_gov_user["user"], data) == expected_result
+
+
+@pytest.mark.parametrize(
+    "data",
+    (
+        (
+            {
+                "assigned_users": {
+                    "fake queue": [
+                        {"id": mock_gov_user_id},
+                    ]
+                },
+                "case_officer": {"id": mock_gov_user_id},
+            },
+        ),
+        (
+            {
+                "assigned_users": {
+                    "fake queue": [
+                        {"id": mock_gov_user_id},
+                    ]
+                },
+                "case_officer": {"id": "fake_id"},
+            },
+        ),
+        (
+            {
+                "assigned_users": {
+                    "fake queue": [
+                        {"id": "fake_id"},
+                    ]
+                },
+                "case_officer": {"id": mock_gov_user_id},
+            },
+        ),
+        (
+            {
+                "assigned_users": {
+                    "fake queue": [
+                        {"id": "fake_id"},
+                    ]
+                },
+                "case_officer": {"id": "fake_id"},
+            },
+        ),
+    ),
+)
+def test_can_user_attach_document(data, mock_gov_user):
+    assert rules.test_rule("can_user_attach_document", mock_gov_user["user"], data)
