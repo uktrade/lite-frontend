@@ -21,7 +21,7 @@ const initAutoCompleteField = async (field, choices, propertyName) => {
     accessibleAutocomplete({
         element: document.querySelector(`#filter_${field}_container`),
         id: `_id_${field}`,
-        source: async (query, populateResults) => {
+        source: (query, populateResults) => {
           if (!query) {
             populateResults([{ id: null, name: "" }]);
             return;
@@ -99,14 +99,14 @@ function showHideFilters() {
 }
 
 const initCountryAutocompleteField = () => {
-    const countryData = fetch("/api/countries/")
+    fetch("/api/countries/")
         .then((response) => response.json())
         .then((results) => results["countries"])
         .then((countries) => initAutoCompleteField('country', countries, 'id'));
 };
 
 const initRegimeEntryAutocompleteField = () => {
-    const regimeEntriesData = fetch("/api/regime-entries/")
+    fetch("/api/regime-entries/")
         .then((response) => response.json())
         .then((regime_entries) => initAutoCompleteField('regime_entry', regime_entries, 'pk'));
 };

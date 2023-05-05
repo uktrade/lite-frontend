@@ -74,7 +74,6 @@ def open_case_filters(driver: WebDriver):
 
 def try_open_filters(driver: WebDriver):
     if not driver.find_element(by=By.CLASS_NAME, value="lite-filter-bar").is_displayed():
-        driver.find_element(by=By.ID, value="show-filters-link").click()
         WebDriverWait(driver, 30).until(
             expected_conditions.presence_of_element_located((By.ID, "show-filters-link"))
         ).click()

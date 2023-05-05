@@ -124,7 +124,6 @@
 .case-filter-actions {
 	z-index: 0;
     @include govuk-font($size: 19);
-    position: relative;
 
     &:before {
 		content: "";

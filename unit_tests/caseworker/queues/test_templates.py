@@ -65,12 +65,13 @@ def test_cases_with_flags(data_standard_case, rf, client):
         "gov_users": [],
         "advice_types": [],
     }
+    queue = {"id": "cfac8bf4-d325-4e8e-9c28-0fe93c0ecf80", "is_system_queue": True}
     request = rf.get(f"/")
     request.session = client.session
     request.requests_session = requests.Session()
 
     context["data"] = {"results": {"cases": [case]}}
-    context["form"] = CasesFiltersForm(request, True, filters)
+    context["form"] = CasesFiltersForm(request, queue, filters)
 
     html = render_to_string("queues/cases.html", context)
     soup = BeautifulSoup(html, "html.parser")
@@ -92,12 +93,13 @@ def test_cases_without_flags(data_standard_case, rf, client):
         "gov_users": [],
         "advice_types": [],
     }
+    queue = {"id": "cfac8bf4-d325-4e8e-9c28-0fe93c0ecf80", "is_system_queue": True}
     request = rf.get(f"/")
     request.session = client.session
     request.requests_session = requests.Session()
 
     context["data"] = {"results": {"cases": [case]}}
-    context["form"] = CasesFiltersForm(request, True, filters)
+    context["form"] = CasesFiltersForm(request, queue, filters)
 
     html = render_to_string("queues/cases.html", context)
     soup = BeautifulSoup(html, "html.parser")

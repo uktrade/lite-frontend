@@ -215,7 +215,7 @@ class Cases(LoginRequiredMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
-        kwargs["system_queue"] = self._is_system_queue()
+        kwargs["queue"] = self.queue
         return kwargs
 
     def get_context_data(self, *args, **kwargs):

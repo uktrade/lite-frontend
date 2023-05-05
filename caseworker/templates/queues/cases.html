@@ -105,11 +105,5 @@
 {% endblock %}
 
 {% block javascript %}
-	{# this is tied to inline javascript in lite_forms/templates/components/autocomplete.html and cannot be removed yet #}
-	<script nonce="{{ request.csp_nonce }}">
-		loadAutoCompletes();
-	</script>
-
 	<script src="{% static 'case-filters.js' %}" type="text/javascript"></script>
-
 {% endblock %}

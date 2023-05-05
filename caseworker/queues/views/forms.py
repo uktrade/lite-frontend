@@ -82,7 +82,7 @@ class CasesFiltersForm(forms.Form):
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, request, system_queue, filters_data, *args, **kwargs):
+    def __init__(self, request, queue, filters_data, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         case_type_choices = self.get_field_choices(filters_data, "case_types")
@@ -184,15 +184,20 @@ class CasesFiltersForm(forms.Form):
             required=False,
         )
 
+        basic_filters = ["case_reference", "case_type", "status", "case_officer", "assigned_user"]
+        if not queue.get("is_system_queue"):
+            basic_filters.append("hidden")
+
+        # When filters are cleared we need to reset all filter fields. Ideally we should do this
+        # in clean() but we are posting anything in this form so we are just redirecting it to the
+        # current queue which removes all query params.
+        # Url doesn't include queue hence generating like this
+        clear_filters_url = f'/queues/{queue["id"]}/'
+
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
-                "case_reference",
-                "case_type",
-                "status",
-                "case_officer",
-                "assigned_user",
-                "hidden" if not system_queue else None,
+                *basic_filters,
                 css_class="basic-filter-fields",
             ),
             AdvancedFiltersFieldset(
@@ -225,7 +230,7 @@ class CasesFiltersForm(forms.Form):
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),
                 HTML(
-                    '<a href="/" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>'
+                    f'<a href="{clear_filters_url}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>'  # noqa
                 ),
                 css_class="case-filter-actions",
             ),
