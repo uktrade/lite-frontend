@@ -1,32 +1,10 @@
+.case-filters {
+    z-index: -1;
+    background-color: govuk-colour("light-grey");
 
-.basic-filter-fields {
-	@include govuk-font($size: 19);
-	position: relative;
-	padding: govuk-spacing(4) 0;
-	box-sizing: border-box;
-	z-index: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    grid-gap: govuk-spacing(2);
-
-	@include govuk-media-query($from: tablet) {
-		margin-top: govuk-spacing(3);
-	}
-
-	&:before {
-		content: "";
-		position: absolute;
-		top: 0;
-		left: 50%;
-		bottom: 0;
-		width: 100vw;
-		transform: translateX(-50vw);
-		background-color: govuk-colour("light-grey");
-		border-width: 2px 0;
-        border-style: solid solid none solid;
-		border-color: darken(govuk-colour("light-grey"), 2%);
-		z-index: -1;
-	}
+    @include govuk-media-query($from: tablet) {
+        margin-top: govuk-spacing(3);
+    }
 
     .govuk-form-group {
         margin-bottom: 0;
@@ -39,10 +17,6 @@
 		max-width: 100%!important;
 	}
 
-    .govuk-input--width-20 {
-		max-width: 100%;
-	}
-
     .govuk-checkboxes__label {
         &::before {
             background: govuk-colour("white");
@@ -50,6 +24,23 @@
 
         text-align: left;
     }
+
+    .govuk-input--width-20 {
+		max-width: 100%;
+	}
+}
+
+.basic-filter-fields {
+	@include govuk-font($size: 19);
+	position: relative;
+	padding-top: govuk-spacing(4);
+	box-sizing: border-box;
+	z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-gap: govuk-spacing(2);
+    margin-left: govuk-spacing(4);
+    margin-right: govuk-spacing(4);
 }
 
 .advanced-group {
@@ -57,20 +48,9 @@
 	box-sizing: border-box;
 	z-index: 0;
 
-    &:before {
-		content: "";
-		position: absolute;
-        z-index: -1;
-        background-color: govuk-colour("light-grey");
-        top: 0;
-        left: 50%;
-        bottom: 0;
-        width: 100vw;
-        transform: translateX(-50vw);
-    }
-
     details {
-        margin: none;
+        margin-left: none;
+        margin-left: govuk-spacing(2);
     }
 
     .govuk-details {
@@ -79,68 +59,29 @@
 
     .govuk-details__text {
         border: none;
+        padding: govuk-spacing(2);
     }
 }
 
 .advanced-filter-fields {
 	@include govuk-font($size: 19);
-	position: relative;
-	box-sizing: border-box;
-	z-index: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     grid-gap: govuk-spacing(2);
     margin-top: 0;
 
-	@include govuk-media-query($from: tablet) {
-		margin-top: govuk-spacing(3);
-	}
-
     #filter_country_container, #filter_regime_entry_container {
 		position: absolute;
         z-index: 1;
     }
-
-    .govuk-form-group {
-        margin-bottom: 0;
-    }
-
-    .govuk-select {
-		width: 100%;
-		display: block;
-		margin-right: 0;
-		max-width: 100%!important;
-	}
-    .govuk-checkboxes__label {
-        &:before {
-            background: govuk-colour("white");
-        }
-
-        text-align: left;
-    }
-
 }
 
 .case-filter-actions {
 	z-index: 0;
     @include govuk-font($size: 19);
 
-    &:before {
-		content: "";
-		position: absolute;
-        z-index: -1;
-        background-color: govuk-colour("light-grey");
-        top: 0;
-        left: 50%;
-        bottom: 0;
-        width: 100vw;
-        transform: translateX(-50vw);
-		border-width: 2px 0;
-		border-color: darken(govuk-colour("light-grey"), 2%);
-    }
-
     .govuk-button {
         margin-top: govuk-spacing(3);
-        margin-right: govuk-spacing(3);
+        margin-left: govuk-spacing(3);
     }
 }
