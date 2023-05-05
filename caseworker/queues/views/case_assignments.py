@@ -44,6 +44,29 @@ class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
         return super().get_context_data(*args, **context, **kwargs)
 
 
+class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = forms.CaseAssignmentsAllocateToMeForm
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        self.allocate_to_me(data)
+        messages.success(self.request, f"You have been successfully added as case adviser")
+        self.success_url = data["return_to"]
+
+        return super().form_valid(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error allocating user as case advisor",
+        "Unexpected error allocating you as case advisor",
+    )
+    def allocate_to_me(self, data):
+        return put_queue_case_assignments(
+            self.request, data["queue_id"], [data["case_id"]], [data["user_id"]], "Allocated self to the case"
+        )
+
+
 class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormView):
     template_name = "core/form.html"
     form_class = forms.CaseAssignmentsCaseOfficerForm
