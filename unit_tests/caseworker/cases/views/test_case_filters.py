@@ -97,3 +97,15 @@ def test_case_filters(authorized_client, requests_mock, mock_cases, mock_cases_h
         }
         date_params = f"{parse.urlencode(date_params)}"
         assert parse.unquote(date_params) in case_search_request.url
+
+
+def test_countries_get(authorized_client):
+    url = reverse("api:countries")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+
+def test_regime_entries_get(authorized_client):
+    url = reverse("api:regime-entries")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
