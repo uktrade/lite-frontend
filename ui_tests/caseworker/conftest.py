@@ -343,6 +343,7 @@ def i_click_application_previously_created(driver, context):  # noqa
     functions.open_case_filters(driver)
     case_list_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
+
     case_list_page.click_on_case(context.case_id)
 
 
@@ -362,6 +363,7 @@ def case_in_cases_list(driver, context):  # noqa
     functions.open_case_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
+
     context.case_row = CaseListPage(driver).get_case_row(context.case_id)
     assert context.reference_code in context.case_row.text
 

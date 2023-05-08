@@ -52,8 +52,13 @@ def lite_menu(request):
         notifications = get_menu_notifications(request)
         notification_data = notifications["notifications"]
         has_notifications = notifications["has_notifications"]
+        queue_pk = request.session["default_queue"]
         pages = [
-            {"title": "Cases", "url": reverse_lazy("core:index"), "icon": "menu/cases"},
+            {
+                "title": "Cases",
+                "url": reverse_lazy("queues:cases", kwargs={"queue_pk": queue_pk}),
+                "icon": "menu/cases",
+            },
             {
                 "title": OrganisationsPage.TITLE,
                 "url": reverse_lazy("organisations:organisations"),
