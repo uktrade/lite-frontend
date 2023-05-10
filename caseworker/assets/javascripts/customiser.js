@@ -94,6 +94,24 @@ class Customiser {
     this.toggleableElems[evt.target.name].visible = evt.target.checked;
     this.showHideElems();
     this.storePreferences();
+    this.fireAnalyticsEvent(evt.target.name, evt.target.checked);
+  }
+
+  fireAnalyticsEvent(choice, visible) {
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    let eventName = "toggle-" + choice + "-";
+    if (this.spec.analytics_prefix) {
+      eventName = this.spec.analytics_prefix + "-" + eventName;
+    }
+    if (visible) {
+      eventName += "visible";
+    } else {
+      eventName += "hidden";
+    }
+    gtag("event", eventName, {});
   }
 
   storePreferences() {
