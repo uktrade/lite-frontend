@@ -473,9 +473,6 @@ class ReviewCountersignDecisionAdviceView(LoginRequiredMixin, CaseContextMixin, 
 
 
 class EditCountersignDecisionAdviceView(ReviewCountersignDecisionAdviceView):
-    def dispatch(self, request, *args, **kwargs):
-        return super().dispatch(request, *args, **kwargs)
-
     def get_data(self, countersign_advice):
         data = []
         for item in countersign_advice.values():
