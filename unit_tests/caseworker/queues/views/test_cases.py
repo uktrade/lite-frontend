@@ -10,6 +10,7 @@ from core import client
 from core.exceptions import ServiceError
 
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
+from caseworker.queues.views.forms import CasesFiltersForm
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
@@ -113,14 +114,13 @@ def test_cases_home_page_view_context(authorized_client):
         "sla_circumference",
         "data",
         "queue",
-        "filters",
         "is_all_cases_queue",
         "enforcement_check",
         "updated_cases_banner_queue_id",
     ]
     response = authorized_client.get(reverse("queues:cases"))
-    assert len(response.context["filters"].filters) == 6
-    assert len(response.context["filters"].advanced_filters) == 23
+    assert isinstance(response.context["form"], CasesFiltersForm)
+    assert len(response.context["form"].fields) == 29
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200
@@ -190,14 +190,14 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
 def test_trigger_list_checkbox_visible_unchecked(authorized_client):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
-    checkbox = html.find(id="is-trigger-list")
+    checkbox = html.find(id="id_is_trigger_list_0")
     assert "checked" not in checkbox.attrs
 
 
 def test_trigger_list_checkbox_visible_checked(authorized_client):
     response = authorized_client.get(reverse("core:index") + "/?is_trigger_list=True")
     html = BeautifulSoup(response.content, "html.parser")
-    checkbox = html.find(id="is-trigger-list")
+    checkbox = html.find(id="id_is_trigger_list_0")
     assert "checked" in checkbox.attrs
 
 

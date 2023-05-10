@@ -263,10 +263,10 @@ def add_report_summary_picklist(add_a_report_summary_picklist):  # noqa
 @then("I see previously created application")  # noqa
 def should_see_previously_created_application(driver, context):  # noqa
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.click_clear_filters_button()
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
     assert driver.find_element(by=By.ID, value=context.case_id).is_displayed()
@@ -279,7 +279,7 @@ def click_on_case(driver, context):  # noqa
 
 @when("I click on show filters")
 def i_show_filters(driver):  # noqa
-    Shared(driver).try_open_filters()
+    functions.open_case_filters(driver)
 
 
 @when(parsers.parse('I click on "{tab_name}" tab'))
@@ -338,11 +338,12 @@ def get_my_case_list(driver):  # noqa
 @when("I click the application previously created")
 def i_click_application_previously_created(driver, context):  # noqa
     case_list_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_list_page.click_clear_filters_button()
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_list_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
+
     case_list_page.click_on_case(context.case_id)
 
 
@@ -356,12 +357,13 @@ def switch_queue_dropdown(driver, queue):  # noqa
 @then("I should see my case in the cases list")  # noqa
 def case_in_cases_list(driver, context):  # noqa
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.click_clear_filters_button()
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
+
     context.case_row = CaseListPage(driver).get_case_row(context.case_id)
     assert context.reference_code in context.case_row.text
 
@@ -369,10 +371,10 @@ def case_in_cases_list(driver, context):  # noqa
 @then("I should see there are no new cases")
 def no_new_cases(driver, context):  # noqa
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.click_clear_filters_button()
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
     assert "There are no new cases" in driver.find_element(by=By.ID, value="form-cases").text
@@ -642,7 +644,7 @@ def i_apply_filters(driver, context):  # noqa
 @then("I don't see previously created application")
 def dont_see_previously_created_application(driver, context):  # noqa
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
     assert context.reference_code not in driver.find_element(by=By.ID, value="main-content").text

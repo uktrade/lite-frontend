@@ -1,0 +1,93 @@
+.case-filters {
+    z-index: -1;
+    background-color: govuk-colour("light-grey");
+
+    /**
+    This is a bit of a hack to break the case filters out from their constrained box that is not the full width of the
+    screen to be the full width of the screen but then add padding back in so the content fits within the constrained
+    box.
+
+    This exists just so that the background colour extends across the full viewport width.
+    */
+    margin-left: calc(((100vw - 100%) / 2) * -1);
+    margin-right: calc(((100vw - 100%) / 2) * -1);
+    padding-left: calc(((100vw - 100%) / 2));
+    padding-right: calc(((100vw - 100%) / 2));
+
+    @include govuk-media-query($from: tablet) {
+        margin-top: govuk-spacing(3);
+    }
+
+    .govuk-form-group {
+        margin-bottom: 0;
+    }
+
+    .govuk-select {
+        width: 100%;
+        display: block;
+        margin-right: 0;
+        max-width: 100%!important;
+    }
+
+    .govuk-checkboxes__label {
+        &::before {
+            background: govuk-colour("white");
+        }
+
+        text-align: left;
+    }
+
+    .govuk-input--width-20 {
+        max-width: 100%;
+    }
+}
+
+.basic-filter-fields {
+    @include govuk-font($size: 19);
+    position: relative;
+    padding-top: govuk-spacing(4);
+    padding-bottom: govuk-spacing(4);
+    box-sizing: border-box;
+    z-index: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-gap: govuk-spacing(2);
+}
+
+.advanced-group {
+    position: relative;
+    box-sizing: border-box;
+    z-index: 0;
+
+    .govuk-details {
+        margin-bottom: 0;
+    }
+
+    .govuk-details__text {
+        border: none;
+        padding: govuk-spacing(2);
+    }
+}
+
+.advanced-filter-fields {
+    @include govuk-font($size: 19);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-gap: govuk-spacing(2);
+    margin-top: 0;
+
+    #filter_country_container, #filter_regime_entry_container {
+        position: absolute;
+        z-index: 1;
+    }
+}
+
+.case-filter-actions {
+    z-index: 0;
+    @include govuk-font($size: 19);
+
+    .govuk-button {
+        margin-top: govuk-spacing(3);
+        margin-right: govuk-spacing(3);
+    }
+}

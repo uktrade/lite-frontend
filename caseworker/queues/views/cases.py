@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from django.http import Http404
-from django.views.generic import TemplateView
+from django.views.generic import FormView
 from django.utils.functional import cached_property
 
 from lite_content.lite_internal_frontend.cases import CasesListPage
@@ -7,7 +9,7 @@ from lite_content.lite_internal_frontend.cases import CasesListPage
 from core.auth.views import LoginRequiredMixin
 from core.exceptions import ServiceError
 
-from caseworker.cases.helpers.filters import case_filters_bar
+from caseworker.queues.views.forms import CasesFiltersForm
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
@@ -23,12 +25,13 @@ from caseworker.queues.services import (
 from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 
 
-class Cases(LoginRequiredMixin, TemplateView):
+class Cases(LoginRequiredMixin, FormView):
     """
     Homepage
     """
 
     template_name = "queues/cases.html"
+    form_class = CasesFiltersForm
 
     @cached_property
     def queue(self):
@@ -72,7 +75,27 @@ class Cases(LoginRequiredMixin, TemplateView):
             if key != "flags[]":
                 params[key] = value
 
-        params["flags"] = self.request.GET.getlist("flags[]", [])
+        # this is essentially decomposing date fields
+        # API expects individual fields for day, month, year for these filters
+        # Crispy form gives us "submitted_from_{0..2}" so they are mapped to day, month, year
+        # Usually this is done in clean() but it doesn't get called as we are not posting anything
+        for param in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
+            date_str = ""
+            date_tokens = []
+            for index, field in [(0, "day"), (1, "month"), (2, "year")]:
+                key = f"{param}_{index}"
+                if key in params:
+                    updated_key = f"{param}_{field}"
+                    params[updated_key] = params.get(key, "")
+                    date_tokens.append(params[updated_key])
+
+            # We need to save compressed date values to show the current filter value
+            if date_tokens and all(date_tokens):
+                date_str = "-".join(date_tokens)
+                date_obj = datetime.strptime(date_str, "%d-%m-%Y").date()
+                params[param] = date_obj
+
+        params["flags"] = self.request.GET.getlist("flags", [])
 
         params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
 
@@ -185,6 +208,16 @@ class Cases(LoginRequiredMixin, TemplateView):
         case["queue_assignments"] = self._transform_queue_assignments(case)
         case["activity_updates"] = self._transform_activity_updates(case)
 
+    def get_initial(self):
+        return self.get_params()
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        kwargs["filters_data"] = self.filters
+        kwargs["queue"] = self.queue
+        return kwargs
+
     def get_context_data(self, *args, **kwargs):
 
         try:
@@ -203,7 +236,6 @@ class Cases(LoginRequiredMixin, TemplateView):
             "sla_circumference": SLA_CIRCUMFERENCE,
             "data": self.data,
             "queue": self.queue,  # Used for showing current queue
-            "filters": case_filters_bar(self.request, self.filters, self._is_system_queue()),
             "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,

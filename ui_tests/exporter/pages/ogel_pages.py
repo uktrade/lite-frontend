@@ -25,7 +25,7 @@ class OgelPage(BasePage):
         functions.click_submit(self.driver)
 
     def filter_by_name(self, name: str):
-        functions.try_open_filters(self.driver)
+        functions.open_case_filters(self.driver)
         self.driver.find_element(by=By.ID, value=self.FILTER_NAME_ID).clear()
         self.driver.find_element(by=By.ID, value=self.FILTER_NAME_ID).send_keys(name)
         functions.click_apply_filters(self.driver)
