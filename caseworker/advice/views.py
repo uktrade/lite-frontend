@@ -408,10 +408,9 @@ class ViewCountersignedAdvice(AdviceDetailView):
         kwargs = super().get_form_kwargs()
 
         is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
-        is_lu_countersigning = (is_in_lu_team,)
         if is_in_lu_team:
             rejected_lu_countersignature = self.rejected_countersign_advice()
-            if rejected_lu_countersignature and is_lu_countersigning:
+            if rejected_lu_countersignature:
                 kwargs["move_case_button_label"] = "Move case back"
 
         return kwargs
