@@ -46,23 +46,18 @@
     @include govuk-font($size: 19);
     position: relative;
     padding-top: govuk-spacing(4);
+    padding-bottom: govuk-spacing(4);
     box-sizing: border-box;
     z-index: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     grid-gap: govuk-spacing(2);
-    margin-left: govuk-spacing(4);
-    margin-right: govuk-spacing(4);
 }
 
 .advanced-group {
     position: relative;
     box-sizing: border-box;
     z-index: 0;
-
-    details {
-        margin-left: govuk-spacing(2);
-    }
 
     .govuk-details {
         margin-bottom: 0;
@@ -93,6 +88,6 @@
 
     .govuk-button {
         margin-top: govuk-spacing(3);
-        margin-left: govuk-spacing(3);
+        margin-right: govuk-spacing(3);
     }
 }
