@@ -659,10 +659,6 @@ class ConsolidateEditView(ReviewConsolidateView):
 class ViewConsolidatedAdviceView(AdviceView, FormView):
     form_class = forms.MoveCaseForwardForm
 
-    def get_lu_finalise_case(self, lu_countersign_required, rejected_lu_countersignature):
-        finalise_case = (not lu_countersign_required) and (not rejected_lu_countersignature)
-        return finalise_case
-
     def get_lu_countersign_required(self, rejected_lu_countersignature):
         case_flag_ids = {flag["id"] for flag in self.case.all_flags}
         lu_countersign_flags = services.LU_COUNTERSIGN_FLAGS
@@ -708,7 +704,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         if user_team_alias == services.LICENSING_UNIT_TEAM:
             rejected_lu_countersignature = self.rejected_countersign_advice()
             lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
-            finalise_case = self.get_lu_finalise_case(lu_countersign_required, rejected_lu_countersignature)
+            finalise_case = not (lu_countersign_required or rejected_lu_countersignature)
 
         return {
             **super().get_context(**kwargs),
