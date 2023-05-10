@@ -82,9 +82,6 @@ class CaseContextMixin:
             if (dest["id"], self.caseworker["team"]["id"]) not in advised_on.items()
         }
 
-    def get_rejected_lu_countersignature(self):
-        return self.rejected_countersign_advice()
-
     def get_context(self, **kwargs):
         return {}
 
@@ -99,7 +96,7 @@ class CaseContextMixin:
         is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
         rejected_lu_countersignature = None
         if is_in_lu_team:
-            rejected_lu_countersignature = self.get_rejected_lu_countersignature()
+            rejected_lu_countersignature = self.rejected_countersign_advice()
 
         return {
             **context,
@@ -413,7 +410,7 @@ class ViewCountersignedAdvice(AdviceDetailView):
         is_in_lu_team = self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
         is_lu_countersigning = (is_in_lu_team,)
         if is_in_lu_team:
-            rejected_lu_countersignature = self.get_rejected_lu_countersignature()
+            rejected_lu_countersignature = self.rejected_countersign_advice()
             if rejected_lu_countersignature and is_lu_countersigning:
                 kwargs["move_case_button_label"] = "Move case back"
 
@@ -712,7 +709,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         finalise_case = False
 
         if user_team_alias == services.LICENSING_UNIT_TEAM:
-            rejected_lu_countersignature = self.get_rejected_lu_countersignature()
+            rejected_lu_countersignature = self.rejected_countersign_advice()
             lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
             finalise_case = self.get_lu_finalise_case(lu_countersign_required, rejected_lu_countersignature)
 
