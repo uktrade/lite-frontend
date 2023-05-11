@@ -8,7 +8,7 @@ from lite_forms.components import Option
 from caseworker.core.constants import SUPER_USER_ROLE_ID
 
 
-def get_gov_users(request, params=None, convert_to_options=False):
+def get_gov_users(request, params=None, convert_to_options=False, convert_to_choices=False):
     if params:
         query_params = urlencode(params)
         data = client.get(request, f"/gov-users/?{query_params}")
@@ -16,25 +16,44 @@ def get_gov_users(request, params=None, convert_to_options=False):
         data = client.get(request, "/gov-users/")
 
     if convert_to_options:
-        converted = []
+        return convert_users_to_options(data)
+    if convert_to_choices:
+        return convert_users_to_choices(data)
 
-        # Hide users without emails (eg system users)
-        for user in [user for user in data.json()["results"] if user["email"]]:
-            first_name = user.get("first_name")
-            last_name = user.get("last_name")
-            email = user.get("email")
-
-            if first_name:
-                value = first_name + " " + last_name
-                description = email
-            else:
-                value = email
-                description = None
-
-            converted.append(Option(key=user.get("id"), value=value, description=description))
-
-        return converted
     return data.json(), data.status_code
+
+
+def convert_users_to_choices(data):
+    choices = []
+    # Hide users without emails (eg system users)
+    users = [user for user in data.json()["results"] if user["email"]]
+    for user in users:
+        display = user.get("email")
+        if user.get("first_name"):
+            display = f'{user["first_name"]} {user["last_name"]} ({user["team"]["name"]})'
+
+        choices.append((user["id"], display))
+    return choices
+
+
+def convert_users_to_options(data):
+    converted = []
+
+    # Hide users without emails (eg system users)
+    for user in [user for user in data.json()["results"] if user["email"]]:
+        first_name = user.get("first_name")
+        last_name = user.get("last_name")
+        email = user.get("email")
+
+        if first_name:
+            value = first_name + " " + last_name
+            description = email
+        else:
+            value = email
+            description = None
+
+        converted.append(Option(key=user.get("id"), value=value, description=description))
+    return converted
 
 
 def get_gov_user(request, pk=None):

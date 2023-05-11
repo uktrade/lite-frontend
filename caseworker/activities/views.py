@@ -3,6 +3,9 @@ from operator import itemgetter
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
+from django.shortcuts import redirect
+from django.http import Http404, HttpResponseRedirect
+from django.conf import settings
 
 from caseworker.cases.helpers.case import CaseworkerMixin
 from core.auth.views import LoginRequiredMixin
@@ -14,6 +17,15 @@ from caseworker.cases.services import (
 )
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
+from caseworker.activities.forms import NotesAndTimelineForm
+from caseworker.users.services import (
+    get_gov_users,
+)
+from caseworker.cases.services import (
+    get_case,
+    post_case_notes,
+)
+from lite_forms.generators import error_page
 
 
 class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, TemplateView):
@@ -66,6 +78,9 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        form = False
+        if settings.FEATURE_MENTIONS_ENABLED:
+            form = NotesAndTimelineForm(request=self.request)
 
         return {
             **context,
@@ -76,4 +91,39 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
             "team_filters": self.get_team_filters(),
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
+            "form": form,
         }
+
+    def clean_post_data(self, post_data):
+        for key in post_data:
+            # this can't be is for some reason
+            if key == "mentions":
+                if post_data.get("mentions"):
+                    post_data["mentions"] = [{"user": user_id} for user_id in post_data["mentions"]]
+            elif key == "is_urgent":
+                post_data["is_urgent"] = True
+            else:
+                post_data[key] = post_data[key][0]
+        return post_data
+        # return {key : post_data[key][0] for key in post_data if key is not "mentions"}
+
+    def post(self, request, **kwargs):
+        if "cancel" in request.POST:
+            return redirect(
+                "cases:activities:notes-and-timeline",
+                pk=self.case_id,
+                queue_pk=self.queue_id,
+            )
+        post_data = dict(request.POST).copy()
+        post_data = self.clean_post_data(post_data)
+
+        response, status_code = post_case_notes(request, self.case_id, post_data)
+
+        if status_code != 201:
+            return error_page(request, response.get("errors")["text"][0])
+
+        return redirect(
+            "cases:activities:notes-and-timeline",
+            pk=self.case_id,
+            queue_pk=self.queue_id,
+        )

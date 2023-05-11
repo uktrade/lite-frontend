@@ -1,7 +1,7 @@
 import { fireEvent, getByLabelText, getByText } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
-
+import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 import { CaseNote } from "../case-notes";
 
 let form;
@@ -40,9 +40,50 @@ const createElement = () => {
   return document.querySelector("form");
 };
 
+const createMentionsElement = () => {
+  document.body.innerHTML = `
+    <form class="notes-and-timeline-case-note" data-module="case-note" method="post">
+      <div class="notes-and-timeline-case-note__wrapper">
+        <label class="govuk-label govuk-visually-hidden" for="input-case-note">
+          Add case note
+        </label>
+        <div class="case-note__container">
+          <textarea id="input-case-note" name="text" cols="80" class="govuk-textarea case-note__textarea"></textarea>
+          <div class="case-note__controls">
+            <div class="govuk-checkboxes govuk-checkboxes--small">
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" type="checkbox" id="is-visible-to-exporter" name="is-visible-to-exporter" value="True">
+                <label class="govuk-label govuk-checkboxes__label" for="is-visible-to-exporter">
+                  Make visible to exporter
+                </label>
+              </div>
+            </div>
+            <div class="case-note__controls-buttons">
+              <a id="link-case-note-cancel" href="/" class="govuk-body govuk-link govuk-link--no-visited-state case-note__cancel-button" type="button" draggable="false">
+                Cancel
+              </a>
+              <button id="button-case-note-post" class="govuk-button" type="submit">
+                Add a case note
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  `;
+  return document.querySelector("form");
+};
+
 const createComponent = () => {
   form = createElement();
-  return new CaseNote(form).init();
+  return new CaseNote(
+    form,
+    "case-note__textarea--focused",
+    "[name=is-visible-to-exporter]",
+    "",
+    "",
+    ".case-note__cancel-button"
+  ).init();
 };
 
 describe("Case notes", () => {
@@ -58,7 +99,7 @@ describe("Case notes", () => {
     expect(textarea).toHaveClass("case-note__textarea--focused");
   });
 
-  test("Blurring textarea removes focused class", async () => {
+  test("Blurring textarea doesn't remove focused class", async () => {
     const textarea = getByLabelText(form, "Add case note");
     expect(textarea).not.toHaveClass("case-note__textarea--focused");
 
@@ -66,7 +107,7 @@ describe("Case notes", () => {
     expect(textarea).toHaveClass("case-note__textarea--focused");
 
     textarea.blur();
-    expect(textarea).not.toHaveClass("case-note__textarea--focused");
+    expect(textarea).toHaveClass("case-note__textarea--focused");
   });
 
   test("Blurring textarea with input keeps focused class", async () => {
