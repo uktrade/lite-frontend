@@ -64,7 +64,7 @@
 
 	{% include 'queues/case-filters.html' %}
 
-    <div class="customiser" data-customiser-spec='{"options_label": "Customise table columns", "identifier": "queue-view", "analytics_prefix": "qv", "toggleable_elements": [{"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Case allocation", "key": "case_allocation", "default_visible": true}, {"label": "Case updates", "key": "case_updates", "default_visible": true}, {"label": "Products", "key": "products"}, {"label": "Control list entries", "key": "control_list_entries"}, {"label": "Report summaries", "key": "report_summaries"}, {"label": "Regimes", "key": "regimes"}, {"label": "Total value", "key": "total_value"}, {"label": "Queries", "key": "queries"}, {"label": "Denial matches", "key": "denial_matches"}, {"label": "Intended end use", "key": "intended_end_use"}, {"label": "Flags", "key": "flags", "default_visible": true}]}'>
+    <div class="customiser" data-customiser-spec='{"options_label": "Customise queue view", "identifier": "queue-view", "analytics_prefix": "qv", "options_hint": "Select columns to show", "toggleable_elements": [{"label": "Destination", "key": "destination", "default_visible": true}, {"label": "Case allocation", "key": "case_allocation", "default_visible": true}, {"label": "Case updates", "key": "case_updates", "default_visible": true}, {"label": "Products", "key": "products"}, {"label": "Control list entry", "key": "control_list_entry"}, {"label": "Report summary", "key": "report_summary"}, {"label": "Regime", "key": "regime"}, {"label": "Total value", "key": "total_value"}, {"label": "Queries", "key": "queries"}, {"label": "Denial matches", "key": "denial_matches"}, {"label": "Intended end use", "key": "intended_end_use"}, {"label": "Flags", "key": "flags", "default_visible": true}]}'>
         <div class="customiser__header">
 	    {% include 'queues/search-tabs.html' %}
         </div>
@@ -88,13 +88,13 @@
 	    	    			{% endif %}
 	    	    			<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">SLA</span></th>
 	    	    			<th class="govuk-table__header app-table__header--skeleton" scope="col">Case</th>
-	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="destinations" scope="col">Destinations</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="destinations" scope="col">Destination</th>
 	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="case_allocation" scope="col">Case allocation</th>
 	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="case_updates" scope="col">Case updates</th>
 	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="products" scope="col">Products</th>
-	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="control_list_entries" scope="col">Control list entries</th>
-	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="report_summaries" scope="col">Report summaries</th>
-	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="regimes" scope="col">Regimes</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="control_list_entries" scope="col">Control list entry</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="report_summaries" scope="col">Report summary</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="regimes" scope="col">Regime</th>
 	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="total_value" scope="col">Total value</th>
 	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="queries" scope="col">Queries</th>
 	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="denial_matches" scope="col">Denial matches</th>

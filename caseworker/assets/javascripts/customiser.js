@@ -75,7 +75,9 @@ class Customiser {
         "beforeend",
         `<details class="customiser__options govuk-details lite-mobile-hide"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">` +
           this.spec.options_label +
-          `</span></summary><div class="govuk-details__text"><ul class="customiser__choices">` +
+          `</span></summary><div class="govuk-details__text"><p>` +
+          (this.spec.options_hint ? this.spec.options_hint : "") +
+          `</p><ul class="customiser__choices">` +
           customiserOptions +
           `</ul></div></details>`
       );
