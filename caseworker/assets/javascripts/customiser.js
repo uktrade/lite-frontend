@@ -14,7 +14,7 @@ class Customiser {
       if (toggleable_details.hasOwnProperty("default_visible")) {
         visible = toggleable_details.default_visible;
       }
-      let $elems = $el.querySelectorAll("[data-customiser-key=" + key + "]");
+      let $elems = $el.querySelectorAll(`[data-customiser-key=${key}]`);
       this.countToggleableElements += $elems.length;
       this.toggleableElems[key] = {
         elements: $elems,
@@ -55,32 +55,32 @@ class Customiser {
     let customiserOptions = ``;
     for (const [key, value] of Object.entries(this.toggleableElems)) {
       const label = value.label;
-      let checkbox =
-        `<div class="govuk-checkboxes__item"><input type="checkbox" class="customiser__option govuk-checkboxes__input" name="` +
-        key +
-        `" ` +
-        (value.visible ? "checked" : "") +
-        ` id="customiser__option-` +
-        key +
-        `"> <label class="govuk-label govuk-checkboxes__label" for="customiser__option-` +
-        key +
-        `">` +
-        label +
-        `</label></div>`;
-      customiserOptions += `<li>` + checkbox + `</li>`;
+      let checkbox = `<div class="govuk-checkboxes__item">
+          <input type="checkbox" class="customiser__option govuk-checkboxes__input" name="${key}" ${
+        value.visible ? "checked" : ""
+      } id="customiser__option-${key}">
+          <label class="govuk-label govuk-checkboxes__label" for="customiser__option-${key}">${label}</label>
+         </div>`;
+      customiserOptions += `<li>${checkbox}</li>`;
     }
-    this.$el
-      .querySelector(".customiser__header")
-      .insertAdjacentHTML(
-        "beforeend",
-        `<details class="customiser__options govuk-details lite-mobile-hide"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">` +
-          this.spec.options_label +
-          `</span></summary><div class="govuk-details__text"><p>` +
-          (this.spec.options_hint ? this.spec.options_hint : "") +
-          `</p><ul class="customiser__choices">` +
-          customiserOptions +
-          `</ul></div></details>`
-      );
+    this.$el.querySelector(".customiser__header").insertAdjacentHTML(
+      "beforeend",
+      `
+          <details class="customiser__options govuk-details lite-mobile-hide">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">${
+                this.spec.options_label
+              }</span>
+            </summary>
+            <div class="govuk-details__text">
+              <p>${this.spec.options_hint ? this.spec.options_hint : ""}</p>
+              <ul class="customiser__choices">
+                ${customiserOptions}
+              </ul>
+            </div>
+          </details>
+        `
+    );
 
     this.$el
       .querySelectorAll("input.customiser__option")
