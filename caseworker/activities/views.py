@@ -4,7 +4,6 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
-from django.http import Http404, HttpResponseRedirect
 from django.conf import settings
 
 from caseworker.cases.helpers.case import CaseworkerMixin
@@ -14,17 +13,11 @@ from caseworker.cases.services import (
     get_activity,
     get_activity_filters,
     get_case,
+    post_case_notes,
 )
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
 from caseworker.activities.forms import NotesAndTimelineForm
-from caseworker.users.services import (
-    get_gov_users,
-)
-from caseworker.cases.services import (
-    get_case,
-    post_case_notes,
-)
 from lite_forms.generators import error_page
 
 
@@ -105,7 +98,6 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
             else:
                 post_data[key] = post_data[key][0]
         return post_data
-        # return {key : post_data[key][0] for key in post_data if key is not "mentions"}
 
     def post(self, request, **kwargs):
         if "cancel" in request.POST:

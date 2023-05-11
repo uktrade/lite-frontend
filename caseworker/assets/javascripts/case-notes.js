@@ -109,7 +109,6 @@ class CaseNote {
     if (element) {
       element.style.display = "none";
       if (show) {
-        console.log("SHOWING");
         element.style.display = "block";
       }
     }

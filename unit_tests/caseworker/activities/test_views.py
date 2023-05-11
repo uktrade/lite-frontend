@@ -5,13 +5,13 @@ from pytest_django.asserts import assertTemplateUsed
 from django.urls import reverse
 
 from caseworker.cases.objects import Case
+from core import client
 
 
 @pytest.fixture(autouse=True)
 def setup(
     settings,
     mock_queue,
-    mock_gov_user,
     mock_case,
     mock_standard_case_activity_filters,
     mock_standard_case_activity_system_user,
@@ -38,18 +38,24 @@ def notes_and_timelines_url(data_queue, data_standard_case):
     )
 
 
-def test_notes_and_timelines_view_flag_on_status_code(
-    authorized_client,
-    notes_and_timelines_url,
-):
+def test_notes_and_timelines_view_flag_on_status_code(authorized_client, notes_and_timelines_url, requests_mock):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": [],
+        },
+    )
     response = authorized_client.get(notes_and_timelines_url)
     assert response.status_code == 200
 
 
-def test_notes_and_timelines_view_templates(
-    authorized_client,
-    notes_and_timelines_url,
-):
+def test_notes_and_timelines_view_templates(authorized_client, notes_and_timelines_url, requests_mock):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": [],
+        },
+    )
     response = authorized_client.get(notes_and_timelines_url)
     assertTemplateUsed(response, "activities/notes-and-timeline.html")
     assertTemplateUsed(response, "layouts/case.html")
@@ -64,7 +70,14 @@ def test_notes_and_timelines_context_data(
     data_queue,
     mock_standard_case_activity_system_user,
     mock_gov_user,
+    requests_mock,
 ):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": [],
+        },
+    )
     response = authorized_client.get(notes_and_timelines_url)
     assert response.context["case"] == Case(data_standard_case["case"])
     assert response.context["queue"] == data_queue
@@ -88,10 +101,14 @@ def test_notes_and_timelines_context_data(
 
 
 def test_notes_and_timelines_searching_by_team(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_standard_case_activity_system_user,
+    authorized_client, notes_and_timelines_url, mock_standard_case_activity_system_user, requests_mock
 ):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": [],
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?team_id=e0cb73c5-6bca-447c-b2a3-688fe259f0e9")
     assert mock_standard_case_activity_system_user.last_request.qs == {
         "team_id": ["e0cb73c5-6bca-447c-b2a3-688fe259f0e9"]
@@ -114,10 +131,14 @@ def test_notes_and_timelines_searching_by_team(
 
 
 def test_notes_and_timelines_searching_by_user_type(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_standard_case_activity_system_user,
+    authorized_client, notes_and_timelines_url, mock_standard_case_activity_system_user, requests_mock
 ):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": [],
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?user_type=exporter")
     assert mock_standard_case_activity_system_user.last_request.qs == {"user_type": ["exporter"]}
     assert response.context["filtering_by"] == ["user_type"]
