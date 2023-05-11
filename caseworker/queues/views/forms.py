@@ -215,7 +215,7 @@ class CasesFiltersForm(forms.Form):
                 Field.text("party_address"),
                 Field.text("goods_related_description"),
                 Field.text("country"),
-                Field.text("control_list_entry"),
+                Field.text("control_list_entry", id="control_list_entry"),
                 Field.text("regime_entry"),
                 Field.select("flags"),
                 Field("submitted_from"),
