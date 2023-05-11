@@ -10,12 +10,26 @@ class SuggestionsTokenField {
       this.controlListEntriesSelector
     );
     const { tokenfield } = $controlListEntries;
+
     tokenfield.addItems(
       suggestions.map((rating) => ({
         id: rating,
         name: rating,
       }))
     );
+  }
+  setOnChangeListener(showNcscBox, hideNcscBox) {
+    const $controlListEntries = document.querySelector(
+      this.controlListEntriesSelector
+    );
+    const { tokenfield } = $controlListEntries;
+    tokenfield.on("change", (event) => {
+      if (event.getItems().some((string) => string.name.match(/ML/gm))) {
+        showNcscBox();
+      } else {
+        hideNcscBox();
+      }
+    });
   }
 }
 

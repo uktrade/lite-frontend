@@ -48,12 +48,17 @@
   }
 
   .lite-autocomplete {
-    &__input, &__menu {
+    &__input,
+    &__menu {
       max-width: none;
     }
   }
 
   .govuk-table__cell {
     padding-right: 10px;
+  }
+
+  #div_id_is_ncsc_military_information_security {
+    display: none;
   }
 }

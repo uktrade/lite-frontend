@@ -9,6 +9,7 @@ import SuggestionsTokenField from "./tau/suggestions-token-field";
 import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
+import ShowHideFormField from "./tau/show-hide-field";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
@@ -117,9 +118,18 @@ const initAssessmentForm = () => {
   const products = JSON.parse(
     document.querySelector("#cle-suggestions-json").textContent
   );
+  const ncscBox = document.querySelector(
+    "#div_id_is_ncsc_military_information_security"
+  );
+  const ncscFormField = new ShowHideFormField(ncscBox);
+
   new SelectProducts(checkboxes, products, (selectedProducts) => {
     headline.setProducts(selectedProducts);
     cleSuggestions.setProducts(selectedProducts);
+    suggestionsTokenField.setOnChangeListener(
+      ncscFormField.showField,
+      ncscFormField.hideField
+    );
   }).init();
 };
 
