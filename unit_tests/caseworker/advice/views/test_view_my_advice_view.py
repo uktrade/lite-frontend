@@ -274,7 +274,6 @@ def test_lu_countersignatures_not_shown(
     data_standard_case,
     final_advice,
     url,
-    with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = final_advice["user"]["team"]["id"]
