@@ -121,15 +121,19 @@ const initAssessmentForm = () => {
   const ncscBox = document.querySelector(
     "#div_id_is_ncsc_military_information_security"
   );
-  const ncscFormField = new ShowHideFormField(ncscBox);
+  if (ncscBox) {
+    const ncscFormField = new ShowHideFormField(ncscBox);
+  }
 
   new SelectProducts(checkboxes, products, (selectedProducts) => {
     headline.setProducts(selectedProducts);
     cleSuggestions.setProducts(selectedProducts);
-    suggestionsTokenField.setOnChangeListener(
-      ncscFormField.showField,
-      ncscFormField.hideField
-    );
+    if (ncscBox) {
+      suggestionsTokenField.setOnChangeListener(
+        ncscFormField.showField,
+        ncscFormField.hideField
+      );
+    }
   }).init();
 };
 

@@ -46,16 +46,26 @@ const initAssessmentForm = () => {
     const ncscBox = document.querySelector(
       "#div_id_is_ncsc_military_information_security"
     );
-    const ncscFormField = new ShowHideFormField(ncscBox);
-    const controlListEntries = document.querySelector("#control_list_entries");
-    const { tokenfield } = controlListEntries;
-    if (
-      tokenfield
-        .showSuggestions()
-        .getItems()
-        .some((string) => string.name.match(/ML/gm))
-    ) {
-      ncscBox.style.display = "revert";
+    if (ncscBox) {
+      const controlListEntries = document.querySelector(
+        "#control_list_entries"
+      );
+      const { tokenfield } = controlListEntries;
+
+      if (
+        tokenfield
+          .showSuggestions()
+          .getItems()
+          .some((string) => string.name.match(/ML/gm))
+      ) {
+        ncscBox.style.display = "revert";
+      }
+
+      const ncscFormField = new ShowHideFormField(ncscBox);
+      suggestionsTokenField.setOnChangeListener(
+        ncscFormField.showField,
+        ncscFormField.hideField
+      );
     }
   };
 };
