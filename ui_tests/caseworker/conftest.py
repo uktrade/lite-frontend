@@ -384,9 +384,9 @@ def customise_queue_view(driver, context):  # noqa
     # Click each checkbox to show the column
     columns_to_show = [
         "products",
-        "control_list_entries",
-        "report_summaries",
-        "regimes",
+        "control_list_entry",
+        "report_summary",
+        "regime",
         "total_value",
         "queries",
         "denial_matches",
