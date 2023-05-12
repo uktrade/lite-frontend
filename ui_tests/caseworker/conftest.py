@@ -368,6 +368,48 @@ def case_in_cases_list(driver, context):  # noqa
     assert context.reference_code in context.case_row.text
 
 
+@then("I should be able to customise the queue view")  # noqa
+def customise_queue_view(driver, context):  # noqa
+    case_in_cases_list(driver, context)
+
+    case_row = CaseListPage(driver).get_case_row(context.case_id)
+    assert f"{context.application_data['product']} (1234)" not in case_row.text
+    assert "£10.24" not in case_row.text
+    assert context.application_data["end_use"] not in case_row.text
+
+    # Open customiser options
+    customiser_options_selector = f"details.customiser__options summary"
+    driver.find_element(by=By.CSS_SELECTOR, value=customiser_options_selector).click()
+
+    # Click each checkbox to show the column
+    columns_to_show = [
+        "products",
+        "control_list_entry",
+        "report_summary",
+        "regime",
+        "total_value",
+        "queries",
+        "denial_matches",
+        "intended_end_use",
+    ]
+    for column in columns_to_show:
+        element_id = f"customiser__option-{column}"
+        driver.find_element(by=By.ID, value=element_id).click()
+
+    # Close the customiser options
+    driver.find_element(by=By.CSS_SELECTOR, value=customiser_options_selector).click()
+
+    case_row = CaseListPage(driver).get_case_row(context.case_id)
+
+    # Ensure that expected extra values show up in case row
+    assert f"{context.application_data['product']} (1234)" in case_row.text
+    assert "£10.24" in case_row.text
+    assert context.application_data["end_use"] in case_row.text
+
+    # Clear localstorage so other tests start fresh
+    driver.execute_script("return window.localStorage.clear();")
+
+
 @then("I should see there are no new cases")
 def no_new_cases(driver, context):  # noqa
     case_page = CaseListPage(driver)
