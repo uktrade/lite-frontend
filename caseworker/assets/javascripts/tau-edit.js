@@ -3,6 +3,7 @@ import CLESuggestions from "./tau/cle-suggestions";
 import SuggestionsTokenField from "./tau/suggestions-token-field";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
+import ShowHideFormField from "./tau/show-hide-field";
 
 const initAssessmentForm = () => {
   const noControlListCheckboxEl = document.querySelector(
@@ -40,6 +41,23 @@ const initAssessmentForm = () => {
     document.querySelector("#cle-suggestions-json").textContent
   );
   cleSuggestions.setProducts(products);
+
+  window.onload = () => {
+    const ncscBox = document.querySelector(
+      "#div_id_is_ncsc_military_information_security"
+    );
+    const ncscFormField = new ShowHideFormField(ncscBox);
+    const controlListEntries = document.querySelector("#control_list_entries");
+    const { tokenfield } = controlListEntries;
+    if (
+      tokenfield
+        .showSuggestions()
+        .getItems()
+        .some((string) => string.name.match(/ML/gm))
+    ) {
+      ncscBox.style.display = "revert";
+    }
+  };
 };
 
 initAssessmentForm();
