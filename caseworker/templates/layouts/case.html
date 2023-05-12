@@ -2,6 +2,7 @@
 
 {% load svg static %}
 {% load rules %}
+{% load crispy_forms_tags %}
 
 {% block body_classes %}app-template__case-body{% endblock %}
 
@@ -120,7 +121,21 @@
 			<div id="allocation-warning" class="app-case-warning-banner">
 				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
 				<span class="app-case-warning-banner__text">
-					You need to allocate yourself or someone else to this case to work on it <a class="app-case-warning-banner__action" href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}&return_to={{ CURRENT_PATH }}">Allocate case</a>
+					You need to allocate yourself or someone else to this case to work on it
+                    <a id="allocate-case-link" class="app-case-warning-banner__action"
+                       href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}&return_to={{ CURRENT_PATH }}"
+                    >Allocate case</a>
+                    {% if not queue.is_system_queue %}
+                    <form action="{% url 'queues:case_assignment_assign_to_me' queue.id %}" method="post"
+                          class="app-case-warning-banner__action-form">
+                        {% csrf_token %}
+                        {{ allocate_to_me_form|crispy }}
+                        <button type="submit" name="status"
+                                id="allocate-to-me-button"
+                                class="app-case-warning-banner__action"
+                        >Allocate to me</button>
+                        </form>
+                    {% endif %}
 				</span>
 			</div>
 		{% endif %}
