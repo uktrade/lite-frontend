@@ -101,6 +101,12 @@ def get_activity(request, pk, activity_filters=None):
     return data.json()["activity"]
 
 
+def get_mentions(request, pk):
+    url = f"/cases/{pk}/case-note-mentions/"
+    data = client.get(request, url)
+    return data.json()
+
+
 def get_activity_filters(request, pk):
     data = client.get(request, f"/cases/{pk}/activity/filters/")
     return data.json()["filters"]
