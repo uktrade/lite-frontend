@@ -27,6 +27,23 @@ def setup(
     pass
 
 
+def test_case_details_latest_activity(authorized_client, data_queue, data_standard_case):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "layouts/case.html")
+    context = response.context
+    assert context["case"]["latest_activity"]
+    assert context["case"]["latest_activity"]["text"] == "Flag added"
+
+
+def test_case_details_latest_activity(authorized_client, data_queue, data_standard_case):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "layouts/case.html")
+    context = response.context
+    assert context["case"]["total_days_elapsed"] == 3
+
+
 def test_case_details_im_done_lu_user(authorized_client, data_queue, data_standard_case):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
@@ -36,6 +53,7 @@ def test_case_details_im_done_lu_user(authorized_client, data_queue, data_standa
     assert context["current_user"]["team"]["alias"] == "LICENSING_UNIT"
     assert len(context["case"]["queue_details"]) == 1
     assert context["case"]["queue_details"][0]["alias"] == LU_POST_CIRC_FINALISE_QUEUE_ALIAS
+    assert context["case"]["queue_details"][0]["days_on_queue_elapsed"] == 2
 
 
 def test_case_details_im_done_fcdo_user(
@@ -53,6 +71,7 @@ def test_case_details_im_done_fcdo_user(
     assert context["current_user"]["team"]["alias"] == "FCDO"
     assert len(context["case"]["queue_details"]) == 1
     assert context["case"]["queue_details"][0]["alias"] == "FCDO_COUNTER_SIGNING"
+    assert context["case"]["queue_details"][0]["days_on_queue_elapsed"] == 3
 
 
 def test_case_details_im_done_tau_user(

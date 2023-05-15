@@ -336,7 +336,12 @@ def mock_standard_case(requests_mock, data_standard_case):
 def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
     data_standard_case["case"]["queue_details"] = [
-        {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "LU Post circulation", "alias": "LU_POST_CIRC_FINALISE"},
+        {
+            "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
+            "name": "LU Post circulation",
+            "alias": "LU_POST_CIRC_FINALISE",
+            "days_on_queue_elapsed": 2,
+        },
     ]
     yield requests_mock.get(url=url, json=data_standard_case)
 
@@ -345,7 +350,12 @@ def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_ca
 def mock_standard_case_on_fcdo_countersigning_queue(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
     data_standard_case["case"]["queue_details"] = [
-        {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "FCDO Countersigning", "alias": "FCDO_COUNTER_SIGNING"},
+        {
+            "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
+            "name": "FCDO Countersigning",
+            "alias": "FCDO_COUNTER_SIGNING",
+            "days_on_queue_elapsed": 3,
+        },
     ]
     yield requests_mock.get(url=url, json=data_standard_case)
 

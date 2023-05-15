@@ -34,6 +34,7 @@ LU_PRE_CIRC_REVIEW_QUEUE_ALIAS = "LU_PRE_CIRC_REVIEW"
 
 
 class Tabs:
+    QUICK_SUMMARY = Tab("quick-summary", CasePage.Tabs.QUICK_SUMMARY, "quick-summary")
     DETAILS = Tab("details", CasePage.Tabs.DETAILS, "details")
     DOCUMENTS = Tab("documents", CasePage.Tabs.DOCUMENTS, "documents")
     LICENCES = Tab("licences", CasePage.Tabs.LICENCES, "licences")
@@ -127,6 +128,38 @@ class CaseView(CaseworkerMixin, TemplateView):
         queue_alias = tuple(queue.get("alias") for queue in self.case.queue_details)
         return self.is_lu_user() and queue_alias == (LU_POST_CIRC_FINALISE_QUEUE_ALIAS,)
 
+    def get_goods_summary(self):
+        goods_summary = {
+            "names": list(),
+            "cles": set(),
+            "regimes": set(),
+            "report_summaries": set(),
+            "total_value": 0.0,
+        }
+        for good in self.case.goods:
+            goods_summary["cles"].update(list(cle["rating"] for cle in good["control_list_entries"]))
+            goods_summary["regimes"].update(list(regime["name"] for regime in good["regime_entries"]))
+            goods_summary["names"].append(good["good"]["name"])
+            if hasattr(good, "report_summary_subject"):
+                report_summary = good["report_summary_subject"]["name"]
+                if hasattr(good, "report_summary_prefix"):
+                    report_summary = f"{good['report_summary_prefix']['name']} {report_summary}"
+                goods_summary["report_summaries"].add(report_summary)
+            goods_summary["total_value"] += float(good["value"])
+        return goods_summary
+
+    def get_destination_countries(self):
+        destination_countries = set()
+        if self.case.data["end_user"]:
+            destination_countries.add(self.case.data["end_user"]["country"]["name"])
+        if self.case.data["consignee"]:
+            destination_countries.add(self.case.data["consignee"]["country"]["name"])
+        for ultimate_end_user in self.case.data["ultimate_end_users"]:
+            destination_countries.add(ultimate_end_user["country"]["name"])
+        for third_party in self.case.data["third_parties"]:
+            destination_countries.add(third_party["country"]["name"])
+        return destination_countries
+
     def get_context(self):
         if not self.tabs:
             self.tabs = []
@@ -157,6 +190,8 @@ class CaseView(CaseworkerMixin, TemplateView):
             "case": self.case,
             "queue": self.queue,
             "is_system_queue": self.queue["is_system_queue"],
+            "goods_summary": self.get_goods_summary(),
+            "destination_countries": self.get_destination_countries(),
             "user_assigned_queues": user_assigned_queues,
             "case_documents": get_case_documents(self.request, self.case_id)[0]["documents"],
             "open_ecju_queries": open_ecju_queries,
@@ -180,6 +215,7 @@ class CaseView(CaseworkerMixin, TemplateView):
         }
 
     def get(self, request, **kwargs):
+        print(f"tab:{self.kwargs['tab']}")
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]

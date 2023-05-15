@@ -71,6 +71,7 @@ logger = getLogger(__name__)
 class CaseTabsMixin:
     def get_tabs(self):
         tabs = [
+            Tabs.QUICK_SUMMARY,
             Tabs.DETAILS,
             Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,

@@ -1,4 +1,5 @@
 import pytest
+from bs4 import BeautifulSoup
 
 from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
@@ -35,11 +36,20 @@ def mock_get_gov_users(mock_gov_users, requests_mock):
     )
 
 
+def test_quick_summary(authorized_client, data_queue, data_standard_case):
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "layouts/case.html")
+    assert response.context["tabs"][0].name == "Quick summary"
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("a", {"id": "tab-quick-summary", "class": "lite-tabs__tab--selected"})
+
+
 def test_notes_and_timeline_tab(authorized_client, data_queue, data_standard_case):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
     assertTemplateUsed(response, "layouts/case.html")
-    assert response.context["tabs"][5].name == "Notes and timeline"
+    assert response.context["tabs"][6].name == "Notes and timeline"
 
 
 @pytest.fixture

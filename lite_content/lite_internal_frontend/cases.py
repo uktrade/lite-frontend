@@ -106,6 +106,7 @@ class CasePage:
             NOTICE = "This isn't available here."
 
     class Tabs:
+        QUICK_SUMMARY = "Quick summary"
         DETAILS = "Details"
         ADVICE_AND_DECISION = "Advice and decision"
         USER_ADVICE = "User advice"
@@ -123,6 +124,36 @@ class CasePage:
         USAGE_COLUMN = "Usage"
         STATUS_COLUMN = "Status"
         NO_CONTENT_NOTICE = "No licences on application"
+
+    class QuickSummaryTab:
+        STATUS = "Status"
+        LICENSING_UNIT_CASE_OFFICER = "Licensing unit case officer"
+        CASE_ADVISER = "Case adviser"
+        TEMPORARY_OR_PERMANENT = "Temporary or permanent"
+        ASSIGNED_QUEUES = "Assigned queues"
+        FLAGS = "Flags"
+        OPEN_QUERY = "Open query"
+        LATEST_ACTION = "Latest action"
+        DAYS_ON_QUEUE_ELAPSED = "Days on queue elapsed"
+        TOTAL_DAYS_ELAPSED = "Total days elapsed"
+        PRODUCT_NAMES = "Product names"
+        TOTAL_VALUE = "Total value"
+        CONTROL_LIST_ENTRIES = "Control list entries"
+        REGIMES = "Regimes"
+        REPORT_SUMMARIES = "Report summaries"
+        SECURITY_GRADED = "Security graded"
+        SECURITY_APPROVALS = "Security approvals"
+        APPLICANT_NAME = "Applicant name"
+        DESTINATIONS = "Destinations"
+        DENIAL_MATCHES = "Denial matches"
+        SANCTION_MATCHES = "Santion matches"
+        END_USE = "End-use"
+        END_USER_DOCUMENT = "End-user document"
+
+        class MissingData:
+            NO_QUEUES_ASSIGNED = "Not assigned to any queues"
+            NO_CASE_OFFICER = "Not assigned"
+            NA = "N/A"
 
     class DetailsTab:
         ADMINISTRATIVE_CENTRE = "Administrative Centre"
