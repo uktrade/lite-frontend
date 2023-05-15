@@ -68,10 +68,10 @@ def exporter_first_audit_in_trail(driver, context):  # noqa
 @then("I see previously hidden created application")  # noqa
 def see_queue_in_queue_list(driver, context):  # noqa
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.click_clear_filters_button()
     case_page = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case_page.click_checkbox_to_show_team_ecju_query_and_hidden_cases()
     case_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)

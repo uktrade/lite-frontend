@@ -186,6 +186,57 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
                     "next_review_date": None,
                     "licences": [],
                     "submitted_at": "2023-01-16T14:53:09.826340Z",
+                    "goods": [
+                        {
+                            "name": "Some product",
+                            "quantity": "20.00",
+                            "value": "10.00",
+                            "regimes": ["Wassenaar Arrangement"],
+                            "cles": ["ML1", "ML1a"],
+                            "report_summary_subject": "subject",
+                            "report_summary_prefix": "prefix",
+                        },
+                        {
+                            "name": "Some other product",
+                            "quantity": "1.00",
+                            "value": "30.00",
+                            "regimes": ["Wassenaar Arrangement"],
+                            "cles": ["ML2", "ML2a", "ML1a"],
+                            "report_summary_subject": "subject",
+                            "report_summary_prefix": "prefix",
+                        },
+                    ],
+                    "denials": [
+                        {
+                            "name": "denial name",
+                            "reference": "denialref",
+                            "category": "exact",
+                            "address": "some address",
+                        },
+                        {
+                            "name": "denial 2 name",
+                            "reference": "denial2ref",
+                            "category": "exact",
+                            "address": "some address 2",
+                        },
+                    ],
+                    "ecju_queries": [
+                        {
+                            "question": "some question",
+                            "response": None,
+                            "raised_by_user": "foo bar",
+                            "responded_by_user": None,
+                            "query_type": "query",
+                        },
+                        {
+                            "question": "some other question",
+                            "response": "some response",
+                            "raised_by_user": "some user",
+                            "responded_by_user": "some responder",
+                            "query_type": "query",
+                        },
+                    ],
+                    "intended_end_use": "birthday present",
                 },
                 {
                     "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",  # /PS-IGNORE
@@ -220,6 +271,10 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
                     "next_review_date": None,
                     "licences": [],
                     "submitted_at": "2023-01-17T14:53:09.826340Z",
+                    "goods": [],
+                    "denials": [],
+                    "ecju_queries": [],
+                    "intended_end_use": "replica",
                 },
             ],
             "filters": {
