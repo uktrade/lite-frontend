@@ -3,7 +3,6 @@ class CaseNote {
   constructor(
     $el,
     TEXTAREA_FOCUSED_CLASS,
-    isVisibleForExporterCheckbox,
     isUrgentCheckbox,
     mentionUsersSelector,
     cancelButtonSelector
@@ -14,30 +13,15 @@ class CaseNote {
     this.$submitButton = this.$el.querySelector("[type=submit]");
     this.$textarea = this.$el.querySelector("[name=text]");
 
-    if (isVisibleForExporterCheckbox) {
-      this.$isVisibleForExporterCheckbox = this.$el.querySelector(
-        "[name=is-visible-to-exporter]"
-      );
-    }
+    this.$isUrgentCheckbox = this.$el.querySelector(`#${isUrgentCheckbox}`);
+    this.$isUrgentCheckboxDiv = this.$el.querySelector(
+      `#div_${isUrgentCheckbox}`
+    );
 
-    this.$isUrgentCheckboxDiv = false;
-    this.$isUrgentCheckbox = false;
-    if (isUrgentCheckbox) {
-      this.$isUrgentCheckboxDiv = this.$el.querySelector(
-        `#div_${isUrgentCheckbox}`
-      );
-      this.$isUrgentCheckbox = this.$el.querySelector(`#${isUrgentCheckbox}`);
-    }
-    this.$mentionUserInputDiv = false;
-    this.$mentionUserInput = false;
-    if (mentionUsersSelector) {
-      this.$mentionUserInputDiv = this.$el.querySelector(
-        `#div_${mentionUsersSelector}`
-      );
-      this.$mentionUserInput = this.$el.querySelector(
-        `#${mentionUsersSelector}`
-      );
-    }
+    this.$mentionUserInput = this.$el.querySelector(`#${mentionUsersSelector}`);
+    this.$mentionUserInputDiv = this.$el.querySelector(
+      `#div_${mentionUsersSelector}`
+    );
   }
 
   init() {
@@ -124,29 +108,13 @@ class CaseNote {
   }
 }
 
-const initCaseNotes = () => {
-  document
-    .querySelectorAll("[data-module=case-note]")
-    .forEach(($el) =>
-      new CaseNote(
-        $el,
-        "case-note__textarea--focused",
-        "[name=is-visible-to-exporter]",
-        false,
-        false,
-        ".case-note__cancel-button"
-      ).init()
-    );
-};
-
 const initCaseNotesForm = () => {
   document
-    .querySelectorAll("form")
+    .querySelectorAll("#case_notes")
     .forEach(($el) =>
       new CaseNote(
         $el,
         "case-note__textarea--focused",
-        false,
         "id_is_urgent",
         "id_mentions",
         "#id_cancel"
@@ -167,4 +135,4 @@ export default function initMentionUsers() {
   );
 }
 
-export { initCaseNotes, CaseNote, initCaseNotesForm, initMentionUsers };
+export { CaseNote, initCaseNotesForm, initMentionUsers };

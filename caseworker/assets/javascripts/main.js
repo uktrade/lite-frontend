@@ -19,11 +19,7 @@ import initQueuesMenu from "./queues-menu.js";
 import initCLEEntries from "./cle-entries.js";
 import initRegimeEntries from "./regime-entries.js";
 import initDestinationsList from "./show-hide-destinations.js";
-import initMentionUsers, {
-  initCaseNotes,
-  initCaseNotesForm,
-  multi_select_field,
-} from "./case-notes";
+import initMentionUsers, { initCaseNotesForm } from "./case-notes";
 import { initExpanders } from "./list-expander";
 
 // vendor styles
@@ -42,7 +38,6 @@ $(document).ready(function () {
   initRegimeEntries();
   initCookierBanner("app-cookie-banner", "js-accept-cookie");
   initDestinationsList();
-  initCaseNotes();
   initCaseNotesForm();
   initMentionUsers();
   initExpanders();

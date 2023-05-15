@@ -38,22 +38,24 @@ def notes_and_timelines_url(data_queue, data_standard_case):
     )
 
 
-def test_notes_and_timelines_view_flag_on_status_code(authorized_client, notes_and_timelines_url, requests_mock):
+def test_notes_and_timelines_view_flag_on_status_code(
+    authorized_client, notes_and_timelines_url, requests_mock, mock_gov_users
+):
     requests_mock.get(
         client._build_absolute_uri(f"/gov-users/"),
         json={
-            "results": [],
+            "results": mock_gov_users,
         },
     )
     response = authorized_client.get(notes_and_timelines_url)
     assert response.status_code == 200
 
 
-def test_notes_and_timelines_view_templates(authorized_client, notes_and_timelines_url, requests_mock):
+def test_notes_and_timelines_view_templates(authorized_client, notes_and_timelines_url, requests_mock, mock_gov_users):
     requests_mock.get(
         client._build_absolute_uri(f"/gov-users/"),
         json={
-            "results": [],
+            "results": mock_gov_users,
         },
     )
     response = authorized_client.get(notes_and_timelines_url)
@@ -71,11 +73,12 @@ def test_notes_and_timelines_context_data(
     mock_standard_case_activity_system_user,
     mock_gov_user,
     requests_mock,
+    mock_gov_users,
 ):
     requests_mock.get(
         client._build_absolute_uri(f"/gov-users/"),
         json={
-            "results": [],
+            "results": mock_gov_users,
         },
     )
     response = authorized_client.get(notes_and_timelines_url)
@@ -101,12 +104,12 @@ def test_notes_and_timelines_context_data(
 
 
 def test_notes_and_timelines_searching_by_team(
-    authorized_client, notes_and_timelines_url, mock_standard_case_activity_system_user, requests_mock
+    authorized_client, notes_and_timelines_url, mock_standard_case_activity_system_user, requests_mock, mock_gov_users
 ):
     requests_mock.get(
         client._build_absolute_uri(f"/gov-users/"),
         json={
-            "results": [],
+            "results": mock_gov_users,
         },
     )
     response = authorized_client.get(f"{notes_and_timelines_url}?team_id=e0cb73c5-6bca-447c-b2a3-688fe259f0e9")
@@ -131,7 +134,7 @@ def test_notes_and_timelines_searching_by_team(
 
 
 def test_notes_and_timelines_searching_by_user_type(
-    authorized_client, notes_and_timelines_url, mock_standard_case_activity_system_user, requests_mock
+    authorized_client, notes_and_timelines_url, mock_standard_case_activity_system_user, requests_mock, mock_gov_users
 ):
     requests_mock.get(
         client._build_absolute_uri(f"/gov-users/"),
@@ -142,3 +145,22 @@ def test_notes_and_timelines_searching_by_user_type(
     response = authorized_client.get(f"{notes_and_timelines_url}?user_type=exporter")
     assert mock_standard_case_activity_system_user.last_request.qs == {"user_type": ["exporter"]}
     assert response.context["filtering_by"] == ["user_type"]
+
+
+def test_notes_and_timelines_user_dropdown(authorized_client, notes_and_timelines_url, requests_mock, mock_gov_users):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
+    response = authorized_client.get(notes_and_timelines_url)
+    users = []
+    for user in mock_gov_users:
+        value = (
+            f'{user["first_name"]} {user["last_name"]} ({user["team"]["name"]})'
+            if user["first_name"]
+            else user["email"]
+        )
+        users.append((user["id"], value))
+    assert response.context["form"].fields["mentions"].choices == users

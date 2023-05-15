@@ -1,6 +1,7 @@
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, Field, Button
 from django import forms
+from django.conf import settings
 
 from caseworker.users.services import get_gov_users
 
@@ -19,6 +20,14 @@ class NotesAndTimelineForm(forms.Form):
     )
     is_urgent = forms.BooleanField(label="Mark as urgent", initial=False, required=False)
 
+    def clean_mentions(self):
+        mentions = self.cleaned_data["mentions"]
+        data = [{"user": user_id} for user_id in mentions]
+        return data
+
+    def clean_is_urgent(self):
+        return bool(self.cleaned_data.get("is_urgent", False))
+
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
@@ -29,6 +38,7 @@ class NotesAndTimelineForm(forms.Form):
         self.fields["mentions"].choices += users
 
         self.helper = FormHelper()
+        self.helper.form_id = "case_notes"
         self.helper.layout = Layout(
             "text",
             "mentions",
@@ -36,3 +46,7 @@ class NotesAndTimelineForm(forms.Form):
             Submit("submit", "Add a case note", disabled=True),
             Button.secondary("cancel", "Cancel"),
         )
+
+        if not settings.FEATURE_MENTIONS_ENABLED:
+            del self.fields["mentions"]
+            del self.fields["is_urgent"]
