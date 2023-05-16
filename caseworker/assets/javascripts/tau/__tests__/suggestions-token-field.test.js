@@ -38,21 +38,4 @@ describe("Suggestions token field", () => {
       { id: "R1a", name: "R1a" },
     ]);
   });
-  test("Set on change listener", () => {
-    const tokenfield = {
-      on: jest.fn(),
-    };
-
-    jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
-
-    const showNcscBox = jest.fn();
-    const hideNcscBox = jest.fn();
-
-    component.setOnChangeListener(showNcscBox, hideNcscBox);
-    tokenfield.on.mock.calls[0][1]({ getItems: () => [{ name: "ML2c2" }] });
-    expect(showNcscBox).toHaveBeenCalled();
-
-    tokenfield.on.mock.calls[0][1]({ getItems: () => [{ name: "PL9002" }] });
-    expect(hideNcscBox).toHaveBeenCalled();
-  });
 });

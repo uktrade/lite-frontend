@@ -3,7 +3,7 @@ import CLESuggestions from "./tau/cle-suggestions";
 import SuggestionsTokenField from "./tau/suggestions-token-field";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
-import ShowHideFormField from "./tau/show-hide-field";
+import ShowHideNcscField from "./tau/show-hide-ncsc-field";
 
 const initAssessmentForm = () => {
   const noControlListCheckboxEl = document.querySelector(
@@ -42,32 +42,23 @@ const initAssessmentForm = () => {
   );
   cleSuggestions.setProducts(products);
 
-  window.onload = () => {
-    const ncscBox = document.querySelector(
-      "#div_id_is_ncsc_military_information_security"
-    );
-    if (ncscBox) {
-      const controlListEntries = document.querySelector(
-        "#control_list_entries"
-      );
-      const { tokenfield } = controlListEntries;
+  const ncscBox = document.querySelector(
+    "#div_id_is_ncsc_military_information_security"
+  );
 
-      if (
-        tokenfield
-          .showSuggestions()
-          .getItems()
-          .some((string) => string.name.match(/ML/gm))
-      ) {
-        ncscBox.style.display = "revert";
-      }
-
-      const ncscFormField = new ShowHideFormField(ncscBox);
-      suggestionsTokenField.setOnChangeListener(
-        ncscFormField.showField,
-        ncscFormField.hideField
+  // Window load is needed due to tokenfield is not being loaded yet to check for the existing suggestions.
+  // After window is loaded we can proceed with the showing or hiding the box depends on suggestions.
+  if (ncscBox) {
+    window.addEventListener("load", () => {
+      const ncscFormField = new ShowHideNcscField(
+        "#control_list_entries",
+        ncscBox
       );
-    }
-  };
+
+      ncscFormField.hideFieldAtLoad();
+      ncscFormField.setOnChangeListener();
+    });
+  }
 };
 
 initAssessmentForm();

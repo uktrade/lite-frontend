@@ -9,7 +9,7 @@ import SuggestionsTokenField from "./tau/suggestions-token-field";
 import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
-import ShowHideFormField from "./tau/show-hide-field";
+import ShowHideNcscField from "./tau/show-hide-ncsc-field";
 
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
@@ -121,19 +121,24 @@ const initAssessmentForm = () => {
   const ncscBox = document.querySelector(
     "#div_id_is_ncsc_military_information_security"
   );
+
+  // Window load is needed due to tokenfield is not being loaded yet to check for the existing suggestions.
+  // After window is loaded we can proceed with the showing or hiding the box depends on suggestions.
   if (ncscBox) {
-    const ncscFormField = new ShowHideFormField(ncscBox);
+    window.addEventListener("load", () => {
+      const ncscFormField = new ShowHideNcscField(
+        "#control_list_entries",
+        ncscBox
+      );
+
+      ncscFormField.hideFieldAtLoad();
+      ncscFormField.setOnChangeListener();
+    });
   }
 
   new SelectProducts(checkboxes, products, (selectedProducts) => {
     headline.setProducts(selectedProducts);
     cleSuggestions.setProducts(selectedProducts);
-    if (ncscBox) {
-      suggestionsTokenField.setOnChangeListener(
-        ncscFormField.showField,
-        ncscFormField.hideField
-      );
-    }
   }).init();
 };
 
