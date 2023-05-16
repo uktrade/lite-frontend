@@ -4,7 +4,6 @@ from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
 
 from django.urls import reverse
-from django.conf import settings
 
 from core import client
 from caseworker.cases.objects import Case
