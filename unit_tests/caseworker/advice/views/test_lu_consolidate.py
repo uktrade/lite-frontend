@@ -62,7 +62,6 @@ def test_lu_consolidate_check_countersignatures_other_recommendations(
     data_standard_case,
     advice_for_lu_countersign,
     url,
-    with_lu_countersigning_enabled,
 ):
     case_id = data_standard_case["case"]["id"]
     team_id = advice_for_lu_countersign[0]["user"]["team"]["id"]

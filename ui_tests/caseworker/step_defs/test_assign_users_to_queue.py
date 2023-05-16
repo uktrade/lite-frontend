@@ -40,7 +40,7 @@ def user_is_on_case_list(driver, context):
 @when("I filter assigned user by Not Assigned")
 def i_filter_case_officer_by_not_assigned(driver):
     case = CaseListPage(driver)
-    functions.try_open_filters(driver)
+    functions.open_case_filters(driver)
     case.enter_assigned_user_filter_text("Not assigned")
     functions.click_apply_filters(driver)
 

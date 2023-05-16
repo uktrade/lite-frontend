@@ -96,27 +96,11 @@ def countersign_advice(data_standard_case, advice_for_countersign, current_user)
     ]
 
 
-def test_get_advice_for_countersign_without_post_circ_countersigning(
-    current_user, advice_for_countersign, with_lu_countersigning_disabled
-):
-    countersign_advice = get_advice_to_countersign(advice_for_countersign, current_user)
-    assert len(countersign_advice) == 0
-
-
-def test_get_advice_for_countersign_with_post_circ_countersigning(
-    current_user, advice_for_countersign, with_lu_countersigning_enabled
-):
+def test_get_advice_for_countersign_with_post_circ_countersigning(current_user, advice_for_countersign):
     countersign_advice = get_advice_to_countersign(advice_for_countersign, current_user)
     for user_id, advice in countersign_advice.items():
         assert user_id == current_user["id"]
         assert len(advice) == 3
-
-
-def test_get_countersign_decision_advice_by_user_without_post_circ_countersigning(
-    mock_case, current_user, with_lu_countersigning_disabled
-):
-    countersign_advice = get_countersign_decision_advice_by_user(mock_case, current_user)
-    assert len(countersign_advice) == 0
 
 
 # fmt: off
@@ -165,33 +149,6 @@ advice_tab_test_data = [
 # fmt: on
 
 
-@pytest.mark.parametrize("test_data", advice_tab_test_data)
-def test_get_advice_tab_context(
-    advice,
-    data_standard_case_with_potential_trigger_list_product,
-    current_user,
-    test_data,
-    with_lu_countersigning_disabled,
-):
-    has_advice, advice_level, countersigned, team_alias, queue_alias, url, buttons = test_data
-    queue_detail = data_standard_case_with_potential_trigger_list_product["case"]["queue_details"][0]
-    if has_advice:
-        advice[0]["level"] = advice_level
-        if countersigned:
-            advice[0]["countersigned_by"] = current_user
-        data_standard_case_with_potential_trigger_list_product["case"]["advice"] = advice
-    current_user["team"]["alias"] = team_alias
-    queue_detail["alias"] = queue_alias
-    context = get_advice_tab_context(
-        Case(data_standard_case_with_potential_trigger_list_product["case"]), current_user, queue_detail["id"]
-    )
-
-    assert context["url"] == url
-
-    for button_name, enabled in context["buttons"].items():
-        assert buttons.get(button_name, False) == enabled
-
-
 # fmt: off
 countersign_advice_tab_test_data = [
     # Fields: Has Advice, Advice Level, Countersigned, User Team, Current Queue, Expected Tab URL, Expected Buttons Enabled (dict)
@@ -211,7 +168,6 @@ def test_get_countersign_advice_tab_context(
     current_user,
     countersign_advice,
     test_data,
-    with_lu_countersigning_enabled,
 ):
     has_advice, advice_level, countersigned, team_alias, queue_alias, url, buttons = test_data
     queue_detail = data_standard_case["case"]["queue_details"][0]
@@ -262,7 +218,6 @@ def test_update_countersign_decision_advice(
     countersign_advice,
     client,
     requests_mock,
-    with_lu_countersigning_enabled,
 ):
     case = Case(data_standard_case["case"])
     # incorrect team, advice not updated
