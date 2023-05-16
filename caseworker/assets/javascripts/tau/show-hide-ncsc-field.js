@@ -23,6 +23,7 @@ class ShowHideNcscField {
         this.showField();
       } else {
         this.hideField();
+        this.ncscBox.querySelector("input").checked = false;
       }
     });
   }

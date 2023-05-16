@@ -48,6 +48,10 @@ describe("ShowHideNCSCField", () => {
 
   test('setOnChangeListener hides ncscBox if "ML" is not present in tokenfield items', () => {
     const displayContainer = document.createElement("div");
+    const checkboxInput = document.createElement("INPUT");
+    checkboxInput.setAttribute("type", "checkbox");
+    displayContainer.append(checkboxInput);
+
     const tokenfield = {
       on: jest.fn().mockImplementation((event, callback) => {
         const mockEvent = {
@@ -66,6 +70,7 @@ describe("ShowHideNCSCField", () => {
     showHideNcscField.setOnChangeListener();
 
     expect(displayContainer.style.display).toBe("none");
+    expect(displayContainer.querySelector("input").checked).toBeFalsy();
   });
 
   test('setOnChangeListener shows ncscBox if "ML" is present in tokenfield items', () => {
