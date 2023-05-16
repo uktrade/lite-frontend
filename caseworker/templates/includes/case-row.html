@@ -170,7 +170,7 @@
 	</td>
 
 	{# CLEs #}
-	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="control_list_entries">
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="control_list_entry">
 		<ol class="govuk-list destinations__list app-cles__list">
             {% for cle in case.goods_summary.cles %}
 				<li class="app-cles__item">
@@ -181,7 +181,7 @@
 	</td>
 
 	{# Report summaries #}
-	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="report_summaries">
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="report_summary">
 		<ol class="govuk-list destinations__list app-report-summaries__list">
 			{% for report_summary in case.goods_summary.report_summaries %}
 				<li class="app-report_summaries__item">
@@ -192,7 +192,7 @@
 	</td>
 
 	{# Regimes #}
-	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="regimes">
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="regime">
         <ol class="govuk-list destinations__list app-regimes__list">
 			{% for regime in case.goods_summary.regimes %}
 				<li class="app-regimes__item">
