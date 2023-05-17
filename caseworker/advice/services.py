@@ -181,6 +181,7 @@ def get_advice_to_countersign(advice, caseworker):
 
     if caseworker["team"]["alias"] == LICENSING_UNIT_TEAM:
         advice_levels_to_countersign = [AdviceLevel.FINAL]
+
     advice_by_team = filter_advice_by_users_team(advice, caseworker)
     user_advice = filter_advice_by_level(advice_by_team, advice_levels_to_countersign)
     grouped_user_advice = group_advice_by_user(user_advice)
