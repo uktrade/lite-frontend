@@ -97,17 +97,6 @@ def test_countersign_approve_all_put(
     ]
 
 
-def test_lu_countersign_decision_raises_error_when_feature_flag_disabled(
-    authorized_client,
-    requests_mock,
-    data_standard_case,
-    countersign_decision_url,
-    with_lu_countersigning_disabled,
-):
-    response = authorized_client.get(countersign_decision_url, data={})
-    assert response.status_code == 404
-
-
 def test_lu_countersign_decision_post_form_errors(
     authorized_client,
     requests_mock,
@@ -115,7 +104,6 @@ def test_lu_countersign_decision_post_form_errors(
     advice_for_countersign,
     current_user,
     countersign_decision_url,
-    with_lu_countersigning_enabled,
 ):
     case_id = standard_case_with_advice["id"]
 
@@ -193,7 +181,6 @@ def test_lu_countersign_decision_post_success(
     standard_case_with_advice,
     advice_for_countersign,
     current_user,
-    with_lu_countersigning_enabled,
     queue_details,
     outcome_accepted,
 ):
@@ -282,7 +269,6 @@ def test_lu_countersign_get_shows_previous_countersignature(
     data_standard_case,
     standard_case_with_advice,
     current_user,
-    with_lu_countersigning_enabled,
     final_advice,
 ):
     case_id = data_standard_case["case"]["id"]

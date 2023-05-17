@@ -65,11 +65,18 @@ def click_apply_filters(driver: WebDriver):
     driver.find_element(by=By.ID, value="button-apply-filters").click()
 
 
+def open_case_filters(driver: WebDriver):
+    if not driver.find_element(by=By.CLASS_NAME, value="case-filters").is_displayed():
+        WebDriverWait(driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, "show-filters-link"))
+        ).click()
+
+
 def try_open_filters(driver: WebDriver):
     if not driver.find_element(by=By.CLASS_NAME, value="lite-filter-bar").is_displayed():
-        driver.find_element(by=By.ID, value="show-filters-link").click()
-        # Delay is necessary as driver can fail to click filters
-        time.sleep(0.5)
+        WebDriverWait(driver, 30).until(
+            expected_conditions.presence_of_element_located((By.ID, "show-filters-link"))
+        ).click()
 
 
 def get_table_rows(driver: WebDriver, table_selector: str = "table", raise_exception_if_empty=False):
