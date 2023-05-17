@@ -26,6 +26,20 @@
 	</div>
 	<div class="app-case__summary-list__row">
 		<dt class="app-case__summary-list__key">
+				{% lcs 'cases.CasePage.QuickSummaryTab.CASE_ADVISER' %}
+		</dt>
+		<dd class="app-case__summary-list__value" id="case_adviser">
+			{% if case.assigned_users %}
+				{{ case|get_adviser_list|join:", " }}
+			{% else %}
+				<span class="govuk-hint govuk-!-margin-0">
+					{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_CASE_OFFICER' %}
+				</span>
+			{% endif %}
+		</dd>
+	</div>
+	<div class="app-case__summary-list__row">
+		<dt class="app-case__summary-list__key">
 				{% lcs 'cases.CasePage.QuickSummaryTab.TEMPORARY_OR_PERMANENT' %}
 		</dt>
 		<dd class="app-case__summary-list__value" id="temporary_or_permanent">
@@ -132,7 +146,7 @@
 			{% lcs 'cases.CasePage.QuickSummaryTab.TOTAL_VALUE' %}
 		</dt>
 		<dd class="app-case__summary-list__value" id="total_value">
-			£{{ goods_summary.total_value|intcomma }}
+			£{{ goods_summary.total_value|floatformat:2|intcomma }}
 		</dd>
 	</div>
 	<div class="app-case__summary-list__row">

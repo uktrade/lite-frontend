@@ -215,7 +215,6 @@ class CaseView(CaseworkerMixin, TemplateView):
         }
 
     def get(self, request, **kwargs):
-        print(f"tab:{self.kwargs['tab']}")
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]

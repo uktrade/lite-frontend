@@ -187,7 +187,7 @@
 	</table>
 
 	{% if case.case_type.sub_type.key != 'exhibition_clearance' and goods|goods_value %}
-		<p class="govuk-body lite-!-margin-top--3 govuk-!-font-weight-bold">Total value: £{{ goods|goods_value|intcomma }}</p>
+		<p class="govuk-body lite-!-margin-top--3 govuk-!-font-weight-bold">Total value: £{{ goods|goods_value|floatformat:2|intcomma }}</p>
 	{% endif %}
 
 	{% if not hide_controls %}

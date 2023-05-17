@@ -34,8 +34,15 @@ def get_clc(goods_on_application):
 
 @register.filter()
 def get_values_as_list(items: List[Dict], key: str):
-    print(f"items: {items}")
     return [item[key] for item in items]
+
+
+@register.filter()
+def get_adviser_list(case):
+    user_list = []
+    for users in case.assigned_users.values():
+        user_list += users
+    return [f"{user.get('first_name')} {user.get('last_name')}" for user in users]
 
 
 @register.filter()
