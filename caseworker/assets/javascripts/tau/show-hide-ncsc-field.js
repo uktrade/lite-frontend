@@ -14,11 +14,16 @@ class ShowHideNcscField {
     this.ncscBox.style.display = "none";
   }
 
-  toggleField() {
+  getTokenfield() {
     const $controlListEntries = document.querySelector(
       this.controlListEntriesSelector
     );
     const { tokenfield } = $controlListEntries;
+    return tokenfield;
+  }
+
+  toggleField() {
+    const tokenfield = this.getTokenfield();
 
     if (tokenfield.getItems().some((string) => string.name.startsWith("ML"))) {
       this.showField();
@@ -29,10 +34,8 @@ class ShowHideNcscField {
   }
 
   setOnChangeListener() {
-    const $controlListEntries = document.querySelector(
-      this.controlListEntriesSelector
-    );
-    const { tokenfield } = $controlListEntries;
+    const tokenfield = this.getTokenfield();
+
     tokenfield.on("change", () => {
       this.toggleField();
     });
