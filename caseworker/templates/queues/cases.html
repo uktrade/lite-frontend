@@ -1,6 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% load svg static %}
+{% load crispy_forms_tags %}
 
 {% block back_link %}{% endblock %}
 
@@ -57,54 +58,66 @@
 		{% endfor %}
 	</div>
 
-	<p id="text-case-count" class="lite-filters__hint-text">{{ data.count }} case{{ data.count|pluralize }}</p>
+	<div class="govuk-grid-row">
+		<p id="text-case-count" class="lite-filters__hint-text">{{ data.count }} case{{ data.count|pluralize }}</p>
+	</div>
 
-	{% include 'filters.html' %}
+	{% include 'queues/case-filters.html' %}
 
-	{% include 'queues/search-tabs.html' %}
+    <div class="customiser" data-customiser-spec='{"options_label": "Customise queue view", "identifier": "queue-view", "analytics_prefix": "qv", "options_hint": "Select columns to show", "toggleable_elements": [{"label": "Destination", "key": "destination", "default_visible": true}, {"label": "Case allocation", "key": "case_allocation", "default_visible": true}, {"label": "Case updates", "key": "case_updates", "default_visible": true}, {"label": "Products", "key": "products"}, {"label": "Control list entry", "key": "control_list_entry"}, {"label": "Report summary", "key": "report_summary"}, {"label": "Regime", "key": "regime"}, {"label": "Total value", "key": "total_value"}, {"label": "Queries", "key": "queries"}, {"label": "Denial matches", "key": "denial_matches"}, {"label": "Intended end use", "key": "intended_end_use"}, {"label": "Flags", "key": "flags", "default_visible": true}]}'>
+        <div class="customiser__header">
+	    {% include 'queues/search-tabs.html' %}
+        </div>
 
-	<form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
-		{% if not data.results.cases %}
-			{% if tab_data.my_cases.is_selected %}
-				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES_ALLOCATED' %}
-			{% else %}
-				{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
-			{% endif %}
-		{% else %}
-		<table id="table-cases" class="govuk-table">
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					{% if not queue.is_system_queue %}
-						<th class="govuk-table__header govuk-table__cell--checkbox">
-							<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
-						</th>
-					{% endif %}
-					<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">{% lcs 'cases.CasesListPage.Table.SLA' %}</span></th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.CASE' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.UPDATES' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton" scope="col">{% lcs 'cases.CasesListPage.Table.ASSIGNEES' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.DESTINATIONS' %}</th>
-					<th class="govuk-table__header app-table__header--skeleton lite-tablet-hide" width="15%" scope="col">{% lcs 'cases.CasesListPage.Table.FLAGS' %}</th>
-				</tr>
-			</thead>
+	    <form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
+	    	{% if not data.results.cases %}
+	    		{% if tab_data.my_cases.is_selected %}
+	    			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES_ALLOCATED' %}
+	    		{% else %}
+	    			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES' %}
+	    		{% endif %}
+	    	{% else %}
+            <div class="case-table-container">
+	    	    <table id="table-cases" class="govuk-table">
+	    	    	<thead class="govuk-table__head">
+	    	    		<tr class="govuk-table__row">
+	    	    			{% if not queue.is_system_queue %}
+	    	    				<th class="govuk-table__header govuk-table__cell--checkbox">
+	    	    					<button id="button-select-all" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
+	    	    				</th>
+	    	    			{% endif %}
+	    	    			<th class="govuk-table__header govuk-table__cell--tight" scope="col"><span class="govuk-visually-hidden">SLA</span></th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" scope="col">Case</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="destination" scope="col">Destination</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="case_allocation" scope="col">Case allocation</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="case_updates" scope="col">Case updates</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="products" scope="col">Products</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="control_list_entry" scope="col">Control list entry</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="report_summary" scope="col">Report summary</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="regime" scope="col">Regime</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="total_value" scope="col">Total value</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="queries" scope="col">Queries</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="denial_matches" scope="col">Denial matches</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="intended_end_use" scope="col">Intended end use</th>
+	    	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="flags" scope="col">Flags</th>
+	    	    		</tr>
+	    	    	</thead>
 
-			<tbody class="govuk-table__body" id="tbody-main">
-				{% for case in data.results.cases %}
-					{% include 'includes/case-row.html' with case=case %}
-				{% endfor %}
-			</tbody>
-		</table>
-		{% endif %}
-	</form>
+	    	    	<tbody class="govuk-table__body" id="tbody-main">
+	    	    		{% for case in data.results.cases %}
+	    	    			{% include 'includes/case-row.html' with case=case %}
+	    	    		{% endfor %}
+	    	    	</tbody>
+	    	    </table>
+            </div>
+	    	{% endif %}
+	    </form>
+    </div>
 
 	{% pagination %}
 
 {% endblock %}
 
 {% block javascript %}
-	{# this is tied to inline javascript in lite_forms/templates/components/autocomplete.html and cannot be removed yet #}
-	<script nonce="{{ request.csp_nonce }}">
-		loadAutoCompletes();
-	</script>
-
+	<script src="{% static 'case-filters.js' %}" type="text/javascript"></script>
 {% endblock %}

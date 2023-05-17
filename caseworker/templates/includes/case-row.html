@@ -1,3 +1,4 @@
+{% load humanize %}
 {% load svg %}
 
 <tr class="govuk-table__row" id="{{ case.id }}">
@@ -57,42 +58,19 @@
 		<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.status.value }}</p>
 	</td>
 
-    {# case updates #}
-	<td class="govuk-table__cell lite-mobile-hide">
-		<ul class="app-updates__list">
-			{% if case.activity_updates %}
-				{% for update in case.activity_updates %}
-					<li class="app-updates__item">
-						<div class="app-updates__action">
-							{% if forloop.first %}
-								Latest action
-							{% else %}
-								Previous action
-							{% endif %}
-						</div>
-						<div class="app-updates__department">
-							{% if update.user.type == 'exporter' %}
-								Applicant {{ update.created_at|to_datetime|date:"d F Y" }}
-							{% else %}
-								{{ update.user.team }} {{ update.created_at|to_datetime|date:"d F Y" }}
-							{% endif %}
-						</div>
-						<div class="app-updates__activity">
-							{{ update.user.first_name }} {{ update.user.last_name }} {{ update.text|linebreaksbr }}
-						</div>
-						{% if update.additional_text %}
-							<div class="app-updates__activity">
-								{{ update.additional_text|linebreaksbr }}
-							</div>
-						{% endif %}
-					</li>
-				{% endfor %}
-			{% endif %}
-		</ul>
+	{# destinations #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="destination">
+		<ol class="govuk-list destinations__list">
+			{% for country in case.unique_destinations %}
+				<li>
+					{{country.name}}
+				</li>
+			{% endfor %}
+		</ol>
 	</td>
 
 	{# 	Case allocation #}
-	<td class="govuk-table__cell lite-mobile-hide expander" data-expander-visible-elems="3">
+	<td class="govuk-table__cell lite-mobile-hide expander" data-expander-visible-elems="3" data-customiser-key="case_allocation">
 		<ul class="app-assignments__list expander__expand-list">
 			{% if case.case_officer.first_name and case.case_officer.last_name %}
 			   <li class="app-assignments__item expander__expand-list__item">
@@ -146,23 +124,122 @@
 		</ul>
 	</td>
 
-	{# destinations #}
-	<td class="govuk-table__cell lite-mobile-hide">
-		<ol class="govuk-list destinations__list">
-			{% for country in case.unique_destinations %}
-				<li>
-					{{country.name}}
+    {# case updates #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="case_updates">
+		<ul class="app-updates__list">
+			{% if case.activity_updates %}
+				{% for update in case.activity_updates %}
+					<li class="app-updates__item">
+						<div class="app-updates__action">
+							{% if forloop.first %}
+								Latest action
+							{% else %}
+								Previous action
+							{% endif %}
+						</div>
+						<div class="app-updates__department">
+							{% if update.user.type == 'exporter' %}
+								Applicant {{ update.created_at|to_datetime|date:"d F Y" }}
+							{% else %}
+								{{ update.user.team }} {{ update.created_at|to_datetime|date:"d F Y" }}
+							{% endif %}
+						</div>
+						<div class="app-updates__activity">
+							{{ update.user.first_name }} {{ update.user.last_name }} {{ update.text|linebreaksbr }}
+						</div>
+						{% if update.additional_text %}
+							<div class="app-updates__activity">
+								{{ update.additional_text|linebreaksbr }}
+							</div>
+						{% endif %}
+					</li>
+				{% endfor %}
+			{% endif %}
+		</ul>
+	</td>
+
+	{# Products #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="products">
+		<ol class="govuk-list destinations__list app-products__list">
+			{% for good in case.goods %}
+				<li class="app-products__item">
+					{{good.name}} ({{good.quantity|floatformat}})
 				</li>
 			{% endfor %}
 		</ol>
 	</td>
 
+	{# CLEs #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="control_list_entry">
+		<ol class="govuk-list destinations__list app-cles__list">
+            {% for cle in case.goods_summary.cles %}
+				<li class="app-cles__item">
+                    {{cle}}
+                </li>
+            {% endfor %}
+        </ol>
+	</td>
+
+	{# Report summaries #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="report_summary">
+		<ol class="govuk-list destinations__list app-report-summaries__list">
+			{% for report_summary in case.goods_summary.report_summaries %}
+				<li class="app-report_summaries__item">
+                    {{report_summary}}
+				</li>
+			{% endfor %}
+		</ol>
+	</td>
+
+	{# Regimes #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="regime">
+        <ol class="govuk-list destinations__list app-regimes__list">
+			{% for regime in case.goods_summary.regimes %}
+				<li class="app-regimes__item">
+                    {{regime}}
+				</li>
+			{% endfor %}
+        </ol>
+	</td>
+
+	{# Total value #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="total_value">
+		<span class="app-total-value">£{{case.goods_summary.total_value|floatformat:2|intcomma}}</span>
+	</td>
+
+	{# Queries #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="queries">
+        {% if case.ecju_queries %}
+            <span class="app-ecju-queries"><a href="{% url 'cases:case' queue.id case.id %}ecju-queries/" class="govuk-link govuk-link--no-visited-state">{{case.ecju_queries|length}} queries</a></span>
+        {% endif %}
+	</td>
+
+	{# Denial matches #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="denial_matches">
+        {% if case.denials %}
+            <span class="app-denials"><a href="{% url 'cases:case' queue.id case.id %}details/#denial-matches" class="govuk-link govuk-link--no-visited-state">{{case.denials|length}} denials</a></span>
+        {% endif %}
+	</td>
+
+	{# intended end use #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="intended_end_use">
+        <span class="app-intended-end-use">
+        {% if case.intended_end_use %}
+            {{case.intended_end_use|truncatechars:200}}
+        {% endif %}
+        {% if case.intended_end_use|length > 200 %}
+            <a href="{% url 'cases:case' queue.id case.id %}details/#end-use-details" class="govuk-link govuk-link--no-visited-state">See more</a>
+        {% endif %}
+        </span>
+	</td>
+
 	{# application flags #}
-	<td class="govuk-table__cell lite-tablet-hide">
+	<td class="govuk-table__cell lite-tablet-hide" data-customiser-key="flags">
 		{% if case.flags or case.destinations_flags or case.goods_flags %}
 			{% include 'includes/case-row-flags.html' with flags=case.flags destinations_flags=case.destinations_flags goods_flags=case.goods_flags %}
 		{% else %}
 			<p class="app-information-bar">No flags set</p>
 		{% endif %}
 	</td>
+
 </tr>
