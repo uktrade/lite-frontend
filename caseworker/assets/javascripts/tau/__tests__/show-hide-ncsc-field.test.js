@@ -100,6 +100,7 @@ describe("ShowHideNCSCField", () => {
 
   test('setOnChangeListener shows ncscBox if "ML" is present in tokenfield items', () => {
     const displayContainer = document.createElement("div");
+    displayContainer.style.display = "none";
     const tokenfield = {
       on: jest.fn().mockImplementation((event, callback) => {
         callback();
