@@ -33,13 +33,13 @@ describe("ShowHideNCSCField", () => {
     expect(displayContainer.style.display).toBe("none");
   });
 
-  test('hideFieldAtLoad shows ncscBox if "ML" is present in tokenfield items at load', () => {
+  test('toggleField shows ncscBox if "ML" is present in tokenfield items', () => {
     const tokenfield = {
       getItems: jest.fn().mockReturnValue([{ name: "ML2c2" }]),
     };
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
 
-    component.hideFieldAtLoad();
+    component.toggleField();
 
     expect(displayContainer.style.display).toBe("revert");
   });

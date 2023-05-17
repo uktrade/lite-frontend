@@ -40,10 +40,6 @@ class ShowHideNcscField {
       this.toggleField();
     });
   }
-
-  hideFieldAtLoad() {
-    this.toggleField();
-  }
 }
 
 export default ShowHideNcscField;

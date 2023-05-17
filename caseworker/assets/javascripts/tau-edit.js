@@ -55,7 +55,7 @@ const initAssessmentForm = () => {
         ncscBox
       );
 
-      ncscFormField.hideFieldAtLoad();
+      ncscFormField.toggleField();
       ncscFormField.setOnChangeListener();
     });
   }
