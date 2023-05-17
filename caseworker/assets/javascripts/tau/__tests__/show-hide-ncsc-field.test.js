@@ -1,6 +1,19 @@
 import "@testing-library/jest-dom";
 
+import EventEmitter from "events";
+
 import ShowHideNcscField from "../show-hide-ncsc-field";
+
+class MockTokenfield extends EventEmitter {
+  constructor(mockCLEArray) {
+    super();
+    this.mockCLEArray = mockCLEArray;
+  }
+
+  getItems() {
+    return this.mockCLEArray;
+  }
+}
 
 let component;
 let displayContainer;
@@ -34,9 +47,7 @@ describe("ShowHideNCSCField", () => {
   });
 
   test('toggleField shows ncscBox if "ML" is present in tokenfield items', () => {
-    const tokenfield = {
-      getItems: jest.fn().mockReturnValue([{ name: "ML2c2" }]),
-    };
+    const tokenfield = new MockTokenfield([{ name: "ML2c2" }]);
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
 
     component.toggleField();
@@ -51,13 +62,7 @@ describe("ShowHideNCSCField", () => {
     checkboxInput.setAttribute("type", "checkbox");
     checkboxInput.checked = true;
     displayContainer.append(checkboxInput);
-
-    const tokenfield = {
-      on: jest.fn().mockImplementation((event, callback) => {
-        callback();
-      }),
-      getItems: jest.fn().mockReturnValue([{ name: "1e2" }]),
-    };
+    const tokenfield = new MockTokenfield([{ name: "1e2" }]);
 
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
 
@@ -65,7 +70,9 @@ describe("ShowHideNCSCField", () => {
       "#control_list_entries",
       displayContainer
     );
+
     showHideNcscField.setOnChangeListener();
+    tokenfield.emit("change");
 
     expect(displayContainer.style.display).toBe("none");
     expect(displayContainer.querySelector("input").checked).toBeFalsy();
@@ -78,13 +85,7 @@ describe("ShowHideNCSCField", () => {
     checkboxInput.setAttribute("type", "checkbox");
     checkboxInput.checked = true;
     displayContainer.append(checkboxInput);
-
-    const tokenfield = {
-      on: jest.fn().mockImplementation((event, callback) => {
-        callback();
-      }),
-      getItems: jest.fn().mockReturnValue([{ name: "123ML123" }]),
-    };
+    const tokenfield = new MockTokenfield([{ name: "123ML123" }]);
 
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
 
@@ -92,7 +93,9 @@ describe("ShowHideNCSCField", () => {
       "#control_list_entries",
       displayContainer
     );
+
     showHideNcscField.setOnChangeListener();
+    tokenfield.emit("change");
 
     expect(displayContainer.style.display).toBe("none");
     expect(displayContainer.querySelector("input").checked).toBeFalsy();
@@ -101,12 +104,7 @@ describe("ShowHideNCSCField", () => {
   test('setOnChangeListener shows ncscBox if "ML" is present in tokenfield items', () => {
     const displayContainer = document.createElement("div");
     displayContainer.style.display = "none";
-    const tokenfield = {
-      on: jest.fn().mockImplementation((event, callback) => {
-        callback();
-      }),
-      getItems: jest.fn().mockReturnValue([{ name: "ML2c2" }]),
-    };
+    const tokenfield = new MockTokenfield([{ name: "ML123" }]);
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
 
     const showHideNcscField = new ShowHideNcscField(
@@ -115,6 +113,7 @@ describe("ShowHideNCSCField", () => {
     );
 
     showHideNcscField.setOnChangeListener();
+    tokenfield.emit("change");
 
     expect(displayContainer.style.display).toBe("revert");
   });
