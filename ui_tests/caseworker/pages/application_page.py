@@ -100,8 +100,8 @@ class ApplicationPage(BasePage):
                 (By.CSS_SELECTOR, f"#{self.BUTTON_POST_NOTE_ID}:not([disabled])")
             )
         )
-
-        old_page = self.driver.find_element(by=By.ID, value=self.BUTTON_POST_NOTE_ID).click()
+        old_page = self.driver.find_element(by=By.TAG_NAME, value="html")
+        self.driver.find_element(by=By.ID, value=self.BUTTON_POST_NOTE_ID).click()
         WebDriverWait(self.driver, 45).until(expected_conditions.staleness_of(old_page))
 
     def click_cancel_btn(self):
