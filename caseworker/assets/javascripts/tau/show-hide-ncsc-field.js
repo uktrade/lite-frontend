@@ -9,8 +9,23 @@ class ShowHideNcscField {
   showField() {
     this.ncscBox.style.display = "revert";
   }
+
   hideField() {
     this.ncscBox.style.display = "none";
+  }
+
+  toggleField() {
+    const $controlListEntries = document.querySelector(
+      this.controlListEntriesSelector
+    );
+    const { tokenfield } = $controlListEntries;
+
+    if (tokenfield.getItems().some((string) => string.name.match(/ML/gm))) {
+      this.showField();
+    } else {
+      this.hideField();
+      this.ncscBox.querySelector("input").checked = false;
+    }
   }
 
   setOnChangeListener() {
@@ -18,30 +33,13 @@ class ShowHideNcscField {
       this.controlListEntriesSelector
     );
     const { tokenfield } = $controlListEntries;
-    tokenfield.on("change", (event) => {
-      if (event.getItems().some((string) => string.name.match(/ML/gm))) {
-        this.showField();
-      } else {
-        this.hideField();
-        this.ncscBox.querySelector("input").checked = false;
-      }
+    tokenfield.on("change", () => {
+      this.toggleField();
     });
   }
 
   hideFieldAtLoad() {
-    const $controlListEntries = document.querySelector(
-      this.controlListEntriesSelector
-    );
-    const { tokenfield } = $controlListEntries;
-
-    if (
-      tokenfield
-        .showSuggestions()
-        .getItems()
-        .some((string) => string.name.match(/ML/gm))
-    ) {
-      this.showField();
-    }
+    this.toggleField();
   }
 }
 

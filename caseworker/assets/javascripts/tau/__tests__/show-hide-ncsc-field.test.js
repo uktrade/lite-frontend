@@ -35,9 +35,7 @@ describe("ShowHideNCSCField", () => {
 
   test('hideFieldAtLoad shows ncscBox if "ML" is present in tokenfield items at load', () => {
     const tokenfield = {
-      showSuggestions: jest.fn().mockReturnValue({
-        getItems: () => [{ name: "ML2c2" }],
-      }),
+      getItems: jest.fn().mockReturnValue([{ name: "ML2c2" }]),
     };
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
 
@@ -54,11 +52,9 @@ describe("ShowHideNCSCField", () => {
 
     const tokenfield = {
       on: jest.fn().mockImplementation((event, callback) => {
-        const mockEvent = {
-          getItems: () => [{ name: "PL9002" }],
-        };
-        callback(mockEvent);
+        callback();
       }),
+      getItems: jest.fn().mockReturnValue([{ name: "1e2" }]),
     };
 
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
@@ -77,11 +73,9 @@ describe("ShowHideNCSCField", () => {
     const displayContainer = document.createElement("div");
     const tokenfield = {
       on: jest.fn().mockImplementation((event, callback) => {
-        const mockEvent = {
-          getItems: () => [{ name: "ML2c2" }],
-        };
-        callback(mockEvent);
+        callback();
       }),
+      getItems: jest.fn().mockReturnValue([{ name: "ML2c2" }]),
     };
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
 
