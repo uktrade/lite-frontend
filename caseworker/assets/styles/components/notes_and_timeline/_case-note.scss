@@ -20,6 +20,12 @@
     border: 1px solid black;
 }
 .warning-text{
-    background-color: #ffb3b3;
-    color: red;
+    display:inline;
+    background-color: #f7d1ce; # /PS-IGNORE
+    color: #dd3f31;
+    width:100%;
+    margin-left: 30px;
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 8px;
 }
