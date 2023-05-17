@@ -1,3 +1,4 @@
+from decimal import Decimal
 import pytest
 import re
 
@@ -476,6 +477,224 @@ def test_activity_updates(url, authorized_client):
     assert "additional line3" not in updates[0]
     assert "Joe Bloggs" in updates[1]
     assert "applied for a licence." in updates[1]
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_context_goods_summary(url, authorized_client):
+    response = authorized_client.get(url)
+    expected_goods_summary = {
+        "cles": {"ML2a", "ML1", "ML2", "ML1a"},
+        "regimes": {"Wassenaar Arrangement"},
+        "report_summaries": {"prefix subject"},
+        "total_value": Decimal("40.00"),
+    }
+    assert response.context["data"]["results"]["cases"][0]["goods_summary"] == expected_goods_summary
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_context_goods(url, authorized_client):
+    response = authorized_client.get(url)
+    expected_goods = [
+        {
+            "cles": ["ML1", "ML1a"],
+            "name": "Some product",
+            "quantity": "20.00",
+            "regimes": ["Wassenaar Arrangement"],
+            "report_summary_prefix": "prefix",
+            "report_summary_subject": "subject",
+            "value": "10.00",
+        },
+        {
+            "cles": ["ML2", "ML2a", "ML1a"],
+            "name": "Some other product",
+            "quantity": "1.00",
+            "regimes": ["Wassenaar Arrangement"],
+            "report_summary_prefix": "prefix",
+            "report_summary_subject": "subject",
+            "value": "30.00",
+        },
+    ]
+    assert response.context["data"]["results"]["cases"][0]["goods"] == expected_goods
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_context_denials(url, authorized_client):
+    response = authorized_client.get(url)
+    expected_denials = [
+        {"address": "some address", "category": "exact", "name": "denial name", "reference": "denialref"},
+        {"address": "some address 2", "category": "exact", "name": "denial 2 name", "reference": "denial2ref"},
+    ]
+    assert response.context["data"]["results"]["cases"][0]["denials"] == expected_denials
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_context_ecju_queries(url, authorized_client):
+    response = authorized_client.get(url)
+    expected_ecju_queries = [
+        {
+            "query_type": "query",
+            "question": "some question",
+            "raised_by_user": "foo bar",
+            "responded_by_user": None,
+            "response": None,
+        },
+        {
+            "query_type": "query",
+            "question": "some other question",
+            "raised_by_user": "some user",
+            "responded_by_user": "some responder",
+            "response": "some response",
+        },
+    ]
+    assert response.context["data"]["results"]["cases"][0]["ecju_queries"] == expected_ecju_queries
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_column_products(url, authorized_client):
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    products = html.find_all("ol", {"class": "app-products__list"})[0].get_text().strip()
+    assert "Some product (20)" in products
+    assert "Some other product (1)" in products
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_column_cles(url, authorized_client):
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    cles = html.find_all("ol", {"class": "app-cles__list"})[0].get_text().strip()
+    assert "ML1" in cles
+    assert "ML1a" in cles
+    assert "ML2" in cles
+    assert "ML2a" in cles
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_column_report_summaries(url, authorized_client):
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    report_summaries = html.find_all("ol", {"class": "app-report-summaries__list"})[0].get_text().strip()
+    assert "prefix subject" in report_summaries
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_column_regimes(url, authorized_client):
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    regimes = html.find_all("ol", {"class": "app-regimes__list"})[0].get_text().strip()
+    assert "Wassenaar Arrangement" in regimes
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_column_total_value(url, authorized_client):
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    total_value = html.find_all("span", {"class": "app-total-value"})[0].get_text().strip()
+    assert "£40.00" in total_value
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_column_queries(url, authorized_client):
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    queries = html.find_all("span", {"class": "app-ecju-queries"})[0].get_text().strip()
+    assert "2 queries" in queries
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_column_denials(url, authorized_client):
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    denials = html.find_all("span", {"class": "app-denials"})[0].get_text().strip()
+    assert "2 denials" in denials
+
+
+@pytest.mark.parametrize(
+    "url",
+    (
+        (reverse("core:index")),
+        (reverse("queues:cases")),
+    ),
+)
+def test_column_intended_end_use(url, authorized_client):
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    intended_end_use = html.find_all("span", {"class": "app-intended-end-use"})[0].get_text().strip()
+    assert "birthday present" in intended_end_use
 
 
 def test_filter_none_pending_gov_users(authorized_client, mock_cases_search):
