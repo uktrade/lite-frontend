@@ -17,6 +17,7 @@ class NotesAndTimelineForm(forms.Form):
         error_messages={"required": "Select the User"},
         label="Mention a co-worker or team to notify them, or ask a question.",
         help_text="Type for suggestions. For example 'Technical Assessment Unit', NSCS, or 'Olivia Smith'",
+        required=False,
     )
     is_urgent = forms.BooleanField(label="Mark as urgent", initial=False, required=False)
 

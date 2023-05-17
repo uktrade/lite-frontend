@@ -16,9 +16,9 @@ def get_gov_users(request, params=None, convert_to_options=False, convert_to_cho
         data = client.get(request, "/gov-users/")
 
     if convert_to_options:
-        return convert_users_to_options(data)
+        return convert_users_to_options(data.json()["results"])
     if convert_to_choices:
-        return convert_users_to_choices(data)
+        return convert_users_to_choices(data.json()["results"])
 
     return data.json(), data.status_code
 
@@ -26,7 +26,7 @@ def get_gov_users(request, params=None, convert_to_options=False, convert_to_cho
 def convert_users_to_choices(data):
     choices = []
     # Hide users without emails (eg system users)
-    users = [user for user in data.json()["results"] if user["email"]]
+    users = [user for user in data if user["email"]]
     for user in users:
         display = user.get("email")
         if user.get("first_name"):
@@ -40,7 +40,7 @@ def convert_users_to_options(data):
     converted = []
 
     # Hide users without emails (eg system users)
-    for user in [user for user in data.json()["results"] if user["email"]]:
+    for user in [user for user in data if user["email"]]:
         first_name = user.get("first_name")
         last_name = user.get("last_name")
         email = user.get("email")

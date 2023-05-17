@@ -89,7 +89,6 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
         post_data = NotesAndTimelineForm(request.POST, request=request)
         post_data.is_valid()
         response, status_code = post_case_notes(request, self.case_id, post_data.cleaned_data)
-
         if status_code != 201:
             return error_page(request, response.get("errors")["text"][0])
 

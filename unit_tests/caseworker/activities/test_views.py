@@ -164,3 +164,44 @@ def test_notes_and_timelines_user_dropdown(authorized_client, notes_and_timeline
         )
         users.append((user["id"], value))
     assert response.context["form"].fields["mentions"].choices == users
+
+
+@pytest.mark.parametrize(
+    "data, mock_data, mock_status, expected_status, template_used",
+    (
+        (
+            {"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"], "is_urgent": False},
+            {},
+            201,
+            302,
+            "activites/notes-and-timelines.html",
+        ),
+        ({}, {"errors": {"text": ["test"]}}, 200, 200, "error.html"),
+    ),
+)
+def test_notes_and_timelines_post_valid(
+    data,
+    mock_data,
+    mock_status,
+    expected_status,
+    template_used,
+    authorized_client,
+    notes_and_timelines_url,
+    mock_gov_users,
+    data_standard_case,
+    requests_mock,
+):
+    requests_mock.post(
+        client._build_absolute_uri(f'/cases/{data_standard_case["case"]["id"]}/case-notes/'),
+        json=mock_data,
+        status_code=mock_status,
+    )
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
+
+    response = authorized_client.post(notes_and_timelines_url, data=data)
+    assert response.status_code == expected_status
