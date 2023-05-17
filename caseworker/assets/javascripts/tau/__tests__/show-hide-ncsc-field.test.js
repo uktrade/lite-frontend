@@ -46,8 +46,10 @@ describe("ShowHideNCSCField", () => {
 
   test('setOnChangeListener hides ncscBox if "ML" is not present in tokenfield items', () => {
     const displayContainer = document.createElement("div");
+    displayContainer.style.display = "revert";
     const checkboxInput = document.createElement("INPUT");
     checkboxInput.setAttribute("type", "checkbox");
+    checkboxInput.checked = true;
     displayContainer.append(checkboxInput);
 
     const tokenfield = {
@@ -55,6 +57,33 @@ describe("ShowHideNCSCField", () => {
         callback();
       }),
       getItems: jest.fn().mockReturnValue([{ name: "1e2" }]),
+    };
+
+    jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });
+
+    const showHideNcscField = new ShowHideNcscField(
+      "#control_list_entries",
+      displayContainer
+    );
+    showHideNcscField.setOnChangeListener();
+
+    expect(displayContainer.style.display).toBe("none");
+    expect(displayContainer.querySelector("input").checked).toBeFalsy();
+  });
+
+  test('setOnChangeListener hides ncscBox if "ML" is only at start of string in tokenfield items', () => {
+    const displayContainer = document.createElement("div");
+    displayContainer.style.display = "revert";
+    const checkboxInput = document.createElement("INPUT");
+    checkboxInput.setAttribute("type", "checkbox");
+    checkboxInput.checked = true;
+    displayContainer.append(checkboxInput);
+
+    const tokenfield = {
+      on: jest.fn().mockImplementation((event, callback) => {
+        callback();
+      }),
+      getItems: jest.fn().mockReturnValue([{ name: "123ML123" }]),
     };
 
     jest.spyOn(document, "querySelector").mockReturnValue({ tokenfield });

@@ -20,7 +20,7 @@ class ShowHideNcscField {
     );
     const { tokenfield } = $controlListEntries;
 
-    if (tokenfield.getItems().some((string) => string.name.match(/ML/gm))) {
+    if (tokenfield.getItems().some((string) => string.name.startsWith("ML"))) {
       this.showField();
     } else {
       this.hideField();
