@@ -11,6 +11,7 @@ urlpatterns = [
     path("<uuid:pk>/edit/", users.EditUser.as_view(), name="edit"),
     path("<uuid:pk>/edit/<str:status>/", users.ChangeUserStatus.as_view(), name="change_status"),
     path("profile/", users.ViewProfile.as_view(), name="profile"),
+    path("mentions/", users.UserCaseNoteMentions.as_view(), name="user_case_note_mentions"),
     # Roles
     path("roles/", roles.Roles.as_view(), name="roles"),
     path("roles/add/", roles.AddRole.as_view(), name="add_role"),
