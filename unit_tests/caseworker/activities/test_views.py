@@ -224,25 +224,32 @@ def test_notes_and_timelines_post_valid(
 
     response = authorized_client.post(notes_and_timelines_url, data=data)
     assert response.status_code == expected_status
-    
-    
+
+
 def test_notes_and_timelines_mentions(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_case_note_mentions,
-    mentions_data,
+    authorized_client, notes_and_timelines_url, mock_case_note_mentions, mentions_data, requests_mock, mock_gov_users
 ):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     assert response.context["mentions"][0]["id"] == mentions_data["results"][0]["id"]
     assert not response.context.get("activities")
 
 
 def test_notes_and_timelines_mentions_template(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_case_note_mentions,
+    authorized_client, notes_and_timelines_url, mock_case_note_mentions, requests_mock, mock_gov_users
 ):
 
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     soup = BeautifulSoup(response.content, "html.parser")
 
@@ -250,12 +257,15 @@ def test_notes_and_timelines_mentions_template(
 
 
 def test_notes_and_timelines_mentions_feature_flag(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_case_note_mentions,
-    settings,
+    authorized_client, notes_and_timelines_url, mock_case_note_mentions, settings, requests_mock, mock_gov_users
 ):
     settings.FEATURE_MENTIONS_ENABLED = False
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     soup = BeautifulSoup(response.content, "html.parser")
 
