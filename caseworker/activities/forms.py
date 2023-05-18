@@ -15,7 +15,7 @@ class NotesAndTimelineForm(forms.Form):
     mentions = forms.MultipleChoiceField(
         choices=(),
         error_messages={"required": "Select the User"},
-        label="Mention a co-worker or team to notify them, or ask a question.",
+        label="Mention a co-worker or team to notify them, or ask a question (optional)",
         help_text="Type for suggestions. For example 'Technical Assessment Unit', NSCS, or 'Olivia Smith'",
         required=False,
     )

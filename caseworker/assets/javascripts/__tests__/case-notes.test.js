@@ -19,7 +19,7 @@ const createMentionsElement = () => {
     </label> <textarea name="text" cols="40" rows="2" class="govuk-textarea case-note__textarea"
       id="id_text"></textarea> </div>
   <div id="div_id_mentions" class="govuk-form-group tokenfield-container"> <label for="id_mentions" class="govuk-label">
-      Mention a co-worker or team to notify them, or ask a question.
+      Mention a co-worker or team to notify them, or ask a question (optional)
     </label>
     <div id="id_mentions_hint" class="govuk-hint">Type for suggestions. For example 'Technical Assessment Unit', NSCS,
       or 'Olivia Smith'</div>
