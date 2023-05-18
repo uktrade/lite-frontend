@@ -48,7 +48,8 @@
   }
 
   .lite-autocomplete {
-    &__input, &__menu {
+    &__input,
+    &__menu {
       max-width: none;
     }
   }
