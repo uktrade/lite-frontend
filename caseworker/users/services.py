@@ -118,3 +118,8 @@ def get_permissions(request, convert_to_options=False):
 
 def is_super_user(user):
     return user["user"]["role"]["id"] == SUPER_USER_ROLE_ID
+
+
+def get_user_case_note_mentions(request):
+    data = client.get(request, "/cases/user-case-note-mentions/")
+    return data.json(), data.status_code

@@ -5,6 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
 from caseworker.core.constants import SUPER_USER_ROLE_ID, UserStatuses
+from core.auth.views import LoginRequiredMixin
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.components import FiltersBar, Select, Option, TextInput
@@ -16,6 +17,7 @@ from caseworker.users.services import (
     put_gov_user,
     get_gov_user,
     is_super_user,
+    get_user_case_note_mentions,
 )
 
 
@@ -139,3 +141,11 @@ class ChangeUserStatus(TemplateView):
         put_gov_user(request, str(kwargs["pk"]), json={"status": request.POST["status"]})
 
         return redirect("/users/")
+
+
+class UserCaseNoteMentions(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        data, _ = get_user_case_note_mentions(request)
+
+        context = {"user_mentions": data}
+        return render(request, "users/mentions.html", context)
