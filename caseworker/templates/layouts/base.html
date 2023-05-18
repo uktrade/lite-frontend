@@ -61,6 +61,12 @@
 				</span>
 			</a>
 			<span></span>
+			{% if FEATURE_MENTIONS_ENABLED %}
+			<a id="link-sign-out" class="app-header__link" href="{% url 'auth:logout' %}" data-tooltip="Mentions">
+				Mentions ({{mention_count}})
+			</a>
+			{% endif %}
+
 			<a id="link-sign-out" class="app-header__link" href="{% url 'auth:logout' %}" data-tooltip="Sign out of LITE">
 				Sign out
 			</a>
