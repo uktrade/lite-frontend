@@ -5,9 +5,9 @@ from django.forms.formsets import formset_factory
 from django.utils.html import format_html
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Field, Layout, Submit, HTML
+from crispy_forms_gds.layout import Field, Layout, Submit
 
-from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
+from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion, ExpandingFieldset
 from core.forms.utils import coerce_str_to_bool
 
 from caseworker.advice import services
@@ -36,13 +36,16 @@ def get_refusal_advice_form_factory(advice, denial_reasons_choices, data=None):
 
 
 class PicklistCharField(forms.CharField):
-    def get_help_link(self, picklist_attrs, help_text):
+    def get_help_html(self, picklist_attrs, help_link_text, help_text_extra=None):
         picklist_tags = f'picklist_type="{picklist_attrs.get("type")}" picklist_name="{picklist_attrs.get("name")}" target="{picklist_attrs.get("target")}"'
-        return f'<a class="govuk-link govuk-link--no-visited-state" href="#" {picklist_tags}>{help_text}</a>'
+        help_html = f'<a class="govuk-link govuk-link--no-visited-state" href="#" {picklist_tags}>{help_link_text}</a>'
+        if help_text_extra:
+            help_html = f"{help_html}<br/>{help_text_extra}"
+        return help_html
 
-    def __init__(self, picklist_attrs, label, help_text, **kwargs):
+    def __init__(self, picklist_attrs, label, help_link_text, help_text_extra=None, **kwargs):
         min_rows = kwargs.pop("min_rows", 10)
-        help_link = self.get_help_link(picklist_attrs, help_text)
+        help_link = self.get_help_html(picklist_attrs, help_link_text, help_text_extra)
         widget = forms.Textarea(attrs={"rows": str(min_rows), "class": "govuk-!-margin-top-4"})
         super().__init__(label=label, help_text=help_link, widget=widget, **kwargs)
 
@@ -87,17 +90,19 @@ class GiveApprovalAdviceForm(forms.Form):
     approval_reasons = PicklistCharField(
         picklist_attrs={"target": "approval_reasons", "type": "standard_advice", "name": "standard advice"},
         label="What are your reasons for approving?",
-        help_text="Choose an approval reason from the template list",
+        help_link_text="Choose an approval reason from the template list",
+        min_rows=1,
         error_messages={"required": "Enter a reason for approving"},
     )
     proviso = PicklistCharField(
         picklist_attrs={"target": "proviso", "type": "proviso", "name": "licence condition"},
         label="Add a licence condition (optional)",
-        help_text="Choose a licence condition from the template list",
+        help_link_text="Choose a licence condition from the template list",
+        min_rows=1,
         required=False,
     )
     instructions_to_exporter = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "10"}),
+        widget=forms.Textarea(attrs={"rows": "1"}),
         label="Add any instructions for the exporter (optional)",
         help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
         required=False,
@@ -105,8 +110,10 @@ class GiveApprovalAdviceForm(forms.Form):
     footnote_details = PicklistCharField(
         picklist_attrs={"target": "footnote_details", "type": "footnotes", "name": "reporting footnote"},
         label="Add a reporting footnote (optional)",
-        help_text="Choose a reporting footnote from the template list",
-        min_rows=5,
+        help_link_text="Choose a reporting footnote from the template list",
+        help_text_extra="Footnotes explain why products to a destination have been approved or refused. "
+        + "They will be publicly available in reports and data tables.",
+        min_rows=1,
         required=False,
     )
 
@@ -115,13 +122,11 @@ class GiveApprovalAdviceForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "approval_reasons",
-            "proviso",
-            "instructions_to_exporter",
-            "footnote_details",
-            HTML.details(
-                "What is a footnote?",
-                "Footnotes explain why products to a destination have been approved or refused. "
-                "They will be publicly available in reports and data tables.",
+            ExpandingFieldset(
+                "proviso",
+                "instructions_to_exporter",
+                "footnote_details",
+                legend="Add a licence condition, instruction to exporter or footnote",
             ),
             Submit("submit", "Submit recommendation"),
         )
@@ -171,7 +176,7 @@ class RefusalAdviceForm(forms.Form):
         self.fields["refusal_reasons"] = PicklistCharField(
             picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "standard advice"},
             label="What are your reasons for this refusal?",
-            help_text="Choose a refusal reason from the template list",
+            help_link_text="Choose a refusal reason from the template list",
             error_messages={"required": "Enter a reason for refusing"},
         )
         self.helper = FormHelper()
@@ -263,19 +268,11 @@ class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):
             label="Select countries for which you want to give advice",
             error_messages={"required": "Select the destinations you want to make recommendations for"},
         )
+        parent_layout = self.helper.layout
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "countries",
-            "approval_reasons",
-            "proviso",
-            "instructions_to_exporter",
-            "footnote_details",
-            HTML.details(
-                "What is a footnote?",
-                "Footnotes explain why products to a destination have been approved or refused. "
-                "They will be publicly available in reports and data tables.",
-            ),
-            Submit("submit", "Submit recommendation"),
+            parent_layout,
         )
 
 
