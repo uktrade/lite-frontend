@@ -3,6 +3,7 @@ from operator import itemgetter
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
+from django.conf import settings
 
 from caseworker.cases.helpers.case import CaseworkerMixin
 from core.auth.views import LoginRequiredMixin
@@ -11,6 +12,7 @@ from caseworker.cases.services import (
     get_activity,
     get_activity_filters,
     get_case,
+    get_mentions,
 )
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
@@ -61,19 +63,24 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
             )
             for team in sorted_teams
         ]
-
         return team_filters
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        if "mentions" in list(self.request.GET.keys()):
+            # add to contex the list of CaseNotes with mentions.
+            mentions = get_mentions(self.request, self.case_id)
+            context.update({"mentions": mentions.get("results", None)})
+        else:
+            activities = get_activity(self.request, self.case_id, activity_filters=self.request.GET)
+            context.update({"activities": activities})
         return {
             **context,
-            "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
             "case": self.case,
             "filtering_by": list(self.request.GET.keys()),
             "queue": self.queue,
             "team_filters": self.get_team_filters(),
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
+            "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
         }

@@ -1,9 +1,11 @@
 import pytest
 
 from pytest_django.asserts import assertTemplateUsed
+from bs4 import BeautifulSoup
 
 from django.urls import reverse
 
+from core import client
 from caseworker.cases.objects import Case
 
 
@@ -36,6 +38,23 @@ def notes_and_timelines_url(data_queue, data_standard_case):
         "cases:activities:notes-and-timeline",
         kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
     )
+
+
+@pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_MENTIONS_ENABLED = True
+
+
+@pytest.fixture
+def mentions_data(data_standard_case, mock_gov_user):
+    return {"results": [{"id": data_standard_case["case"]["id"], "user": mock_gov_user["user"]}]}
+
+
+@pytest.fixture
+def mock_case_note_mentions(requests_mock, data_standard_case, mentions_data):
+    data_standard_case_pk = data_standard_case["case"]["id"]
+    url = client._build_absolute_uri(f"/cases/{data_standard_case_pk}/case-note-mentions/")
+    return requests_mock.get(url=url, json=mentions_data)
 
 
 def test_notes_and_timelines_view_flag_on_status_code(
@@ -121,3 +140,39 @@ def test_notes_and_timelines_searching_by_user_type(
     response = authorized_client.get(f"{notes_and_timelines_url}?user_type=exporter")
     assert mock_standard_case_activity_system_user.last_request.qs == {"user_type": ["exporter"]}
     assert response.context["filtering_by"] == ["user_type"]
+
+
+def test_notes_and_timelines_mentions(
+    authorized_client,
+    notes_and_timelines_url,
+    mock_case_note_mentions,
+    mentions_data,
+):
+    response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
+    assert response.context["mentions"][0]["id"] == mentions_data["results"][0]["id"]
+    assert not response.context.get("activities")
+
+
+def test_notes_and_timelines_mentions_template(
+    authorized_client,
+    notes_and_timelines_url,
+    mock_case_note_mentions,
+):
+
+    response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert soup.find("ul", {"class": "notes-and-timeline-nav__mentions"})
+
+
+def test_notes_and_timelines_mentions_feature_flag(
+    authorized_client,
+    notes_and_timelines_url,
+    mock_case_note_mentions,
+    settings,
+):
+    settings.FEATURE_MENTIONS_ENABLED = False
+    response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert not soup.find("ul", {"class": "notes-and-timeline-nav__mentions"})
