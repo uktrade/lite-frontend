@@ -43,6 +43,8 @@
                 </ul>
             </nav>
             {% if FEATURE_MENTIONS_ENABLED %}
+            <hr>
+            <nav class="notes-and-timeline-nav">
                 <ul class="notes-and-timeline-nav__list notes-and-timeline-nav__mentions">
                     <li class="notes-and-timeline-nav__list-item{% if "mentions" in filtering_by %} notes-and-timeline-nav__list-item--selected{% endif %}">
                         <a class="notes-and-timeline-nav__list-link" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}?mentions=True">
@@ -53,6 +55,7 @@
                     </li>
                 </ul>
             {% endif %}
+            </nav>
         </div>
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-grid-row">
