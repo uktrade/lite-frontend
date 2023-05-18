@@ -1,261 +1,265 @@
 {% load static advice_tags %}
 {% load humanize %}
 
-<dl class="app-case__summary-list">
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.STATUS' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="status">
-			{{ case.data.status.value }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.QuickSummaryTab.LICENSING_UNIT_CASE_OFFICER' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="licensing_unit_case_officer">
-			{% if case.case_officer %}
-				{{ case.case_officer|username }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_CASE_OFFICER' %}
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.QuickSummaryTab.CASE_ADVISER' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="case_adviser">
-			{% if case.assigned_users %}
-				{{ case|get_adviser_list|join:", " }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_CASE_OFFICER' %}
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.QuickSummaryTab.TEMPORARY_OR_PERMANENT' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="temporary_or_permanent">
-			{{ case.data.export_type.key }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.ASSIGNED_QUEUES' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="assigned_queues">
-			{% if case.queue_details %}
-				{{ case.queue_details|get_values_as_list:"name"|join:", " }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_QUEUES_ASSIGNED' %}
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.FLAGS' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="flags">
-			{% if case.flags or case.destinations_flags or case.goods_flags %}
-				{{ case.all_flags|get_flags_list|join:", " }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					None
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.QuickSummaryTab.OPEN_QUERY' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="open_query">
-			{% if case.has_open_queries %}
-				Outstanding queries
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					None
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.LATEST_ACTION' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="latest_actions">
-			<div>
-				{% if case.latest_activity.user.type == 'exporter' %}
-					Applicant {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-				{% else %}
-					{{ case.latest_activity.user.team }} {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-				{% endif %}
+<div class="customiser" data-customiser-spec='{"options_label": "Customise summary view", "identifier": "summary-view", "analytics_prefix": "sv", "options_hint": "Select columns to show", "toggleable_elements": [{"label": "Status", "key": "status"}, {"label": "Licensing unit case officer", "key": "licensing_unit_case_officer", "default_visible": true}, {"label": "Case adviser", "key": "case_adviser"}, {"label": "Temporary or permanent", "key": "temporary_or_permanent"}, {"label": "Assigned queues", "key": "assigned_queues"}, {"label": "Flags", "key": "flags"}, {"label": "Open query", "key": "open_query"}, {"label": "Latest action", "key": "latest_action"}, {"label": "Days on queue elapsed", "key": "days_on_queue_elapsed", "default_visible": true}, {"label": "Total days elapsed", "key": "total_days_elapsed"}, {"label": "Product names", "key": "product_names"}, {"label": "Total value", "key": "total_value", "default_visible": true}, {"label": "Control list entries", "key": "control_list_entry", "default_visible": true}, {"label": "Regimes", "key": "regime"}, {"label": "Report summaries", "key": "report_summary", "default_visible": true}, {"label": "Security graded", "key": "security_graded"}, {"label": "Security approvals", "key": "security_approvals"}, {"label": "Applicant name", "key": "applicant", "default_visible": true}, {"label": "Destinations", "key": "destination", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Santion matches", "key": "sanction_matches", "default_visible": true}, {"label": "End-use", "key": "end_use"}, {"label": "End-user document", "key": "end_user_document", "default_visible": true}]}'>
+	<div class="customiser__header">
+		<dl class="app-case__summary-list">
+			<div class="app-case__summary-list__row" data-customiser-key="status">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.STATUS' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="status">
+					{{ case.data.status.value }}
+				</dd>
 			</div>
-			<div>
-				{{ case.latest_activity.user.first_name }} {{ case.latest_activity.user.last_name }} {{ case.latest_activity.text|linebreaksbr }}
+			<div class="app-case__summary-list__row" data-customiser-key="licensing_unit_case_officer">
+				<dt class="app-case__summary-list__key">
+						{% lcs 'cases.CasePage.QuickSummaryTab.LICENSING_UNIT_CASE_OFFICER' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="licensing_unit_case_officer">
+					{% if case.case_officer %}
+						{{ case.case_officer|username }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_CASE_OFFICER' %}
+						</span>
+					{% endif %}
+				</dd>
 			</div>
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.DAYS_ON_QUEUE_ELAPSED' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="days_on_queue_elapsed">
-			{% if case.queue_details %}
-				{{ case.queue_details|get_values_as_list:"days_on_queue_elapsed"|join:", " }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NA' %}
-				</span>
+			<div class="app-case__summary-list__row" data-customiser-key="case_adviser">
+				<dt class="app-case__summary-list__key">
+						{% lcs 'cases.CasePage.QuickSummaryTab.CASE_ADVISER' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="case_adviser">
+					{% if case.assigned_users %}
+						{{ case|get_adviser_list|join:", " }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_CASE_OFFICER' %}
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="temporary_or_permanent">
+				<dt class="app-case__summary-list__key">
+						{% lcs 'cases.CasePage.QuickSummaryTab.TEMPORARY_OR_PERMANENT' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="temporary_or_permanent">
+					{{ case.data.export_type.key }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="assigned_queues">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.ASSIGNED_QUEUES' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="assigned_queues">
+					{% if case.queue_details %}
+						{{ case.queue_details|get_values_as_list:"name"|join:", " }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_QUEUES_ASSIGNED' %}
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="flags">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.FLAGS' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="flags">
+					{% if case.flags or case.destinations_flags or case.goods_flags %}
+						{{ case.all_flags|get_flags_list|join:", " }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							None
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="open_query">
+				<dt class="app-case__summary-list__key">
+						{% lcs 'cases.CasePage.QuickSummaryTab.OPEN_QUERY' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="open_query">
+					{% if case.has_open_queries %}
+						Outstanding queries
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							None
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="latest_action">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.LATEST_ACTION' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="latest_action">
+					<div>
+						{% if case.latest_activity.user.type == 'exporter' %}
+							Applicant {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
+						{% else %}
+							{{ case.latest_activity.user.team }} {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
+						{% endif %}
+					</div>
+					<div>
+						{{ case.latest_activity.user.first_name }} {{ case.latest_activity.user.last_name }} {{ case.latest_activity.text|linebreaksbr }}
+					</div>
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="days_on_queue_elapsed">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.DAYS_ON_QUEUE_ELAPSED' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="days_on_queue_elapsed">
+					{% if case.queue_details %}
+						{{ case.queue_details|get_values_as_list:"days_on_queue_elapsed"|join:", " }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NA' %}
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="total_days_elapsed">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.TOTAL_DAYS_ELAPSED' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="total_days_elapsed">
+					{% if not is_terminal %}
+						{{ case.total_days_elapsed }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NA' %}
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="product_names">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.PRODUCT_NAMES' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="product_names">
+					{{ goods_summary.names|join:", " }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="total_value">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.TOTAL_VALUE' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="total_value">
+					£{{ goods_summary.total_value|floatformat:2|intcomma }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="control_list_entry">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.CONTROL_LIST_ENTRIES' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="control_list_entry">
+					{{ goods_summary.cles|join:", " }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="regime">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.REGIMES' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="regime">
+					{{ goods_summary.regimes|join:", " }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="report_summary">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.REPORT_SUMMARIES' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="report_summary">
+					{{ goods_summary.report_summaries|join:", " }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="security_graded">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.SECURITY_GRADED' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="security_graded">
+					{{ display_pv_grading|yesno|capfirst }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="security_approvals">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.SECURITY_APPROVALS' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="security_approvals">
+					{% if case.security_approvals %}
+						{{ case.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							None
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="applicant">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.APPLICANT_NAME' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="applicant">
+					{{ case.data.submitted_by }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="destination">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.DESTINATIONS' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="destination">
+					{{ destination_countries|join:", " }}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="denial_matches">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.DENIAL_MATCHES' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="denial_matches">
+					{% if case.data.denial_matches %}
+						{{ case.data.denial_matches|get_denial_references|join:", " }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							None
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="sanction_matches">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.SANCTION_MATCHES' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="sanction_matches">
+					{% if case.data.sanction_matches %}
+						{{ case.data.sanction_matches|get_sanction_list|join:", " }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							None
+						</span>
+					{% endif %}
+				</dd>
+			</div>
+			<div class="app-case__summary-list__row" data-customiser-key="end_use">
+				<dt class="app-case__summary-list__key">
+					{% lcs 'cases.CasePage.QuickSummaryTab.END_USE' %}
+				</dt>
+				<dd class="app-case__summary-list__value" id="end_use">
+					{{ case.data.intended_end_use }}
+				</dd>
+			</div>
+			{% if end_user.documents|length %}
+				<div class="app-case__summary-list__row" data-customiser-key="end_user_document">
+					{% for document in end_user.documents %}
+						<li class="app-case__summary-list__value" id="end_user_document">
+							<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+								{% if document.type == "end_user_undertaking_document" or document.type == "supporting_document" %}End-user document{% elif document.type == "end_user_english_translation_document" %}English translation{% elif document.type == "end_user_english_translation_document" %}Company letterhead{% endif %} ({{ document_extension|upper }} opens in new tab)
+							</a>
+						</li>
+					{% endfor %}
+				</div>
 			{% endif %}
-		</dd>
+		</dl>
 	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.TOTAL_DAYS_ELAPSED' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="total_days_elapsed">
-			{% if not is_terminal %}
-				{{ case.total_days_elapsed }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NA' %}
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.PRODUCT_NAMES' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="product_names">
-			{{ goods_summary.names|join:", " }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.TOTAL_VALUE' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="total_value">
-			£{{ goods_summary.total_value|floatformat:2|intcomma }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.CONTROL_LIST_ENTRIES' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="control_list_entries">
-			{{ goods_summary.cles|join:", " }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.REGIMES' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="control_list_entries">
-			{{ goods_summary.regimes|join:", " }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.REPORT_SUMMARIES' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="report_summaries">
-			{{ goods_summary.report_summaries|join:", " }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.SECURITY_GRADED' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="security_graded">
-			{{ display_pv_grading|yesno|capfirst }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.SECURITY_APPROVALS' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="security_approvals">
-			{% if case.security_approvals %}
-				{{ case.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					None
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.APPLICANT_NAME' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="applicant">
-			{{ case.data.submitted_by }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.DESTINATIONS' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="destinations">
-			{{ destination_countries|join:", " }}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.DENIAL_MATCHES' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="denial_matches">
-			{% if case.data.denial_matches %}
-				{{ case.data.denial_matches|get_denial_references|join:", " }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					None
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.SANCTION_MATCHES' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="sanction_matches">
-			{% if case.data.sanction_matches %}
-				{{ case.data.sanction_matches|get_sanction_list|join:", " }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					None
-				</span>
-			{% endif %}
-		</dd>
-	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.QuickSummaryTab.END_USE' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="end_use">
-			{{ case.data.intended_end_use }}
-		</dd>
-	</div>
-	{% if end_user.documents|length %}
-		<div class="app-case__summary-list__row">
-			{% for document in end_user.documents %}
-				<li class="app-case__summary-list__value" id="end_user_document">
-					<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
-						{% if document.type == "end_user_undertaking_document" or document.type == "supporting_document" %}End-user document{% elif document.type == "end_user_english_translation_document" %}English translation{% elif document.type == "end_user_english_translation_document" %}Company letterhead{% endif %} ({{ document_extension|upper }} opens in new tab)
-					</a>
-				</li>
-			{% endfor %}
-		</div>
-	{% endif %}
-</dl>
+</div>

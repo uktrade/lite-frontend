@@ -39,10 +39,12 @@ def get_values_as_list(items: List[Dict], key: str):
 
 @register.filter()
 def get_adviser_list(case):
-    user_list = []
+    unique_users = set()
+    if not case.assigned_users:
+        return
     for users in case.assigned_users.values():
-        user_list += users
-    return [f"{user.get('first_name')} {user.get('last_name')}" for user in users]
+        unique_users.update({f"{user.get('first_name')} {user.get('last_name')}" for user in users})
+    return list(unique_users)
 
 
 @register.filter()
