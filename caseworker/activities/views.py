@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 from django.shortcuts import redirect
+from django.conf import settings
 
 from caseworker.cases.helpers.case import CaseworkerMixin
 from core.auth.views import LoginRequiredMixin
@@ -13,6 +14,7 @@ from caseworker.cases.services import (
     get_activity_filters,
     get_case,
     post_case_notes,
+    get_mentions,
 )
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
@@ -66,16 +68,20 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
             )
             for team in sorted_teams
         ]
-
         return team_filters
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.form = NotesAndTimelineForm(request=self.request)
-
+        if "mentions" in list(self.request.GET.keys()):
+            # add to contex the list of CaseNotes with mentions.
+            mentions = get_mentions(self.request, self.case_id)
+            context.update({"mentions": mentions.get("results", None)})
+        else:
+            activities = get_activity(self.request, self.case_id, activity_filters=self.request.GET)
+            context.update({"activities": activities})
         return {
             **context,
-            "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
             "case": self.case,
             "filtering_by": list(self.request.GET.keys()),
             "queue": self.queue,
@@ -83,6 +89,7 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
             "form": self.form,
+            "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
         }
 
     def post(self, request, **kwargs):
