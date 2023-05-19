@@ -45,19 +45,14 @@ const initAssessmentForm = () => {
   const ncscBox = document.querySelector(
     "#div_id_is_ncsc_military_information_security"
   );
-
-  // Window load is needed due to tokenfield is not being loaded yet to check for the existing suggestions.
-  // After window is loaded we can proceed with the showing or hiding the box depends on suggestions.
   if (ncscBox) {
-    window.addEventListener("load", () => {
-      const ncscFormField = new ShowHideNcscField(
-        "#control_list_entries",
-        ncscBox
-      );
+    const ncscFormField = new ShowHideNcscField(
+      "#control_list_entries",
+      ncscBox
+    );
 
-      ncscFormField.toggleField();
-      ncscFormField.setOnChangeListener();
-    });
+    ncscFormField.toggleField();
+    ncscFormField.setOnChangeListener();
   }
 };
 
