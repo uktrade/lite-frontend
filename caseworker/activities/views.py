@@ -2,8 +2,7 @@ from operator import itemgetter
 
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.views.generic import TemplateView
-from django.shortcuts import redirect
+from django.views.generic import FormView
 from django.conf import settings
 
 from caseworker.cases.helpers.case import CaseworkerMixin
@@ -22,9 +21,9 @@ from caseworker.activities.forms import NotesAndTimelineForm
 from lite_forms.generators import error_page
 
 
-class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, TemplateView):
+class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormView):
     template_name = "activities/notes-and-timeline.html"
-    form = NotesAndTimelineForm
+    form_class = NotesAndTimelineForm
 
     @cached_property
     def case_id(self):
@@ -70,9 +69,13 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
         ]
         return team_filters
 
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["request"] = self.request
+        return form_kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.form = NotesAndTimelineForm(request=self.request)
         if "mentions" in list(self.request.GET.keys()):
             # add to contex the list of CaseNotes with mentions.
             mentions = get_mentions(self.request, self.case_id)
@@ -88,19 +91,14 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
             "team_filters": self.get_team_filters(),
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
-            "form": self.form,
             "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
         }
 
-    def post(self, request, **kwargs):
-        post_data = NotesAndTimelineForm(request.POST, request=request)
-        post_data.is_valid()
-        response, status_code = post_case_notes(request, self.case_id, post_data.cleaned_data)
+    def form_valid(self, form):
+        response, status_code = post_case_notes(self.request, self.case_id, form.cleaned_data)
         if status_code != 201:
-            return error_page(request, response.get("errors")["text"][0])
+            return error_page(self.request, response.get("errors")["text"][0])
+        return super().form_valid(form)
 
-        return redirect(
-            "cases:activities:notes-and-timeline",
-            pk=self.case_id,
-            queue_pk=self.queue_id,
-        )
+    def get_success_url(self):
+        return reverse("cases:activities:notes-and-timeline", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
