@@ -1,4 +1,6 @@
 from django.urls import reverse
+from bs4 import BeautifulSoup
+
 from core import client
 
 
@@ -18,5 +20,9 @@ def test_user_case_note_mentions(authorized_client, requests_mock):
 
     url = reverse("users:user_case_note_mentions")
     response = authorized_client.get(url)
+
     assert response.status_code == 200
     assert response.context["user_mentions"] == mentions_data
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("table", {"class": "govuk-table"}).find("tr", {"id": "mentions-row-1"})

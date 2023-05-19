@@ -3,6 +3,7 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
+from django.utils.functional import cached_property
 
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.constants import SUPER_USER_ROLE_ID, UserStatuses
@@ -145,7 +146,9 @@ class ChangeUserStatus(TemplateView):
 
 class UserCaseNoteMentions(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
-        data, _ = get_user_case_note_mentions(request)
+        return render(request, "users/mentions.html", {"user_mentions": self.mentions})
 
-        context = {"user_mentions": data}
-        return render(request, "users/mentions.html", context)
+    @cached_property
+    def mentions(self):
+        data, _ = get_user_case_note_mentions(self.request)
+        return data

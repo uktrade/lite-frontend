@@ -29,7 +29,7 @@
 			</thead>
 			<tbody class="govuk-table__body">
 				{% for user_case_note_mention in user_mentions.mentions %}
-					<tr class="govuk-table__row" id="row-{{ forloop.counter }}">
+					<tr class="govuk-table__row" id="mentions-row-{{ forloop.counter }}">
 						<td class="govuk-table__header" scope="row">
 								{{ user_case_note_mention.reference_code }}
 						</td>
