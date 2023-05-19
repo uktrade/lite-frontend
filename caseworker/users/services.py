@@ -121,5 +121,6 @@ def is_super_user(user):
 
 
 def get_user_case_note_mentions(request):
-    data = client.get(request, "/cases/user-case-note-mentions/")
+    response = client.get(request, "/cases/user-case-note-mentions/")
+    response.raise_for_status()
     return data.json(), data.status_code
