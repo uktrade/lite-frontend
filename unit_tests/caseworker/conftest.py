@@ -1,4 +1,5 @@
 import copy
+from datetime import timedelta
 import re
 import os
 import uuid
@@ -7,6 +8,7 @@ import pytest
 from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
+from django.utils import timezone
 import rules
 
 from caseworker.advice import services
@@ -340,7 +342,7 @@ def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_ca
             "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
             "name": "LU Post circulation",
             "alias": "LU_POST_CIRC_FINALISE",
-            "days_on_queue_elapsed": 2,
+            "joined_queue_at": (timezone.now() - timedelta(days=2)).isoformat(),
         },
     ]
     yield requests_mock.get(url=url, json=data_standard_case)
@@ -354,7 +356,7 @@ def mock_standard_case_on_fcdo_countersigning_queue(requests_mock, data_standard
             "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
             "name": "FCDO Countersigning",
             "alias": "FCDO_COUNTER_SIGNING",
-            "days_on_queue_elapsed": 3,
+            "joined_queue_at": (timezone.now() - timedelta(days=3)).isoformat(),
         },
     ]
     yield requests_mock.get(url=url, json=data_standard_case)

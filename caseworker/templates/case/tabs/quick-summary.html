@@ -6,7 +6,7 @@
 		<dl class="app-case__summary-list">
 			<div class="app-case__summary-list__row" data-customiser-key="status">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.STATUS' %}
+					Status
 				</dt>
 				<dd class="app-case__summary-list__value" id="status">
 					{{ case.data.status.value }}
@@ -14,35 +14,35 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="licensing_unit_case_officer">
 				<dt class="app-case__summary-list__key">
-						{% lcs 'cases.CasePage.QuickSummaryTab.LICENSING_UNIT_CASE_OFFICER' %}
+					Licensing unit case officer
 				</dt>
 				<dd class="app-case__summary-list__value" id="licensing_unit_case_officer">
 					{% if case.case_officer %}
 						{{ case.case_officer|username }}
 					{% else %}
 						<span class="govuk-hint govuk-!-margin-0">
-							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_CASE_OFFICER' %}
+							Not assigned
 						</span>
 					{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="case_adviser">
 				<dt class="app-case__summary-list__key">
-						{% lcs 'cases.CasePage.QuickSummaryTab.CASE_ADVISER' %}
+					Case adviser
 				</dt>
 				<dd class="app-case__summary-list__value" id="case_adviser">
 					{% if case.assigned_users %}
 						{{ case|get_adviser_list|join:", " }}
 					{% else %}
 						<span class="govuk-hint govuk-!-margin-0">
-							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_CASE_OFFICER' %}
+							Not assigned
 						</span>
 					{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="temporary_or_permanent">
 				<dt class="app-case__summary-list__key">
-						{% lcs 'cases.CasePage.QuickSummaryTab.TEMPORARY_OR_PERMANENT' %}
+					Temporary or permanent
 				</dt>
 				<dd class="app-case__summary-list__value" id="temporary_or_permanent">
 					{{ case.data.export_type.key }}
@@ -50,21 +50,21 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="assigned_queues">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.ASSIGNED_QUEUES' %}
+					Assigned queues
 				</dt>
 				<dd class="app-case__summary-list__value" id="assigned_queues">
 					{% if case.queue_details %}
-						{{ case.queue_details|get_values_as_list:"name"|join:", " }}
+						{{ case.queue_details|get_values_from_dict_list:"name"|join:", " }}
 					{% else %}
 						<span class="govuk-hint govuk-!-margin-0">
-							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NO_QUEUES_ASSIGNED' %}
+							Not assigned
 						</span>
 					{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="flags">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.FLAGS' %}
+					Flags
 				</dt>
 				<dd class="app-case__summary-list__value" id="flags">
 					{% if case.flags or case.destinations_flags or case.goods_flags %}
@@ -78,7 +78,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="open_query">
 				<dt class="app-case__summary-list__key">
-						{% lcs 'cases.CasePage.QuickSummaryTab.OPEN_QUERY' %}
+					Open query
 				</dt>
 				<dd class="app-case__summary-list__value" id="open_query">
 					{% if case.has_open_queries %}
@@ -92,7 +92,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="latest_action">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.LATEST_ACTION' %}
+					Latest action
 				</dt>
 				<dd class="app-case__summary-list__value" id="latest_action">
 					<div>
@@ -109,35 +109,35 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="days_on_queue_elapsed">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.DAYS_ON_QUEUE_ELAPSED' %}
+					Days on queue elapsed
 				</dt>
 				<dd class="app-case__summary-list__value" id="days_on_queue_elapsed">
 					{% if case.queue_details %}
-						{{ case.queue_details|get_values_as_list:"days_on_queue_elapsed"|join:", " }}
+						{{ case.queue_details|get_values_from_dict_list:"days_on_queue_elapsed"|join:", " }}
 					{% else %}
 						<span class="govuk-hint govuk-!-margin-0">
-							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NA' %}
+							N/A
 						</span>
 					{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="total_days_elapsed">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.TOTAL_DAYS_ELAPSED' %}
+					Total days elapsed
 				</dt>
 				<dd class="app-case__summary-list__value" id="total_days_elapsed">
 					{% if not is_terminal %}
 						{{ case.total_days_elapsed }}
 					{% else %}
 						<span class="govuk-hint govuk-!-margin-0">
-							{% lcs 'cases.CasePage.QuickSummaryTab.MissingData.NA' %}
+							N/A
 						</span>
 					{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="product_names">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.PRODUCT_NAMES' %}
+					Product names
 				</dt>
 				<dd class="app-case__summary-list__value" id="product_names">
 					{{ goods_summary.names|join:", " }}
@@ -145,7 +145,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="total_value">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.TOTAL_VALUE' %}
+					Total value
 				</dt>
 				<dd class="app-case__summary-list__value" id="total_value">
 					£{{ goods_summary.total_value|floatformat:2|intcomma }}
@@ -153,7 +153,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="control_list_entry">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.CONTROL_LIST_ENTRIES' %}
+					Control list entries
 				</dt>
 				<dd class="app-case__summary-list__value" id="control_list_entry">
 					{{ goods_summary.cles|join:", " }}
@@ -161,7 +161,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="regime">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.REGIMES' %}
+					Regimes
 				</dt>
 				<dd class="app-case__summary-list__value" id="regime">
 					{{ goods_summary.regimes|join:", " }}
@@ -169,7 +169,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="report_summary">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.REPORT_SUMMARIES' %}
+					Report summaries
 				</dt>
 				<dd class="app-case__summary-list__value" id="report_summary">
 					{{ goods_summary.report_summaries|join:", " }}
@@ -177,7 +177,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="security_graded">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.SECURITY_GRADED' %}
+					Security graded
 				</dt>
 				<dd class="app-case__summary-list__value" id="security_graded">
 					{{ display_pv_grading|yesno|capfirst }}
@@ -185,7 +185,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="security_approvals">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.SECURITY_APPROVALS' %}
+					Security approvals
 				</dt>
 				<dd class="app-case__summary-list__value" id="security_approvals">
 					{% if case.security_approvals %}
@@ -199,7 +199,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="applicant">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.APPLICANT_NAME' %}
+					Applicant name
 				</dt>
 				<dd class="app-case__summary-list__value" id="applicant">
 					{{ case.data.submitted_by }}
@@ -207,7 +207,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="destination">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.DESTINATIONS' %}
+					Destinations
 				</dt>
 				<dd class="app-case__summary-list__value" id="destination">
 					{{ destination_countries|join:", " }}
@@ -215,7 +215,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="denial_matches">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.DENIAL_MATCHES' %}
+					Denial matches
 				</dt>
 				<dd class="app-case__summary-list__value" id="denial_matches">
 					{% if case.data.denial_matches %}
@@ -229,7 +229,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="sanction_matches">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.SANCTION_MATCHES' %}
+					Sanction matches
 				</dt>
 				<dd class="app-case__summary-list__value" id="sanction_matches">
 					{% if case.data.sanction_matches %}
@@ -243,7 +243,7 @@
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="end_use">
 				<dt class="app-case__summary-list__key">
-					{% lcs 'cases.CasePage.QuickSummaryTab.END_USE' %}
+					End-use
 				</dt>
 				<dd class="app-case__summary-list__value" id="end_use">
 					{{ case.data.intended_end_use }}

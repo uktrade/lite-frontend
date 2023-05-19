@@ -33,7 +33,7 @@ def get_clc(goods_on_application):
 
 
 @register.filter()
-def get_values_as_list(items: List[Dict], key: str):
+def get_values_from_dict_list(items: List[Dict], key: str):
     return [item[key] for item in items]
 
 

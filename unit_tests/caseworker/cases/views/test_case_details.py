@@ -1,10 +1,13 @@
 import pytest
 from bs4 import BeautifulSoup
+from datetime import timedelta
 
 from pytest_django.asserts import assertTemplateUsed
 
 from copy import deepcopy
+from dateutil.parser import parse
 from django.urls import reverse
+from django.utils import timezone
 
 from core import client
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS
@@ -41,7 +44,7 @@ def test_case_details_latest_activity(authorized_client, data_queue, data_standa
     response = authorized_client.get(url)
     assertTemplateUsed(response, "layouts/case.html")
     context = response.context
-    assert context["case"]["total_days_elapsed"] == 3
+    assert context["case"]["total_days_elapsed"] == (timezone.now() - parse(context["case"]["submitted_at"])).days
 
 
 def test_case_details_im_done_lu_user(authorized_client, data_queue, data_standard_case):

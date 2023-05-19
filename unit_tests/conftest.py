@@ -1,4 +1,5 @@
 import re
+from datetime import timedelta
 import datetime
 import pytest
 import os
@@ -8,6 +9,7 @@ from urllib.parse import urljoin, urlparse
 
 from django.conf import settings
 from django.urls import resolve
+from django.utils import timezone
 
 from formtools.wizard.views import normalize_name
 
@@ -215,7 +217,6 @@ def data_open_case():
                     },
                 },
             },
-            "total_days_elapsed": 3,
             "has_advice": {"user": False, "my_user": False, "team": False, "my_team": False, "final": False},
             "advice": [],
             "all_flags": [
@@ -495,6 +496,7 @@ def data_open_case():
                 },
             },
             "next_review_date": None,
+            "submitted_at": "2023-05-05T12:52:37.703607Z",
             "licences": [],
         }
     }
@@ -538,13 +540,13 @@ def data_standard_case(
                     "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
                     "name": "queue",
                     "alias": "FCDO_CASES_TO_REVIEW",
-                    "days_on_queue_elapsed": 2,
+                    "joined_queue_at": (timezone.now() - timedelta(days=2)).isoformat(),
                 },
                 {
                     "id": "c270b79b-370c-4c5e-b8b6-4d5210a58956",
                     "name": "queue 20200818000000",
                     "alias": "QUEUE_2",
-                    "days_on_queue_elapsed": 3,
+                    "joined_queue_at": (timezone.now() - timedelta(days=3)).isoformat(),
                 },
             ],
             "assigned_users": {},
@@ -566,7 +568,7 @@ def data_standard_case(
                     },
                 },
             },
-            "total_days_elapsed": 3,
+            "submitted_at": "2023-05-05T12:52:37.703607Z",
             "has_advice": {
                 "user": False,
                 "my_user": False,
@@ -1130,7 +1132,7 @@ def data_standard_case_with_all_trigger_list_products_assessed(data_standard_cas
             "id": "566fd526-bd6d-40c1-94bd-60d10c967cf7",
             "name": "queue 20230119000000",
             "alias": "BEIS_NUCLEAR_CASES_TO_REVIEW",
-            "days_on_queue_elapsed": 2,
+            "joined_queue_at": (timezone.now() - timedelta(days=2)).isoformat(),
         },
     )
 

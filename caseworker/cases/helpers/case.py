@@ -1,4 +1,6 @@
-import datetime
+from datetime import datetime
+from dateutil.parser import parse
+from decimal import Decimal
 
 from django.shortcuts import render
 from django.utils import timezone
@@ -134,7 +136,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             "cles": set(),
             "regimes": set(),
             "report_summaries": set(),
-            "total_value": 0.0,
+            "total_value": 0,
         }
         for good in self.case.goods:
             goods_summary["cles"].update(list(cle["rating"] for cle in good["control_list_entries"]))
@@ -145,19 +147,18 @@ class CaseView(CaseworkerMixin, TemplateView):
                 if hasattr(good, "report_summary_prefix"):
                     report_summary = f"{good['report_summary_prefix']['name']} {report_summary}"
                 goods_summary["report_summaries"].add(report_summary)
-            goods_summary["total_value"] += float(good["value"])
+            goods_summary["total_value"] += Decimal(good["value"])
         return goods_summary
 
     def get_destination_countries(self):
         destination_countries = set()
+        all_parties = self.case.data["ultimate_end_users"] + self.case.data["third_parties"]
         if self.case.data["end_user"]:
-            destination_countries.add(self.case.data["end_user"]["country"]["name"])
+            all_parties.append(self.case.data["end_user"])
         if self.case.data["consignee"]:
-            destination_countries.add(self.case.data["consignee"]["country"]["name"])
-        for ultimate_end_user in self.case.data["ultimate_end_users"]:
-            destination_countries.add(ultimate_end_user["country"]["name"])
-        for third_party in self.case.data["third_parties"]:
-            destination_countries.add(third_party["country"]["name"])
+            all_parties.append(self.case.data["consignee"])
+        for party in all_parties:
+            destination_countries.add(party["country"]["name"])
         return destination_countries
 
     def get_context(self):
@@ -176,7 +177,7 @@ class CaseView(CaseworkerMixin, TemplateView):
         future_next_review_date = (
             True
             if self.case.next_review_date
-            and datetime.datetime.strptime(self.case.next_review_date, "%Y-%m-%d").date() > timezone.localtime().date()
+            and datetime.strptime(self.case.next_review_date, "%Y-%m-%d ").date() > timezone.localtime().date()
             else False
         )
 
@@ -214,13 +215,19 @@ class CaseView(CaseworkerMixin, TemplateView):
             **self.additional_context,
         }
 
+    def _transform_data(self):
+        self.case.total_days_elapsed = (timezone.now() - parse(self.case.submitted_at)).days
+        for queue_detail in self.case.queue_details:
+            queue_detail["days_on_queue_elapsed"] = (timezone.now() - parse(queue_detail["joined_queue_at"])).days
+
     def get(self, request, **kwargs):
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
-
         self.permissions = get_user_permissions(self.request)
+
+        self._transform_data()
 
         if hasattr(self, "get_" + self.case.sub_type + "_" + self.case.type):
             getattr(self, "get_" + self.case.sub_type + "_" + self.case.type)()
