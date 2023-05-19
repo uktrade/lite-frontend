@@ -139,6 +139,9 @@ const initAssessmentForm = () => {
 
 const initSaveAndContinueButton = () => {
   const button = document.querySelector("#submit-id-submit");
+  if (!button) {
+    return;
+  }
   new DisablingButton(button).init();
 };
 
