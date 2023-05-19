@@ -108,7 +108,7 @@ class CaseNote {
   }
 }
 
-const initCaseNotesForm = () => {
+const initCaseNotes = () => {
   document
     .querySelectorAll("#case_notes")
     .forEach(($el) =>
@@ -135,4 +135,4 @@ export default function initMentionUsers() {
   );
 }
 
-export { CaseNote, initCaseNotesForm, initMentionUsers };
+export { CaseNote, initCaseNotes, initMentionUsers };
