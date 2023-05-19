@@ -48,11 +48,13 @@ describe("ShowHideNCSCField", () => {
   });
 
   test('showField sets the display property to "revert"', () => {
+    displayContainer.style.display = "none";
     component.showField();
     expect(displayContainer.style.display).toBe("revert");
   });
 
   test('hideField sets the display property to "none"', () => {
+    displayContainer.style.display = "revert";
     component.hideField();
     expect(displayContainer.style.display).toBe("none");
   });
@@ -68,7 +70,6 @@ describe("ShowHideNCSCField", () => {
 
   test('setOnChangeListener hides ncscBox if "ML" is not present in tokenfield items', () => {
     displayContainer.style.display = "revert";
-    checkboxInput.setAttribute("type", "checkbox");
     checkboxInput.checked = true;
 
     const tokenfield = new MockTokenfield([{ name: "1e2" }]);
@@ -88,7 +89,6 @@ describe("ShowHideNCSCField", () => {
 
   test('setOnChangeListener hides ncscBox if "ML" is only at start of string in tokenfield items', () => {
     displayContainer.style.display = "revert";
-    checkboxInput.setAttribute("type", "checkbox");
     checkboxInput.checked = true;
 
     const tokenfield = new MockTokenfield([{ name: "123ML123" }]);
