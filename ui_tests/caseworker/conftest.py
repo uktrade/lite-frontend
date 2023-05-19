@@ -200,9 +200,10 @@ def submit_form(driver):  # noqa
     WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
 
 
-@when(parsers.parse('I click element with css selector "{css_selector}"'))
-def click_text(driver, css_selector):  # noqa
-    driver.find_element(by=By.CSS_SELECTOR, value=css_selector).click()
+@when(parsers.parse('I click the text "{text}"'))
+def click_text(driver, text):  # noqa
+    xpath = f"//*[text()[contains(.,'{text}')]]"
+    driver.find_element(by=By.XPATH, value=xpath).click()
 
 
 @when(parsers.parse('I click "{button_text}"'))
