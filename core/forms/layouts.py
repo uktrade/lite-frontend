@@ -143,6 +143,7 @@ class Prefixed(Field):
 class ExpandingFieldset(Fieldset):
     template = "forms/expanding_fieldset.html"
 
-    def __init__(self, *args, text_div_css_class=None, **kwargs):
+    def __init__(self, *args, text_div_css_class=None, summary_css_class=None, **kwargs):
         self.text_div_css_class = text_div_css_class
+        self.summary_css_class = summary_css_class
         super().__init__(*args, **kwargs)

@@ -127,6 +127,7 @@ class GiveApprovalAdviceForm(forms.Form):
                 "instructions_to_exporter",
                 "footnote_details",
                 legend="Add a licence condition, instruction to exporter or footnote",
+                summary_css_class="supplemental-approval-fields",
             ),
             Submit("submit", "Submit recommendation"),
         )

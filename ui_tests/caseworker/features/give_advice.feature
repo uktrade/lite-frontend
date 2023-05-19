@@ -21,6 +21,10 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click continue
     And I select countries "GB, UA"
     And I enter "Hello World" as the reasons for approving
+    And I click element with css selector "summary.supplemental-approval-fields"
+    And I enter "licence condition" as the licence condition
+    And I enter "instruction for exporter" as the instructions for the exporter
+    And I enter "reporting footnote" as the reporting footnote
     And I click submit recommendation
     Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
     When I click move case forward
@@ -84,6 +88,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click approve all
     And I click continue
     And I enter "reason for approving" as the reasons for approving
+    And I click element with css selector "summary.supplemental-approval-fields"
     And I enter "licence condition" as the licence condition
     And I enter "instruction for exporter" as the instructions for the exporter
     And I enter "reporting footnote" as the reporting footnote
@@ -140,6 +145,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click approve all
     And I click continue
     And I enter "reason for approving" as the reasons for approving
+    And I click element with css selector "summary.supplemental-approval-fields"
     And I enter "licence condition" as the licence condition
     And I enter "instruction for exporter" as the instructions for the exporter
     And I enter "reporting footnote" as the reporting footnote
@@ -150,6 +156,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see "reporting footnote" as the reporting footnote
     When I click "Edit recommendation"
     And I enter "reason for approving1" as the reasons for approving
+    And I click element with css selector "summary.supplemental-approval-fields"
     And I enter "licence condition1" as the licence condition
     And I enter "instruction for exporter1" as the instructions for the exporter
     And I enter "reporting footnote1" as the reporting footnote
@@ -176,6 +183,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click approve all
     And I click continue
     And I enter "reason for approving" as the reasons for approving
+    And I click element with css selector "summary.supplemental-approval-fields"
     And I enter "licence condition" as the licence condition
     And I enter "instruction for exporter" as the instructions for the exporter
     And I enter "reporting footnote" as the reporting footnote
