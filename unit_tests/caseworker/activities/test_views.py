@@ -195,7 +195,13 @@ def test_notes_and_timelines_user_dropdown(authorized_client, notes_and_timeline
             302,
             "activites/notes-and-timelines.html",
         ),
-        ({}, {"errors": {"text": ["test"]}}, 200, 200, "error.html"),
+        (
+            {"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"], "is_urgent": False},
+            {"errors": {"text": ["test"]}},
+            400,
+            200,
+            "error.html",
+        ),
     ),
 )
 def test_notes_and_timelines_post_valid(
@@ -224,6 +230,10 @@ def test_notes_and_timelines_post_valid(
 
     response = authorized_client.post(notes_and_timelines_url, data=data)
     assert response.status_code == expected_status
+    if expected_status == 302:
+        assert response.url == notes_and_timelines_url
+    else:
+        assertTemplateUsed(response, template_used)
 
 
 def test_notes_and_timelines_mentions(
