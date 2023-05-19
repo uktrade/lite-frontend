@@ -29,17 +29,15 @@ import "tippy.js/dist/tippy.css";
 // our styles
 import "../styles/styles.scss";
 
-$(document).ready(function () {
-  // init govuk
-  initAll();
-  // init our JS
-  initMenuTooltips();
-  initQueuesMenu();
-  initCLEEntries();
-  initRegimeEntries();
-  initCookierBanner("app-cookie-banner", "js-accept-cookie");
-  initDestinationsList();
-  initCaseNotes();
-  initExpanders();
-  initCustomisers();
-});
+// init govuk
+initAll();
+// init our JS
+initMenuTooltips();
+initQueuesMenu();
+initCLEEntries();
+initRegimeEntries();
+initCookierBanner("app-cookie-banner", "js-accept-cookie");
+initDestinationsList();
+initCaseNotes();
+initExpanders();
+initCustomisers();
