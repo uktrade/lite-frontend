@@ -234,3 +234,12 @@ def get_menu_notifications(request):
         request.cached_get_menu_notifications = client.get(request, "/gov-users/notifications/")
     response = request.cached_get_menu_notifications
     return response.json()
+
+
+def get_mention_count(request):
+    # return 1
+    if not hasattr(request, "cached_get_mention_count"):
+        request.cached_get_mention_count = client.get(request, "/cases/user-case-note-mentions/")
+    response = request.cached_get_mention_count.json()
+    mentions_count = len(response["mentions"])
+    return mentions_count

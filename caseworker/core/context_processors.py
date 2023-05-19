@@ -1,9 +1,11 @@
 import os
 
 from django.urls import reverse_lazy
+from django.conf import settings
+
 
 from caseworker.core.constants import Permission
-from caseworker.core.services import get_user_permissions, get_menu_notifications
+from caseworker.core.services import get_user_permissions, get_menu_notifications, get_mention_count
 from lite_content.lite_internal_frontend import strings, open_general_licences
 from lite_content.lite_internal_frontend.flags import FlagsList
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage
@@ -52,6 +54,10 @@ def lite_menu(request):
         notifications = get_menu_notifications(request)
         notification_data = notifications["notifications"]
         has_notifications = notifications["has_notifications"]
+        # this can default to 0 and we can remove the "is not False" in the template when removing the feature flag
+        mentions = False
+        if settings.FEATURE_MENTIONS_ENABLED:
+            mentions = get_mention_count(request)
         queue_pk = request.session["default_queue"]
         pages = [
             {
@@ -98,7 +104,11 @@ def lite_menu(request):
         ]
     else:
         pages = []
-    return {"LITE_MENU": [x for x in pages if x is not None], "MENU_NOTIFICATIONS": has_notifications}
+    return {
+        "LITE_MENU": [x for x in pages if x is not None],
+        "MENU_NOTIFICATIONS": has_notifications,
+        "mention_count": mentions,
+    }
 
 
 def is_all_cases_queue(request):
