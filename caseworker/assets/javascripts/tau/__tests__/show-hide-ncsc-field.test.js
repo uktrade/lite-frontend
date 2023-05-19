@@ -15,6 +15,7 @@ class MockTokenfield extends EventEmitter {
   }
 }
 
+let checkboxInput;
 let component;
 let displayContainer;
 let tokenFieldElement;
@@ -23,18 +24,21 @@ const createElements = () => {
   document.body.innerHTML = `
     <div>
       <div id="token-field"></div>
-      <div id="display-container" style="display: none;"></div>
+      <div id="display-container" style="display: none;">
+        <input id="checkbox" type="checkbox" />
+      </div>
     </div>
   `;
 
   return [
     document.querySelector("#token-field"),
     document.querySelector("#display-container"),
+    document.querySelector("#checkbox"),
   ];
 };
 
 const createComponent = () => {
-  [tokenFieldElement, displayContainer] = createElements();
+  [tokenFieldElement, displayContainer, checkboxInput] = createElements();
   component = new ShowHideNcscField("#token-field", displayContainer);
   return component;
 };
@@ -64,10 +68,9 @@ describe("ShowHideNCSCField", () => {
 
   test('setOnChangeListener hides ncscBox if "ML" is not present in tokenfield items', () => {
     displayContainer.style.display = "revert";
-    const checkboxInput = document.createElement("INPUT");
     checkboxInput.setAttribute("type", "checkbox");
     checkboxInput.checked = true;
-    displayContainer.append(checkboxInput);
+
     const tokenfield = new MockTokenfield([{ name: "1e2" }]);
     tokenFieldElement.tokenfield = tokenfield;
 
@@ -84,12 +87,10 @@ describe("ShowHideNCSCField", () => {
   });
 
   test('setOnChangeListener hides ncscBox if "ML" is only at start of string in tokenfield items', () => {
-    const displayContainer = document.createElement("div");
     displayContainer.style.display = "revert";
-    const checkboxInput = document.createElement("INPUT");
     checkboxInput.setAttribute("type", "checkbox");
     checkboxInput.checked = true;
-    displayContainer.append(checkboxInput);
+
     const tokenfield = new MockTokenfield([{ name: "123ML123" }]);
     tokenFieldElement.tokenfield = tokenfield;
 
@@ -106,7 +107,6 @@ describe("ShowHideNCSCField", () => {
   });
 
   test('setOnChangeListener shows ncscBox if "ML" is present in tokenfield items', () => {
-    const displayContainer = document.createElement("div");
     displayContainer.style.display = "none";
     const tokenfield = new MockTokenfield([{ name: "ML123" }]);
     tokenFieldElement.tokenfield = tokenfield;
