@@ -1,9 +1,9 @@
 // Set defaults
 $govuk-page-width: 2000px !default;
 $govuk-root-font-size: 19px !default;
-$govuk-font-family: Segoe UI, -apple-system, BlinkMacSystemFont, Arial, Sans-Serif;
-$govuk-brand-colour: #31363F !default;
-
+$govuk-font-family: Segoe UI, -apple-system, BlinkMacSystemFont, Arial,
+  Sans-Serif;
+$govuk-brand-colour: #31363f !default;
 
 @function get_govuk_image_asset_url($filename) {
   @return url("../../../node_modules/govuk-frontend/govuk/assets/images/" + $filename);
@@ -13,13 +13,13 @@ $govuk-brand-colour: #31363F !default;
   @return url("../../../node_modules/govuk-frontend/govuk/assets/fonts/" + $filename);
 }
 
-$govuk-image-url-function: 'get_govuk_image_asset_url';
-$govuk-font-url-function: 'get_govuk_font_asset_url';
+$govuk-image-url-function: "get_govuk_image_asset_url";
+$govuk-font-url-function: "get_govuk_font_asset_url";
 
 @import "node_modules/govuk-frontend/govuk/all";
 @import "node_modules/accessible-autocomplete/src/autocomplete";
 @import "core/assets/styles/all";
-@import 'caseworker/assets/styles/lightpick';
+@import "caseworker/assets/styles/lightpick";
 
 @import "overrides/all";
 @import "components/all";
@@ -28,3 +28,4 @@ $govuk-font-url-function: 'get_govuk_font_asset_url';
 @import "assessment-form";
 @import "tau";
 @import "case-filters";
+@import "mentions";

@@ -33,7 +33,7 @@
 						<td class="govuk-table__header" scope="row">
 								{{ user_case_note_mention.reference_code }}
 						</td>
-						<td class="govuk-table__cell">{% if user_case_note_mention.is_urgent %} <p class="warning-text">URGENT</p> {% endif %}<br>{% if user_case_note_mention.is_accessed %} <p class="warning-text">NEW</p> {% endif %}</td>
+						<td class="govuk-table__cell"> {% if user_case_note_mention.is_accessed %}<p class="mentions__new govuk-tag">NEW</p>{% endif %} <br>{% if user_case_note_mention.is_urgent %} <p class="warning-text mentions__urgent">URGENT</p>{% endif %} </td>
 						<td class="govuk-table__cell">{{ user_case_note_mention.created_at|to_datetime|date:"d F Y" }}</td>
 						<td class="govuk-table__cell">
 							<div>
