@@ -3,7 +3,9 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
+from django.utils.functional import cached_property
 
+from core.auth.views import LoginRequiredMixin
 from caseworker.core.constants import SUPER_USER_ROLE_ID, UserStatuses
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.users import UsersPage
@@ -16,6 +18,7 @@ from caseworker.users.services import (
     put_gov_user,
     get_gov_user,
     is_super_user,
+    get_user_case_note_mentions,
 )
 
 
@@ -139,3 +142,13 @@ class ChangeUserStatus(TemplateView):
         put_gov_user(request, str(kwargs["pk"]), json={"status": request.POST["status"]})
 
         return redirect("/users/")
+
+
+class UserCaseNoteMentions(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        return render(request, "users/mentions.html", {"user_mentions": self.mentions})
+
+    @cached_property
+    def mentions(self):
+        data, _ = get_user_case_note_mentions(self.request)
+        return data
