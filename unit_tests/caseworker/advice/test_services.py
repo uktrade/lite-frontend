@@ -9,8 +9,8 @@ from caseworker.advice.services import (
     BEIS_NUCLEAR_COUNTERSIGNING,
     FCDO_CASES_TO_REVIEW_QUEUE,
     FCDO_CPACC_CASES_TO_REVIEW_QUEUE,
-    FCDO_COUNTERSIGNING_QUEUE,
     NCSC_CASES_TO_REVIEW,
+    FCDO_COUNTERSIGNING_QUEUE,
     BEIS_CHEMICAL,
     BEIS_NUCLEAR,
     FCDO_TEAM,
@@ -117,7 +117,6 @@ advice_tab_test_data = [
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[0], MOD_CONSOLIDATE_QUEUES[1], "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[1], MOD_CONSOLIDATE_QUEUES[2], "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[2], MOD_CONSOLIDATE_QUEUES[3], "cases:advice_view", {"make_recommendation": True},),
-    (False, "user", False, MOD_CONSOLIDATE_TEAMS[3], MOD_CONSOLIDATE_QUEUES[4], "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[3], MOD_CONSOLIDATE_QUEUES[4], "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, NCSC_TEAM, NCSC_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": True},),
     # An individual accessing the cases again after having given advice
