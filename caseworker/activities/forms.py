@@ -47,7 +47,15 @@ class NotesAndTimelineForm(forms.Form):
             Div(
                 Submit("submit", "Add a case note"),
                 HTML(
-                    '<a id="id_cancel" href={% url "cases:activities:notes-and-timeline" pk=case.id queue_pk=queue.id %} class="govuk-body govuk-link govuk-link--no-visited-state case-note__cancel-button" type="button" draggable="false">Cancel</a>'
+                    """
+                    <a id="id_cancel"
+                        href={% url "cases:activities:notes-and-timeline" pk=case.id queue_pk=queue.id %}
+                        class="govuk-body govuk-link govuk-link--no-visited-state"
+                        type="button"
+                        draggable="false">
+                        Cancel
+                    </a>
+                    """
                 ),
                 css_class="case-note__controls-buttons",
             ),
