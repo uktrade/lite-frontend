@@ -25,7 +25,6 @@ class CaseNote {
   }
 
   init() {
-    this.$el.addEventListener("submit", (evt) => this.handleSubmit(evt));
     this.$cancelButton.addEventListener("click", (evt) =>
       this.handleCancelButtonClick(evt)
     );
@@ -39,23 +38,6 @@ class CaseNote {
       this.handleTextareaInput(evt)
     );
     this.toggleSubmitButtonEnabled();
-  }
-
-  isMarkedAsVisibleForExporter() {
-    return this.$isVisibleForExporterCheckbox.checked;
-  }
-
-  handleSubmit(evt) {
-    if (!this.isMarkedAsVisibleForExporter()) {
-      return;
-    }
-
-    const confirmed = confirm(
-      "This note will be visible to the exporter, are you sure you wish to continue?"
-    );
-    if (!confirmed) {
-      evt.preventDefault();
-    }
   }
 
   handleCancelButtonClick(evt) {
