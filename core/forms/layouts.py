@@ -1,7 +1,7 @@
 from crispy_forms.layout import TemplateNameMixin
 from crispy_forms.utils import render_field, TEMPLATE_PACK
 
-from crispy_forms_gds.layout import Field, HTML
+from crispy_forms_gds.layout import Field, HTML, Fieldset
 
 from django.template.loader import render_to_string
 
@@ -138,3 +138,12 @@ class ConditionalCheckbox(TemplateNameMixin):
 class Prefixed(Field):
     def __init__(self, prefix, field, **kwargs):
         super().__init__(field, context={"prefix": prefix}, template="%s/layout/prefixed_field.html", **kwargs)
+
+
+class ExpandingFieldset(Fieldset):
+    template = "forms/expanding_fieldset.html"
+
+    def __init__(self, *args, text_div_css_class=None, summary_css_class=None, **kwargs):
+        self.text_div_css_class = text_div_css_class
+        self.summary_css_class = summary_css_class
+        super().__init__(*args, **kwargs)
