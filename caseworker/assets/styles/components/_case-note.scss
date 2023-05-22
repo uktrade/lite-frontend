@@ -29,8 +29,11 @@
         display: flex;
         margin-left: auto;
 
-        a, button {
+        a, button, input {
             margin-bottom: 0;
+        }
+        a {
+            margin-left: 10px;
         }
     }
 

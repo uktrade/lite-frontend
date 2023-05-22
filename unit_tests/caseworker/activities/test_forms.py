@@ -14,55 +14,53 @@ def mock_request(rf, authorized_client):
     yield request
 
 
-@pytest.fixture()
-def mock_post_site(requests_mock, organisation_pk):
-    url = client._build_absolute_uri(f"/organisations/{organisation_pk}/sites/")
-    yield requests_mock.post(
-        url=url, json={"site": {"name": "Test site", "id": "00000000-0000-0000-0000-000000000001"}}
-    )
-
-
-@pytest.fixture()
-def mock_validate_site(requests_mock, organisation_pk):
-    url = client._build_absolute_uri(f"/organisations/{organisation_pk}/sites/")
-    yield requests_mock.post(url=url, json={})
-
-
 @pytest.mark.parametrize(
-    "data, valid_status",
+    "data, valid_status, error_message",
     (
-        ({"text": ""}, False),
-        ({"text": "this is text", "is_urgent": False}, True),
-        ({"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"]}, True),  # /PS-IGNORE
+        ({"text": ""}, False, {"text": ["Case Notes are Required"]}),
+        ({"text": "this is text", "is_urgent": False}, True, {}),
+        ({"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"]}, True, {}),  # /PS-IGNORE
         (
-            {"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"], "is_urgent": False},
-            True,
-        ),  # /PS-IGNORE
+            {"text": "this is text", "mentions": ["Invalid User"], "is_urgent": False},
+            False,
+            {"mentions": ["Select a valid choice. Invalid User is not one of the available choices."]},
+        ),
         (
             {
                 "text": "this is text",
-                "mentions": [
-                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
-                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",
-                ],  # /PS-IGNORE
+                "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"],  # /PS-IGNORE
                 "is_urgent": False,
             },
             True,
+            {},
         ),
         (
             {
                 "text": "this is text",
                 "mentions": [
-                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
-                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",
-                ],  # /PS-IGNORE
+                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",  # /PS-IGNORE
+                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                ],
+                "is_urgent": False,
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "text": "this is text",
+                "mentions": [
+                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",  # /PS-IGNORE
+                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                ],
                 "is_urgent": True,
             },
             True,
+            {},
         ),
     ),
 )
-def test_notes_and_timeline(data, valid_status, mock_request, requests_mock, mock_gov_users):
+def test_notes_and_timeline(data, valid_status, error_message, mock_request, requests_mock, mock_gov_users):
     url = "/gov-users/"
     json = {
         "results": mock_gov_users,
@@ -70,6 +68,7 @@ def test_notes_and_timeline(data, valid_status, mock_request, requests_mock, moc
     requests_mock.get(client._build_absolute_uri(url), json=json)
     form = forms.NotesAndTimelineForm(data=data, request=mock_request)
     assert form.is_valid() == valid_status
+    assert form.errors == error_message
 
 
 @pytest.mark.parametrize(
@@ -77,16 +76,9 @@ def test_notes_and_timeline(data, valid_status, mock_request, requests_mock, moc
     (
         ({"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"]}, False),  # /PS-IGNORE
         (
-            {"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"], "is_urgent": False},
-            False,
-        ),  # /PS-IGNORE
-        (
             {
                 "text": "this is text",
-                "mentions": [
-                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
-                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",
-                ],  # /PS-IGNORE
+                "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"],  # /PS-IGNORE
                 "is_urgent": False,
             },
             False,
@@ -95,8 +87,19 @@ def test_notes_and_timeline(data, valid_status, mock_request, requests_mock, moc
             {
                 "text": "this is text",
                 "mentions": [
-                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
-                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",
+                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",  # /PS-IGNORE
+                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                ],
+                "is_urgent": False,
+            },
+            False,
+        ),
+        (
+            {
+                "text": "this is text",
+                "mentions": [
+                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",  # /PS-IGNORE
+                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
                 ],  # /PS-IGNORE
                 "is_urgent": True,
             },
@@ -125,24 +128,24 @@ def test_notes_and_timeline_clean_is_urgent(data, expected, mock_request, reques
         (
             {
                 "text": "this is text",
-                "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"],
+                "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"],  # /PS-IGNORE
                 "is_urgent": False,
-            },  # /PS-IGNORE
+            },
             [{"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}],  # /PS-IGNORE
         ),
         (
             {
                 "text": "this is text",
                 "mentions": [
-                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
-                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",
-                ],  # /PS-IGNORE
+                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",  # /PS-IGNORE
+                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                ],
                 "is_urgent": False,
             },
             [
-                {"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"},
-                {"user": "d832b2fb-e128-4367-9cfe-6f6d37d270f7"},
-            ],  # /PS-IGNORE
+                {"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"},  # /PS-IGNORE
+                {"user": "d832b2fb-e128-4367-9cfe-6f6d37d270f7"},  # /PS-IGNORE
+            ],
         ),
     ),
 )
@@ -167,24 +170,24 @@ def test_notes_and_timeline_clean_mentions(data, expected, mock_request, request
         (
             {
                 "text": "this is text",
-                "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"],
+                "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"],  # /PS-IGNORE
                 "is_urgent": False,
-            },  # /PS-IGNORE
+            },
             [{"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"}],  # /PS-IGNORE
         ),
         (
             {
                 "text": "this is text",
                 "mentions": [
-                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",
-                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",
-                ],  # /PS-IGNORE
+                    "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",  # /PS-IGNORE
+                    "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                ],
                 "is_urgent": False,
             },
             [
-                {"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"},
-                {"user": "d832b2fb-e128-4367-9cfe-6f6d37d270f7"},
-            ],  # /PS-IGNORE
+                {"user": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"},  # /PS-IGNORE
+                {"user": "d832b2fb-e128-4367-9cfe-6f6d37d270f7"},  # /PS-IGNORE
+            ],
         ),
     ),
 )

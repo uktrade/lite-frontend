@@ -3,6 +3,7 @@ import {
   getByLabelText,
   getByText,
   getAllByText,
+  getByDisplayValue,
 } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
@@ -120,12 +121,12 @@ describe("Case notes mentions", () => {
   });
 
   test("Submit button is not enabled by default", () => {
-    const submitButton = getAllByText(mentionForm, "Add a case note")[1];
+    const submitButton = getByDisplayValue(mentionForm, "Add a case note");
     expect(submitButton).toBeDisabled();
   });
 
   test("Submit button enabled after adding text", async () => {
-    const submitButton = getAllByText(mentionForm, "Add a case note")[1];
+    const submitButton = getByDisplayValue(mentionForm, "Add a case note");
     expect(submitButton).toBeDisabled();
 
     const textarea = getByLabelText(mentionForm, "Add a case note");
@@ -136,7 +137,7 @@ describe("Case notes mentions", () => {
   });
 
   test("Submit button enabled after pasting text", async () => {
-    const submitButton = getAllByText(mentionForm, "Add a case note")[1];
+    const submitButton = getByDisplayValue(mentionForm, "Add a case note");
     expect(submitButton).toBeDisabled();
 
     const textarea = getByLabelText(mentionForm, "Add a case note");
@@ -147,7 +148,7 @@ describe("Case notes mentions", () => {
   });
 
   test("Submit button disabled after removing text", async () => {
-    const submitButton = getAllByText(mentionForm, "Add a case note")[1];
+    const submitButton = getByDisplayValue(mentionForm, "Add a case note");
     expect(submitButton).toBeDisabled();
 
     const textarea = getByLabelText(mentionForm, "Add a case note");

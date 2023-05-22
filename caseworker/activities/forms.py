@@ -1,9 +1,9 @@
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit, Field, Button
+from crispy_forms_gds.layout import Layout, Submit, Field, HTML, Div
 from django import forms
 from django.conf import settings
 
-from caseworker.users.services import get_gov_users
+from caseworker.users.services import get_gov_users, convert_users_to_choices
 
 
 class NotesAndTimelineForm(forms.Form):
@@ -14,7 +14,7 @@ class NotesAndTimelineForm(forms.Form):
     )
     mentions = forms.MultipleChoiceField(
         choices=(),
-        error_messages={"required": "Select the User"},
+        widget=forms.SelectMultiple(),
         label="Mention a co-worker or team to notify them, or ask a question (optional)",
         help_text="Type for suggestions. For example 'Technical Assessment Unit', NSCS, or 'Olivia Smith'",
         required=False,
@@ -33,10 +33,10 @@ class NotesAndTimelineForm(forms.Form):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
-        self.fields["mentions"].widget = forms.SelectMultiple()
+        users_data, _ = get_gov_users(request)
+        user_choices = convert_users_to_choices(users_data["results"])
 
-        users = get_gov_users(request, convert_to_choices=True)
-        self.fields["mentions"].choices += users
+        self.fields["mentions"].choices += user_choices
 
         self.helper = FormHelper()
         self.helper.form_id = "case_notes"
@@ -44,8 +44,13 @@ class NotesAndTimelineForm(forms.Form):
             "text",
             "mentions",
             Field.checkboxes("is_urgent", small=True),
-            Submit("submit", "Add a case note", disabled=True),
-            Button.secondary("cancel", "Cancel"),
+            Div(
+                Submit("submit", "Add a case note"),
+                HTML(
+                    '<a id="id_cancel" href={% url "cases:activities:notes-and-timeline" pk=case.id queue_pk=queue.id %} class="govuk-body govuk-link govuk-link--no-visited-state case-note__cancel-button" type="button" draggable="false">Cancel</a>'
+                ),
+                css_class="case-note__controls-buttons",
+            ),
         )
 
         if not settings.FEATURE_MENTIONS_ENABLED:

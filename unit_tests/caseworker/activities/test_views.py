@@ -166,23 +166,65 @@ def test_notes_and_timelines_searching_by_user_type(
     assert response.context["filtering_by"] == ["user_type"]
 
 
-def test_notes_and_timelines_user_dropdown(authorized_client, notes_and_timelines_url, requests_mock, mock_gov_users):
+@pytest.mark.parametrize(
+    "user, expected",
+    (
+        (
+            [
+                {
+                    "id": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",  # /PS-IGNORE
+                    "email": "nobody_1@nodomain.com",  # /PS-IGNORE
+                    "first_name": "Firstname",
+                    "last_name": "Williams",
+                    "team": {
+                        "name": "MOD-ECJU",
+                    },
+                },
+                {
+                    "id": "53a88f67-feda-4975-b0f9-e7689999abd7",  # /PS-IGNORE
+                    "email": "nobody@nodomain.com",  # /PS-IGNORE
+                    "first_name": "joe_2",
+                    "last_name": "smith",
+                    "team": {
+                        "name": "MOD-ECJU",
+                    },
+                },
+                {
+                    "id": "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                    "email": "test_3@joebloggs.co.uk",  # /PS-IGNORE
+                    "first_name": "",
+                    "last_name": "",
+                    "team": {
+                        "name": "Admin",
+                    },
+                },
+                {
+                    "id": "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                    "email": "",
+                    "first_name": "Firstname",
+                    "last_name": "Williams",
+                    "team": {
+                        "name": "MOD-ECJU",
+                    },
+                },
+            ],
+            [
+                ("1f288b81-2c26-439f-ac32-2a43c8b1a5cb", "Firstname Williams (MOD-ECJU)"),  # /PS-IGNORE
+                ("53a88f67-feda-4975-b0f9-e7689999abd7", "joe_2 smith (MOD-ECJU)"),  # /PS-IGNORE
+                ("d832b2fb-e128-4367-9cfe-6f6d37d270f7", "test_3@joebloggs.co.uk"),  # /PS-IGNORE
+            ],
+        ),
+    ),
+)
+def test_notes_and_timelines_user_dropdown(user, expected, authorized_client, notes_and_timelines_url, requests_mock):
     requests_mock.get(
         client._build_absolute_uri(f"/gov-users/"),
         json={
-            "results": mock_gov_users,
+            "results": user,
         },
     )
     response = authorized_client.get(notes_and_timelines_url)
-    users = []
-    for user in mock_gov_users:
-        value = (
-            f'{user["first_name"]} {user["last_name"]} ({user["team"]["name"]})'
-            if user["first_name"]
-            else user["email"]
-        )
-        users.append((user["id"], value))
-    assert response.context["form"].fields["mentions"].choices == users
+    assert response.context["form"].fields["mentions"].choices == expected
 
 
 @pytest.mark.parametrize(
@@ -253,7 +295,6 @@ def test_notes_and_timelines_mentions(
 def test_notes_and_timelines_mentions_template(
     authorized_client, notes_and_timelines_url, mock_case_note_mentions, requests_mock, mock_gov_users
 ):
-
     requests_mock.get(
         client._build_absolute_uri(f"/gov-users/"),
         json={
