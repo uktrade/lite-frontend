@@ -10,9 +10,11 @@ from caseworker.advice.services import (
     FCDO_CASES_TO_REVIEW_QUEUE,
     FCDO_CPACC_CASES_TO_REVIEW_QUEUE,
     FCDO_COUNTERSIGNING_QUEUE,
+    NCSC_CASES_TO_REVIEW,
     BEIS_CHEMICAL,
     BEIS_NUCLEAR,
     FCDO_TEAM,
+    NCSC_TEAM,
     LICENSING_UNIT_TEAM,
     LU_POST_CIRC_FINALISE_QUEUE,
     LU_LICENSING_MANAGER_QUEUE,
@@ -116,6 +118,7 @@ advice_tab_test_data = [
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[1], MOD_CONSOLIDATE_QUEUES[2], "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[2], MOD_CONSOLIDATE_QUEUES[3], "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[3], MOD_CONSOLIDATE_QUEUES[4], "cases:advice_view", {"make_recommendation": True},),
+    (False, "user", False, MOD_CONSOLIDATE_TEAMS[3], MOD_CONSOLIDATE_QUEUES[4], "cases:advice_view", {"make_recommendation": True},),
     # An individual accessing the cases again after having given advice
     (True, "user", False, BEIS_CHEMICAL, BEIS_CHEMICAL_CASES_TO_REVIEW, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
     (True, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_CASES_TO_REVIEW, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
@@ -126,6 +129,7 @@ advice_tab_test_data = [
     (True, "user", False, MOD_CONSOLIDATE_TEAMS[1], MOD_CONSOLIDATE_QUEUES[2], "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
     (True, "user", False, MOD_CONSOLIDATE_TEAMS[2], MOD_CONSOLIDATE_QUEUES[3], "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
     (True, "user", False, MOD_CONSOLIDATE_TEAMS[3], MOD_CONSOLIDATE_QUEUES[4], "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
+    (True, "user", True, NCSC_TEAM, NCSC_CASES_TO_REVIEW, "cases:countersign_view", {"edit_recommendation": True, "move_case_forward": True},),
     # An individual countersigning advice on a case for the first time
     (True, "user", False, FCDO_TEAM, FCDO_COUNTERSIGNING_QUEUE, "cases:countersign_advice_view", {"review_and_countersign": True},),
     (True, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_COUNTERSIGNING, "cases:countersign_advice_view", {"review_and_countersign": True},),
@@ -134,7 +138,6 @@ advice_tab_test_data = [
     (True, "final", False, LICENSING_UNIT_TEAM, LU_SR_LICENSING_MANAGER_QUEUE, "cases:advice_view", {"review_and_countersign": False},),
     # An individual accessing the case after giving countersigned advice
     (True, "user", True, BEIS_NUCLEAR, BEIS_NUCLEAR_COUNTERSIGNING, "cases:countersign_view", {"edit_recommendation": True, "move_case_forward": True},),
-    (True, "user", True, FCDO_TEAM, FCDO_COUNTERSIGNING_QUEUE, "cases:countersign_view", {"edit_recommendation": True, "move_case_forward": True},),
     # An individual consolidating advice on a case for the first time
     (True, "user", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUES[0], "cases:consolidate_advice_view", {"review_and_combine": True},),
     (True, "user", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUES[1], "cases:consolidate_advice_view", {"review_and_combine": True},),
