@@ -62,7 +62,7 @@
 			</a>
 			<span></span>
 			{% if mention_count is not False %}
-			<a id="link-mentions" class="app-header__link" href="{% url 'auth:logout' %}" data-tooltip="Mentions">
+			<a id="link-mentions" class="app-header__link" href="{% url 'users:user_case_note_mentions' %}" data-tooltip="Mentions">
 				Mentions ({{mention_count}})
 			</a>
 			{% endif %}

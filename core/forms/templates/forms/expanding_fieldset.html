@@ -3,10 +3,10 @@
     {{ fieldset.flat_attrs|safe }}>
     {% if legend %}
         <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
+            <summary class="govuk-details__summary {{fieldset.summary_css_class}}">
             <span class="govuk-details__summary-text">{{ legend|safe }}</span>
             </summary>
-            <div class="govuk-details__text advanced-filter-fields">
+            <div class="govuk-details__text {{fieldset.text_div_css_class}}">
                 {{ fields|safe }}
             </div>
         </details>
