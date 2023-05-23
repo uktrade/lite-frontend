@@ -13,57 +13,68 @@ let mentionForm;
 
 const createMentionsElement = () => {
   document.body.innerHTML = `
-  <form id="case_notes" method="post"> <input type="hidden" name="csrfmiddlewaretoken"
-    value="">
-  <div id="div_id_text" class="govuk-form-group"> <label for="id_text" class="govuk-label">
-      Add a case note
-    </label> <textarea name="text" cols="40" rows="2" class="govuk-textarea case-note__textarea"
-      id="id_text"></textarea> </div>
-  <div id="div_id_mentions" class="govuk-form-group tokenfield-container"> <label for="id_mentions" class="govuk-label">
-      Mention a co-worker to notify them, or ask a question (optional)
-    </label>
-    <div id="id_mentions_hint" class="govuk-hint">Type for suggestions. For example 'Technical Assessment Unit', NSCS,
-      or 'Olivia Smith'</div>
-    <div class="tokenfield tokenfield-mode-tokens" id="id_mentions">
-      <input class="tokenfield-copy-helper" style="display:none;position:fixed;top:-1000px;right:1000px;" tabindex="-1"
-        type="text">
-      <div class="tokenfield-set">
-        <ul></ul>
+  <form data-module="case-note" method="post">
+    <input type="hidden" name="csrfmiddlewaretoken"/>
+    <div id="div_id_text" class="govuk-form-group">
+      <label for="id_text" class="govuk-label"> Add a case note </label>
+      <textarea name="text" cols="40" rows="2" class="govuk-textarea case-note__textarea" id="id_text"></textarea>
+    </div>
+    <div class="case-note-mentions">
+      <div id="div_id_mentions" class="govuk-form-group tokenfield-container">
+        <label for="id_mentions" class="govuk-label">
+          Mention a co-worker to notify them, or ask a question (optional)
+        </label>
+        <div id="id_mentions_hint" class="govuk-hint">
+          Type for suggestions. For example 'Technical Assessment Unit', NSCS, or
+          'Olivia Smith'
+        </div>
+        <div class="tokenfield tokenfield-mode-tokens" id="id_mentions">
+          <input class="tokenfield-copy-helper" style="display: none; position: fixed; top: -1000px; right: 1000px"
+            tabindex="-1" type="text" />
+          <div class="tokenfield-set">
+            <ul></ul>
+          </div>
+          <input class="tokenfield-input" type="text" placeholder="" style="width: 100%" />
+          <div class="tokenfield-suggest" style="display: none">
+            <ul class="tokenfield-suggest-list"></ul>
+          </div>
+          <div id="tokenfield-sizer-105d31c371" style="
+              width: auto;
+              height: auto;
+              overflow: hidden;
+              white-space: pre;
+              position: fixed;
+              top: -10000px;
+              left: 10000px;
+            "></div>
+        </div>
       </div>
-      <input class="tokenfield-input" type="text" placeholder="" style="width: 100%;">
-      <div class="tokenfield-suggest" style="display: none;">
-        <ul class="tokenfield-suggest-list"></ul>
-      </div>
-      <div id="tokenfield-sizer"
-        style="width: auto; height: auto; overflow: hidden; white-space: pre; position: fixed; top: -10000px; left: 10000px;">
+      <div id="div_id_is_urgent" class="govuk-form-group">
+        <div class="govuk-checkboxes govuk-checkboxes--small">
+          <div class="govuk-checkboxes__item">
+            <input type="checkbox" name="is_urgent" class="govuk-checkboxes__input" id="id_is_urgent" />
+            <label class="govuk-label govuk-checkboxes__label" for="id_is_urgent">
+              Mark as urgent
+            </label>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  <div id="div_id_is_urgent" class="govuk-form-group">
-    <div class="govuk-checkboxes govuk-checkboxes--small">
-      <div class="govuk-checkboxes__item"> <input type="checkbox" name="is_urgent" class="govuk-checkboxes__input"
-          id="id_is_urgent"> <label class="govuk-label govuk-checkboxes__label" for="id_is_urgent">
-          Mark as urgent
-        </label> </div>
+    <div class="case-note__controls-buttons">
+      <input type="submit" name="submit" value="Add a case note" class="govuk-button" id="submit-id-submit" disabled="" />
+      <a id="id_cancel"
+        class="govuk-body govuk-link govuk-link--no-visited-state case-note-cancel" type="button" draggable="false">
+        Cancel
+      </a>
     </div>
-  </div> <input type="submit" name="submit" value="Add a case note" class="govuk-button" id="submit-id-submit"
-    disabled="">
-  <button name="cancel" class="govuk-button govuk-button--secondary" id="id_cancel"
-    data-module="govuk-button">Cancel</button>
-</form>
+  </form>
   `;
   return document.querySelector("form");
 };
 
 const createMentionsComponent = () => {
   mentionForm = createMentionsElement();
-  return new CaseNote(
-    mentionForm,
-    "case-note__textarea--focused",
-    "id_is_urgent",
-    "id_mentions",
-    "#id_cancel"
-  ).init();
+  return new CaseNote(mentionForm).init();
 };
 
 describe("Case notes mentions", () => {
