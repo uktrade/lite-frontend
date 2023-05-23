@@ -238,6 +238,9 @@ The Javascript/SCSS is automatically watched via the node docker service.
 
 The production assets are built on deployment as part of the cloudfoundry build. We specify the [node buildpack in the cloudfoundry manifest file](./manifest.yml#L4) which cloudfoundry automatically picks up. This then runs the command specified [`heroku-postbuild` specified in the package.json](./package.json#L14).
 
+to run the tests run:
+`docker exec -it lite-frontend_frontend_assets_watcher_1 npm run test`
+
 ### Without docker
 
 Node version required can be found in the `package.json` under `engines`.

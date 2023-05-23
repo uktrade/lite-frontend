@@ -1,19 +1,15 @@
+import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 class CaseNote {
   TEXTAREA_FOCUSED_CLASS = "case-note__textarea--focused";
-
   constructor($el) {
     this.$el = $el;
-
-    this.$isVisibleForExporterCheckbox = this.$el.querySelector(
-      "[name=is-visible-to-exporter]"
-    );
-    this.$cancelButton = this.$el.querySelector(".case-note__cancel-button");
+    this.$mentions = this.$el.querySelector(".case-note-mentions");
+    this.$cancelButton = this.$el.querySelector(".case-note-cancel");
     this.$submitButton = this.$el.querySelector("[type=submit]");
     this.$textarea = this.$el.querySelector("[name=text]");
   }
 
   init() {
-    this.$el.addEventListener("submit", (evt) => this.handleSubmit(evt));
     this.$cancelButton.addEventListener("click", (evt) =>
       this.handleCancelButtonClick(evt)
     );
@@ -26,39 +22,20 @@ class CaseNote {
     this.$textarea.addEventListener("paste", (evt) =>
       this.handleTextareaInput(evt)
     );
-    this.$textarea.addEventListener("blur", (evt) =>
-      this.handleTextareaBlur(evt)
-    );
     this.toggleSubmitButtonEnabled();
-  }
-
-  isMarkedAsVisibleForExporter() {
-    return this.$isVisibleForExporterCheckbox.checked;
-  }
-
-  handleSubmit(evt) {
-    if (!this.isMarkedAsVisibleForExporter()) {
-      return;
-    }
-
-    const confirmed = confirm(
-      "This note will be visible to the exporter, are you sure you wish to continue?"
-    );
-    if (!confirmed) {
-      evt.preventDefault();
-    }
   }
 
   handleCancelButtonClick(evt) {
     evt.preventDefault();
-    this.$textarea.value = "";
-    this.$textarea.dispatchEvent(new Event("blur"));
+    this.$el.reset();
     this.$textarea.dispatchEvent(new Event("input"));
-    this.$isVisibleForExporterCheckbox.checked = false;
+    this.handleTextareaBlur();
+    this.toggleMentionFields(false);
   }
 
   handleTextareaFocus() {
     this.$textarea.classList.add(this.TEXTAREA_FOCUSED_CLASS);
+    this.toggleMentionFields(true);
   }
 
   hasText() {
@@ -79,6 +56,19 @@ class CaseNote {
     this.$submitButton.disabled = !this.hasText();
   }
 
+  displayToggle(element, show = true) {
+    if (element) {
+      element.style.display = "none";
+      if (show) {
+        element.style.display = "block";
+      }
+    }
+  }
+
+  toggleMentionFields(show = true) {
+    this.displayToggle(this.$mentions, show);
+  }
+
   handleTextareaInput() {
     this.toggleSubmitButtonEnabled();
   }
@@ -90,4 +80,17 @@ const initCaseNotes = () => {
     .forEach(($el) => new CaseNote($el).init());
 };
 
-export { initCaseNotes, CaseNote };
+export default function initMentionUsers() {
+  const mentionUserField = document.getElementById("id_mentions");
+
+  if (!mentionUserField) return;
+
+  const mentionUserTokenField = progressivelyEnhanceMultipleSelectField(
+    mentionUserField,
+    (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    }
+  );
+}
+
+export { CaseNote, initCaseNotes, initMentionUsers };

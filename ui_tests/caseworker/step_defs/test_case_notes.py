@@ -38,15 +38,3 @@ def post_note_is_disabled(driver):
 def entered_text_no_longer_in_case_field(driver, context):
     application_page = ApplicationPage(driver)
     assert context.text not in application_page.get_text_of_case_note_field(), "cancel button hasn't cleared text"
-
-
-@when("I click make visible to exporter")
-def click_visible_to_exporters_checkbox(driver):
-    application_page = ApplicationPage(driver)
-    application_page.click_visible_to_exporter_checkbox()
-
-
-@when("I click confirm on confirmation box")
-def click_confirm_on_confirmation_box(driver):
-    alert = driver.switch_to.alert
-    alert.accept()

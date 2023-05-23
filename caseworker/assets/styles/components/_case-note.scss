@@ -29,12 +29,26 @@
         display: flex;
         margin-left: auto;
 
-        a, button {
+        a, button, input {
             margin-bottom: 0;
+        }
+        a {
+            margin-left: 10px;
         }
     }
 
     &__cancel-button {
         margin-right: govuk-spacing(4);
     }
+
+    .tokenfield-copy-helper {
+        display: none;
+    }
+}
+.case-note-mentions{
+    display: none;
+
+    .tokenfield-copy-helper {
+            display: none;
+        }
 }

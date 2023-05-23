@@ -12,12 +12,13 @@ from lite_forms.components import (
 )
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
-from caseworker.users.services import get_gov_users
+from caseworker.users.services import get_gov_users, convert_users_to_options
 
 
 def assign_case_officer_form(request: HttpRequest, existing_officer, queue_id, case_id, is_compliance=None):
     params = {"disable_pagination": True, "status": UserStatuses.ACTIVE}
-    users = get_gov_users(request, params, convert_to_options=True)
+    users_data, _ = get_gov_users(request, params)
+    users = convert_users_to_options(users_data["results"])
     buttons = [Button(cases.Manage.AssignCaseOfficer.SUBMIT_BUTTON, action="submit")]
     if existing_officer:
         buttons.append(
