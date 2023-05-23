@@ -513,6 +513,9 @@ def data_standard_case(
     report_summary_prefix,
     report_summary_subject,
 ):
+    joined_queue_at_1 = timezone.now() - timedelta(days=2)
+    joined_queue_at_2 = timezone.now() - timedelta(days=3)
+    submitted_at = timezone.now() - timedelta(days=7)
     return {
         "case": {
             "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",
@@ -540,16 +543,19 @@ def data_standard_case(
                     "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
                     "name": "queue",
                     "alias": "FCDO_CASES_TO_REVIEW",
-                    "joined_queue_at": (timezone.now() - timedelta(days=2)).isoformat(),
+                    "joined_queue_at": joined_queue_at_1.isoformat(),
+                    "days_on_queue_elapsed": (timezone.now() - joined_queue_at_1).days,
                 },
                 {
                     "id": "c270b79b-370c-4c5e-b8b6-4d5210a58956",
                     "name": "queue 20200818000000",
                     "alias": "QUEUE_2",
-                    "joined_queue_at": (timezone.now() - timedelta(days=3)).isoformat(),
+                    "joined_queue_at": joined_queue_at_2.isoformat(),
+                    "days_on_queue_elapsed": (timezone.now() - joined_queue_at_2).days,
                 },
             ],
             "assigned_users": {},
+            "has_open_queries": False,
             "latest_activity": {
                 "text": "Flag added",
                 "created_at": "2020-10-07T15:26:36.976341+01:00",
@@ -568,7 +574,8 @@ def data_standard_case(
                     },
                 },
             },
-            "submitted_at": "2023-05-05T12:52:37.703607Z",
+            "submitted_at": submitted_at.isoformat(),
+            "total_days_elapsed": (timezone.now() - submitted_at).days,
             "has_advice": {
                 "user": False,
                 "my_user": False,
@@ -1029,6 +1036,7 @@ def data_standard_case(
                             "data": "",
                             "is_revoked": "",
                             "is_revoked_comment": "",
+                            "reference": "ref1",
                         },
                         "category": "Partial",
                     },
@@ -1127,12 +1135,14 @@ def data_standard_case_with_potential_trigger_list_product(
 def data_standard_case_with_all_trigger_list_products_assessed(data_standard_case_with_potential_trigger_list_product):
     data = copy.deepcopy(data_standard_case_with_potential_trigger_list_product)
     data["case"]["data"]["goods"][0]["is_trigger_list_guidelines_applicable"] = True
+    joined_queue_at = timezone.now() - timedelta(days=2)
     data["case"]["queue_details"].append(
         {
             "id": "566fd526-bd6d-40c1-94bd-60d10c967cf7",
             "name": "queue 20230119000000",
             "alias": "BEIS_NUCLEAR_CASES_TO_REVIEW",
-            "joined_queue_at": (timezone.now() - timedelta(days=2)).isoformat(),
+            "joined_queue_at": joined_queue_at.isoformat(),
+            "days_on_queue_elapsed": (timezone.now() - joined_queue_at).days,
         },
     )
 

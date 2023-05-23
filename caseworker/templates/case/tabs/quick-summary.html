@@ -188,8 +188,8 @@
 					Security approvals
 				</dt>
 				<dd class="app-case__summary-list__value" id="security_approvals">
-					{% if case.security_approvals %}
-						{{ case.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
+					{% if case.data.security_approvals %}
+						{{ case.data.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
 					{% else %}
 						<span class="govuk-hint govuk-!-margin-0">
 							None
@@ -249,9 +249,9 @@
 					{{ case.data.intended_end_use }}
 				</dd>
 			</div>
-			{% if end_user.documents|length %}
+			{% if case.data.end_user.documents|length %}
 				<div class="app-case__summary-list__row" data-customiser-key="end_user_document">
-					{% for document in end_user.documents %}
+					{% for document in case.data.end_user.documents %}
 						<li class="app-case__summary-list__value" id="end_user_document">
 							<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
 								{% if document.type == "end_user_undertaking_document" or document.type == "supporting_document" %}End-user document{% elif document.type == "end_user_english_translation_document" %}English translation{% elif document.type == "end_user_english_translation_document" %}Company letterhead{% endif %} ({{ document_extension|upper }} opens in new tab)

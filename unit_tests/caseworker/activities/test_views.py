@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
 
+from django.test import override_settings
 from django.urls import reverse
 
 from core import client
@@ -36,6 +37,7 @@ def mock_get_gov_users(mock_gov_users, requests_mock):
     )
 
 
+@override_settings(FEATURE_QUICK_SUMMARY=True)
 def test_quick_summary(authorized_client, data_queue, data_standard_case):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
@@ -45,6 +47,7 @@ def test_quick_summary(authorized_client, data_queue, data_standard_case):
     assert soup.find("a", {"id": "tab-quick-summary", "class": "lite-tabs__tab--selected"})
 
 
+@override_settings(FEATURE_QUICK_SUMMARY=True)
 def test_notes_and_timeline_tab(authorized_client, data_queue, data_standard_case):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
