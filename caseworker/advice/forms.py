@@ -40,7 +40,7 @@ class PicklistCharField(forms.CharField):
         picklist_tags = f'picklist_type="{picklist_attrs.get("type")}" picklist_name="{picklist_attrs.get("name")}" target="{picklist_attrs.get("target")}"'
         help_html = f'<a class="govuk-link govuk-link--no-visited-state" href="#" {picklist_tags}>{help_link_text}</a>'
         if help_text_extra:
-            help_html = f"{help_html}<br/>{help_text_extra}"
+            help_html = f"{help_text_extra}<br/>{help_html}"
         return help_html
 
     def __init__(self, picklist_attrs, label, help_link_text, help_text_extra=None, **kwargs):
