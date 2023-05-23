@@ -45,15 +45,10 @@
         display: none;
     }
 }
-
-#div_id_mentions{
+.case-note-mentions{
     display: none;
 
     .tokenfield-copy-helper {
-        display: none;
-    }
-}
-
-#div_id_is_urgent{
-    display: none;
+            display: none;
+        }
 }

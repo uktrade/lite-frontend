@@ -42,15 +42,14 @@ class NotesAndTimelineForm(forms.Form):
         self.helper.attrs = {"data-module": "case-note"}
         self.helper.layout = Layout(
             "text",
-            "mentions",
-            Field.checkboxes("is_urgent", small=True),
+            Div("mentions", Field.checkboxes("is_urgent", small=True), css_class="case-note-mentions"),
             Div(
                 Submit("submit", "Add a case note"),
                 HTML(
                     """
                     <a id="id_cancel"
                         href={% url "cases:activities:notes-and-timeline" pk=case.id queue_pk=queue.id %}
-                        class="govuk-body govuk-link govuk-link--no-visited-state"
+                        class="govuk-body govuk-link govuk-link--no-visited-state case-note-cancel"
                         type="button"
                         draggable="false">
                         Cancel

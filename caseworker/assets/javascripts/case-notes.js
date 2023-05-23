@@ -1,26 +1,12 @@
 import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 class CaseNote {
   TEXTAREA_FOCUSED_CLASS = "case-note__textarea--focused";
-  constructor(
-    $el,
-    isUrgentCheckbox,
-    mentionUsersSelector,
-    cancelButtonSelector
-  ) {
+  constructor($el) {
     this.$el = $el;
-    this.$cancelButton = this.$el.querySelector(cancelButtonSelector);
+    this.$mentions = this.$el.querySelector(".case-note-mentions");
+    this.$cancelButton = this.$el.querySelector(".case-note-cancel");
     this.$submitButton = this.$el.querySelector("[type=submit]");
     this.$textarea = this.$el.querySelector("[name=text]");
-
-    this.$isUrgentCheckbox = this.$el.querySelector(`#${isUrgentCheckbox}`);
-    this.$isUrgentCheckboxDiv = this.$el.querySelector(
-      `#div_${isUrgentCheckbox}`
-    );
-
-    this.$mentionUserInput = this.$el.querySelector(`#${mentionUsersSelector}`);
-    this.$mentionUserInputDiv = this.$el.querySelector(
-      `#div_${mentionUsersSelector}`
-    );
   }
 
   init() {
@@ -41,10 +27,10 @@ class CaseNote {
 
   handleCancelButtonClick(evt) {
     evt.preventDefault();
-    this.$textarea.dispatchEvent(new Event("input"));
-    this.toggleMentionFields(false);
     this.$el.reset();
+    this.$textarea.dispatchEvent(new Event("input"));
     this.handleTextareaBlur();
+    this.toggleMentionFields(false);
   }
 
   handleTextareaFocus() {
@@ -80,8 +66,7 @@ class CaseNote {
   }
 
   toggleMentionFields(show = true) {
-    this.displayToggle(this.$isUrgentCheckboxDiv, show);
-    this.displayToggle(this.$mentionUserInputDiv, show);
+    this.displayToggle(this.$mentions, show);
   }
 
   handleTextareaInput() {
@@ -92,9 +77,7 @@ class CaseNote {
 const initCaseNotes = () => {
   document
     .querySelectorAll("[data-module=case-note]")
-    .forEach(($el) =>
-      new CaseNote($el, "id_is_urgent", "id_mentions", "#id_cancel").init()
-    );
+    .forEach(($el) => new CaseNote($el).init());
 };
 
 export default function initMentionUsers() {
