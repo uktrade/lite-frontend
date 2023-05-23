@@ -39,7 +39,7 @@ class NotesAndTimelineForm(forms.Form):
         self.fields["mentions"].choices += user_choices
 
         self.helper = FormHelper()
-        self.helper.form_id = "case_notes"
+        self.helper.attrs = {"data-module": "case-note"}
         self.helper.layout = Layout(
             "text",
             "mentions",

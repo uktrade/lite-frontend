@@ -1,13 +1,12 @@
 import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 class CaseNote {
+  TEXTAREA_FOCUSED_CLASS = "case-note__textarea--focused";
   constructor(
     $el,
-    TEXTAREA_FOCUSED_CLASS,
     isUrgentCheckbox,
     mentionUsersSelector,
     cancelButtonSelector
   ) {
-    this.TEXTAREA_FOCUSED_CLASS = TEXTAREA_FOCUSED_CLASS;
     this.$el = $el;
     this.$cancelButton = this.$el.querySelector(cancelButtonSelector);
     this.$submitButton = this.$el.querySelector("[type=submit]");
@@ -92,15 +91,9 @@ class CaseNote {
 
 const initCaseNotes = () => {
   document
-    .querySelectorAll("#case_notes")
+    .querySelectorAll("[data-module=case-note]")
     .forEach(($el) =>
-      new CaseNote(
-        $el,
-        "case-note__textarea--focused",
-        "id_is_urgent",
-        "id_mentions",
-        "#id_cancel"
-      ).init()
+      new CaseNote($el, "id_is_urgent", "id_mentions", "#id_cancel").init()
     );
 };
 
