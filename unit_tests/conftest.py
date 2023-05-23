@@ -544,14 +544,12 @@ def data_standard_case(
                     "name": "queue",
                     "alias": "FCDO_CASES_TO_REVIEW",
                     "joined_queue_at": joined_queue_at_1.isoformat(),
-                    "days_on_queue_elapsed": (timezone.now() - joined_queue_at_1).days,
                 },
                 {
                     "id": "c270b79b-370c-4c5e-b8b6-4d5210a58956",
                     "name": "queue 20200818000000",
                     "alias": "QUEUE_2",
                     "joined_queue_at": joined_queue_at_2.isoformat(),
-                    "days_on_queue_elapsed": (timezone.now() - joined_queue_at_2).days,
                 },
             ],
             "assigned_users": {},
@@ -575,7 +573,6 @@ def data_standard_case(
                 },
             },
             "submitted_at": submitted_at.isoformat(),
-            "total_days_elapsed": (timezone.now() - submitted_at).days,
             "has_advice": {
                 "user": False,
                 "my_user": False,
@@ -1142,7 +1139,6 @@ def data_standard_case_with_all_trigger_list_products_assessed(data_standard_cas
             "name": "queue 20230119000000",
             "alias": "BEIS_NUCLEAR_CASES_TO_REVIEW",
             "joined_queue_at": joined_queue_at.isoformat(),
-            "days_on_queue_elapsed": (timezone.now() - joined_queue_at).days,
         },
     )
 

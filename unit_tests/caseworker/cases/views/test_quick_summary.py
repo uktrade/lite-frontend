@@ -92,10 +92,10 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
 
     days_on_queue_elapsed = html.find(id="days_on_queue_elapsed").text.strip()
     for queue_detail in data_standard_case["case"]["queue_details"]:
-        assert str(queue_detail["days_on_queue_elapsed"]) in days_on_queue_elapsed
+        assert str((timezone.now() - parse(queue_detail["joined_queue_at"])).days) in days_on_queue_elapsed
 
     total_days_elapsed = html.find(id="total_days_elapsed").text.strip()
-    assert total_days_elapsed == str(data_standard_case["case"]["total_days_elapsed"])
+    assert total_days_elapsed == str((timezone.now() - parse(data_standard_case["case"]["submitted_at"])).days)
 
     product_names = html.find(id="product_names").text.strip()
     for good in data_standard_case["case"]["data"]["goods"]:

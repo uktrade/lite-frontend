@@ -44,7 +44,7 @@ def test_quick_summary(authorized_client, data_queue, data_standard_case):
     assertTemplateUsed(response, "layouts/case.html")
     assert response.context["tabs"][0].name == "Quick summary"
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find("a", {"id": "tab-quick-summary", "class": "lite-tabs__tab--selected"})
+    assert soup.find("a", {"id": "tab-quick-summary", "class": "lite-tabs__tab lite-tabs__tab--selected"})
 
 
 @override_settings(FEATURE_QUICK_SUMMARY=True)

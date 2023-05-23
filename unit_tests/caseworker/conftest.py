@@ -344,7 +344,6 @@ def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_ca
             "name": "LU Post circulation",
             "alias": "LU_POST_CIRC_FINALISE",
             "joined_queue_at": joined_queue_at.isoformat(),
-            "days_on_queue_elapsed": (timezone.now() - joined_queue_at).days,
         },
     ]
     yield requests_mock.get(url=url, json=data_standard_case)
@@ -360,7 +359,6 @@ def mock_standard_case_on_fcdo_countersigning_queue(requests_mock, data_standard
             "name": "FCDO Countersigning",
             "alias": "FCDO_COUNTER_SIGNING",
             "joined_queue_at": joined_queue_at.isoformat(),
-            "days_on_queue_elapsed": (timezone.now() - joined_queue_at).days,
         },
     ]
     yield requests_mock.get(url=url, json=data_standard_case)
