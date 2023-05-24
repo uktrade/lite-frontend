@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 from django.utils.functional import cached_property
+from caseworker.cases.services import update_mentions
 
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.constants import SUPER_USER_ROLE_ID, UserStatuses
@@ -146,6 +147,13 @@ class ChangeUserStatus(TemplateView):
 
 class UserCaseNoteMentions(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
+        my_unread_mentions = [
+            {"id": m["id"], "is_accessed": True}
+            for m in self.mentions.get("mentions", [])
+            if not m["is_accessed"] and m["user"]["id"]
+        ]
+        if my_unread_mentions:
+            update_mentions(request, my_unread_mentions)
         return render(request, "users/mentions.html", {"user_mentions": self.mentions})
 
     @cached_property

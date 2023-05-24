@@ -13,6 +13,7 @@ from caseworker.cases.services import (
     get_activity_filters,
     get_case,
     get_mentions,
+    update_mentions,
 )
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
@@ -36,6 +37,11 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
     @cached_property
     def queue(self):
         return get_queue(self.request, self.queue_id)
+
+    @cached_property
+    def mentions(self):
+        case_note_mentions = get_mentions(self.request, self.case_id)
+        return case_note_mentions.get("results")
 
     def get_team_filter_url(self, team):
         url = reverse(
@@ -65,12 +71,23 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
         ]
         return team_filters
 
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        if "mentions" in list(request.GET.keys()):
+            my_unread_mentions = [
+                {"id": m["id"], "is_accessed": True}
+                for m in self.mentions
+                if not m["is_accessed"] and m["user"]["id"] == self.request.session["lite_api_user_id"]
+            ]
+            if my_unread_mentions:
+                update_mentions(request, my_unread_mentions)
+        return response
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if "mentions" in list(self.request.GET.keys()):
-            # add to contex the list of CaseNotes with mentions.
-            mentions = get_mentions(self.request, self.case_id)
-            context.update({"mentions": mentions.get("results", None)})
+            # add to context the list of CaseNotes with mentions.
+            context.update({"mentions": self.mentions})
         else:
             activities = get_activity(self.request, self.case_id, activity_filters=self.request.GET)
             context.update({"activities": activities})

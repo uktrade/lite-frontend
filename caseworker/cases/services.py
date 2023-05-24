@@ -107,6 +107,12 @@ def get_mentions(request, pk):
     return data.json()
 
 
+def update_mentions(request, json):
+    request = client.put(request, "/cases/case-note-mentions/", json)
+    request.raise_for_status()
+    return request.json()
+
+
 def get_activity_filters(request, pk):
     data = client.get(request, f"/cases/{pk}/activity/filters/")
     return data.json()["filters"]
