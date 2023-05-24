@@ -5,6 +5,11 @@ from bs4 import BeautifulSoup
 from core import client
 
 
+@pytest.fixture(autouse=True)
+def default_feature_flags(settings):
+    settings.FEATURE_MENTIONS_ENABLED = True
+
+
 @pytest.mark.parametrize(
     "data, count",
     (

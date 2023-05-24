@@ -55,9 +55,7 @@ def lite_menu(request):
         notification_data = notifications["notifications"]
         has_notifications = notifications["has_notifications"]
         # this can default to 0 and we can remove the "is not False" in the template when removing the feature flag
-        mentions = False
-        if settings.FEATURE_MENTIONS_ENABLED:
-            mentions = get_mention_count(request)
+        mentions = get_mention_count(request)
         queue_pk = request.session["default_queue"]
         pages = [
             {
@@ -107,7 +105,8 @@ def lite_menu(request):
     return {
         "LITE_MENU": [x for x in pages if x is not None],
         "MENU_NOTIFICATIONS": has_notifications,
-        "mention_count": mentions,
+        "MENTIONS_COUNT": mentions,
+        "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
     }
 
 
