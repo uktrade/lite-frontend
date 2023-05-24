@@ -49,12 +49,12 @@ def export_vars(request):
 
 def lite_menu(request):
     has_notifications = False
+    mentions = False
     if "lite_api_user_id" in request.session:
         permissions = get_user_permissions(request)
         notifications = get_menu_notifications(request)
         notification_data = notifications["notifications"]
         has_notifications = notifications["has_notifications"]
-        # this can default to 0 and we can remove the "is not False" in the template when removing the feature flag
         mentions = get_mention_count(request)
         queue_pk = request.session["default_queue"]
         pages = [

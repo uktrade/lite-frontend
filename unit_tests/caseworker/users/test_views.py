@@ -58,7 +58,7 @@ def test_user_case_note_mention_count(data, count, authorized_client, requests_m
     url = reverse("users:user_case_note_mentions")
     response = authorized_client.get(url)
     assert response.status_code == 200
-    assert response.context["mention_count"] == count
+    assert response.context["MENTIONS_COUNT"] == count
 
 
 def test_user_case_note_mentions(authorized_client, requests_mock):
