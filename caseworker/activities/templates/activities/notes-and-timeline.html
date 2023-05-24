@@ -1,4 +1,5 @@
 {% extends 'layouts/case.html' %}
+{% load crispy_forms_tags %}
 
 {% block header_tabs %}
     <div id="tab-bar" class="app-case-tab-bar">
@@ -59,35 +60,9 @@
         </div>
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-grid-row">
-                <form action="{% url 'cases:case_notes' queue.id case.id %}" class="notes-and-timeline-case-note" data-module="case-note" method="post">
-                    <div class="notes-and-timeline-case-note__wrapper">
-                        {% csrf_token %}
-                        <label class="govuk-label govuk-visually-hidden" for="input-case-note">
-                            Add case note
-                        </label>
-                        <div class="case-note__container">
-                            <textarea id="input-case-note" name="text" cols="80" class="govuk-textarea case-note__textarea"></textarea>
-                            <div class="case-note__controls">
-                                <div class="govuk-checkboxes govuk-checkboxes--small">
-                                    <div class="govuk-checkboxes__item">
-                                        <input class="govuk-checkboxes__input" type="checkbox" id="is-visible-to-exporter" name="is-visible-to-exporter" value="True">
-                                        <label class="govuk-label govuk-checkboxes__label" for="is-visible-to-exporter">
-                                            Make visible to exporter
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="case-note__controls-buttons">
-                                    <a id="link-case-note-cancel" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}" class="govuk-body govuk-link govuk-link--no-visited-state case-note__cancel-button" type="button" draggable="false">
-                                        Cancel
-                                    </a>
-                                    <button id="button-case-note-post" class="govuk-button" type="submit">
-                                        Add a case note
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                <div class="notes-and-timeline-case-note">
+                    {% crispy form %}
+                </div>
             </div>
             <div class="govuk-grid-row">
                 <div class="notes-and-timeline-timeline">
@@ -100,7 +75,7 @@
                                      {% for mention in mentions_by_date.list %}
                                      <div class="notes-and-timeline-timeline__day-group-item">
                                             {% if mention.case_note_user.team %}<span class="app-activity__item__user">{{ mention.case_note_user.team.name }}:</span> {% endif %}{{ mention.case_note_user.first_name }} {{ mention.case_note_user.last_name }}
-                                            sent a case note to {{ mention.user.first_name }} {{ mention.user.last_name }} ({{mention.user.team.name}}){% if mention.is_urgent %} <p class="warning-text">URGENT</p> {% endif %}
+                                            sent a case note to {{ mention.user.first_name }} {{ mention.user.last_name }} ({{mention.user.team.name}}){% if mention.is_urgent %} <p class="warning-text mentions__urgent">URGENT</p> {% endif %}
                                             <div class="notes-and-timeline-timeline__day-group-note">
                                                 {{ mention.case_note_text }}
                                             </div>

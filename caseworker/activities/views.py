@@ -2,7 +2,7 @@ from operator import itemgetter
 
 from django.urls import reverse
 from django.utils.functional import cached_property
-from django.views.generic import TemplateView
+from django.views.generic import FormView
 from django.conf import settings
 
 from caseworker.cases.helpers.case import CaseworkerMixin
@@ -12,15 +12,19 @@ from caseworker.cases.services import (
     get_activity,
     get_activity_filters,
     get_case,
+    post_case_notes,
     get_mentions,
     update_mentions,
 )
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
+from caseworker.activities.forms import NotesAndTimelineForm
+from lite_forms.generators import error_page
 
 
-class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, TemplateView):
+class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormView):
     template_name = "activities/notes-and-timeline.html"
+    form_class = NotesAndTimelineForm
 
     @cached_property
     def case_id(self):
@@ -83,6 +87,11 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
                 update_mentions(request, my_unread_mentions)
         return response
 
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["request"] = self.request
+        return form_kwargs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if "mentions" in list(self.request.GET.keys()):
@@ -101,3 +110,12 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Templ
             "current_tab": "cases:activities:notes-and-timeline",
             "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
         }
+
+    def form_valid(self, form):
+        response, status_code = post_case_notes(self.request, self.case_id, form.cleaned_data)
+        if status_code != 201:
+            return error_page(self.request, response.get("errors")["text"][0])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:activities:notes-and-timeline", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
