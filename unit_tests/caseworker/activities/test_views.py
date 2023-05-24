@@ -25,6 +25,16 @@ def setup(
     yield
 
 
+@pytest.fixture(autouse=True)
+def mock_get_gov_users(mock_gov_users, requests_mock):
+    yield requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
+
+
 def test_notes_and_timeline_tab(authorized_client, data_queue, data_standard_case):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
@@ -295,12 +305,6 @@ def test_notes_and_timelines_mentions(
 def test_notes_and_timelines_mentions_template(
     authorized_client, notes_and_timelines_url, mock_case_note_mentions, requests_mock, mock_gov_users
 ):
-    requests_mock.get(
-        client._build_absolute_uri(f"/gov-users/"),
-        json={
-            "results": mock_gov_users,
-        },
-    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     soup = BeautifulSoup(response.content, "html.parser")
 
@@ -308,15 +312,14 @@ def test_notes_and_timelines_mentions_template(
 
 
 def test_notes_and_timelines_mentions_feature_flag(
-    authorized_client, notes_and_timelines_url, mock_case_note_mentions, settings, requests_mock, mock_gov_users
+    authorized_client,
+    notes_and_timelines_url,
+    mock_case_note_mentions,
+    settings,
+    requests_mock,
+    mock_gov_users,
 ):
     settings.FEATURE_MENTIONS_ENABLED = False
-    requests_mock.get(
-        client._build_absolute_uri(f"/gov-users/"),
-        json={
-            "results": mock_gov_users,
-        },
-    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     soup = BeautifulSoup(response.content, "html.parser")
 
