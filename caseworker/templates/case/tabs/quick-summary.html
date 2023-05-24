@@ -95,16 +95,22 @@
 					Latest action
 				</dt>
 				<dd class="app-case__summary-list__value" id="latest_action">
-					<div>
-						{% if case.latest_activity.user.type == 'exporter' %}
-							Applicant {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-						{% else %}
-							{{ case.latest_activity.user.team }} {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-						{% endif %}
-					</div>
-					<div>
-						{{ case.latest_activity.user.first_name }} {{ case.latest_activity.user.last_name }} {{ case.latest_activity.text|linebreaksbr }}
-					</div>
+					{% if case.latest_activity %}
+						<div>
+							{% if case.latest_activity.user.type == 'exporter' %}
+								Applicant {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
+							{% else %}
+								{{ case.latest_activity.user.team }} {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
+							{% endif %}
+						</div>
+						<div>
+							{{ case.latest_activity.user.first_name }} {{ case.latest_activity.user.last_name }} {{ case.latest_activity.text|linebreaksbr }}
+						</div>
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							None
+						</span>
+					{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="days_on_queue_elapsed">
@@ -156,7 +162,13 @@
 					Control list entries
 				</dt>
 				<dd class="app-case__summary-list__value" id="control_list_entry">
+				{% if goods_summary.cles %}
 					{{ goods_summary.cles|join:", " }}
+				{% else %}
+					<span class="govuk-hint govuk-!-margin-0">
+						None
+					</span>
+				{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="regime">
@@ -164,7 +176,13 @@
 					Regimes
 				</dt>
 				<dd class="app-case__summary-list__value" id="regime">
-					{{ goods_summary.regimes|join:", " }}
+					{% if goods_summary.regimes %}
+						{{ goods_summary.regimes|join:", " }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							None
+						</span>
+					{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="report_summary">
@@ -172,7 +190,13 @@
 					Report summaries
 				</dt>
 				<dd class="app-case__summary-list__value" id="report_summary">
-					{{ goods_summary.report_summaries|join:", " }}
+					{% if goods_summary.report_summaries %}
+						{{ goods_summary.report_summaries|join:", " }}
+					{% else %}
+						<span class="govuk-hint govuk-!-margin-0">
+							None
+						</span>
+					{% endif %}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="security_graded">
@@ -188,8 +212,8 @@
 					Security approvals
 				</dt>
 				<dd class="app-case__summary-list__value" id="security_approvals">
-					{% if case.data.security_approvals %}
-						{{ case.data.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
+					{% if case.security_approvals %}
+						{{ case.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
 					{% else %}
 						<span class="govuk-hint govuk-!-margin-0">
 							None
@@ -249,9 +273,9 @@
 					{{ case.data.intended_end_use }}
 				</dd>
 			</div>
-			{% if case.data.end_user.documents|length %}
+			{% if end_user.documents|length %}
 				<div class="app-case__summary-list__row" data-customiser-key="end_user_document">
-					{% for document in case.data.end_user.documents %}
+					{% for document in end_user.documents %}
 						<li class="app-case__summary-list__value" id="end_user_document">
 							<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
 								{% if document.type == "end_user_undertaking_document" or document.type == "supporting_document" %}End-user document{% elif document.type == "end_user_english_translation_document" %}English translation{% elif document.type == "end_user_english_translation_document" %}Company letterhead{% endif %} ({{ document_extension|upper }} opens in new tab)
