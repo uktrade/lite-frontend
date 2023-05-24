@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from django.utils import timezone
 from os import path, makedirs, chmod, pardir
 from re import search
@@ -285,3 +286,10 @@ def get_element_row_text_from_table(elements, text_to_search_on):
     # Element index -1 means an element with the given text was not found
     if element_index != -1:
         return elements[element_index].text
+
+
+@contextmanager
+def wait_for_page_to_reload(driver, *, timeout=45):
+    old_page = driver.find_element(by=By.TAG_NAME, value="html")
+    yield
+    WebDriverWait(driver, timeout).until(EC.staleness_of(old_page))

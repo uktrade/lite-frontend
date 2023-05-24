@@ -195,9 +195,8 @@ def prepare_case(api_test_client, nlr):  # noqa
 @when("I click continue")
 @when("I click submit")
 def submit_form(driver):  # noqa
-    old_page = driver.find_element(by=By.TAG_NAME, value="html")
-    Shared(driver).click_submit()
-    WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
+    with utils.wait_for_page_to_reload(driver):
+        Shared(driver).click_submit()
 
 
 @when(parsers.parse('I click the text "{text}"'))

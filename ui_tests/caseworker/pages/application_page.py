@@ -5,8 +5,11 @@ from selenium.webdriver.support.ui import Select
 
 from tests_common import functions
 from ui_tests.caseworker.pages.BasePage import BasePage
-from tests_common.tools.helpers import scroll_to_element_by_id
-from tests_common.tools.helpers import scroll_to_element_below_header_by_id
+from tests_common.tools.helpers import (
+    scroll_to_element_below_header_by_id,
+    scroll_to_element_by_id,
+    wait_for_page_to_reload,
+)
 
 
 class ApplicationPage(BasePage):
@@ -100,9 +103,8 @@ class ApplicationPage(BasePage):
                 (By.CSS_SELECTOR, f"#{self.BUTTON_POST_NOTE_ID}:not([disabled])")
             )
         )
-        old_page = self.driver.find_element(by=By.TAG_NAME, value="html")
-        self.driver.find_element(by=By.ID, value=self.BUTTON_POST_NOTE_ID).click()
-        WebDriverWait(self.driver, 45).until(expected_conditions.staleness_of(old_page))
+        with wait_for_page_to_reload(self.driver):
+            self.driver.find_element(by=By.ID, value=self.BUTTON_POST_NOTE_ID).click()
 
     def click_cancel_btn(self):
         WebDriverWait(self.driver, 30).until(
