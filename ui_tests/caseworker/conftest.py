@@ -915,7 +915,8 @@ def fill_report_summary_select_regime_none_and_submit(driver, prefix, subject): 
 @when("I click submit recommendation")  # noqa
 @when("I click save and publish to exporter")  # noqa
 def submit_form(driver):  # noqa
-    Shared(driver).click_submit()
+    with utils.wait_for_page_to_reload(driver):
+        Shared(driver).click_submit()
 
 
 @then(parsers.parse('I select the CLE "{control_code}"'))
