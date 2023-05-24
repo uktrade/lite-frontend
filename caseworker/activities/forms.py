@@ -2,7 +2,7 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, Field, HTML, Div
 from django import forms
 from django.conf import settings
-
+from caseworker.core.constants import UserStatuses
 from caseworker.users.services import get_gov_users, convert_users_to_choices
 
 
@@ -33,7 +33,7 @@ class NotesAndTimelineForm(forms.Form):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
-        users_data, _ = get_gov_users(request)
+        users_data, _ = get_gov_users(request, {"disable_pagination": True, "status": UserStatuses.ACTIVE})
         user_choices = convert_users_to_choices(users_data["results"])
 
         self.fields["mentions"].choices += user_choices
