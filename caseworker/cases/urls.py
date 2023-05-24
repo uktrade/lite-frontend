@@ -16,6 +16,8 @@ from caseworker.flags.views import AssignFlags
 
 app_name = "cases"
 
+# When the feature flag is removed then this statement will be removed
+# and code coverage will return to 100%
 if settings.FEATURE_QUICK_SUMMARY:
     detail_tab = "quick-summary"
 else:
