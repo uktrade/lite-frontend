@@ -204,7 +204,7 @@
 					Security graded
 				</dt>
 				<dd class="app-case__summary-list__value" id="security_graded">
-					{{ display_pv_grading|yesno|capfirst }}
+					{{ case.goods|is_case_pv_graded|yesno|capfirst }}
 				</dd>
 			</div>
 			<div class="app-case__summary-list__row" data-customiser-key="security_approvals">

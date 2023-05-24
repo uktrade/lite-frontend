@@ -63,6 +63,8 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     data_standard_case["case"]["assigned_users"] = {"00000000-0000-0000-0000-000000000001": [gov_user]}
     data_standard_case["case"]["case_officer"] = gov_user
     data_standard_case["case"]["data"]["sanction_matches"] = [{"list_name": "Russia"}]
+    data_standard_case["case"]["data"]["goods"][0]["report_summary_prefix"] = {"name": "casing for"}
+    data_standard_case["case"]["data"]["goods"][0]["report_summary_subject"] = {"name": "nuke"}
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
@@ -120,13 +122,10 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
 
     report_summary = html.find(id="report_summary").text.strip()
     for good in data_standard_case["case"]["data"]["goods"]:
-        if "report_summary_subject" in good and good["report_summary_subject"]:
-            assert f'{good["report_summary_prefix"]["name"]} {good["report_summary_subject"]["name"]}' in report_summary
+        assert f'{good["report_summary_prefix"]["name"]} {good["report_summary_subject"]["name"]}' in report_summary
 
     security_graded = html.find(id="security_graded").text.strip()
-    for good in data_standard_case["case"]["data"]["goods"]:
-        if "is_pv_graded" in good and good["is_pv_graded"] == "yes":
-            assert security_graded == good["is_pv_graded"]
+    assert security_graded.lower() == data_standard_case["case"]["data"]["goods"][0]["good"]["is_pv_graded"]
 
     security_approvals = html.find(id="security_approvals").text.strip()
     for approval in data_standard_case["case"]["data"]["security_approvals"]:
@@ -139,10 +138,8 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     all_parties = (
         data_standard_case["case"]["data"]["ultimate_end_users"] + data_standard_case["case"]["data"]["third_parties"]
     )
-    if data_standard_case["case"]["data"]["consignee"]:
-        all_parties.append(data_standard_case["case"]["data"]["consignee"])
-    if data_standard_case["case"]["data"]["end_user"]:
-        all_parties.append(data_standard_case["case"]["data"]["end_user"])
+    all_parties.append(data_standard_case["case"]["data"]["consignee"])
+    all_parties.append(data_standard_case["case"]["data"]["end_user"])
     for party in all_parties:
         assert party["country"]["name"] in destination
 
@@ -158,8 +155,7 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     assert end_use == data_standard_case["case"]["data"]["intended_end_use"]
 
     end_user_document = html.find(id="end_user_document")
-    if not data_standard_case["case"]["data"]["end_user"]["documents"]:
-        assert end_user_document == None
+    assert end_user_document == None
 
 
 @override_settings(FEATURE_QUICK_SUMMARY=True)
@@ -178,6 +174,7 @@ def test_case_summary_missing_data(authorized_client, data_queue, data_standard_
         good["regime_entries"] = []
         good["report_summary_prefix"] = None
         good["report_summary_subject"] = None
+        good["good"]["is_pv_graded"] = "no"
 
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
