@@ -212,8 +212,8 @@
 					Security approvals
 				</dt>
 				<dd class="app-case__summary-list__value" id="security_approvals">
-					{% if case.security_approvals %}
-						{{ case.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
+					{% if case.data.security_approvals %}
+						{{ case.data.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
 					{% else %}
 						<span class="govuk-hint govuk-!-margin-0">
 							None
