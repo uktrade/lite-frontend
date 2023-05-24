@@ -22,7 +22,7 @@
                 <form id="tau-form" method="POST">
                     <h1 class="govuk-heading-m tau__headline">Assessing {{good.good.name}}</h1>
                     {% crispy form %}
-                    {% test_rule 'can_user_assess_products' current_user case as can_user_assess_products %}
+                    {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
                     {% if can_user_assess_products %}
                         <input type="submit" name="submit" value="Save" class="govuk-button" id="submit-id-submit" />
                     {% endif %}

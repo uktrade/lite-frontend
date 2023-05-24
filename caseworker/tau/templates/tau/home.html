@@ -24,7 +24,7 @@
                     {% endif %}
                 </div>
                 <!-- Move case forward form -->
-                {% test_rule 'can_user_move_case_forward' current_user case as can_user_move_case_forward %}
+                {% test_rule 'can_user_move_case_forward' request case as can_user_move_case_forward %}
                 {% if can_user_move_case_forward  %}
                     <div class="govuk-grid-column-one-third">
                         {% if not unassessed_goods and is_tau and not is_all_cases_queue %}
@@ -51,7 +51,7 @@
                         <div class="govuk-grid-column-one-third assessment-form__second-column">
                             <h1 class="govuk-heading-m assessment-form__headline"></h1>
                             {% crispy form %}
-                            {% test_rule 'can_user_assess_products' current_user case as can_user_assess_products %}
+                            {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
                             {% if can_user_assess_products %}
                                 <input type="submit" name="submit" value="Save and continue" class="govuk-button" id="submit-id-submit" />
                             {% endif %}
@@ -66,7 +66,7 @@
                     <div class="govuk-grid-column-full">
                         <table id="assessed-products" class="govuk-table">
                             <h2 class="govuk-heading-m">Assessed products</h2>
-                            {% test_rule 'can_user_assess_products' current_user case as can_user_assess_products %}
+                            {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
                             {% if can_user_assess_products %}
                                 <a id="clear-assessments-button" href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
                             {% endif %}

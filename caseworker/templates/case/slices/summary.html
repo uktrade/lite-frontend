@@ -1,5 +1,5 @@
 {% load rules %}
-{% test_rule 'can_user_change_case' current_user case as can_user_change_case %}
+{% test_rule 'can_user_change_case' request case as can_user_change_case %}
 
 <dl class="app-case__summary-list">
 	{% if case.case_type.reference.key == "comp_v" %}

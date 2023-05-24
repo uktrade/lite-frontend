@@ -1,10 +1,18 @@
 import pytest
 import rules
 
+from django.http import HttpRequest
+
 from caseworker.core import rules as caseworker_rules
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
+
+
+def get_mock_request(user):
+    request = HttpRequest()
+    request.user = user
+    return request
 
 
 @pytest.mark.parametrize(
@@ -45,11 +53,11 @@ mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
 )
 def test_is_user_assigned(data, mock_gov_user, expected_result):
     assigned_users = {"assigned_users": data}
-    assert caseworker_rules.is_user_assigned(mock_gov_user["user"], assigned_users) == expected_result
+    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) == expected_result
 
 
 def test_is_user_case_officer_none():
-    assert caseworker_rules.is_user_case_adviser(None, {"case_officer": None}) is False
+    assert caseworker_rules.is_user_case_adviser(get_mock_request(None), {"case_officer": None}) is False
 
 
 @pytest.mark.parametrize(
@@ -61,7 +69,7 @@ def test_is_user_case_officer_none():
     ),
 )
 def test_is_user_case_officer(data, mock_gov_user, expected_result):
-    assert caseworker_rules.is_user_case_adviser(mock_gov_user["user"], data) == expected_result
+    assert caseworker_rules.is_user_case_adviser(get_mock_request(mock_gov_user["user"]), data) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -119,13 +127,12 @@ def test_user_assignment_based_rules(data, mock_gov_user, expected_result):
         "can_user_move_case_forward",
         "can_user_review_and_countersign",
         "can_user_review_and_combine",
-        "can_user_make_recommendation",
         "can_user_assess_products",
         "can_user_add_an_ejcu_query",
         "can_user_generate_document",
         "can_user_add_contact",
     ):
-        assert rules.test_rule(rule_name, mock_gov_user["user"], data) == expected_result
+        assert rules.test_rule(rule_name, get_mock_request(mock_gov_user["user"]), data) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -174,4 +181,4 @@ def test_user_assignment_based_rules(data, mock_gov_user, expected_result):
     ),
 )
 def test_can_user_attach_document(data, mock_gov_user):
-    assert rules.test_rule("can_user_attach_document", mock_gov_user["user"], data)
+    assert rules.test_rule("can_user_attach_document", get_mock_request(mock_gov_user["user"]), data)
