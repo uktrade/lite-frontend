@@ -142,9 +142,9 @@ class CaseView(CaseworkerMixin, TemplateView):
             goods_summary["cles"].update(list(cle["rating"] for cle in good["control_list_entries"]))
             goods_summary["regimes"].update(list(regime["name"] for regime in good["regime_entries"]))
             goods_summary["names"].append(good["good"]["name"])
-            if hasattr(good, "report_summary_subject"):
+            if "report_summary_subject" in good and good["report_summary_subject"]:
                 report_summary = good["report_summary_subject"]["name"]
-                if hasattr(good, "report_summary_prefix"):
+                if "report_summary_prefix" in good and good["report_summary_prefix"]:
                     report_summary = f"{good['report_summary_prefix']['name']} {report_summary}"
                 goods_summary["report_summaries"].add(report_summary)
             goods_summary["total_value"] += Decimal(good["value"])
@@ -217,8 +217,9 @@ class CaseView(CaseworkerMixin, TemplateView):
 
     def _transform_data(self):
         self.case.total_days_elapsed = (timezone.now() - parse(self.case.submitted_at)).days
-        for queue_detail in self.case.queue_details:
-            queue_detail["days_on_queue_elapsed"] = (timezone.now() - parse(queue_detail["joined_queue_at"])).days
+        if self.case.queue_details:
+            for queue_detail in self.case.queue_details:
+                queue_detail["days_on_queue_elapsed"] = (timezone.now() - parse(queue_detail["joined_queue_at"])).days
 
     def get(self, request, **kwargs):
         self.case_id = str(kwargs["pk"])

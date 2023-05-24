@@ -62,6 +62,7 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     }
     data_standard_case["case"]["assigned_users"] = {"00000000-0000-0000-0000-000000000001": [gov_user]}
     data_standard_case["case"]["case_officer"] = gov_user
+    data_standard_case["case"]["data"]["sanction_matches"] = [{"list_name": "Russia"}]
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
@@ -119,14 +120,12 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
 
     report_summary = html.find(id="report_summary").text.strip()
     for good in data_standard_case["case"]["data"]["goods"]:
-        if hasattr(good, "report_summary_prefix"):
-            assert (
-                f'{good["report_summary_prefix"]["name"]}, {good["report_summary_subject"]["name"]}' in report_summary
-            )
+        if "report_summary_subject" in good and good["report_summary_subject"]:
+            assert f'{good["report_summary_prefix"]["name"]} {good["report_summary_subject"]["name"]}' in report_summary
 
     security_graded = html.find(id="security_graded").text.strip()
     for good in data_standard_case["case"]["data"]["goods"]:
-        if hasattr(good, "is_pv_graded") and good["is_pv_graded"] == "yes":
+        if "is_pv_graded" in good and good["is_pv_graded"] == "yes":
             assert security_graded == good["is_pv_graded"]
 
     security_approvals = html.find(id="security_approvals").text.strip()
@@ -161,3 +160,72 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     end_user_document = html.find(id="end_user_document")
     if not data_standard_case["case"]["data"]["end_user"]["documents"]:
         assert end_user_document == None
+
+
+@override_settings(FEATURE_QUICK_SUMMARY=True)
+def test_case_summary_missing_data(authorized_client, data_queue, data_standard_case):
+    data_standard_case["case"]["queue_details"] = []
+    data_standard_case["case"]["flags"] = []
+    data_standard_case["case"]["goods_flags"] = []
+    data_standard_case["case"]["destinations_flags"] = []
+    data_standard_case["case"]["has_open_queries"] = False
+    data_standard_case["case"]["latest_activity"] = None
+    data_standard_case["case"]["data"]["security_approvals"] = []
+    data_standard_case["case"]["data"]["denial_matches"] = []
+    data_standard_case["case"]["data"]["sanction_matches"] = []
+    for good in data_standard_case["case"]["data"]["goods"]:
+        good["control_list_entries"] = []
+        good["regime_entries"] = []
+        good["report_summary_prefix"] = None
+        good["report_summary_subject"] = None
+
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+
+    licensing_unit_case_officer = html.find(id="licensing_unit_case_officer").text.strip()
+    assert licensing_unit_case_officer == "Not assigned"
+
+    case_adviser = html.find(id="case_adviser").text.strip()
+    assert case_adviser == "Not assigned"
+
+    assigned_queues = html.find(id="assigned_queues").text.strip()
+    assert assigned_queues == "Not assigned"
+
+    flags = html.find(id="flags").text.strip()
+    assert flags == "None"
+
+    open_query = html.find(id="open_query").text.strip()
+    assert open_query == "None"
+
+    latest_action = html.find(id="latest_action").text.strip()
+    assert latest_action == "None"
+
+    days_on_queue_elapsed = html.find(id="days_on_queue_elapsed").text.strip()
+    assert days_on_queue_elapsed == "N/A"
+
+    control_list_entry = html.find(id="control_list_entry").text.strip()
+    assert control_list_entry == "None"
+
+    regime = html.find(id="regime").text.strip()
+    assert regime == "None"
+
+    report_summary = html.find(id="report_summary").text.strip()
+    assert report_summary == "None"
+
+    security_graded = html.find(id="security_graded").text.strip()
+    assert security_graded == "No"
+
+    denial_matches = html.find(id="denial_matches").text.strip()
+    assert denial_matches == "None"
+
+    sanction_matches = html.find(id="sanction_matches").text.strip()
+    assert sanction_matches == "None"
+
+    data_standard_case["case"]["data"]["goods"][0]["report_summary_subject"] = {"name": "guns"}
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+
+    report_summary = html.find(id="report_summary").text.strip()
+    assert report_summary == "guns"
