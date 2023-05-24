@@ -91,18 +91,18 @@ class GiveApprovalAdviceForm(forms.Form):
         picklist_attrs={"target": "approval_reasons", "type": "standard_advice", "name": "standard advice"},
         label="What are your reasons for approving?",
         help_link_text="Choose an approval reason from the template list",
-        min_rows=1,
+        min_rows=3,
         error_messages={"required": "Enter a reason for approving"},
     )
     proviso = PicklistCharField(
         picklist_attrs={"target": "proviso", "type": "proviso", "name": "licence condition"},
         label="Add a licence condition (optional)",
         help_link_text="Choose a licence condition from the template list",
-        min_rows=1,
+        min_rows=3,
         required=False,
     )
     instructions_to_exporter = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "1"}),
+        widget=forms.Textarea(attrs={"rows": "3"}),
         label="Add any instructions for the exporter (optional)",
         help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
         required=False,
@@ -113,7 +113,7 @@ class GiveApprovalAdviceForm(forms.Form):
         help_link_text="Choose a reporting footnote from the template list",
         help_text_extra="Footnotes explain why products to a destination have been approved or refused. "
         + "They will be publicly available in reports and data tables.",
-        min_rows=1,
+        min_rows=3,
         required=False,
     )
 
