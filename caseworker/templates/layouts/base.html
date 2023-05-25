@@ -63,7 +63,13 @@
 			<span></span>
 			{% if FEATURE_MENTIONS_ENABLED %}
 			<a id="link-mentions" class="app-header__link" href="{% url 'users:user_case_note_mentions' %}" data-tooltip="Mentions">
-				Mentions ({{ MENTIONS_COUNT }})
+				{% if MENTIONS_COUNT > 0 %}
+					<b>
+						Mentions ({{ MENTIONS_COUNT }})
+					</b>
+				{% else %}
+					Mentions
+				{% endif %}
 			</a>
 			{% endif %}
 

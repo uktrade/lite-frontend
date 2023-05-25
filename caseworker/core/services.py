@@ -240,4 +240,4 @@ def get_mention_count(request):
     if not hasattr(request, "cached_get_mention_count"):
         request.cached_get_mention_count = client.get(request, "/cases/user-case-note-mentions/")
     response = request.cached_get_mention_count.json()
-    return len(response["mentions"])
+    return len([mention for mention in response["mentions"] if not mention.get("is_accessed")])

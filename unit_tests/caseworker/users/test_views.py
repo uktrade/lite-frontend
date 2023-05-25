@@ -19,6 +19,7 @@ def default_feature_flags(settings):
                     {
                         "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                         "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
+                        "is_accessed": False,
                     }
                 ]
             },
@@ -30,22 +31,26 @@ def default_feature_flags(settings):
                     {
                         "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                         "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
+                        "is_accessed": True,
                     },
                     {
                         "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                         "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
+                        "is_accessed": False,
                     },
                     {
                         "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                         "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
+                        "is_accessed": False,
                     },
                     {
                         "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                         "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
+                        "is_accessed": False,
                     },
                 ]
             },
-            4,
+            3,
         ),
     ),
 )
@@ -67,6 +72,9 @@ def test_user_case_note_mentions(authorized_client, requests_mock):
             {
                 "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                 "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
+                "id": "f65fbf49-c14b-482b-833f-hdkwhdke79",  # /PS-IGNORE
+                "is_accessed": True,
+                "user": {"id": 123},
             }
         ]
     }
