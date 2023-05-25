@@ -6,13 +6,10 @@ from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit
 
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
+from core.forms.layouts import ExpandingFieldset
 from caseworker.flags.services import get_flags
 
 SLA_DAYS_RANGE = 99
-
-
-class AdvancedFiltersFieldset(Fieldset):
-    template = "queues/advanced_filters_fieldset.html"
 
 
 class CasesFiltersForm(forms.Form):
@@ -200,7 +197,7 @@ class CasesFiltersForm(forms.Form):
                 *basic_filters,
                 css_class="basic-filter-fields",
             ),
-            AdvancedFiltersFieldset(
+            ExpandingFieldset(
                 Field.text("exporter_application_reference"),
                 Field.text("organisation_name"),
                 Field.text("exporter_site_name"),
@@ -226,6 +223,7 @@ class CasesFiltersForm(forms.Form):
                 Field("is_trigger_list"),
                 legend="Advanced filters",
                 css_class="advanced-group",
+                text_div_css_class="advanced-filter-fields",
             ),
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),
