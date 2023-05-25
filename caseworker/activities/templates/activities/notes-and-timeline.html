@@ -77,7 +77,7 @@
                                             {% if mention.case_note_user.team %}<span class="app-activity__item__user">{{ mention.case_note_user.team.name }}:</span> {% endif %}{{ mention.case_note_user.first_name }} {{ mention.case_note_user.last_name }}
                                             sent a case note to {{ mention.user.first_name }} {{ mention.user.last_name }} ({{mention.user.team.name}}){% if mention.is_urgent %} <p class="warning-text mentions__urgent">URGENT</p> {% endif %}
                                             <div class="notes-and-timeline-timeline__day-group-note">
-                                                {{ mention.case_note_text }}
+                                                {{ mention.case_note_text|linebreaks }}
                                             </div>
                                      </div>
                                  {% endfor %}
@@ -96,12 +96,11 @@
                                             {% else %}
                                                 {% if user.team %}<span class="app-activity__item__user">{{ user.team }}:</span> {% endif %}{{ user.first_name }} {{ user.last_name }}
                                             {% endif %}
-
                                             {{ activity.text|linebreaksbr }}
 
                                             {% if activity.additional_text %}
                                                 <div class="notes-and-timeline-timeline__day-group-note">
-                                                    {{ activity.additional_text }}
+                                                    {{ activity.additional_text|linebreaks }}
                                                 </div>
                                             {% endif %}
                                         </div>
