@@ -7,13 +7,13 @@ from django.urls import reverse
 
 from core import client
 from caseworker.cases.objects import Case
+from core import client
 
 
 @pytest.fixture(autouse=True)
 def setup(
     settings,
     mock_queue,
-    mock_gov_user,
     mock_case,
     mock_standard_case_activity_filters,
     mock_standard_case_activity_system_user,
@@ -58,17 +58,25 @@ def mock_case_note_mentions(requests_mock, data_standard_case, mentions_data):
 
 
 def test_notes_and_timelines_view_flag_on_status_code(
-    authorized_client,
-    notes_and_timelines_url,
+    authorized_client, notes_and_timelines_url, requests_mock, mock_gov_users
 ):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(notes_and_timelines_url)
     assert response.status_code == 200
 
 
-def test_notes_and_timelines_view_templates(
-    authorized_client,
-    notes_and_timelines_url,
-):
+def test_notes_and_timelines_view_templates(authorized_client, notes_and_timelines_url, requests_mock, mock_gov_users):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(notes_and_timelines_url)
     assertTemplateUsed(response, "activities/notes-and-timeline.html")
     assertTemplateUsed(response, "layouts/case.html")
@@ -83,7 +91,15 @@ def test_notes_and_timelines_context_data(
     data_queue,
     mock_standard_case_activity_system_user,
     mock_gov_user,
+    requests_mock,
+    mock_gov_users,
 ):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(notes_and_timelines_url)
     assert response.context["case"] == Case(data_standard_case["case"])
     assert response.context["queue"] == data_queue
@@ -107,10 +123,14 @@ def test_notes_and_timelines_context_data(
 
 
 def test_notes_and_timelines_searching_by_team(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_standard_case_activity_system_user,
+    authorized_client, notes_and_timelines_url, mock_standard_case_activity_system_user, requests_mock, mock_gov_users
 ):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?team_id=e0cb73c5-6bca-447c-b2a3-688fe259f0e9")
     assert mock_standard_case_activity_system_user.last_request.qs == {
         "team_id": ["e0cb73c5-6bca-447c-b2a3-688fe259f0e9"]
@@ -133,32 +153,154 @@ def test_notes_and_timelines_searching_by_team(
 
 
 def test_notes_and_timelines_searching_by_user_type(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_standard_case_activity_system_user,
+    authorized_client, notes_and_timelines_url, mock_standard_case_activity_system_user, requests_mock, mock_gov_users
 ):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": [],
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?user_type=exporter")
     assert mock_standard_case_activity_system_user.last_request.qs == {"user_type": ["exporter"]}
     assert response.context["filtering_by"] == ["user_type"]
 
 
-def test_notes_and_timelines_mentions(
+@pytest.mark.parametrize(
+    "user, expected",
+    (
+        (
+            [
+                {
+                    "id": "1f288b81-2c26-439f-ac32-2a43c8b1a5cb",  # /PS-IGNORE
+                    "email": "nobody_1@nodomain.com",  # /PS-IGNORE
+                    "first_name": "Firstname",
+                    "last_name": "Williams",
+                    "team": {
+                        "name": "MOD-ECJU",
+                    },
+                },
+                {
+                    "id": "53a88f67-feda-4975-b0f9-e7689999abd7",  # /PS-IGNORE
+                    "email": "nobody@nodomain.com",  # /PS-IGNORE
+                    "first_name": "joe_2",
+                    "last_name": "smith",
+                    "team": {
+                        "name": "MOD-ECJU",
+                    },
+                },
+                {
+                    "id": "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                    "email": "test_3@joebloggs.co.uk",  # /PS-IGNORE
+                    "first_name": "",
+                    "last_name": "",
+                    "team": {
+                        "name": "Admin",
+                    },
+                },
+                {
+                    "id": "d832b2fb-e128-4367-9cfe-6f6d37d270f7",  # /PS-IGNORE
+                    "email": "",
+                    "first_name": "Firstname",
+                    "last_name": "Williams",
+                    "team": {
+                        "name": "MOD-ECJU",
+                    },
+                },
+            ],
+            [
+                ("1f288b81-2c26-439f-ac32-2a43c8b1a5cb", "Firstname Williams (MOD-ECJU)"),  # /PS-IGNORE
+                ("53a88f67-feda-4975-b0f9-e7689999abd7", "joe_2 smith (MOD-ECJU)"),  # /PS-IGNORE
+                ("d832b2fb-e128-4367-9cfe-6f6d37d270f7", "test_3@joebloggs.co.uk"),  # /PS-IGNORE
+            ],
+        ),
+    ),
+)
+def test_notes_and_timelines_user_dropdown(user, expected, authorized_client, notes_and_timelines_url, requests_mock):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": user,
+        },
+    )
+    response = authorized_client.get(notes_and_timelines_url)
+    assert response.context["form"].fields["mentions"].choices == expected
+
+
+@pytest.mark.parametrize(
+    "data, mock_data, mock_status, expected_status, template_used",
+    (
+        (
+            {"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"], "is_urgent": False},
+            {},
+            201,
+            302,
+            "activites/notes-and-timelines.html",
+        ),
+        (
+            {"text": "this is text", "mentions": ["1f288b81-2c26-439f-ac32-2a43c8b1a5cb"], "is_urgent": False},
+            {"errors": {"text": ["test"]}},
+            400,
+            200,
+            "error.html",
+        ),
+    ),
+)
+def test_notes_and_timelines_post_valid(
+    data,
+    mock_data,
+    mock_status,
+    expected_status,
+    template_used,
     authorized_client,
     notes_and_timelines_url,
-    mock_case_note_mentions,
-    mentions_data,
+    mock_gov_users,
+    data_standard_case,
+    requests_mock,
 ):
+    requests_mock.post(
+        client._build_absolute_uri(f'/cases/{data_standard_case["case"]["id"]}/case-notes/'),
+        json=mock_data,
+        status_code=mock_status,
+    )
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
+
+    response = authorized_client.post(notes_and_timelines_url, data=data)
+    assert response.status_code == expected_status
+    if expected_status == 302:
+        assert response.url == notes_and_timelines_url
+    else:
+        assertTemplateUsed(response, template_used)
+
+
+def test_notes_and_timelines_mentions(
+    authorized_client, notes_and_timelines_url, mock_case_note_mentions, mentions_data, requests_mock, mock_gov_users
+):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     assert response.context["mentions"][0]["id"] == mentions_data["results"][0]["id"]
     assert not response.context.get("activities")
 
 
 def test_notes_and_timelines_mentions_template(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_case_note_mentions,
+    authorized_client, notes_and_timelines_url, mock_case_note_mentions, requests_mock, mock_gov_users
 ):
-
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     soup = BeautifulSoup(response.content, "html.parser")
 
@@ -166,12 +308,15 @@ def test_notes_and_timelines_mentions_template(
 
 
 def test_notes_and_timelines_mentions_feature_flag(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_case_note_mentions,
-    settings,
+    authorized_client, notes_and_timelines_url, mock_case_note_mentions, settings, requests_mock, mock_gov_users
 ):
     settings.FEATURE_MENTIONS_ENABLED = False
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     soup = BeautifulSoup(response.content, "html.parser")
 

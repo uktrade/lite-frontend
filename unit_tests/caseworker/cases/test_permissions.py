@@ -130,6 +130,8 @@ def test_warning_renders_when_expected(
     view_name,
     is_user_case_officer,
     is_user_assigned,
+    requests_mock,
+    mock_gov_users,
 ):
     if is_user_case_officer:
         data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
@@ -138,6 +140,12 @@ def test_warning_renders_when_expected(
     else:
         data_standard_case["case"]["case_officer"] = None
         data_standard_case["case"]["assigned_users"] = {}
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
     url = reverse(view_name, kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
