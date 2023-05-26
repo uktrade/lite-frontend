@@ -1,9 +1,11 @@
 import os
 
 from django.urls import reverse_lazy
+from django.conf import settings
+
 
 from caseworker.core.constants import Permission
-from caseworker.core.services import get_user_permissions, get_menu_notifications
+from caseworker.core.services import get_user_permissions, get_menu_notifications, get_mentions
 from lite_content.lite_internal_frontend import strings, open_general_licences
 from lite_content.lite_internal_frontend.flags import FlagsList
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage
@@ -98,7 +100,21 @@ def lite_menu(request):
         ]
     else:
         pages = []
-    return {"LITE_MENU": [x for x in pages if x is not None], "MENU_NOTIFICATIONS": has_notifications}
+    return {
+        "LITE_MENU": [x for x in pages if x is not None],
+        "MENU_NOTIFICATIONS": has_notifications,
+    }
+
+
+def new_mentions(request):
+    new_mentions = 0
+    if "lite_api_user_id" in request.session:
+        mentions, _ = get_mentions(request)
+        new_mentions = len([mention for mention in mentions["mentions"] if not mention.get("is_accessed")])
+    return {
+        "NEW_MENTIONS_COUNT": new_mentions,
+        "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
+    }
 
 
 def is_all_cases_queue(request):

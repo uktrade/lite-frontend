@@ -234,3 +234,10 @@ def get_menu_notifications(request):
         request.cached_get_menu_notifications = client.get(request, "/gov-users/notifications/")
     response = request.cached_get_menu_notifications
     return response.json()
+
+
+def get_mentions(request):
+    if not hasattr(request, "cached_mentions"):
+        request.cached_mentions = client.get(request, "/cases/user-case-note-mentions/")
+    response = request.cached_mentions
+    return response.json(), response.status_code
