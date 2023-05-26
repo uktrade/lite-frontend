@@ -1,6 +1,5 @@
 import pytest
 from django.urls import reverse
-from core import client
 from bs4 import BeautifulSoup
 from core import client
 from requests.exceptions import HTTPError
