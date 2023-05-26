@@ -236,8 +236,8 @@ def get_menu_notifications(request):
     return response.json()
 
 
-def get_mention_count(request):
-    if not hasattr(request, "cached_get_mention_count"):
-        request.cached_get_mention_count = client.get(request, "/cases/user-case-note-mentions/")
-    response = request.cached_get_mention_count.json()
-    return len([mention for mention in response["mentions"] if not mention.get("is_accessed")])
+def get_mentions(request):
+    if not hasattr(request, "cached_mentions"):
+        request.cached_mentions = client.get(request, "/cases/user-case-note-mentions/")
+    response = request.cached_mentions
+    return response.json(), response.status_code

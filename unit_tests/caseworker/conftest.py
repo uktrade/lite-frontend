@@ -413,7 +413,7 @@ def mock_countries(requests_mock, data_countries):
 
 
 @pytest.fixture
-def mock_gov_user(requests_mock, mock_notifications, mock_mentions_count, mock_case_statuses, gov_uk_user_id):
+def mock_gov_user(requests_mock, mock_notifications, mock_new_mentions_count, mock_case_statuses, gov_uk_user_id):
     url = client._build_absolute_uri("/gov-users/")
     data = {
         "user": {
@@ -520,7 +520,7 @@ def mock_notifications(requests_mock):
 
 
 @pytest.fixture
-def mock_mentions_count(requests_mock):
+def mock_new_mentions_count(requests_mock):
     url = client._build_absolute_uri("/cases/user-case-note-mentions/")
     data = {"mentions": [{}, {}]}
     requests_mock.get(url=url, json=data)

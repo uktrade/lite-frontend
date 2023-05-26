@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 from caseworker.core.constants import Permission
-from caseworker.core.services import get_user_permissions, get_menu_notifications, get_mention_count
+from caseworker.core.services import get_user_permissions, get_menu_notifications, get_mentions
 from lite_content.lite_internal_frontend import strings, open_general_licences
 from lite_content.lite_internal_frontend.flags import FlagsList
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage
@@ -49,13 +49,11 @@ def export_vars(request):
 
 def lite_menu(request):
     has_notifications = False
-    mentions = False
     if "lite_api_user_id" in request.session:
         permissions = get_user_permissions(request)
         notifications = get_menu_notifications(request)
         notification_data = notifications["notifications"]
         has_notifications = notifications["has_notifications"]
-        mentions = get_mention_count(request)
         queue_pk = request.session["default_queue"]
         pages = [
             {
@@ -105,7 +103,17 @@ def lite_menu(request):
     return {
         "LITE_MENU": [x for x in pages if x is not None],
         "MENU_NOTIFICATIONS": has_notifications,
-        "MENTIONS_COUNT": mentions,
+    }
+
+
+def new_mentions(request):
+    new_mentions = False
+    if "lite_api_user_id" in request.session:
+        mentions, _ = get_mentions(request)
+        if mentions.get("mentions"):
+            new_mentions = len([mention for mention in mentions["mentions"] if not mention.get("is_accessed")])
+    return {
+        "NEW_MENTIONS_COUNT": new_mentions,
         "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
     }
 

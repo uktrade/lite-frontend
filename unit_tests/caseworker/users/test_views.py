@@ -3,6 +3,7 @@ from django.urls import reverse
 from core import client
 from bs4 import BeautifulSoup
 from core import client
+from requests.exceptions import HTTPError
 
 
 @pytest.fixture(autouse=True)
@@ -63,7 +64,22 @@ def test_user_case_note_mention_count(data, count, authorized_client, requests_m
     url = reverse("users:user_case_note_mentions")
     response = authorized_client.get(url)
     assert response.status_code == 200
-    assert response.context["MENTIONS_COUNT"] == count
+    assert response.context["NEW_MENTIONS_COUNT"] == count
+
+
+def test_user_case_note_mention_count_error(authorized_client, requests_mock):
+    data = {"mentions": []}
+    requests_mock.get(
+        client._build_absolute_uri("/cases/user-case-note-mentions/"),
+        status_code=500,
+        json=data,
+    )
+
+    url = reverse("users:user_case_note_mentions")
+    with pytest.raises(HTTPError) as exc_info:
+        response = authorized_client.get(url)
+    exception = exc_info.value
+    assert exception.response.status_code == 500
 
 
 def test_user_case_note_mentions(authorized_client, requests_mock):
