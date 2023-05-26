@@ -107,7 +107,7 @@ def lite_menu(request):
 
 
 def new_mentions(request):
-    new_mentions = False
+    new_mentions = 0
     if "lite_api_user_id" in request.session:
         mentions, _ = get_mentions(request)
         if mentions.get("mentions"):

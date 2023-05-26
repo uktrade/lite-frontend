@@ -10,8 +10,22 @@ def default_feature_flags(settings):
     settings.FEATURE_MENTIONS_ENABLED = True
 
 
+@pytest.fixture(autouse=True)
+def setup(
+    settings,
+    mock_queue,
+    mock_case,
+    mock_standard_case_activity_filters,
+    mock_standard_case_ecju_queries,
+    mock_standard_case_assigned_queues,
+    mock_standard_case_documents,
+    mock_standard_case_additional_contacts,
+):
+    yield
+
+
 @pytest.mark.parametrize(
-    "data, count",
+    "data, count, url",
     (
         (
             {
@@ -24,6 +38,7 @@ def default_feature_flags(settings):
                 ]
             },
             1,
+            reverse("teams:teams"),
         ),
         (
             {
@@ -51,22 +66,21 @@ def default_feature_flags(settings):
                 ]
             },
             3,
+            reverse("teams:teams"),
         ),
     ),
 )
-def test_user_case_note_mention_count(data, count, authorized_client, requests_mock):
+def test_user_case_note_mention_count(data, count, url, authorized_client, requests_mock):
     requests_mock.get(
         client._build_absolute_uri("/cases/user-case-note-mentions/"),
         json=data,
     )
-
-    url = reverse("users:user_case_note_mentions")
     response = authorized_client.get(url)
     assert response.status_code == 200
     assert response.context["NEW_MENTIONS_COUNT"] == count
 
 
-def test_user_case_note_mention_count_error(authorized_client, requests_mock):
+def test_user_case_note_mention_count_error(authorized_client, requests_mock, data_queue, data_standard_case):
     data = {"mentions": []}
     requests_mock.get(
         client._build_absolute_uri("/cases/user-case-note-mentions/"),
@@ -74,11 +88,10 @@ def test_user_case_note_mention_count_error(authorized_client, requests_mock):
         json=data,
     )
 
-    url = reverse("users:user_case_note_mentions")
-    with pytest.raises(HTTPError) as exc_info:
-        response = authorized_client.get(url)
-    exception = exc_info.value
-    assert exception.response.status_code == 500
+    url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["NEW_MENTIONS_COUNT"] == 0
 
 
 def test_user_case_note_mentions(authorized_client, requests_mock):
