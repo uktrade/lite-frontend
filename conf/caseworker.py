@@ -48,6 +48,7 @@ TEMPLATES = [
                 "caseworker.core.context_processors.current_queue",
                 "caseworker.core.context_processors.export_vars",
                 "caseworker.core.context_processors.lite_menu",
+                "caseworker.core.context_processors.new_mentions",
                 "caseworker.core.context_processors.current_user",
                 "caseworker.core.context_processors.is_all_cases_queue",
                 "caseworker.core.context_processors.feature_flags",
