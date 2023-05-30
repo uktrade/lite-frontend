@@ -1222,6 +1222,19 @@ def standard_case_activity():
                 "text": "updated the status to: Submitted.",
                 "additional_text": "",
             },
+            {
+                "id": "ca08e46b-0278-40ff-87a2-8be2600fad52",
+                "created_at": "2020-08-03T12:52:37.740574Z",
+                "user": {"first_name": "mention", "last_name": "person"},
+                "text": "send case note to .",
+                "additional_text": "",
+                "is_urgent": True,
+                "payload": {
+                    "is_urgent": True,
+                    "mention_users": ["Joe Bloggs (Admin)"],
+                },
+                "verb": "created_case_note_with_mentions",
+            },
         ]
     }
 

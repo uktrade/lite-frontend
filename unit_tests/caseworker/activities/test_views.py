@@ -288,6 +288,23 @@ def test_notes_and_timelines_post_valid(
         assertTemplateUsed(response, template_used)
 
 
+def test_notes_and_timelines_mentions_urgent(
+    authorized_client,
+    requests_mock,
+    notes_and_timelines_url,
+    gov_uk_user_id,
+    data_standard_case,
+):
+
+    response = authorized_client.get(notes_and_timelines_url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    mention_note = soup.find_all("div", {"class": "notes-and-timeline-timeline__day-group-item"})[2]
+    assert mention_note.find("p").text == "URGENT"
+
+
 def test_notes_and_timelines_mentions(
     authorized_client, notes_and_timelines_url, mock_case_note_mentions, mentions_data, requests_mock, mock_gov_users
 ):
