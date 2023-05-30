@@ -104,7 +104,11 @@
             <th scope="row" class="govuk-table__header">Days on queue elapsed</th>
             <td class="govuk-table__cell">
 				{% if case.queue_details %}
-					{{ case.queue_details|get_values_from_dict_list:"days_on_queue_elapsed"|join:", " }}
+                    {% for queue_detail in case.queue_details %}
+                        {% if queue_detail.id == queue.id %}
+                            {{queue_detail.days_on_queue_elapsed}}
+                        {% endif %}
+                    {% endfor %}
 				{% else %}
 					<span class="govuk-hint govuk-!-margin-0">
 						N/A
