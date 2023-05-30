@@ -300,9 +300,7 @@ def test_notes_and_timelines_mentions_urgent(
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
-
-    mention_note = soup.find_all("div", {"class": "notes-and-timeline-timeline__day-group-item"})[2]
-    assert mention_note.find("p").text == "URGENT"
+    assert soup.find(class_="warning-text mentions__urgent")
 
 
 def test_notes_and_timelines_mentions(

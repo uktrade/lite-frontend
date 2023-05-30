@@ -97,7 +97,7 @@
                                                 {% if user.team %}<span class="app-activity__item__user">{{ user.team }}:</span> {% endif %}{{ user.first_name }} {{ user.last_name }}
                                             {% endif %}
                                             {% if activity.verb == "created_case_note_with_mentions" %}
-                                                {{ activity.text|slice:":-1" }}
+                                                {{ activity.text|slice:":-1"|linebreaks }}
                                                 {{ activity.payload.mention_users|join:", " }}
                                                 {% if activity.payload.is_urgent %} <p class="warning-text mentions__urgent">URGENT</p> {% endif %}
                                             {% else %}
