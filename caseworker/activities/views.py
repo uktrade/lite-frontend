@@ -94,12 +94,6 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if "mentions" in list(self.request.GET.keys()):
-            # add to context the list of CaseNotes with mentions.
-            context.update({"mentions": self.mentions})
-        else:
-            activities = get_activity(self.request, self.case_id, activity_filters=self.request.GET)
-            context.update({"activities": activities})
         return {
             **context,
             "case": self.case,
@@ -108,6 +102,7 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
             "team_filters": self.get_team_filters(),
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
+            "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
             "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
         }
 
