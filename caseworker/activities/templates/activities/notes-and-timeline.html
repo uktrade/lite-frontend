@@ -75,7 +75,7 @@
                                      {% for mention in mentions_by_date.list %}
                                      <div class="notes-and-timeline-timeline__day-group-item">
                                             {% if mention.case_note_user.team %}<span class="app-activity__item__user">{{ mention.case_note_user.team.name }}:</span> {% endif %}{{ mention.case_note_user.first_name }} {{ mention.case_note_user.last_name }}
-                                            sent a case note to {{ mention.user.first_name }} {{ mention.user.last_name }} ({{mention.user.team.name}}){% if mention.is_urgent %} <p class="warning-text mentions__urgent">URGENT</p> {% endif %}
+                                            mentioned {{ mention.user.first_name }} {{ mention.user.last_name }} ({{mention.user.team.name}}) in a case note {% if mention.is_urgent %} <p class="warning-text mentions__urgent">URGENT</p> {% endif %}
                                             <div class="notes-and-timeline-timeline__day-group-note">
                                                 {{ mention.case_note_text|linebreaks }}
                                             </div>

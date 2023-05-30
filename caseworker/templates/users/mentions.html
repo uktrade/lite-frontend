@@ -38,7 +38,7 @@
 						<td class="govuk-table__cell">
 							<div>
 								{% if user_case_note_mention.case_note_user.team %}<span class="app-activity__item__user">{{ user_case_note_mention.case_note_user.team.name }}:</span> {% endif %}{{ user_case_note_mention.case_note_user.first_name }} {{ user_case_note_mention.case_note_user.last_name }}
-								sent a {% if user_case_note_mention.is_urgent %} Urgent {% endif %} case note to  {{ user_case_note_mention.user.first_name }} {{ user_case_note_mention.user.last_name }} ({{user_case_note_mention.user.team.name}})
+								mentioned {{ user_case_note_mention.user.first_name }} {{ user_case_note_mention.user.last_name }} ({{user_case_note_mention.user.team.name}}) in a case note
 								<div class="notes-and-timeline-timeline__day-group-note">
 									{{ user_case_note_mention.case_note_text }}
 								</div>
