@@ -12,5 +12,8 @@ module.exports = {
 
   "setupFiles": [
     "./setupJest.js"
-  ]
+  ],
+  "moduleNameMapper": {
+    "core/(.*)": "<rootDir>/core/assets/javascripts/$1"
+  }
 };
