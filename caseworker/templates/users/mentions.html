@@ -44,7 +44,7 @@
 								</div>
 						 </div>
 						</td>
-						<td class="govuk-table__cell"><a href="{% url 'cases:case' queue_pk=user_case_note_mention.case_queue_id pk=user_case_note_mention.case_id %}activities/?mentions=True">View or Respond</a></td>
+						<td class="govuk-table__cell"><a href="{% url 'cases:case' queue_pk=user_case_note_mention.case_queue_id pk=user_case_note_mention.case_id %}activities/?mentions=True&activity_type=created_case_note_with_mentions">View or Respond</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>
