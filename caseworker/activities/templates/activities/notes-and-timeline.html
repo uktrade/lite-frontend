@@ -48,7 +48,7 @@
             <nav class="notes-and-timeline-nav">
                 <ul class="notes-and-timeline-nav__list notes-and-timeline-nav__mentions">
                     <li class="notes-and-timeline-nav__list-item{% if "mentions" in filtering_by %} notes-and-timeline-nav__list-item--selected{% endif %}">
-                        <a class="notes-and-timeline-nav__list-link" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}?mentions=True">
+                        <a class="notes-and-timeline-nav__list-link" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}?mentions=True&activity_type=created_case_note_with_mentions">
                             <span class="notes-and-timeline-nav__list-link-wrapper">
                                 Mentions
                             </span>
@@ -66,24 +66,6 @@
             </div>
             <div class="govuk-grid-row">
                 <div class="notes-and-timeline-timeline">
-                    {% if "mentions" in filtering_by %}
-                        {% regroup mentions by created_at|to_datetime|date:"d F Y" as mentions_list %}
-                        {% for mentions_by_date in mentions_list %}
-                             <div class="notes-and-timeline-timeline__day-group">
-                                 <h2 class="notes-and-timeline-timeline__day-group-heading">{{ mentions_by_date.grouper }}</h2>
-
-                                     {% for mention in mentions_by_date.list %}
-                                     <div class="notes-and-timeline-timeline__day-group-item">
-                                            {% if mention.case_note_user.team %}<span class="app-activity__item__user">{{ mention.case_note_user.team.name }}:</span> {% endif %}{{ mention.case_note_user.first_name }} {{ mention.case_note_user.last_name }}
-                                            sent a case note to {{ mention.user.first_name }} {{ mention.user.last_name }} ({{mention.user.team.name}}){% if mention.is_urgent %} <p class="warning-text mentions__urgent">URGENT</p> {% endif %}
-                                            <div class="notes-and-timeline-timeline__day-group-note">
-                                                {{ mention.case_note_text|linebreaks }}
-                                            </div>
-                                     </div>
-                                 {% endfor %}
-                             </div>
-                        {% endfor %}
-                    {% else %}
                         {% regroup activities by created_at|to_datetime|date:"d F Y" as activity_list %}
                         {% for activities_by_date in activity_list %}
                             <div class="notes-and-timeline-timeline__day-group">
@@ -113,7 +95,6 @@
                                 {% endfor %}
                             </div>
                         {% endfor %}
-                    {% endif%}
                 </div>
             </div>
         </div>
