@@ -29,7 +29,7 @@ def setup(
     (
         (
             {
-                "mentions": [
+                "results": [
                     {
                         "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                         "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
@@ -42,7 +42,7 @@ def setup(
         ),
         (
             {
-                "mentions": [
+                "results": [
                     {
                         "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                         "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
@@ -81,7 +81,7 @@ def test_user_case_note_mention_count(data, count, url, authorized_client, reque
 
 
 def test_user_case_note_mention_count_error(authorized_client, requests_mock, data_queue, data_standard_case):
-    data = {"mentions": []}
+    data = {"results": []}
     requests_mock.get(
         client._build_absolute_uri("/cases/user-case-note-mentions/"),
         status_code=500,
@@ -96,7 +96,7 @@ def test_user_case_note_mention_count_error(authorized_client, requests_mock, da
 
 def test_user_case_note_mentions(authorized_client, requests_mock):
     mentions_data = {
-        "mentions": [
+        "results": [
             {
                 "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                 "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
@@ -115,7 +115,7 @@ def test_user_case_note_mentions(authorized_client, requests_mock):
     response = authorized_client.get(url)
 
     assert response.status_code == 200
-    assert response.context["user_mentions"] == mentions_data
+    assert response.context["data"] == mentions_data
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find("table", {"class": "govuk-table"}).find("tr", {"id": "mentions-row-1"})
@@ -123,7 +123,7 @@ def test_user_case_note_mentions(authorized_client, requests_mock):
 
 def test_user_case_note_mentions_update_is_accessed(authorized_client, requests_mock):
     mentions_data = {
-        "mentions": [
+        "results": [
             {
                 "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
                 "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE

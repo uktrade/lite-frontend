@@ -523,7 +523,7 @@ def mock_notifications(requests_mock):
 @pytest.fixture
 def mock_new_mentions_count(requests_mock):
     url = client._build_absolute_uri("/cases/user-case-note-mentions/")
-    data = {"mentions": [{}, {}]}
+    data = {"results": [{}, {}]}
     requests_mock.get(url=url, json=data)
     yield data
 
