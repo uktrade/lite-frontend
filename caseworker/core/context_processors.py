@@ -110,7 +110,7 @@ def new_mentions(request):
     new_mentions = 0
     if "lite_api_user_id" in request.session:
         mentions, _ = get_mentions(request)
-        new_mentions = len([mention for mention in mentions["mentions"] if not mention.get("is_accessed")])
+        new_mentions = len([mention for mention in mentions["results"] if not mention.get("is_accessed")])
     return {
         "NEW_MENTIONS_COUNT": new_mentions,
         "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,

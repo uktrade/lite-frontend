@@ -147,16 +147,18 @@ class ChangeUserStatus(TemplateView):
 
 class UserCaseNoteMentions(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
+        self.params = {"page": int(self.request.GET.get("page", 1))}
+
         my_unread_mentions = [
             {"id": m["id"], "is_accessed": True}
-            for m in self.mentions.get("mentions", [])
+            for m in self.mentions.get("results", [])
             if not m["is_accessed"] and m["user"]["id"]
         ]
         if my_unread_mentions:
             update_mentions(request, my_unread_mentions)
-        return render(request, "users/mentions.html", {"user_mentions": self.mentions})
+        return render(request, "users/mentions.html", {"data": self.mentions})
 
     @cached_property
     def mentions(self):
-        data, _ = get_user_case_note_mentions(self.request)
+        data, _ = get_user_case_note_mentions(self.request, self.params)
         return data
