@@ -316,12 +316,11 @@ def test_notes_and_timelines_mentions_urgent(
     gov_uk_user_id,
     data_standard_case,
 ):
-
     response = authorized_client.get(notes_and_timelines_url)
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find(class_="warning-text mentions__urgent")
+    assert soup.find(class_="govuk-tag--red")
 
 
 def test_notes_and_timelines_mentions_template(
@@ -355,7 +354,6 @@ def test_notes_and_timelines_mentions_update_is_accessed(
     gov_uk_user_id,
     data_standard_case,
 ):
-
     mentions_data = {
         "results": [
             {
