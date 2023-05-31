@@ -288,6 +288,27 @@ def test_notes_and_timelines_post_valid(
         assertTemplateUsed(response, template_used)
 
 
+def test_notes_and_timelines_filter_by_mentions(
+    authorized_client,
+    notes_and_timelines_url,
+    mock_standard_case_activity_system_user,
+    requests_mock,
+    mock_gov_users,
+    mock_case_note_mentions,
+):
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
+
+    authorized_client.get(f"{notes_and_timelines_url}?mentions=True&activity_type=created_case_note_with_mentions")
+    assert mock_standard_case_activity_system_user.last_request.qs["activity_type"] == [
+        "created_case_note_with_mentions"
+    ]
+
+
 def test_notes_and_timelines_mentions_urgent(
     authorized_client,
     requests_mock,
@@ -301,20 +322,6 @@ def test_notes_and_timelines_mentions_urgent(
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(class_="warning-text mentions__urgent")
-
-
-def test_notes_and_timelines_mentions(
-    authorized_client, notes_and_timelines_url, mock_case_note_mentions, mentions_data, requests_mock, mock_gov_users
-):
-    requests_mock.get(
-        client._build_absolute_uri(f"/gov-users/"),
-        json={
-            "results": mock_gov_users,
-        },
-    )
-    response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
-    assert response.context["mentions"][0]["id"] == mentions_data["results"][0]["id"]
-    assert not response.context.get("activities")
 
 
 def test_notes_and_timelines_mentions_template(
