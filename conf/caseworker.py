@@ -25,6 +25,10 @@ INSTALLED_APPS += [
     "rules.apps.AutodiscoverRulesConfig",
 ]
 
+MIDDLEWARE += [
+    "caseworker.queues.middleware.RequestQueueMiddleware",
+]
+
 if MOCK_SSO_ACTIVATE_ENDPOINTS:
     INSTALLED_APPS += [
         "caseworker.mock_sso",
