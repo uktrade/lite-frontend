@@ -16,15 +16,8 @@ from caseworker.flags.views import AssignFlags
 
 app_name = "cases"
 
-# When the feature flag is removed then this statement will be removed
-# and code coverage will return to 100%
-if settings.FEATURE_QUICK_SUMMARY:
-    detail_tab = "quick-summary"
-else:
-    detail_tab = "details"
-
 urlpatterns = [
-    path("", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True, "tab": detail_tab}),
+    path("", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True, "tab": "details"}),
     path("case-notes/", main.CaseNotes.as_view(), name="case_notes"),
     path("im-done/", main.ImDoneView.as_view(), name="done"),
     path("change-status/", main.ChangeStatus.as_view(), name="manage"),

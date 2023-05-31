@@ -78,7 +78,7 @@ class CaseTabsMixin:
             Tabs.DOCUMENTS,
         ]
         if settings.FEATURE_QUICK_SUMMARY:
-            tabs.insert(0, Tabs.QUICK_SUMMARY)
+            tabs.insert(1, Tabs.QUICK_SUMMARY)
 
         return tabs
 

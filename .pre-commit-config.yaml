@@ -1,6 +1,6 @@
 exclude: (exporter/assets/built/|caseworker/assets/built/)
 default_language_version:
-  python: python3.9
+  python: python3.7
 repos:
   - repo: https://github.com/psf/black
     rev: 22.3.0

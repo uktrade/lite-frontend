@@ -36,8 +36,8 @@ LU_PRE_CIRC_REVIEW_QUEUE_ALIAS = "LU_PRE_CIRC_REVIEW"
 
 
 class Tabs:
-    QUICK_SUMMARY = Tab("quick-summary", CasePage.Tabs.QUICK_SUMMARY, "quick-summary")
     DETAILS = Tab("details", CasePage.Tabs.DETAILS, "details")
+    QUICK_SUMMARY = Tab("quick-summary", CasePage.Tabs.QUICK_SUMMARY, "quick-summary")
     DOCUMENTS = Tab("documents", CasePage.Tabs.DOCUMENTS, "documents")
     LICENCES = Tab("licences", CasePage.Tabs.LICENCES, "licences")
     ADDITIONAL_CONTACTS = Tab("additional-contacts", CasePage.Tabs.ADDITIONAL_CONTACTS, "additional-contacts")
