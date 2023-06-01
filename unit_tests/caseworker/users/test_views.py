@@ -25,73 +25,48 @@ def setup(
 
 
 @pytest.mark.parametrize(
-    "data, count, url",
+    "data, count",
     (
-        (
-            {
-                "results": [
-                    {
-                        "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
-                        "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
-                        "is_accessed": False,
-                    }
-                ]
-            },
-            1,
-            reverse("teams:teams"),
-        ),
-        (
-            {
-                "results": [
-                    {
-                        "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
-                        "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
-                        "is_accessed": True,
-                    },
-                    {
-                        "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
-                        "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
-                        "is_accessed": False,
-                    },
-                    {
-                        "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
-                        "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
-                        "is_accessed": False,
-                    },
-                    {
-                        "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
-                        "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
-                        "is_accessed": False,
-                    },
-                ]
-            },
-            3,
-            reverse("teams:teams"),
-        ),
+        ({"count": 1}, 1),
+        ({"count": 3}, 3),
+        ({"count": 0}, 0),
     ),
 )
-def test_user_case_note_mention_count(data, count, url, authorized_client, requests_mock):
+def test_user_case_note_mention_count(data, count, authorized_client, requests_mock):
     requests_mock.get(
-        client._build_absolute_uri("/cases/user-case-note-mentions/"),
+        client._build_absolute_uri("/cases/user-case-note-mentions-new-count/"),
         json=data,
     )
-    response = authorized_client.get(url)
+    response = authorized_client.get(
+        reverse("teams:teams"),
+    )
     assert response.status_code == 200
     assert response.context["NEW_MENTIONS_COUNT"] == count
 
 
 def test_user_case_note_mention_count_error(authorized_client, requests_mock, data_queue, data_standard_case):
-    data = {"results": []}
+    data = {}
     requests_mock.get(
-        client._build_absolute_uri("/cases/user-case-note-mentions/"),
+        client._build_absolute_uri("/cases/user-case-note-mentions-new-count/"),
         status_code=500,
         json=data,
     )
 
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
-    response = authorized_client.get(url)
+    with pytest.raises(HTTPError) as exc_info:
+        response = authorized_client.get(url)
+    exception = exc_info.value
+    assert exception.response.status_code == 500
+
+
+def test_user_case_note_mention_feature_flag_false(authorized_client, settings):
+    settings.FEATURE_MENTIONS_ENABLED = False
+    response = authorized_client.get(
+        reverse("teams:teams"),
+    )
     assert response.status_code == 200
     assert response.context["NEW_MENTIONS_COUNT"] == 0
+    assert response.context["FEATURE_MENTIONS_ENABLED"] is False
 
 
 def test_user_case_note_mentions(authorized_client, requests_mock):
