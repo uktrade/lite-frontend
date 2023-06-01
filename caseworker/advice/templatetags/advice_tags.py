@@ -1,5 +1,5 @@
 from collections import defaultdict
-
+from typing import Dict, List
 from django import template
 
 from caseworker.advice import constants, services
@@ -30,6 +30,40 @@ def get_clc(goods_on_application):
         clcs.update(entries)
 
     return sorted(clcs - {None})
+
+
+@register.filter()
+def get_values_from_dict_list(items: List[Dict], key: str):
+    return [item[key] for item in items]
+
+
+@register.filter()
+def get_adviser_list(case):
+    unique_users = set()
+    for users in case.assigned_users.values():
+        unique_users.update({f"{user.get('first_name')} {user.get('last_name')}" for user in users})
+    return list(unique_users)
+
+
+@register.filter()
+def get_flags_list(flags):
+    return [flag.get("name") for flag in flags]
+
+
+@register.filter()
+def get_denial_references(denial_matches):
+    denial_references = []
+    for denial_match in denial_matches:
+        denial_references.append(denial_match["denial"]["reference"])
+    return denial_references
+
+
+@register.filter()
+def get_sanction_list(sanction_matches):
+    sanction_list = set()
+    for sanction in sanction_matches:
+        sanction_list.add(sanction["list_name"])
+    return sanction_list
 
 
 @register.filter()

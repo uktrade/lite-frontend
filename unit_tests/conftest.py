@@ -1,4 +1,5 @@
 import re
+from datetime import timedelta
 import datetime
 import pytest
 import os
@@ -8,6 +9,7 @@ from urllib.parse import urljoin, urlparse
 
 from django.conf import settings
 from django.urls import resolve
+from django.utils import timezone
 
 from formtools.wizard.views import normalize_name
 
@@ -197,6 +199,24 @@ def data_open_case():
             "queues": ["0149b643-d38a-4d1a-b259-7f73ff4f7b97"],
             "queue_names": ["queue 20200629162022"],
             "assigned_users": {},
+            "latest_activity": {
+                "text": "Flag added",
+                "created_at": "2020-10-07T15:26:36.976341+01:00",
+                "user": {
+                    "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                    "first_name": "Richard",
+                    "last_name": "Tier",
+                    "type": "internal",
+                    "team": {
+                        "id": "51358bb7-0743-481b-b60f-edf16f644d52",
+                        "name": "BEIS CWC",
+                        "part_of_ecju": None,
+                        "is_ogd": False,
+                        "alias": None,
+                        "department": None,
+                    },
+                },
+            },
             "has_advice": {"user": False, "my_user": False, "team": False, "my_team": False, "final": False},
             "advice": [],
             "all_flags": [
@@ -476,6 +496,7 @@ def data_open_case():
                 },
             },
             "next_review_date": None,
+            "submitted_at": "2023-05-05T12:52:37.703607Z",
             "licences": [],
         }
     }
@@ -492,6 +513,9 @@ def data_standard_case(
     report_summary_prefix,
     report_summary_subject,
 ):
+    joined_queue_at_1 = timezone.now() - timedelta(days=2)
+    joined_queue_at_2 = timezone.now() - timedelta(days=3)
+    submitted_at = timezone.now() - timedelta(days=7)
     return {
         "case": {
             "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",
@@ -515,10 +539,40 @@ def data_standard_case(
             "queues": ["1b926457-5c9e-4916-8497-51886e51863a", "c270b79b-370c-4c5e-b8b6-4d5210a58956"],
             "queue_names": ["queue", "queue 20200818000000"],
             "queue_details": [
-                {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "queue", "alias": "FCDO_CASES_TO_REVIEW"},
-                {"id": "c270b79b-370c-4c5e-b8b6-4d5210a58956", "name": "queue 20200818000000", "alias": "QUEUE_2"},
+                {
+                    "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
+                    "name": "queue",
+                    "alias": "FCDO_CASES_TO_REVIEW",
+                    "joined_queue_at": joined_queue_at_1.isoformat(),
+                },
+                {
+                    "id": "c270b79b-370c-4c5e-b8b6-4d5210a58956",
+                    "name": "queue 20200818000000",
+                    "alias": "QUEUE_2",
+                    "joined_queue_at": joined_queue_at_2.isoformat(),
+                },
             ],
             "assigned_users": {},
+            "has_open_queries": False,
+            "latest_activity": {
+                "text": "Flag added",
+                "created_at": "2020-10-07T15:26:36.976341+01:00",
+                "user": {
+                    "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+                    "first_name": "Richard",
+                    "last_name": "Tier",
+                    "type": "internal",
+                    "team": {
+                        "id": "51358bb7-0743-481b-b60f-edf16f644d52",
+                        "name": "BEIS CWC",
+                        "part_of_ecju": None,
+                        "is_ogd": False,
+                        "alias": None,
+                        "department": None,
+                    },
+                },
+            },
+            "submitted_at": submitted_at.isoformat(),
             "has_advice": {
                 "user": False,
                 "my_user": False,
@@ -979,6 +1033,7 @@ def data_standard_case(
                             "data": "",
                             "is_revoked": "",
                             "is_revoked_comment": "",
+                            "reference": "ref1",
                         },
                         "category": "Partial",
                     },
@@ -1077,11 +1132,13 @@ def data_standard_case_with_potential_trigger_list_product(
 def data_standard_case_with_all_trigger_list_products_assessed(data_standard_case_with_potential_trigger_list_product):
     data = copy.deepcopy(data_standard_case_with_potential_trigger_list_product)
     data["case"]["data"]["goods"][0]["is_trigger_list_guidelines_applicable"] = True
+    joined_queue_at = timezone.now() - timedelta(days=2)
     data["case"]["queue_details"].append(
         {
             "id": "566fd526-bd6d-40c1-94bd-60d10c967cf7",
             "name": "queue 20230119000000",
             "alias": "BEIS_NUCLEAR_CASES_TO_REVIEW",
+            "joined_queue_at": joined_queue_at.isoformat(),
         },
     )
 

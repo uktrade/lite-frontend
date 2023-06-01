@@ -106,6 +106,7 @@ class CasePage:
             NOTICE = "This isn't available here."
 
     class Tabs:
+        QUICK_SUMMARY = "Quick summary"
         DETAILS = "Details"
         ADVICE_AND_DECISION = "Advice and decision"
         USER_ADVICE = "User advice"

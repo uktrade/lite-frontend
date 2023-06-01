@@ -1,4 +1,5 @@
 import pytest
+from bs4 import BeautifulSoup
 
 from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
@@ -39,7 +40,8 @@ def test_notes_and_timeline_tab(authorized_client, data_queue, data_standard_cas
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
     assertTemplateUsed(response, "layouts/case.html")
-    assert response.context["tabs"][5].name == "Notes and timeline"
+    all_tab_names = [tab.name for tab in response.context["tabs"]]
+    assert "Notes and timeline" in all_tab_names
 
 
 @pytest.fixture
