@@ -37,7 +37,7 @@ def data_assigned_case(data_standard_case):
 
 def get_mock_request(user, queue):
     request = HttpRequest()
-    request.user = user
+    request.lite_user = user
     request.queue = queue
     return request
 

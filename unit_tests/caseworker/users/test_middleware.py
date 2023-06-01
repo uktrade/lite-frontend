@@ -11,7 +11,7 @@ def test_request_user_middleware_process_view_no_user_id_in_session(mock_get_gov
     request.session = {}
     RequestUserMiddleware(mock.Mock()).process_view(request, None, None, None)
     mock_get_gov_user.assert_not_called()
-    assert not hasattr(request, "user")
+    assert not hasattr(request, "lite_user")
 
 
 @mock.patch("caseworker.users.middleware.get_gov_user")
@@ -21,7 +21,7 @@ def test_request_queue_middleware_process_view_api_error(mock_get_gov_user):
     request.session = {"lite_api_user_id": "some-user-id"}
     RequestUserMiddleware(mock.Mock()).process_view(request, None, None, None)
     mock_get_gov_user.assert_called_with(request, "some-user-id")
-    assert not hasattr(request, "user")
+    assert not hasattr(request, "lite_user")
 
 
 @mock.patch("caseworker.users.middleware.get_gov_user")
@@ -31,4 +31,4 @@ def test_request_queue_middleware_process_view_success(mock_get_gov_user):
     request.session = {"lite_api_user_id": "some-user-id"}
     RequestUserMiddleware(mock.Mock()).process_view(request, None, None, None)
     mock_get_gov_user.assert_called_with(request, "some-user-id")
-    assert request.user == "some-user"
+    assert request.lite_user == "some-user"

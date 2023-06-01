@@ -37,7 +37,7 @@ def can_beis_make_recommendation(user, case, queue_alias):
 @rules.predicate
 def can_user_make_recommendation(request, case):
     queue = request.queue
-    user = request.user
+    user = request.lite_user
     team = user["team"]["alias"]
     queue_alias = queue["alias"]
     existing_advice = services.get_my_advice(case.advice, user["id"])
@@ -59,3 +59,4 @@ def can_user_make_recommendation(request, case):
 
 
 rules.add_rule("can_user_make_recommendation", is_user_allocated & can_user_make_recommendation)
+rules.add_rule("can_user_make_recommendation_when_allocated", can_user_make_recommendation)

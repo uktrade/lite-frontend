@@ -11,7 +11,7 @@ mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
 
 def get_mock_request(user):
     request = HttpRequest()
-    request.user = user
+    request.lite_user = user
     return request
 
 

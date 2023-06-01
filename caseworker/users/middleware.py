@@ -15,4 +15,4 @@ class RequestUserMiddleware:
         response_data, status_code = get_gov_user(request, str(request.session["lite_api_user_id"]))
         if not status_code == 200:
             return
-        request.user = response_data.get("user", None)
+        request.lite_user = response_data.get("user", None)

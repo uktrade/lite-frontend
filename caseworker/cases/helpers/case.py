@@ -3,6 +3,7 @@ from dateutil.parser import parse
 from decimal import Decimal
 
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
@@ -110,9 +111,22 @@ class CaseworkerMixin:
                 }
             )
         )
+        allocate_and_approve_form = (
+            None
+            if self.queue["is_system_queue"]
+            else CaseAssignmentsAllocateToMeForm(
+                initial={
+                    "queue_id": self.queue_id,
+                    "user_id": self.caseworker["id"],
+                    "case_id": self.case_id,
+                    "return_to": reverse("cases:approve_all", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}),
+                }
+            )
+        )
         return {
             **context,
             "allocate_to_me_form": allocate_to_me_form,
+            "allocate_and_approve_form": allocate_and_approve_form,
         }
 
 
