@@ -16,7 +16,8 @@ class NotesAndTimelineForm(forms.Form):
         choices=(),
         widget=forms.SelectMultiple(),
         label="Mention a co-worker to notify them, or ask a question (optional)",
-        help_text="Type for suggestions. For example 'Technical Assessment Unit', NSCS, or 'Olivia Smith'",
+        help_text="""Type for suggestions. For example 'Olivia Smith', or
+        'Technical Assessment Unit' to choose from members of that team""",
         required=False,
     )
     is_urgent = forms.BooleanField(label="Mark as urgent", initial=False, required=False)
