@@ -3,14 +3,20 @@ import rules
 
 @rules.predicate
 def is_user_case_adviser(request, case):
-    user = request.lite_user
+    try:
+        user = request.lite_user
+    except AttributeError:
+        return False
     case_officer = case["case_officer"]
     return case_officer is not None and user and user["id"] == case_officer.get("id")
 
 
 @rules.predicate
 def is_user_assigned(request, case):
-    user = request.lite_user
+    try:
+        user = request.lite_user
+    except AttributeError:
+        return False
     if user and case["assigned_users"]:
         # Loop through all queues to check if user is assigned
         for _, assigned_users in case["assigned_users"].items():
