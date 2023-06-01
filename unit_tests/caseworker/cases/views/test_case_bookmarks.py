@@ -19,6 +19,14 @@ def test_no_bookmarks_present(authorized_client, mock_no_bookmarks):
     assert context["bookmarks"] == {"user": []}
 
 
+def test_failed_bookmarks_displays_no_bookmarks(authorized_client, mock_failed_bookmarks_call):
+    url = reverse("core:index")
+    response = authorized_client.get(url)
+    context = response.context
+    assert context["return_to"] == url
+    assert context["bookmarks"] == {"user": []}
+
+
 def test_bookmarks_present(authorized_client, mock_bookmarks, gov_uk_user_id):
     url = reverse("core:index")
     response = authorized_client.get(url)

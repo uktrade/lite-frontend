@@ -6,7 +6,6 @@ from django.views.generic import FormView
 from caseworker.bookmarks import forms, services
 from caseworker.queues.views.cases import CaseDataMixin
 from caseworker.queues.views.forms import CasesFiltersForm
-from core import client
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 

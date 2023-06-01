@@ -1,19 +1,12 @@
 from datetime import datetime
-
-from dateutil import parser
 from decimal import Decimal
 
+from dateutil import parser
 from django.http import Http404
-from django.views.generic import FormView
 from django.utils.functional import cached_property
+from django.views.generic import FormView
 
-from caseworker.bookmarks.services import add_bookmark, fetch_bookmarks
-from lite_content.lite_internal_frontend.cases import CasesListPage
-
-from core.auth.views import LoginRequiredMixin
-from core.exceptions import ServiceError
-
-from caseworker.queues.views.forms import CasesFiltersForm
+from caseworker.bookmarks.services import fetch_bookmarks
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
@@ -23,10 +16,14 @@ from caseworker.core.constants import (
     SLA_RADIUS,
 )
 from caseworker.core.services import get_user_permissions
+from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.queues.services import (
     get_queue,
 )
-from caseworker.queues.services import get_cases_search_data, head_cases_search_count
+from caseworker.queues.views.forms import CasesFiltersForm
+from core.auth.views import LoginRequiredMixin
+from core.exceptions import ServiceError
+from lite_content.lite_internal_frontend.cases import CasesListPage
 
 
 class CaseDataMixin:

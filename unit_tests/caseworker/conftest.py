@@ -2088,6 +2088,12 @@ def mock_no_bookmarks(requests_mock):
 
 
 @pytest.fixture()
+def mock_failed_bookmarks_call(requests_mock):
+    url = client._build_absolute_uri("/bookmarks/")
+    return requests_mock.get(url=url, status_code=400)
+
+
+@pytest.fixture()
 def mock_bookmarks(requests_mock, gov_uk_user_id):
     url = client._build_absolute_uri("/bookmarks/")
     return requests_mock.get(
