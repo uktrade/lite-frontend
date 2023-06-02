@@ -3,245 +3,250 @@
 
 <h2 class="govuk-heading-m">Quick Summary</h2>
 
-<table class="govuk-table app-table">
-    <tbody class="govuk-table__body" id="tbody-placeholder">
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Status</th>
-            <td class="govuk-table__cell">{{ case.data.status.value }}</td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Licensing unit case officer</th>
-            <td class="govuk-table__cell">
-				{% if case.case_officer %}
-					{{ case.case_officer|username }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						Not assigned
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Case advisers</th>
-            <td class="govuk-table__cell">
-			{% if case.assigned_users %}
-				{{ case|get_adviser_list|join:", " }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					Not assigned
-				</span>
-			{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Temporary or permanent</th>
-            <td class="govuk-table__cell">{{ case.data.export_type.key }}</td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Assigned queues</th>
-            <td class="govuk-table__cell">
-				{% if case.queue_details %}
-					{{ case.queue_details|get_values_from_dict_list:"name"|join:", " }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						Not assigned
-					</span>
-				{% endif %}
+<div class="customiser" data-customiser-spec='{"options_label": "Customise quick summary", "identifier": "quick-summary", "analytics_prefix": "qs", "options_hint": "Select items to show", "toggleable_elements": [{"label": "Status", "key": "status", "default_visible": false}, {"label": "Licensing unit case officer", "key": "lu_case_officer", "default_visible": true}, {"label": "Case advisers", "key": "case_advisers", "default_visible": false}, {"label": "Temporary or permanent", "key": "temporary_permanent", "default_visible": false}, {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false}, {"label": "Flags", "key": "flags", "default_visible": false}, {"label": "Queries", "key": "queries", "default_visible": false}, {"label": "Latest action", "key": "latest_action", "default_visible": false}, {"label": "Days on queue elapsed", "key": "days_on_queue", "default_visible": true}, {"label": "Total days elapsed", "key": "total_days", "default_visible": false}, {"label": "Product names", "key": "product_names", "default_visible": false}, {"label": "Total value", "key": "total_value", "default_visible": false}, {"label": "Control list entries", "key": "control_list_entries", "default_visible": true}, {"label": "Regimes", "key": "regimes", "default_visible": true}, {"label": "Report summaries", "key": "report_summaries", "default_visible": true}, {"label": "Security graded", "key": "security_graded", "default_visible": false}, {"label": "Security approvals", "key": "security_approvals", "default_visible": false}, {"label": "Applicant name", "key": "applicant_name", "default_visible": true}, {"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false}, {"label": "End use", "key": "end_use", "default_visible": true}, {"label": "End-user documents", "key": "end_user_documents", "default_visible": true}]}'>
+    <div class="customiser__header"></div>
 
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Flags</th>
-            <td class="govuk-table__cell">
-				{% if case.flags or case.destinations_flags or case.goods_flags %}
-					{{ case.all_flags|get_flags_list|join:", " }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Open query</th>
-            <td class="govuk-table__cell">
-				{% if case.has_open_queries %}
-					Outstanding queries
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Latest action</th>
-            <td class="govuk-table__cell">
-				{% if case.latest_activity %}
-					<div>
-						{% if case.latest_activity.user.type == 'exporter' %}
-							Applicant {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-						{% else %}
-							{{ case.latest_activity.user.team }} {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-						{% endif %}
-					</div>
-					<div>
-						{{ case.latest_activity.user.first_name }} {{ case.latest_activity.user.last_name }} {{ case.latest_activity.text|linebreaksbr }}
-					</div>
-					{% if case.latest_activity.additional_text %}
-						<div class="app-updates__activity">
-							{{ case.latest_activity.additional_text|linebreaksbr }}
-						</div>
-					{% endif %}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Days on queue elapsed</th>
-            <td class="govuk-table__cell">
-				{% if case.queue_details %}
-                    {% for queue_detail in case.queue_details %}
-                        {% if queue_detail.id == queue.id %}
-                            {{queue_detail.days_on_queue_elapsed}}
-                        {% endif %}
+    <table class="govuk-table app-table">
+        <tbody class="govuk-table__body" id="tbody-placeholder">
+            <tr class="govuk-table__row app-table__row" data-customiser-key="status">
+                <th scope="row" class="govuk-table__header">Status</th>
+                <td class="govuk-table__cell">{{ case.data.status.value }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="lu_case_officer">
+                <th scope="row" class="govuk-table__header">Licensing unit case officer</th>
+                <td class="govuk-table__cell">
+    				{% if case.case_officer %}
+    					{{ case.case_officer|username }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						Not assigned
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="case_advisers">
+                <th scope="row" class="govuk-table__header">Case advisers</th>
+                <td class="govuk-table__cell">
+    			{% if case.assigned_users %}
+    				{{ case|get_adviser_list|join:", " }}
+    			{% else %}
+    				<span class="govuk-hint govuk-!-margin-0">
+    					Not assigned
+    				</span>
+    			{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="temporary_permanent">
+                <th scope="row" class="govuk-table__header">Temporary or permanent</th>
+                <td class="govuk-table__cell">{{ case.data.export_type.key }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="assigned_queues">
+                <th scope="row" class="govuk-table__header">Assigned queues</th>
+                <td class="govuk-table__cell">
+    				{% if case.queue_details %}
+    					{{ case.queue_details|get_values_from_dict_list:"name"|join:", " }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						Not assigned
+    					</span>
+    				{% endif %}
+
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="flags">
+                <th scope="row" class="govuk-table__header">Flags</th>
+                <td class="govuk-table__cell">
+    				{% if case.flags or case.destinations_flags or case.goods_flags %}
+    					{{ case.all_flags|get_flags_list|join:", " }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="queries">
+                <th scope="row" class="govuk-table__header">Open query</th>
+                <td class="govuk-table__cell">
+    				{% if case.has_open_queries %}
+    					Outstanding queries
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="latest_action">
+                <th scope="row" class="govuk-table__header">Latest action</th>
+                <td class="govuk-table__cell">
+    				{% if case.latest_activity %}
+    					<div>
+    						{% if case.latest_activity.user.type == 'exporter' %}
+    							Applicant {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
+    						{% else %}
+    							{{ case.latest_activity.user.team }} {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
+    						{% endif %}
+    					</div>
+    					<div>
+    						{{ case.latest_activity.user.first_name }} {{ case.latest_activity.user.last_name }} {{ case.latest_activity.text|linebreaksbr }}
+    					</div>
+    					{% if case.latest_activity.additional_text %}
+    						<div class="app-updates__activity">
+    							{{ case.latest_activity.additional_text|linebreaksbr }}
+    						</div>
+    					{% endif %}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="days_on_queue">
+                <th scope="row" class="govuk-table__header">Days on queue elapsed</th>
+                <td class="govuk-table__cell">
+    				{% if case.queue_details %}
+                        {% for queue_detail in case.queue_details %}
+                            {% if queue_detail.id == queue.id %}
+                                {{queue_detail.days_on_queue_elapsed}}
+                            {% endif %}
+                        {% endfor %}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						N/A
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="total_days">
+                <th scope="row" class="govuk-table__header">Total days elapsed</th>
+                <td class="govuk-table__cell">
+    				{% if not is_terminal %}
+    					{{ case.total_days_elapsed }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						N/A
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="product_names">
+                <th scope="row" class="govuk-table__header">Product names</th>
+                <td class="govuk-table__cell">
+                    {% for name in goods_summary.names %}
+                        {{name}}<br/>
                     {% endfor %}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						N/A
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Total days elapsed</th>
-            <td class="govuk-table__cell">
-				{% if not is_terminal %}
-					{{ case.total_days_elapsed }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						N/A
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Product names</th>
-            <td class="govuk-table__cell">
-                {% for name in goods_summary.names %}
-                    {{name}}<br/>
-                {% endfor %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Total value</th>
-            <td class="govuk-table__cell">£{{ goods_summary.total_value|floatformat:2|intcomma }}</td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Control list entries</th>
-            <td class="govuk-table__cell">
-				{% if goods_summary.cles %}
-                    {% for cle in goods_summary.cles %}
-                        {{cle}}<br/>
-                    {% endfor %}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Regimes</th>
-            <td class="govuk-table__cell">
-				{% if goods_summary.regimes %}
-					{{ goods_summary.regimes|join:", " }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Report summaries</th>
-            <td class="govuk-table__cell">
-				{% if goods_summary.report_summaries %}
-					{{ goods_summary.report_summaries|join:", " }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Security graded</th>
-            <td class="govuk-table__cell">{{ case.goods|is_case_pv_graded|yesno|capfirst }}</td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Security approvals</th>
-            <td class="govuk-table__cell">
-				{% if case.data.security_approvals %}
-					{{ case.data.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Applicant name</th>
-            <td class="govuk-table__cell">{{ case.data.submitted_by }}</td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Destinations</th>
-            <td class="govuk-table__cell">{{ destination_countries|join:", " }}</td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Denial matches</th>
-            <td class="govuk-table__cell">
-				{% if case.data.denial_matches %}
-					{{ case.data.denial_matches|get_denial_references|join:", " }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">Sanction matches</th>
-            <td class="govuk-table__cell">
-				{% if case.data.sanction_matches %}
-					{{ case.data.sanction_matches|get_sanction_list|join:", " }}
-				{% else %}
-					<span class="govuk-hint govuk-!-margin-0">
-						None
-					</span>
-				{% endif %}
-            </td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">End-use</th>
-            <td class="govuk-table__cell">{{ case.data.intended_end_use }}</td>
-        </tr>
-        <tr class="govuk-table__row app-table__row">
-            <th scope="row" class="govuk-table__header">End-user documents</th>
-            <td class="govuk-table__cell">
-				{% for document in case.data.end_user.documents %}
-					<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
-						{% if document.type == "end_user_undertaking_document" or document.type == "supporting_document" %}End-user document{% elif document.type == "end_user_english_translation_document" %}English translation{% elif document.type == "end_user_english_translation_document" %}Company letterhead{% endif %} ({{ document.name|document_extension|upper }} opens in new tab)
-					</a><br/>
-				{% endfor %}
-            </td>
-        </tr>
-    </tbody>
-</table>
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="total_value">
+                <th scope="row" class="govuk-table__header">Total value</th>
+                <td class="govuk-table__cell">£{{ goods_summary.total_value|floatformat:2|intcomma }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="control_list_entries">
+                <th scope="row" class="govuk-table__header">Control list entries</th>
+                <td class="govuk-table__cell">
+    				{% if goods_summary.cles %}
+                        {% for cle in goods_summary.cles %}
+                            {{cle}}<br/>
+                        {% endfor %}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="regimes">
+                <th scope="row" class="govuk-table__header">Regimes</th>
+                <td class="govuk-table__cell">
+    				{% if goods_summary.regimes %}
+    					{{ goods_summary.regimes|join:", " }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="report_summaries">
+                <th scope="row" class="govuk-table__header">Report summaries</th>
+                <td class="govuk-table__cell">
+    				{% if goods_summary.report_summaries %}
+    					{{ goods_summary.report_summaries|join:", " }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="security_graded">
+                <th scope="row" class="govuk-table__header">Security graded</th>
+                <td class="govuk-table__cell">{{ case.goods|is_case_pv_graded|yesno|capfirst }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="security_approvals">
+                <th scope="row" class="govuk-table__header">Security approvals</th>
+                <td class="govuk-table__cell">
+    				{% if case.data.security_approvals %}
+    					{{ case.data.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="applicant_name">
+                <th scope="row" class="govuk-table__header">Applicant name</th>
+                <td class="govuk-table__cell">{{ case.data.submitted_by }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="destinations">
+                <th scope="row" class="govuk-table__header">Destinations</th>
+                <td class="govuk-table__cell">{{ destination_countries|join:", " }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="denial_matches">
+                <th scope="row" class="govuk-table__header">Denial matches</th>
+                <td class="govuk-table__cell">
+    				{% if case.data.denial_matches %}
+    					{{ case.data.denial_matches|get_denial_references|join:", " }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="sanction_matches">
+                <th scope="row" class="govuk-table__header">Sanction matches</th>
+                <td class="govuk-table__cell">
+    				{% if case.data.sanction_matches %}
+    					{{ case.data.sanction_matches|get_sanction_list|join:", " }}
+    				{% else %}
+    					<span class="govuk-hint govuk-!-margin-0">
+    						None
+    					</span>
+    				{% endif %}
+                </td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="end_use">
+                <th scope="row" class="govuk-table__header">End-use</th>
+                <td class="govuk-table__cell">{{ case.data.intended_end_use }}</td>
+            </tr>
+            <tr class="govuk-table__row app-table__row" data-customiser-key="end_user_documents">
+                <th scope="row" class="govuk-table__header">End-user documents</th>
+                <td class="govuk-table__cell">
+    				{% for document in case.data.end_user.documents %}
+    					<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+    						{% if document.type == "end_user_undertaking_document" or document.type == "supporting_document" %}End-user document{% elif document.type == "end_user_english_translation_document" %}English translation{% elif document.type == "end_user_english_translation_document" %}Company letterhead{% endif %} ({{ document.name|document_extension|upper }} opens in new tab)
+    					</a><br/>
+    				{% endfor %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
 
 {% test_rule 'can_user_allocate_and_approve' request case as can_user_allocate_and_approve %}
 {% if allocate_and_approve_form and can_user_allocate_and_approve %}
