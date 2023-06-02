@@ -1,9 +1,10 @@
 import json
 import uuid
+from collections import OrderedDict
 
 import pytest
 
-from caseworker.bookmarks.services import description_from_filter, enhance_bookmark
+from caseworker.bookmarks.services import description_from_filter, enrich_bookmark_for_display, enrich_filter_for_saving
 from unit_tests.caseworker.conftest import GOV_USER_ID
 
 
@@ -62,12 +63,71 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
             "Finalised to: 01-03-2011",
             "finalised_to_0=01&finalised_to_1=03&finalised_to_2=2011",
         ),
+        (
+            {"country": "DE", "_id_country": "Germany"},
+            "Country: Germany",
+            "country=DE",
+        ),
+        (
+            {
+                "regime_entry": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
+                "_id_regime_entry": "Wassenaar Arrangement Sensitive",
+            },
+            "Regime entry: Wassenaar Arrangement Sensitive",
+            "regime_entry=2594daef-8156-4e78-b4c4-e25f6cdbd203",
+        ),
     ],
 )
-def test_enhance_bookmark(filter_data, bookmark_filter, expected_description, expected_url_params):
+def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_description, expected_url_params):
     bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
 
-    enhance_bookmark(bookmark, filter_data)
+    enrich_bookmark_for_display(bookmark, filter_data)
 
     assert bookmark["description"] == expected_description
     assert bookmark["url"] == f"/queues/?{expected_url_params}"
+
+
+@pytest.mark.parametrize(
+    "name, filter_data, raw_filters, expected_filter_data",
+    [
+        (
+            "Test unwanted entries are removed",
+            {"case_reference": "ABC/123", "save": True, "saved_filter_description": "Filter_1"},
+            {
+                "case_reference": "ABC/123",
+                "_id_country": "Germany",
+                "regime": "",
+                "_id_regime": "",
+                "save": True,
+                "saved_filter_description": "Filter_1",
+            },
+            {"case_reference": "ABC/123"},
+        ),
+        (
+            "Test _id_ entry is copied over if the corresponding entry is present",
+            {"country": "DE"},
+            {"country": "DE", "_id_country": "Germany", "regime": "", "_id_regime": ""},
+            {"country": "DE", "_id_country": "Germany"},
+        ),
+        (
+            "Test _id_ entry is copied over for mulitple entries",
+            {"country": "DE", "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203"},
+            {
+                "country": "DE",
+                "_id_country": "Germany",
+                "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
+                "_id_regime": "Wassenaar Arrangement Sensitive",
+            },
+            {
+                "country": "DE",
+                "_id_country": "Germany",
+                "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
+                "_id_regime": "Wassenaar Arrangement Sensitive",
+            },
+        ),
+    ],
+)
+def test_enrich_filter_for_saving(name, filter_data, raw_filters, expected_filter_data):
+    actual_filter = enrich_filter_for_saving(filter_data, raw_filters)
+
+    assert sorted(actual_filter.items()) == sorted(expected_filter_data.items())
