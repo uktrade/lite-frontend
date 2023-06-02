@@ -52,6 +52,11 @@ def get_mock_request(user):
     ),
 )
 def test_is_user_assigned(data, mock_gov_user, expected_result):
+    assigned_users = {"assigned_users": data}
+    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) == expected_result
+
+
+def test_is_user_assigned_request_missing_attribute():
     assigned_users = {
         "assigned_users": {
             "fake queue": [
@@ -63,11 +68,6 @@ def test_is_user_assigned(data, mock_gov_user, expected_result):
         },
     }
     assert not caseworker_rules.is_user_assigned(None, assigned_users)
-
-
-def test_is_user_assigned_request_missing_attribute():
-    assigned_users = {"assigned_users": data}
-    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) == expected_result
 
 
 def test_is_user_case_officer_none():
