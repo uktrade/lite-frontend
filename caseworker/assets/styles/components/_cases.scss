@@ -615,3 +615,16 @@ $case-header-text-colour: govuk-colour('white');
 .case-table-container {
     overflow-x: scroll;
 }
+
+.quick-summary {
+    display: flex;
+
+    &__content {
+        margin-bottom: auto;
+        margin-right: 2rem;
+    }
+
+    &__customiser-options {
+        min-width: 15rem;
+    }
+}
