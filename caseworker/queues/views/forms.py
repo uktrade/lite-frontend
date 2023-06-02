@@ -205,10 +205,6 @@ class CasesFiltersForm(forms.Form):
         self.helper.layout = Layout(
             Fieldset(
                 *basic_filters,
-                css_id="basic-filter-fields",
-                css_class="basic-filter-fields",
-            ),
-            ExpandingFieldset(
                 Field.text("exporter_application_reference"),
                 Field.text("organisation_name"),
                 Field.text("exporter_site_name"),
@@ -232,11 +228,8 @@ class CasesFiltersForm(forms.Form):
                 Field("finalised_to"),
                 Field("is_nca_applicable"),
                 Field("is_trigger_list"),
-                legend="Advanced filters",
-                css_id="advanced-filter-fields",
-                css_class="advanced-group",
-                text_div_css_class="advanced-filter-fields",
-                details_id="advanced-filter-details",
+                css_id="basic-filter-fields",
+                css_class="basic-filter-fields",
             ),
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),

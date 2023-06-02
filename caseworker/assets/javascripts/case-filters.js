@@ -102,19 +102,9 @@ function expandBasicFilters() {
   hideLink.classList.remove("toggle-hidden");
 }
 
-function expandAdvancedFilters() {
-  let advancedFilterDetails = document.getElementById(
-    "advanced-filter-details"
-  );
-  advancedFilterDetails.setAttribute("open", "");
-}
-
 function showHideFilters() {
   let expandBasic = filterIsPopulated("basic-filter-fields");
-  let expandAdvanced = filterIsPopulated("advanced-filter-fields");
-
-  if (expandBasic || expandAdvanced) expandBasicFilters();
-  if (expandAdvanced) expandAdvancedFilters();
+  if (expandBasic) expandBasicFilters();
 }
 
 const initCountryAutocompleteField = () => {
