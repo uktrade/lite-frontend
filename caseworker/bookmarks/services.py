@@ -20,12 +20,13 @@ def fetch_bookmarks(request, filter_data):
 
     bookmarks = response.json()
     for bookmark in bookmarks["user"]:
-        enhance_bookmark(bookmark, filter_data)
+        enrich_bookmark_for_display(bookmark, filter_data)
+
     return bookmarks
 
 
-def add_bookmark(request, data):
-    filter_to_save = _ordered_filter(data)
+def add_bookmark(request, data, raw_filters):
+    filter_to_save = enrich_filter_for_saving(data, raw_filters)
     now = datetime.today().strftime("%y%m%d-%H%M%S")
     filter_name = f"New unnamed filter ({now})"
     bookmark_name = filter_name
@@ -56,10 +57,11 @@ def rename_bookmark(request, bookmark_id, name):
     return client.put(request, f"/bookmarks", data)
 
 
-def enhance_bookmark(bookmark, filter_data):
-    url = reverse("queues:cases")
+def enrich_bookmark_for_display(bookmark, filter_data):
+    base_url = reverse("queues:cases")
     bookmark_filter = bookmark["filter_json"]
     bookmark["description"] = description_from_filter(bookmark_filter, filter_data)
+
     for key in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
         if key in bookmark_filter:
             date_str = bookmark_filter[key]
@@ -69,11 +71,31 @@ def enhance_bookmark(bookmark, filter_data):
             bookmark_filter[f"{key}_1"] = m
             bookmark_filter[f"{key}_2"] = y
 
+    for key in list(bookmark_filter.keys()):
+        if key.startswith("_id_"):
+            del bookmark_filter[key]
+
     query = urlencode(bookmark_filter)
-    bookmark["url"] = f"{url}?{query}"
+    url = f"{base_url}?{query}"
+    bookmark["url"] = url
 
 
-def _ordered_filter(data):
+def description_from_filter(bookmark_filter, filter_data):
+    filter_dict = {**bookmark_filter}
+
+    _enrich_value_from_filter_data(filter_dict, filter_data, "assigned_user", "gov_users", "id", "full_name")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "case_officer", "gov_users", "id", "full_name")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "case_type", "case_types")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "status", "statuses")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "team_advice_type", "advice_types")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "final_advice_type", "advice_types")
+
+    _swap_ids_for_readable_values(filter_dict)
+
+    return ", ".join([f"{k.capitalize().replace('_', ' ')}: {v.replace('_', ' ')}" for (k, v) in filter_dict.items()])
+
+
+def enrich_filter_for_saving(data, raw_filters):
     keys_to_remove = [
         "csrfmiddlewaretoken",
         "save",
@@ -82,11 +104,18 @@ def _ordered_filter(data):
         "saved_filter_name",
         "return_to",
     ]
-    filters = OrderedDict(sorted({k: data[k] for k in data.keys() if data[k] and k not in keys_to_remove}.items()))
-    return filters
+
+    filters = {k: data[k] for k in data.keys() if data[k] and k not in keys_to_remove}
+
+    # Add in _id_ prefixed data to preserve country and regime names.
+    for key in raw_filters:
+        if key.startswith("_id_") and key[4:] in filters:
+            filters[key] = raw_filters[key]
+
+    return OrderedDict(sorted(filters.items()))
 
 
-def _enhance_value_from_filter_data(
+def _enrich_value_from_filter_data(
     bookmark_filter, filter_data, bookmark_filter_key, filter_data_key, id_key="key", value_key="value"
 ):
     if bookmark_filter_key in bookmark_filter:
@@ -95,14 +124,8 @@ def _enhance_value_from_filter_data(
         bookmark_filter[bookmark_filter_key] = case_type_dict.get(case_type, case_type)
 
 
-def description_from_filter(bookmark_filter, filter_data):
-    filter_dict = {**bookmark_filter}
-
-    _enhance_value_from_filter_data(filter_dict, filter_data, "assigned_user", "gov_users", "id", "full_name")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "case_officer", "gov_users", "id", "full_name")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "case_type", "case_types")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "status", "statuses")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "team_advice_type", "advice_types")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "final_advice_type", "advice_types")
-
-    return ", ".join([f"{k.capitalize().replace('_', ' ')}: {v.replace('_', ' ')}" for (k, v) in filter_dict.items()])
+def _swap_ids_for_readable_values(filter_dict):
+    for key in list(filter_dict.keys()):
+        if key.startswith("_id_") and key[4:] in filter_dict:
+            filter_dict[key[4:]] = filter_dict[key]
+            del filter_dict[key]
