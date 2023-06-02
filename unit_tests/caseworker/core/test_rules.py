@@ -52,12 +52,26 @@ def get_mock_request(user):
     ),
 )
 def test_is_user_assigned(data, mock_gov_user, expected_result):
+    assigned_users = {
+        "assigned_users": {
+            "fake queue": [
+                {"id": mock_gov_user_id},
+            ],
+            "fake queue 2": [
+                {"id": "12345zyz"},
+            ],
+        },
+    }
+    assert not caseworker_rules.is_user_assigned(None, assigned_users)
+
+
+def test_is_user_assigned_request_missing_attribute():
     assigned_users = {"assigned_users": data}
     assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) == expected_result
 
 
 def test_is_user_case_officer_none():
-    assert caseworker_rules.is_user_case_officer(get_mock_request(None), {"case_officer": None}) is False
+    assert not caseworker_rules.is_user_case_officer(get_mock_request(None), {"case_officer": None})
 
 
 @pytest.mark.parametrize(
@@ -70,6 +84,10 @@ def test_is_user_case_officer_none():
 )
 def test_is_user_case_officer(data, mock_gov_user, expected_result):
     assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) == expected_result
+
+
+def test_is_user_case_officer_request_missing_attribute():
+    assert caseworker_rules.is_user_case_officer(None, {"case_officer": {"id": mock_gov_user_id}}) is False
 
 
 @pytest.mark.parametrize(

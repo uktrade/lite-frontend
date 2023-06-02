@@ -42,6 +42,13 @@ def get_mock_request(user, queue):
     return request
 
 
+def test_can_user_make_recommendation_request_missing_attributes(mock_gov_user, data_fake_queue, data_standard_case):
+    case = Case(data_standard_case["case"])
+    request = None
+
+    assert not rules.test_rule("can_user_make_recommendation", request, case)
+
+
 def test_can_user_make_recommendation_user_not_allocated(mock_gov_user, data_fake_queue, data_standard_case):
     case = Case(data_standard_case["case"])
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
