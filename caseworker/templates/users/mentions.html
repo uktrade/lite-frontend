@@ -28,7 +28,7 @@
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% for user_case_note_mention in user_mentions.mentions %}
+				{% for user_case_note_mention in data.results %}
 					<tr class="govuk-table__row" id="mentions-row-{{ forloop.counter }}">
 						<td class="govuk-table__header" scope="row">
 								{{ user_case_note_mention.reference_code }}
@@ -49,5 +49,5 @@
 				{% endfor %}
 			</tbody>
 		</table>
-
+		{% pagination %}
 {% endblock %}

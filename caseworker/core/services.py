@@ -241,3 +241,11 @@ def get_mentions(request):
         request.cached_mentions = client.get(request, "/cases/user-case-note-mentions/")
     response = request.cached_mentions
     return response.json(), response.status_code
+
+
+def get_new_mention_count(request):
+    if not hasattr(request, "cached_new_mention_count"):
+        request.cached_new_mention_count = client.get(request, "/cases/user-case-note-mentions-new-count/")
+    response = request.cached_new_mention_count
+    response.raise_for_status()
+    return response.json(), response.status_code
