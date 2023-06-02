@@ -57,7 +57,7 @@ def test_is_user_assigned(data, mock_gov_user, expected_result):
 
 
 def test_is_user_case_officer_none():
-    assert caseworker_rules.is_user_case_adviser(get_mock_request(None), {"case_officer": None}) is False
+    assert caseworker_rules.is_user_case_officer(get_mock_request(None), {"case_officer": None}) is False
 
 
 @pytest.mark.parametrize(
@@ -69,7 +69,7 @@ def test_is_user_case_officer_none():
     ),
 )
 def test_is_user_case_officer(data, mock_gov_user, expected_result):
-    assert caseworker_rules.is_user_case_adviser(get_mock_request(mock_gov_user["user"]), data) == expected_result
+    assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) == expected_result
 
 
 @pytest.mark.parametrize(

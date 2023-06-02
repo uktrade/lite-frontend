@@ -2,7 +2,7 @@ import rules
 
 
 @rules.predicate
-def is_user_case_adviser(request, case):
+def is_user_case_officer(request, case):
     try:
         user = request.lite_user
     except AttributeError:
@@ -25,7 +25,7 @@ def is_user_assigned(request, case):
     return False
 
 
-is_user_allocated = is_user_case_adviser | is_user_assigned
+is_user_allocated = is_user_case_officer | is_user_assigned
 
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
