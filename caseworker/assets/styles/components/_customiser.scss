@@ -14,12 +14,18 @@
         justify-content: space-between;
     }
 
-    &__options {
-        padding: 15px 0px;
-    }
-
     &__toggleable--hidden {
         display: none;
     }
 
+}
+
+// styling for queue view only
+.lite-tabs__container + .customiser__options {
+    padding: 15px 0px;
+}
+
+// styling for quick-summary tab only
+#tab-quick-summary-content .customiser__options {
+    min-width: fit-content;
 }
