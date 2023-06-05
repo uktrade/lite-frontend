@@ -27,18 +27,24 @@
 					<th class="govuk-table__header" scope="col"></th>
 				</tr>
 			</thead>
+
 			<tbody class="govuk-table__body">
 				{% for user_case_note_mention in data.results %}
 					<tr class="govuk-table__row" id="mentions-row-{{ forloop.counter }}">
 						<td class="govuk-table__header" scope="row">
 								{{ user_case_note_mention.reference_code }}
 						</td>
-						<td class="govuk-table__cell"> {% if user_case_note_mention.is_accessed %}<p class="govuk-tag">NEW</p>{% endif %} <br>{% if user_case_note_mention.is_urgent %}<p class="govuk-tag govuk-tag--red">URGENT</p>{% endif %} </td>
+						<td class="govuk-table__cell">
+							<ul class="mentions-tag">
+								{% if not user_case_note_mention.is_accessed %}<li><span class="govuk-tag">NEW</span></li>{% endif %}
+								{% if user_case_note_mention.is_urgent %}<li><span class="govuk-tag govuk-tag--red">URGENT</span></li>{% endif %}
+							</ul>
+						</td>
 						<td class="govuk-table__cell">{{ user_case_note_mention.created_at|to_datetime|date:"d F Y" }}</td>
 						<td class="govuk-table__cell">
 							<div>
 								{% if user_case_note_mention.case_note_user.team %}<span class="app-activity__item__user">{{ user_case_note_mention.case_note_user.team.name }}:</span> {% endif %}{{ user_case_note_mention.case_note_user.first_name }} {{ user_case_note_mention.case_note_user.last_name }}
-								mentioned {{ user_case_note_mention.user.first_name }} {{ user_case_note_mention.user.last_name }} ({{user_case_note_mention.user.team.name}}) in a case note
+								mentioned {{ user_case_note_mention.user.first_name }} {{ user_case_note_mention.user.last_name }} ({{user_case_note_mention.user.team.name}}) in a case note.
 								<div class="notes-and-timeline-timeline__day-group-note">
 									{{ user_case_note_mention.case_note_text }}
 								</div>

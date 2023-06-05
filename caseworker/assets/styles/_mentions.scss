@@ -1,7 +1,9 @@
-.mentions {
-  &__new,
-  &__urgent {
-    margin-left: 0px;
-    margin-top: 0px;
+.mentions-tag {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+
+  li {
+    margin-bottom: 8px;
   }
 }
