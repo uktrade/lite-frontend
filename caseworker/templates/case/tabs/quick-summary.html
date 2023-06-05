@@ -3,7 +3,7 @@
 
 <h2 class="govuk-heading-m">Quick Summary</h2>
 
-<div class="quick-summary customiser" data-customiser-spec='{"options_label": "Customise quick summary", "identifier": "quick-summary", "analytics_prefix": "qs", "options_hint": "Select items to show", "toggleable_elements": [{"label": "Status", "key": "status", "default_visible": false}, {"label": "Licensing unit case officer", "key": "lu_case_officer", "default_visible": true}, {"label": "Case advisers", "key": "case_advisers", "default_visible": false}, {"label": "Temporary or permanent", "key": "temporary_permanent", "default_visible": false}, {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false}, {"label": "Flags", "key": "flags", "default_visible": false}, {"label": "Queries", "key": "queries", "default_visible": false}, {"label": "Latest action", "key": "latest_action", "default_visible": false}, {"label": "Days on queue elapsed", "key": "days_on_queue", "default_visible": true}, {"label": "Total days elapsed", "key": "total_days", "default_visible": false}, {"label": "Product names", "key": "product_names", "default_visible": false}, {"label": "Total value", "key": "total_value", "default_visible": false}, {"label": "Control list entries", "key": "control_list_entries", "default_visible": true}, {"label": "Regimes", "key": "regimes", "default_visible": true}, {"label": "Report summaries", "key": "report_summaries", "default_visible": true}, {"label": "Security graded", "key": "security_graded", "default_visible": false}, {"label": "Security approvals", "key": "security_approvals", "default_visible": false}, {"label": "Applicant name", "key": "applicant_name", "default_visible": true}, {"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false}, {"label": "End use", "key": "end_use", "default_visible": true}, {"label": "End-user documents", "key": "end_user_documents", "default_visible": true}]}'>
+<div class="quick-summary customiser" data-customiser-spec='{"options_label": "Customise quick summary", "identifier": "quick-summary", "analytics_prefix": "qs", "options_hint": "Select items to show", "toggleable_elements": [{"label": "Status", "key": "status", "default_visible": false}, {"label": "Licensing Unit case officer", "key": "lu_case_officer", "default_visible": true}, {"label": "Case adviser", "key": "case_advisers", "default_visible": false}, {"label": "Temporary or Permanent", "key": "temporary_permanent", "default_visible": false}, {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false}, {"label": "Flags", "key": "flags", "default_visible": false}, {"label": "Queries", "key": "queries", "default_visible": false}, {"label": "Latest action", "key": "latest_action", "default_visible": false}, {"label": "Days elapsed on this queue", "key": "days_on_queue", "default_visible": true}, {"label": "Total days elapsed", "key": "total_days", "default_visible": false}, {"label": "Product names", "key": "product_names", "default_visible": false}, {"label": "Total value", "key": "total_value", "default_visible": false}, {"label": "Control list entries", "key": "control_list_entries", "default_visible": true}, {"label": "Regimes", "key": "regimes", "default_visible": true}, {"label": "Report summaries", "key": "report_summaries", "default_visible": true}, {"label": "Security graded", "key": "security_graded", "default_visible": false}, {"label": "Security approvals", "key": "security_approvals", "default_visible": false}, {"label": "Applicant name", "key": "applicant_name", "default_visible": true}, {"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false}, {"label": "End use", "key": "end_use", "default_visible": true}, {"label": "End-user document", "key": "end_user_documents", "default_visible": true}]}'>
 
 
     <div class="quick-summary__content">
@@ -14,7 +14,7 @@
                     <td class="govuk-table__cell">{{ case.data.status.value }}</td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="lu_case_officer">
-                    <th scope="row" class="govuk-table__header">Licensing unit case officer</th>
+                    <th scope="row" class="govuk-table__header">Licensing Unit case officer</th>
                     <td class="govuk-table__cell">
         				{% if case.case_officer %}
         					{{ case.case_officer|username }}
@@ -26,7 +26,7 @@
                     </td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="case_advisers">
-                    <th scope="row" class="govuk-table__header">Case advisers</th>
+                    <th scope="row" class="govuk-table__header">Case adviser</th>
                     <td class="govuk-table__cell">
         			{% if case.assigned_users %}
         				{{ case|get_adviser_list|join:", " }}
@@ -38,7 +38,7 @@
                     </td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="temporary_permanent">
-                    <th scope="row" class="govuk-table__header">Temporary or permanent</th>
+                    <th scope="row" class="govuk-table__header">Temporary or Permanent</th>
                     <td class="govuk-table__cell">{{ case.data.export_type.key }}</td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="assigned_queues">
@@ -60,9 +60,7 @@
         				{% if case.flags or case.destinations_flags or case.goods_flags %}
         					{{ case.all_flags|get_flags_list|join:", " }}
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					None
         				{% endif %}
                     </td>
                 </tr>
@@ -70,11 +68,9 @@
                     <th scope="row" class="govuk-table__header">Open query</th>
                     <td class="govuk-table__cell">
         				{% if case.has_open_queries %}
-        					Outstanding queries
+        					Yes
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					No
         				{% endif %}
                     </td>
                 </tr>
@@ -98,14 +94,12 @@
         						</div>
         					{% endif %}
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					None
         				{% endif %}
                     </td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="days_on_queue">
-                    <th scope="row" class="govuk-table__header">Days on queue elapsed</th>
+                    <th scope="row" class="govuk-table__header">Days elapsed on this queue</th>
                     <td class="govuk-table__cell">
         				{% if case.queue_details %}
                             {% for queue_detail in case.queue_details %}
@@ -152,9 +146,7 @@
                                 {{cle}}<br/>
                             {% endfor %}
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					None
         				{% endif %}
                     </td>
                 </tr>
@@ -164,9 +156,7 @@
         				{% if goods_summary.regimes %}
         					{{ goods_summary.regimes|join:", " }}
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					None
         				{% endif %}
                     </td>
                 </tr>
@@ -176,9 +166,7 @@
         				{% if goods_summary.report_summaries %}
         					{{ goods_summary.report_summaries|join:", " }}
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					None
         				{% endif %}
                     </td>
                 </tr>
@@ -192,9 +180,7 @@
         				{% if case.data.security_approvals %}
         					{{ case.data.security_approvals|list_to_choice_labels:security_classified_approvals_types }}
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					None
         				{% endif %}
                     </td>
                 </tr>
@@ -212,9 +198,7 @@
         				{% if case.data.denial_matches %}
         					{{ case.data.denial_matches|get_denial_references|join:", " }}
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					None
         				{% endif %}
                     </td>
                 </tr>
@@ -224,9 +208,7 @@
         				{% if case.data.sanction_matches %}
         					{{ case.data.sanction_matches|get_sanction_list|join:", " }}
         				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						None
-        					</span>
+        					None
         				{% endif %}
                     </td>
                 </tr>
@@ -235,7 +217,7 @@
                     <td class="govuk-table__cell">{{ case.data.intended_end_use }}</td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="end_user_documents">
-                    <th scope="row" class="govuk-table__header">End-user documents</th>
+                    <th scope="row" class="govuk-table__header">End-user document</th>
                     <td class="govuk-table__cell">
         				{% for document in case.data.end_user.documents %}
         					<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
