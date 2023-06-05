@@ -46,7 +46,7 @@ def test_can_user_make_recommendation_request_missing_attributes(mock_gov_user, 
     case = Case(data_standard_case["case"])
     request = None
 
-    assert not rules.test_rule("can_user_make_recommendation", request, case)
+    assert not advice_rules.can_user_make_recommendation(request, case)
 
 
 def test_can_user_make_recommendation_user_not_allocated(mock_gov_user, data_fake_queue, data_standard_case):
@@ -180,10 +180,10 @@ def test_can_user_make_recommendation_user_allocated_ncsc_queue_mismatch(
     assert not rules.test_rule("can_user_make_recommendation", request, data_assigned_case)
 
 
-def test_can_user_make_recommendation_when_allocated(mock_gov_user, data_fake_queue, data_standard_case):
-    # User satisfies `can_user_make_recommendation_when_allocated` criteria, but is not yet allocated
+def test_can_user_allocate_and_approve(mock_gov_user, data_fake_queue, data_standard_case):
+    # User satisfies `can_user_allocate_and_approve` criteria, but is not yet allocated
     case = Case(data_standard_case["case"])
     mock_gov_user["user"]["team"]["alias"] = services.NCSC_TEAM
     data_fake_queue["alias"] = services.NCSC_CASES_TO_REVIEW
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
-    assert rules.test_rule("can_user_make_recommendation_when_allocated", request, case)
+    assert rules.test_rule("can_user_allocate_and_approve", request, case)

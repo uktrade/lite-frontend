@@ -243,8 +243,8 @@
     </tbody>
 </table>
 
-{% test_rule 'can_user_make_recommendation_when_allocated' request case as can_user_make_recommendation_when_allocated %}
-{% if allocate_and_approve_form and can_user_make_recommendation_when_allocated %}
+{% test_rule 'can_user_allocate_and_approve' request case as can_user_allocate_and_approve %}
+{% if allocate_and_approve_form and can_user_allocate_and_approve %}
     <form action="{% url 'queues:case_assignment_assign_to_me' queue.id %}" method="post"
       class="app-case-warning-banner__action-form">
     {% csrf_token %}

@@ -62,4 +62,4 @@ def can_user_make_recommendation(request, case):
 
 
 rules.add_rule("can_user_make_recommendation", is_user_allocated & can_user_make_recommendation)
-rules.add_rule("can_user_make_recommendation_when_allocated", can_user_make_recommendation)
+rules.add_rule("can_user_allocate_and_approve", can_user_make_recommendation)
