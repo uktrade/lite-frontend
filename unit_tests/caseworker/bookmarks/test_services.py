@@ -1,10 +1,15 @@
 import json
 import uuid
-from collections import OrderedDict
 
 import pytest
 
-from caseworker.bookmarks.services import description_from_filter, enrich_bookmark_for_display, enrich_filter_for_saving
+from caseworker.bookmarks.services import (
+    description_from_filter,
+    enrich_bookmark_for_display,
+    TEMP_BOOKMARK_NAME,
+    get_next_temp_bookmark_name,
+    enrich_filter_for_saving,
+)
 from unit_tests.caseworker.conftest import GOV_USER_ID
 
 
@@ -131,3 +136,31 @@ def test_enrich_filter_for_saving(name, filter_data, raw_filters, expected_filte
     actual_filter = enrich_filter_for_saving(filter_data, raw_filters)
 
     assert sorted(actual_filter.items()) == sorted(expected_filter_data.items())
+
+
+@pytest.mark.parametrize(
+    "bookmarks, expected_name",
+    [
+        (
+            {"user": []},
+            TEMP_BOOKMARK_NAME,
+        ),
+        (
+            {"user": [{"name": TEMP_BOOKMARK_NAME}, {"name": "Renamed to something"}]},
+            f"{TEMP_BOOKMARK_NAME} (1)",
+        ),
+        (
+            {
+                "user": [
+                    {"name": TEMP_BOOKMARK_NAME},
+                    {"name": TEMP_BOOKMARK_NAME + " (3)"},
+                    {"name": TEMP_BOOKMARK_NAME + " (1)"},
+                ]
+            },
+            f"{TEMP_BOOKMARK_NAME} (4)",
+        ),
+    ],
+)
+def test_get_next_temp_bookmark_name(bookmarks, expected_name):
+    actual_name = get_next_temp_bookmark_name(bookmarks)
+    assert actual_name == expected_name

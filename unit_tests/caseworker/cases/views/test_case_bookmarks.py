@@ -1,7 +1,7 @@
-import json
-
 import pytest
 from django.urls import reverse
+
+from caseworker.bookmarks.services import TEMP_BOOKMARK_NAME
 
 
 @pytest.fixture(autouse=True)

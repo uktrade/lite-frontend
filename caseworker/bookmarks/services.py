@@ -1,6 +1,7 @@
-from datetime import datetime, date
 import logging
+import re
 from collections import OrderedDict
+from datetime import date
 
 from django.urls import reverse
 from django.utils.http import urlencode
@@ -9,6 +10,7 @@ from caseworker.users.services import get_gov_user
 from core import client
 
 logger = logging.getLogger(__name__)
+TEMP_BOOKMARK_NAME = "New unnamed filter"
 
 
 def fetch_bookmarks(request, filter_data):
@@ -27,9 +29,7 @@ def fetch_bookmarks(request, filter_data):
 
 def add_bookmark(request, data, raw_filters):
     filter_to_save = enrich_filter_for_saving(data, raw_filters)
-    now = datetime.today().strftime("%y%m%d-%H%M%S")
-    filter_name = f"New unnamed filter ({now})"
-    bookmark_name = filter_name
+    bookmark_name = data["next_temp_bookmark_name"]
     user, _ = get_gov_user(request)
     user_id = user["user"]["id"]
 
@@ -55,6 +55,19 @@ def delete_bookmark(request, bookmark_id):
 def rename_bookmark(request, bookmark_id, name):
     data = {"id": bookmark_id, "name": name}
     return client.put(request, f"/bookmarks", data)
+
+
+def get_next_temp_bookmark_name(bookmarks):
+    p = TEMP_BOOKMARK_NAME + r"(?: \((\d+)\))?"
+    suffix = ""
+    matches = [re.match(p, b["name"]) for b in bookmarks["user"]]
+    indexes = [m.group(1) for m in matches if m]
+
+    if indexes:
+        next_index = max([int(index) if index else 0 for index in indexes]) + 1
+        suffix = f" ({next_index})"
+
+    return TEMP_BOOKMARK_NAME + suffix
 
 
 def enrich_bookmark_for_display(bookmark, filter_data):
@@ -103,6 +116,7 @@ def enrich_filter_for_saving(data, raw_filters):
         "saved_filter_description",
         "saved_filter_name",
         "return_to",
+        "next_temp_bookmark_name",
     ]
 
     filters = {k: data[k] for k in data.keys() if data[k] and k not in keys_to_remove}

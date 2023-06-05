@@ -122,7 +122,7 @@ def test_cases_home_page_view_context(authorized_client):
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert isinstance(response.context["form"], CasesFiltersForm)
-    assert len(response.context["form"].fields) == 30
+    assert len(response.context["form"].fields) == 31
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200

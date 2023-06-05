@@ -190,8 +190,21 @@ class CasesFiltersForm(forms.Form):
             widget=HiddenInput(),
             required=False,
         )
+        self.fields["next_temp_bookmark_name"] = forms.CharField(
+            label="",
+            widget=HiddenInput(),
+            required=False,
+        )
 
-        basic_filters = ["case_reference", "case_type", "status", "case_officer", "assigned_user", "return_to"]
+        basic_filters = [
+            "case_reference",
+            "case_type",
+            "status",
+            "case_officer",
+            "assigned_user",
+            "return_to",
+            "next_temp_bookmark_name",
+        ]
         if not queue.get("is_system_queue"):
             basic_filters.append("hidden")
 

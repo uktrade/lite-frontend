@@ -11,6 +11,7 @@ from django.test import Client
 from django.utils import timezone
 
 from caseworker.advice import services
+from caseworker.bookmarks.services import TEMP_BOOKMARK_NAME
 from core import client
 from core.helpers import convert_value_to_query_param
 from caseworker.advice.services import LICENSING_UNIT_TEAM, FIRST_COUNTERSIGN, SECOND_COUNTERSIGN

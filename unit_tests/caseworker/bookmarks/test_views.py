@@ -42,6 +42,7 @@ def test_add_bookmark_ok(authorized_client, mock_queue, mock_cases_with_filter_d
         url,
         data={
             "return_to": return_to_url,
+            "next_temp_bookmark_name": "New unnamed filter",
             "country": "GB",
             "case_officer": gov_uk_user_id,
             "finalised_to_0": "22",

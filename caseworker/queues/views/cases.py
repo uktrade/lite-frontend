@@ -6,7 +6,7 @@ from django.http import Http404
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 
-from caseworker.bookmarks.services import fetch_bookmarks
+from caseworker.bookmarks.services import fetch_bookmarks, get_next_temp_bookmark_name
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
@@ -231,6 +231,10 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         case["goods_summary"] = self._transform_goods(case)
         case["submitted_at"] = parser.parse(case["submitted_at"])
 
+    @cached_property
+    def fetch_bookmarks(self):
+        return fetch_bookmarks(self.request, self.filters)
+
     def get_initial(self):
         return self.get_params()
 
@@ -240,6 +244,8 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         kwargs["filters_data"] = self.filters
         kwargs["queue"] = self.queue
         kwargs["initial"]["return_to"] = self.request.get_full_path()
+        bookmarks = self.fetch_bookmarks
+        kwargs["initial"]["next_temp_bookmark_name"] = get_next_temp_bookmark_name(bookmarks)
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
@@ -254,7 +260,6 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
-        bookmarks = fetch_bookmarks(self.request, self.filters)
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,
@@ -265,7 +270,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
             "show_updated_cases_banner": show_updated_cases_banner,
             "tab_data": self._tab_data(),
-            "bookmarks": bookmarks,
+            "bookmarks": self.fetch_bookmarks,
             "return_to": self.request.get_full_path(),
         }
 
