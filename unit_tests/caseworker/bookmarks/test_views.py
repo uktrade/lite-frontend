@@ -1,4 +1,3 @@
-import json
 import uuid
 
 import pytest
@@ -57,11 +56,8 @@ def test_add_bookmark_ok(authorized_client, mock_queue, mock_cases_with_filter_d
     assert posted_content["name"].startswith("New unnamed filter")
     assert posted_content["user_id"] == gov_uk_user_id
 
-    expected_filter = f"""{{
-        "case_officer": "{gov_uk_user_id}", "country": "GB",
-        "finalised_to": "22-09-2002"
-    }}"""
-    assert json.loads(posted_content["filter_json"]) == json.loads(expected_filter)
+    expected_filter = {"case_officer": gov_uk_user_id, "country": "GB", "finalised_to": "22-09-2002"}
+    assert posted_content["filter_json"] == expected_filter
 
 
 @pytest.mark.parametrize("return_code", [400, 500])

@@ -32,9 +32,8 @@ def add_bookmark(request, data):
     for k, v in filter_to_save.items():
         if type(v) == date:
             filter_to_save[k] = v.strftime("%d-%m-%Y")
-    filter_json = json.dumps(filter_to_save)
     data = {
-        "filter_json": filter_json,
+        "filter_json": filter_to_save,
         "name": bookmark_name,
         "user_id": user_id,
     }
@@ -56,8 +55,7 @@ def rename_bookmark(request, bookmark_id, name):
 
 def enhance_bookmark(bookmark, filter_data):
     url = reverse("queues:cases")
-    bookmark_filter_json = bookmark["filter_json"]
-    bookmark_filter = json.loads(bookmark_filter_json)
+    bookmark_filter = bookmark["filter_json"]
     bookmark["description"] = description_from_filter(bookmark_filter, filter_data)
     for key in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
         if key in bookmark_filter:

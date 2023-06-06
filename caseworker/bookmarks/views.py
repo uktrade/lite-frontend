@@ -42,7 +42,7 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
 
 class DeleteBookmark(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
-    form_class = forms.DeleteBookmark
+    form_class = forms.ModifyBookmark
 
     def form_valid(self, form):
         data = form.cleaned_data
@@ -68,7 +68,7 @@ class DeleteBookmark(LoginRequiredMixin, FormView):
 
 class RenameBookmark(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
-    form_class = forms.DeleteBookmark
+    form_class = forms.ModifyBookmark
 
     def form_valid(self, form):
         data = form.cleaned_data

@@ -65,7 +65,7 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
     ],
 )
 def test_enhance_bookmark(filter_data, bookmark_filter, expected_description, expected_url_params):
-    bookmark = {"name": "Name", "description": "", "filter_json": json.dumps(bookmark_filter), "id": uuid.uuid4()}
+    bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
 
     enhance_bookmark(bookmark, filter_data)
 

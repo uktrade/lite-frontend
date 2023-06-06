@@ -1,3 +1,10 @@
+// This function toggles whether the specified element is hidden or displayed.
+// It will also toggle the show/hide links appropriately.
+//
+// elementId: The id of the element to toggle
+// startVisible: set this to true to start with the relevant elements visible, or false to start with them hidden.
+// showLinkId: id of the link that will show the element and the hide link and hide itself
+// hideLinkId: id of the link that will hide the element and itself and display the show link
 export function enableToggle(elementId, startVisible, showLinkId, hideLinkId) {
   if (startVisible) {
     enableSwap(elementId, null, showLinkId, hideLinkId);
@@ -6,6 +13,13 @@ export function enableToggle(elementId, startVisible, showLinkId, hideLinkId) {
   }
 }
 
+// This function swaps the visible element with the hidden element in the document.
+// It will also toggle the swap/revert links appropriately.
+//
+// visibleElementId: The id of the visible element
+// hiddenElementId: The id of the hidden element
+// swapLinkId: id of the link that will hide the visible element and show the hidden one.
+// revertLinkId: id of the link that will revert the two elements to their original state.
 export function enableSwap(
   visibleElementId,
   hiddenElementId,
