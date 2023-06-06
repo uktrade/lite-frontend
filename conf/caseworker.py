@@ -48,6 +48,7 @@ TEMPLATES = [
                 "caseworker.core.context_processors.current_queue",
                 "caseworker.core.context_processors.export_vars",
                 "caseworker.core.context_processors.lite_menu",
+                "caseworker.core.context_processors.new_mentions",
                 "caseworker.core.context_processors.current_user",
                 "caseworker.core.context_processors.is_all_cases_queue",
                 "caseworker.core.context_processors.feature_flags",
@@ -127,7 +128,9 @@ FEATURE_PRODUCTPEDIA_ON = env.bool("FEATURE_PRODUCTPEDIA_ON", False)
 FEATURE_FLAG_PRODUCT_SEARCH = env.bool("FEATURE_FLAG_PRODUCT_SEARCH", False)
 
 FEATURE_C7_NCSC_ENABLED = env.bool("FEATURE_C7_NCSC_ENABLED", False)
-FEATURE_MENTIONS_ENABLED = env.bool("FEATURE_MENTIONS_ENABLED", False)
+FEATURE_MENTIONS_ENABLED = env.bool("FEATURE_MENTIONS_ENABLED", True)
+
+FEATURE_QUICK_SUMMARY = env.bool("FEATURE_QUICK_SUMMARY", False)
 
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):

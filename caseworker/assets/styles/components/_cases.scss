@@ -3,6 +3,7 @@
   grid-gap: govuk-spacing(3) 150px;
   margin: 0;
   overflow: hidden;
+  height: fit-content;
 
   &__row {
     display: grid;
