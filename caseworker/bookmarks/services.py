@@ -1,5 +1,5 @@
 from datetime import datetime, date
-import json
+import logging
 from collections import OrderedDict
 
 from django.urls import reverse
@@ -8,11 +8,14 @@ from django.utils.http import urlencode
 from caseworker.users.services import get_gov_user
 from core import client
 
+logger = logging.getLogger(__name__)
+
 
 def fetch_bookmarks(request, filter_data):
     response = client.get(request, "/bookmarks/")
     if response.status_code >= 300:
         # Not important enough to break the page, so return an empty set of bookmarks.
+        logger.error("Error retrieving bookmarks. Status code: %s; Message: %s", response.status_code, response.json)
         return {"user": []}
 
     bookmarks = response.json()
