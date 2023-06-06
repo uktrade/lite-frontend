@@ -12,7 +12,7 @@ Feature: I want to create ECJU queries
     When I go to application previously created
     And I assign myself to the case
     And I click the queries tab
-    And I click "Add an ECJU query"
+    And I click "Send a query to the exporter"
     And I enter "Some unique query" as the query
     And I click send
     Then I see "Some unique query" as the query under open queries

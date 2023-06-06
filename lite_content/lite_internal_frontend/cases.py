@@ -776,7 +776,7 @@ class EcjuQueries:
         COMPLIANCE_ACTION = "Compliance query"
 
     class AddQuery:
-        ADD_BUTTON_LABEL = "Add an ECJU query"
+        ADD_BUTTON_LABEL = "Send a query to the exporter"
         ADD_PRE_VISIT_QUESTIONNAIRE = "Add pre visit questionnaire"
         COMPLIANCE_ACTIONS = "Add compliance actions"
 
