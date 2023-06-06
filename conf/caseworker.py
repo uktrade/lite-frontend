@@ -25,6 +25,11 @@ INSTALLED_APPS += [
     "rules.apps.AutodiscoverRulesConfig",
 ]
 
+MIDDLEWARE += [
+    "caseworker.queues.middleware.RequestQueueMiddleware",
+    "caseworker.users.middleware.RequestUserMiddleware",
+]
+
 if MOCK_SSO_ACTIVATE_ENDPOINTS:
     INSTALLED_APPS += [
         "caseworker.mock_sso",
@@ -45,11 +50,10 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.messages.context_processors.messages",
-                "caseworker.core.context_processors.current_queue",
+                "caseworker.core.context_processors.current_queue_and_user",
                 "caseworker.core.context_processors.export_vars",
                 "caseworker.core.context_processors.lite_menu",
                 "caseworker.core.context_processors.new_mentions",
-                "caseworker.core.context_processors.current_user",
                 "caseworker.core.context_processors.is_all_cases_queue",
                 "caseworker.core.context_processors.feature_flags",
             ],

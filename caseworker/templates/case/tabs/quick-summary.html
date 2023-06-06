@@ -1,4 +1,4 @@
-{% load static advice_tags %}
+{% load static advice_tags crispy_forms_tags rules %}
 {% load humanize %}
 
 <h2 class="govuk-heading-m">Quick Summary</h2>
@@ -242,3 +242,13 @@
         </tr>
     </tbody>
 </table>
+
+{% test_rule 'can_user_allocate_and_approve' request case as can_user_allocate_and_approve %}
+{% if allocate_and_approve_form and can_user_allocate_and_approve %}
+    <form action="{% url 'queues:case_assignment_assign_to_me' queue.id %}" method="post"
+      class="app-case-warning-banner__action-form">
+    {% csrf_token %}
+    {{ allocate_and_approve_form|crispy }}
+    <button type="submit" name="status" id="allocate-and-approve-button" class="govuk-button govuk-button--primary">Allocate to me and approve</button>
+    </form>
+{% endif %}

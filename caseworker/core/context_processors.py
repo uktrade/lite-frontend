@@ -18,22 +18,22 @@ from caseworker.users.services import get_gov_user
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 
 
-def current_queue(request):
+def current_queue_and_user(request):
+    extra_context = {}
     kwargs = getattr(request.resolver_match, "kwargs", {})
+    queue = None
     if "queue_pk" in kwargs and "disable_queue_lookup" not in kwargs:
         queue_pk = request.resolver_match.kwargs["queue_pk"]
         queue = get_queue(request, queue_pk)
-        return {"queue": queue}
+    extra_context["queue"] = queue
 
-    return {}
-
-
-def current_user(request):
     current_user = None
     if "lite_api_user_id" in request.session:
         user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
         current_user = user.get("user", None)
-    return {"current_user": current_user}
+    extra_context["current_user"] = current_user
+
+    return extra_context
 
 
 def export_vars(request):
