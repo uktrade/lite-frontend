@@ -1,6 +1,6 @@
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit, Button
+from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
 from django import forms
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
@@ -191,9 +191,21 @@ class CasesFiltersForm(forms.Form):
             required=False,
         )
 
-        basic_filters = ["case_reference", "case_type", "status", "case_officer", "assigned_user", "return_to"]
+        case_filters = [
+            "case_reference",
+            "case_type",
+            "status",
+            "case_officer",
+            "assigned_user",
+            "return_to",
+            Field("submitted_from"),
+            Field("submitted_to"),
+            Field.select("flags"),
+            Field("finalised_from"),
+            Field("finalised_to"),
+        ]
         if not queue.get("is_system_queue"):
-            basic_filters.append("hidden")
+            case_filters.append("hidden")
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the
@@ -203,40 +215,42 @@ class CasesFiltersForm(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Fieldset(
-                *basic_filters,
-                css_id="basic-filter-fields",
-                css_class="basic-filter-fields",
-            ),
-            ExpandingFieldset(
-                Field.text("exporter_application_reference"),
-                Field.text("organisation_name"),
-                Field.text("exporter_site_name"),
-                Field.text("exporter_site_address"),
-                Field.select("team_advice_type"),
-                Field.select("final_advice_type"),
-                Field.select("max_sla_days_remaining"),
-                Field.select("min_sla_days_remaining"),
-                Field.select("sla_days_elapsed"),
-                Field.select("sla_days_elapsed_sort_order"),
-                Field.text("party_name"),
-                Field.text("party_address"),
-                Field.text("goods_related_description"),
-                Field.text("country"),
-                Field.text("control_list_entry", id="control_list_entry"),
-                Field.text("regime_entry"),
-                Field.select("flags"),
-                Field("submitted_from"),
-                Field("submitted_to"),
-                Field("finalised_from"),
-                Field("finalised_to"),
-                Field("is_nca_applicable"),
-                Field("is_trigger_list"),
-                legend="Advanced filters",
-                css_id="advanced-filter-fields",
-                css_class="advanced-group",
-                text_div_css_class="advanced-filter-fields",
-                details_id="advanced-filter-details",
+            Accordion(
+                AccordionSection(
+                    "Case",
+                    *case_filters,
+                ),
+                AccordionSection(
+                    "Product",
+                    Field.text("control_list_entry", id="control_list_entry"),
+                    Field.text("regime_entry"),
+                    Field.text("goods_related_description"),
+                    Field("is_trigger_list"),
+                    Field("is_nca_applicable"),
+                ),
+                AccordionSection(
+                    "Applicant",
+                    Field.text("exporter_application_reference"),
+                    Field.text("organisation_name"),
+                    Field.text("exporter_site_name"),
+                    Field.text("exporter_site_address"),
+                ),
+                AccordionSection(
+                    "Parties",
+                    Field.text("party_name"),
+                    Field.text("party_address"),
+                    Field.text("country"),
+                ),
+                AccordionSection(
+                    "Misc",
+                    Field.select("team_advice_type"),
+                    Field.select("final_advice_type"),
+                    Field.select("max_sla_days_remaining"),
+                    Field.select("min_sla_days_remaining"),
+                    Field.select("sla_days_elapsed"),
+                    Field.select("sla_days_elapsed_sort_order"),
+                ),
+                css_id="accordion-1",
             ),
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),
@@ -248,7 +262,7 @@ class CasesFiltersForm(forms.Form):
                     formaction=reverse("bookmarks:add_bookmark"),
                 ),
                 HTML(
-                    f'<a href="{clear_filters_url}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>'  # noqa
+                    f'<a href="{clear_filters_url}" class="govuk-button govuk-button--secondary" id="button-clear-filters">Clear filters</a>'  # noqa
                 ),
                 css_class="case-filter-actions",
             ),

@@ -1,3 +1,17 @@
+.app-queue-view {
+    display: flex;
+
+    &__filters {
+        width: 25rem;
+        min-width: 25rem;
+        margin-right: 5rem;
+    }
+
+    &__content {
+        overflow: auto;
+    }
+}
+
 .app-case__summary-list {
   display: grid;
   grid-gap: govuk-spacing(3) 150px;
