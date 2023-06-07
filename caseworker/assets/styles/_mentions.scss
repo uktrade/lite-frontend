@@ -7,3 +7,12 @@
     margin-bottom: 8px;
   }
 }
+
+.mentions {
+  .govuk-table {
+    &__cell {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+  }
+}
