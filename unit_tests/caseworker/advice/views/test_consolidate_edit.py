@@ -263,7 +263,6 @@ def test_edit_consolidated_advice_approve_by_lu_put(
     url,
     consolidated_advice,
 ):
-
     case_data = data_standard_case
     case_data["case"]["advice"] = consolidated_advice
 
@@ -279,11 +278,7 @@ def test_edit_consolidated_advice_approve_by_lu_put(
     history = requests_mock.request_history.pop()
     assert history.method == "PUT"
     assert history.json() == [
-        {
-            "id": advice["id"],
-            "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-        }
+        {"id": advice["id"], "text": data["approval_reasons"], "proviso": data["proviso"], "type": "proviso"}
         for advice in consolidated_advice
     ]
 
@@ -333,7 +328,6 @@ def test_edit_consolidated_advice_by_LU_error_from_API(
     url,
     consolidated_advice,
 ):
-
     case_data = data_standard_case
     case_data["case"]["advice"] = consolidated_advice
 

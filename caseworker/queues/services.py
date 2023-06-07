@@ -54,8 +54,12 @@ def post_queues(request, json):
 
 
 def get_queue(request, pk):
-    data = client.get(request, "/queues/" + str(pk))
-    return data.json()
+    if hasattr(request, "queue") and request.queue.get("id") == pk:
+        return request.queue
+
+    response = client.get(request, "/queues/" + str(pk))
+    response.raise_for_status()
+    return response.json()
 
 
 def get_cases_search_data(request, queue_pk, params):

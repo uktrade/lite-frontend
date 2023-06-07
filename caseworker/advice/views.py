@@ -66,23 +66,6 @@ class CaseContextMixin:
 
         return self.case["data"]["goods"]
 
-    def unadvised_countries(self):
-        """Returns a dict of countries for which advice has not been given by the current user's team."""
-        dest_types = constants.DESTINATION_TYPES
-        advised_on = {
-            # Map of destinations advised on -> team that gave the advice
-            advice.get(dest_type): advice["user"]["team"]["id"]
-            for dest_type in dest_types
-            for advice in self.case.advice
-            if advice.get(dest_type) is not None
-        }
-        return {
-            dest["country"]["id"]: dest["country"]["name"]
-            for dest in self.case.destinations
-            # Don't include destinations already advised on by the current user's team
-            if (dest["id"], self.caseworker["team"]["id"]) not in advised_on.items()
-        }
-
     def get_context(self, **kwargs):
         return {}
 
@@ -176,7 +159,9 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_form(self):
         if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
-            return forms.FCDOApprovalAdviceForm(self.unadvised_countries(), **self.get_form_kwargs())
+            return forms.FCDOApprovalAdviceForm(
+                services.unadvised_countries(self.caseworker, self.case), **self.get_form_kwargs()
+            )
         else:
             return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
 
@@ -198,7 +183,9 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_form(self):
         denial_reasons = get_denial_reasons(self.request)
         if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
-            return forms.FCDORefusalAdviceForm(denial_reasons, self.unadvised_countries(), **self.get_form_kwargs())
+            return forms.FCDORefusalAdviceForm(
+                denial_reasons, services.unadvised_countries(self.caseworker, self.case), **self.get_form_kwargs()
+            )
         else:
             return forms.RefusalAdviceForm(denial_reasons, **self.get_form_kwargs())
 
@@ -222,7 +209,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEIS
         context = super().get_context_data(**kwargs)
         my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
-        advice_completed = self.unadvised_countries() == {}
+        advice_completed = services.unadvised_countries(self.caseworker, self.case) == {}
         return {
             **context,
             "my_advice": my_advice.values(),
@@ -353,7 +340,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
     def can_advise(self):
         if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
             # FCO cannot advice when all the destinations are already covered
-            return self.unadvised_countries() != {}
+            return services.unadvised_countries(self.caseworker, self.case) != {}
         return True
 
     def get_context(self, **kwargs):

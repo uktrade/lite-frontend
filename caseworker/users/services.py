@@ -131,7 +131,10 @@ def is_super_user(user):
     return user["user"]["role"]["id"] == SUPER_USER_ROLE_ID
 
 
-def get_user_case_note_mentions(request):
-    response = client.get(request, "/cases/user-case-note-mentions/")
+def get_user_case_note_mentions(request, params):
+
+    query_params = urlencode(params)
+    url = f"/cases/user-case-note-mentions/?{query_params}"
+    response = client.get(request, url)
     response.raise_for_status()
     return response.json(), response.status_code
