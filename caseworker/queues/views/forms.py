@@ -8,7 +8,6 @@ from django.urls import reverse
 from caseworker.flags.services import get_flags
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
-from core.forms.layouts import ExpandingFieldset
 
 SLA_DAYS_RANGE = 99
 
