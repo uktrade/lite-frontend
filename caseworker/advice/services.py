@@ -368,6 +368,7 @@ def update_advice(request, case, caseworker, advice_type, data, level):
                 "id": advice["id"],
                 "text": data["approval_reasons"],
                 "proviso": data["proviso"],
+                "type": "proviso" if data["proviso"] else "approve",
             }
             for advice in consolidated_advice
         ]
