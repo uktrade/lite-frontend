@@ -113,8 +113,6 @@ function showHideFilters() {
   let expandBasic = filterIsPopulated("basic-filter-fields");
   let expandAdvanced = filterIsPopulated("advanced-filter-fields");
 
-  console.log("Basic: " + expandBasic + "; Adv: " + expandAdvanced);
-
   if (expandBasic || expandAdvanced) expandBasicFilters();
   if (expandAdvanced) expandAdvancedFilters();
 }
@@ -134,8 +132,11 @@ const initRegimeEntryAutocompleteField = () => {
     );
 };
 
-const initCaseFilters = () => {
+const enableTogglingOfSavedFiltersPanel = () => {
   enableToggle("case-filters", false, "show-filters-link", "hide-filters-link");
+};
+const initCaseFilters = () => {
+  enableTogglingOfSavedFiltersPanel();
   initCountryAutocompleteField();
   initRegimeEntryAutocompleteField();
   initFlagsFiltersField();
