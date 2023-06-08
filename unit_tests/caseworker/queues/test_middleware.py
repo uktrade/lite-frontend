@@ -1,6 +1,7 @@
 from unittest import mock
 
 from django.http import HttpRequest
+from requests.exceptions import HTTPError
 
 from caseworker.queues.middleware import RequestQueueMiddleware
 
@@ -17,6 +18,15 @@ def test_request_queue_middleware_process_view_queue_pk_in_kwargs(mock_get_queue
 @mock.patch("caseworker.queues.middleware.get_queue")
 def test_request_queue_middleware_process_view_queue_pk_missing(mock_get_queue):
     mock_get_queue.return_value = {"id": "some_queue"}
+    request = HttpRequest()
+    RequestQueueMiddleware(mock.Mock()).process_view(request, None, None, {})
+    mock_get_queue.assert_not_called()
+    assert not hasattr(request, "queue")
+
+
+@mock.patch("caseworker.queues.middleware.get_queue")
+def test_request_queue_middleware_process_view_queue_request_403s(mock_get_queue):
+    mock_get_queue.side_effect = HTTPError("Client error: 403")
     request = HttpRequest()
     RequestQueueMiddleware(mock.Mock()).process_view(request, None, None, {})
     mock_get_queue.assert_not_called()

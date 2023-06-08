@@ -11,4 +11,7 @@ class RequestQueueMiddleware:
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         if view_kwargs.get("queue_pk"):
-            request.queue = get_queue(request, view_kwargs["queue_pk"])
+            try:
+                request.queue = get_queue(request, view_kwargs["queue_pk"])
+            except Exception:
+                return
