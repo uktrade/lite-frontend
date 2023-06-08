@@ -34,6 +34,7 @@ def setup(
     mock_queues_list,
     mock_control_list_entries,
     mock_regime_entries,
+    mock_empty_bookmarks,
 ):
     yield
 
@@ -121,7 +122,7 @@ def test_cases_home_page_view_context(authorized_client):
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert isinstance(response.context["form"], CasesFiltersForm)
-    assert len(response.context["form"].fields) == 29
+    assert len(response.context["form"].fields) == 30
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200

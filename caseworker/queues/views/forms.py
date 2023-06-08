@@ -1,13 +1,14 @@
-from django import forms
-
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit
+from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit, Button
+from django import forms
+from django.forms.widgets import HiddenInput
+from django.urls import reverse
 
+from caseworker.flags.services import get_flags
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
 from core.forms.layouts import ExpandingFieldset
-from caseworker.flags.services import get_flags
 
 SLA_DAYS_RANGE = 99
 
@@ -100,21 +101,25 @@ class CasesFiltersForm(forms.Form):
             choices=case_type_choices,
             label="Filter by type",
             widget=forms.Select(attrs={"id": "case_type"}),
+            required=False,
         )
 
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
             label="Filter by status",
+            required=False,
         )
 
         self.fields["case_officer"] = forms.ChoiceField(
             choices=gov_user_choices,
             label="Filter by case officer",
+            required=False,
         )
 
         self.fields["assigned_user"] = forms.ChoiceField(
             choices=gov_user_choices,
             label="Filter by assigned user",
+            required=False,
         )
 
         self.fields["team_advice_type"] = forms.ChoiceField(
@@ -180,8 +185,13 @@ class CasesFiltersForm(forms.Form):
             widget=CheckboxInputSmall(),
             required=False,
         )
+        self.fields["return_to"] = forms.CharField(
+            label="",
+            widget=HiddenInput(),
+            required=False,
+        )
 
-        basic_filters = ["case_reference", "case_type", "status", "case_officer", "assigned_user"]
+        basic_filters = ["case_reference", "case_type", "status", "case_officer", "assigned_user", "return_to"]
         if not queue.get("is_system_queue"):
             basic_filters.append("hidden")
 
@@ -195,6 +205,7 @@ class CasesFiltersForm(forms.Form):
         self.helper.layout = Layout(
             Fieldset(
                 *basic_filters,
+                css_id="basic-filter-fields",
                 css_class="basic-filter-fields",
             ),
             ExpandingFieldset(
@@ -222,11 +233,20 @@ class CasesFiltersForm(forms.Form):
                 Field("is_nca_applicable"),
                 Field("is_trigger_list"),
                 legend="Advanced filters",
+                css_id="advanced-filter-fields",
                 css_class="advanced-group",
                 text_div_css_class="advanced-filter-fields",
+                details_id="advanced-filter-details",
             ),
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),
+                Button(
+                    "save_filter",
+                    "Save filter",
+                    css_id="button-save-filters",
+                    formmethod="POST",
+                    formaction=reverse("bookmarks:add_bookmark"),
+                ),
                 HTML(
                     f'<a href="{clear_filters_url}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>'  # noqa
                 ),

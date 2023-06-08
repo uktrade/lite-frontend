@@ -18,6 +18,7 @@ INSTALLED_APPS += [
     "caseworker.letter_templates",
     "caseworker.external_data",
     "caseworker.advice",
+    "caseworker.bookmarks",
     "caseworker.tau",
     "caseworker.teams",
     "caseworker.cases",
