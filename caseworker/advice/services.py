@@ -3,7 +3,7 @@ from collections import defaultdict
 from requests.exceptions import HTTPError
 
 from core import client
-from caseworker.advice.constants import AdviceLevel
+from caseworker.advice import constants
 
 # Queues
 BEIS_CHEMICAL_CASES_TO_REVIEW = "BEIS_CHEMICAL_CASES_TO_REVIEW"
@@ -101,7 +101,7 @@ def filter_current_user_advice(all_advice, user_id):
     return [
         advice
         for advice in all_advice
-        if advice["level"] == AdviceLevel.USER
+        if advice["level"] == constants.AdviceLevel.USER
         and advice["type"]["key"] in ["approve", "proviso", "refuse"]
         and (advice["user"]["id"] == user_id)
     ]
@@ -179,11 +179,10 @@ def group_advice_by_team(advice):
 
 
 def get_advice_to_countersign(advice, caseworker):
-    advice_levels_to_countersign = [AdviceLevel.USER]
+    advice_levels_to_countersign = [constants.AdviceLevel.USER]
 
     if caseworker["team"]["alias"] == LICENSING_UNIT_TEAM:
-        advice_levels_to_countersign = [AdviceLevel.FINAL]
-
+        advice_levels_to_countersign = [constants.AdviceLevel.FINAL]
     advice_by_team = filter_advice_by_users_team(advice, caseworker)
     user_advice = filter_advice_by_level(advice_by_team, advice_levels_to_countersign)
     grouped_user_advice = group_advice_by_user(user_advice)
@@ -244,10 +243,10 @@ def get_advice_to_consolidate(advice, user_team_alias):
     """
     if user_team_alias == LICENSING_UNIT_TEAM:
         # LU needs to review the consolidated advice given by MOD which is at team level
-        user_team_advice = filter_advice_by_level(advice, [AdviceLevel.USER, AdviceLevel.TEAM])
+        user_team_advice = filter_advice_by_level(advice, [constants.AdviceLevel.USER, constants.AdviceLevel.TEAM])
         advice_from_teams = filter_advice_by_teams(user_team_advice, LU_CONSOLIDATE_TEAMS)
     elif user_team_alias == MOD_ECJU_TEAM:
-        user_advice = filter_advice_by_level(advice, [AdviceLevel.USER])
+        user_advice = filter_advice_by_level(advice, [constants.AdviceLevel.USER])
         advice_from_teams = filter_advice_by_teams(user_advice, MOD_CONSOLIDATE_TEAMS)
     else:
         raise Exception(f"Consolidate/combine operation not allowed for team {user_team_alias}")
@@ -369,6 +368,7 @@ def update_advice(request, case, caseworker, advice_type, data, level):
                 "id": advice["id"],
                 "text": data["approval_reasons"],
                 "proviso": data["proviso"],
+                "type": "proviso" if data["proviso"] else "approve",
             }
             for advice in consolidated_advice
         ]
@@ -510,7 +510,6 @@ def get_advice_tab_context(case, caseworker, queue_id):
         "url": "cases:advice_view",
         # Booleans that determine button visibility
         "buttons": {
-            "make_recommendation": False,
             "edit_recommendation": False,
             "clear_recommendation": False,
             "review_and_countersign": False,
@@ -531,10 +530,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
         ):
             existing_advice = get_my_advice(case.advice, caseworker["id"])
 
-            if not existing_advice:
-                # An individual giving advice on a case for the first time
-                context["buttons"]["make_recommendation"] = True
-            else:
+            if existing_advice:
                 # An individual accessing a case again after having given advice
                 context["url"] = "cases:view_my_advice"
                 context["buttons"]["edit_recommendation"] = True
@@ -543,7 +539,6 @@ def get_advice_tab_context(case, caseworker, queue_id):
 
             # BEIS Nuclear need to assess products first before giving recommendation
             if team_alias == BEIS_NUCLEAR and queue_alias == BEIS_NUCLEAR_CASES_TO_REVIEW and not existing_advice:
-                context["buttons"]["make_recommendation"] = len(unassessed_trigger_list_goods(case)) == 0
                 context["buttons"]["assess_trigger_list_products"] = len(unassessed_trigger_list_goods(case)) > 0
 
         elif queue_alias == FCDO_COUNTERSIGNING_QUEUE or queue_alias == BEIS_NUCLEAR_COUNTERSIGNING:
@@ -591,3 +586,21 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
     return context
+
+
+def unadvised_countries(caseworker, case):
+    """Returns a dict of countries for which advice has not been given by the current user's team."""
+    dest_types = constants.DESTINATION_TYPES
+    advised_on = {
+        # Map of destinations advised on -> team that gave the advice
+        advice.get(dest_type): advice["user"]["team"]["id"]
+        for dest_type in dest_types
+        for advice in case.advice
+        if advice.get(dest_type) is not None
+    }
+    return {
+        dest["country"]["id"]: dest["country"]["name"]
+        for dest in case.destinations
+        # Don't include destinations already advised on by the current user's team
+        if (dest["id"], caseworker["team"]["id"]) not in advised_on.items()
+    }

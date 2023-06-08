@@ -72,16 +72,18 @@ class CaseTabsMixin:
     def get_tabs(self):
         tabs = [
             Tabs.DETAILS,
+            Tabs.LICENCES,
             Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
         ]
+        if settings.FEATURE_QUICK_SUMMARY:
+            tabs.insert(1, Tabs.QUICK_SUMMARY)
 
         return tabs
 
     def get_standard_application_tabs(self):
         tabs = self.get_tabs()
-        tabs.insert(1, Tabs.LICENCES)
         tabs.append(self.get_notes_and_timelines_tab())
         tabs.append(self.get_advice_tab())
         tabs.append(self.get_assessment_tab())

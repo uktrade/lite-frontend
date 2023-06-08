@@ -2,7 +2,7 @@
 
 <div class="lite-buttons-row">
 	{% make_list queue.id case.id as button_params %}
-	{% test_rule 'can_user_add_an_ejcu_query' current_user case as can_user_add_an_ejcu_query %}
+	{% test_rule 'can_user_add_an_ejcu_query' request case as can_user_add_an_ejcu_query %}
 	{% if can_user_add_an_ejcu_query %}
 		{% govuk_link_button id='new-query' text='cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' url='cases:new_ecju_query' url_param=button_params query_params="?query_type=ecju_query"%}
 	{% endif %}

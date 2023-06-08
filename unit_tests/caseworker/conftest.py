@@ -1,4 +1,5 @@
 import copy
+from datetime import timedelta
 import re
 import os
 import uuid
@@ -7,6 +8,7 @@ import pytest
 from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
+from django.utils import timezone
 import rules
 
 from caseworker.advice import services
@@ -335,8 +337,14 @@ def mock_standard_case(requests_mock, data_standard_case):
 @pytest.fixture
 def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    joined_queue_at = timezone.now() - timedelta(days=2)
     data_standard_case["case"]["queue_details"] = [
-        {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "LU Post circulation", "alias": "LU_POST_CIRC_FINALISE"},
+        {
+            "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
+            "name": "LU Post circulation",
+            "alias": "LU_POST_CIRC_FINALISE",
+            "joined_queue_at": joined_queue_at.isoformat(),
+        },
     ]
     yield requests_mock.get(url=url, json=data_standard_case)
 
@@ -344,8 +352,14 @@ def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_ca
 @pytest.fixture
 def mock_standard_case_on_fcdo_countersigning_queue(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    joined_queue_at = timezone.now() - timedelta(days=3)
     data_standard_case["case"]["queue_details"] = [
-        {"id": "f458094c-1fed-4222-ac70-ff5fa20ff649", "name": "FCDO Countersigning", "alias": "FCDO_COUNTER_SIGNING"},
+        {
+            "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
+            "name": "FCDO Countersigning",
+            "alias": "FCDO_COUNTER_SIGNING",
+            "joined_queue_at": joined_queue_at.isoformat(),
+        },
     ]
     yield requests_mock.get(url=url, json=data_standard_case)
 
@@ -414,7 +428,7 @@ def mock_countries(requests_mock, data_countries):
 
 
 @pytest.fixture
-def mock_gov_user(requests_mock, mock_notifications, mock_case_statuses, gov_uk_user_id):
+def mock_gov_user(requests_mock, mock_notifications, mock_new_mentions_count, mock_case_statuses, gov_uk_user_id):
     url = client._build_absolute_uri("/gov-users/")
     data = {
         "user": {
@@ -516,6 +530,14 @@ def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock
 def mock_notifications(requests_mock):
     url = client._build_absolute_uri("/gov-users/notifications/")
     data = {"notifications": {"organisations": 8}, "has_notifications": True}
+    requests_mock.get(url=url, json=data)
+    yield data
+
+
+@pytest.fixture
+def mock_new_mentions_count(requests_mock):
+    url = client._build_absolute_uri("/cases/user-case-note-mentions-new-count/")
+    data = {"count": 5}
     requests_mock.get(url=url, json=data)
     yield data
 
@@ -1221,6 +1243,19 @@ def standard_case_activity():
                 "user": {"first_name": "Automated", "last_name": "Test"},
                 "text": "updated the status to: Submitted.",
                 "additional_text": "",
+            },
+            {
+                "id": "ca08e46b-0278-40ff-87a2-8be2600fad52",
+                "created_at": "2020-08-03T12:52:37.740574Z",
+                "user": {"first_name": "mention", "last_name": "person"},
+                "text": "send case note to .",
+                "additional_text": "",
+                "is_urgent": True,
+                "payload": {
+                    "is_urgent": True,
+                    "mention_users": ["Joe Bloggs (Admin)"],
+                },
+                "verb": "created_case_note_with_mentions",
             },
         ]
     }

@@ -1,4 +1,5 @@
 import pytest
+from bs4 import BeautifulSoup
 
 from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
@@ -25,11 +26,22 @@ def setup(
     yield
 
 
+@pytest.fixture(autouse=True)
+def mock_get_gov_users(mock_gov_users, requests_mock):
+    yield requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/"),
+        json={
+            "results": mock_gov_users,
+        },
+    )
+
+
 def test_notes_and_timeline_tab(authorized_client, data_queue, data_standard_case):
     url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(url)
     assertTemplateUsed(response, "layouts/case.html")
-    assert response.context["tabs"][5].name == "Notes and timeline"
+    all_tab_names = [tab.name for tab in response.context["tabs"]]
+    assert "Notes and timeline" in all_tab_names
 
 
 @pytest.fixture
@@ -47,7 +59,7 @@ def default_feature_flags(settings):
 
 @pytest.fixture
 def mentions_data(data_standard_case, mock_gov_user):
-    return {"results": [{"id": data_standard_case["case"]["id"], "user": mock_gov_user["user"]}]}
+    return {"results": [{"id": data_standard_case["case"]["id"], "user": mock_gov_user["user"], "is_accessed": True}]}
 
 
 @pytest.fixture
@@ -278,8 +290,13 @@ def test_notes_and_timelines_post_valid(
         assertTemplateUsed(response, template_used)
 
 
-def test_notes_and_timelines_mentions(
-    authorized_client, notes_and_timelines_url, mock_case_note_mentions, mentions_data, requests_mock, mock_gov_users
+def test_notes_and_timelines_filter_by_mentions(
+    authorized_client,
+    notes_and_timelines_url,
+    mock_standard_case_activity_system_user,
+    requests_mock,
+    mock_gov_users,
+    mock_case_note_mentions,
 ):
     requests_mock.get(
         client._build_absolute_uri(f"/gov-users/"),
@@ -287,20 +304,30 @@ def test_notes_and_timelines_mentions(
             "results": mock_gov_users,
         },
     )
-    response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
-    assert response.context["mentions"][0]["id"] == mentions_data["results"][0]["id"]
-    assert not response.context.get("activities")
+
+    authorized_client.get(f"{notes_and_timelines_url}?mentions=True&activity_type=created_case_note_with_mentions")
+    assert mock_standard_case_activity_system_user.last_request.qs["activity_type"] == [
+        "created_case_note_with_mentions"
+    ]
+
+
+def test_notes_and_timelines_mentions_urgent(
+    authorized_client,
+    requests_mock,
+    notes_and_timelines_url,
+    gov_uk_user_id,
+    data_standard_case,
+):
+    response = authorized_client.get(notes_and_timelines_url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(class_="govuk-tag--red")
 
 
 def test_notes_and_timelines_mentions_template(
     authorized_client, notes_and_timelines_url, mock_case_note_mentions, requests_mock, mock_gov_users
 ):
-    requests_mock.get(
-        client._build_absolute_uri(f"/gov-users/"),
-        json={
-            "results": mock_gov_users,
-        },
-    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     soup = BeautifulSoup(response.content, "html.parser")
 
@@ -308,16 +335,55 @@ def test_notes_and_timelines_mentions_template(
 
 
 def test_notes_and_timelines_mentions_feature_flag(
-    authorized_client, notes_and_timelines_url, mock_case_note_mentions, settings, requests_mock, mock_gov_users
+    authorized_client,
+    notes_and_timelines_url,
+    mock_case_note_mentions,
+    settings,
+    requests_mock,
+    mock_gov_users,
 ):
     settings.FEATURE_MENTIONS_ENABLED = False
-    requests_mock.get(
-        client._build_absolute_uri(f"/gov-users/"),
-        json={
-            "results": mock_gov_users,
-        },
-    )
     response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
     soup = BeautifulSoup(response.content, "html.parser")
 
     assert not soup.find("ul", {"class": "notes-and-timeline-nav__mentions"})
+
+
+def test_notes_and_timelines_mentions_update_is_accessed(
+    authorized_client,
+    requests_mock,
+    notes_and_timelines_url,
+    gov_uk_user_id,
+    data_standard_case,
+):
+    mentions_data = {
+        "results": [
+            {
+                "id": "f65fbf49-c14b-482b-833f-hdkwhdke79",  # /PS-IGNORE
+                "is_accessed": True,
+                "user": {"id": gov_uk_user_id},
+            },
+            {
+                "id": "f65fbf49-c14b-482b-833f-jkfjk89",  # /PS-IGNORE
+                "is_accessed": False,
+                "user": {"id": "hjfi*93-t15c-582c-844g-hdkwhdke99"},
+            },
+            {
+                "id": "f65fbf49-c14b-482b-833f-hdkwhdke99",  # /PS-IGNORE
+                "is_accessed": False,
+                "user": {"id": gov_uk_user_id},
+            },
+        ]
+    }
+    data_standard_case_pk = data_standard_case["case"]["id"]
+    url = client._build_absolute_uri(f"/cases/{data_standard_case_pk}/case-note-mentions/")
+    requests_mock.get(url=url, json=mentions_data)
+
+    mock_case_note_mention_update = requests_mock.put(client._build_absolute_uri("/cases/case-note-mentions/"), json={})
+
+    response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
+
+    assert response.status_code == 200
+    assert mock_case_note_mention_update.called_once
+    last_request = mock_case_note_mention_update.last_request
+    assert last_request.json() == [{"id": "f65fbf49-c14b-482b-833f-hdkwhdke99", "is_accessed": True}]
