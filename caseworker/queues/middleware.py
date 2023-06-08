@@ -10,8 +10,7 @@ class RequestQueueMiddleware:
         return response
 
     def process_view(self, request, view_func, view_args, view_kwargs):
+        if "lite_api_user_id" not in request.session:
+            return
         if view_kwargs.get("queue_pk"):
-            try:
-                request.queue = get_queue(request, view_kwargs["queue_pk"])
-            except Exception:
-                return
+            request.queue = get_queue(request, view_kwargs["queue_pk"])
