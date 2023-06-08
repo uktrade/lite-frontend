@@ -2,12 +2,17 @@
     display: flex;
 
     &__filters {
-        width: 25rem;
-        min-width: 25rem;
+        margin-top: 15px;
+        flex: 1 0 7rem;
         margin-right: 5rem;
+
+        .govuk-details__text {
+            width: 24rem;
+        }
     }
 
     &__content {
+        flex: 1 1 auto;
         overflow: auto;
     }
 }
