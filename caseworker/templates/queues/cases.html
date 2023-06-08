@@ -62,7 +62,11 @@
 		<p id="text-case-count" class="lite-filters__hint-text">{{ data.count }} case{{ data.count|pluralize }}</p>
 	</div>
 
+    {% include 'queues/case-filters-toggle.html' %}
+    {% include 'bookmarks/bookmarks-toggle.html' %}
+
 	{% include 'queues/case-filters.html' %}
+    {% include 'bookmarks/bookmarks.html' %}
 
     <div class="customiser" data-customiser-spec='{"options_label": "Customise queue view", "identifier": "queue-view", "analytics_prefix": "qv", "options_hint": "Select columns to show", "toggleable_elements": [{"label": "Destination", "key": "destination", "default_visible": true}, {"label": "Case allocation", "key": "case_allocation", "default_visible": true}, {"label": "Case updates", "key": "case_updates", "default_visible": true}, {"label": "Products", "key": "products"}, {"label": "Control list entry", "key": "control_list_entry"}, {"label": "Report summary", "key": "report_summary"}, {"label": "Regime", "key": "regime"}, {"label": "Total value", "key": "total_value"}, {"label": "Queries", "key": "queries"}, {"label": "Denial matches", "key": "denial_matches"}, {"label": "Intended end use", "key": "intended_end_use"}, {"label": "Flags", "key": "flags", "default_visible": true}]}'>
         <div class="customiser__header">
@@ -116,8 +120,4 @@
 
 	{% pagination %}
 
-{% endblock %}
-
-{% block javascript %}
-	<script src="{% static 'case-filters.js' %}" type="text/javascript"></script>
 {% endblock %}

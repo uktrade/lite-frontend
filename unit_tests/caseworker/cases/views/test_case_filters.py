@@ -5,7 +5,6 @@ from urllib import parse
 
 from django.urls import reverse
 
-from core import client
 from caseworker.queues.views.forms import CasesFiltersForm
 
 
@@ -17,35 +16,6 @@ def setup(
     mock_regime_entries,
 ):
     pass
-
-
-@pytest.fixture(autouse=True)
-def mock_cases(requests_mock, queue_pk):
-    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&page=1")
-    yield requests_mock.get(
-        url=url,
-        json={
-            "results": {
-                "queues": [],
-                "cases": [],
-                "filters": {
-                    "gov_users": [],
-                    "case_types": [],
-                    "statuses": [],
-                    "advice_types": [],
-                },
-            }
-        },
-    )
-
-
-@pytest.fixture(autouse=True)
-def mock_cases_head(requests_mock, queue_pk):
-    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&page=1")
-    yield requests_mock.head(
-        url=url,
-        headers={"Resource-Count": ""},
-    )
 
 
 @pytest.mark.parametrize(
@@ -71,7 +41,7 @@ def mock_cases_head(requests_mock, queue_pk):
         ({"field": "finalised_to", "params": {"finalised_to_0": "1", "finalised_to_1": "1", "finalised_to_2": "2022"}}),
     ],
 )
-def test_case_filters(authorized_client, requests_mock, mock_cases, mock_cases_head, filters_data):
+def test_case_filters(authorized_client, requests_mock, mock_cases, mock_cases_head, filters_data, mock_no_bookmarks):
     url = reverse("core:index", kwargs={"disable_queue_lookup": True})
     query_params = f"{parse.urlencode(filters_data['params'], doseq=True)}"
     url = url + f"?{query_params}"
