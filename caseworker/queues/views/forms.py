@@ -219,6 +219,7 @@ class CasesFiltersForm(forms.Form):
                 AccordionSection(
                     "Case",
                     *case_filters,
+                    css_id="accordion-case-filters",
                 ),
                 AccordionSection(
                     "Product",
