@@ -80,7 +80,7 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     expected_case_adviser = f'{gov_user["first_name"]} {gov_user["last_name"]}'
     assert expected_lu_case_officer in table_text
 
-    expected_temporary_or_permanent = data_standard_case["case"]["data"]["export_type"]["key"]
+    expected_temporary_or_permanent = data_standard_case["case"]["data"]["export_type"]["key"].capitalize()
     assert expected_temporary_or_permanent in table_text
 
     expected_assigned_queues = data_standard_case["case"]["queue_details"][0]["name"]

@@ -630,6 +630,12 @@ $case-header-text-colour: govuk-colour('white');
             col.quick-summary__table-wide {
                 width: 15rem;
             }
+
+            ul.app-flags {
+                white-space: nowrap;
+                flex-flow: wrap;
+                margin-bottom: 0;
+            }
         }
     }
 

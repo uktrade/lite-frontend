@@ -13,7 +13,7 @@
             <tbody class="govuk-table__body" id="tbody-placeholder">
                 <tr class="govuk-table__row app-table__row" data-customiser-key="status">
                     <th scope="row" class="govuk-table__header">Status</th>
-                    <td class="govuk-table__cell">{{ case.data.status.value }}</td>
+                    <td class="govuk-table__cell"><span class="govuk-tag govuk-tag--grey govuk-!-margin-0">{{ case.data.status.value }}</span></td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="lu_case_officer">
                     <th scope="row" class="govuk-table__header">Licensing Unit case officer</th>
@@ -59,11 +59,7 @@
                 <tr class="govuk-table__row app-table__row" data-customiser-key="flags">
                     <th scope="row" class="govuk-table__header">Flags</th>
                     <td class="govuk-table__cell">
-        				{% if case.flags or case.destinations_flags or case.goods_flags %}
-        					{{ case.all_flags|get_flags_list|join:", " }}
-        				{% else %}
-        					None
-        				{% endif %}
+	                    {% include 'includes/flags.html' with flags=case.all_flags list=False %}
                     </td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="queries">
