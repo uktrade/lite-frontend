@@ -272,6 +272,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
+    And I click on "Details" tab
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
 
@@ -352,6 +353,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the application reference on the document preview
     When I click continue
     And I click save and publish to exporter
+    And I click on "Details" tab
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
 
@@ -408,6 +410,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the product name under name on the document preview
     When I click continue
     And I click save and publish to exporter
+    And I click on "Details" tab
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
 
@@ -457,5 +460,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
+    And I click on "Details" tab
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
