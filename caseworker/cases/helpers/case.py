@@ -115,12 +115,13 @@ class CaseworkerMixin:
             None
             if self.queue["is_system_queue"]
             else CaseAssignmentsAllocateToMeForm(
+                auto_id="allocate-approve-%s",
                 initial={
                     "queue_id": self.queue_id,
                     "user_id": self.caseworker["id"],
                     "case_id": self.case_id,
                     "return_to": reverse("cases:approve_all", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}),
-                }
+                },
             )
         )
         return {
