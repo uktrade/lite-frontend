@@ -48,6 +48,15 @@
         margin-top: govuk-spacing(2);
     }
 
+    &__case-column{
+        padding-right: 40px;
+    }
+    
+    &__date-column,
+    &__view-column {
+        white-space: nowrap;
+    }
+
     .govuk-tag--red {
         margin-left: 50px;
     }
