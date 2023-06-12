@@ -4,7 +4,7 @@
 <h2 class="govuk-heading-m">Quick summary</h2>
 <p class="govuk-caption-m">Create your own summary of this case</p>
 
-<div class="quick-summary customiser" data-customiser-spec='{"options_label": "Customise quick summary", "identifier": "quick-summary", "analytics_prefix": "qs", "options_hint": "Select items to show", "toggleable_elements": [{"label": "Status", "key": "status", "default_visible": false}, {"label": "Licensing Unit case officer", "key": "lu_case_officer", "default_visible": true}, {"label": "Case adviser", "key": "case_advisers", "default_visible": false}, {"label": "Temporary or permanent", "key": "temporary_permanent", "default_visible": false}, {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false}, {"label": "Flags", "key": "flags", "default_visible": false}, {"label": "Queries", "key": "queries", "default_visible": false}, {"label": "Latest action", "key": "latest_action", "default_visible": false}, {"label": "Days elapsed on this queue", "key": "days_on_queue", "default_visible": true}, {"label": "Total days elapsed", "key": "total_days", "default_visible": false}, {"label": "Product names", "key": "product_names", "default_visible": false}, {"label": "Total value", "key": "total_value", "default_visible": false}, {"label": "Control list entry", "key": "control_list_entries", "default_visible": true}, {"label": "Regimes", "key": "regimes", "default_visible": true}, {"label": "Report summaries", "key": "report_summaries", "default_visible": true}, {"label": "Security graded", "key": "security_graded", "default_visible": false}, {"label": "Security approvals", "key": "security_approvals", "default_visible": false}, {"label": "Applicant name", "key": "applicant_name", "default_visible": true}, {"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false}, {"label": "End use", "key": "end_use", "default_visible": true}, {"label": "End-user document", "key": "end_user_documents", "default_visible": true}]}'>
+<div class="quick-summary customiser" data-customiser-spec='{"options_label": "Customise quick summary", "identifier": "quick-summary", "analytics_prefix": "qs", "options_hint": "Select items to show", "toggleable_elements": [{"label": "Status", "key": "status", "default_visible": false}, {"label": "Licensing Unit case officer", "key": "lu_case_officer", "default_visible": true}, {"label": "Case adviser", "key": "case_advisers", "default_visible": false}, {"label": "Temporary or permanent", "key": "temporary_permanent", "default_visible": false}, {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false}, {"label": "Flags", "key": "flags", "default_visible": false}, {"label": "Queries", "key": "queries", "default_visible": false}, {"label": "Latest action", "key": "latest_action", "default_visible": false}, {"label": "Days elapsed on this queue", "key": "days_on_queue", "default_visible": true}, {"label": "Product names", "key": "product_names", "default_visible": false}, {"label": "Total value", "key": "total_value", "default_visible": false}, {"label": "Control list entry", "key": "control_list_entries", "default_visible": true}, {"label": "Regimes", "key": "regimes", "default_visible": true}, {"label": "Report summaries", "key": "report_summaries", "default_visible": true}, {"label": "Security graded", "key": "security_graded", "default_visible": false}, {"label": "Security approvals", "key": "security_approvals", "default_visible": false}, {"label": "Applicant name", "key": "applicant_name", "default_visible": true}, {"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false}, {"label": "End use", "key": "end_use", "default_visible": true}, {"label": "End-user document", "key": "end_user_documents", "default_visible": true}]}'>
 
 
     <div class="quick-summary__content">
@@ -105,18 +105,6 @@
                                     {{queue_detail.days_on_queue_elapsed}}
                                 {% endif %}
                             {% endfor %}
-        				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						N/A
-        					</span>
-        				{% endif %}
-                    </td>
-                </tr>
-                <tr class="govuk-table__row app-table__row" data-customiser-key="total_days">
-                    <th scope="row" class="govuk-table__header">Total days elapsed</th>
-                    <td class="govuk-table__cell">
-        				{% if not is_terminal %}
-        					{{ case.total_days_elapsed }}
         				{% else %}
         					<span class="govuk-hint govuk-!-margin-0">
         						N/A

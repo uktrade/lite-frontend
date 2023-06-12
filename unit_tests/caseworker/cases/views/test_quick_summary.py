@@ -92,9 +92,6 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     expected_latest_action = data_standard_case["case"]["latest_activity"]["text"]
     assert expected_latest_action in table_text
 
-    expected_total_days_elapsed = str((timezone.now() - parse(data_standard_case["case"]["submitted_at"])).days)
-    assert expected_total_days_elapsed in table_text
-
     for good in data_standard_case["case"]["data"]["goods"]:
         expected_product_name = good["good"]["name"]
         assert expected_product_name in table_text
