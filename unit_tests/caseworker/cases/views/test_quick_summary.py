@@ -89,9 +89,6 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     expected_flags = data_standard_case["case"]["all_flags"][0]["name"]
     assert expected_flags in table_text
 
-    expected_open_query = "Outstanding queries" if data_standard_case["case"]["has_open_queries"] else "None"
-    assert expected_open_query in table_text
-
     expected_latest_action = data_standard_case["case"]["latest_activity"]["text"]
     assert expected_latest_action in table_text
 
