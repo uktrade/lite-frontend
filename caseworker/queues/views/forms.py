@@ -15,64 +15,64 @@ SLA_DAYS_RANGE = 99
 class CasesFiltersForm(forms.Form):
 
     case_reference = forms.CharField(
-        label="Filter by case reference",
+        label="Case reference",
         widget=forms.TextInput(attrs={"id": "case_reference"}),
         required=False,
     )
     exporter_application_reference = forms.CharField(
-        label="Filter by exporter reference",
+        label="Exporter reference",
         required=False,
     )
     organisation_name = forms.CharField(
-        label="Filter by organisation name",
+        label="Organisation name",
         required=False,
     )
     exporter_site_name = forms.CharField(
-        label="Filter by exporter site name",
+        label="Exporter site name",
         required=False,
     )
     exporter_site_address = forms.CharField(
-        label="Filter by exporter site address",
+        label="Exporter site address",
         required=False,
     )
     party_name = forms.CharField(
-        label="Filter by party name",
+        label="Party name",
         required=False,
     )
     party_address = forms.CharField(
-        label="Filter by party address",
+        label="Party address",
         required=False,
     )
     goods_related_description = forms.CharField(
-        label="Filter by goods related description",
+        label="Goods related description",
         required=False,
     )
     country = forms.CharField(
-        label="Filter by country",
+        label="Country",
         required=False,
     )
     control_list_entry = forms.CharField(
-        label="Filter by control list entry",
+        label="Control list entry",
         required=False,
     )
     regime_entry = forms.CharField(
-        label="Filter by regime entry",
+        label="Regime entry",
         required=False,
     )
     submitted_from = DateInputField(
-        label="Filter by submitted from date",
+        label="Submitted from date",
         required=False,
     )
     submitted_to = DateInputField(
-        label="Filter by submitted to date",
+        label="Submitted to date",
         required=False,
     )
     finalised_from = DateInputField(
-        label="Filter by finalised from date",
+        label="Finalised from date",
         required=False,
     )
     finalised_to = DateInputField(
-        label="Filter by finalised to date",
+        label="Finalised to date",
         required=False,
     )
 
@@ -98,66 +98,66 @@ class CasesFiltersForm(forms.Form):
 
         self.fields["case_type"] = forms.ChoiceField(
             choices=case_type_choices,
-            label="Filter by type",
+            label="Case type",
             widget=forms.Select(attrs={"id": "case_type"}),
             required=False,
         )
 
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
-            label="Filter by status",
+            label="Case status",
             required=False,
         )
 
         self.fields["case_officer"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Filter by case officer",
+            label="Case officer",
             required=False,
         )
 
         self.fields["assigned_user"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Filter by assigned user",
+            label="Assigned user",
             required=False,
         )
 
         self.fields["team_advice_type"] = forms.ChoiceField(
-            label="Filter by team advice type",
+            label="Team advice type",
             choices=advice_type_choices,
             required=False,
         )
 
         self.fields["final_advice_type"] = forms.ChoiceField(
-            label="Filter by final advice type",
+            label="Final advice type",
             choices=advice_type_choices,
             required=False,
         )
 
         self.fields["max_sla_days_remaining"] = forms.ChoiceField(
-            label="Filter by max SLA days remaining",
+            label="Max SLA days remaining",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["min_sla_days_remaining"] = forms.ChoiceField(
-            label="Filter by min SLA days remaining",
+            label="Min SLA days remaining",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["sla_days_elapsed"] = forms.ChoiceField(
-            label="Filter by SLA days elapsed",
+            label="SLA days elapsed",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["sla_days_elapsed_sort_order"] = forms.ChoiceField(
-            label="Filter by sorted by SLA days",
+            label="Sorted by SLA days",
             choices=sla_sorted_choices,
             required=False,
         )
         self.fields["flags"] = forms.MultipleChoiceField(
-            label="Filter by flags",
+            label="Flags",
             choices=flags_choices,
             required=False,
             # setting id for javascript to use

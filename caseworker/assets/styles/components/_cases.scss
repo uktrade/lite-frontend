@@ -3,7 +3,7 @@
 
     &__filters {
         margin-top: 15px;
-        flex: 1 0 7rem;
+        flex: 0 0 7rem;
         margin-right: 5rem;
 
         .govuk-details__text {
@@ -661,5 +661,27 @@ $case-header-text-colour: govuk-colour('white');
     &__customiser-options {
         flex: 0 1 20rem;
     }
+
+}
+
+.case-filter-fields {
+    label {
+        font-weight: bold;
+    }
+
+    legend {
+        font-weight: bold;
+    }
+
+    div.govuk-form-group {
+        margin-bottom: 1rem;
+    }
+
+    .lite-autocomplete__wrapper {
+        input {
+            max-width: 100%;
+        }
+    }
+
 
 }
