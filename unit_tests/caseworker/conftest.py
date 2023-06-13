@@ -2100,10 +2100,15 @@ def mock_bookmarks(requests_mock, gov_uk_user_id):
         url=url,
         json={
             "user": [
-                {"id": str(uuid.uuid4()), "name": "Bookmark1", "description": "", "filter_json": {"country": "DE"}},
                 {
                     "id": str(uuid.uuid4()),
                     "name": "Bookmark1",
+                    "description": "",
+                    "filter_json": {"country": "DE", "_id_country": "Germany"},
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "name": "Bookmark2",
                     "description": "",
                     "filter_json": {"case_officer": gov_uk_user_id},
                 },

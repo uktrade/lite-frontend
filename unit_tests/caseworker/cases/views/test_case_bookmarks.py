@@ -1,3 +1,5 @@
+import json
+
 import pytest
 from django.urls import reverse
 
@@ -38,8 +40,8 @@ def test_bookmarks_present(authorized_client, mock_bookmarks, gov_uk_user_id):
 
     assert first["name"] == "Bookmark1"
     assert first["filter_json"] == {"country": "DE"}
-    assert first["description"] == "Country: DE"
+    assert first["description"] == "Country: Germany"
 
-    assert second["name"] == "Bookmark1"
+    assert second["name"] == "Bookmark2"
     assert second["filter_json"] == {"case_officer": gov_uk_user_id}
     assert second["description"] == "Case officer: John Smith"

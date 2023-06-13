@@ -20,12 +20,13 @@ def fetch_bookmarks(request, filter_data):
 
     bookmarks = response.json()
     for bookmark in bookmarks["user"]:
-        enhance_bookmark(bookmark, filter_data)
+        enrich_bookmark_for_display(bookmark, filter_data)
+
     return bookmarks
 
 
-def add_bookmark(request, data):
-    filter_to_save = _ordered_filter(data)
+def add_bookmark(request, data, raw_filters):
+    filter_to_save = enrich_filter_for_saving(data, raw_filters)
     now = datetime.today().strftime("%y%m%d-%H%M%S")
     filter_name = f"New unnamed filter ({now})"
     bookmark_name = filter_name
@@ -56,10 +57,14 @@ def rename_bookmark(request, bookmark_id, name):
     return client.put(request, f"/bookmarks", data)
 
 
-def enhance_bookmark(bookmark, filter_data):
-    url = reverse("queues:cases")
+def enrich_bookmark_for_display(bookmark, filter_data):
+    base_url = reverse("queues:cases")
     bookmark_filter = bookmark["filter_json"]
     bookmark["description"] = description_from_filter(bookmark_filter, filter_data)
+    bookmark["url"] = url_from_bookmark(base_url, bookmark_filter)
+
+
+def url_from_bookmark(base_url, bookmark_filter):
     for key in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
         if key in bookmark_filter:
             date_str = bookmark_filter[key]
@@ -69,11 +74,31 @@ def enhance_bookmark(bookmark, filter_data):
             bookmark_filter[f"{key}_1"] = m
             bookmark_filter[f"{key}_2"] = y
 
+    # We don't need the _id_ prefixed entries in the url
+    for key in list(bookmark_filter.keys()):
+        if key.startswith("_id_"):
+            del bookmark_filter[key]
+
     query = urlencode(bookmark_filter)
-    bookmark["url"] = f"{url}?{query}"
+    return f"{base_url}?{query}"
 
 
-def _ordered_filter(data):
+def description_from_filter(bookmark_filter, filter_data):
+    filter_dict = {**bookmark_filter}
+
+    _enrich_value_from_filter_data(filter_dict, filter_data, "assigned_user", "gov_users", "id", "full_name")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "case_officer", "gov_users", "id", "full_name")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "case_type", "case_types")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "status", "statuses")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "team_advice_type", "advice_types")
+    _enrich_value_from_filter_data(filter_dict, filter_data, "final_advice_type", "advice_types")
+
+    _swap_ids_for_readable_values(filter_dict)
+
+    return ", ".join([f"{k.capitalize().replace('_', ' ')}: {v.replace('_', ' ')}" for (k, v) in filter_dict.items()])
+
+
+def enrich_filter_for_saving(data, raw_filters):
     keys_to_remove = [
         "csrfmiddlewaretoken",
         "save",
@@ -82,27 +107,62 @@ def _ordered_filter(data):
         "saved_filter_name",
         "return_to",
     ]
-    filters = OrderedDict(sorted({k: data[k] for k in data.keys() if data[k] and k not in keys_to_remove}.items()))
-    return filters
+
+    filters = {k: data[k] for k in data.keys() if data[k] and k not in keys_to_remove}
+
+    # Add in _id_ prefixed data to preserve country and regime names. This is to prevent
+    # unnecessary lookup when we display the bookmarks later, as the description and
+    # url display need different values for these filters (status, gov_user etc)
+    # the former needing the display value and the latter an id.
+    for key in raw_filters:
+        if key.startswith("_id_") and key[4:] in filters:
+            filters[key] = raw_filters[key]
+
+    return OrderedDict(sorted(filters.items()))
 
 
-def _enhance_value_from_filter_data(
+def _enrich_value_from_filter_data(
     bookmark_filter, filter_data, bookmark_filter_key, filter_data_key, id_key="key", value_key="value"
 ):
+    """
+    Some filters (e.g. assigned_user, status) have their ids stored rather than human readable value.
+    For these, we have access to the human readable value in the filter_data lists which are
+    used in the lookups for those filters. This function replaces those ids with the
+    looked up entry in the filter_data for display purposes.
+
+    The filter_data is a dictionary with the data type as key (e.g. 'statuses' or 'gov_users')
+    and a list of the objects for the dropdown as the value. e.g.
+
+    {
+    'statuses': [{'id': '00000000-0000-0000-0000-000000000001', 'key': 'submitted', 'value': 'Submitted', ...],
+    'gov_users': {...
+    }
+
+    Params:
+    bookmark_filter: the bookmark filter we are enriching
+    filter_data: the filter data dictionary to fetch the enrichment data from
+    bookmark_filter_key: the entry in the filter we want to enrich
+    filter_data_key: key for the data type we want to look up
+    id_key: the key in the filter_data object that our id should match. Usually just "key", but "id" for users.
+    value_key: the key in the filter_data object that contains the human readable value we are enriching with.
+    """
     if bookmark_filter_key in bookmark_filter:
-        case_type = bookmark_filter[bookmark_filter_key]
-        case_type_dict = {x[id_key]: x[value_key] for x in filter_data[filter_data_key]}
-        bookmark_filter[bookmark_filter_key] = case_type_dict.get(case_type, case_type)
+        entry_id = bookmark_filter[bookmark_filter_key]
+        matching_data_item = [entry for entry in filter_data[filter_data_key] if entry[id_key] == entry_id]
+        if matching_data_item:
+            bookmark_filter[bookmark_filter_key] = matching_data_item[0][value_key]
 
 
-def description_from_filter(bookmark_filter, filter_data):
-    filter_dict = {**bookmark_filter}
-
-    _enhance_value_from_filter_data(filter_dict, filter_data, "assigned_user", "gov_users", "id", "full_name")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "case_officer", "gov_users", "id", "full_name")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "case_type", "case_types")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "status", "statuses")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "team_advice_type", "advice_types")
-    _enhance_value_from_filter_data(filter_dict, filter_data, "final_advice_type", "advice_types")
-
-    return ", ".join([f"{k.capitalize().replace('_', ' ')}: {v.replace('_', ' ')}" for (k, v) in filter_dict.items()])
+def _swap_ids_for_readable_values(filter_dict):
+    """
+    Some filters (notably the Regime and Country filters) store their id in the field entry
+    and (counterintuitively) store the human readable variant of this in an '_id_' prefixed
+    entry in the filter dictionary. We preserve this in the filter_json in order to avoid
+    having to look this data up at this enrichment stage. This function replaces the id in
+    these fields with the human readable value from the _id_ prefixed entry.
+    """
+    for key in list(filter_dict.keys()):
+        if key.startswith("_id_") and key[4:] in filter_dict:
+            filter_dict[key[4:]] = filter_dict[key]
+            # We don't want to display these _id_ fields, so delete them after we've used them.
+            del filter_dict[key]

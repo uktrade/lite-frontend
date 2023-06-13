@@ -36,7 +36,7 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
         "Unexpected error saving filter",
     )
     def add_bookmark(self, data):
-        response = services.add_bookmark(self.request, data)
+        response = services.add_bookmark(self.request, data, self.request.POST)
         return response.json(), response.status_code
 
 
