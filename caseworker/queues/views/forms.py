@@ -223,9 +223,10 @@ class CasesFiltersForm(forms.Form):
             Field.select("flags"),
             Field("finalised_from"),
             Field("finalised_to"),
-            Field.select("assigned_queues"),
             "return_to",
         ]
+        if queue.get("is_system_queue"):
+            case_filters.append(Field.select("assigned_queues"))
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the
