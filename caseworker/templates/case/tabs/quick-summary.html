@@ -1,17 +1,19 @@
 {% load static advice_tags crispy_forms_tags rules %}
 {% load humanize %}
 
-<h2 class="govuk-heading-m">Quick Summary</h2>
+<h2 class="govuk-heading-m">Quick summary</h2>
+<p class="govuk-caption-m">Create your own summary of this case</p>
 
-<div class="quick-summary customiser" data-customiser-spec='{"options_label": "Customise quick summary", "identifier": "quick-summary", "analytics_prefix": "qs", "options_hint": "Select items to show", "toggleable_elements": [{"label": "Status", "key": "status", "default_visible": false}, {"label": "Licensing Unit case officer", "key": "lu_case_officer", "default_visible": true}, {"label": "Case adviser", "key": "case_advisers", "default_visible": false}, {"label": "Temporary or Permanent", "key": "temporary_permanent", "default_visible": false}, {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false}, {"label": "Flags", "key": "flags", "default_visible": false}, {"label": "Queries", "key": "queries", "default_visible": false}, {"label": "Latest action", "key": "latest_action", "default_visible": false}, {"label": "Days elapsed on this queue", "key": "days_on_queue", "default_visible": true}, {"label": "Total days elapsed", "key": "total_days", "default_visible": false}, {"label": "Product names", "key": "product_names", "default_visible": false}, {"label": "Total value", "key": "total_value", "default_visible": false}, {"label": "Control list entries", "key": "control_list_entries", "default_visible": true}, {"label": "Regimes", "key": "regimes", "default_visible": true}, {"label": "Report summaries", "key": "report_summaries", "default_visible": true}, {"label": "Security graded", "key": "security_graded", "default_visible": false}, {"label": "Security approvals", "key": "security_approvals", "default_visible": false}, {"label": "Applicant name", "key": "applicant_name", "default_visible": true}, {"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false}, {"label": "End use", "key": "end_use", "default_visible": true}, {"label": "End-user document", "key": "end_user_documents", "default_visible": true}]}'>
+<div class="quick-summary customiser" data-customiser-spec='{"options_label": "Customise quick summary", "identifier": "quick-summary", "analytics_prefix": "qs", "options_hint": "Select items to show", "toggleable_elements": [{"label": "Status", "key": "status", "default_visible": false}, {"label": "Licensing Unit case officer", "key": "lu_case_officer", "default_visible": true}, {"label": "Case adviser", "key": "case_advisers", "default_visible": false}, {"label": "Temporary or permanent", "key": "temporary_permanent", "default_visible": false}, {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false}, {"label": "Flags", "key": "flags", "default_visible": false}, {"label": "Queries", "key": "queries", "default_visible": false}, {"label": "Latest action", "key": "latest_action", "default_visible": false}, {"label": "Days elapsed on this queue", "key": "days_on_queue", "default_visible": true}, {"label": "Product names", "key": "product_names", "default_visible": false}, {"label": "Total value", "key": "total_value", "default_visible": false}, {"label": "Control list entry", "key": "control_list_entries", "default_visible": true}, {"label": "Regimes", "key": "regimes", "default_visible": true}, {"label": "Report summaries", "key": "report_summaries", "default_visible": true}, {"label": "Security graded", "key": "security_graded", "default_visible": false}, {"label": "Security approvals", "key": "security_approvals", "default_visible": false}, {"label": "Applicant name", "key": "applicant_name", "default_visible": true}, {"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false}, {"label": "End use", "key": "end_use", "default_visible": true}, {"label": "End-user document", "key": "end_user_documents", "default_visible": true}]}'>
 
 
     <div class="quick-summary__content">
         <table class="govuk-table app-table">
+            <col span="1" class="quick-summary__table-wide">
             <tbody class="govuk-table__body" id="tbody-placeholder">
                 <tr class="govuk-table__row app-table__row" data-customiser-key="status">
                     <th scope="row" class="govuk-table__header">Status</th>
-                    <td class="govuk-table__cell">{{ case.data.status.value }}</td>
+                    <td class="govuk-table__cell"><span class="govuk-tag govuk-tag--grey govuk-!-margin-0">{{ case.data.status.value }}</span></td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="lu_case_officer">
                     <th scope="row" class="govuk-table__header">Licensing Unit case officer</th>
@@ -38,8 +40,8 @@
                     </td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="temporary_permanent">
-                    <th scope="row" class="govuk-table__header">Temporary or Permanent</th>
-                    <td class="govuk-table__cell">{{ case.data.export_type.key }}</td>
+                    <th scope="row" class="govuk-table__header">Temporary or permanent</th>
+                    <td class="govuk-table__cell">{{ case.data.export_type.key|capfirst }}</td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="assigned_queues">
                     <th scope="row" class="govuk-table__header">Assigned queues</th>
@@ -57,17 +59,13 @@
                 <tr class="govuk-table__row app-table__row" data-customiser-key="flags">
                     <th scope="row" class="govuk-table__header">Flags</th>
                     <td class="govuk-table__cell">
-        				{% if case.flags or case.destinations_flags or case.goods_flags %}
-        					{{ case.all_flags|get_flags_list|join:", " }}
-        				{% else %}
-        					None
-        				{% endif %}
+	                    {% include 'includes/flags.html' with flags=case.all_flags list=False %}
                     </td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="queries">
                     <th scope="row" class="govuk-table__header">Open query</th>
                     <td class="govuk-table__cell">
-        				{% if case.has_open_queries %}
+        				{% if open_ecju_queries %}
         					Yes
         				{% else %}
         					No
@@ -114,18 +112,6 @@
         				{% endif %}
                     </td>
                 </tr>
-                <tr class="govuk-table__row app-table__row" data-customiser-key="total_days">
-                    <th scope="row" class="govuk-table__header">Total days elapsed</th>
-                    <td class="govuk-table__cell">
-        				{% if not is_terminal %}
-        					{{ case.total_days_elapsed }}
-        				{% else %}
-        					<span class="govuk-hint govuk-!-margin-0">
-        						N/A
-        					</span>
-        				{% endif %}
-                    </td>
-                </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="product_names">
                     <th scope="row" class="govuk-table__header">Product names</th>
                     <td class="govuk-table__cell">
@@ -139,7 +125,7 @@
                     <td class="govuk-table__cell">£{{ goods_summary.total_value|floatformat:2|intcomma }}</td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="control_list_entries">
-                    <th scope="row" class="govuk-table__header">Control list entries</th>
+                    <th scope="row" class="govuk-table__header">Control list entry</th>
                     <td class="govuk-table__cell">
         				{% if goods_summary.cles %}
                             {% for cle in goods_summary.cles %}
@@ -240,5 +226,5 @@
         {% endif %}
     </div>
 
-    <div class="quick-summary__customiser-options customiser__header"></div>
+    <div class="quick-summary__customiser-options customiser__header lite-mobile-hide"></div>
 </div>

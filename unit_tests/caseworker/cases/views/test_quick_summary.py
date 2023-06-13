@@ -80,7 +80,7 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     expected_case_adviser = f'{gov_user["first_name"]} {gov_user["last_name"]}'
     assert expected_lu_case_officer in table_text
 
-    expected_temporary_or_permanent = data_standard_case["case"]["data"]["export_type"]["key"]
+    expected_temporary_or_permanent = data_standard_case["case"]["data"]["export_type"]["key"].capitalize()
     assert expected_temporary_or_permanent in table_text
 
     expected_assigned_queues = data_standard_case["case"]["queue_details"][0]["name"]
@@ -89,14 +89,8 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     expected_flags = data_standard_case["case"]["all_flags"][0]["name"]
     assert expected_flags in table_text
 
-    expected_open_query = "Outstanding queries" if data_standard_case["case"]["has_open_queries"] else "None"
-    assert expected_open_query in table_text
-
     expected_latest_action = data_standard_case["case"]["latest_activity"]["text"]
     assert expected_latest_action in table_text
-
-    expected_total_days_elapsed = str((timezone.now() - parse(data_standard_case["case"]["submitted_at"])).days)
-    assert expected_total_days_elapsed in table_text
 
     for good in data_standard_case["case"]["data"]["goods"]:
         expected_product_name = good["good"]["name"]
