@@ -18,6 +18,7 @@ INSTALLED_APPS += [
     "caseworker.letter_templates",
     "caseworker.external_data",
     "caseworker.advice",
+    "caseworker.bookmarks",
     "caseworker.tau",
     "caseworker.teams",
     "caseworker.cases",
@@ -134,7 +135,7 @@ FEATURE_FLAG_PRODUCT_SEARCH = env.bool("FEATURE_FLAG_PRODUCT_SEARCH", False)
 FEATURE_C7_NCSC_ENABLED = env.bool("FEATURE_C7_NCSC_ENABLED", False)
 FEATURE_MENTIONS_ENABLED = env.bool("FEATURE_MENTIONS_ENABLED", True)
 
-FEATURE_QUICK_SUMMARY = env.bool("FEATURE_QUICK_SUMMARY", False)
+FEATURE_QUICK_SUMMARY = env.bool("FEATURE_QUICK_SUMMARY", True)
 
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):

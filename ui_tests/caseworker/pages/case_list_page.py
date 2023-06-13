@@ -105,6 +105,8 @@ class CaseListPage(BasePage):
 
     def click_on_case(self, case_id):
         self.driver.find_element(by=By.ID, value=f"case-{case_id}").click()
+        # Go to details tab as it is no longer the default tab
+        self.driver.find_element(by=By.ID, value=f"tab-details").click()
 
     def click_on_case_checkbox(self, case_id):
         self.driver.find_element(by=By.CSS_SELECTOR, value=self.CHECKBOX_CASE + case_id + "']").click()

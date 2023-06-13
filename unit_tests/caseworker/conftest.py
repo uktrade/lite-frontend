@@ -9,7 +9,6 @@ from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
 from django.utils import timezone
-import rules
 
 from caseworker.advice import services
 from core import client
@@ -21,6 +20,8 @@ second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
 
 
 DEFAULT_ENVFILE = "caseworker.env"
+
+GOV_USER_ID = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
 
 
 def pytest_configure(config):
@@ -46,7 +47,15 @@ def default_feature_flags(settings):
 
 @pytest.fixture
 def gov_uk_user_id():
-    return "2a43805b-c082-47e7-9188-c8b3e1a83cb0"
+    return GOV_USER_ID
+
+
+@pytest.fixture
+def gov_uk_users(gov_uk_user_id):
+    return [
+        {"full_name": "John Smith", "id": gov_uk_user_id, "pending": False},
+        {"full_name": "", "id": str(uuid.uuid4()), "pending": True},
+    ]
 
 
 @pytest.fixture
@@ -72,7 +81,27 @@ def data_case_types():
 
 
 @pytest.fixture
-def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
+def filter_data(mock_case_statuses, data_case_types, gov_uk_users):
+    return {
+        "advice_types": [
+            {"key": "approve", "value": "Approve"},
+            {"key": "proviso", "value": "Proviso"},
+            {"key": "refuse", "value": "Refuse"},
+            {"key": "no_licence_required", "value": "No Licence Required"},
+            {"key": "not_applicable", "value": "Not Applicable"},
+            {"key": "conflicting", "value": "Conflicting"},
+        ],
+        "case_types": data_case_types,
+        "gov_users": gov_uk_users,
+        "statuses": mock_case_statuses["statuses"],
+        "is_system_queue": True,
+        "is_work_queue": False,
+        "queue": {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
+    }
+
+
+@pytest.fixture
+def data_cases_search(filter_data):
     return {
         "count": 1,
         "results": {
@@ -280,25 +309,7 @@ def data_cases_search(mock_case_statuses, data_case_types, gov_uk_user_id):
                     "intended_end_use": "replica",
                 },
             ],
-            "filters": {
-                "advice_types": [
-                    {"key": "approve", "value": "Approve"},
-                    {"key": "proviso", "value": "Proviso"},
-                    {"key": "refuse", "value": "Refuse"},
-                    {"key": "no_licence_required", "value": "No Licence Required"},
-                    {"key": "not_applicable", "value": "Not Applicable"},
-                    {"key": "conflicting", "value": "Conflicting"},
-                ],
-                "case_types": data_case_types,
-                "gov_users": [
-                    {"full_name": "John Smith", "id": gov_uk_user_id, "pending": False},
-                    {"full_name": "", "id": gov_uk_user_id, "pending": True},
-                ],
-                "statuses": mock_case_statuses["statuses"],
-                "is_system_queue": True,
-                "is_work_queue": False,
-                "queue": {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
-            },
+            "filters": filter_data,
             "queues": [
                 {"case_count": 2, "id": "00000000-0000-0000-0000-000000000001", "name": "All cases"},
                 {"case_count": 2, "id": "00000000-0000-0000-0000-000000000002", "name": "Open cases"},
@@ -419,6 +430,12 @@ def queue_pk(data_queue):
 def mock_queue(requests_mock, data_queue):
     url = client._build_absolute_uri("/queues/")
     yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)
+
+
+@pytest.fixture
+def mock_empty_bookmarks(requests_mock):
+    url = client._build_absolute_uri("/bookmarks/")
+    yield requests_mock.get(url=url, json={"user": []})
 
 
 @pytest.fixture
@@ -2039,3 +2056,62 @@ def assign_user_to_case():
         case["case"]["assigned_users"]["queue"] = [user["user"]]
 
     return _assign_user_to_case
+
+
+@pytest.fixture()
+def mock_cases_with_filter_data(requests_mock, queue_pk, gov_uk_users):
+    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&page=1")
+    yield requests_mock.get(
+        url=url,
+        json={
+            "results": {
+                "queues": [],
+                "cases": [],
+                "filters": {
+                    "gov_users": gov_uk_users,
+                    "case_types": [],
+                    "statuses": [],
+                    "advice_types": [],
+                },
+            }
+        },
+    )
+
+
+@pytest.fixture()
+def mock_no_bookmarks(requests_mock):
+    url = client._build_absolute_uri("/bookmarks/")
+    return requests_mock.get(
+        url=url,
+        json={"user": []},
+    )
+
+
+@pytest.fixture()
+def mock_failed_bookmarks_call(requests_mock):
+    url = client._build_absolute_uri("/bookmarks/")
+    return requests_mock.get(url=url, status_code=400)
+
+
+@pytest.fixture()
+def mock_bookmarks(requests_mock, gov_uk_user_id):
+    url = client._build_absolute_uri("/bookmarks/")
+    return requests_mock.get(
+        url=url,
+        json={
+            "user": [
+                {
+                    "id": str(uuid.uuid4()),
+                    "name": "Bookmark1",
+                    "description": "",
+                    "filter_json": {"country": "DE", "_id_country": "Germany"},
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "name": "Bookmark2",
+                    "description": "",
+                    "filter_json": {"case_officer": gov_uk_user_id},
+                },
+            ]
+        },
+    )

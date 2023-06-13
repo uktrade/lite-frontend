@@ -185,3 +185,6 @@ playwright_videos/
 
 caseworker/assets/built
 exporter/assets/built
+
+# merge backup files
+*.orig

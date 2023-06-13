@@ -17,7 +17,7 @@
 	</div>
 
 
-		<table class="govuk-table">
+		<table class="govuk-table mentions">
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">Case</th>
@@ -31,7 +31,7 @@
 			<tbody class="govuk-table__body">
 				{% for user_case_note_mention in data.results %}
 					<tr class="govuk-table__row" id="mentions-row-{{ forloop.counter }}">
-						<td class="govuk-table__header" scope="row">
+						<td class="govuk-table__header notes-and-timeline-timeline__case-column" scope="row">
 								{{ user_case_note_mention.reference_code }}
 						</td>
 						<td class="govuk-table__cell">
@@ -40,7 +40,7 @@
 								{% if user_case_note_mention.is_urgent %}<li><span class="govuk-tag govuk-tag--red">URGENT</span></li>{% endif %}
 							</ul>
 						</td>
-						<td class="govuk-table__cell">{{ user_case_note_mention.created_at|to_datetime|date:"d F Y" }}</td>
+						<td class="govuk-table__cell notes-and-timeline-timeline__date-column">{{ user_case_note_mention.created_at|to_datetime|date:"d F Y" }}</td>
 						<td class="govuk-table__cell">
 							<div>
 								{% if user_case_note_mention.case_note_user.team %}<span class="app-activity__item__user">{{ user_case_note_mention.case_note_user.team.name }}:</span> {% endif %}{{ user_case_note_mention.case_note_user.first_name }} {{ user_case_note_mention.case_note_user.last_name }}
@@ -50,7 +50,7 @@
 								</div>
 						 </div>
 						</td>
-						<td class="govuk-table__cell"><a href="{% url 'cases:case' queue_pk=user_case_note_mention.case_queue_id pk=user_case_note_mention.case_id %}activities/?mentions=True&activity_type=created_case_note_with_mentions">View or Respond</a></td>
+						<td class="govuk-table__cell notes-and-timeline-timeline__view-column"><a href="{% url 'cases:case' queue_pk=user_case_note_mention.case_queue_id pk=user_case_note_mention.case_id %}activities/?mentions=True&activity_type=created_case_note_with_mentions">View or Respond</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

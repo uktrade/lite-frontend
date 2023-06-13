@@ -47,7 +47,9 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
         )
 
     def get_success_url(self):
-        return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+        return reverse(
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "tab": "details"}
+        )
 
     def get_initial(self):
         return {"assignment_id": self.request.GET.get("assignment_id")}
