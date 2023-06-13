@@ -88,6 +88,7 @@ class CaseDataMixin:
                 params[param] = date_obj
 
         params["flags"] = self.request.GET.getlist("flags", [])
+        params["assigned_queues"] = self.request.GET.getlist("assigned_queues", [])
 
         params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
 
@@ -255,6 +256,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
         kwargs["all_flags"] = self.all_flags
         kwargs["queue"] = self.queue
