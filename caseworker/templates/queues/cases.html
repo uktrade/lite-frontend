@@ -77,7 +77,6 @@
                 <div class="customiser__header">
 	                {% include 'queues/search-tabs.html' %}
                 </div>
-	            <p id="text-case-count" class="lite-filters__hint-text">{{ data.count }} case{{ data.count|pluralize }}</p>
 
 	            <form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
 	            	{% if not data.results.cases %}
