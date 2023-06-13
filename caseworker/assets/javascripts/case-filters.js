@@ -95,11 +95,8 @@ function filterIsPopulated(filterGroupName) {
 
 function expandBasicFilters() {
   let caseFilters = document.getElementById("case-filters");
-  caseFilters.classList.remove("toggle-hidden");
   let showLink = document.getElementById("show-filters-link");
   let hideLink = document.getElementById("hide-filters-link");
-  showLink.classList.add("toggle-hidden");
-  hideLink.classList.remove("toggle-hidden");
 }
 
 function expandAdvancedFilters() {
@@ -132,11 +129,7 @@ const initRegimeEntryAutocompleteField = () => {
     );
 };
 
-const enableTogglingOfSavedFiltersPanel = () => {
-  enableToggle("case-filters", false, "show-filters-link", "hide-filters-link");
-};
 const initCaseFilters = () => {
-  enableTogglingOfSavedFiltersPanel();
   initCountryAutocompleteField();
   initRegimeEntryAutocompleteField();
   initFlagsFiltersField();

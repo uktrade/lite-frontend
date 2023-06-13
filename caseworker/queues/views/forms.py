@@ -1,6 +1,6 @@
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit, Button
+from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
 from django import forms
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
@@ -8,7 +8,6 @@ from django.urls import reverse
 from caseworker.flags.services import get_flags
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
-from core.forms.layouts import ExpandingFieldset
 
 SLA_DAYS_RANGE = 99
 
@@ -16,64 +15,64 @@ SLA_DAYS_RANGE = 99
 class CasesFiltersForm(forms.Form):
 
     case_reference = forms.CharField(
-        label="Filter by case reference",
+        label="Case reference",
         widget=forms.TextInput(attrs={"id": "case_reference"}),
         required=False,
     )
     exporter_application_reference = forms.CharField(
-        label="Filter by exporter reference",
+        label="Exporter reference",
         required=False,
     )
     organisation_name = forms.CharField(
-        label="Filter by organisation name",
+        label="Organisation name",
         required=False,
     )
     exporter_site_name = forms.CharField(
-        label="Filter by exporter site name",
+        label="Exporter site name",
         required=False,
     )
     exporter_site_address = forms.CharField(
-        label="Filter by exporter site address",
+        label="Exporter site address",
         required=False,
     )
     party_name = forms.CharField(
-        label="Filter by party name",
+        label="Party name",
         required=False,
     )
     party_address = forms.CharField(
-        label="Filter by party address",
+        label="Party address",
         required=False,
     )
     goods_related_description = forms.CharField(
-        label="Filter by goods related description",
+        label="Goods related description",
         required=False,
     )
     country = forms.CharField(
-        label="Filter by country",
+        label="Country",
         required=False,
     )
     control_list_entry = forms.CharField(
-        label="Filter by control list entry",
+        label="Control list entry",
         required=False,
     )
     regime_entry = forms.CharField(
-        label="Filter by regime entry",
+        label="Regime entry",
         required=False,
     )
     submitted_from = DateInputField(
-        label="Filter by submitted from date",
+        label="Submitted from date",
         required=False,
     )
     submitted_to = DateInputField(
-        label="Filter by submitted to date",
+        label="Submitted to date",
         required=False,
     )
     finalised_from = DateInputField(
-        label="Filter by finalised from date",
+        label="Finalised from date",
         required=False,
     )
     finalised_to = DateInputField(
-        label="Filter by finalised to date",
+        label="Finalised to date",
         required=False,
     )
 
@@ -99,66 +98,66 @@ class CasesFiltersForm(forms.Form):
 
         self.fields["case_type"] = forms.ChoiceField(
             choices=case_type_choices,
-            label="Filter by type",
+            label="Case type",
             widget=forms.Select(attrs={"id": "case_type"}),
             required=False,
         )
 
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
-            label="Filter by status",
+            label="Case status",
             required=False,
         )
 
         self.fields["case_officer"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Filter by case officer",
+            label="Case officer",
             required=False,
         )
 
         self.fields["assigned_user"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Filter by assigned user",
+            label="Assigned user",
             required=False,
         )
 
         self.fields["team_advice_type"] = forms.ChoiceField(
-            label="Filter by team advice type",
+            label="Team advice type",
             choices=advice_type_choices,
             required=False,
         )
 
         self.fields["final_advice_type"] = forms.ChoiceField(
-            label="Filter by final advice type",
+            label="Final advice type",
             choices=advice_type_choices,
             required=False,
         )
 
         self.fields["max_sla_days_remaining"] = forms.ChoiceField(
-            label="Filter by max SLA days remaining",
+            label="Max SLA days remaining",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["min_sla_days_remaining"] = forms.ChoiceField(
-            label="Filter by min SLA days remaining",
+            label="Min SLA days remaining",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["sla_days_elapsed"] = forms.ChoiceField(
-            label="Filter by SLA days elapsed",
+            label="SLA days elapsed",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["sla_days_elapsed_sort_order"] = forms.ChoiceField(
-            label="Filter by sorted by SLA days",
+            label="Sorted by SLA days",
             choices=sla_sorted_choices,
             required=False,
         )
         self.fields["flags"] = forms.MultipleChoiceField(
-            label="Filter by flags",
+            label="Flags",
             choices=flags_choices,
             required=False,
             # setting id for javascript to use
@@ -191,9 +190,21 @@ class CasesFiltersForm(forms.Form):
             required=False,
         )
 
-        basic_filters = ["case_reference", "case_type", "status", "case_officer", "assigned_user", "return_to"]
+        case_filters = [
+            "case_reference",
+            "case_type",
+            "status",
+            "case_officer",
+            "assigned_user",
+            "return_to",
+            Field("submitted_from"),
+            Field("submitted_to"),
+            Field.select("flags"),
+            Field("finalised_from"),
+            Field("finalised_to"),
+        ]
         if not queue.get("is_system_queue"):
-            basic_filters.append("hidden")
+            case_filters.append("hidden")
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the
@@ -203,40 +214,43 @@ class CasesFiltersForm(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Fieldset(
-                *basic_filters,
-                css_id="basic-filter-fields",
-                css_class="basic-filter-fields",
-            ),
-            ExpandingFieldset(
-                Field.text("exporter_application_reference"),
-                Field.text("organisation_name"),
-                Field.text("exporter_site_name"),
-                Field.text("exporter_site_address"),
-                Field.select("team_advice_type"),
-                Field.select("final_advice_type"),
-                Field.select("max_sla_days_remaining"),
-                Field.select("min_sla_days_remaining"),
-                Field.select("sla_days_elapsed"),
-                Field.select("sla_days_elapsed_sort_order"),
-                Field.text("party_name"),
-                Field.text("party_address"),
-                Field.text("goods_related_description"),
-                Field.text("country"),
-                Field.text("control_list_entry", id="control_list_entry"),
-                Field.text("regime_entry"),
-                Field.select("flags"),
-                Field("submitted_from"),
-                Field("submitted_to"),
-                Field("finalised_from"),
-                Field("finalised_to"),
-                Field("is_nca_applicable"),
-                Field("is_trigger_list"),
-                legend="Advanced filters",
-                css_id="advanced-filter-fields",
-                css_class="advanced-group",
-                text_div_css_class="advanced-filter-fields",
-                details_id="advanced-filter-details",
+            Accordion(
+                AccordionSection(
+                    "Case",
+                    *case_filters,
+                    css_id="accordion-case-filters",
+                ),
+                AccordionSection(
+                    "Product",
+                    Field.text("control_list_entry", id="control_list_entry"),
+                    Field.text("regime_entry"),
+                    Field.text("goods_related_description"),
+                    Field("is_trigger_list"),
+                    Field("is_nca_applicable"),
+                ),
+                AccordionSection(
+                    "Applicant",
+                    Field.text("exporter_application_reference"),
+                    Field.text("organisation_name"),
+                    Field.text("exporter_site_name"),
+                    Field.text("exporter_site_address"),
+                ),
+                AccordionSection(
+                    "Parties",
+                    Field.text("party_name"),
+                    Field.text("party_address"),
+                    Field.text("country"),
+                ),
+                AccordionSection(
+                    "Misc",
+                    Field.select("team_advice_type"),
+                    Field.select("final_advice_type"),
+                    Field.select("max_sla_days_remaining"),
+                    Field.select("min_sla_days_remaining"),
+                    Field.select("sla_days_elapsed"),
+                    Field.select("sla_days_elapsed_sort_order"),
+                ),
+                css_id="accordion-1",
             ),
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),
@@ -248,7 +262,7 @@ class CasesFiltersForm(forms.Form):
                     formaction=reverse("bookmarks:add_bookmark"),
                 ),
                 HTML(
-                    f'<a href="{clear_filters_url}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>'  # noqa
+                    f'<a href="{clear_filters_url}" class="govuk-button govuk-button--secondary" id="button-clear-filters">Clear filters</a>'  # noqa
                 ),
                 css_class="case-filter-actions",
             ),
