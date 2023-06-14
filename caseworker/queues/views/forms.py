@@ -92,7 +92,6 @@ class CasesFiltersForm(forms.Form):
     def __init__(self, request, queue, filters_data, all_flags, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        case_type_choices = self.get_field_choices(filters_data, "case_types")
         case_status_choices = self.get_field_choices(filters_data, "statuses")
         advice_type_choices = self.get_field_choices(filters_data, "advice_types")
         gov_user_choices = [("", "Select"), ("not_assigned", "Not assigned")] + [
@@ -108,14 +107,6 @@ class CasesFiltersForm(forms.Form):
             (queue["id"], f"{queue['team']['name']}: {queue['name']}")
             for queue in get_queues(request, convert_to_options=False, users_team_first=True)
         ]
-        hidden_cases_choices = [(True, "Show hidden cases, including cases with open ECJU queries.")]
-
-        self.fields["case_type"] = forms.ChoiceField(
-            choices=case_type_choices,
-            label="Case type",
-            widget=forms.Select(attrs={"id": "case_type"}),
-            required=False,
-        )
 
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
@@ -200,13 +191,6 @@ class CasesFiltersForm(forms.Form):
             widget=CheckboxInputSmall(),
             required=False,
         )
-        self.fields["hidden"] = forms.TypedChoiceField(
-            choices=hidden_cases_choices,
-            coerce=coerce_str_to_bool,
-            label="",
-            widget=CheckboxInputSmall(),
-            required=False,
-        )
         self.fields["return_to"] = forms.CharField(
             label="",
             widget=HiddenInput(),
@@ -218,7 +202,6 @@ class CasesFiltersForm(forms.Form):
             "status",
             "case_officer",
             "assigned_user",
-            "case_type",
             "export_type",
             Field("submitted_from"),
             Field("submitted_to"),
