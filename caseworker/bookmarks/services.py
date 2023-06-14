@@ -1,9 +1,9 @@
-from datetime import datetime, date
 import logging
 from collections import OrderedDict
+from datetime import datetime, date
+from urllib.parse import urlencode
 
 from django.urls import reverse
-from django.utils.http import urlencode
 
 from caseworker.users.services import get_gov_user
 from core import client
@@ -11,7 +11,7 @@ from core import client
 logger = logging.getLogger(__name__)
 
 
-def fetch_bookmarks(request, filter_data):
+def fetch_bookmarks(request, filter_data, all_flags):
     response = client.get(request, "/bookmarks/")
     if response.status_code >= 300:
         # Not important enough to break the page, so return an empty set of bookmarks.
@@ -20,7 +20,7 @@ def fetch_bookmarks(request, filter_data):
 
     bookmarks = response.json()
     for bookmark in bookmarks["user"]:
-        enrich_bookmark_for_display(bookmark, filter_data)
+        enrich_bookmark_for_display(bookmark, filter_data, all_flags)
 
     return bookmarks
 
@@ -57,10 +57,10 @@ def rename_bookmark(request, bookmark_id, name):
     return client.put(request, f"/bookmarks", data)
 
 
-def enrich_bookmark_for_display(bookmark, filter_data):
+def enrich_bookmark_for_display(bookmark, filter_data, all_flags):
     base_url = reverse("queues:cases")
     bookmark_filter = bookmark["filter_json"]
-    bookmark["description"] = description_from_filter(bookmark_filter, filter_data)
+    bookmark["description"] = description_from_filter(bookmark_filter, filter_data, all_flags)
     bookmark["url"] = url_from_bookmark(base_url, bookmark_filter)
 
 
@@ -79,11 +79,11 @@ def url_from_bookmark(base_url, bookmark_filter):
         if key.startswith("_id_"):
             del bookmark_filter[key]
 
-    query = urlencode(bookmark_filter)
+    query = urlencode(bookmark_filter, doseq=True)
     return f"{base_url}?{query}"
 
 
-def description_from_filter(bookmark_filter, filter_data):
+def description_from_filter(bookmark_filter, filter_data, all_flags):
     filter_dict = {**bookmark_filter}
 
     _enrich_value_from_filter_data(filter_dict, filter_data, "assigned_user", "gov_users", "id", "full_name")
@@ -94,6 +94,8 @@ def description_from_filter(bookmark_filter, filter_data):
     _enrich_value_from_filter_data(filter_dict, filter_data, "final_advice_type", "advice_types")
 
     _swap_ids_for_readable_values(filter_dict)
+
+    _change_flag_ids_to_comma_seperated_names(filter_dict, all_flags)
 
     return ", ".join([f"{k.capitalize().replace('_', ' ')}: {v.replace('_', ' ')}" for (k, v) in filter_dict.items()])
 
@@ -166,3 +168,11 @@ def _swap_ids_for_readable_values(filter_dict):
             filter_dict[key[4:]] = filter_dict[key]
             # We don't want to display these _id_ fields, so delete them after we've used them.
             del filter_dict[key]
+
+
+def _change_flag_ids_to_comma_seperated_names(filter_dict, all_flags):
+    bookmark_flags = filter_dict.get("flags", [])
+    if bookmark_flags:
+        flags_dict = {flag["id"]: flag["name"] for flag in all_flags}
+        flag_names = [flags_dict[flag_name] for flag_name in bookmark_flags]
+        filter_dict["flags"] = ", ".join(flag_names)
