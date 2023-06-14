@@ -17,7 +17,7 @@ from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.core.helpers import get_organisation_documents
-from caseworker.cases.services import post_review_good
+from caseworker.cases.services import post_review_good, post_review_goods, post_review_goods_json
 from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
@@ -237,33 +237,36 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
 
     def form_valid(self, form):
         data = {**form.cleaned_data}
+
+        payload = self.get_goods_payload(data)
+        post_review_goods_json(self.request, case_id=self.kwargs["pk"], json=payload)
+
+        return super().form_valid(form)
+
+    def get_goods_payload(self, data):
         # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
-        good_ids = data.pop("goods")
 
-        for good in self.get_goods(good_ids):
-            payload = {
-                **data,
-                "current_object": good["id"],
-                "objects": [good["good"]["id"]],
-                "is_good_controlled": is_good_controlled,
-                "regime_entries": get_regime_entries_payload_data(data),
-            }
+        # get_goods used to get a set of goods previously
+        good_ids = set(data.pop("goods"))
 
-            # These are used to determine the `regime_entries` and aren't needed
-            # when sending to the backend
-            del payload["mtcr_entries"]
-            del payload["wassenaar_entries"]
-            del payload["nsg_entries"]
-            del payload["cwc_entries"]
-            del payload["ag_entries"]
-            del payload["regimes"]
-
-            post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
-
-        return super().form_valid(form)
+        payload = {
+            **data,
+            "objects": list(good_ids),
+            "is_good_controlled": is_good_controlled,
+            "regime_entries": get_regime_entries_payload_data(data),
+        }
+        # These are used to determine the `regime_entries` and aren't needed
+        # when sending to the backend
+        del payload["mtcr_entries"]
+        del payload["wassenaar_entries"]
+        del payload["nsg_entries"]
+        del payload["cwc_entries"]
+        del payload["ag_entries"]
+        del payload["regimes"]
+        return payload
 
 
 class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
@@ -401,7 +404,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         del payload["cwc_entries"]
         del payload["ag_entries"]
         del payload["regimes"]
-
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
 
         return super().form_valid(form)

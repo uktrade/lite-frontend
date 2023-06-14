@@ -262,6 +262,8 @@ def get_goods_type(request, pk):
 
 
 def post_review_goods(request, case_id, json):
+    # the post shouldn't be aware of the dataset like this.
+    # this should likely be in cases/views/goods.py ReviewGoods and then call the new below function as currently the input json isn't used.
     json = {
         "objects": request.GET.getlist("goods", request.GET.getlist("goods_types")),
         "comment": request.POST.get("comment"),
@@ -269,6 +271,11 @@ def post_review_goods(request, case_id, json):
         "is_good_controlled": request.POST.get("is_good_controlled") == "True",
         "report_summary": request.POST.get("report_summary"),
     }
+    response = client.post(request, f"/goods/control-list-entries/{case_id}/", json)
+    return response.json(), response.status_code
+
+
+def post_review_goods_json(request, case_id, json):
     response = client.post(request, f"/goods/control-list-entries/{case_id}/", json)
     return response.json(), response.status_code
 
