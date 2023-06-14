@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from dateutil import parser
 from django.http import Http404
@@ -90,6 +91,9 @@ class CaseDataMixin:
         # but it can be overriden by a checkbox on the frontend
         is_hidden_by_form = self.request.GET.get("hidden", False)
         params["hidden"] = self._set_is_hidden(params["selected_tab"], is_hidden_by_form)
+        # No need to send return_to parameter in server calls
+        if params.get("return_to"):
+            del params["return_to"]
 
         return params
 
@@ -234,12 +238,22 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
     def get_initial(self):
         return self.get_params()
 
+    def get_return_url(self):
+        current_full_url = self.request.get_full_path()
+        url_parts = list(urlparse(current_full_url))
+        query = parse_qs(url_parts[4], keep_blank_values=True)
+        if query.get("return_to"):
+            del query["return_to"]
+        url_parts[4] = urlencode(query, doseq=True)
+        sanitised_url = urlunparse(url_parts)
+        return sanitised_url
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
         kwargs["queue"] = self.queue
-        kwargs["initial"]["return_to"] = self.request.get_full_path()
+        kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
@@ -266,7 +280,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
             "show_updated_cases_banner": show_updated_cases_banner,
             "tab_data": self._tab_data(),
             "bookmarks": bookmarks,
-            "return_to": self.request.get_full_path(),
+            "return_to": self.get_return_url(),
         }
 
         return super().get_context_data(*args, **context, **kwargs)
