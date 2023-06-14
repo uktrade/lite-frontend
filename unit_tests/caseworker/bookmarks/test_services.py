@@ -35,8 +35,8 @@ from unit_tests.caseworker.conftest import GOV_USER_ID
         ),
     ],
 )
-def test_description_from_filter(filter_data, bookmark_filter, expected_description):
-    description = description_from_filter(bookmark_filter, filter_data)
+def test_description_from_filter(filter_data, bookmark_filter, expected_description, flags):
+    description = description_from_filter(bookmark_filter, filter_data, flags)
     assert description == expected_description
 
 
@@ -76,12 +76,17 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
             "Regime entry: Wassenaar Arrangement Sensitive",
             "regime_entry=2594daef-8156-4e78-b4c4-e25f6cdbd203",
         ),
+        (
+            {"flags": ["798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2", "e50f5cd3-331c-4914-b618-ee6eb67a081c"]},
+            "Flags: AG Review Required, BAE",
+            "flags=798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2&flags=e50f5cd3-331c-4914-b618-ee6eb67a081c",
+        ),
     ],
 )
-def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_description, expected_url_params):
+def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_description, expected_url_params, flags):
     bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
 
-    enrich_bookmark_for_display(bookmark, filter_data)
+    enrich_bookmark_for_display(bookmark, filter_data, flags)
 
     assert bookmark["description"] == expected_description
     assert bookmark["url"] == f"/queues/?{expected_url_params}"
