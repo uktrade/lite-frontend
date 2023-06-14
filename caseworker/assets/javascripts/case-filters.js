@@ -144,6 +144,16 @@ const initRegimeEntryAutocompleteField = () => {
 const initCaseFilters = () => {
   initCountryAutocompleteField();
   initRegimeEntryAutocompleteField();
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: "",
+    preserveNullOptions: true,
+    selectElement: document.querySelector("#case_officer"),
+  });
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: "",
+    preserveNullOptions: true,
+    selectElement: document.querySelector("#case_adviser"),
+  });
   initFlagsFiltersField();
   initAssignedQueuesFiltersField();
   showHideFilters();

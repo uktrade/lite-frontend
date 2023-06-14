@@ -21,11 +21,11 @@ class CasesFiltersForm(forms.Form):
         required=False,
     )
     export_type = forms.ChoiceField(
-        label="Temporary or permanent",
+        label="Permanent or temporary",
         choices=(
             ("", ""),
-            ("temporary", "Temporary"),
             ("permanent", "Permanent"),
+            ("temporary", "Temporary"),
         ),
         required=False,
     )
@@ -125,13 +125,15 @@ class CasesFiltersForm(forms.Form):
 
         self.fields["case_officer"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Case officer",
+            label="Licensing Unit case officer",
+            widget=forms.Select(attrs={"id": "case_officer"}),
             required=False,
         )
 
         self.fields["assigned_user"] = forms.ChoiceField(
             choices=gov_user_choices,
             label="Case adviser",
+            widget=forms.Select(attrs={"id": "case_adviser"}),
             required=False,
         )
 
