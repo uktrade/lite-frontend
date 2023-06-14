@@ -331,6 +331,11 @@ def go_to_team_edit_page(driver, team, queue):  # noqa
     teams_page.select_team_from_dropdown(team)
     teams_page.select_default_queue_from_dropdown(queue)
     functions.click_submit(driver)
+    # Ensure we return to the profile page
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "link-edit-team")))
+    # Check that the team/queue change was applied successfully
+    assert driver.find_element(by=By.ID, value="user-team-name").text == team
+    assert driver.find_element(by=By.ID, value="user-default-queue").text == queue
 
 
 @when("I go to my case list")  # noqa

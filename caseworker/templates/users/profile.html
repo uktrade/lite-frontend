@@ -78,7 +78,7 @@
 				{% lcs 'users.UserProfile.SummaryList.TEAM' %}
 			</dt>
 			<dd class="govuk-summary-list__value">
-				<a href="{% url 'teams:team' data.user.team.id %}" class="govuk-link govuk-link--no-visited-state">{{ data.user.team.name }}</a>
+				<a href="{% url 'teams:team' data.user.team.id %}" id="user-team-name" class="govuk-link govuk-link--no-visited-state">{{ data.user.team.name }}</a>
 			</dd>
 			<dd class="govuk-summary-list__actions">
 				<a id="link-edit-team" href="{% url 'users:edit' data.user.id %}#team" class="govuk-link govuk-link--no-visited-state">
@@ -107,7 +107,7 @@
 			<dt class="govuk-summary-list__key">
 				{% lcs 'users.UserProfile.SummaryList.DEFAULT_QUEUE' %}
 			</dt>
-			<dd class="govuk-summary-list__value">
+			<dd class="govuk-summary-list__value" id="user-default-queue">
 				{{ data.user.default_queue.name }}
 			</dd>
 			<dd class="govuk-summary-list__actions">
