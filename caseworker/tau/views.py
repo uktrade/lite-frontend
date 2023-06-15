@@ -17,7 +17,7 @@ from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.services import get_control_list_entries
 from caseworker.core.helpers import get_organisation_documents
-from caseworker.cases.services import post_review_good, post_review_goods, post_review_goods_json
+from caseworker.cases.services import post_review_good
 from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
@@ -239,7 +239,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         data = {**form.cleaned_data}
 
         payload = self.get_goods_payload(data)
-        post_review_goods_json(self.request, case_id=self.kwargs["pk"], json=payload)
+        post_review_good(self.request, self.kwargs["pk"], payload)
 
         return super().form_valid(form)
 
@@ -248,13 +248,18 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
-
         # get_goods used to get a set of goods previously
-        good_ids = set(data.pop("goods"))
+        good_ids = data.pop("goods")
+
+        current_objects = {}
+        for good in self.get_goods(good_ids):
+            current_objects[good["good"]["id"]] = good["id"]
+        goods = current_objects.keys()
 
         payload = {
             **data,
-            "objects": list(good_ids),
+            "current_objects": current_objects,
+            "objects": list(goods),
             "is_good_controlled": is_good_controlled,
             "regime_entries": get_regime_entries_payload_data(data),
         }
