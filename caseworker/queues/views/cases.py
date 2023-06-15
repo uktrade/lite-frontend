@@ -17,6 +17,7 @@ from caseworker.core.constants import (
     SLA_RADIUS,
 )
 from caseworker.core.services import get_user_permissions
+from caseworker.flags.services import get_flags
 from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.queues.services import (
     get_queue,
@@ -46,6 +47,10 @@ class CaseDataMixin:
                 )
 
         return response.json()
+
+    @cached_property
+    def all_flags(self):
+        return get_flags(self.request, disable_pagination=True)
 
     @property
     def filters(self):
@@ -250,8 +255,8 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
+        kwargs["all_flags"] = self.all_flags
         kwargs["queue"] = self.queue
         kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs
@@ -268,7 +273,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
-        bookmarks = fetch_bookmarks(self.request, self.filters)
+        bookmarks = fetch_bookmarks(self.request, self.filters, self.all_flags)
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,

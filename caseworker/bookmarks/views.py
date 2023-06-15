@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.views.generic import FormView
 
 from caseworker.bookmarks import forms, services
+from caseworker.flags.services import get_flags
 from caseworker.queues.views.cases import CaseDataMixin
 from caseworker.queues.views.forms import CasesFiltersForm
 from core.auth.views import LoginRequiredMixin
@@ -24,9 +25,9 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
         kwargs["queue"] = self.queue
+        kwargs["all_flags"] = get_flags(self.request, disable_pagination=True)
 
         return kwargs
 

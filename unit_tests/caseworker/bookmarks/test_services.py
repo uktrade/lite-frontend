@@ -1,6 +1,4 @@
-import json
 import uuid
-from collections import OrderedDict
 
 import pytest
 
@@ -35,8 +33,8 @@ from unit_tests.caseworker.conftest import GOV_USER_ID
         ),
     ],
 )
-def test_description_from_filter(filter_data, bookmark_filter, expected_description):
-    description = description_from_filter(bookmark_filter, filter_data)
+def test_description_from_filter(filter_data, bookmark_filter, expected_description, flags):
+    description = description_from_filter(bookmark_filter, filter_data, flags)
     assert description == expected_description
 
 
@@ -76,15 +74,44 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
             "Regime entry: Wassenaar Arrangement Sensitive",
             "regime_entry=2594daef-8156-4e78-b4c4-e25f6cdbd203",
         ),
+        (
+            {"flags": ["798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2", "e50f5cd3-331c-4914-b618-ee6eb67a081c"]},
+            "Flags: AG Review Required, BAE",
+            "flags=798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2&flags=e50f5cd3-331c-4914-b618-ee6eb67a081c",
+        ),
+        (
+            {"is_trigger_list": True},
+            "Is trigger list: True",
+            "is_trigger_list=True",
+        ),
+        (
+            {"min_sla_days_remaining": 15},
+            "Min sla days remaining: 15",
+            "min_sla_days_remaining=15",
+        ),
     ],
 )
-def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_description, expected_url_params):
+def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_description, expected_url_params, flags):
     bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
 
-    enrich_bookmark_for_display(bookmark, filter_data)
+    enriched = enrich_bookmark_for_display(bookmark, filter_data, flags)
 
-    assert bookmark["description"] == expected_description
-    assert bookmark["url"] == f"/queues/?{expected_url_params}"
+    assert enriched["description"] == expected_description
+    assert enriched["url"] == f"/queues/?{expected_url_params}"
+
+
+class ObjectToForceException:
+    def __str__(self):
+        raise Exception("This object breaks when str() called")
+
+
+def test_enrich_bookmark_for_display_returns_None_on_error(filter_data, flags):
+    bookmark_filter = {"dodgy_filter_entry": ObjectToForceException()}
+    bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
+
+    enriched = enrich_bookmark_for_display(bookmark, filter_data, flags)
+
+    assert enriched is None
 
 
 @pytest.mark.parametrize(

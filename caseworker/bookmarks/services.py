@@ -1,9 +1,9 @@
-from datetime import datetime, date
 import logging
 from collections import OrderedDict
+from datetime import datetime, date
+from urllib.parse import urlencode
 
 from django.urls import reverse
-from django.utils.http import urlencode
 
 from caseworker.users.services import get_gov_user
 from core import client
@@ -11,18 +11,18 @@ from core import client
 logger = logging.getLogger(__name__)
 
 
-def fetch_bookmarks(request, filter_data):
+def fetch_bookmarks(request, filter_data, all_flags):
     response = client.get(request, "/bookmarks/")
     if response.status_code >= 300:
         # Not important enough to break the page, so return an empty set of bookmarks.
         logger.error("Error retrieving bookmarks. Status code: %s; Message: %s", response.status_code, response.json)
         return {"user": []}
 
-    bookmarks = response.json()
-    for bookmark in bookmarks["user"]:
-        enrich_bookmark_for_display(bookmark, filter_data)
+    bookmarks = response.json()["user"]
+    enriched_bookmarks = [enrich_bookmark_for_display(bookmark, filter_data, all_flags) for bookmark in bookmarks]
+    enriched_bookmarks = [bookmark for bookmark in enriched_bookmarks if bookmark is not None]
 
-    return bookmarks
+    return {"user": enriched_bookmarks}
 
 
 def add_bookmark(request, data, raw_filters):
@@ -57,11 +57,18 @@ def rename_bookmark(request, bookmark_id, name):
     return client.put(request, f"/bookmarks", data)
 
 
-def enrich_bookmark_for_display(bookmark, filter_data):
-    base_url = reverse("queues:cases")
-    bookmark_filter = bookmark["filter_json"]
-    bookmark["description"] = description_from_filter(bookmark_filter, filter_data)
-    bookmark["url"] = url_from_bookmark(base_url, bookmark_filter)
+def enrich_bookmark_for_display(bookmark, filter_data, all_flags):
+    try:
+        out = {**bookmark}
+        base_url = reverse("queues:cases")
+        bookmark_filter = out["filter_json"]
+        out["description"] = description_from_filter(bookmark_filter, filter_data, all_flags)
+        out["url"] = url_from_bookmark(base_url, bookmark_filter)
+
+        return out
+    except Exception as ex:  # pylint: disable=broad-except
+        logger.exception("Error enriching bookmark: %s", str(ex))
+        return None
 
 
 def url_from_bookmark(base_url, bookmark_filter):
@@ -79,11 +86,11 @@ def url_from_bookmark(base_url, bookmark_filter):
         if key.startswith("_id_"):
             del bookmark_filter[key]
 
-    query = urlencode(bookmark_filter)
+    query = urlencode(bookmark_filter, doseq=True)
     return f"{base_url}?{query}"
 
 
-def description_from_filter(bookmark_filter, filter_data):
+def description_from_filter(bookmark_filter, filter_data, all_flags):
     filter_dict = {**bookmark_filter}
 
     _enrich_value_from_filter_data(filter_dict, filter_data, "assigned_user", "gov_users", "id", "full_name")
@@ -95,7 +102,11 @@ def description_from_filter(bookmark_filter, filter_data):
 
     _swap_ids_for_readable_values(filter_dict)
 
-    return ", ".join([f"{k.capitalize().replace('_', ' ')}: {v.replace('_', ' ')}" for (k, v) in filter_dict.items()])
+    _change_flag_ids_to_comma_seperated_names(filter_dict, all_flags)
+
+    return ", ".join(
+        [f"{k.capitalize().replace('_', ' ')}: {str(v).replace('_', ' ')}" for (k, v) in filter_dict.items()]
+    )
 
 
 def enrich_filter_for_saving(data, raw_filters):
@@ -166,3 +177,10 @@ def _swap_ids_for_readable_values(filter_dict):
             filter_dict[key[4:]] = filter_dict[key]
             # We don't want to display these _id_ fields, so delete them after we've used them.
             del filter_dict[key]
+
+
+def _change_flag_ids_to_comma_seperated_names(filter_dict, all_flags):
+    bookmark_flags = filter_dict.get("flags", [])
+    if bookmark_flags:
+        flag_names = [flag["name"] for flag in all_flags if flag["id"] in bookmark_flags]
+        filter_dict["flags"] = ", ".join(sorted(flag_names))
