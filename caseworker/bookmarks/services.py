@@ -66,7 +66,7 @@ def enrich_bookmark_for_display(bookmark, filter_data, all_flags):
         out["url"] = url_from_bookmark(base_url, bookmark_filter)
 
         return out
-    except Exception as ex:
+    except Exception as ex:  # pylint: disable=broad-except
         logger.exception(f"Error enriching bookmark: {str(ex)}")
         return None
 
