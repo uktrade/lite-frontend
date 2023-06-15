@@ -18,11 +18,11 @@ def fetch_bookmarks(request, filter_data, all_flags):
         logger.error("Error retrieving bookmarks. Status code: %s; Message: %s", response.status_code, response.json)
         return {"user": []}
 
-    bookmarks = response.json()
-    for bookmark in bookmarks["user"]:
-        enrich_bookmark_for_display(bookmark, filter_data, all_flags)
+    bookmarks = response.json()["user"]
+    enriched_bookmarks = [enrich_bookmark_for_display(bookmark, filter_data, all_flags) for bookmark in bookmarks]
+    enriched_bookmarks = [bookmark for bookmark in enriched_bookmarks if bookmark is not None]
 
-    return bookmarks
+    return {"user": enriched_bookmarks}
 
 
 def add_bookmark(request, data, raw_filters):
@@ -58,10 +58,17 @@ def rename_bookmark(request, bookmark_id, name):
 
 
 def enrich_bookmark_for_display(bookmark, filter_data, all_flags):
-    base_url = reverse("queues:cases")
-    bookmark_filter = bookmark["filter_json"]
-    bookmark["description"] = description_from_filter(bookmark_filter, filter_data, all_flags)
-    bookmark["url"] = url_from_bookmark(base_url, bookmark_filter)
+    try:
+        out = {**bookmark}
+        base_url = reverse("queues:cases")
+        bookmark_filter = out["filter_json"]
+        out["description"] = description_from_filter(bookmark_filter, filter_data, all_flags)
+        out["url"] = url_from_bookmark(base_url, bookmark_filter)
+
+        return out
+    except Exception as ex:
+        logger.exception(f"Error enriching bookmark: {str(ex)}")
+        return None
 
 
 def url_from_bookmark(base_url, bookmark_filter):
