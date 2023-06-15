@@ -67,7 +67,7 @@ def enrich_bookmark_for_display(bookmark, filter_data, all_flags):
 
         return out
     except Exception as ex:  # pylint: disable=broad-except
-        logger.exception(f"Error enriching bookmark: {str(ex)}")
+        logger.exception("Error enriching bookmark: %s", str(ex))
         return None
 
 
