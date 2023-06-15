@@ -1,6 +1,4 @@
-import json
 import uuid
-from collections import OrderedDict
 
 import pytest
 
@@ -96,10 +94,24 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
 def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_description, expected_url_params, flags):
     bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
 
-    enrich_bookmark_for_display(bookmark, filter_data, flags)
+    enriched = enrich_bookmark_for_display(bookmark, filter_data, flags)
 
-    assert bookmark["description"] == expected_description
-    assert bookmark["url"] == f"/queues/?{expected_url_params}"
+    assert enriched["description"] == expected_description
+    assert enriched["url"] == f"/queues/?{expected_url_params}"
+
+
+class ObjectToForceException:
+    def __str__(self):
+        raise Exception("This object breaks when str() called")
+
+
+def test_enrich_bookmark_for_display_returns_None_on_error(filter_data, flags):
+    bookmark_filter = {"dodgy_filter_entry": ObjectToForceException()}
+    bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
+
+    enriched = enrich_bookmark_for_display(bookmark, filter_data, flags)
+
+    assert enriched is None
 
 
 @pytest.mark.parametrize(
