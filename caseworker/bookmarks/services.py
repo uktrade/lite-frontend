@@ -173,6 +173,5 @@ def _swap_ids_for_readable_values(filter_dict):
 def _change_flag_ids_to_comma_seperated_names(filter_dict, all_flags):
     bookmark_flags = filter_dict.get("flags", [])
     if bookmark_flags:
-        flags_dict = {flag["id"]: flag["name"] for flag in all_flags}
-        flag_names = [flags_dict[flag_name] for flag_name in bookmark_flags]
-        filter_dict["flags"] = ", ".join(flag_names)
+        flag_names = [flag["name"] for flag in all_flags if flag["id"] in bookmark_flags]
+        filter_dict["flags"] = ", ".join(sorted(flag_names))
