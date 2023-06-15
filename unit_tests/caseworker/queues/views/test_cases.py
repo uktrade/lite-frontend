@@ -705,3 +705,16 @@ def test_filter_none_pending_gov_users(authorized_client, mock_cases_search):
     assert gov_users == [
         {"full_name": "John Smith", "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "pending": False}
     ]  # /PS-IGNORE
+
+
+def test_cases_home_page_return_to_search(authorized_client, mock_cases_search):
+    regime_entry = "af8043ee-6657-4d4b-83a2-f1a5cdd016ed"
+    url = reverse("queues:cases") + f"?regime_entry={regime_entry}&return_to=/foobar"  # /PS-IGNORE
+    response = authorized_client.get(url)
+    # Ensure return_to not sent in server call
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "regime_entry": [regime_entry],  # /PS-IGNORE
+    }
+    # Ensure return_to parameter does not appear in return_to url value
+    assert response.context["return_to"] == f"/queues/?regime_entry={regime_entry}"
