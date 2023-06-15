@@ -81,6 +81,16 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
             "Flags: AG Review Required, BAE",
             "flags=798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2&flags=e50f5cd3-331c-4914-b618-ee6eb67a081c",
         ),
+        (
+            {"is_trigger_list": True},
+            "Is trigger list: True",
+            "is_trigger_list=True",
+        ),
+        (
+            {"min_sla_days_remaining": 15},
+            "Min sla days remaining: 15",
+            "min_sla_days_remaining=15",
+        ),
     ],
 )
 def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_description, expected_url_params, flags):

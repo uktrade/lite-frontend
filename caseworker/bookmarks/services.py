@@ -97,7 +97,9 @@ def description_from_filter(bookmark_filter, filter_data, all_flags):
 
     _change_flag_ids_to_comma_seperated_names(filter_dict, all_flags)
 
-    return ", ".join([f"{k.capitalize().replace('_', ' ')}: {v.replace('_', ' ')}" for (k, v) in filter_dict.items()])
+    return ", ".join(
+        [f"{k.capitalize().replace('_', ' ')}: {str(v).replace('_', ' ')}" for (k, v) in filter_dict.items()]
+    )
 
 
 def enrich_filter_for_saving(data, raw_filters):
