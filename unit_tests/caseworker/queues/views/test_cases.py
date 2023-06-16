@@ -179,6 +179,23 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     }
 
 
+def test_cases_home_page_organisation_site_country_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    control_list_entry_filter_input = html.find(id="id_organisation_site_country")
+    assert control_list_entry_filter_input.attrs["type"] == "text"
+    assert control_list_entry_filter_input.attrs["name"] == "organisation_site_country"
+
+    url = reverse("queues:cases") + "?organisation_site_country=NL"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "organisation_site_country": ["nl"],
+    }
+
+
 def test_cases_home_page_trigger_list_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases") + "?is_trigger_list=True"
     authorized_client.get(url)

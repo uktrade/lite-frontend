@@ -40,8 +40,8 @@ class CasesFiltersForm(forms.Form):
         label="Exporter site name",
         required=False,
     )
-    exporter_site_address = forms.CharField(
-        label="Exporter site address",
+    organisation_site_country = forms.CharField(
+        label="Organisation country",
         required=False,
     )
     party_name = forms.CharField(
@@ -236,10 +236,9 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Applicant",
-                    Field.text("exporter_application_reference"),
                     Field.text("organisation_name"),
                     Field.text("exporter_site_name"),
-                    Field.text("exporter_site_address"),
+                    Field.text("organisation_site_country"),
                 ),
                 AccordionSection(
                     "Parties",

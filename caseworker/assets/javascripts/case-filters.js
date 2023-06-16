@@ -133,6 +133,15 @@ const initCountryAutocompleteField = () => {
     .then((countries) => initAutoCompleteField("country", countries, "id"));
 };
 
+const initOrganisationSiteCountryAutocompleteField = () => {
+  fetch("/api/countries/")
+    .then((response) => response.json())
+    .then((results) => results["countries"])
+    .then((countries) =>
+      initAutoCompleteField("organisation_site_country", countries, "id")
+    );
+};
+
 const initRegimeEntryAutocompleteField = () => {
   fetch("/api/regime-entries/")
     .then((response) => response.json())
@@ -143,6 +152,7 @@ const initRegimeEntryAutocompleteField = () => {
 
 const initCaseFilters = () => {
   initCountryAutocompleteField();
+  initOrganisationSiteCountryAutocompleteField();
   initRegimeEntryAutocompleteField();
   accessibleAutocomplete.enhanceSelectElement({
     defaultValue: "",
