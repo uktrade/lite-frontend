@@ -5,7 +5,6 @@ from django import forms
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 
-from caseworker.flags.services import get_flags
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
 
@@ -79,7 +78,7 @@ class CasesFiltersForm(forms.Form):
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, request, queue, filters_data, *args, **kwargs):
+    def __init__(self, queue, filters_data, all_flags, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         case_type_choices = self.get_field_choices(filters_data, "case_types")
@@ -93,7 +92,7 @@ class CasesFiltersForm(forms.Form):
         sla_sorted_choices = [("", "Select"), ("ascending", "Ascending"), ("descending", "Descending")]
         nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
-        flags_choices = [(flag["id"], flag["name"]) for flag in get_flags(request, disable_pagination=True)]
+        flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         hidden_cases_choices = [(True, "Show hidden cases, including cases with open ECJU queries.")]
 
         self.fields["case_type"] = forms.ChoiceField(

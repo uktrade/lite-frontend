@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from dateutil import parser
 from django.http import Http404
@@ -16,6 +17,7 @@ from caseworker.core.constants import (
     SLA_RADIUS,
 )
 from caseworker.core.services import get_user_permissions
+from caseworker.flags.services import get_flags
 from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.queues.services import (
     get_queue,
@@ -45,6 +47,10 @@ class CaseDataMixin:
                 )
 
         return response.json()
+
+    @cached_property
+    def all_flags(self):
+        return get_flags(self.request, disable_pagination=True)
 
     @property
     def filters(self):
@@ -90,6 +96,9 @@ class CaseDataMixin:
         # but it can be overriden by a checkbox on the frontend
         is_hidden_by_form = self.request.GET.get("hidden", False)
         params["hidden"] = self._set_is_hidden(params["selected_tab"], is_hidden_by_form)
+        # No need to send return_to parameter in server calls
+        if params.get("return_to"):
+            del params["return_to"]
 
         return params
 
@@ -234,12 +243,22 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
     def get_initial(self):
         return self.get_params()
 
+    def get_return_url(self):
+        current_full_url = self.request.get_full_path()
+        url_parts = list(urlparse(current_full_url))
+        query = parse_qs(url_parts[4], keep_blank_values=True)
+        if query.get("return_to"):
+            del query["return_to"]
+        url_parts[4] = urlencode(query, doseq=True)
+        sanitised_url = urlunparse(url_parts)
+        return sanitised_url
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
+        kwargs["all_flags"] = self.all_flags
         kwargs["queue"] = self.queue
-        kwargs["initial"]["return_to"] = self.request.get_full_path()
+        kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
@@ -254,7 +273,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
-        bookmarks = fetch_bookmarks(self.request, self.filters)
+        bookmarks = fetch_bookmarks(self.request, self.filters, self.all_flags)
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,
@@ -266,7 +285,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
             "show_updated_cases_banner": show_updated_cases_banner,
             "tab_data": self._tab_data(),
             "bookmarks": bookmarks,
-            "return_to": self.request.get_full_path(),
+            "return_to": self.get_return_url(),
         }
 
         return super().get_context_data(*args, **context, **kwargs)
