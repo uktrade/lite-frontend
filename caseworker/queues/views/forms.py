@@ -5,7 +5,6 @@ from django import forms
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 
-from caseworker.flags.services import get_flags
 from caseworker.queues.services import get_queues
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall

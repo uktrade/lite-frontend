@@ -25,6 +25,7 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
         kwargs["queue"] = self.queue
         kwargs["all_flags"] = get_flags(self.request, disable_pagination=True)
