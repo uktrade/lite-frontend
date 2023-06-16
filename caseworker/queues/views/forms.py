@@ -37,7 +37,7 @@ class CasesFiltersForm(forms.Form):
         required=False,
     )
     exporter_site_name = forms.CharField(
-        label="Exporter site name",
+        label="Site name",
         required=False,
     )
     organisation_site_country = forms.CharField(
