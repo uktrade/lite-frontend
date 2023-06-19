@@ -94,8 +94,6 @@ class CasesFiltersForm(forms.Form):
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
 
-        sla_days_choices = [("", "Select")] + [(i, i) for i in range(SLA_DAYS_RANGE)]
-        sla_sorted_choices = [("", "Select"), ("ascending", "Ascending"), ("descending", "Descending")]
         nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
@@ -124,41 +122,6 @@ class CasesFiltersForm(forms.Form):
             required=False,
         )
 
-        self.fields["team_advice_type"] = forms.ChoiceField(
-            label="Team advice type",
-            choices=advice_type_choices,
-            required=False,
-        )
-
-        self.fields["final_advice_type"] = forms.ChoiceField(
-            label="Final advice type",
-            choices=advice_type_choices,
-            required=False,
-        )
-
-        self.fields["max_sla_days_remaining"] = forms.ChoiceField(
-            label="Max SLA days remaining",
-            choices=sla_days_choices,
-            required=False,
-        )
-
-        self.fields["min_sla_days_remaining"] = forms.ChoiceField(
-            label="Min SLA days remaining",
-            choices=sla_days_choices,
-            required=False,
-        )
-
-        self.fields["sla_days_elapsed"] = forms.ChoiceField(
-            label="SLA days elapsed",
-            choices=sla_days_choices,
-            required=False,
-        )
-
-        self.fields["sla_days_elapsed_sort_order"] = forms.ChoiceField(
-            label="Sorted by SLA days",
-            choices=sla_sorted_choices,
-            required=False,
-        )
         self.fields["flags"] = forms.MultipleChoiceField(
             label="Flags",
             choices=flags_choices,
@@ -241,15 +204,6 @@ class CasesFiltersForm(forms.Form):
                     "Parties",
                     Field.text("country"),
                     Field.text("party_name"),
-                ),
-                AccordionSection(
-                    "Misc",
-                    Field.select("team_advice_type"),
-                    Field.select("final_advice_type"),
-                    Field.select("max_sla_days_remaining"),
-                    Field.select("min_sla_days_remaining"),
-                    Field.select("sla_days_elapsed"),
-                    Field.select("sla_days_elapsed_sort_order"),
                 ),
                 css_id="accordion-1",
             ),
