@@ -16,7 +16,7 @@ from caseworker.core.constants import (
     SLA_CIRCUMFERENCE,
     SLA_RADIUS,
 )
-from caseworker.core.services import get_user_permissions
+from caseworker.core.services import get_user_permissions, get_control_list_entries
 from caseworker.flags.services import get_flags
 from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.queues.services import (
@@ -52,6 +52,10 @@ class CaseDataMixin:
     def all_flags(self):
         return get_flags(self.request, disable_pagination=True)
 
+    @cached_property
+    def all_cles(self):
+        return get_control_list_entries(self.request, include_parent=True)
+
     @property
     def filters(self):
         gov_users = self.data["results"]["filters"]["gov_users"]
@@ -64,7 +68,7 @@ class CaseDataMixin:
     def get_params(self):
         params = {"page": int(self.request.GET.get("page", 1))}
         for key, value in self.request.GET.items():
-            if key != "flags[]":
+            if key != "flags[]":  # What is this for? Thinking it is an artifact of times gone by...
                 params[key] = value
 
         # this is essentially decomposing date fields
@@ -72,7 +76,6 @@ class CaseDataMixin:
         # Crispy form gives us "submitted_from_{0..2}" so they are mapped to day, month, year
         # Usually this is done in clean() but it doesn't get called as we are not posting anything
         for param in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
-            date_str = ""
             date_tokens = []
             for index, field in [(0, "day"), (1, "month"), (2, "year")]:
                 key = f"{param}_{index}"
@@ -88,6 +91,7 @@ class CaseDataMixin:
                 params[param] = date_obj
 
         params["flags"] = self.request.GET.getlist("flags", [])
+        params["control_list_entry"] = self.request.GET.getlist("control_list_entry", [])
 
         params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
 
@@ -257,6 +261,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs["filters_data"] = self.filters
         kwargs["all_flags"] = self.all_flags
+        kwargs["all_cles"] = self.all_cles
         kwargs["queue"] = self.queue
         kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs

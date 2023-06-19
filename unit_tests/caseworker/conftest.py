@@ -2218,3 +2218,38 @@ def mock_bookmarks(requests_mock, gov_uk_user_id, flags):
 def mock_flags(requests_mock, flags):
     url = client._build_absolute_uri("/flags/")
     return requests_mock.get(url=url, json=flags)
+
+
+@pytest.fixture()
+def mock_all_control_list_entries(requests_mock, all_cles):
+    url = client._build_absolute_uri("/static/control-list-entries/")
+    return requests_mock.get(url=url, json={"control_list_entries": all_cles})
+
+
+@pytest.fixture()
+def all_cles():
+    return [
+        {"rating": "MEND3", "text": "MEND3", "parent": None},
+        {
+            "rating": "ML1",
+            "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms and automatic weapons with "
+            + "a calibre of 12.7mm or less, and accessories and specially designed components",
+            "parent": None,
+        },
+        {
+            "rating": "ML1a",
+            "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns",
+            "parent": "3fc955d3-1b0e-406f-96ee-b2a3c237f9bd",
+        },
+        {"rating": "ML1b", "text": "Smooth-bore weapons", "parent": "3fc955d3-1b0e-406f-96ee-b2a3c237f9bd"},
+        {
+            "rating": "ML1b1",
+            "text": "Smooth-bore weapons specially designed for military use",
+            "parent": "29d1f6de-b14b-4c92-b79b-c42124789ce3",
+        },
+        {
+            "rating": "ML1b2",
+            "text": "Smooth-bore weapons: fully automatic but not specially designed for military use",
+            "parent": "29d1f6de-b14b-4c92-b79b-c42124789ce3",
+        },
+    ]

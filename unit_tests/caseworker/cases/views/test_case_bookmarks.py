@@ -11,7 +11,7 @@ def setup(
     pass
 
 
-def test_no_bookmarks_present(authorized_client, mock_no_bookmarks):
+def test_no_bookmarks_present(authorized_client, mock_no_bookmarks, mock_all_control_list_entries):
     url = reverse("core:index")
     response = authorized_client.get(url)
     context = response.context
@@ -19,7 +19,9 @@ def test_no_bookmarks_present(authorized_client, mock_no_bookmarks):
     assert context["bookmarks"] == {"user": []}
 
 
-def test_failed_bookmarks_displays_no_bookmarks(authorized_client, mock_failed_bookmarks_call):
+def test_failed_bookmarks_displays_no_bookmarks(
+    authorized_client, mock_failed_bookmarks_call, mock_all_control_list_entries
+):
     url = reverse("core:index")
     response = authorized_client.get(url)
     context = response.context
@@ -27,7 +29,9 @@ def test_failed_bookmarks_displays_no_bookmarks(authorized_client, mock_failed_b
     assert context["bookmarks"] == {"user": []}
 
 
-def test_bookmarks_present(authorized_client, mock_bookmarks, mock_flags, gov_uk_user_id):
+def test_bookmarks_present(
+    authorized_client, mock_bookmarks, mock_flags, gov_uk_user_id, mock_all_control_list_entries
+):
     url = reverse("core:index")
     response = authorized_client.get(url)
     context = response.context

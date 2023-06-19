@@ -34,7 +34,14 @@ def mock_edit_bookmark(requests_mock, code=200):
     )
 
 
-def test_add_bookmark_ok(authorized_client, mock_queue, mock_cases_with_filter_data, requests_mock, gov_uk_user_id):
+def test_add_bookmark_ok(
+    authorized_client,
+    mock_queue,
+    mock_cases_with_filter_data,
+    requests_mock,
+    gov_uk_user_id,
+    mock_all_control_list_entries,
+):
     mock_post = mock_post_bookmark(requests_mock)
     url = reverse("bookmarks:add_bookmark")
     return_to_url = "http://return-to.com"
@@ -62,7 +69,13 @@ def test_add_bookmark_ok(authorized_client, mock_queue, mock_cases_with_filter_d
 
 @pytest.mark.parametrize("return_code", [400, 500])
 def test_add_bookmark_fail(
-    authorized_client, mock_queue, mock_cases_with_filter_data, requests_mock, gov_uk_user_id, return_code
+    authorized_client,
+    mock_queue,
+    mock_cases_with_filter_data,
+    requests_mock,
+    gov_uk_user_id,
+    return_code,
+    mock_all_control_list_entries,
 ):
     mock_post_bookmark(requests_mock, return_code)
     url = reverse("bookmarks:add_bookmark")

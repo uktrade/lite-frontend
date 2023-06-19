@@ -50,10 +50,6 @@ class CasesFiltersForm(forms.Form):
         label="Country",
         required=False,
     )
-    control_list_entry = forms.CharField(
-        label="Control list entry",
-        required=False,
-    )
     regime_entry = forms.CharField(
         label="Regime entry",
         required=False,
@@ -78,7 +74,7 @@ class CasesFiltersForm(forms.Form):
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, queue, filters_data, all_flags, *args, **kwargs):
+    def __init__(self, queue, filters_data, all_flags, all_cles, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         case_type_choices = self.get_field_choices(filters_data, "case_types")
@@ -93,6 +89,7 @@ class CasesFiltersForm(forms.Form):
         nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
+        cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
         hidden_cases_choices = [(True, "Show hidden cases, including cases with open ECJU queries.")]
 
         self.fields["case_type"] = forms.ChoiceField(
@@ -162,6 +159,13 @@ class CasesFiltersForm(forms.Form):
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
         )
+        self.fields["control_list_entry"] = forms.MultipleChoiceField(
+            label="Control list entry",
+            choices=cle_choices,
+            required=False,
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "control_list_entry"}),
+        )
         self.fields["is_nca_applicable"] = forms.TypedChoiceField(
             choices=nca_choices,
             coerce=coerce_str_to_bool,
@@ -221,7 +225,7 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Product",
-                    Field.text("control_list_entry", id="control_list_entry"),
+                    Field.select("control_list_entry", id="control_list_entry"),
                     Field.text("regime_entry"),
                     Field.text("goods_related_description"),
                     Field("is_trigger_list"),

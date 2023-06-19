@@ -159,8 +159,11 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
     control_list_entry_filter_input = html.find(id="control_list_entry")
-    assert control_list_entry_filter_input.attrs["type"] == "text"
-    assert control_list_entry_filter_input.attrs["name"] == "control_list_entry"
+    cles = [cle.get("value") for cle in control_list_entry_filter_input.findAll("option")]
+
+    assert control_list_entry_filter_input.name == "select"
+    assert "ML1" in cles
+    assert "ML1a" in cles
 
     url = reverse("queues:cases") + "?control_list_entry=ML1"
     response = authorized_client.get(url)

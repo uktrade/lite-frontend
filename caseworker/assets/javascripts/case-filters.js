@@ -61,57 +61,22 @@ const initAutoCompleteField = async (field, choices, propertyName) => {
   nameInput = document.querySelector(`_id_${field}`);
 };
 
-export default function initFlagsFiltersField() {
+function initFlagsFiltersField() {
   const flagsField = document.getElementById("flags");
   if (!flagsField) return;
 
-  const flagsTokenField = progressivelyEnhanceMultipleSelectField(
-    flagsField,
-    (option) => {
-      return { id: option.value, name: option.label, classes: [] };
-    }
-  );
+  progressivelyEnhanceMultipleSelectField(flagsField, (option) => {
+    return { id: option.value, name: option.label, classes: [] };
+  });
 }
 
-function filterIsPopulated(filterGroupName) {
-  let filterGroup = document.getElementById(filterGroupName);
-  let filters = filterGroup.querySelectorAll("input,select");
-  for (const filter of filters) {
-    if (
-      (filter.value !== "" &&
-        filter.value !== "Select" &&
-        filter.value !== "blank" &&
-        filter.type !== "hidden" &&
-        filter.type !== "submit" &&
-        filter.type !== "checkbox") ||
-      (filter.type === "checkbox" && filter.attributes["checked"])
-    ) {
-      return true;
-    }
-  }
+function initCLEFiltersField() {
+  const clesField = document.getElementById("control_list_entry");
+  if (!clesField) return;
 
-  return false;
-}
-
-function expandBasicFilters() {
-  let caseFilters = document.getElementById("case-filters");
-  let showLink = document.getElementById("show-filters-link");
-  let hideLink = document.getElementById("hide-filters-link");
-}
-
-function expandAdvancedFilters() {
-  let advancedFilterDetails = document.getElementById(
-    "advanced-filter-details"
-  );
-  advancedFilterDetails.setAttribute("open", "");
-}
-
-function showHideFilters() {
-  let expandBasic = filterIsPopulated("basic-filter-fields");
-  let expandAdvanced = filterIsPopulated("advanced-filter-fields");
-
-  if (expandBasic || expandAdvanced) expandBasicFilters();
-  if (expandAdvanced) expandAdvancedFilters();
+  progressivelyEnhanceMultipleSelectField(clesField, (option) => {
+    return { id: option.value, name: option.label, classes: [] };
+  });
 }
 
 const initCountryAutocompleteField = () => {
@@ -133,7 +98,7 @@ const initCaseFilters = () => {
   initCountryAutocompleteField();
   initRegimeEntryAutocompleteField();
   initFlagsFiltersField();
-  showHideFilters();
+  initCLEFiltersField();
 };
 
 initCaseFilters();
