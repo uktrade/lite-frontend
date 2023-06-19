@@ -1,14 +1,5 @@
 import { enableToggle, enableSwap } from "./toggle";
 
-function setupBookmarkPaneToggling() {
-  enableToggle(
-    "bookmarks",
-    false,
-    "show-bookmarks-link",
-    "hide-bookmarks-link"
-  );
-}
-
 function setupHiddenBookmarkNameEditField() {
   const bookmarkNameElements = document.querySelectorAll('[id^="bookmark-"]');
 
@@ -42,5 +33,4 @@ function setupHiddenBookmarkNameEditField() {
   }
 }
 
-setupBookmarkPaneToggling();
 setupHiddenBookmarkNameEditField();
