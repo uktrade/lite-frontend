@@ -49,10 +49,6 @@ class CasesFiltersForm(forms.Form):
         label="Party name",
         required=False,
     )
-    party_address = forms.CharField(
-        label="Party address",
-        required=False,
-    )
     goods_related_description = forms.CharField(
         label="Goods related description",
         required=False,
@@ -243,9 +239,8 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Parties",
-                    Field.text("party_name"),
-                    Field.text("party_address"),
                     Field.text("country"),
+                    Field.text("party_name"),
                 ),
                 AccordionSection(
                     "Misc",
