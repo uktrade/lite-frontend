@@ -5,6 +5,7 @@ from django import forms
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 
+from caseworker.queues.services import get_queues
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
 
@@ -16,6 +17,15 @@ class CasesFiltersForm(forms.Form):
     case_reference = forms.CharField(
         label="Case reference",
         widget=forms.TextInput(attrs={"id": "case_reference"}),
+        required=False,
+    )
+    export_type = forms.ChoiceField(
+        label="Permanent or temporary",
+        choices=(
+            ("", ""),
+            ("permanent", "Permanent"),
+            ("temporary", "Temporary"),
+        ),
         required=False,
     )
     exporter_application_reference = forms.CharField(
@@ -78,10 +88,9 @@ class CasesFiltersForm(forms.Form):
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, queue, filters_data, all_flags, *args, **kwargs):
+    def __init__(self, request, queue, filters_data, all_flags, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        case_type_choices = self.get_field_choices(filters_data, "case_types")
         case_status_choices = self.get_field_choices(filters_data, "statuses")
         advice_type_choices = self.get_field_choices(filters_data, "advice_types")
         gov_user_choices = [("", "Select"), ("not_assigned", "Not assigned")] + [
@@ -93,14 +102,10 @@ class CasesFiltersForm(forms.Form):
         nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
-        hidden_cases_choices = [(True, "Show hidden cases, including cases with open ECJU queries.")]
-
-        self.fields["case_type"] = forms.ChoiceField(
-            choices=case_type_choices,
-            label="Case type",
-            widget=forms.Select(attrs={"id": "case_type"}),
-            required=False,
-        )
+        assigned_queues_choices = [
+            (queue["id"], f"{queue['team']['name']}: {queue['name']}")
+            for queue in get_queues(request, convert_to_options=False, users_team_first=True)
+        ]
 
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
@@ -110,13 +115,15 @@ class CasesFiltersForm(forms.Form):
 
         self.fields["case_officer"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Case officer",
+            label="Licensing Unit case officer",
+            widget=forms.Select(attrs={"id": "case_officer"}),
             required=False,
         )
 
         self.fields["assigned_user"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Assigned user",
+            label="Case adviser",
+            widget=forms.Select(attrs={"id": "case_adviser"}),
             required=False,
         )
 
@@ -162,6 +169,13 @@ class CasesFiltersForm(forms.Form):
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
         )
+        self.fields["assigned_queues"] = forms.MultipleChoiceField(
+            label="Assigned queues",
+            choices=assigned_queues_choices,
+            required=False,
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "assigned-queues"}),
+        )
         self.fields["is_nca_applicable"] = forms.TypedChoiceField(
             choices=nca_choices,
             coerce=coerce_str_to_bool,
@@ -176,13 +190,6 @@ class CasesFiltersForm(forms.Form):
             widget=CheckboxInputSmall(),
             required=False,
         )
-        self.fields["hidden"] = forms.TypedChoiceField(
-            choices=hidden_cases_choices,
-            coerce=coerce_str_to_bool,
-            label="",
-            widget=CheckboxInputSmall(),
-            required=False,
-        )
         self.fields["return_to"] = forms.CharField(
             label="",
             widget=HiddenInput(),
@@ -191,19 +198,19 @@ class CasesFiltersForm(forms.Form):
 
         case_filters = [
             "case_reference",
-            "case_type",
             "status",
             "case_officer",
             "assigned_user",
-            "return_to",
+            "export_type",
             Field("submitted_from"),
             Field("submitted_to"),
             Field.select("flags"),
             Field("finalised_from"),
             Field("finalised_to"),
+            "return_to",
         ]
-        if not queue.get("is_system_queue"):
-            case_filters.append("hidden")
+        if queue.get("is_system_queue"):
+            case_filters.append(Field.select("assigned_queues"))
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the

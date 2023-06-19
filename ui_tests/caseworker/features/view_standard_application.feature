@@ -10,7 +10,6 @@ Feature: I want to view the case details of a case
     And the status is set to "submitted"
     When I go to the case list page
     And I click on show filters
-    And I filter by application type "Standard Individual Export Licence"
     Then I should see my case in the cases list
     When I go to application previously created
     And I click on "Documents" tab

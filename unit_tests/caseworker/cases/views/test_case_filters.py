@@ -39,9 +39,12 @@ def setup(
             }
         ),
         ({"field": "finalised_to", "params": {"finalised_to_0": "1", "finalised_to_1": "1", "finalised_to_2": "2022"}}),
+        ({"params": {"export_type": "permanent", "assigned_queues": "fake-queue-id-1"}}),
     ],
 )
-def test_case_filters(authorized_client, requests_mock, mock_cases, mock_cases_head, filters_data, mock_no_bookmarks):
+def test_case_filters(
+    authorized_client, requests_mock, mock_queues_list, mock_cases, mock_cases_head, filters_data, mock_no_bookmarks
+):
     url = reverse("core:index", kwargs={"disable_queue_lookup": True})
     query_params = f"{parse.urlencode(filters_data['params'], doseq=True)}"
     url = url + f"?{query_params}"

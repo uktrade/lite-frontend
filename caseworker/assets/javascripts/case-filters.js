@@ -73,6 +73,18 @@ export default function initFlagsFiltersField() {
   );
 }
 
+export function initAssignedQueuesFiltersField() {
+  const assignedQueuesField = document.getElementById("assigned-queues");
+  if (!assignedQueuesField) return;
+
+  const assignedQueuesTokenField = progressivelyEnhanceMultipleSelectField(
+    assignedQueuesField,
+    (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    }
+  );
+}
+
 function filterIsPopulated(filterGroupName) {
   let filterGroup = document.getElementById(filterGroupName);
   let filters = filterGroup.querySelectorAll("input,select");
@@ -132,7 +144,18 @@ const initRegimeEntryAutocompleteField = () => {
 const initCaseFilters = () => {
   initCountryAutocompleteField();
   initRegimeEntryAutocompleteField();
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: "",
+    preserveNullOptions: true,
+    selectElement: document.querySelector("#case_officer"),
+  });
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: "",
+    preserveNullOptions: true,
+    selectElement: document.querySelector("#case_adviser"),
+  });
   initFlagsFiltersField();
+  initAssignedQueuesFiltersField();
   showHideFilters();
 };
 

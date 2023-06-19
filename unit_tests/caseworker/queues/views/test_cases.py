@@ -137,6 +137,14 @@ def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_sea
     }
 
 
+def test_cases_home_page_return_to_excluded_from_api(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?return_to=foo"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+    }
+
+
 def test_cases_home_page_case_search_API_page_not_found(authorized_client, mock_cases_search_page_not_found):
     url = reverse("queues:cases")
     response = authorized_client.get(url)
