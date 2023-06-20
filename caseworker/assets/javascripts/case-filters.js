@@ -2,7 +2,6 @@ import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
 
 import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
-import { enableToggle } from "./toggle";
 
 const initAutoCompleteField = async (field, choices, propertyName) => {
   const originalInput = document.querySelector(`#id_${field}`);
@@ -68,17 +67,18 @@ function initFlagsFiltersField() {
   progressivelyEnhanceMultipleSelectField(flagsField, (option) => {
     return { id: option.value, name: option.label, classes: [] };
   });
-  export function initAssignedQueuesFiltersField() {
-    const assignedQueuesField = document.getElementById("assigned-queues");
-    if (!assignedQueuesField) return;
+}
 
-    const assignedQueuesTokenField = progressivelyEnhanceMultipleSelectField(
-      assignedQueuesField,
-      (option) => {
-        return { id: option.value, name: option.label, classes: [] };
-      }
-    );
-  }
+export function initAssignedQueuesFiltersField() {
+  const assignedQueuesField = document.getElementById("assigned-queues");
+  if (!assignedQueuesField) return;
+
+  const assignedQueuesTokenField = progressivelyEnhanceMultipleSelectField(
+    assignedQueuesField,
+    (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    }
+  );
 }
 
 function initCLEFiltersField() {

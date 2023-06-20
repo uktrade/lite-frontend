@@ -260,6 +260,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
         kwargs["all_flags"] = self.all_flags
         kwargs["all_cles"] = self.all_cles
