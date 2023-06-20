@@ -40,9 +40,10 @@ class CasesFiltersForm(forms.Form):
         label="Site name",
         required=False,
     )
-    organisation_site_country = forms.CharField(
-        label="Organisation country",
+    goods_starting_point = forms.ChoiceField(
+        label="Shipping from",
         required=False,
+        choices=(("", ""), ("GB", "Great Britain"), ("NI", "Northern Ireland")),
     )
     party_name = forms.CharField(
         label="Party name",
@@ -238,7 +239,7 @@ class CasesFiltersForm(forms.Form):
                     "Applicant",
                     Field.text("organisation_name"),
                     Field.text("exporter_site_name"),
-                    Field.text("organisation_site_country"),
+                    Field.select("goods_starting_point"),
                 ),
                 AccordionSection(
                     "Parties",

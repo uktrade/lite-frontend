@@ -179,20 +179,19 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     }
 
 
-def test_cases_home_page_organisation_site_country_search(authorized_client, mock_cases_search):
+def test_cases_home_page_goods_starting_point_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases")
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
-    control_list_entry_filter_input = html.find(id="id_organisation_site_country")
-    assert control_list_entry_filter_input.attrs["type"] == "text"
-    assert control_list_entry_filter_input.attrs["name"] == "organisation_site_country"
+    control_list_entry_filter_input = html.find(id="id_goods_starting_point")
+    assert control_list_entry_filter_input.attrs["name"] == "goods_starting_point"
 
-    url = reverse("queues:cases") + "?organisation_site_country=NL"
+    url = reverse("queues:cases") + "?goods_starting_point=NI"
     response = authorized_client.get(url)
     assert response.status_code == 200
     assert mock_cases_search.last_request.qs == {
         **default_params,
-        "organisation_site_country": ["nl"],
+        "goods_starting_point": ["ni"],
     }
 
 
