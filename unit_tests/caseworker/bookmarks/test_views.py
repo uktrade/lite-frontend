@@ -37,6 +37,7 @@ def mock_edit_bookmark(requests_mock, code=200):
 def test_add_bookmark_ok(
     authorized_client,
     mock_queue,
+    mock_queues_list,
     mock_cases_with_filter_data,
     requests_mock,
     gov_uk_user_id,
@@ -71,6 +72,7 @@ def test_add_bookmark_ok(
 def test_add_bookmark_fail(
     authorized_client,
     mock_queue,
+    mock_queues_list,
     mock_cases_with_filter_data,
     requests_mock,
     gov_uk_user_id,

@@ -68,6 +68,17 @@ function initFlagsFiltersField() {
   progressivelyEnhanceMultipleSelectField(flagsField, (option) => {
     return { id: option.value, name: option.label, classes: [] };
   });
+  export function initAssignedQueuesFiltersField() {
+    const assignedQueuesField = document.getElementById("assigned-queues");
+    if (!assignedQueuesField) return;
+
+    const assignedQueuesTokenField = progressivelyEnhanceMultipleSelectField(
+      assignedQueuesField,
+      (option) => {
+        return { id: option.value, name: option.label, classes: [] };
+      }
+    );
+  }
 }
 
 function initCLEFiltersField() {
@@ -97,7 +108,18 @@ const initRegimeEntryAutocompleteField = () => {
 const initCaseFilters = () => {
   initCountryAutocompleteField();
   initRegimeEntryAutocompleteField();
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: "",
+    preserveNullOptions: true,
+    selectElement: document.querySelector("#case_officer"),
+  });
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: "",
+    preserveNullOptions: true,
+    selectElement: document.querySelector("#case_adviser"),
+  });
   initFlagsFiltersField();
+  initAssignedQueuesFiltersField();
   initCLEFiltersField();
 };
 

@@ -42,7 +42,6 @@ def pytest_configure(config):
 @pytest.fixture(autouse=True)
 def default_feature_flags(settings):
     settings.FEATURE_C7_NCSC_ENABLED = True
-    settings.FEATURE_MENTIONS_ENABLED = True
 
 
 @pytest.fixture

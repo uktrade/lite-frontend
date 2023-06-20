@@ -35,6 +35,7 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
         kwargs["all_flags"] = get_flags(self.request, disable_pagination=True)
         kwargs["all_cles"] = self.all_cles
         kwargs["queue"] = self.queue
+        kwargs["all_flags"] = get_flags(self.request, disable_pagination=True)
 
         return kwargs
 

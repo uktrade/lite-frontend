@@ -6,11 +6,6 @@ from requests.exceptions import HTTPError
 
 
 @pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_MENTIONS_ENABLED = True
-
-
-@pytest.fixture(autouse=True)
 def setup(
     settings,
     mock_queue,
@@ -57,16 +52,6 @@ def test_user_case_note_mention_count_error(authorized_client, requests_mock, da
         response = authorized_client.get(url)
     exception = exc_info.value
     assert exception.response.status_code == 500
-
-
-def test_user_case_note_mention_feature_flag_false(authorized_client, settings):
-    settings.FEATURE_MENTIONS_ENABLED = False
-    response = authorized_client.get(
-        reverse("teams:teams"),
-    )
-    assert response.status_code == 200
-    assert response.context["NEW_MENTIONS_COUNT"] == 0
-    assert response.context["FEATURE_MENTIONS_ENABLED"] is False
 
 
 def test_user_case_note_mentions(authorized_client, requests_mock):

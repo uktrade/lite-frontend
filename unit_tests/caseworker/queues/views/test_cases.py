@@ -1,17 +1,15 @@
-from decimal import Decimal
-import pytest
 import re
-
-from bs4 import BeautifulSoup
+from decimal import Decimal
 from urllib import parse
 
+import pytest
+from bs4 import BeautifulSoup
 from django.urls import reverse
-
-from core import client
-from core.exceptions import ServiceError
 
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.queues.views.forms import CasesFiltersForm
+from core import client
+from core.exceptions import ServiceError
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
@@ -137,6 +135,14 @@ def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_sea
     }
 
 
+def test_cases_home_page_return_to_excluded_from_api(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?return_to=foo"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+    }
+
+
 def test_cases_home_page_case_search_API_page_not_found(authorized_client, mock_cases_search_page_not_found):
     url = reverse("queues:cases")
     response = authorized_client.get(url)
@@ -171,6 +177,22 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "control_list_entry": ["ml1"],
+    }
+
+
+def test_cases_home_page_goods_starting_point_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    control_list_entry_filter_input = html.find(id="id_goods_starting_point")
+    assert control_list_entry_filter_input.attrs["name"] == "goods_starting_point"
+
+    url = reverse("queues:cases") + "?goods_starting_point=NI"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "goods_starting_point": ["ni"],
     }
 
 

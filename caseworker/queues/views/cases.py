@@ -91,6 +91,7 @@ class CaseDataMixin:
                 params[param] = date_obj
 
         params["flags"] = self.request.GET.getlist("flags", [])
+        params["assigned_queues"] = self.request.GET.getlist("assigned_queues", [])
         params["control_list_entry"] = self.request.GET.getlist("control_list_entry", [])
 
         params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
