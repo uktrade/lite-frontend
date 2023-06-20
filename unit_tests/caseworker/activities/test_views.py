@@ -52,11 +52,6 @@ def notes_and_timelines_url(data_queue, data_standard_case):
     )
 
 
-@pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_MENTIONS_ENABLED = True
-
-
 @pytest.fixture
 def mentions_data(data_standard_case, mock_gov_user):
     return {"results": [{"id": data_standard_case["case"]["id"], "user": mock_gov_user["user"], "is_accessed": True}]}
@@ -332,21 +327,6 @@ def test_notes_and_timelines_mentions_template(
     soup = BeautifulSoup(response.content, "html.parser")
 
     assert soup.find("ul", {"class": "notes-and-timeline-nav__mentions"})
-
-
-def test_notes_and_timelines_mentions_feature_flag(
-    authorized_client,
-    notes_and_timelines_url,
-    mock_case_note_mentions,
-    settings,
-    requests_mock,
-    mock_gov_users,
-):
-    settings.FEATURE_MENTIONS_ENABLED = False
-    response = authorized_client.get(f"{notes_and_timelines_url}?mentions=True")
-    soup = BeautifulSoup(response.content, "html.parser")
-
-    assert not soup.find("ul", {"class": "notes-and-timeline-nav__mentions"})
 
 
 def test_notes_and_timelines_mentions_update_is_accessed(
