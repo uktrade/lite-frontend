@@ -87,6 +87,12 @@ class CasesFiltersForm(forms.Form):
         widget=CheckboxInputSmall(),
         required=False,
     )
+    exclude_sanction_matches = forms.TypedChoiceField(
+        choices=[(True, "Exclude sanction matches")],
+        label="",
+        widget=CheckboxInputSmall(),
+        required=False,
+    )
 
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
@@ -211,6 +217,7 @@ class CasesFiltersForm(forms.Form):
                     Field.text("country"),
                     Field.text("party_name"),
                     Field("exclude_denial_matches"),
+                    Field("exclude_sanction_matches"),
                 ),
                 css_id="accordion-1",
             ),

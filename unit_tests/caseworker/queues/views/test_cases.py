@@ -128,7 +128,7 @@ def test_cases_home_page_view_context(authorized_client):
         "exporter_application_reference",
         "organisation_name",
         "exporter_site_name",
-        "exporter_site_address",
+        "goods_starting_point",
         "party_name",
         "goods_related_description",
         "country",
@@ -138,6 +138,8 @@ def test_cases_home_page_view_context(authorized_client):
         "submitted_to",
         "finalised_from",
         "finalised_to",
+        "exclude_denial_matches",
+        "exclude_sanction_matches",
         "status",
         "case_officer",
         "assigned_user",
@@ -237,12 +239,30 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
     }
 
 
-def test_cases_home_page_exlude_denial_matches_search(authorized_client, mock_cases_search):
+def test_cases_home_page_exclude_denial_matches_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases") + "?exclude_denial_matches=True"
-    authorized_client.get(url)
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_denial_matches_input = html.find(id="id_exclude_denial_matches_0")
+    assert exclude_denial_matches_input.attrs["name"] == "exclude_denial_matches"
+
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "exclude_denial_matches": ["true"],
+    }
+
+
+def test_cases_home_page_exclude_sanction_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?exclude_sanction_matches=True"
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_sanction_matches_input = html.find(id="id_exclude_sanction_matches_0")
+    assert exclude_sanction_matches_input.attrs["name"] == "exclude_sanction_matches"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "exclude_sanction_matches": ["true"],
     }
 
 
