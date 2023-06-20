@@ -250,16 +250,11 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         # get_goods used to get a set of goods previously
         good_ids = data.pop("goods")
-
-        current_objects = {}
-        for good in self.get_goods(good_ids):
-            current_objects[good["good"]["id"]] = good["id"]
-        goods = current_objects.keys()
+        goods = [good["good"]["id"] for good in self.get_goods(good_ids)]
 
         payload = {
             **data,
-            "current_objects": current_objects,
-            "objects": list(goods),
+            "objects": list(set(goods)),
             "is_good_controlled": is_good_controlled,
             "regime_entries": get_regime_entries_payload_data(data),
         }
@@ -395,7 +390,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
         payload = {
             **data,
-            "current_object": self.good_id,
             "objects": [good["good"]["id"]],
             "is_good_controlled": is_good_controlled,
             "regime_entries": get_regime_entries_payload_data(data),
@@ -441,15 +435,15 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
 
     def post(self, request, queue_pk, pk):
-        for good in self.assessed_goods:
-            payload = {
-                "control_list_entries": [],
-                "is_good_controlled": None,
-                "report_summary": None,
-                "comment": None,
-                "current_object": good["id"],
-                "objects": [good["good"]["id"]],
-                "regime_entries": [],
-            }
-            post_review_good(self.request, case_id=pk, data=payload)
+        goods = [good["good"]["id"] for good in self.assessed_goods]
+        goods_unique = list(set(goods))
+        payload = {
+            "control_list_entries": [],
+            "is_good_controlled": None,
+            "report_summary": None,
+            "comment": None,
+            "objects": goods_unique,
+            "regime_entries": [],
+        }
+        post_review_good(self.request, case_id=pk, data=payload)
         return redirect(reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}))
