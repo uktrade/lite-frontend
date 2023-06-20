@@ -81,6 +81,12 @@ class CasesFiltersForm(forms.Form):
         label="Finalised to date",
         required=False,
     )
+    exclude_denial_matches = forms.TypedChoiceField(
+        choices=[(True, "Exclude denial matches")],
+        label="",
+        widget=CheckboxInputSmall(),
+        required=False,
+    )
 
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
@@ -204,6 +210,7 @@ class CasesFiltersForm(forms.Form):
                     "Parties",
                     Field.text("country"),
                     Field.text("party_name"),
+                    Field("exclude_denial_matches"),
                 ),
                 css_id="accordion-1",
             ),

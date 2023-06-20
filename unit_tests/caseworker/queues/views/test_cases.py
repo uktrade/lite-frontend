@@ -237,6 +237,15 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
     }
 
 
+def test_cases_home_page_exlude_denial_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?exclude_denial_matches=True"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "exclude_denial_matches": ["true"],
+    }
+
+
 def test_trigger_list_checkbox_visible_unchecked(authorized_client):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
