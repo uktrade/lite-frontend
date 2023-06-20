@@ -30,6 +30,7 @@ def setup(
     mock_queues_list,
     mock_control_list_entries,
     mock_regime_entries,
+    mock_empty_bookmarks,
 ):
     yield
 

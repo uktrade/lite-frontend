@@ -1,18 +1,13 @@
 from datetime import datetime
+from decimal import Decimal
+from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from dateutil import parser
-from decimal import Decimal
-
 from django.http import Http404
-from django.views.generic import FormView
 from django.utils.functional import cached_property
+from django.views.generic import FormView
 
-from lite_content.lite_internal_frontend.cases import CasesListPage
-
-from core.auth.views import LoginRequiredMixin
-from core.exceptions import ServiceError
-
-from caseworker.queues.views.forms import CasesFiltersForm
+from caseworker.bookmarks.services import fetch_bookmarks
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
@@ -22,28 +17,18 @@ from caseworker.core.constants import (
     SLA_RADIUS,
 )
 from caseworker.core.services import get_user_permissions
+from caseworker.flags.services import get_flags
+from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.queues.services import (
     get_queue,
 )
-from caseworker.queues.services import get_cases_search_data, head_cases_search_count
+from caseworker.queues.views.forms import CasesFiltersForm
+from core.auth.views import LoginRequiredMixin
+from core.exceptions import ServiceError
+from lite_content.lite_internal_frontend.cases import CasesListPage
 
 
-class Cases(LoginRequiredMixin, FormView):
-    """
-    Homepage
-    """
-
-    template_name = "queues/cases.html"
-    form_class = CasesFiltersForm
-
-    @cached_property
-    def queue(self):
-        return get_queue(self.request, self.queue_pk)
-
-    @property
-    def queue_pk(self):
-        return self.kwargs.get("queue_pk") or self.request.session["default_queue"]
-
+class CaseDataMixin:
     @cached_property
     def data(self):
         params = self.get_params()
@@ -62,6 +47,10 @@ class Cases(LoginRequiredMixin, FormView):
                 )
 
         return response.json()
+
+    @cached_property
+    def all_flags(self):
+        return get_flags(self.request, disable_pagination=True)
 
     @property
     def filters(self):
@@ -107,8 +96,41 @@ class Cases(LoginRequiredMixin, FormView):
         # but it can be overriden by a checkbox on the frontend
         is_hidden_by_form = self.request.GET.get("hidden", False)
         params["hidden"] = self._set_is_hidden(params["selected_tab"], is_hidden_by_form)
+        # No need to send return_to parameter in server calls
+        if params.get("return_to"):
+            del params["return_to"]
 
         return params
+
+    def _set_is_hidden(self, tab_name, is_hidden_by_form):
+        if is_hidden_by_form:
+            return "True"
+        elif self._is_system_queue():
+            return "True"
+        elif tab_name == CasesListPage.Tabs.MY_CASES or tab_name == CasesListPage.Tabs.OPEN_QUERIES:
+            return "True"
+        else:
+            return "False"
+
+    def _is_system_queue(self):
+        return self.queue.get("is_system_queue", False)
+
+    @cached_property
+    def queue(self):
+        return get_queue(self.request, self.queue_pk)
+
+    @property
+    def queue_pk(self):
+        return self.kwargs.get("queue_pk") or self.request.session["default_queue"]
+
+
+class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
+    """
+    Homepage
+    """
+
+    template_name = "queues/cases.html"
+    form_class = CasesFiltersForm
 
     def _get_tab_url(self, tab_name):
         params = self.request.GET.copy()
@@ -125,19 +147,6 @@ class Cases(LoginRequiredMixin, FormView):
         params["hidden"] = self._set_is_hidden(tab_name, is_hidden_by_form)
 
         return head_cases_search_count(self.request, self.queue_pk, params)
-
-    def _set_is_hidden(self, tab_name, is_hidden_by_form):
-        if is_hidden_by_form:
-            return "True"
-        elif self._is_system_queue():
-            return "True"
-        elif tab_name == CasesListPage.Tabs.MY_CASES or tab_name == CasesListPage.Tabs.OPEN_QUERIES:
-            return "True"
-        else:
-            return "False"
-
-    def _is_system_queue(self):
-        return self.queue.get("is_system_queue", False)
 
     def _tab_data(self):
         selected_tab = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
@@ -234,15 +243,25 @@ class Cases(LoginRequiredMixin, FormView):
     def get_initial(self):
         return self.get_params()
 
+    def get_return_url(self):
+        current_full_url = self.request.get_full_path()
+        url_parts = list(urlparse(current_full_url))
+        query = parse_qs(url_parts[4], keep_blank_values=True)
+        if query.get("return_to"):
+            del query["return_to"]
+        url_parts[4] = urlencode(query, doseq=True)
+        sanitised_url = urlunparse(url_parts)
+        return sanitised_url
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
+        kwargs["all_flags"] = self.all_flags
         kwargs["queue"] = self.queue
+        kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs
 
     def get_context_data(self, *args, **kwargs):
-
         try:
             updated_queue = [
                 queue for queue in self.data["results"]["queues"] if queue["id"] == UPDATED_CASES_QUEUE_ID
@@ -254,6 +273,7 @@ class Cases(LoginRequiredMixin, FormView):
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
+        bookmarks = fetch_bookmarks(self.request, self.filters, self.all_flags)
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,
@@ -264,6 +284,8 @@ class Cases(LoginRequiredMixin, FormView):
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
             "show_updated_cases_banner": show_updated_cases_banner,
             "tab_data": self._tab_data(),
+            "bookmarks": bookmarks,
+            "return_to": self.get_return_url(),
         }
 
         return super().get_context_data(*args, **context, **kwargs)

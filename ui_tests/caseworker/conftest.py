@@ -77,6 +77,7 @@ def sign_into_sso(driver, sso_sign_in):  # noqa
 @when("I go to application previously created")  # noqa
 def click_on_created_application(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id)
+    driver.find_element(by=By.ID, value=f"tab-details").click()
 
 
 @given("I create standard application or standard application has been previously created")  # noqa
@@ -281,6 +282,7 @@ def should_see_previously_created_application(driver, context):  # noqa
 @when("I click on the application previously created")
 def click_on_case(driver, context):  # noqa
     driver.find_element(by=By.ID, value=f"case-{context.case_id}").click()
+    driver.find_element(by=By.ID, value=f"tab-details").click()
 
 
 @when("I click on show filters")
@@ -866,6 +868,8 @@ def submit_case_as_team_with_decision(driver, team, queue, decision, context, in
 
     submit_form(driver)
     click_on_created_application(driver, context, internal_url)
+    case_page = CasePage(driver)
+    case_page.change_tab(CaseTabs.DETAILS)
 
 
 @then(parsers.parse('for the first good I see "{value}" for "{name}"'))

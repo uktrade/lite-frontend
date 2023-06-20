@@ -16,7 +16,7 @@ from caseworker.flags.views import AssignFlags
 app_name = "cases"
 
 urlpatterns = [
-    path("", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True, "tab": "details"}),
+    path("", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True, "tab": "default"}),
     path("case-notes/", main.CaseNotes.as_view(), name="case_notes"),
     path("im-done/", main.ImDoneView.as_view(), name="done"),
     path("change-status/", main.ChangeStatus.as_view(), name="manage"),
