@@ -3,7 +3,6 @@ from operator import itemgetter
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import FormView
-from django.conf import settings
 
 from caseworker.cases.helpers.case import CaseworkerMixin
 from core.auth.views import LoginRequiredMixin
@@ -103,7 +102,6 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
             "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
-            "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
         }
 
     def form_valid(self, form):
