@@ -101,7 +101,6 @@ class CasesFiltersForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         case_status_choices = self.get_field_choices(filters_data, "statuses")
-        advice_type_choices = self.get_field_choices(filters_data, "advice_types")
         gov_user_choices = [("", "Select"), ("not_assigned", "Not assigned")] + [
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
