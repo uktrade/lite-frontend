@@ -1,7 +1,6 @@
 import os
 
 from django.urls import reverse_lazy
-from django.conf import settings
 
 
 from caseworker.core.constants import Permission
@@ -109,12 +108,10 @@ def lite_menu(request):
 def new_mentions(request):
     new_mentions = 0
     if "lite_api_user_id" in request.session:
-        if settings.FEATURE_MENTIONS_ENABLED:
-            results, _ = get_new_mention_count(request)
-            new_mentions = results["count"]
+        results, _ = get_new_mention_count(request)
+        new_mentions = results["count"]
     return {
         "NEW_MENTIONS_COUNT": new_mentions,
-        "FEATURE_MENTIONS_ENABLED": settings.FEATURE_MENTIONS_ENABLED,
     }
 
 

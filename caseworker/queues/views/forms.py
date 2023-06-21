@@ -1,13 +1,13 @@
-from django import forms
-
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit
+from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
+from django import forms
+from django.forms.widgets import HiddenInput
+from django.urls import reverse
 
+from caseworker.queues.services import get_queues
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
-from core.forms.layouts import ExpandingFieldset
-from caseworker.flags.services import get_flags
 
 SLA_DAYS_RANGE = 99
 
@@ -15,74 +15,83 @@ SLA_DAYS_RANGE = 99
 class CasesFiltersForm(forms.Form):
 
     case_reference = forms.CharField(
-        label="Filter by case reference",
+        label="Case reference",
         widget=forms.TextInput(attrs={"id": "case_reference"}),
         required=False,
     )
+    export_type = forms.ChoiceField(
+        label="Permanent or temporary",
+        choices=(
+            ("", ""),
+            ("permanent", "Permanent"),
+            ("temporary", "Temporary"),
+        ),
+        required=False,
+    )
     exporter_application_reference = forms.CharField(
-        label="Filter by exporter reference",
+        label="Exporter reference",
         required=False,
     )
     organisation_name = forms.CharField(
-        label="Filter by organisation name",
+        label="Organisation name",
         required=False,
     )
     exporter_site_name = forms.CharField(
-        label="Filter by exporter site name",
+        label="Site name",
         required=False,
     )
-    exporter_site_address = forms.CharField(
-        label="Filter by exporter site address",
+    goods_starting_point = forms.ChoiceField(
+        label="Shipping from",
         required=False,
+        choices=(("", ""), ("GB", "Great Britain"), ("NI", "Northern Ireland")),
     )
     party_name = forms.CharField(
-        label="Filter by party name",
+        label="Party name",
         required=False,
     )
     party_address = forms.CharField(
-        label="Filter by party address",
+        label="Party address",
         required=False,
     )
     goods_related_description = forms.CharField(
-        label="Filter by goods related description",
+        label="Goods related description",
         required=False,
     )
     country = forms.CharField(
-        label="Filter by country",
+        label="Country",
         required=False,
     )
     control_list_entry = forms.CharField(
-        label="Filter by control list entry",
+        label="Control list entry",
         required=False,
     )
     regime_entry = forms.CharField(
-        label="Filter by regime entry",
+        label="Regime entry",
         required=False,
     )
     submitted_from = DateInputField(
-        label="Filter by submitted from date",
+        label="Submitted from date",
         required=False,
     )
     submitted_to = DateInputField(
-        label="Filter by submitted to date",
+        label="Submitted to date",
         required=False,
     )
     finalised_from = DateInputField(
-        label="Filter by finalised from date",
+        label="Finalised from date",
         required=False,
     )
     finalised_to = DateInputField(
-        label="Filter by finalised to date",
+        label="Finalised to date",
         required=False,
     )
 
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, request, queue, filters_data, *args, **kwargs):
+    def __init__(self, request, queue, filters_data, all_flags, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        case_type_choices = self.get_field_choices(filters_data, "case_types")
         case_status_choices = self.get_field_choices(filters_data, "statuses")
         advice_type_choices = self.get_field_choices(filters_data, "advice_types")
         gov_user_choices = [("", "Select"), ("not_assigned", "Not assigned")] + [
@@ -93,71 +102,80 @@ class CasesFiltersForm(forms.Form):
         sla_sorted_choices = [("", "Select"), ("ascending", "Ascending"), ("descending", "Descending")]
         nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
-        flags_choices = [(flag["id"], flag["name"]) for flag in get_flags(request, disable_pagination=True)]
-        hidden_cases_choices = [(True, "Show hidden cases, including cases with open ECJU queries.")]
-
-        self.fields["case_type"] = forms.ChoiceField(
-            choices=case_type_choices,
-            label="Filter by type",
-            widget=forms.Select(attrs={"id": "case_type"}),
-        )
+        flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
+        assigned_queues_choices = [
+            (queue["id"], f"{queue['team']['name']}: {queue['name']}")
+            for queue in get_queues(request, convert_to_options=False, users_team_first=True)
+        ]
 
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
-            label="Filter by status",
+            label="Case status",
+            required=False,
         )
 
         self.fields["case_officer"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Filter by case officer",
+            label="Licensing Unit case officer",
+            widget=forms.Select(attrs={"id": "case_officer"}),
+            required=False,
         )
 
         self.fields["assigned_user"] = forms.ChoiceField(
             choices=gov_user_choices,
-            label="Filter by assigned user",
+            label="Case adviser",
+            widget=forms.Select(attrs={"id": "case_adviser"}),
+            required=False,
         )
 
         self.fields["team_advice_type"] = forms.ChoiceField(
-            label="Filter by team advice type",
+            label="Team advice type",
             choices=advice_type_choices,
             required=False,
         )
 
         self.fields["final_advice_type"] = forms.ChoiceField(
-            label="Filter by final advice type",
+            label="Final advice type",
             choices=advice_type_choices,
             required=False,
         )
 
         self.fields["max_sla_days_remaining"] = forms.ChoiceField(
-            label="Filter by max SLA days remaining",
+            label="Max SLA days remaining",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["min_sla_days_remaining"] = forms.ChoiceField(
-            label="Filter by min SLA days remaining",
+            label="Min SLA days remaining",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["sla_days_elapsed"] = forms.ChoiceField(
-            label="Filter by SLA days elapsed",
+            label="SLA days elapsed",
             choices=sla_days_choices,
             required=False,
         )
 
         self.fields["sla_days_elapsed_sort_order"] = forms.ChoiceField(
-            label="Filter by sorted by SLA days",
+            label="Sorted by SLA days",
             choices=sla_sorted_choices,
             required=False,
         )
         self.fields["flags"] = forms.MultipleChoiceField(
-            label="Filter by flags",
+            label="Flags",
             choices=flags_choices,
             required=False,
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
+        )
+        self.fields["assigned_queues"] = forms.MultipleChoiceField(
+            label="Assigned queues",
+            choices=assigned_queues_choices,
+            required=False,
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "assigned-queues"}),
         )
         self.fields["is_nca_applicable"] = forms.TypedChoiceField(
             choices=nca_choices,
@@ -173,17 +191,27 @@ class CasesFiltersForm(forms.Form):
             widget=CheckboxInputSmall(),
             required=False,
         )
-        self.fields["hidden"] = forms.TypedChoiceField(
-            choices=hidden_cases_choices,
-            coerce=coerce_str_to_bool,
+        self.fields["return_to"] = forms.CharField(
             label="",
-            widget=CheckboxInputSmall(),
+            widget=HiddenInput(),
             required=False,
         )
 
-        basic_filters = ["case_reference", "case_type", "status", "case_officer", "assigned_user"]
-        if not queue.get("is_system_queue"):
-            basic_filters.append("hidden")
+        case_filters = [
+            "case_reference",
+            "status",
+            "case_officer",
+            "assigned_user",
+            "export_type",
+            Field("submitted_from"),
+            Field("submitted_to"),
+            Field.select("flags"),
+            Field("finalised_from"),
+            Field("finalised_to"),
+            "return_to",
+        ]
+        if queue.get("is_system_queue"):
+            case_filters.append(Field.select("assigned_queues"))
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the
@@ -193,42 +221,54 @@ class CasesFiltersForm(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            Fieldset(
-                *basic_filters,
-                css_class="basic-filter-fields",
-            ),
-            ExpandingFieldset(
-                Field.text("exporter_application_reference"),
-                Field.text("organisation_name"),
-                Field.text("exporter_site_name"),
-                Field.text("exporter_site_address"),
-                Field.select("team_advice_type"),
-                Field.select("final_advice_type"),
-                Field.select("max_sla_days_remaining"),
-                Field.select("min_sla_days_remaining"),
-                Field.select("sla_days_elapsed"),
-                Field.select("sla_days_elapsed_sort_order"),
-                Field.text("party_name"),
-                Field.text("party_address"),
-                Field.text("goods_related_description"),
-                Field.text("country"),
-                Field.text("control_list_entry", id="control_list_entry"),
-                Field.text("regime_entry"),
-                Field.select("flags"),
-                Field("submitted_from"),
-                Field("submitted_to"),
-                Field("finalised_from"),
-                Field("finalised_to"),
-                Field("is_nca_applicable"),
-                Field("is_trigger_list"),
-                legend="Advanced filters",
-                css_class="advanced-group",
-                text_div_css_class="advanced-filter-fields",
+            Accordion(
+                AccordionSection(
+                    "Case",
+                    *case_filters,
+                    css_id="accordion-case-filters",
+                ),
+                AccordionSection(
+                    "Product",
+                    Field.text("control_list_entry", id="control_list_entry"),
+                    Field.text("regime_entry"),
+                    Field.text("goods_related_description"),
+                    Field("is_trigger_list"),
+                    Field("is_nca_applicable"),
+                ),
+                AccordionSection(
+                    "Applicant",
+                    Field.text("organisation_name"),
+                    Field.text("exporter_site_name"),
+                    Field.select("goods_starting_point"),
+                ),
+                AccordionSection(
+                    "Parties",
+                    Field.text("party_name"),
+                    Field.text("party_address"),
+                    Field.text("country"),
+                ),
+                AccordionSection(
+                    "Misc",
+                    Field.select("team_advice_type"),
+                    Field.select("final_advice_type"),
+                    Field.select("max_sla_days_remaining"),
+                    Field.select("min_sla_days_remaining"),
+                    Field.select("sla_days_elapsed"),
+                    Field.select("sla_days_elapsed_sort_order"),
+                ),
+                css_id="accordion-1",
             ),
             Fieldset(
                 Submit("submit", "Apply filters", css_id="button-apply-filters"),
+                Button(
+                    "save_filter",
+                    "Save filter",
+                    css_id="button-save-filters",
+                    formmethod="POST",
+                    formaction=reverse("bookmarks:add_bookmark"),
+                ),
                 HTML(
-                    f'<a href="{clear_filters_url}" class="govuk-button govuk-button--secondary govuk-button--secondary-white" id="button-clear-filters">Clear filters</a>'  # noqa
+                    f'<a href="{clear_filters_url}" class="govuk-button govuk-button--secondary" id="button-clear-filters">Clear filters</a>'  # noqa
                 ),
                 css_class="case-filter-actions",
             ),

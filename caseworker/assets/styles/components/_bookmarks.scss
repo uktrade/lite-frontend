@@ -1,0 +1,59 @@
+#bookmark-links {
+  display: block;
+}
+
+#bookmarks {
+  /**
+  This is a bit of a hack to break the case filters out from their constrained box that is not the full width of the
+  screen to be the full width of the screen but then add padding back in so the content fits within the constrained
+  box.
+
+  This exists just so that the background colour extends across the full viewport width.
+  */
+  margin-left: calc(((100vw - 100%) / 2) * -1);
+  margin-right: calc(((100vw - 100%) / 2) * -1);
+  padding-left: calc(((100vw - 100%) / 2));
+  padding-right: calc(((100vw - 100%) / 2));
+}
+
+.current-bookmark {
+  background-color: aliceblue;
+}
+
+.bookmark-submit {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1d70b8;
+  text-decoration: underline;
+}
+
+.bookmark-submit:hover {
+  color: #4c2c92;
+}
+
+div.saved-filter-field {
+  display: inline-block;
+  label, input {
+    display: inline-block;
+  }
+}
+
+button.bookmark-name-edit {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  min-height: auto !important;
+  width: 60%;
+}
+
+.bookmark-field {
+  padding: 5px;
+}
+
+.bookmark {
+  border-bottom: 2px solid lightgray;
+}
+
+#bookmarks-toggle {
+  margin-left: 10px;
+}

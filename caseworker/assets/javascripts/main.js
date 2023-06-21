@@ -9,7 +9,6 @@ import initCookierBanner from "../../../core/assets/javascripts/cookies/banner.j
 // core
 // TODO: can't rewrite these as ES6 imports yet as they are used by other templates
 import "../../../core/assets/javascripts/select-buttons.js";
-import "../../../core/assets/javascripts/filter-bar.js";
 import "./checkboxes.js";
 import "./snackbar-hide.js";
 
