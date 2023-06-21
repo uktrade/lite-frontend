@@ -99,7 +99,6 @@ class Goods:
                 "end_use_control": kwargs.get("end_use_control", []),
                 "report_summary": kwargs.get("report_summary", ""),
                 "comment": kwargs.get("comment", ""),
-                "current_object": good_on_application_id,
                 "objects": [good_id],
             },
         )
