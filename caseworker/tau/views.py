@@ -250,7 +250,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
         # get_goods used to get a set of goods previously
         good_ids = data.pop("goods")
-        goods = [good["good"]["id"] for good in self.get_goods(good_ids)]
+        goods = [good["id"] for good in self.get_goods(good_ids)]
 
         payload = {
             **data,
@@ -390,7 +390,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
         payload = {
             **data,
-            "objects": [good["good"]["id"]],
+            "objects": [good["id"]],
             "is_good_controlled": is_good_controlled,
             "regime_entries": get_regime_entries_payload_data(data),
         }
@@ -435,7 +435,7 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
 
     def post(self, request, queue_pk, pk):
-        goods = [good["good"]["id"] for good in self.assessed_goods]
+        goods = [good["id"] for good in self.assessed_goods]
         goods_unique = list(set(goods))
         payload = {
             "control_list_entries": [],
