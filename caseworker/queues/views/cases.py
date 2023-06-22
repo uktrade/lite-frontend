@@ -275,7 +275,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
-        bookmarks = fetch_bookmarks(self.request, self.filters, self.all_flags)
+        bookmarks = fetch_bookmarks(self.request, self.filters, self.all_flags, self.request.path)
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,
