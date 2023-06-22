@@ -105,8 +105,8 @@ class CasesFiltersForm(forms.Form):
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
 
-        nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
-        trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
+        nca_choices = [(True, "Nuclear Cooperation Agreement")]
+        trigger_list_guidelines_choices = [(True, "Trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         assigned_queues_choices = [
             (queue["id"], f"{queue['team']['name']}: {queue['name']}")
