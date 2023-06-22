@@ -1,11 +1,16 @@
 import pytest
 import requests
-
 from bs4 import BeautifulSoup
-
 from django.template.loader import render_to_string
 
 from caseworker.queues.views.forms import CasesFiltersForm
+
+
+@pytest.fixture()
+def all_regimes(data_regime_entries):
+    return [
+        {"id": regime["pk"], "name": regime["name"]} for regime in sorted(data_regime_entries, key=lambda r: r["name"])
+    ]
 
 
 @pytest.mark.parametrize(
@@ -41,7 +46,7 @@ def test_sla_display_days(elapsed, remaining):
     assert render_to_string("includes/sla_display.html", context)
 
 
-def test_cases_with_flags(data_standard_case, mock_queues_list, rf, client, flags):
+def test_cases_with_flags(data_standard_case, mock_queues_list, rf, client, flags, all_regimes):
     context = {}
     context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
     case = data_standard_case["case"]
@@ -71,7 +76,7 @@ def test_cases_with_flags(data_standard_case, mock_queues_list, rf, client, flag
     request.requests_session = requests.Session()
 
     context["data"] = {"results": {"cases": [case]}}
-    context["form"] = CasesFiltersForm(request, queue, filters, flags)
+    context["form"] = CasesFiltersForm(request, queue, filters, flags, all_regimes)
 
     html = render_to_string("queues/cases.html", context)
     soup = BeautifulSoup(html, "html.parser")
@@ -82,7 +87,7 @@ def test_cases_with_flags(data_standard_case, mock_queues_list, rf, client, flag
     assert "Red Destination" in flags
 
 
-def test_cases_without_flags(data_standard_case, mock_queues_list, rf, client, flags):
+def test_cases_without_flags(data_standard_case, mock_queues_list, rf, client, flags, all_regimes):
     context = {}
     context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
     case = data_standard_case["case"]
@@ -99,7 +104,7 @@ def test_cases_without_flags(data_standard_case, mock_queues_list, rf, client, f
     request.requests_session = requests.Session()
 
     context["data"] = {"results": {"cases": [case]}}
-    context["form"] = CasesFiltersForm(request, queue, filters, flags)
+    context["form"] = CasesFiltersForm(request, queue, filters, flags, all_regimes)
 
     html = render_to_string("queues/cases.html", context)
     soup = BeautifulSoup(html, "html.parser")

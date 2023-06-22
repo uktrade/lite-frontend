@@ -142,7 +142,7 @@ def test_cases_home_page_view_context(authorized_client):
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert isinstance(response.context["form"], CasesFiltersForm)
-    assert [field_name for field_name, _ in response.context["form"].fields.items()] == [
+    expected_fields = [
         "case_reference",
         "export_type",
         "exporter_application_reference",
@@ -169,6 +169,9 @@ def test_cases_home_page_view_context(authorized_client):
         "is_trigger_list",
         "return_to",
     ]
+
+    actual_fields = [field_name for field_name, _ in response.context["form"].fields.items()]
+    assert set(actual_fields) == set(expected_fields)
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200

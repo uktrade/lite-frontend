@@ -2,8 +2,17 @@ import uuid
 
 import pytest
 
-from caseworker.bookmarks.services import description_from_filter, enrich_bookmark_for_display, enrich_filter_for_saving
+from caseworker.bookmarks.services import enrich_filter_for_saving, BookmarkEnricher
 from unit_tests.caseworker.conftest import GOV_USER_ID
+
+
+def new_bookmarks(filter):
+    return [{"name": "Name", "description": "", "filter_json": filter, "id": uuid.uuid4()}]
+
+
+@pytest.fixture()
+def all_regimes(data_regime_entries):
+    return [{"id": regime["pk"], "name": regime["name"]} for regime in data_regime_entries]
 
 
 @pytest.mark.parametrize(
@@ -34,8 +43,13 @@ from unit_tests.caseworker.conftest import GOV_USER_ID
     ],
 )
 def test_description_from_filter(filter_data, bookmark_filter, expected_description, flags):
-    description = description_from_filter(bookmark_filter, filter_data, flags)
-    assert description == expected_description
+    bookmarks = new_bookmarks(bookmark_filter)
+    enricher = BookmarkEnricher(filter_data, flags, None, "/queues/")
+    enriched = enricher.enrich_for_display(bookmarks)
+
+    # description = description_from_filter(bookmark_filter, filter_data, flags)
+    assert len(enriched) == 1
+    assert enriched[0]["description"] == expected_description
 
 
 @pytest.mark.parametrize(
@@ -68,11 +82,20 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
         ),
         (
             {
-                "regime_entry": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
-                "_id_regime_entry": "Wassenaar Arrangement Sensitive",
+                "regime_entry": ["d73d0273-ef94-4951-9c51-c291eba949a0"],  #  /PS-IGNORE
             },
-            "Regime entry: Wassenaar Arrangement Sensitive",
-            "regime_entry=2594daef-8156-4e78-b4c4-e25f6cdbd203",
+            "Regime entry: wassenaar-1",
+            "regime_entry=d73d0273-ef94-4951-9c51-c291eba949a0",  #  /PS-IGNORE
+        ),
+        (
+            {
+                "regime_entry": [
+                    "d73d0273-ef94-4951-9c51-c291eba949a0",
+                    "c760976f-fd14-4356-9f23-f6eaf084475d",
+                ],  #  /PS-IGNORE
+            },
+            "Regime entry: mtcr-1, wassenaar-1",
+            "regime_entry=d73d0273-ef94-4951-9c51-c291eba949a0&regime_entry=c760976f-fd14-4356-9f23-f6eaf084475d",  #  /PS-IGNORE
         ),
         (
             {"flags": ["798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2", "e50f5cd3-331c-4914-b618-ee6eb67a081c"]},
@@ -91,22 +114,28 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
         ),
     ],
 )
-def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_description, expected_url_params, flags):
-    bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
+def test_enrich_bookmark_for_display(
+    filter_data, bookmark_filter, expected_description, expected_url_params, flags, all_regimes
+):
+    bookmarks = new_bookmarks(bookmark_filter)
 
-    enriched = enrich_bookmark_for_display(bookmark, filter_data, flags, "/queues/")
+    enricher = BookmarkEnricher(filter_data, flags, all_regimes, "/queues/")
+    enriched = enricher.enrich_for_display(bookmarks)
 
-    assert enriched["description"] == expected_description
-    assert enriched["url"] == f"/queues/?{expected_url_params}"
+    assert len(enriched) == 1
+    assert enriched[0]["description"] == expected_description
+    assert enriched[0]["url"] == f"/queues/?{expected_url_params}"
 
 
 def test_enrich_bookmark_for_display_custom_base_url(filter_data, flags):
-    bookmark = {"name": "Name", "description": "", "filter_json": {"is_trigger_list": True}, "id": uuid.uuid4()}
+    bookmarks = new_bookmarks({"is_trigger_list": True})
 
-    enriched = enrich_bookmark_for_display(bookmark, filter_data, flags, "/queues/abcd")
+    enricher = BookmarkEnricher(filter_data, flags, all_regimes, "/queues/abcd")
+    enriched = enricher.enrich_for_display(bookmarks)
 
-    assert enriched["description"] == "Is trigger list: True"
-    assert enriched["url"] == f"/queues/abcd?is_trigger_list=True"
+    assert len(enriched) == 1
+    assert enriched[0]["description"] == "Is trigger list: True"
+    assert enriched[0]["url"] == f"/queues/abcd?is_trigger_list=True"
 
 
 class ObjectToForceException:
@@ -114,13 +143,14 @@ class ObjectToForceException:
         raise Exception("This object breaks when str() called")
 
 
-def test_enrich_bookmark_for_display_returns_None_on_error(filter_data, flags):
+def test_enrich_bookmark_for_display_filters_out_errors(filter_data, flags):
     bookmark_filter = {"dodgy_filter_entry": ObjectToForceException()}
-    bookmark = {"name": "Name", "description": "", "filter_json": bookmark_filter, "id": uuid.uuid4()}
+    bookmarks = new_bookmarks(bookmark_filter)
 
-    enriched = enrich_bookmark_for_display(bookmark, filter_data, flags, "/queues/")
+    enricher = BookmarkEnricher(filter_data, flags, None, "/queues/")
+    enriched = enricher.enrich_for_display(bookmarks)
 
-    assert enriched is None
+    assert len(enriched) == 0
 
 
 @pytest.mark.parametrize(

@@ -61,10 +61,6 @@ class CasesFiltersForm(forms.Form):
         label="Control list entry",
         required=False,
     )
-    regime_entry = forms.CharField(
-        label="Regime entry",
-        required=False,
-    )
     submitted_from = DateInputField(
         label="Submitted after",
         required=False,
@@ -97,7 +93,7 @@ class CasesFiltersForm(forms.Form):
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, request, queue, filters_data, all_flags, *args, **kwargs):
+    def __init__(self, request, queue, filters_data, all_flags, all_regimes, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         case_status_choices = self.get_field_choices(filters_data, "statuses")
@@ -108,6 +104,7 @@ class CasesFiltersForm(forms.Form):
         nca_choices = [(True, "Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
+        regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]
         assigned_queues_choices = [
             (queue["id"], f"{queue['team']['name']}: {queue['name']}")
             for queue in get_queues(request, convert_to_options=False, users_team_first=True)
@@ -141,6 +138,13 @@ class CasesFiltersForm(forms.Form):
             help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
+        )
+        self.fields["regime_entry"] = forms.MultipleChoiceField(
+            label="Regime entry",
+            choices=regime_choices,
+            required=False,
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "regime_entry"}),
         )
         self.fields["assigned_queues"] = forms.MultipleChoiceField(
             label="Assigned queues",
