@@ -2,7 +2,6 @@ import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
 
 import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
-import { enableToggle } from "./toggle";
 
 const initAutoCompleteField = async (field, choices, propertyName) => {
   const originalInput = document.querySelector(`#id_${field}`);
@@ -65,65 +64,27 @@ export default function initFlagsFiltersField() {
   const flagsField = document.getElementById("flags");
   if (!flagsField) return;
 
-  const flagsTokenField = progressivelyEnhanceMultipleSelectField(
-    flagsField,
-    (option) => {
-      return { id: option.value, name: option.label, classes: [] };
-    }
-  );
+  progressivelyEnhanceMultipleSelectField(flagsField, (option) => {
+    return { id: option.value, name: option.label, classes: [] };
+  });
 }
 
 export function initAssignedQueuesFiltersField() {
   const assignedQueuesField = document.getElementById("assigned-queues");
   if (!assignedQueuesField) return;
 
-  const assignedQueuesTokenField = progressivelyEnhanceMultipleSelectField(
-    assignedQueuesField,
-    (option) => {
-      return { id: option.value, name: option.label, classes: [] };
-    }
-  );
+  progressivelyEnhanceMultipleSelectField(assignedQueuesField, (option) => {
+    return { id: option.value, name: option.label, classes: [] };
+  });
 }
 
-function filterIsPopulated(filterGroupName) {
-  let filterGroup = document.getElementById(filterGroupName);
-  let filters = filterGroup.querySelectorAll("input,select");
-  for (const filter of filters) {
-    if (
-      (filter.value !== "" &&
-        filter.value !== "Select" &&
-        filter.value !== "blank" &&
-        filter.type !== "hidden" &&
-        filter.type !== "submit" &&
-        filter.type !== "checkbox") ||
-      (filter.type === "checkbox" && filter.attributes["checked"])
-    ) {
-      return true;
-    }
-  }
+function initRegimeFiltersField() {
+  const regimeField = document.getElementById("regime_entry");
+  if (!regimeField) return;
 
-  return false;
-}
-
-function expandBasicFilters() {
-  let caseFilters = document.getElementById("case-filters");
-  let showLink = document.getElementById("show-filters-link");
-  let hideLink = document.getElementById("hide-filters-link");
-}
-
-function expandAdvancedFilters() {
-  let advancedFilterDetails = document.getElementById(
-    "advanced-filter-details"
-  );
-  advancedFilterDetails.setAttribute("open", "");
-}
-
-function showHideFilters() {
-  let expandBasic = filterIsPopulated("basic-filter-fields");
-  let expandAdvanced = filterIsPopulated("advanced-filter-fields");
-
-  if (expandBasic || expandAdvanced) expandBasicFilters();
-  if (expandAdvanced) expandAdvancedFilters();
+  progressivelyEnhanceMultipleSelectField(regimeField, (option) => {
+    return { id: option.value, name: option.label, classes: [] };
+  });
 }
 
 const initCountryAutocompleteField = () => {
@@ -133,17 +94,8 @@ const initCountryAutocompleteField = () => {
     .then((countries) => initAutoCompleteField("country", countries, "id"));
 };
 
-const initRegimeEntryAutocompleteField = () => {
-  fetch("/api/regime-entries/")
-    .then((response) => response.json())
-    .then((regime_entries) =>
-      initAutoCompleteField("regime_entry", regime_entries, "pk")
-    );
-};
-
 const initCaseFilters = () => {
   initCountryAutocompleteField();
-  initRegimeEntryAutocompleteField();
   accessibleAutocomplete.enhanceSelectElement({
     defaultValue: "",
     preserveNullOptions: true,
@@ -156,7 +108,7 @@ const initCaseFilters = () => {
   });
   initFlagsFiltersField();
   initAssignedQueuesFiltersField();
-  showHideFilters();
+  initRegimeFiltersField();
 };
 
 initCaseFilters();

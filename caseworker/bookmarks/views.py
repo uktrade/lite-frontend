@@ -1,10 +1,13 @@
 from http import HTTPStatus
 
 from django.contrib import messages
+from django.utils.functional import cached_property
 from django.views.generic import FormView
 
 from caseworker.bookmarks import forms, services
+from caseworker.core.services import get_regime_entries
 from caseworker.flags.services import get_flags
+
 from caseworker.queues.views.cases import CaseDataMixin
 from caseworker.queues.views.forms import CasesFiltersForm
 from core.auth.views import LoginRequiredMixin
@@ -14,6 +17,10 @@ from core.decorators import expect_status
 class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
     template_name = "core/form.html"
     form_class = CasesFiltersForm
+
+    @cached_property
+    def all_regimes(self):
+        return get_regime_entries(self.request)
 
     def form_valid(self, form):
         data = form.cleaned_data
@@ -27,6 +34,7 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
+        kwargs["all_regimes"] = self.all_regimes
         kwargs["queue"] = self.queue
         kwargs["all_flags"] = get_flags(self.request, disable_pagination=True)
 
