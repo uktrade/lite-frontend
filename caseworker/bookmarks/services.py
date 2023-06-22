@@ -3,8 +3,6 @@ from collections import OrderedDict
 from datetime import datetime, date
 from urllib.parse import urlencode
 
-from django.urls import reverse
-
 from caseworker.users.services import get_gov_user
 from core import client
 
