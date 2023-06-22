@@ -4,6 +4,7 @@ from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from dateutil import parser
 from django.http import Http404
+from django.shortcuts import redirect
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 
@@ -250,14 +251,18 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
     def get_initial(self):
         return self.get_params()
 
-    def get_return_url(self):
-        current_full_url = self.request.get_full_path()
-        url_parts = list(urlparse(current_full_url))
+    def _strip_param_from_url(self, url, param):
+        url_parts = list(urlparse(url))
         query = parse_qs(url_parts[4], keep_blank_values=True)
-        if query.get("return_to"):
-            del query["return_to"]
+        if query.get(param):
+            del query[param]
         url_parts[4] = urlencode(query, doseq=True)
         sanitised_url = urlunparse(url_parts)
+        return sanitised_url
+
+    def get_return_url(self):
+        current_full_url = self.request.get_full_path()
+        sanitised_url = self._strip_param_from_url(current_full_url, "return_to")
         return sanitised_url
 
     def get_form_kwargs(self):
@@ -268,6 +273,15 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         kwargs["queue"] = self.queue
         kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs
+
+    def post(self, request, *args, **kwargs):
+        # This view does most of it's work through GET, but initial form POST submissions
+        # are handled here and redirected to a GET after stripping out csrfmiddlewaretoken
+        # - this should not be visible in GET params due to security concerns
+        get_params = request.POST.urlencode()
+        url = f"{request.path}?{get_params}"
+        sanitised_url = self._strip_param_from_url(url, "csrfmiddlewaretoken")
+        return redirect(sanitised_url)
 
     def get_context_data(self, *args, **kwargs):
         try:
