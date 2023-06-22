@@ -97,6 +97,12 @@ class CaseDataMixin:
         # but it can be overriden by a checkbox on the frontend
         is_hidden_by_form = self.request.GET.get("hidden", False)
         params["hidden"] = self._set_is_hidden(params["selected_tab"], is_hidden_by_form)
+        # Ideally we would do some proper form validation and this value would be removed
+        # as part of that, until then we remove assigned_queues from the params
+        # because this should not be filtered on unless the queue is a system queue
+        if params.get("assigned_queues") and not self._is_system_queue():
+            del params["assigned_queues"]
+
         # No need to send return_to parameter in server calls
         if params.get("return_to"):
             del params["return_to"]
