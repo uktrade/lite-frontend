@@ -8,6 +8,11 @@
 
         .govuk-details__text {
             width: 24rem;
+            padding-top: 0;
+
+            .govuk-accordion__controls {
+                padding-bottom: 1rem;
+            }
         }
     }
 
