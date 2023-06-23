@@ -100,6 +100,15 @@ def test_enrich_bookmark_for_display(filter_data, bookmark_filter, expected_desc
     assert enriched["url"] == f"/queues/?{expected_url_params}"
 
 
+def test_enrich_bookmark_for_display_custom_base_url(filter_data, flags):
+    bookmark = {"name": "Name", "description": "", "filter_json": {"is_trigger_list": True}, "id": uuid.uuid4()}
+
+    enriched = enrich_bookmark_for_display(bookmark, filter_data, flags, "/queues/abcd")
+
+    assert enriched["description"] == "Is trigger list: True"
+    assert enriched["url"] == f"/queues/abcd?is_trigger_list=True"
+
+
 class ObjectToForceException:
     def __str__(self):
         raise Exception("This object breaks when str() called")
