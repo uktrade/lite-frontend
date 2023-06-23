@@ -122,7 +122,33 @@ def test_cases_home_page_view_context(authorized_client):
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert isinstance(response.context["form"], CasesFiltersForm)
-    assert len(response.context["form"].fields) == 30
+    assert [field_name for field_name, _ in response.context["form"].fields.items()] == [
+        "case_reference",
+        "export_type",
+        "exporter_application_reference",
+        "organisation_name",
+        "exporter_site_name",
+        "goods_starting_point",
+        "party_name",
+        "goods_related_description",
+        "country",
+        "control_list_entry",
+        "regime_entry",
+        "submitted_from",
+        "submitted_to",
+        "finalised_from",
+        "finalised_to",
+        "exclude_denial_matches",
+        "exclude_sanction_matches",
+        "status",
+        "case_officer",
+        "assigned_user",
+        "flags",
+        "assigned_queues",
+        "is_nca_applicable",
+        "is_trigger_list",
+        "return_to",
+    ]
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200
@@ -210,6 +236,33 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],  # /PS-IGNORE
+    }
+
+
+def test_cases_home_page_exclude_denial_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?exclude_denial_matches=True"
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_denial_matches_input = html.find(id="id_exclude_denial_matches_0")
+    assert exclude_denial_matches_input.attrs["name"] == "exclude_denial_matches"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "exclude_denial_matches": ["true"],
+    }
+
+
+def test_cases_home_page_exclude_sanction_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?exclude_sanction_matches=True"
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_sanction_matches_input = html.find(id="id_exclude_sanction_matches_0")
+    assert exclude_sanction_matches_input.attrs["name"] == "exclude_sanction_matches"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "exclude_sanction_matches": ["true"],
     }
 
 
