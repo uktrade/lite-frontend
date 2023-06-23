@@ -133,10 +133,12 @@ class CasesFiltersForm(forms.Form):
             required=False,
         )
 
+        flag_url = reverse("flags:flags")
         self.fields["flags"] = forms.MultipleChoiceField(
             label="Flags",
             choices=flags_choices,
             required=False,
+            help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
         )
