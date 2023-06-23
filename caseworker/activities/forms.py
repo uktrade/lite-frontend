@@ -1,7 +1,6 @@
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, Field, HTML, Div
 from django import forms
-from django.conf import settings
 from caseworker.core.constants import UserStatuses
 from caseworker.users.services import get_gov_users, convert_users_to_choices
 
@@ -60,7 +59,3 @@ class NotesAndTimelineForm(forms.Form):
                 css_class="case-note__controls-buttons",
             ),
         )
-
-        if not settings.FEATURE_MENTIONS_ENABLED:
-            del self.fields["mentions"]
-            del self.fields["is_urgent"]

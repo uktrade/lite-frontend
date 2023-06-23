@@ -40,7 +40,6 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I change my team to "Technical Assessment Unit" and default queue to "Open cases"
     And I go to my case list
     And I click on show filters
-    And I filter by application type "Standard Individual Export Licence"
     Then I should see my case in the cases list
     When I go to application previously created
     Then I should see the product name as "Rifle" with product rating as "PL9002"

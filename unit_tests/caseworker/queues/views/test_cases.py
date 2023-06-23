@@ -137,6 +137,14 @@ def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_sea
     }
 
 
+def test_cases_home_page_return_to_excluded_from_api(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?return_to=foo"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+    }
+
+
 def test_cases_home_page_case_search_API_page_not_found(authorized_client, mock_cases_search_page_not_found):
     url = reverse("queues:cases")
     response = authorized_client.get(url)
@@ -168,6 +176,22 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "control_list_entry": ["ml1"],
+    }
+
+
+def test_cases_home_page_goods_starting_point_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    control_list_entry_filter_input = html.find(id="id_goods_starting_point")
+    assert control_list_entry_filter_input.attrs["name"] == "goods_starting_point"
+
+    url = reverse("queues:cases") + "?goods_starting_point=NI"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "goods_starting_point": ["ni"],
     }
 
 

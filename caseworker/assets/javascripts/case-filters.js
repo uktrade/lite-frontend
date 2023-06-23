@@ -73,6 +73,18 @@ export default function initFlagsFiltersField() {
   );
 }
 
+export function initAssignedQueuesFiltersField() {
+  const assignedQueuesField = document.getElementById("assigned-queues");
+  if (!assignedQueuesField) return;
+
+  const assignedQueuesTokenField = progressivelyEnhanceMultipleSelectField(
+    assignedQueuesField,
+    (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    }
+  );
+}
+
 function filterIsPopulated(filterGroupName) {
   let filterGroup = document.getElementById(filterGroupName);
   let filters = filterGroup.querySelectorAll("input,select");
@@ -95,11 +107,8 @@ function filterIsPopulated(filterGroupName) {
 
 function expandBasicFilters() {
   let caseFilters = document.getElementById("case-filters");
-  caseFilters.classList.remove("toggle-hidden");
   let showLink = document.getElementById("show-filters-link");
   let hideLink = document.getElementById("hide-filters-link");
-  showLink.classList.add("toggle-hidden");
-  hideLink.classList.remove("toggle-hidden");
 }
 
 function expandAdvancedFilters() {
@@ -132,14 +141,21 @@ const initRegimeEntryAutocompleteField = () => {
     );
 };
 
-const enableTogglingOfSavedFiltersPanel = () => {
-  enableToggle("case-filters", false, "show-filters-link", "hide-filters-link");
-};
 const initCaseFilters = () => {
-  enableTogglingOfSavedFiltersPanel();
   initCountryAutocompleteField();
   initRegimeEntryAutocompleteField();
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: "",
+    preserveNullOptions: true,
+    selectElement: document.querySelector("#case_officer"),
+  });
+  accessibleAutocomplete.enhanceSelectElement({
+    defaultValue: "",
+    preserveNullOptions: true,
+    selectElement: document.querySelector("#case_adviser"),
+  });
   initFlagsFiltersField();
+  initAssignedQueuesFiltersField();
   showHideFilters();
 };
 

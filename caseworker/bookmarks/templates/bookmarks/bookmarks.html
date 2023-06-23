@@ -1,8 +1,10 @@
 {% load crispy_forms_tags crispy_forms_gds %}
 {% load svg static %}
 
-<div id="bookmarks" class="govuk-width-container toggle-hidden">
-    <p class="govuk-body govuk-!-font-weight-bold bookmark-headline">Select a filter you want to display within queue view</p>
+<div id="bookmarks" class="govuk-width-container">
+    {% if bookmarks.user %}
+    <h2 class="govuk-heading-m">Saved Filters</h2>
+    <p class="govuk-body">Select a filter you want to display within queue view</p>
     <div>
         {% for bookmark in bookmarks.user %}
             <div class="bookmark govuk-body govuk-grid-row{% if bookmark.is_current_filter %} current-bookmark{% endif %}">
@@ -38,5 +40,6 @@
             </div>
         {%  endfor %}
     </div>
+    {% endif %}
 </div>
 <script src="{% static 'bookmarks.js' %}" type="text/javascript"></script>

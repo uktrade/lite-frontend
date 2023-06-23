@@ -3,7 +3,6 @@
 }
 
 #bookmarks {
-  background-color: #f3f2f1;
   /**
   This is a bit of a hack to break the case filters out from their constrained box that is not the full width of the
   screen to be the full width of the screen but then add padding back in so the content fits within the constrained
@@ -53,10 +52,6 @@ button.bookmark-name-edit {
 
 .bookmark {
   border-bottom: 2px solid lightgray;
-}
-
-.bookmark-headline {
-  padding-top: 30px;
 }
 
 #bookmarks-toggle {

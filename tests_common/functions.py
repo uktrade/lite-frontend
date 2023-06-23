@@ -70,6 +70,9 @@ def open_case_filters(driver: WebDriver):
         WebDriverWait(driver, 30).until(
             expected_conditions.presence_of_element_located((By.ID, "show-filters-link"))
         ).click()
+        WebDriverWait(driver, 30).until(
+            expected_conditions.element_to_be_clickable((By.ID, "accordion-case-filters"))
+        ).click()
 
 
 def try_open_filters(driver: WebDriver):
