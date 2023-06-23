@@ -78,7 +78,6 @@ def test_form(
         "is_good_controlled": None,
         "report_summary": None,
         "comment": None,
-        "current_object": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-        "objects": ["6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"],
+        "objects": ["6daad1c3-cf97-4aad-b711-d5c9a9f4586e"],
         "regime_entries": [],
     }

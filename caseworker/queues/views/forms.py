@@ -49,10 +49,6 @@ class CasesFiltersForm(forms.Form):
         label="Party name",
         required=False,
     )
-    party_address = forms.CharField(
-        label="Party address",
-        required=False,
-    )
     goods_related_description = forms.CharField(
         label="Goods related description",
         required=False,
@@ -85,6 +81,18 @@ class CasesFiltersForm(forms.Form):
         label="Finalised to date",
         required=False,
     )
+    exclude_denial_matches = forms.TypedChoiceField(
+        choices=[(True, "Exclude denial matches")],
+        label="",
+        widget=CheckboxInputSmall(),
+        required=False,
+    )
+    exclude_sanction_matches = forms.TypedChoiceField(
+        choices=[(True, "Exclude sanction matches")],
+        label="",
+        widget=CheckboxInputSmall(),
+        required=False,
+    )
 
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
@@ -93,13 +101,10 @@ class CasesFiltersForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         case_status_choices = self.get_field_choices(filters_data, "statuses")
-        advice_type_choices = self.get_field_choices(filters_data, "advice_types")
         gov_user_choices = [("", "Select"), ("not_assigned", "Not assigned")] + [
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
 
-        sla_days_choices = [("", "Select")] + [(i, i) for i in range(SLA_DAYS_RANGE)]
-        sla_sorted_choices = [("", "Select"), ("ascending", "Ascending"), ("descending", "Descending")]
         nca_choices = [(True, "Filter by Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Filter by trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
@@ -128,41 +133,6 @@ class CasesFiltersForm(forms.Form):
             required=False,
         )
 
-        self.fields["team_advice_type"] = forms.ChoiceField(
-            label="Team advice type",
-            choices=advice_type_choices,
-            required=False,
-        )
-
-        self.fields["final_advice_type"] = forms.ChoiceField(
-            label="Final advice type",
-            choices=advice_type_choices,
-            required=False,
-        )
-
-        self.fields["max_sla_days_remaining"] = forms.ChoiceField(
-            label="Max SLA days remaining",
-            choices=sla_days_choices,
-            required=False,
-        )
-
-        self.fields["min_sla_days_remaining"] = forms.ChoiceField(
-            label="Min SLA days remaining",
-            choices=sla_days_choices,
-            required=False,
-        )
-
-        self.fields["sla_days_elapsed"] = forms.ChoiceField(
-            label="SLA days elapsed",
-            choices=sla_days_choices,
-            required=False,
-        )
-
-        self.fields["sla_days_elapsed_sort_order"] = forms.ChoiceField(
-            label="Sorted by SLA days",
-            choices=sla_sorted_choices,
-            required=False,
-        )
         self.fields["flags"] = forms.MultipleChoiceField(
             label="Flags",
             choices=flags_choices,
@@ -243,18 +213,10 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Parties",
-                    Field.text("party_name"),
-                    Field.text("party_address"),
                     Field.text("country"),
-                ),
-                AccordionSection(
-                    "Misc",
-                    Field.select("team_advice_type"),
-                    Field.select("final_advice_type"),
-                    Field.select("max_sla_days_remaining"),
-                    Field.select("min_sla_days_remaining"),
-                    Field.select("sla_days_elapsed"),
-                    Field.select("sla_days_elapsed_sort_order"),
+                    Field.text("party_name"),
+                    Field("exclude_denial_matches"),
+                    Field("exclude_sanction_matches"),
                 ),
                 css_id="accordion-1",
             ),

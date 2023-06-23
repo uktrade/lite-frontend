@@ -237,33 +237,36 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
 
     def form_valid(self, form):
         data = {**form.cleaned_data}
+
+        payload = self.get_goods_payload(data)
+        post_review_good(self.request, self.kwargs["pk"], payload)
+
+        return super().form_valid(form)
+
+    def get_goods_payload(self, data):
         # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
         # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
         # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
         is_good_controlled = not data.pop("does_not_have_control_list_entries")
+        # get_goods used to get a set of goods previously
         good_ids = data.pop("goods")
+        goods = [good["id"] for good in self.get_goods(good_ids)]
 
-        for good in self.get_goods(good_ids):
-            payload = {
-                **data,
-                "current_object": good["id"],
-                "objects": [good["good"]["id"]],
-                "is_good_controlled": is_good_controlled,
-                "regime_entries": get_regime_entries_payload_data(data),
-            }
-
-            # These are used to determine the `regime_entries` and aren't needed
-            # when sending to the backend
-            del payload["mtcr_entries"]
-            del payload["wassenaar_entries"]
-            del payload["nsg_entries"]
-            del payload["cwc_entries"]
-            del payload["ag_entries"]
-            del payload["regimes"]
-
-            post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
-
-        return super().form_valid(form)
+        payload = {
+            **data,
+            "objects": list(set(goods)),
+            "is_good_controlled": is_good_controlled,
+            "regime_entries": get_regime_entries_payload_data(data),
+        }
+        # These are used to determine the `regime_entries` and aren't needed
+        # when sending to the backend
+        del payload["mtcr_entries"]
+        del payload["wassenaar_entries"]
+        del payload["nsg_entries"]
+        del payload["cwc_entries"]
+        del payload["ag_entries"]
+        del payload["regimes"]
+        return payload
 
 
 class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
@@ -387,8 +390,7 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
         payload = {
             **data,
-            "current_object": self.good_id,
-            "objects": [good["good"]["id"]],
+            "objects": [good["id"]],
             "is_good_controlled": is_good_controlled,
             "regime_entries": get_regime_entries_payload_data(data),
         }
@@ -401,7 +403,6 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
         del payload["cwc_entries"]
         del payload["ag_entries"]
         del payload["regimes"]
-
         post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
 
         return super().form_valid(form)
@@ -434,15 +435,15 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
 
     def post(self, request, queue_pk, pk):
-        for good in self.assessed_goods:
-            payload = {
-                "control_list_entries": [],
-                "is_good_controlled": None,
-                "report_summary": None,
-                "comment": None,
-                "current_object": good["id"],
-                "objects": [good["good"]["id"]],
-                "regime_entries": [],
-            }
-            post_review_good(self.request, case_id=pk, data=payload)
+        goods = [good["id"] for good in self.assessed_goods]
+        goods_unique = list(set(goods))
+        payload = {
+            "control_list_entries": [],
+            "is_good_controlled": None,
+            "report_summary": None,
+            "comment": None,
+            "objects": goods_unique,
+            "regime_entries": [],
+        }
+        post_review_good(self.request, case_id=pk, data=payload)
         return redirect(reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}))
