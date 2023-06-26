@@ -57,10 +57,6 @@ class CasesFiltersForm(forms.Form):
         label="Country",
         required=False,
     )
-    control_list_entry = forms.CharField(
-        label="Control list entry",
-        required=False,
-    )
     submitted_from = DateInputField(
         label="Submitted after",
         required=False,
@@ -93,7 +89,7 @@ class CasesFiltersForm(forms.Form):
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, request, queue, filters_data, all_flags, all_regimes, *args, **kwargs):
+    def __init__(self, request, queue, filters_data, all_flags, all_cles, all_regimes, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         case_status_choices = self.get_field_choices(filters_data, "statuses")
@@ -104,6 +100,7 @@ class CasesFiltersForm(forms.Form):
         nca_choices = [(True, "Nuclear Cooperation Agreement")]
         trigger_list_guidelines_choices = [(True, "Trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
+        cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
         regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]
         assigned_queues_choices = [
             (queue["id"], f"{queue['team']['name']}: {queue['name']}")
@@ -138,6 +135,13 @@ class CasesFiltersForm(forms.Form):
             help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
+        )
+        self.fields["control_list_entry"] = forms.MultipleChoiceField(
+            label="Control list entry",
+            choices=cle_choices,
+            required=False,
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "control_list_entry"}),
         )
         self.fields["regime_entry"] = forms.MultipleChoiceField(
             label="Regime entry",
@@ -205,7 +209,7 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Product",
-                    Field.text("control_list_entry", id="control_list_entry"),
+                    Field.select("control_list_entry", id="control_list_entry"),
                     Field.text("regime_entry"),
                     Field.text("goods_related_description"),
                     Field("is_trigger_list"),

@@ -5,6 +5,7 @@ from django.utils.functional import cached_property
 from django.views.generic import FormView
 
 from caseworker.bookmarks import forms, services
+from caseworker.core.services import get_control_list_entries
 from caseworker.core.services import get_regime_entries
 from caseworker.flags.services import get_flags
 from caseworker.queues.views.cases import CaseDataMixin
@@ -16,6 +17,10 @@ from core.decorators import expect_status
 class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
     template_name = "core/form.html"
     form_class = CasesFiltersForm
+
+    @cached_property
+    def all_cles(self):
+        return get_control_list_entries(self.request, include_parent=True)
 
     @cached_property
     def all_regimes(self):
@@ -33,7 +38,9 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
+        kwargs["all_flags"] = get_flags(self.request, disable_pagination=True)
         kwargs["all_regimes"] = self.all_regimes
+        kwargs["all_cles"] = self.all_cles
         kwargs["queue"] = self.queue
         kwargs["all_flags"] = get_flags(self.request, disable_pagination=True)
 

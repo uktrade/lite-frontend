@@ -1,17 +1,15 @@
-from decimal import Decimal
-import pytest
 import re
-
-from bs4 import BeautifulSoup
+from decimal import Decimal
 from urllib import parse
 
+import pytest
+from bs4 import BeautifulSoup
 from django.urls import reverse
-
-from core import client
-from core.exceptions import ServiceError
 
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.queues.views.forms import CasesFiltersForm
+from core import client
+from core.exceptions import ServiceError
 
 queue_pk = "59ef49f4-cf0c-4085-87b1-9ac6817b4ba6"
 
@@ -251,8 +249,11 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
     control_list_entry_filter_input = html.find(id="control_list_entry")
-    assert control_list_entry_filter_input.attrs["type"] == "text"
-    assert control_list_entry_filter_input.attrs["name"] == "control_list_entry"
+    cles = [cle.get("value") for cle in control_list_entry_filter_input.findAll("option")]
+
+    assert control_list_entry_filter_input.name == "select"
+    assert "ML1" in cles
+    assert "ML1a" in cles
 
     url = reverse("queues:cases") + "?control_list_entry=ML1"
     response = authorized_client.get(url)

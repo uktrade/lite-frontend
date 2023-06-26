@@ -60,7 +60,7 @@ const initAutoCompleteField = async (field, choices, propertyName) => {
   nameInput = document.querySelector(`_id_${field}`);
 };
 
-export default function initFlagsFiltersField() {
+function initFlagsFiltersField() {
   const flagsField = document.getElementById("flags");
   if (!flagsField) return;
 
@@ -74,6 +74,14 @@ export function initAssignedQueuesFiltersField() {
   if (!assignedQueuesField) return;
 
   progressivelyEnhanceMultipleSelectField(assignedQueuesField, (option) => {
+    return { id: option.value, name: option.label, classes: [] };
+  });
+}
+
+function initCLEFiltersField() {
+  const clesField = document.getElementById("control_list_entry");
+  if (!clesField) return;
+    progressivelyEnhanceMultipleSelectField(clesField, (option) => {
     return { id: option.value, name: option.label, classes: [] };
   });
 }
@@ -108,6 +116,7 @@ const initCaseFilters = () => {
   });
   initFlagsFiltersField();
   initAssignedQueuesFiltersField();
+  initCLEFiltersField();
   initRegimeFiltersField();
 };
 
