@@ -174,6 +174,20 @@ def test_cases_home_page_view_context(authorized_client):
     assert response.status_code == 200
 
 
+def test_cases_home_page_post_redirect(authorized_client):
+    url = reverse("queues:cases")
+    response = authorized_client.post(url, follow=False)
+    assert response.url == "/queues/"
+    assert response.status_code == 302
+
+
+def test_cases_home_page_post_redirect_strips_csrftoken(authorized_client):
+    url = reverse("queues:cases")
+    response = authorized_client.post(url, {"csrfmiddlewaretoken": "foobar", "other_param": "bar"}, follow=False)
+    assert response.url == "/queues/?other_param=bar"
+    assert response.status_code == 302
+
+
 def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases") + "?is_nca_applicable=True"
     authorized_client.get(url)
