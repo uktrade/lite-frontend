@@ -66,19 +66,19 @@ class CasesFiltersForm(forms.Form):
         required=False,
     )
     submitted_from = DateInputField(
-        label="Submitted from date",
+        label="Submitted after",
         required=False,
     )
     submitted_to = DateInputField(
-        label="Submitted to date",
+        label="Submitted before",
         required=False,
     )
     finalised_from = DateInputField(
-        label="Finalised from date",
+        label="Finalised after",
         required=False,
     )
     finalised_to = DateInputField(
-        label="Finalised to date",
+        label="Finalised before",
         required=False,
     )
     exclude_denial_matches = forms.TypedChoiceField(
@@ -133,10 +133,12 @@ class CasesFiltersForm(forms.Form):
             required=False,
         )
 
+        flag_url = reverse("flags:flags")
         self.fields["flags"] = forms.MultipleChoiceField(
             label="Flags",
             choices=flags_choices,
             required=False,
+            help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
         )
