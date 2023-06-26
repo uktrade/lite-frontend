@@ -17,7 +17,7 @@ from caseworker.core.constants import (
     SLA_CIRCUMFERENCE,
     SLA_RADIUS,
 )
-from caseworker.core.services import get_user_permissions, get_regime_entries
+from caseworker.core.services import get_regime_entries
 from caseworker.core.services import get_user_permissions, get_control_list_entries
 from caseworker.flags.services import get_flags
 from caseworker.queues.services import get_cases_search_data, head_cases_search_count
