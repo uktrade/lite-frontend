@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 
 import pytest
 
@@ -195,6 +196,14 @@ def test_enrich_bookmark_for_display_filters_out_errors(filter_data, flags):
                 "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
                 "_id_regime": "Wassenaar Arrangement Sensitive",
             },
+        ),
+        (
+            "Test decimal value converted properly",
+            {"max_total_value": Decimal(200)},
+            {
+                "max_total_value": Decimal(200),
+            },
+            {"max_total_value": "200"},
         ),
     ],
 )
