@@ -98,6 +98,11 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
             "regime_entry=d73d0273-ef94-4951-9c51-c291eba949a0&regime_entry=c760976f-fd14-4356-9f23-f6eaf084475d",  #  /PS-IGNORE
         ),
         (
+            {"control_list_entry": ["ML11a", "MEND2"]},
+            "Control list entry: MEND2, ML11a",
+            "control_list_entry=ML11a&control_list_entry=MEND2",
+        ),
+        (
             {"flags": ["798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2", "e50f5cd3-331c-4914-b618-ee6eb67a081c"]},
             "Flags: AG Review Required, BAE",
             "flags=798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2&flags=e50f5cd3-331c-4914-b618-ee6eb67a081c",

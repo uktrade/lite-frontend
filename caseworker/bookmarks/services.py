@@ -93,6 +93,10 @@ class BookmarkEnricher:
         self._change_flag_ids_to_comma_seperated_names(filter_dict)
         self._change_regime_ids_to_comma_seperated_names(filter_dict)
 
+        for filter_key in filter_dict:
+            if isinstance(filter_dict[filter_key], list):
+                filter_dict[filter_key] = ", ".join(sorted(str(item) for item in filter_dict[filter_key]))
+
         return ", ".join(
             [f"{k.capitalize().replace('_', ' ')}: {str(v).replace('_', ' ')}" for (k, v) in filter_dict.items()]
         )
