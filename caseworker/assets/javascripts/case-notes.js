@@ -80,6 +80,39 @@ const initCaseNotes = () => {
     .forEach(($el) => new CaseNote($el).init());
 };
 
+const getItem = (option) => {
+  return { id: option.value, name: option.text, classes: [] };
+};
+
+const getItems = (element) => {
+  var items = [];
+  for (var i = 0; i < element.options.length; i++) {
+    var option = element.options.item(i);
+    var item = getItem(option);
+    items.push(item);
+  }
+  return items;
+};
+
+const search = (terms, filterTerm) => {
+  filterTerm = filterTerm.toLowerCase();
+  return terms
+    .filter((v) => v.name.toLowerCase().includes(filterTerm))
+    .sort((a, b) => {
+      const aName = a.name;
+      const bName = b.name;
+      const aStarts = aName.toLowerCase().startsWith(filterTerm);
+      const bStarts = bName.toLowerCase().startsWith(filterTerm);
+      if (aStarts && bStarts) return aName.localeCompare(bName);
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+      return aName.localeCompare(bName);
+    });
+};
+
+const itemList = getItems(document.getElementById("id_mentions"));
+let fieldInput = "";
+
 export default function initMentionUsers() {
   const mentionUserField = document.getElementById("id_mentions");
 
@@ -91,6 +124,20 @@ export default function initMentionUsers() {
       return { id: option.value, name: option.label, classes: [] };
     }
   );
+
+  mentionUserTokenField.onInput = (input, event) => {
+    fieldInput = input;
+    return input;
+  };
+
+  const onSuggestions = (event) => {
+    sortedItems = search(itemList, fieldInput);
+    mentionUserTokenField.setSuggestedItems(sortedItems);
+  };
+
+  mentionUserTokenField.on("showSuggestions", (data, event) => {
+    onSuggestions();
+  });
 }
 
 export { CaseNote, initCaseNotes, initMentionUsers };
