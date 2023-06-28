@@ -46,7 +46,9 @@ def test_sla_display_days(elapsed, remaining):
     assert render_to_string("includes/sla_display.html", context)
 
 
-def test_cases_with_flags(data_standard_case, mock_queues_list, rf, client, flags, all_cles, all_regimes):
+def test_cases_with_flags(
+    data_standard_case, mock_countries, mock_queues_list, rf, client, flags, all_cles, all_regimes
+):
     context = {}
     context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
     case = data_standard_case["case"]
@@ -87,7 +89,9 @@ def test_cases_with_flags(data_standard_case, mock_queues_list, rf, client, flag
     assert "Red Destination" in flags
 
 
-def test_cases_without_flags(data_standard_case, mock_queues_list, rf, client, flags, all_cles, all_regimes):
+def test_cases_without_flags(
+    data_standard_case, mock_countries, mock_queues_list, rf, client, flags, all_cles, all_regimes
+):
     context = {}
     context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
     case = data_standard_case["case"]
