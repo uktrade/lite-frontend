@@ -118,6 +118,11 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
             "Min sla days remaining: 15",
             "min_sla_days_remaining=15",
         ),
+        (
+            {"max_total_value": "200.0"},
+            "Max total value: 200.0",
+            "max_total_value=200.0",
+        ),
     ],
 )
 def test_enrich_bookmark_for_display(
