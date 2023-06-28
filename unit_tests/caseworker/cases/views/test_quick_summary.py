@@ -60,8 +60,13 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     data_standard_case["case"]["assigned_users"] = {"00000000-0000-0000-0000-000000000001": [gov_user]}
     data_standard_case["case"]["case_officer"] = gov_user
     data_standard_case["case"]["data"]["sanction_matches"] = [{"list_name": "Russia"}]
+    # New style report summary
     data_standard_case["case"]["data"]["goods"][0]["report_summary_prefix"] = {"name": "casing for"}
     data_standard_case["case"]["data"]["goods"][0]["report_summary_subject"] = {"name": "nuke"}
+    # Old style report summary
+    data_standard_case["case"]["data"]["goods"][1]["report_summary_prefix"] = None
+    data_standard_case["case"]["data"]["goods"][1]["report_summary_subject"] = None
+    data_standard_case["case"]["data"]["goods"][1]["report_summary"] = "some report summary"
     url = reverse(
         "cases:case",
         kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"], "tab": "quick-summary"},
@@ -110,8 +115,12 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
         for regime_entry in good["regime_entries"]:
             assert regime_entry["name"] in table_text
 
-    for good in data_standard_case["case"]["data"]["goods"]:
-        assert f'{good["report_summary_prefix"]["name"]} {good["report_summary_subject"]["name"]}' in table_text
+    # Check new style report summary
+    good = data_standard_case["case"]["data"]["goods"][0]
+    assert f'{good["report_summary_prefix"]["name"]} {good["report_summary_subject"]["name"]}' in table_text
+    # Check old style report summary
+    good_2 = data_standard_case["case"]["data"]["goods"][1]
+    assert good_2["report_summary"] in table_text
 
     assert data_standard_case["case"]["data"]["goods"][0]["good"]["is_pv_graded"] in table_text.lower()
 
