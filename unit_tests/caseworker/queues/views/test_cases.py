@@ -149,6 +149,7 @@ def test_cases_home_page_view_context(authorized_client):
         "goods_starting_point",
         "party_name",
         "goods_related_description",
+        "max_total_value",
         "country",
         "control_list_entry",
         "regime_entry",
@@ -261,6 +262,23 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "control_list_entry": ["ml1"],
+    }
+
+
+def test_cases_home_page_max_total_value_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    control_list_entry_filter_input = html.find(id="id_max_total_value")
+    assert control_list_entry_filter_input.attrs["type"] == "number"
+    assert control_list_entry_filter_input.attrs["name"] == "max_total_value"
+
+    url = reverse("queues:cases") + "?max_total_value=300"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "max_total_value": ["300"],
     }
 
 
