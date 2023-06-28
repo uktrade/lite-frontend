@@ -1,6 +1,7 @@
 import logging
 from collections import OrderedDict
 from datetime import datetime, date
+from decimal import Decimal
 from urllib.parse import urlencode
 
 from caseworker.users.services import get_gov_user
@@ -175,11 +176,16 @@ def enrich_filter_for_saving(data, raw_filters):
 
     filters = {k: data[k] for k in data.keys() if data[k] and k not in keys_to_remove}
 
+    # Ensure that Decimal values are cast to string ready for json serialization
+    for key, value in filters.items():
+        if isinstance(value, Decimal):
+            filters[key] = str(value)
+
     # Add in _id_ prefixed data to preserve country and regime names. This is to prevent
     # unnecessary lookup when we display the bookmarks later, as the description and
     # url display need different values for these filters (status, gov_user etc)
     # the former needing the display value and the latter an id.
-    for key in raw_filters:
+    for key, value in raw_filters.items():
         if key.startswith("_id_") and key[4:] in filters:
             filters[key] = raw_filters[key]
 

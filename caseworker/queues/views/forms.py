@@ -53,6 +53,10 @@ class CasesFiltersForm(forms.Form):
         label="Goods related description",
         required=False,
     )
+    max_total_value = forms.DecimalField(
+        label="Max total value (£)",
+        required=False,
+    )
     country = forms.CharField(
         label="Country",
         required=False,
@@ -212,6 +216,7 @@ class CasesFiltersForm(forms.Form):
                     Field.select("control_list_entry", id="control_list_entry"),
                     Field.text("regime_entry"),
                     Field.text("goods_related_description"),
+                    Field("max_total_value", css_class="govuk-input"),
                     Field("is_trigger_list"),
                     Field("is_nca_applicable"),
                 ),
