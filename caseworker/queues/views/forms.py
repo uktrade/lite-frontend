@@ -5,6 +5,7 @@ from django import forms
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 
+from caseworker.core.services import get_countries
 from caseworker.queues.services import get_queues
 from core.forms.utils import coerce_str_to_bool
 from core.forms.widgets import CheckboxInputSmall
@@ -57,10 +58,6 @@ class CasesFiltersForm(forms.Form):
         label="Max total value (£)",
         required=False,
     )
-    country = forms.CharField(
-        label="Country",
-        required=False,
-    )
     submitted_from = DateInputField(
         label="Submitted after",
         required=False,
@@ -102,6 +99,8 @@ class CasesFiltersForm(forms.Form):
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
         regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]
+        countries_response, _ = get_countries(request)
+        country_choices = [(country["id"], country["name"]) for country in countries_response["countries"]]
         assigned_queues_choices = [
             (queue["id"], f"{queue['team']['name']}: {queue['name']}")
             for queue in get_queues(request, convert_to_options=False, users_team_first=True)
@@ -149,6 +148,13 @@ class CasesFiltersForm(forms.Form):
             required=False,
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "regime_entry"}),
+        )
+        self.fields["countries"] = forms.MultipleChoiceField(
+            label="Country",
+            choices=country_choices,
+            required=False,
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "countries"}),
         )
         self.fields["assigned_queues"] = forms.MultipleChoiceField(
             label="Assigned queues",
@@ -224,7 +230,7 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Parties",
-                    Field.text("country"),
+                    Field.text("countries"),
                     Field.text("party_name"),
                     Field.checkbox("exclude_denial_matches"),
                     Field.checkbox("exclude_sanction_matches"),
