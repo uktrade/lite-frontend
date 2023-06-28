@@ -77,16 +77,12 @@ class CasesFiltersForm(forms.Form):
         label="Finalised before",
         required=False,
     )
-    exclude_denial_matches = forms.TypedChoiceField(
-        choices=[(True, "Exclude denial matches")],
-        label="",
-        widget=CheckboxInputSmall(),
+    exclude_denial_matches = forms.BooleanField(
+        label="Exclude denial matches",
         required=False,
     )
-    exclude_sanction_matches = forms.TypedChoiceField(
-        choices=[(True, "Exclude sanction matches")],
-        label="",
-        widget=CheckboxInputSmall(),
+    exclude_sanction_matches = forms.BooleanField(
+        label="Exclude sanction matches",
         required=False,
     )
 
@@ -230,8 +226,8 @@ class CasesFiltersForm(forms.Form):
                     "Parties",
                     Field.text("country"),
                     Field.text("party_name"),
-                    Field("exclude_denial_matches"),
-                    Field("exclude_sanction_matches"),
+                    Field.checkbox("exclude_denial_matches"),
+                    Field.checkbox("exclude_sanction_matches"),
                 ),
                 css_id="accordion-1",
             ),
