@@ -3,15 +3,13 @@ from collections import OrderedDict
 from datetime import datetime, date
 from urllib.parse import urlencode
 
-from django.urls import reverse
-
 from caseworker.users.services import get_gov_user
 from core import client
 
 logger = logging.getLogger(__name__)
 
 
-def fetch_bookmarks(request, filter_data, all_flags):
+def fetch_bookmarks(request, filter_data, all_flags, bookmark_base_url):
     response = client.get(request, "/bookmarks/")
     if response.status_code >= 300:
         # Not important enough to break the page, so return an empty set of bookmarks.
@@ -19,7 +17,9 @@ def fetch_bookmarks(request, filter_data, all_flags):
         return {"user": []}
 
     bookmarks = response.json()["user"]
-    enriched_bookmarks = [enrich_bookmark_for_display(bookmark, filter_data, all_flags) for bookmark in bookmarks]
+    enriched_bookmarks = [
+        enrich_bookmark_for_display(bookmark, filter_data, all_flags, bookmark_base_url) for bookmark in bookmarks
+    ]
     enriched_bookmarks = [bookmark for bookmark in enriched_bookmarks if bookmark is not None]
 
     return {"user": enriched_bookmarks}
@@ -57,13 +57,12 @@ def rename_bookmark(request, bookmark_id, name):
     return client.put(request, f"/bookmarks", data)
 
 
-def enrich_bookmark_for_display(bookmark, filter_data, all_flags):
+def enrich_bookmark_for_display(bookmark, filter_data, all_flags, bookmark_base_url):
     try:
         out = {**bookmark}
-        base_url = reverse("queues:cases")
         bookmark_filter = out["filter_json"]
         out["description"] = description_from_filter(bookmark_filter, filter_data, all_flags)
-        out["url"] = url_from_bookmark(base_url, bookmark_filter)
+        out["url"] = url_from_bookmark(bookmark_base_url, bookmark_filter)
 
         return out
     except Exception as ex:  # pylint: disable=broad-except

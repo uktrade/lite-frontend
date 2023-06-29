@@ -107,7 +107,7 @@ class AbstractReviewGoodWizardView(SessionWizardView):
     def process_step(self, form):
         if self.case["case_type"]["reference"]["key"] != "siel":
             raise ValueError("Only SIEL licences are supported")
-        data = {**form.cleaned_data, "current_object": self.object["id"], "objects": [self.object["good"]["id"]]}
+        data = {**form.cleaned_data, "objects": [self.object["good"]["id"]]}
         del data["does_not_have_control_list_entries"]
         post_review_good(self.request, case_id=self.kwargs["pk"], data=data)
         return super().process_step(form)

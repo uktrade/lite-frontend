@@ -47,6 +47,26 @@ def mock_cases_search(requests_mock, data_cases_search, queue_pk):
 
 
 @pytest.fixture
+def mock_cases_search_team_queue(requests_mock, data_cases_search):
+    encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
+    return requests_mock.get(url=url, json=data_cases_search)
+
+
+@pytest.fixture
+def mock_team_queue(requests_mock):
+    data = {
+        "id": queue_pk,
+        "alias": None,
+        "name": "Some team",
+        "is_system_queue": False,
+        "countersigning_queue": None,
+    }
+    url = client._build_absolute_uri("/queues/")
+    return requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)
+
+
+@pytest.fixture
 def mock_cases_search_page_2(requests_mock, data_cases_search, queue_pk):
     encoded_params = parse.urlencode({"page": 2, "flags": []}, doseq=True)
     url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
@@ -122,10 +142,50 @@ def test_cases_home_page_view_context(authorized_client):
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert isinstance(response.context["form"], CasesFiltersForm)
-    assert len(response.context["form"].fields) == 30
+    assert [field_name for field_name, _ in response.context["form"].fields.items()] == [
+        "case_reference",
+        "export_type",
+        "exporter_application_reference",
+        "organisation_name",
+        "exporter_site_name",
+        "goods_starting_point",
+        "party_name",
+        "goods_related_description",
+        "country",
+        "control_list_entry",
+        "regime_entry",
+        "submitted_from",
+        "submitted_to",
+        "finalised_from",
+        "finalised_to",
+        "exclude_denial_matches",
+        "exclude_sanction_matches",
+        "status",
+        "case_officer",
+        "assigned_user",
+        "flags",
+        "assigned_queues",
+        "is_nca_applicable",
+        "is_trigger_list",
+        "return_to",
+    ]
     for context_key in context_keys:
         assert response.context[context_key]
     assert response.status_code == 200
+
+
+def test_cases_home_page_post_redirect(authorized_client):
+    url = reverse("queues:cases")
+    response = authorized_client.post(url, follow=False)
+    assert response.url == "/queues/"
+    assert response.status_code == 302
+
+
+def test_cases_home_page_post_redirect_strips_csrftoken(authorized_client):
+    url = reverse("queues:cases")
+    response = authorized_client.post(url, {"csrfmiddlewaretoken": "foobar", "other_param": "bar"}, follow=False)
+    assert response.url == "/queues/?other_param=bar"
+    assert response.status_code == 302
 
 
 def test_cases_home_page_nca_applicable_search(authorized_client, mock_cases_search):
@@ -142,6 +202,27 @@ def test_cases_home_page_return_to_excluded_from_api(authorized_client, mock_cas
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
         **default_params,
+    }
+
+
+def test_cases_home_page_assigned_queues(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?assigned_queues=foo"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "assigned_queues": ["foo"],
+    }
+
+
+def test_cases_queue_page_assigned_queues(authorized_client, mock_cases_search_team_queue, mock_team_queue):
+    url = reverse("queues:cases", kwargs={"queue_pk": queue_pk}) + "?assigned_queues=foo"
+    authorized_client.get(url)
+    # Assert that assigned_queues is not sent through to the search API request
+    assert mock_cases_search_team_queue.last_request.qs == {
+        "page": ["1"],
+        "queue_id": [queue_pk],
+        "selected_tab": ["all_cases"],
+        "hidden": ["false"],
     }
 
 
@@ -210,6 +291,33 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],  # /PS-IGNORE
+    }
+
+
+def test_cases_home_page_exclude_denial_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?exclude_denial_matches=True"
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_denial_matches_input = html.find(id="id_exclude_denial_matches_0")
+    assert exclude_denial_matches_input.attrs["name"] == "exclude_denial_matches"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "exclude_denial_matches": ["true"],
+    }
+
+
+def test_cases_home_page_exclude_sanction_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?exclude_sanction_matches=True"
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_sanction_matches_input = html.find(id="id_exclude_sanction_matches_0")
+    assert exclude_sanction_matches_input.attrs["name"] == "exclude_sanction_matches"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "exclude_sanction_matches": ["true"],
     }
 
 

@@ -4,6 +4,7 @@ from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from dateutil import parser
 from django.http import Http404
+from django.shortcuts import redirect
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 
@@ -97,6 +98,12 @@ class CaseDataMixin:
         # but it can be overriden by a checkbox on the frontend
         is_hidden_by_form = self.request.GET.get("hidden", False)
         params["hidden"] = self._set_is_hidden(params["selected_tab"], is_hidden_by_form)
+        # Ideally we would do some proper form validation and this value would be removed
+        # as part of that, until then we remove assigned_queues from the params
+        # because this should not be filtered on unless the queue is a system queue
+        if params.get("assigned_queues") and not self._is_system_queue():
+            del params["assigned_queues"]
+
         # No need to send return_to parameter in server calls
         if params.get("return_to"):
             del params["return_to"]
@@ -244,14 +251,18 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
     def get_initial(self):
         return self.get_params()
 
-    def get_return_url(self):
-        current_full_url = self.request.get_full_path()
-        url_parts = list(urlparse(current_full_url))
+    def _strip_param_from_url(self, url, param):
+        url_parts = list(urlparse(url))
         query = parse_qs(url_parts[4], keep_blank_values=True)
-        if query.get("return_to"):
-            del query["return_to"]
+        if query.get(param):
+            del query[param]
         url_parts[4] = urlencode(query, doseq=True)
         sanitised_url = urlunparse(url_parts)
+        return sanitised_url
+
+    def get_return_url(self):
+        current_full_url = self.request.get_full_path()
+        sanitised_url = self._strip_param_from_url(current_full_url, "return_to")
         return sanitised_url
 
     def get_form_kwargs(self):
@@ -262,6 +273,15 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         kwargs["queue"] = self.queue
         kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs
+
+    def post(self, request, *args, **kwargs):
+        # This view does most of it's work through GET, but initial form POST submissions
+        # are handled here and redirected to a GET after stripping out csrfmiddlewaretoken
+        # - this should not be visible in GET params due to security concerns
+        get_params = request.POST.urlencode()
+        url = f"{request.path}?{get_params}"
+        sanitised_url = self._strip_param_from_url(url, "csrfmiddlewaretoken")
+        return redirect(sanitised_url)
 
     def get_context_data(self, *args, **kwargs):
         try:
@@ -275,7 +295,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
-        bookmarks = fetch_bookmarks(self.request, self.filters, self.all_flags)
+        bookmarks = fetch_bookmarks(self.request, self.filters, self.all_flags, self.request.path)
         context = {
             "sla_radius": SLA_RADIUS,
             "sla_circumference": SLA_CIRCUMFERENCE,

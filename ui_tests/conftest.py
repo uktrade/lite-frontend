@@ -18,6 +18,10 @@ STEP_THROUGH = False  # Gives a prompt for every step in the terminal
 STEP_VERBOSE = STEP_THROUGH  # Shows info as a banner for every step
 
 
+def pytest_bdd_step_error(request, feature, scenario, step, step_func, step_func_args, exception):
+    step.name = f"[FAILED] {step.name}"
+
+
 def pytest_bdd_before_step_call(request, feature, scenario, step, step_func, step_func_args):
     """
     Runs before each step
