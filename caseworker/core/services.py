@@ -1,10 +1,10 @@
 from collections import defaultdict
 
+from caseworker.cases.constants import CaseType
 from caseworker.users.services import get_gov_user
 from core import client
 from core.constants import CaseStatusEnum
 from core.helpers import convert_value_to_query_param
-from caseworker.cases.constants import CaseType
 from lite_forms.components import Option
 
 
@@ -183,25 +183,9 @@ def get_control_list_entries(request, convert_to_options=False, include_parent=F
 
 
 # Regime Entries
-def get_regime_entries(request, regime_entries_cache=[]):  # noqa
-    """
-    Preliminary caching mechanism, requires service restart to repopulate regime entries
-    """
-    if regime_entries_cache:
-        return regime_entries_cache
-    else:
-        data = client.get(request, "/static/regimes/entries/")
-
-    for regime_entry in data.json():
-        regime_entries_cache.append(
-            Option(
-                key=regime_entry["pk"],
-                value=regime_entry["name"],
-                description=regime_entry["name"],
-            )
-        )
-
-    return regime_entries_cache
+def get_regime_entries(request):
+    data = client.get(request, "/static/regimes/entries/")
+    return [{"id": regime["pk"], "name": regime["name"]} for regime in sorted(data.json(), key=lambda r: r["name"])]
 
 
 def get_gov_pv_gradings(request, convert_to_options=False):

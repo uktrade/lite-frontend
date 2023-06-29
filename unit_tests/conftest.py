@@ -30,7 +30,7 @@ def add_test_template_dirs(settings):
 
 @pytest.fixture
 def data_control_list_entries():
-    # in relity there are around 3000 CLCs
+    # in reality there are around 3000 CLCs
     return {
         "control_list_entries": [
             {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
