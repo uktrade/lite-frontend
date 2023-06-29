@@ -80,7 +80,7 @@ FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = env.bool("FEATURE_FLAG_ALLOW_CLC_Q
 SPIRE_URL = "https://www.spire.trade.gov.uk/spire/fox/espire/LOGIN/login"
 
 FEATURE_FLAG_FIREARMS_ENABLED = env.bool("FEATURE_FLAG_FIREARMS_ENABLED", False)
-FEATURE_C7_NCSC_ENABLED = env.bool("FEATURE_C7_NCSC_ENABLED", False)
+FEATURE_C7_NCSC_ENABLED = env.bool("FEATURE_C7_NCSC_ENABLED", True)
 
 if "redis" in VCAP_SERVICES:
     REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
