@@ -150,7 +150,6 @@ def test_cases_home_page_view_context(authorized_client):
         "party_name",
         "goods_related_description",
         "max_total_value",
-        "country",
         "control_list_entry",
         "regime_entry",
         "submitted_from",
@@ -163,6 +162,7 @@ def test_cases_home_page_view_context(authorized_client):
         "case_officer",
         "assigned_user",
         "flags",
+        "countries",
         "assigned_queues",
         "is_nca_applicable",
         "is_trigger_list",
@@ -321,7 +321,7 @@ def test_cases_home_page_exclude_denial_matches_search(authorized_client, mock_c
     response = authorized_client.get(url)
 
     html = BeautifulSoup(response.content, "html.parser")
-    exclude_denial_matches_input = html.find(id="id_exclude_denial_matches_0")
+    exclude_denial_matches_input = html.find(id="id_exclude_denial_matches")
     assert exclude_denial_matches_input.attrs["name"] == "exclude_denial_matches"
 
     assert mock_cases_search.last_request.qs == {
@@ -334,12 +334,26 @@ def test_cases_home_page_exclude_sanction_matches_search(authorized_client, mock
     url = reverse("queues:cases") + "?exclude_sanction_matches=True"
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
-    exclude_sanction_matches_input = html.find(id="id_exclude_sanction_matches_0")
+    exclude_sanction_matches_input = html.find(id="id_exclude_sanction_matches")
     assert exclude_sanction_matches_input.attrs["name"] == "exclude_sanction_matches"
 
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "exclude_sanction_matches": ["true"],
+    }
+
+
+def test_cases_home_page_countries_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?countries=GB&countries=FR"
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_denial_matches_input = html.find(id="countries")
+    assert exclude_denial_matches_input.attrs["name"] == "countries"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "countries": ["gb", "fr"],
     }
 
 

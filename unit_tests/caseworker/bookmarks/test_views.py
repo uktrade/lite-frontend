@@ -37,6 +37,7 @@ def mock_edit_bookmark(requests_mock, code=200):
 def test_add_bookmark_ok(
     authorized_client,
     mock_queue,
+    mock_countries,
     mock_queues_list,
     mock_cases_with_filter_data,
     requests_mock,
@@ -51,7 +52,7 @@ def test_add_bookmark_ok(
         url,
         data={
             "return_to": return_to_url,
-            "country": "GB",
+            "countries": ["GB"],
             "case_officer": gov_uk_user_id,
             "finalised_to_0": "22",
             "finalised_to_1": "09",
@@ -65,7 +66,7 @@ def test_add_bookmark_ok(
     assert posted_content["name"].startswith("New unnamed filter")
     assert posted_content["user_id"] == gov_uk_user_id
 
-    expected_filter = {"case_officer": gov_uk_user_id, "country": "GB", "finalised_to": "22-09-2002"}
+    expected_filter = {"case_officer": gov_uk_user_id, "countries": ["GB"], "finalised_to": "22-09-2002"}
     assert posted_content["filter_json"] == expected_filter
 
 
@@ -74,6 +75,7 @@ def test_add_bookmark_fail(
     authorized_client,
     mock_queue,
     mock_queues_list,
+    mock_countries,
     mock_cases_with_filter_data,
     requests_mock,
     gov_uk_user_id,
