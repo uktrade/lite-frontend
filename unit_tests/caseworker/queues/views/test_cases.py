@@ -150,7 +150,9 @@ def test_cases_home_page_view_context(authorized_client):
         "party_name",
         "max_total_value",
         "control_list_entry",
+        "exclude_control_list_entry",
         "regime_entry",
+        "exclude_regime_entry",
         "report_summary",
         "submitted_from",
         "submitted_to",
@@ -266,6 +268,27 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     }
 
 
+def test_cases_home_page_exclude_control_list_entries_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    control_list_entry_filter_input = html.find(id="control_list_entry")
+    cles = [cle.get("value") for cle in control_list_entry_filter_input.findAll("option")]
+
+    assert control_list_entry_filter_input.name == "select"
+    assert "ML1" in cles
+    assert "ML1a" in cles
+
+    url = reverse("queues:cases") + "?control_list_entry=ML1&exclude_control_list_entry=true"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "control_list_entry": ["ml1"],
+        "exclude_control_list_entry": ["true"],
+    }
+
+
 def test_cases_home_page_max_total_value_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases")
     response = authorized_client.get(url)
@@ -314,6 +337,16 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],  # /PS-IGNORE
+    }
+
+
+def test_cases_home_page_exclude_regime_entry_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed&exclude_regime_entry=true"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],
+        "exclude_regime_entry": ["true"],
     }
 
 

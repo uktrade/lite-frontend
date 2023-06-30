@@ -102,7 +102,9 @@ class CasesFiltersForm(forms.Form):
         trigger_list_guidelines_choices = [(True, "Trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
+        exclude_cle_choices = [(True, "Exclude control list entries")]
         regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]
+        exclude_regime_choices = [(True, "Exclude regime entries")]
         countries_response, _ = get_countries(request)
         country_choices = [(country["id"], country["name"]) for country in countries_response["countries"]]
         assigned_queues_choices = [
@@ -146,12 +148,26 @@ class CasesFiltersForm(forms.Form):
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "control_list_entry"}),
         )
+        self.fields["exclude_control_list_entry"] = forms.TypedChoiceField(
+            choices=exclude_cle_choices,
+            coerce=coerce_str_to_bool,
+            label="",
+            widget=CheckboxInputSmall(),
+            required=False,
+        )
         self.fields["regime_entry"] = forms.MultipleChoiceField(
             label="Regime entry",
             choices=regime_choices,
             required=False,
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "regime_entry"}),
+        )
+        self.fields["exclude_regime_entry"] = forms.TypedChoiceField(
+            choices=exclude_regime_choices,
+            coerce=coerce_str_to_bool,
+            label="",
+            widget=CheckboxInputSmall(),
+            required=False,
         )
         self.fields["countries"] = forms.MultipleChoiceField(
             label="Country",
@@ -220,7 +236,9 @@ class CasesFiltersForm(forms.Form):
                 AccordionSection(
                     "Product",
                     Field.select("control_list_entry", id="control_list_entry"),
+                    Field("exclude_control_list_entry"),
                     Field.text("regime_entry"),
+                    Field("exclude_regime_entry"),
                     Field.text("report_summary"),
                     Field.text("product_name"),
                     Field("max_total_value", css_class="govuk-input"),
