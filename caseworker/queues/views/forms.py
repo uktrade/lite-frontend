@@ -50,8 +50,8 @@ class CasesFiltersForm(forms.Form):
         label="Party name",
         required=False,
     )
-    goods_related_description = forms.CharField(
-        label="Goods related description",
+    product_name = forms.CharField(
+        label="Product name",
         required=False,
     )
     max_total_value = forms.DecimalField(
@@ -222,7 +222,7 @@ class CasesFiltersForm(forms.Form):
                     Field.select("control_list_entry", id="control_list_entry"),
                     Field.text("regime_entry"),
                     Field.text("report_summary"),
-                    Field.text("goods_related_description"),
+                    Field.text("product_name"),
                     Field("max_total_value", css_class="govuk-input"),
                     Field("is_trigger_list"),
                     Field("is_nca_applicable"),
