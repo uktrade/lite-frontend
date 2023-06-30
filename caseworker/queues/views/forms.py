@@ -1,6 +1,6 @@
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
+from crispy_forms_gds.layout import Layout, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
 from django import forms
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
@@ -84,6 +84,11 @@ class CasesFiltersForm(forms.Form):
     )
     exclude_sanction_matches = forms.BooleanField(
         label="Exclude sanction matches",
+        required=False,
+    )
+    return_to = forms.CharField(
+        label="",
+        widget=HiddenInput(),
         required=False,
     )
 
@@ -181,11 +186,6 @@ class CasesFiltersForm(forms.Form):
             widget=CheckboxInputSmall(),
             required=False,
         )
-        self.fields["return_to"] = forms.CharField(
-            label="",
-            widget=HiddenInput(),
-            required=False,
-        )
 
         case_filters = [
             "case_reference",
@@ -193,15 +193,14 @@ class CasesFiltersForm(forms.Form):
             "case_officer",
             "assigned_user",
             "export_type",
-            Field("submitted_from"),
-            Field("submitted_to"),
-            Field.select("flags"),
-            Field("finalised_from"),
-            Field("finalised_to"),
-            "return_to",
+            "submitted_from",
+            "submitted_to",
+            "flags",
+            "finalised_from",
+            "finalised_to",
         ]
         if queue.get("is_system_queue"):
-            case_filters.append(Field.select("assigned_queues"))
+            case_filters.append("assigned_queues")
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the
@@ -219,27 +218,28 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Product",
-                    Field.select("control_list_entry", id="control_list_entry"),
-                    Field.text("regime_entry"),
-                    Field.text("report_summary"),
-                    Field.text("goods_related_description"),
-                    Field("max_total_value", css_class="govuk-input"),
-                    Field("is_trigger_list"),
-                    Field("is_nca_applicable"),
+                    "control_list_entry",
+                    "regime_entry",
+                    "report_summary",
+                    "goods_related_description",
+                    "max_total_value",
+                    "is_trigger_list",
+                    "is_nca_applicable",
                 ),
                 AccordionSection(
                     "Applicant",
-                    Field.text("organisation_name"),
-                    Field.text("exporter_site_name"),
-                    Field.select("goods_starting_point"),
+                    "organisation_name",
+                    "exporter_site_name",
+                    "goods_starting_point",
                 ),
                 AccordionSection(
                     "Parties",
-                    Field.text("countries"),
-                    Field.text("party_name"),
-                    Field.checkbox("exclude_denial_matches"),
-                    Field.checkbox("exclude_sanction_matches"),
+                    "countries",
+                    "party_name",
+                    "exclude_denial_matches",
+                    "exclude_sanction_matches",
                 ),
+                "return_to",
                 css_id="accordion-1",
             ),
             Fieldset(
