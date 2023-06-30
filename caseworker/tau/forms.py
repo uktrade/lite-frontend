@@ -223,10 +223,9 @@ class TAUEditForm(forms.Form):
                 ),
                 "None",
             ),
+            "is_ncsc_military_information_security",
             "comment",
         ]
-        if settings.FEATURE_C7_NCSC_ENABLED:
-            fields.insert(len(fields) - 1, "is_ncsc_military_information_security")
         self.helper.layout = Layout(*fields)
 
     def validate_single_regime_choice(self, cleaned_data, selected_regimes, regime, field_name, error_message):
