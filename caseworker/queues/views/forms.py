@@ -58,6 +58,10 @@ class CasesFiltersForm(forms.Form):
         label="Max total value (£)",
         required=False,
     )
+    report_summary = forms.CharField(
+        label="Report summary",
+        required=False,
+    )
     submitted_from = DateInputField(
         label="Submitted after",
         required=False,
@@ -217,6 +221,7 @@ class CasesFiltersForm(forms.Form):
                     "Product",
                     Field.select("control_list_entry", id="control_list_entry"),
                     Field.text("regime_entry"),
+                    Field.text("report_summary"),
                     Field.text("goods_related_description"),
                     Field("max_total_value", css_class="govuk-input"),
                     Field("is_trigger_list"),
