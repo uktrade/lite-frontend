@@ -53,7 +53,7 @@ def test_case_filters(
     assert isinstance(response.context["form"], CasesFiltersForm)
 
     history = requests_mock.request_history
-    case_search_request = history[-5]
+    case_search_request = history[-6]
 
     assert parse.unquote(query_params) in case_search_request.url
     if filters_data.get("field"):
