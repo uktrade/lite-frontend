@@ -18,7 +18,6 @@ from caseworker.regimes.enums import Regimes
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
 from ..report_summary.services import get_report_summary_prefix, get_report_summary_subject
-from django.conf import settings
 
 REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
 REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
