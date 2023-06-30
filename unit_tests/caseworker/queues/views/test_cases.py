@@ -148,7 +148,6 @@ def test_cases_home_page_view_context(authorized_client):
         "exporter_site_name",
         "goods_starting_point",
         "party_name",
-        "goods_related_description",
         "max_total_value",
         "control_list_entry",
         "regime_entry",
@@ -168,6 +167,7 @@ def test_cases_home_page_view_context(authorized_client):
         "is_nca_applicable",
         "is_trigger_list",
         "return_to",
+        "product_name",
     ]
 
     actual_fields = [field_name for field_name, _ in response.context["form"].fields.items()]
@@ -343,6 +343,21 @@ def test_cases_home_page_exclude_denial_matches_search(authorized_client, mock_c
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "exclude_denial_matches": ["true"],
+    }
+
+
+def test_cases_home_page_product_name_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?product_name=submarines"
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_denial_matches_input = html.find(id="id_product_name")
+    assert exclude_denial_matches_input.attrs["name"] == "product_name"
+    assert exclude_denial_matches_input.attrs["value"] == "submarines"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "product_name": ["submarines"],
     }
 
 
