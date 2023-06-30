@@ -35,7 +35,14 @@ def mock_edit_bookmark(requests_mock, code=200):
 
 
 def test_add_bookmark_ok(
-    authorized_client, mock_queue, mock_queues_list, mock_cases_with_filter_data, requests_mock, gov_uk_user_id
+    authorized_client,
+    mock_queue,
+    mock_queues_list,
+    mock_cases_with_filter_data,
+    requests_mock,
+    gov_uk_user_id,
+    mock_all_control_list_entries,
+    mock_regime_entries,
 ):
     mock_post = mock_post_bookmark(requests_mock)
     url = reverse("bookmarks:add_bookmark")
@@ -71,6 +78,8 @@ def test_add_bookmark_fail(
     requests_mock,
     gov_uk_user_id,
     return_code,
+    mock_all_control_list_entries,
+    mock_regime_entries,
 ):
     mock_post_bookmark(requests_mock, return_code)
     url = reverse("bookmarks:add_bookmark")
