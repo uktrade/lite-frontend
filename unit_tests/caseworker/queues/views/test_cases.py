@@ -424,14 +424,14 @@ def test_cases_home_page_countries_search(authorized_client, mock_cases_search):
 def test_trigger_list_checkbox_visible_unchecked(authorized_client):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
-    checkbox = html.find(id="id_is_trigger_list_0")
+    checkbox = html.find(id="id_is_trigger_list")
     assert "checked" not in checkbox.attrs
 
 
 def test_trigger_list_checkbox_visible_checked(authorized_client):
     response = authorized_client.get(reverse("core:index") + "/?is_trigger_list=True")
     html = BeautifulSoup(response.content, "html.parser")
-    checkbox = html.find(id="id_is_trigger_list_0")
+    checkbox = html.find(id="id_is_trigger_list")
     assert "checked" in checkbox.attrs
 
 
