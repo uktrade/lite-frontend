@@ -77,14 +77,10 @@
                     <td class="govuk-table__cell">
         				{% if case.latest_activity %}
         					<div>
-        						{% if case.latest_activity.user.type == 'exporter' %}
-        							Applicant {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-        						{% else %}
-        							{{ case.latest_activity.user.team }} {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-        						{% endif %}
+			                    {% include 'activities/includes/activity-entry-user.html' with activity=case.latest_activity %} {{ update.created_at|to_datetime|date:"d F Y" }}
         					</div>
         					<div>
-        						{{ case.latest_activity.user.first_name }} {{ case.latest_activity.user.last_name }} {{ case.latest_activity.text|linebreaksbr }}
+			                    {% include 'activities/includes/activity-entry-activity.html' with activity=case.latest_activity %}
         					</div>
         					{% if case.latest_activity.additional_text %}
         						<div class="app-updates__activity">
