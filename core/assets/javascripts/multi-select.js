@@ -2,7 +2,7 @@ import LiteTokenfield from "./lite-tokenfield";
 import LiteTokenFieldStartsWith from "./lite-tokenfield-starts-with";
 
 const defaultGetItem = (option) => {
-  return { id: option.value, name: option.text, classes: [] };
+  return { id: option.value, name: option.value, classes: [] };
 };
 
 const getItems = (element, getItem) => {

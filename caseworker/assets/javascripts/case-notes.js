@@ -86,7 +86,12 @@ export default function initMentionUsers() {
   if (!mentionUserField) return;
 
   const mentionUserTokenField =
-    progressivelyEnhanceMultipleSelectFieldStartsWith(mentionUserField);
+    progressivelyEnhanceMultipleSelectFieldStartsWith(
+      mentionUserField,
+      (option) => {
+        return { id: option.value, name: option.text, classes: [] };
+      }
+    );
 }
 
 export { CaseNote, initCaseNotes, initMentionUsers };

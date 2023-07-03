@@ -28,8 +28,12 @@ const createElements = () => {
 describe("Test progressivelyEnhanceMultipleSelectFieldStartsWith input", () => {
   beforeEach(() => {
     const element = createElements();
-    const tokenField =
-      progressivelyEnhanceMultipleSelectFieldStartsWith(element);
+    const tokenField = progressivelyEnhanceMultipleSelectFieldStartsWith(
+      element,
+      (option) => {
+        return { id: option.value, name: option.label, classes: [] };
+      }
+    );
   });
 
   test("_filterData a", () => {
