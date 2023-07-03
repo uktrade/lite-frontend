@@ -8,7 +8,6 @@ from django.urls import reverse
 from caseworker.core.services import get_countries
 from caseworker.queues.services import get_queues
 from core.forms.utils import coerce_str_to_bool
-from core.forms.widgets import CheckboxInputSmall
 
 SLA_DAYS_RANGE = 99
 
