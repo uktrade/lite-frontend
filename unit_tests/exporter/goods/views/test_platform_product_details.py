@@ -8,12 +8,6 @@ from core import client
 from core.constants import ProductCategories
 
 
-@pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_FLAG_NON_FIREARMS_PLATFORM_ENABLED = True
-    settings.FEATURE_C7_NCSC_ENABLED = True
-
-
 @pytest.fixture
 def complete_item_product_details_url(good_id):
     return reverse(
