@@ -19,55 +19,37 @@ const getItems = (element, getItem) => {
   return { items, selected };
 };
 
-const progressivelyEnhanceMultipleSelectField = (
-  element,
-  getItem = defaultGetItem
-) => {
-  element.parentElement.classList.add("tokenfield-container");
-  var { items, selected } = getItems(element, getItem);
-  var tokenField = new LiteTokenfield({
-    el: element,
-    items: items,
-    newItems: false,
-    addItemOnBlur: true,
-    filterSetItems: false,
-    addItemsOnPaste: true,
-    minChars: 1,
-    itemName: element.name,
-    setItems: selected,
-    keepItemsOrder: false,
-  });
+const progressivelyEnhanceMultipleSelectFactory = (TokenFieldType) => {
+  const enhancer = (element, getItem = defaultGetItem) => {
+    element.parentElement.classList.add("tokenfield-container");
+    var { items, selected } = getItems(element, getItem);
+    var tokenField = new TokenFieldType({
+      el: element,
+      items: items,
+      newItems: false,
+      addItemOnBlur: true,
+      filterSetItems: false,
+      addItemsOnPaste: true,
+      minChars: 1,
+      itemName: element.name,
+      setItems: selected,
+      keepItemsOrder: false,
+    });
 
-  tokenField._renderItems();
-  tokenField._html.container.id = element.id;
-  element.remove();
-  return tokenField;
+    tokenField._renderItems();
+    tokenField._html.container.id = element.id;
+    element.remove();
+    return tokenField;
+  };
+
+  return enhancer;
 };
 
-const progressivelyEnhanceMultipleSelectFieldStartsWith = (
-  element,
-  getItem = defaultGetItem
-) => {
-  element.parentElement.classList.add("tokenfield-container");
-  var { items, selected } = getItems(element, getItem);
-  var tokenField = new LiteTokenFieldStartsWith({
-    el: element,
-    items: items,
-    newItems: false,
-    addItemOnBlur: true,
-    filterSetItems: false,
-    addItemsOnPaste: true,
-    minChars: 1,
-    itemName: element.name,
-    setItems: selected,
-    keepItemsOrder: false,
-  });
+const progressivelyEnhanceMultipleSelectField =
+  progressivelyEnhanceMultipleSelectFactory(LiteTokenfield);
 
-  tokenField._renderItems();
-  tokenField._html.container.id = element.id;
-  element.remove();
-  return tokenField;
-};
+const progressivelyEnhanceMultipleSelectFieldStartsWith =
+  progressivelyEnhanceMultipleSelectFactory(LiteTokenFieldStartsWith);
 
 export {
   progressivelyEnhanceMultipleSelectField,
