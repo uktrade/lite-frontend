@@ -1,4 +1,4 @@
-import { progressivelyEnhanceMultipleSelectField } from "core/multi-select-starts-with";
+import { progressivelyEnhanceMultipleSelectFieldStartsWith } from "core/multi-select";
 class CaseNote {
   TEXTAREA_FOCUSED_CLASS = "case-note__textarea--focused";
   constructor($el) {
@@ -86,7 +86,7 @@ export default function initMentionUsers() {
   if (!mentionUserField) return;
 
   const mentionUserTokenField =
-    progressivelyEnhanceMultipleSelectField(mentionUserField);
+    progressivelyEnhanceMultipleSelectFieldStartsWith(mentionUserField);
 }
 
 export { CaseNote, initCaseNotes, initMentionUsers };

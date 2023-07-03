@@ -1,6 +1,6 @@
 import LiteTokenfield from "./lite-tokenfield";
 
-class LiteTokenFieldCustomSearch extends LiteTokenfield {
+class LiteTokenFieldStartsWith extends LiteTokenfield {
   /**
    * Override __filterData to sort by startswith
    * @param val the user search term
@@ -23,4 +23,4 @@ class LiteTokenFieldCustomSearch extends LiteTokenfield {
   };
 }
 
-export default window.TokenField = LiteTokenFieldCustomSearch;
+export default window.StartsWithTokenField = LiteTokenFieldStartsWith;

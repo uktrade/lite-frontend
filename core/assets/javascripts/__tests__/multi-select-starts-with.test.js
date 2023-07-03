@@ -1,14 +1,10 @@
-import LiteTokenFieldCustomSearch from "../lite-tokenfield-starts-with";
+import { progressivelyEnhanceMultipleSelectFieldStartsWith } from "../multi-select";
 // make a document with a basic dropdown to instantiate and filter with tokenfield
 
 const createElements = () => {
   document.body.innerHTML = `
     <select
-    name="mentions"
-    aria-describedby="id_mentions_hint"
-    class="selectmultiple"
-    id="id_mentions"
-    multiple=""
+    id="select"
     >
         <option value="12345">
             damien
@@ -25,134 +21,61 @@ const createElements = () => {
     </select>
     `;
 
-  const element = document.querySelector("#id_mentions");
+  const element = document.querySelector("#select");
   return element;
 };
 
-const createTokenField = (element, items) => {
-  return new LiteTokenFieldCustomSearch({
-    el: element,
-    items: items,
-    newItems: false,
-    addItemOnBlur: true,
-    filterSetItems: false,
-    addItemsOnPaste: true,
-    minChars: 1,
-    itemName: element.name,
-    setItems: [],
-    keepItemsOrder: false,
+describe("Test progressivelyEnhanceMultipleSelectFieldStartsWith input", () => {
+  beforeEach(() => {
+    const element = createElements();
+    const tokenField =
+      progressivelyEnhanceMultipleSelectFieldStartsWith(element);
   });
-};
-
-describe("LiteTokenFieldCustomSearch", () => {
-  const items = [
-    {
-      id: "12345",
-      name: "damien",
-      class: [],
-    },
-    {
-      id: "1234",
-      name: "Daniel",
-      class: [],
-    },
-    {
-      id: "123",
-      name: "adam",
-      class: [],
-    },
-    {
-      id: "678",
-      name: "Mathew (DDAT)",
-      class: [],
-    },
-  ];
-  const element = createElements();
-  const tokenField = createTokenField(element, items);
 
   test("_filterData a", () => {
-    const expected = [
-      {
-        id: "123",
-        name: "adam",
-        class: [],
-      },
-      {
-        id: "12345",
-        name: "damien",
-        class: [],
-      },
-      {
-        id: "1234",
-        name: "Daniel",
-        class: [],
-      },
-      {
-        id: "678",
-        name: "Mathew (DDAT)",
-        class: [],
-      },
-    ];
-    let orderedItems = tokenField._filterData("a", items);
-    expect(orderedItems).toStrictEqual(expected);
+    const expected = ["adam", "damien", "Daniel", "Mathew (DDAT)"];
+    document.querySelector(".tokenfield-input").value = "a";
+    document.querySelector(".tokenfield-input").click();
+    const results = Array.from(
+      document.querySelectorAll(".tokenfield-suggest-item")
+    ).map((item) => item.innerHTML);
+    expect(results).toStrictEqual(expected);
   });
 
-  test("_filterData da", () => {
-    const expected = [
-      {
-        id: "12345",
-        name: "damien",
-        class: [],
-      },
-      {
-        id: "1234",
-        name: "Daniel",
-        class: [],
-      },
-      {
-        id: "123",
-        name: "adam",
-        class: [],
-      },
-      {
-        id: "678",
-        name: "Mathew (DDAT)",
-        class: [],
-      },
-    ];
-    let orderedItems = tokenField._filterData("da", items);
-    expect(orderedItems).toStrictEqual(expected);
+  test("input: da", () => {
+    const expected = ["damien", "Daniel", "adam", "Mathew (DDAT)"];
+    document.querySelector(".tokenfield-input").value = "da";
+    document.querySelector(".tokenfield-input").click();
+    const results = Array.from(
+      document.querySelectorAll(".tokenfield-suggest-item")
+    ).map((item) => item.innerHTML);
+    expect(results).toStrictEqual(expected);
   });
 
-  test("_filterData am", () => {
-    const expected = [
-      {
-        id: "123",
-        name: "adam",
-        class: [],
-      },
-      {
-        id: "12345",
-        name: "damien",
-        class: [],
-      },
-    ];
-    let orderedItems = tokenField._filterData("am", items);
-    expect(orderedItems).toStrictEqual(expected);
+  test("input: am", () => {
+    const expected = ["adam", "damien"];
+    document.querySelector(".tokenfield-input").value = "am";
+    document.querySelector(".tokenfield-input").click();
+    const results = Array.from(
+      document.querySelectorAll(".tokenfield-suggest-item")
+    ).map((item) => item.innerHTML);
+    expect(results).toStrictEqual(expected);
   });
 
-  test("_filterData ddat", () => {
-    const expected = [
-      {
-        id: "678",
-        name: "Mathew (DDAT)",
-        class: [],
-      },
-    ];
-    let orderedItems = tokenField._filterData("ddat", items);
-    expect(orderedItems).toStrictEqual(expected);
+  test("input: ddat", () => {
+    const expected = ["Mathew (DDAT)"];
+    document.querySelector(".tokenfield-input").value = "ddat";
+    document.querySelector(".tokenfield-input").click();
+    var results = Array.from(
+      document.querySelectorAll(".tokenfield-suggest-item")
+    ).map((item) => item.innerHTML);
+    expect(results).toStrictEqual(expected);
 
-    orderedItems = tokenField._filterData("DDAT", items);
-    expect(orderedItems).toStrictEqual(expected);
+    document.querySelector(".tokenfield-input").value = "DDAT";
+    document.querySelector(".tokenfield-input").click();
+    var results = Array.from(
+      document.querySelectorAll(".tokenfield-suggest-item")
+    ).map((item) => item.innerHTML);
+    expect(results).toStrictEqual(expected);
   });
 });
