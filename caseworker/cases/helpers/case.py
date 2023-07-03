@@ -163,6 +163,10 @@ class CaseView(CaseworkerMixin, TemplateView):
                 if "report_summary_prefix" in good and good["report_summary_prefix"]:
                     report_summary = f"{good['report_summary_prefix']['name']} {report_summary}"
                 goods_summary["report_summaries"].add(report_summary)
+            # support legacy report_summary field until it is removed
+            elif good.get("report_summary"):
+                goods_summary["report_summaries"].add(good["report_summary"])
+
             goods_summary["total_value"] += Decimal(good["value"])
         return goods_summary
 
