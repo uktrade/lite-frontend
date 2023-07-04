@@ -138,14 +138,10 @@
 							{% endif %}
 						</div>
 						<div class="app-updates__department">
-							{% if update.user.type == 'exporter' %}
-								Applicant {{ update.created_at|to_datetime|date:"d F Y" }}
-							{% else %}
-								{{ update.user.team }} {{ update.created_at|to_datetime|date:"d F Y" }}
-							{% endif %}
+			                {% include 'activities/includes/activity-entry-user.html' with activity=update %} {{ update.created_at|to_datetime|date:"d F Y" }}
 						</div>
 						<div class="app-updates__activity">
-							{{ update.user.first_name }} {{ update.user.last_name }} {{ update.text|linebreaksbr }}
+			                {% include 'activities/includes/activity-entry-activity.html' with activity=update %}
 						</div>
 						{% if update.additional_text %}
 							<div class="app-updates__activity">

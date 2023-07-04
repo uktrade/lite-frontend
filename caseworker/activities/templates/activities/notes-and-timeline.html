@@ -71,19 +71,9 @@
                                 {% for activity in activities_by_date.list %}
                                     {% with user=activity.user %}
                                         <div class="notes-and-timeline-timeline__day-group-item">
-                                            {% if user.type == 'exporter' %}
-                                                <span class="app-activity__item__user">Applicant:</span> {{ user.first_name }} {{ user.last_name }}
-                                            {% else %}
-                                                {% if user.team %}<span class="app-activity__item__user">{{ user.team }}:</span> {% endif %}{{ user.first_name }} {{ user.last_name }}
-                                            {% endif %}
-                                            {% if activity.verb == "created_case_note_with_mentions" %}
-                                                {{ activity.text|slice:":-1"}}
-                                                {{ activity.payload.mention_users|join:", " }}
-                                                in a case note.
-                                                {% if activity.payload.is_urgent %} <p class="govuk-tag govuk-tag--red">URGENT</p> {% endif %}
-                                            {% else %}
-                                                {{ activity.text|linebreaksbr }}
-                                             {% endif %}
+
+			                                {% include 'activities/includes/activity-entry-user.html' with activity=activity %}
+			                                {% include 'activities/includes/activity-entry-activity.html' with activity=activity %}
                                             {% if activity.additional_text %}
                                                 <div class="notes-and-timeline-timeline__day-group-note">
                                                     {{ activity.additional_text|linebreaks }}

@@ -1,0 +1,7 @@
+{% with user=activity.user %}
+    {% if user.type == 'exporter' %}
+        <span class="app-activity__item__user">Applicant:</span> {{ user.first_name }} {{ user.last_name }}
+    {% else %}
+        {% if user.team %}<span class="app-activity__item__user">{{ user.team }}:</span> {% endif %}{{ user.first_name }} {{ user.last_name }}
+    {% endif %}
+{% endwith %}
