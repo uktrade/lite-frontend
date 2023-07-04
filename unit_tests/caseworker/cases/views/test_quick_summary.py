@@ -146,3 +146,6 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
 
     expected_end_use = data_standard_case["case"]["data"]["intended_end_use"]
     assert expected_end_use in table_text
+
+    expected_end_user = data_standard_case["case"]["data"]["end_user"]["name"]
+    assert expected_end_user in table_text
