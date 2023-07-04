@@ -1,15 +1,11 @@
 import LiteTokenfield from "./lite-tokenfield";
+import LiteTokenFieldStartsWith from "./lite-tokenfield-starts-with";
 
 const defaultGetItem = (option) => {
   return { id: option.value, name: option.value, classes: [] };
 };
 
-const progressivelyEnhanceMultipleSelectField = (
-  element,
-  getItem = defaultGetItem
-) => {
-  element.parentElement.classList.add("tokenfield-container");
-
+const getItems = (element, getItem) => {
   var items = [];
   var selected = [];
   for (var i = 0; i < element.options.length; i++) {
@@ -20,22 +16,42 @@ const progressivelyEnhanceMultipleSelectField = (
     }
     items.push(item);
   }
-  var tokenField = new LiteTokenfield({
-    el: element,
-    items: items,
-    newItems: false,
-    addItemOnBlur: true,
-    filterSetItems: false,
-    addItemsOnPaste: true,
-    minChars: 1,
-    itemName: element.name,
-    setItems: selected,
-    keepItemsOrder: false,
-  });
-  tokenField._renderItems();
-  tokenField._html.container.id = element.id;
-  element.remove();
-  return tokenField;
+  return { items, selected };
 };
 
-export { progressivelyEnhanceMultipleSelectField };
+const progressivelyEnhanceMultipleSelectFactory = (TokenFieldType) => {
+  const enhancer = (element, getItem = defaultGetItem) => {
+    element.parentElement.classList.add("tokenfield-container");
+    var { items, selected } = getItems(element, getItem);
+    var tokenField = new TokenFieldType({
+      el: element,
+      items: items,
+      newItems: false,
+      addItemOnBlur: true,
+      filterSetItems: false,
+      addItemsOnPaste: true,
+      minChars: 1,
+      itemName: element.name,
+      setItems: selected,
+      keepItemsOrder: false,
+    });
+
+    tokenField._renderItems();
+    tokenField._html.container.id = element.id;
+    element.remove();
+    return tokenField;
+  };
+
+  return enhancer;
+};
+
+const progressivelyEnhanceMultipleSelectField =
+  progressivelyEnhanceMultipleSelectFactory(LiteTokenfield);
+
+const progressivelyEnhanceMultipleSelectFieldStartsWith =
+  progressivelyEnhanceMultipleSelectFactory(LiteTokenFieldStartsWith);
+
+export {
+  progressivelyEnhanceMultipleSelectField,
+  progressivelyEnhanceMultipleSelectFieldStartsWith,
+};

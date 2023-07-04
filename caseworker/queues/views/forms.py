@@ -5,9 +5,9 @@ from django import forms
 from django.forms.widgets import HiddenInput
 from django.urls import reverse
 
+from caseworker.core.services import get_countries
 from caseworker.queues.services import get_queues
-from core.forms.utils import coerce_str_to_bool
-from core.forms.widgets import CheckboxInputSmall
+
 
 SLA_DAYS_RANGE = 99
 
@@ -49,16 +49,16 @@ class CasesFiltersForm(forms.Form):
         label="Party name",
         required=False,
     )
-    goods_related_description = forms.CharField(
-        label="Goods related description",
+    product_name = forms.CharField(
+        label="Product name",
         required=False,
     )
     max_total_value = forms.DecimalField(
         label="Max total value (£)",
         required=False,
     )
-    country = forms.CharField(
-        label="Country",
+    report_summary = forms.CharField(
+        label="Report summary",
         required=False,
     )
     submitted_from = DateInputField(
@@ -77,16 +77,28 @@ class CasesFiltersForm(forms.Form):
         label="Finalised before",
         required=False,
     )
-    exclude_denial_matches = forms.TypedChoiceField(
-        choices=[(True, "Exclude denial matches")],
-        label="",
-        widget=CheckboxInputSmall(),
+    exclude_denial_matches = forms.BooleanField(
+        label="Exclude denial matches",
         required=False,
     )
-    exclude_sanction_matches = forms.TypedChoiceField(
-        choices=[(True, "Exclude sanction matches")],
-        label="",
-        widget=CheckboxInputSmall(),
+    exclude_sanction_matches = forms.BooleanField(
+        label="Exclude sanction matches",
+        required=False,
+    )
+    exclude_control_list_entry = forms.BooleanField(
+        label="Exclude control list entries",
+        required=False,
+    )
+    exclude_regime_entry = forms.BooleanField(
+        label="Exclude regime entries",
+        required=False,
+    )
+    is_trigger_list = forms.BooleanField(
+        label="Trigger list",
+        required=False,
+    )
+    is_nca_applicable = forms.BooleanField(
+        label="Nuclear Cooperation Agreement",
         required=False,
     )
 
@@ -101,11 +113,11 @@ class CasesFiltersForm(forms.Form):
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
 
-        nca_choices = [(True, "Nuclear Cooperation Agreement")]
-        trigger_list_guidelines_choices = [(True, "Trigger list")]
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
         regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]
+        countries_response, _ = get_countries(request)
+        country_choices = [(country["id"], country["name"]) for country in countries_response["countries"]]
         assigned_queues_choices = [
             (queue["id"], f"{queue['team']['name']}: {queue['name']}")
             for queue in get_queues(request, convert_to_options=False, users_team_first=True)
@@ -154,26 +166,19 @@ class CasesFiltersForm(forms.Form):
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "regime_entry"}),
         )
+        self.fields["countries"] = forms.MultipleChoiceField(
+            label="Country",
+            choices=country_choices,
+            required=False,
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "countries"}),
+        )
         self.fields["assigned_queues"] = forms.MultipleChoiceField(
             label="Assigned queues",
             choices=assigned_queues_choices,
             required=False,
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "assigned-queues"}),
-        )
-        self.fields["is_nca_applicable"] = forms.TypedChoiceField(
-            choices=nca_choices,
-            coerce=coerce_str_to_bool,
-            label="",
-            widget=CheckboxInputSmall(),
-            required=False,
-        )
-        self.fields["is_trigger_list"] = forms.TypedChoiceField(
-            choices=trigger_list_guidelines_choices,
-            coerce=coerce_str_to_bool,
-            label="",
-            widget=CheckboxInputSmall(),
-            required=False,
         )
         self.fields["return_to"] = forms.CharField(
             label="",
@@ -214,8 +219,11 @@ class CasesFiltersForm(forms.Form):
                 AccordionSection(
                     "Product",
                     Field.select("control_list_entry", id="control_list_entry"),
+                    Field("exclude_control_list_entry"),
                     Field.text("regime_entry"),
-                    Field.text("goods_related_description"),
+                    Field("exclude_regime_entry"),
+                    Field.text("report_summary"),
+                    Field.text("product_name"),
                     Field("max_total_value", css_class="govuk-input"),
                     Field("is_trigger_list"),
                     Field("is_nca_applicable"),
@@ -228,10 +236,10 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Parties",
-                    Field.text("country"),
+                    Field.text("countries"),
                     Field.text("party_name"),
-                    Field("exclude_denial_matches"),
-                    Field("exclude_sanction_matches"),
+                    Field.checkbox("exclude_denial_matches"),
+                    Field.checkbox("exclude_sanction_matches"),
                 ),
                 css_id="accordion-1",
             ),

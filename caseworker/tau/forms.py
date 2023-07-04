@@ -18,7 +18,6 @@ from caseworker.regimes.enums import Regimes
 from .summaries import get_good_on_application_tau_summary
 from .widgets import GoodsMultipleSelect
 from ..report_summary.services import get_report_summary_prefix, get_report_summary_subject
-from django.conf import settings
 
 REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
 REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
@@ -223,10 +222,9 @@ class TAUEditForm(forms.Form):
                 ),
                 "None",
             ),
+            "is_ncsc_military_information_security",
             "comment",
         ]
-        if settings.FEATURE_C7_NCSC_ENABLED:
-            fields.insert(len(fields) - 1, "is_ncsc_military_information_security")
         self.helper.layout = Layout(*fields)
 
     def validate_single_regime_choice(self, cleaned_data, selected_regimes, regime, field_name, error_message):
