@@ -212,7 +212,10 @@ def test_case_POST_remove_case_officer_success(
     url = reverse("cases:remove-case-officer", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
     response = authorized_client.post(url, follow=True)
     assert response.status_code == 200
-    assert response.redirect_chain[-1][0] == f"/queues/{data_queue['id']}/cases/{data_standard_case['case']['id']}/"
+    assert (
+        response.redirect_chain[-1][0]
+        == f"/queues/{data_queue['id']}/cases/{data_standard_case['case']['id']}/details/"
+    )
     messages = [str(msg) for msg in response.context["messages"]]
     expected_message = "some user was successfully removed as Licensing Unit case officer"
     assert messages == [expected_message]
@@ -243,7 +246,10 @@ def test_case_remove_officer_POST_error(
     url = reverse("cases:remove-case-officer", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
     response = authorized_client.post(url, follow=True)
     assert response.status_code == 200
-    assert response.redirect_chain[-1][0] == f"/queues/{data_queue['id']}/cases/{data_standard_case['case']['id']}/"
+    assert (
+        response.redirect_chain[-1][0]
+        == f"/queues/{data_queue['id']}/cases/{data_standard_case['case']['id']}/details/"
+    )
     messages = [str(msg) for msg in response.context["messages"]]
     expected_message = (
         "An error occurred when removing some user as Licensing Unit case officer. Please try again later"
