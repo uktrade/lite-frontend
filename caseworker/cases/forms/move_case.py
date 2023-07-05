@@ -20,6 +20,8 @@ def move_case_form(request: HttpRequest, queue, case: dict):
                 ],
             ),
         ],
-        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"]})),
+        back_link=BackLink(
+            url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"], "tab": "details"})
+        ),
         container="case",
     )

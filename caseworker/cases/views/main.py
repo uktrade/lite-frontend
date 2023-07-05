@@ -392,7 +392,7 @@ class MoveCase(SingleFormView):
         self.context = {"case": case}
         self.success_message = cases.Manage.MoveCase.SUCCESS_MESSAGE
         self.success_url = reverse_lazy(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
         )
 
 
