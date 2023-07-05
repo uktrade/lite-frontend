@@ -667,6 +667,11 @@ $case-header-text-colour: govuk-colour('white');
                 width: 15rem;
             }
 
+            ol#quick-summary__product-names {
+                padding-left: 1rem;
+                margin: 0;
+            }
+
             ul.app-flags {
                 white-space: nowrap;
                 flex-flow: wrap;

@@ -141,9 +141,11 @@
                 <tr class="govuk-table__row app-table__row" data-customiser-key="product_names">
                     <th scope="row" class="govuk-table__header">Product names</th>
                     <td class="govuk-table__cell">
+                        <ol id="quick-summary__product-names">
                         {% for name in goods_summary.names %}
-                            {{name}}<br/>
+                            <li>{{name}}</li>
                         {% endfor %}
+                        </ol>
                     </td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="total_value">
