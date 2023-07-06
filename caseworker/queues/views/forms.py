@@ -101,6 +101,11 @@ class CasesFiltersForm(forms.Form):
         label="Nuclear Cooperation Agreement",
         required=False,
     )
+    return_to = forms.CharField(
+        label="",
+        widget=HiddenInput(),
+        required=False,
+    )
 
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
@@ -179,11 +184,6 @@ class CasesFiltersForm(forms.Form):
             required=False,
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "assigned-queues"}),
-        )
-        self.fields["return_to"] = forms.CharField(
-            label="",
-            widget=HiddenInput(),
-            required=False,
         )
 
         case_filters = [
