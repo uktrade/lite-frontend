@@ -231,9 +231,9 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Applicant",
-                    Field.text("organisation_name"),
-                    Field.text("exporter_site_name"),
-                    Field.select("goods_starting_point"),
+                    "organisation_name",
+                    "exporter_site_name",
+                    "goods_starting_point",
                 ),
                 AccordionSection(
                     "Parties",
