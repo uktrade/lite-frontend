@@ -197,7 +197,6 @@ class CasesFiltersForm(forms.Form):
             Field.select("flags"),
             Field("finalised_from"),
             Field("finalised_to"),
-            "return_to",
         ]
         if queue.get("is_system_queue"):
             case_filters.append(Field.select("assigned_queues"))
@@ -210,6 +209,7 @@ class CasesFiltersForm(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
+            "return_to",
             Accordion(
                 AccordionSection(
                     "Case",
