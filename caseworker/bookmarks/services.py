@@ -115,10 +115,10 @@ class BookmarkEnricher:
             out["url"] = self._url_from_bookmark(bookmark_filter)
 
             return out
-        except Exception as ex:  # pylint: disable=broad-except
-            logger.exception("Error enriching bookmark")
+        except Exception:  # pylint: disable=broad-except
             if settings.DEBUG:
                 raise
+            logger.exception("Error enriching bookmark")
             return None
 
     def _description_from_filter(self, bookmark_filter):
