@@ -223,6 +223,29 @@ def test_assign_flags_destination_form_submit(
     assert response.status_code == 302
 
 
+def test_assign_flags_case_form_submit(
+    authorized_client, mock_queue, data_standard_case, mock_put_flags, mock_case, queue_pk, standard_case_pk
+):
+
+    destination_pk = data_standard_case["case"]["data"]["destinations"]["data"]["id"]
+
+    valid_data = {
+        "note": "Lorem ipsum",
+        "flags[]": "",
+    }
+
+    url = (
+        reverse("cases:assign_flags", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk})
+        + f"?case={standard_case_pk}"
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    response = authorized_client.post(url, data=valid_data)
+    assert response.url == f"/queues/{queue_pk}/cases/{standard_case_pk}/details/"
+    assert response.status_code == 302
+
+
 def test_assign_flags_form_return_to(
     authorized_client, mock_queue, data_standard_case, mock_put_flags, mock_case, queue_pk, standard_case_pk
 ):

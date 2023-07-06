@@ -1,6 +1,8 @@
+from django.urls import reverse
+
 from caseworker.cases.services import get_user_case_queues
 from lite_content.lite_internal_frontend.cases import DoneWithCaseOnQueueForm
-from lite_forms.components import Form, Option, Checkboxes, DetailComponent, TextArea, HiddenField
+from lite_forms.components import Form, Option, Checkboxes, DetailComponent, TextArea, HiddenField, BackLink
 from lite_forms.helpers import conditional
 from caseworker.queues.services import get_queue
 
@@ -36,5 +38,6 @@ def done_with_case_form(request, queue_pk, case_pk, has_review_date):
         ],
         default_button_name=DoneWithCaseOnQueueForm.SUBMIT,
         container="case",
+        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_pk, "tab": "details"})),
         javascript_imports=conditional(has_review_date, {"/javascripts/assign_queue.js"}, None),
     )

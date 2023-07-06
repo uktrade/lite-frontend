@@ -21,6 +21,8 @@ def change_status_form(queue, case, statuses):
                 ],
             ),
         ],
-        back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"]})),
+        back_link=BackLink(
+            url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"], "tab": "details"})
+        ),
         container="case",
     )
