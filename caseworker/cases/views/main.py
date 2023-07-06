@@ -71,14 +71,13 @@ logger = getLogger(__name__)
 class CaseTabsMixin:
     def get_tabs(self):
         tabs = [
+            Tabs.QUICK_SUMMARY,
             Tabs.DETAILS,
             Tabs.LICENCES,
             Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
         ]
-        if settings.FEATURE_QUICK_SUMMARY:
-            tabs.insert(0, Tabs.QUICK_SUMMARY)
 
         return tabs
 
