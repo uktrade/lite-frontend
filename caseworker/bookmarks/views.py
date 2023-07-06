@@ -29,7 +29,7 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
     def form_valid(self, form):
         data = form.cleaned_data
         self.add_bookmark(data)
-        messages.success(self.request, f"Bookmark saved")
+        messages.success(self.request, "Bookmark saved")
         self.success_url = data["return_to"]
 
         return super().form_valid(form)
@@ -67,7 +67,7 @@ class DeleteBookmark(LoginRequiredMixin, FormView):
 
         self.delete_bookmark(bookmark_id)
 
-        messages.success(self.request, f"Saved filter deleted")
+        messages.success(self.request, "Saved filter deleted")
         self.success_url = return_to
 
         return super().form_valid(form)
@@ -93,7 +93,7 @@ class RenameBookmark(LoginRequiredMixin, FormView):
 
         self.rename_bookmark(bookmark_id, data["name"])
 
-        messages.success(self.request, f"Saved filter renamed")
+        messages.success(self.request, "Saved filter renamed")
         self.success_url = return_to
 
         return super().form_valid(form)
