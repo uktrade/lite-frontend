@@ -47,20 +47,20 @@ def add_bookmark(request, data):
         "name": bookmark_name,
         "user_id": user_id,
     }
-    response = client.post(request, f"/bookmarks", data)
+    response = client.post(request, "/bookmarks", data)
 
     return response
 
 
 def delete_bookmark(request, bookmark_id):
     data = {"id": bookmark_id}
-    response = client.delete(request, f"/bookmarks", data)
+    response = client.delete(request, "/bookmarks", data)
     return response
 
 
 def rename_bookmark(request, bookmark_id, name):
     data = {"id": bookmark_id, "name": name}
-    return client.put(request, f"/bookmarks", data)
+    return client.put(request, "/bookmarks", data)
 
 
 def get_label_from_field(field):
