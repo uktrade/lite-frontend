@@ -4,7 +4,37 @@
 <h2 class="govuk-heading-m">Quick summary</h2>
 <p class="govuk-caption-m">Create your own summary of this case</p>
 
-<div class="quick-summary customiser" data-customiser-spec='{"options_label": "Customise quick summary", "identifier": "quick-summary", "analytics_prefix": "qs", "options_hint": "Select items to show", "toggleable_elements": [{"label": "Status", "key": "status", "default_visible": false}, {"label": "Licensing Unit case officer", "key": "lu_case_officer", "default_visible": true}, {"label": "Case adviser", "key": "case_advisers", "default_visible": false}, {"label": "Temporary or permanent", "key": "temporary_permanent", "default_visible": false}, {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false}, {"label": "Flags", "key": "flags", "default_visible": false}, {"label": "Queries", "key": "queries", "default_visible": false}, {"label": "Latest action", "key": "latest_action", "default_visible": false}, {"label": "Days elapsed on this queue", "key": "days_on_queue", "default_visible": true}, {"label": "Product names", "key": "product_names", "default_visible": false}, {"label": "Total value", "key": "total_value", "default_visible": false}, {"label": "Control list entry", "key": "control_list_entries", "default_visible": true}, {"label": "Regimes", "key": "regimes", "default_visible": true}, {"label": "Report summaries", "key": "report_summaries", "default_visible": true}, {"label": "Security graded", "key": "security_graded", "default_visible": false}, {"label": "Security approvals", "key": "security_approvals", "default_visible": false}, {"label": "Applicant name", "key": "applicant_name", "default_visible": true}, {"label": "Destinations", "key": "destinations", "default_visible": true}, {"label": "Denial matches", "key": "denial_matches", "default_visible": true}, {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false}, {"label": "End use", "key": "end_use", "default_visible": true}, {"label": "End-user document", "key": "end_user_documents", "default_visible": true}]}'>
+<div class="quick-summary customiser" data-customiser-spec='{
+    "options_label": "Customise quick summary",
+    "identifier": "quick-summary",
+    "analytics_prefix": "qs",
+    "options_hint": "Select items to show",
+    "toggleable_elements": [
+        {"label": "Status", "key": "status", "default_visible": false},
+        {"label": "Licensing Unit case officer", "key": "lu_case_officer", "default_visible": true},
+        {"label": "Case adviser", "key": "case_advisers", "default_visible": false},
+        {"label": "Temporary or permanent", "key": "temporary_permanent", "default_visible": false},
+        {"label": "Assigned queues", "key": "assigned_queues", "default_visible": false},
+        {"label": "Flags", "key": "flags", "default_visible": false},
+        {"label": "Queries", "key": "queries", "default_visible": false},
+        {"label": "Latest action", "key": "latest_action", "default_visible": false},
+        {"label": "Days elapsed on this queue", "key": "days_on_queue", "default_visible": true},
+        {"label": "Product names", "key": "product_names", "default_visible": false},
+        {"label": "Total value", "key": "total_value", "default_visible": false},
+        {"label": "Control list entry", "key": "control_list_entries", "default_visible": true},
+        {"label": "Regimes", "key": "regimes", "default_visible": true},
+        {"label": "Report summaries", "key": "report_summaries", "default_visible": true},
+        {"label": "Security graded", "key": "security_graded", "default_visible": false},
+        {"label": "Security approvals", "key": "security_approvals", "default_visible": false},
+        {"label": "Applicant name", "key": "applicant_name", "default_visible": true},
+        {"label": "Destinations", "key": "destinations", "default_visible": true},
+        {"label": "Denial matches", "key": "denial_matches", "default_visible": true},
+        {"label": "Sanction matches", "key": "sanction_matches", "default_visible": false},
+        {"label": "End-use", "key": "end_use", "default_visible": true},
+        {"label": "End-user", "key": "end_user", "default_visible": true},
+        {"label": "End-user document", "key": "end_user_documents", "default_visible": true}
+    ]
+}'>
 
 
     <div class="quick-summary__content">
@@ -77,14 +107,10 @@
                     <td class="govuk-table__cell">
         				{% if case.latest_activity %}
         					<div>
-        						{% if case.latest_activity.user.type == 'exporter' %}
-        							Applicant {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-        						{% else %}
-        							{{ case.latest_activity.user.team }} {{ case.latest_activity.created_at|to_datetime|date:"d F Y" }}
-        						{% endif %}
+			                    {% include 'activities/includes/activity-entry-user.html' with activity=case.latest_activity %} {{ update.created_at|to_datetime|date:"d F Y" }}
         					</div>
         					<div>
-        						{{ case.latest_activity.user.first_name }} {{ case.latest_activity.user.last_name }} {{ case.latest_activity.text|linebreaksbr }}
+			                    {% include 'activities/includes/activity-entry-activity.html' with activity=case.latest_activity %}
         					</div>
         					{% if case.latest_activity.additional_text %}
         						<div class="app-updates__activity">
@@ -115,9 +141,11 @@
                 <tr class="govuk-table__row app-table__row" data-customiser-key="product_names">
                     <th scope="row" class="govuk-table__header">Product names</th>
                     <td class="govuk-table__cell">
+                        <ol id="quick-summary__product-names">
                         {% for name in goods_summary.names %}
-                            {{name}}<br/>
+                            <li>{{name}}</li>
                         {% endfor %}
+                        </ol>
                     </td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="total_value">
@@ -201,6 +229,10 @@
                 <tr class="govuk-table__row app-table__row" data-customiser-key="end_use">
                     <th scope="row" class="govuk-table__header">End-use</th>
                     <td class="govuk-table__cell" id="quick-summary__end-use">{{ case.data.intended_end_use }}</td>
+                </tr>
+                <tr class="govuk-table__row app-table__row" data-customiser-key="end_user">
+                    <th scope="row" class="govuk-table__header">End-user</th>
+                    <td class="govuk-table__cell" id="quick-summary__end-user">{{ case.data.end_user.name }}</td>
                 </tr>
                 <tr class="govuk-table__row app-table__row" data-customiser-key="end_user_documents">
                     <th scope="row" class="govuk-table__header">End-user document</th>

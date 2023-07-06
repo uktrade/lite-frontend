@@ -1,0 +1,8 @@
+{% if activity.verb == "created_case_note_with_mentions" %}
+    {{ activity.text|slice:":-1"}}
+    {{ activity.payload.mention_users|join:", " }}
+    in a case note.
+    {% if activity.payload.is_urgent %} <p class="govuk-tag govuk-tag--red">URGENT</p> {% endif %}
+{% else %}
+    {{ activity.text|linebreaksbr }}
+{% endif %}

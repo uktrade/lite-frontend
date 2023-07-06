@@ -7,7 +7,6 @@ from pytest_django.asserts import assertTemplateUsed, assertTemplateNotUsed
 
 from copy import deepcopy
 from dateutil.parser import parse
-from django.test import override_settings
 from django.urls import reverse
 from django.utils import timezone
 
@@ -31,7 +30,6 @@ def setup(
     pass
 
 
-@override_settings(FEATURE_QUICK_SUMMARY=True)
 def test_case_summary_activated(authorized_client, data_queue, data_standard_case):
     url = reverse(
         "cases:case",
@@ -41,7 +39,6 @@ def test_case_summary_activated(authorized_client, data_queue, data_standard_cas
     assertTemplateUsed(response, "case/tabs/quick-summary.html")
 
 
-@override_settings(FEATURE_QUICK_SUMMARY=True)
 def test_case_summary_data(authorized_client, data_queue, data_standard_case):
     gov_user = {
         "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
@@ -146,3 +143,6 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
 
     expected_end_use = data_standard_case["case"]["data"]["intended_end_use"]
     assert expected_end_use in table_text
+
+    expected_end_user = data_standard_case["case"]["data"]["end_user"]["name"]
+    assert expected_end_user in table_text
