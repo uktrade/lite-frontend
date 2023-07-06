@@ -56,6 +56,7 @@ class CasesFiltersForm(forms.Form):
     max_total_value = forms.DecimalField(
         label="Max total value (£)",
         required=False,
+        widget=forms.TextInput,
     )
     report_summary = forms.CharField(
         label="Report summary",
@@ -224,7 +225,7 @@ class CasesFiltersForm(forms.Form):
                     "exclude_regime_entry",
                     "report_summary",
                     "product_name",
-                    Field("max_total_value", css_class="govuk-input"),
+                    "max_total_value",
                     "is_trigger_list",
                     "is_nca_applicable",
                 ),

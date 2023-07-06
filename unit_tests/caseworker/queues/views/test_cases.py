@@ -294,7 +294,7 @@ def test_cases_home_page_max_total_value_search(authorized_client, mock_cases_se
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
     control_list_entry_filter_input = html.find(id="id_max_total_value")
-    assert control_list_entry_filter_input.attrs["type"] == "number"
+    assert control_list_entry_filter_input.attrs["type"] == "text"
     assert control_list_entry_filter_input.attrs["name"] == "max_total_value"
 
     url = reverse("queues:cases") + "?max_total_value=300"
