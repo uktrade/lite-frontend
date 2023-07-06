@@ -31,8 +31,8 @@ def fetch_bookmarks(request, filter_data, all_flags, all_cles, all_regimes, queu
     return {"user": enriched_bookmarks}
 
 
-def add_bookmark(request, data, raw_filters):
-    filter_to_save = enrich_filter_for_saving(data, raw_filters)
+def add_bookmark(request, data):
+    filter_to_save = enrich_filter_for_saving(data)
     now = datetime.today().strftime("%y%m%d-%H%M%S")
     filter_name = f"New unnamed filter ({now})"
     bookmark_name = filter_name
@@ -155,17 +155,11 @@ class BookmarkEnricher:
 
     def _url_from_bookmark(self, bookmark_filter):
         bookmark_filter = self._split_dates(bookmark_filter)
-
-        # We don't need the _id_ prefixed entries in the url
-        for key in list(bookmark_filter.keys()):
-            if key.startswith("_id_"):
-                del bookmark_filter[key]
-
         query = urlencode(bookmark_filter, doseq=True)
         return f"{self.bookmark_base_url}?{query}"
 
 
-def enrich_filter_for_saving(data, raw_filters):
+def enrich_filter_for_saving(data):
     keys_to_remove = [
         "csrfmiddlewaretoken",
         "save",
@@ -181,13 +175,5 @@ def enrich_filter_for_saving(data, raw_filters):
     for key, value in filters.items():
         if isinstance(value, Decimal):
             filters[key] = str(value)
-
-    # Add in _id_ prefixed data to preserve country and regime names. This is to prevent
-    # unnecessary lookup when we display the bookmarks later, as the description and
-    # url display need different values for these filters (status, gov_user etc)
-    # the former needing the display value and the latter an id.
-    for key, value in raw_filters.items():
-        if key.startswith("_id_") and key[4:] in filters:
-            filters[key] = raw_filters[key]
 
     return OrderedDict(sorted(filters.items()))

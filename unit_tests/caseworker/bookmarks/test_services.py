@@ -242,54 +242,29 @@ def test_enrich_bookmark_for_display_filters_out_errors(
 
 
 @pytest.mark.parametrize(
-    "name, filter_data, raw_filters, expected_filter_data",
+    "name, filter_data, expected_filter_data",
     [
         (
             "Test unwanted entries are removed",
-            {"case_reference": "ABC/123", "save": True, "saved_filter_description": "Filter_1"},
             {
                 "case_reference": "ABC/123",
-                "_id_country": "Germany",
-                "regime": "",
-                "_id_regime": "",
+                "csrfmiddlewaretoken": "csrfmiddlewaretoken",
                 "save": True,
+                "save_filter": True,
                 "saved_filter_description": "Filter_1",
+                "saved_filter_name": "Name",
+                "return_to": "/return-to/",
             },
             {"case_reference": "ABC/123"},
         ),
         (
-            "Test _id_ entry is copied over if the corresponding entry is present",
-            {"country": "DE"},
-            {"country": "DE", "_id_country": "Germany", "regime": "", "_id_regime": ""},
-            {"country": "DE", "_id_country": "Germany"},
-        ),
-        (
-            "Test _id_ entry is copied over for mulitple entries",
-            {"country": "DE", "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203"},
-            {
-                "country": "DE",
-                "_id_country": "Germany",
-                "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
-                "_id_regime": "Wassenaar Arrangement Sensitive",
-            },
-            {
-                "country": "DE",
-                "_id_country": "Germany",
-                "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
-                "_id_regime": "Wassenaar Arrangement Sensitive",
-            },
-        ),
-        (
             "Test decimal value converted properly",
             {"max_total_value": Decimal(200)},
-            {
-                "max_total_value": Decimal(200),
-            },
             {"max_total_value": "200"},
         ),
     ],
 )
-def test_enrich_filter_for_saving(name, filter_data, raw_filters, expected_filter_data):
-    actual_filter = enrich_filter_for_saving(filter_data, raw_filters)
+def test_enrich_filter_for_saving(name, filter_data, expected_filter_data):
+    actual_filter = enrich_filter_for_saving(filter_data)
 
     assert sorted(actual_filter.items()) == sorted(expected_filter_data.items())
