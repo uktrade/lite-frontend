@@ -169,7 +169,7 @@ def enrich_filter_for_saving(data):
         "return_to",
     ]
 
-    filters = {k: data[k] for k in data.keys() if data[k] and k not in keys_to_remove}
+    filters = {key: val for key, val in data.items() if val and key not in keys_to_remove}
 
     # Ensure that Decimal values are cast to string ready for json serialization
     for key, value in filters.items():

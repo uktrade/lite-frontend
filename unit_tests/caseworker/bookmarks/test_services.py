@@ -258,6 +258,15 @@ def test_enrich_bookmark_for_display_filters_out_errors(
             {"case_reference": "ABC/123"},
         ),
         (
+            "Test removed falsey values",
+            {
+                "None": None,
+                "False": False,
+                "empty string": "",
+            },
+            {},
+        ),
+        (
             "Test decimal value converted properly",
             {"max_total_value": Decimal(200)},
             {"max_total_value": "200"},
