@@ -116,7 +116,7 @@ class BookmarkEnricher:
 
             return out
         except Exception as ex:  # pylint: disable=broad-except
-            logger.exception("Error enriching bookmark: %s", str(ex))
+            logger.exception("Error enriching bookmark")
             if settings.DEBUG:
                 raise
             return None
