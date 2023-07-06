@@ -1,3 +1,4 @@
+import datetime
 import pytest
 import requests
 import uuid
@@ -270,6 +271,11 @@ def test_enrich_bookmark_for_display_filters_out_errors(
             "Test decimal value converted properly",
             {"max_total_value": Decimal(200)},
             {"max_total_value": "200"},
+        ),
+        (
+            "Test date value converted properly",
+            {"a_date": datetime.date(2020, 10, 1)},
+            {"a_date": "01-10-2020"},
         ),
     ],
 )

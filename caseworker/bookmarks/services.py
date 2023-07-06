@@ -39,9 +39,6 @@ def add_bookmark(request, data):
     user, _ = get_gov_user(request)
     user_id = user["user"]["id"]
 
-    for k, v in filter_to_save.items():
-        if type(v) == date:
-            filter_to_save[k] = v.strftime("%d-%m-%Y")
     data = {
         "filter_json": filter_to_save,
         "name": bookmark_name,
@@ -177,6 +174,9 @@ def enrich_filter_for_saving(data):
             continue
         if isinstance(value, Decimal):
             filters[key] = str(value)
+            continue
+        if isinstance(value, date):
+            filters[key] = value.strftime("%d-%m-%Y")
             continue
         filters[key] = value
 
