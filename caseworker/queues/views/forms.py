@@ -192,14 +192,14 @@ class CasesFiltersForm(forms.Form):
             "case_officer",
             "assigned_user",
             "export_type",
-            Field("submitted_from"),
-            Field("submitted_to"),
-            Field.select("flags"),
-            Field("finalised_from"),
-            Field("finalised_to"),
+            "submitted_from",
+            "submitted_to",
+            "flags",
+            "finalised_from",
+            "finalised_to",
         ]
         if queue.get("is_system_queue"):
-            case_filters.append(Field.select("assigned_queues"))
+            case_filters.append("assigned_queues")
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the
