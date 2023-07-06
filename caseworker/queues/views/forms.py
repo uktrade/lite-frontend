@@ -1,8 +1,8 @@
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
+
 from django import forms
-from django.forms.widgets import HiddenInput
 from django.urls import reverse
 
 from caseworker.core.services import get_countries
@@ -104,7 +104,7 @@ class CasesFiltersForm(forms.Form):
     )
     return_to = forms.CharField(
         label="",
-        widget=HiddenInput(),
+        widget=forms.HiddenInput(),
         required=False,
     )
 
