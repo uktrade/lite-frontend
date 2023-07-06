@@ -61,12 +61,12 @@ def test_bookmarks_present(
     assert context["return_to"] == url
 
     assert first["name"] == "Bookmark1"
-    assert first["filter_json"] == {"country": "DE"}
+    assert first["filter_json"] == {"countries": ["DE"]}
     assert first["description"] == "Country: Germany"
 
     assert second["name"] == "Bookmark2"
     assert second["filter_json"] == {"case_officer": gov_uk_user_id}
-    assert second["description"] == "Case officer: John Smith"
+    assert second["description"] == "Licensing Unit case officer: John Smith"
 
     assert third["name"] == "Bookmark3"
     assert third["filter_json"] == {

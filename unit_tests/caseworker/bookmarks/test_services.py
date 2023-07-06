@@ -1,7 +1,8 @@
-import uuid
-from decimal import Decimal
-
 import pytest
+import requests
+import uuid
+
+from decimal import Decimal
 
 from caseworker.bookmarks.services import enrich_filter_for_saving, BookmarkEnricher
 from unit_tests.caseworker.conftest import GOV_USER_ID
@@ -12,40 +13,94 @@ def new_bookmarks(filter):
 
 
 @pytest.fixture()
+def all_cles(data_control_list_entries):
+    return data_control_list_entries["control_list_entries"]
+
+
+@pytest.fixture()
 def all_regimes(data_regime_entries):
     return [{"id": regime["pk"], "name": regime["name"]} for regime in data_regime_entries]
+
+
+@pytest.fixture()
+def request_with_session(rf, client):
+    request = rf.get("/")
+    request.session = client.session
+    request.requests_session = requests.Session()
+
+    return request
 
 
 @pytest.mark.parametrize(
     "bookmark_filter, expected_description",
     [
         ({}, ""),
-        ({"country": "AZ"}, "Country: AZ"),
         ({"case_reference": "GBSIEL/2023"}, "Case reference: GBSIEL/2023"),
-        ({"case_officer": GOV_USER_ID}, "Case officer: John Smith"),
-        ({"assigned_user": GOV_USER_ID}, "Assigned user: John Smith"),
-        ({"case_type": "gift"}, "Case type: MOD Gifting Clearance"),
-        ({"status": "ogd_advice"}, "Status: OGD Advice"),
-        ({"team_advice_type": "no_licence_required"}, "Team advice type: No Licence Required"),
-        ({"final_advice_type": "not_applicable"}, "Final advice type: Not Applicable"),
+        ({"case_officer": GOV_USER_ID}, "Licensing Unit case officer: John Smith"),
+        ({"assigned_user": GOV_USER_ID}, "Case adviser: John Smith"),
+        ({"status": "ogd_advice"}, "Case status: OGD Advice"),
+        ({"control_list_entry": ["ML1", "ML1a"]}, "Control list entry: ML1, ML1a"),
+        ({"submitted_from": "12-12-2010"}, "Submitted after: 12-12-2010"),
+        ({"is_trigger_list": True}, "Trigger list: True"),
+        ({"countries": ["DE"]}, "Country: Germany"),
         (
             {
-                "final_advice_type": "not_applicable",
+                "regime_entry": [
+                    "d73d0273-ef94-4951-9c51-c291eba949a0",  #  /PS-IGNORE
+                    "c760976f-fd14-4356-9f23-f6eaf084475d",  #  /PS-IGNORE
+                ],
+            },
+            "Regime entry: mtcr-1, wassenaar-1",
+        ),
+        (
+            {
                 "case_officer": GOV_USER_ID,
                 "assigned_user": GOV_USER_ID,
-                "case_type": "gift",
                 "status": "ogd_advice",
-                "team_advice_type": "no_licence_required",
-                "country": "AZ",
+                "control_list_entry": ["ML1", "ML1a"],
+                "submitted_from": "12-12-2010",
+                "is_trigger_list": True,
+                "countries": ["DE"],
             },
-            "Final advice type: Not Applicable, Case officer: John Smith, Assigned user: John Smith, Case type: MOD "
-            "Gifting Clearance, Status: OGD Advice, Team advice type: No Licence Required, Country: AZ",
+            "Case adviser: John Smith, Case status: OGD Advice, Control list entry: ML1, ML1a, Country: Germany, Licensing Unit case officer: John Smith, Submitted after: 12-12-2010, Trigger list: True",
+        ),
+        ({"invalid_field_name": "invalid field value"}, ""),
+        (
+            {
+                "case_reference": "GBSIEL/2023",
+                "invalid_field_name": "invalid field value",
+            },
+            "Case reference: GBSIEL/2023",
+        ),
+        (
+            {
+                "case_officer": "not-a-real-id",
+            },
+            "",
+        ),
+        (
+            {
+                "case_reference": "GBSIEL/2023",
+                "case_officer": "not-a-real-id",
+            },
+            "Case reference: GBSIEL/2023",
         ),
     ],
 )
-def test_description_from_filter(filter_data, bookmark_filter, expected_description, flags):
+def test_description_from_filter(
+    request_with_session,
+    filter_data,
+    bookmark_filter,
+    expected_description,
+    flags,
+    all_cles,
+    all_regimes,
+    mock_countries,
+    mock_queues_list,
+    data_queue,
+):
     bookmarks = new_bookmarks(bookmark_filter)
-    enricher = BookmarkEnricher(filter_data, flags, None, "/queues/")
+    enricher = BookmarkEnricher(request_with_session, filter_data, flags, all_cles, all_regimes, data_queue, "/queues/")
     enriched = enricher.enrich_for_display(bookmarks)
 
     # description = description_from_filter(bookmark_filter, filter_data, flags)
@@ -58,28 +113,28 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
     [
         (
             {"submitted_from": "07-06-2022"},
-            "Submitted from: 07-06-2022",
+            "Submitted after: 07-06-2022",
             "submitted_from_0=07&submitted_from_1=06&submitted_from_2=2022",
         ),
         (
             {"submitted_to": "23-11-1990"},
-            "Submitted to: 23-11-1990",
+            "Submitted before: 23-11-1990",
             "submitted_to_0=23&submitted_to_1=11&submitted_to_2=1990",
         ),
         (
             {"finalised_from": "31-12-2007"},
-            "Finalised from: 31-12-2007",
+            "Finalised after: 31-12-2007",
             "finalised_from_0=31&finalised_from_1=12&finalised_from_2=2007",
         ),
         (
             {"finalised_to": "01-03-2011"},
-            "Finalised to: 01-03-2011",
+            "Finalised before: 01-03-2011",
             "finalised_to_0=01&finalised_to_1=03&finalised_to_2=2011",
         ),
         (
-            {"country": "DE", "_id_country": "Germany"},
+            {"countries": ["DE"]},
             "Country: Germany",
-            "country=DE",
+            "countries=DE",
         ),
         (
             {
@@ -91,17 +146,17 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
         (
             {
                 "regime_entry": [
-                    "d73d0273-ef94-4951-9c51-c291eba949a0",
-                    "c760976f-fd14-4356-9f23-f6eaf084475d",
-                ],  #  /PS-IGNORE
+                    "d73d0273-ef94-4951-9c51-c291eba949a0",  #  /PS-IGNORE
+                    "c760976f-fd14-4356-9f23-f6eaf084475d",  #  /PS-IGNORE
+                ],
             },
             "Regime entry: mtcr-1, wassenaar-1",
             "regime_entry=d73d0273-ef94-4951-9c51-c291eba949a0&regime_entry=c760976f-fd14-4356-9f23-f6eaf084475d",  #  /PS-IGNORE
         ),
         (
-            {"control_list_entry": ["ML11a", "MEND2"]},
-            "Control list entry: MEND2, ML11a",
-            "control_list_entry=ML11a&control_list_entry=MEND2",
+            {"control_list_entry": ["ML1", "ML1a"]},
+            "Control list entry: ML1, ML1a",
+            "control_list_entry=ML1&control_list_entry=ML1a",
         ),
         (
             {"flags": ["798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2", "e50f5cd3-331c-4914-b618-ee6eb67a081c"]},
@@ -110,27 +165,32 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
         ),
         (
             {"is_trigger_list": True},
-            "Is trigger list: True",
+            "Trigger list: True",
             "is_trigger_list=True",
         ),
         (
-            {"min_sla_days_remaining": 15},
-            "Min sla days remaining: 15",
-            "min_sla_days_remaining=15",
-        ),
-        (
             {"max_total_value": "200.0"},
-            "Max total value: 200.0",
+            "Max total value (£): 200.0",
             "max_total_value=200.0",
         ),
     ],
 )
 def test_enrich_bookmark_for_display(
-    filter_data, bookmark_filter, expected_description, expected_url_params, flags, all_regimes
+    request_with_session,
+    filter_data,
+    bookmark_filter,
+    expected_description,
+    expected_url_params,
+    flags,
+    all_cles,
+    all_regimes,
+    mock_countries,
+    mock_queues_list,
+    data_queue,
 ):
     bookmarks = new_bookmarks(bookmark_filter)
 
-    enricher = BookmarkEnricher(filter_data, flags, all_regimes, "/queues/")
+    enricher = BookmarkEnricher(request_with_session, filter_data, flags, all_cles, all_regimes, data_queue, "/queues/")
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 1
@@ -138,14 +198,25 @@ def test_enrich_bookmark_for_display(
     assert enriched[0]["url"] == f"/queues/?{expected_url_params}"
 
 
-def test_enrich_bookmark_for_display_custom_base_url(filter_data, flags):
+def test_enrich_bookmark_for_display_custom_base_url(
+    request_with_session,
+    filter_data,
+    flags,
+    all_cles,
+    all_regimes,
+    mock_countries,
+    mock_queues_list,
+    data_queue,
+):
     bookmarks = new_bookmarks({"is_trigger_list": True})
 
-    enricher = BookmarkEnricher(filter_data, flags, all_regimes, "/queues/abcd")
+    enricher = BookmarkEnricher(
+        request_with_session, filter_data, flags, all_cles, all_regimes, data_queue, "/queues/abcd"
+    )
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 1
-    assert enriched[0]["description"] == "Is trigger list: True"
+    assert enriched[0]["description"] == "Trigger list: True"
     assert enriched[0]["url"] == f"/queues/abcd?is_trigger_list=True"
 
 
@@ -154,11 +225,17 @@ class ObjectToForceException:
         raise Exception("This object breaks when str() called")
 
 
-def test_enrich_bookmark_for_display_filters_out_errors(filter_data, flags):
+def test_enrich_bookmark_for_display_filters_out_errors(
+    request_with_session,
+    filter_data,
+    all_cles,
+    all_regimes,
+    flags,
+):
     bookmark_filter = {"dodgy_filter_entry": ObjectToForceException()}
     bookmarks = new_bookmarks(bookmark_filter)
 
-    enricher = BookmarkEnricher(filter_data, flags, None, "/queues/")
+    enricher = BookmarkEnricher(request_with_session, filter_data, flags, all_cles, all_regimes, None, "/queues/")
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 0
