@@ -96,10 +96,15 @@ function initRegimeFiltersField() {
 }
 
 const initCountryAutocompleteField = () => {
-  fetch("/api/countries/")
-    .then((response) => response.json())
-    .then((results) => results["countries"])
-    .then((countries) => initAutoCompleteField("country", countries, "id"));
+  const countriesField = document.getElementById("countries");
+  if (!countriesField) return;
+
+  const countriesTokenField = progressivelyEnhanceMultipleSelectField(
+    countriesField,
+    (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    }
+  );
 };
 
 const initCaseFilters = () => {

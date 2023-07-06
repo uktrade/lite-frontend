@@ -97,10 +97,10 @@ class CaseDataMixin:
                 params[param] = date_obj
 
         params["flags"] = self.request.GET.getlist("flags", [])
+        params["countries"] = self.request.GET.getlist("countries", [])
         params["assigned_queues"] = self.request.GET.getlist("assigned_queues", [])
         params["control_list_entry"] = self.request.GET.getlist("control_list_entry", [])
         params["regime_entry"] = self.request.GET.getlist("regime_entry", [])
-
         params["selected_tab"] = self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
 
         # if the hidden param is 'true' then cases with open queries are included

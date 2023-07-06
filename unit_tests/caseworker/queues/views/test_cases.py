@@ -148,11 +148,12 @@ def test_cases_home_page_view_context(authorized_client):
         "exporter_site_name",
         "goods_starting_point",
         "party_name",
-        "goods_related_description",
         "max_total_value",
-        "country",
         "control_list_entry",
+        "exclude_control_list_entry",
         "regime_entry",
+        "exclude_regime_entry",
+        "report_summary",
         "submitted_from",
         "submitted_to",
         "finalised_from",
@@ -163,10 +164,12 @@ def test_cases_home_page_view_context(authorized_client):
         "case_officer",
         "assigned_user",
         "flags",
+        "countries",
         "assigned_queues",
         "is_nca_applicable",
         "is_trigger_list",
         "return_to",
+        "product_name",
     ]
 
     actual_fields = [field_name for field_name, _ in response.context["form"].fields.items()]
@@ -265,6 +268,27 @@ def test_cases_home_page_control_list_entries_search(authorized_client, mock_cas
     }
 
 
+def test_cases_home_page_exclude_control_list_entries_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+    html = BeautifulSoup(response.content, "html.parser")
+    control_list_entry_filter_input = html.find(id="control_list_entry")
+    cles = [cle.get("value") for cle in control_list_entry_filter_input.findAll("option")]
+
+    assert control_list_entry_filter_input.name == "select"
+    assert "ML1" in cles
+    assert "ML1a" in cles
+
+    url = reverse("queues:cases") + "?control_list_entry=ML1&exclude_control_list_entry=true"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "control_list_entry": ["ml1"],
+        "exclude_control_list_entry": ["true"],
+    }
+
+
 def test_cases_home_page_max_total_value_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases")
     response = authorized_client.get(url)
@@ -316,12 +340,37 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
     }
 
 
+def test_cases_home_page_exclude_regime_entry_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed&exclude_regime_entry=true"
+    authorized_client.get(url)
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],
+        "exclude_regime_entry": ["true"],
+    }
+
+
+def test_cases_home_page_report_summary_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?report_summary=submarines"
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_denial_matches_input = html.find(id="id_report_summary")
+    assert exclude_denial_matches_input.attrs["name"] == "report_summary"
+    assert exclude_denial_matches_input.attrs["value"] == "submarines"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "report_summary": ["submarines"],
+    }
+
+
 def test_cases_home_page_exclude_denial_matches_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases") + "?exclude_denial_matches=True"
     response = authorized_client.get(url)
 
     html = BeautifulSoup(response.content, "html.parser")
-    exclude_denial_matches_input = html.find(id="id_exclude_denial_matches_0")
+    exclude_denial_matches_input = html.find(id="id_exclude_denial_matches")
     assert exclude_denial_matches_input.attrs["name"] == "exclude_denial_matches"
 
     assert mock_cases_search.last_request.qs == {
@@ -330,11 +379,26 @@ def test_cases_home_page_exclude_denial_matches_search(authorized_client, mock_c
     }
 
 
+def test_cases_home_page_product_name_matches_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?product_name=submarines"
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_denial_matches_input = html.find(id="id_product_name")
+    assert exclude_denial_matches_input.attrs["name"] == "product_name"
+    assert exclude_denial_matches_input.attrs["value"] == "submarines"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "product_name": ["submarines"],
+    }
+
+
 def test_cases_home_page_exclude_sanction_matches_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases") + "?exclude_sanction_matches=True"
     response = authorized_client.get(url)
     html = BeautifulSoup(response.content, "html.parser")
-    exclude_sanction_matches_input = html.find(id="id_exclude_sanction_matches_0")
+    exclude_sanction_matches_input = html.find(id="id_exclude_sanction_matches")
     assert exclude_sanction_matches_input.attrs["name"] == "exclude_sanction_matches"
 
     assert mock_cases_search.last_request.qs == {
@@ -343,17 +407,31 @@ def test_cases_home_page_exclude_sanction_matches_search(authorized_client, mock
     }
 
 
+def test_cases_home_page_countries_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?countries=GB&countries=FR"
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    exclude_denial_matches_input = html.find(id="countries")
+    assert exclude_denial_matches_input.attrs["name"] == "countries"
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "countries": ["gb", "fr"],
+    }
+
+
 def test_trigger_list_checkbox_visible_unchecked(authorized_client):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
-    checkbox = html.find(id="id_is_trigger_list_0")
+    checkbox = html.find(id="id_is_trigger_list")
     assert "checked" not in checkbox.attrs
 
 
 def test_trigger_list_checkbox_visible_checked(authorized_client):
     response = authorized_client.get(reverse("core:index") + "/?is_trigger_list=True")
     html = BeautifulSoup(response.content, "html.parser")
-    checkbox = html.find(id="id_is_trigger_list_0")
+    checkbox = html.find(id="id_is_trigger_list")
     assert "checked" in checkbox.attrs
 
 

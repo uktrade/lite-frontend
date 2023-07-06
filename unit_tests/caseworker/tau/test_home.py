@@ -41,11 +41,6 @@ def setup(
     yield
 
 
-@pytest.fixture(autouse=True)
-def default_feature_flags(settings):
-    settings.FEATURE_C7_NCSC_ENABLED = True
-
-
 @pytest.fixture
 def url(data_standard_case):
     return reverse(
