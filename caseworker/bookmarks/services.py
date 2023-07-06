@@ -40,9 +40,8 @@ def add_bookmark(request, data):
     user_id = user["user"]["id"]
 
     for k, v in filter_to_save.items():
-        if isinstance(v, date):
+        if type(v) == date:
             filter_to_save[k] = v.strftime("%d-%m-%Y")
-
     data = {
         "filter_json": filter_to_save,
         "name": bookmark_name,
@@ -170,11 +169,15 @@ def enrich_filter_for_saving(data):
         "return_to",
     ]
 
-    filters = {key: val for key, val in data.items() if val and key not in keys_to_remove}
-
-    # Ensure that Decimal values are cast to string ready for json serialization
-    for key, value in filters.items():
+    filters = {}
+    for key, value in data.items():
+        if not value:
+            continue
+        if key in keys_to_remove:
+            continue
         if isinstance(value, Decimal):
             filters[key] = str(value)
+            continue
+        filters[key] = value
 
     return OrderedDict(sorted(filters.items()))
