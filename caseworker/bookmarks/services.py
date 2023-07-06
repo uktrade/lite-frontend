@@ -40,8 +40,9 @@ def add_bookmark(request, data):
     user_id = user["user"]["id"]
 
     for k, v in filter_to_save.items():
-        if type(v) == date:
+        if isinstance(v, date):
             filter_to_save[k] = v.strftime("%d-%m-%Y")
+
     data = {
         "filter_json": filter_to_save,
         "name": bookmark_name,
