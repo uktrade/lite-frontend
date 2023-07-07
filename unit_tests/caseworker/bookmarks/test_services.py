@@ -365,6 +365,12 @@ def test_enrich_bookmark_for_display_filters_out_errors(
     ],
 )
 def test_enrich_filter_for_saving(name, filter_data, expected_filter_data):
-    actual_filter = enrich_filter_for_saving(filter_data)
+    keys_to_remove = [
+        "save",
+        "save_filter",
+        "saved_filter_description",
+        "saved_filter_name",
+    ]
+    actual_filter = enrich_filter_for_saving(filter_data, keys_to_remove)
 
     assert sorted(actual_filter.items()) == sorted(expected_filter_data.items())

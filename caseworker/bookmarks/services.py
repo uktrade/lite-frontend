@@ -34,8 +34,8 @@ def fetch_bookmarks(request, bookmark_base_url, bookmark_form_provider):
     return {"user": enriched_bookmarks}
 
 
-def add_bookmark(request, data):
-    filter_to_save = enrich_filter_for_saving(data)
+def add_bookmark(request, data, keys_to_remove):
+    filter_to_save = enrich_filter_for_saving(data, keys_to_remove)
     now = datetime.today().strftime("%y%m%d-%H%M%S")
     filter_name = f"New unnamed filter ({now})"
     bookmark_name = filter_name
@@ -148,15 +148,12 @@ class BookmarkEnricher:
         return f"{self.bookmark_base_url}?{query}"
 
 
-def enrich_filter_for_saving(data):
-    keys_to_remove = [
+def enrich_filter_for_saving(data, keys_to_remove):
+    common_keys_to_remove = [
         "csrfmiddlewaretoken",
-        "save",
-        "save_filter",
-        "saved_filter_description",
-        "saved_filter_name",
         "return_to",
     ]
+    keys_to_remove = common_keys_to_remove + keys_to_remove
 
     filters = {}
     for key, value in data.items():
