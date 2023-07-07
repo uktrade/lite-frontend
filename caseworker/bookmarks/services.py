@@ -12,8 +12,12 @@ from django.conf import settings
 
 from caseworker.users.services import get_gov_user
 from core import client
+from core.helpers import decompose_date
 
 logger = logging.getLogger(__name__)
+
+
+ENRICHED_DATE_FORMAT = "%d-%m-%Y"
 
 
 def fetch_bookmarks(request, bookmark_base_url, bookmark_form_provider):
@@ -133,12 +137,9 @@ class BookmarkEnricher:
                 continue
             if field_name not in bookmark_filter:
                 continue
-            date_str = bookmark_filter[field_name]
-            d, m, y = date_str.split("-")
+            d = datetime.strptime(bookmark_filter[field_name], ENRICHED_DATE_FORMAT).date()
             del bookmark_filter[field_name]
-            bookmark_filter[f"{field_name}_0"] = d
-            bookmark_filter[f"{field_name}_1"] = m
-            bookmark_filter[f"{field_name}_2"] = y
+            bookmark_filter.update(decompose_date(field_name, d))
         return bookmark_filter
 
     def _url_from_bookmark(self, bookmark_filter):
@@ -167,7 +168,7 @@ def enrich_filter_for_saving(data):
             filters[key] = str(value)
             continue
         if isinstance(value, date):
-            filters[key] = value.strftime("%d-%m-%Y")
+            filters[key] = value.strftime(ENRICHED_DATE_FORMAT)
             continue
         filters[key] = value
 

@@ -213,7 +213,7 @@ def test_description_from_filter(
         (
             {"submitted_from": "07-06-2022"},
             "Submitted after: 07-06-2022",
-            "submitted_from_0=07&submitted_from_1=06&submitted_from_2=2022",
+            "submitted_from_0=7&submitted_from_1=6&submitted_from_2=2022",
         ),
         (
             {"submitted_to": "23-11-1990"},
@@ -228,7 +228,7 @@ def test_description_from_filter(
         (
             {"finalised_to": "01-03-2011"},
             "Finalised before: 01-03-2011",
-            "finalised_to_0=01&finalised_to_1=03&finalised_to_2=2011",
+            "finalised_to_0=1&finalised_to_1=3&finalised_to_2=2011",
         ),
         (
             {"countries": ["DE"]},

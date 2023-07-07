@@ -6,10 +6,11 @@ from django.urls import reverse
 
 from core import client
 from core.constants import OrganisationDocumentType
+from core.helpers import decompose_date
 
 from exporter.applications.views.goods.firearm.views.constants import AddGoodFirearmSteps
 from exporter.core.forms import CurrentFile
-from exporter.core.helpers import convert_api_date_string_to_date, decompose_date
+from exporter.core.helpers import convert_api_date_string_to_date
 from exporter.goods.forms.firearms import (
     FirearmAttachRFDCertificate,
     FirearmAttachSection5LetterOfAuthorityForm,
