@@ -340,3 +340,6 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         form_class = self.get_form_class()
         kwargs = self.get_form_kwargs()
         return form_class(data=form_data, **kwargs)
+
+    def get_bookmark_form_class(self):
+        return self.get_form_class()

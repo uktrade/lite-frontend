@@ -131,6 +131,9 @@ def mock_form_provider():
         def get_bound_bookmark_form(self, form_data):
             return MockForm(data=form_data)
 
+        def get_bookmark_form_class(self):
+            return MockForm
+
     return MockFormProvider()
 
 

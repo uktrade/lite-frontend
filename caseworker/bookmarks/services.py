@@ -127,14 +127,18 @@ class BookmarkEnricher:
 
     def _split_dates(self, bookmark_filter):
         bookmark_filter = {**bookmark_filter}
-        for key in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
-            if key in bookmark_filter:
-                date_str = bookmark_filter[key]
-                d, m, y = date_str.split("-")
-                del bookmark_filter[key]
-                bookmark_filter[f"{key}_0"] = d
-                bookmark_filter[f"{key}_1"] = m
-                bookmark_filter[f"{key}_2"] = y
+        form_class = self.bookmark_form_provider.get_bookmark_form_class()
+        for field_name, field in form_class.declared_fields.items():
+            if not isinstance(field, DateInputField):
+                continue
+            if field_name not in bookmark_filter:
+                continue
+            date_str = bookmark_filter[field_name]
+            d, m, y = date_str.split("-")
+            del bookmark_filter[field_name]
+            bookmark_filter[f"{field_name}_0"] = d
+            bookmark_filter[f"{field_name}_1"] = m
+            bookmark_filter[f"{field_name}_2"] = y
         return bookmark_filter
 
     def _url_from_bookmark(self, bookmark_filter):
