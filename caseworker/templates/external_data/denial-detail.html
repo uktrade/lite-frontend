@@ -16,7 +16,7 @@
 
     <div class="govuk-!-margin-bottom-6">
         {% if queue_id and case_id %}
-            <a class="lite-back-link-button govuk-back-link" id="back-link" href="{% url 'cases:case' queue_id case_id %}">Back</a>
+            <a class="lite-back-link-button govuk-back-link" id="back-link" href="{% url 'cases:case' queue_pk=queue_id pk=case_id tab="details" %}">Back</a>
         {% else %}
             <a class="lite-back-link-button govuk-back-link" id="back-link" href="#">Back</a>
         {% endif %}
