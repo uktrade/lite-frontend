@@ -316,12 +316,8 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
 
         bookmarks = fetch_bookmarks(
             self.request,
-            self.filters,
-            self.all_flags,
-            self.all_cles,
-            self.all_regimes,
-            self.queue,
             self.request.path,
+            self,
         )
         context = {
             "sla_radius": SLA_RADIUS,
@@ -339,3 +335,8 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         }
 
         return super().get_context_data(*args, **context, **kwargs)
+
+    def get_bound_bookmark_form(self, form_data):
+        form_class = self.get_form_class()
+        kwargs = self.get_form_kwargs()
+        return form_class(data=form_data, **kwargs)

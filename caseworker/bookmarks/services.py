@@ -10,14 +10,13 @@ from crispy_forms_gds.fields import DateInputField
 from django import forms
 from django.conf import settings
 
-from caseworker.queues.views.forms import CasesFiltersForm
 from caseworker.users.services import get_gov_user
 from core import client
 
 logger = logging.getLogger(__name__)
 
 
-def fetch_bookmarks(request, filter_data, all_flags, all_cles, all_regimes, queue, bookmark_base_url):
+def fetch_bookmarks(request, bookmark_base_url, bookmark_form_provider):
     response = client.get(request, "/bookmarks/")
     if response.status_code >= 300:
         # Not important enough to break the page, so return an empty set of bookmarks.
@@ -25,7 +24,7 @@ def fetch_bookmarks(request, filter_data, all_flags, all_cles, all_regimes, queu
         return {"user": []}
 
     bookmarks = response.json()["user"]
-    enricher = BookmarkEnricher(request, filter_data, all_flags, all_cles, all_regimes, queue, bookmark_base_url)
+    enricher = BookmarkEnricher(request, bookmark_base_url, bookmark_form_provider)
     enriched_bookmarks = enricher.enrich_for_display(bookmarks)
 
     return {"user": enriched_bookmarks}
@@ -94,14 +93,10 @@ def get_description_from_form(form):
 
 
 class BookmarkEnricher:
-    def __init__(self, request, filter_data, all_flags, all_cles, all_regimes, queue, bookmark_base_url):
+    def __init__(self, request, bookmark_base_url, bookmark_form_provider):
         self.request = request
-        self.filter_data = filter_data
-        self.all_flags = all_flags
-        self.all_cles = all_cles
-        self.all_regimes = all_regimes
-        self.queue = queue
         self.bookmark_base_url = bookmark_base_url
+        self.bookmark_form_provider = bookmark_form_provider
 
     def enrich_for_display(self, bookmarks):
         enriched_bookmarks = [self._enrich_bookmark_for_display(bookmark) for bookmark in bookmarks]
@@ -126,15 +121,7 @@ class BookmarkEnricher:
         # were originally posted from the form but we store the date as a single
         # value so we need to split it out again
         data = self._split_dates(bookmark_filter)
-        form = CasesFiltersForm(
-            self.request,
-            self.queue,
-            self.filter_data,
-            self.all_flags,
-            self.all_cles,
-            self.all_regimes,
-            data=data,
-        )
+        form = self.bookmark_form_provider.get_bound_bookmark_form(data)
         form.full_clean()
         return get_description_from_form(form)
 
