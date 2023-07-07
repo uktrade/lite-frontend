@@ -102,7 +102,7 @@ class CaseOfficerRemove(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         default_success_url = reverse(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]}
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "tab": "details"}
         )
         return self.request.GET.get("return_to", default_success_url)
 

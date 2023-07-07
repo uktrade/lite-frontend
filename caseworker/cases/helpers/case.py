@@ -2,7 +2,6 @@ from datetime import datetime
 from dateutil.parser import parse
 from decimal import Decimal
 
-from django.conf import settings
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
@@ -202,9 +201,7 @@ class CaseView(CaseworkerMixin, TemplateView):
         )
 
         context = super().get_context_data()
-        default_tab = "details"
-        if settings.FEATURE_QUICK_SUMMARY:
-            default_tab = "quick-summary"
+        default_tab = "quick-summary"
         current_tab = default_tab if self.kwargs["tab"] == "default" else self.kwargs["tab"]
 
         return {

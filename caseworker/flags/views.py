@@ -365,7 +365,9 @@ class AssignFlags(LoginRequiredMixin, SingleFormView):
 
             self.form = set_flags_form(flags, self.level, show_case_header=True, show_sidebar=show_sidebar)
             self.form.back_link = BackLink(
-                url=reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
+                url=reverse(
+                    "cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
+                )
             )
 
         self.data = {"flags": self.get_object_flags()}
@@ -412,13 +414,19 @@ class AssignFlags(LoginRequiredMixin, SingleFormView):
             return reverse("organisations:organisation", kwargs={"pk": self.object_pk})
         elif self.level == FlagLevel.GOODS:
             return (
-                reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+                reverse(
+                    "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
+                )
                 + "#slice-goods"
             )
         elif self.level == FlagLevel.DESTINATIONS:
             return (
-                reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+                reverse(
+                    "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
+                )
                 + "#slice-destinations"
             )
         else:
-            return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+            return reverse(
+                "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
+            )
