@@ -5,9 +5,6 @@ from crispy_forms_gds.layout import Layout, Fieldset, HTML, Submit, Button, Acco
 from django import forms
 from django.urls import reverse
 
-from caseworker.core.services import get_countries
-from caseworker.queues.services import get_queues
-
 
 SLA_DAYS_RANGE = 99
 
@@ -111,7 +108,7 @@ class CasesFiltersForm(forms.Form):
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, request, queue, filters_data, all_flags, all_cles, all_regimes, *args, **kwargs):
+    def __init__(self, queue, filters_data, all_flags, all_cles, all_regimes, countries, queues, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         case_status_choices = self.get_field_choices(filters_data, "statuses")
@@ -122,12 +119,8 @@ class CasesFiltersForm(forms.Form):
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
         regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]
-        countries_response, _ = get_countries(request)
-        country_choices = [(country["id"], country["name"]) for country in countries_response["countries"]]
-        assigned_queues_choices = [
-            (queue["id"], f"{queue['team']['name']}: {queue['name']}")
-            for queue in get_queues(request, convert_to_options=False, users_team_first=True)
-        ]
+        country_choices = [(country["id"], country["name"]) for country in countries]
+        assigned_queues_choices = [(queue["id"], f"{queue['team']['name']}: {queue['name']}") for queue in queues]
 
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,

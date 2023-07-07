@@ -17,12 +17,18 @@ from caseworker.core.constants import (
     SLA_CIRCUMFERENCE,
     SLA_RADIUS,
 )
-from caseworker.core.services import get_regime_entries
-from caseworker.core.services import get_user_permissions, get_control_list_entries
+from caseworker.core.services import (
+    get_control_list_entries,
+    get_countries,
+    get_regime_entries,
+    get_user_permissions,
+)
 from caseworker.flags.services import get_flags
-from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.queues.services import (
+    get_cases_search_data,
+    head_cases_search_count,
     get_queue,
+    get_queues,
 )
 from caseworker.queues.views.forms import CasesFiltersForm
 from core.auth.views import LoginRequiredMixin
@@ -61,6 +67,19 @@ class CaseDataMixin:
     @cached_property
     def all_regimes(self):
         return get_regime_entries(self.request)
+
+    @cached_property
+    def countries(self):
+        countries_response, _ = get_countries(self.request)
+        return countries_response["countries"]
+
+    @cached_property
+    def queues(self):
+        return get_queues(
+            self.request,
+            convert_to_options=False,
+            users_team_first=True,
+        )
 
     @property
     def filters(self):
@@ -277,12 +296,13 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
         kwargs["all_flags"] = self.all_flags
         kwargs["all_cles"] = self.all_cles
         kwargs["all_regimes"] = self.all_regimes
         kwargs["queue"] = self.queue
+        kwargs["countries"] = self.countries
+        kwargs["queues"] = self.queues
         kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs
 
