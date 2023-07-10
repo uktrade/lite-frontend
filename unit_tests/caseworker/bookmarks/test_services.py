@@ -5,6 +5,10 @@ import uuid
 
 from decimal import Decimal
 
+from crispy_forms_gds.fields import DateInputField
+from django import forms
+from django.urls import reverse
+
 from caseworker.bookmarks.services import enrich_filter_for_saving, BookmarkEnricher
 from unit_tests.caseworker.conftest import GOV_USER_ID
 
@@ -30,6 +34,107 @@ def request_with_session(rf, client):
     request.requests_session = requests.Session()
 
     return request
+
+
+@pytest.fixture()
+def mock_form_provider():
+    class MockForm(forms.Form):
+        case_reference = forms.CharField(
+            label="Case reference",
+            widget=forms.TextInput(attrs={"id": "case_reference"}),
+            required=False,
+        )
+        submitted_from = DateInputField(
+            label="Submitted after",
+            required=False,
+        )
+        submitted_to = DateInputField(
+            label="Submitted before",
+            required=False,
+        )
+        finalised_from = DateInputField(
+            label="Finalised after",
+            required=False,
+        )
+        finalised_to = DateInputField(
+            label="Finalised before",
+            required=False,
+        )
+        is_trigger_list = forms.BooleanField(
+            label="Trigger list",
+            required=False,
+        )
+        max_total_value = forms.DecimalField(
+            label="Max total value (£)",
+            required=False,
+            widget=forms.TextInput,
+        )
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.fields["status"] = forms.ChoiceField(
+                choices=[("ogd_advice", "OGD Advice")],
+                label="Case status",
+                required=False,
+            )
+            self.fields["case_officer"] = forms.ChoiceField(
+                choices=[(GOV_USER_ID, "John Smith")],
+                label="Licensing Unit case officer",
+                widget=forms.Select(attrs={"id": "case_officer"}),
+                required=False,
+            )
+            self.fields["assigned_user"] = forms.ChoiceField(
+                choices=[(GOV_USER_ID, "John Smith")],
+                label="Case adviser",
+                widget=forms.Select(attrs={"id": "case_adviser"}),
+                required=False,
+            )
+            self.fields["control_list_entry"] = forms.MultipleChoiceField(
+                label="Control list entry",
+                choices=[("ML1", "ML1"), ("ML1a", "ML1a")],
+                required=False,
+                # setting id for javascript to use
+                widget=forms.SelectMultiple(attrs={"id": "control_list_entry"}),
+            )
+            self.fields["countries"] = forms.MultipleChoiceField(
+                label="Country",
+                choices=[("DE", "Germany")],
+                required=False,
+                # setting id for javascript to use
+                widget=forms.SelectMultiple(attrs={"id": "countries"}),
+            )
+            self.fields["regime_entry"] = forms.MultipleChoiceField(
+                label="Regime entry",
+                choices=[
+                    ("d73d0273-ef94-4951-9c51-c291eba949a0", "wassenaar-1"),  # /PS-IGNORE
+                    ("c760976f-fd14-4356-9f23-f6eaf084475d", "mtcr-1"),  # /PS-IGNORE
+                ],
+                required=False,
+                # setting id for javascript to use
+                widget=forms.SelectMultiple(attrs={"id": "regime_entry"}),
+            )
+            flag_url = reverse("flags:flags")
+            self.fields["flags"] = forms.MultipleChoiceField(
+                label="Flags",
+                choices=[
+                    ("798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2", "BAE"),
+                    ("e50f5cd3-331c-4914-b618-ee6eb67a081c", "AG Review Required"),
+                ],
+                required=False,
+                help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
+                # setting id for javascript to use
+                widget=forms.SelectMultiple(attrs={"id": "flags"}),
+            )
+
+    class MockFormProvider:
+        def get_bound_bookmark_form(self, form_data):
+            return MockForm(data=form_data)
+
+        def get_bookmark_form_class(self):
+            return MockForm
+
+    return MockFormProvider()
 
 
 @pytest.mark.parametrize(
@@ -90,21 +195,14 @@ def request_with_session(rf, client):
 )
 def test_description_from_filter(
     request_with_session,
-    filter_data,
     bookmark_filter,
     expected_description,
-    flags,
-    all_cles,
-    all_regimes,
-    mock_countries,
-    mock_queues_list,
-    data_queue,
+    mock_form_provider,
 ):
     bookmarks = new_bookmarks(bookmark_filter)
-    enricher = BookmarkEnricher(request_with_session, filter_data, flags, all_cles, all_regimes, data_queue, "/queues/")
+    enricher = BookmarkEnricher(request_with_session, "/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
-    # description = description_from_filter(bookmark_filter, filter_data, flags)
     assert len(enriched) == 1
     assert enriched[0]["description"] == expected_description
 
@@ -115,7 +213,7 @@ def test_description_from_filter(
         (
             {"submitted_from": "07-06-2022"},
             "Submitted after: 07-06-2022",
-            "submitted_from_0=07&submitted_from_1=06&submitted_from_2=2022",
+            "submitted_from_0=7&submitted_from_1=6&submitted_from_2=2022",
         ),
         (
             {"submitted_to": "23-11-1990"},
@@ -130,7 +228,7 @@ def test_description_from_filter(
         (
             {"finalised_to": "01-03-2011"},
             "Finalised before: 01-03-2011",
-            "finalised_to_0=01&finalised_to_1=03&finalised_to_2=2011",
+            "finalised_to_0=1&finalised_to_1=3&finalised_to_2=2011",
         ),
         (
             {"countries": ["DE"]},
@@ -178,20 +276,14 @@ def test_description_from_filter(
 )
 def test_enrich_bookmark_for_display(
     request_with_session,
-    filter_data,
     bookmark_filter,
     expected_description,
     expected_url_params,
-    flags,
-    all_cles,
-    all_regimes,
-    mock_countries,
-    mock_queues_list,
-    data_queue,
+    mock_form_provider,
 ):
     bookmarks = new_bookmarks(bookmark_filter)
 
-    enricher = BookmarkEnricher(request_with_session, filter_data, flags, all_cles, all_regimes, data_queue, "/queues/")
+    enricher = BookmarkEnricher(request_with_session, "/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 1
@@ -201,18 +293,14 @@ def test_enrich_bookmark_for_display(
 
 def test_enrich_bookmark_for_display_custom_base_url(
     request_with_session,
-    filter_data,
-    flags,
-    all_cles,
-    all_regimes,
-    mock_countries,
-    mock_queues_list,
-    data_queue,
+    mock_form_provider,
 ):
     bookmarks = new_bookmarks({"is_trigger_list": True})
 
     enricher = BookmarkEnricher(
-        request_with_session, filter_data, flags, all_cles, all_regimes, data_queue, "/queues/abcd"
+        request_with_session,
+        "/queues/abcd",
+        mock_form_provider,
     )
     enriched = enricher.enrich_for_display(bookmarks)
 
@@ -228,15 +316,12 @@ class ObjectToForceException:
 
 def test_enrich_bookmark_for_display_filters_out_errors(
     request_with_session,
-    filter_data,
-    all_cles,
-    all_regimes,
-    flags,
+    mock_form_provider,
 ):
     bookmark_filter = {"dodgy_filter_entry": ObjectToForceException()}
     bookmarks = new_bookmarks(bookmark_filter)
 
-    enricher = BookmarkEnricher(request_with_session, filter_data, flags, all_cles, all_regimes, None, "/queues/")
+    enricher = BookmarkEnricher(request_with_session, "/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 0
@@ -280,6 +365,12 @@ def test_enrich_bookmark_for_display_filters_out_errors(
     ],
 )
 def test_enrich_filter_for_saving(name, filter_data, expected_filter_data):
-    actual_filter = enrich_filter_for_saving(filter_data)
+    keys_to_remove = [
+        "save",
+        "save_filter",
+        "saved_filter_description",
+        "saved_filter_name",
+    ]
+    actual_filter = enrich_filter_for_saving(filter_data, keys_to_remove)
 
     assert sorted(actual_filter.items()) == sorted(expected_filter_data.items())

@@ -52,7 +52,17 @@ class AddBookmark(LoginRequiredMixin, CaseDataMixin, FormView):
         "Unexpected error saving filter",
     )
     def add_bookmark(self, data):
-        response = services.add_bookmark(self.request, data)
+        keys_to_remove = [
+            "save",
+            "save_filter",
+            "saved_filter_description",
+            "saved_filter_name",
+        ]
+        response = services.add_bookmark(
+            self.request,
+            data,
+            keys_to_remove,
+        )
         return response.json(), response.status_code
 
 

@@ -43,19 +43,23 @@ def setup(
     ],
 )
 def test_case_filters(
-    authorized_client, requests_mock, mock_queues_list, mock_cases, mock_cases_head, filters_data, mock_no_bookmarks
+    authorized_client,
+    requests_mock,
+    mock_queues_list,
+    mock_cases,
+    mock_cases_head,
+    filters_data,
+    mock_no_bookmarks,
 ):
     url = reverse("core:index", kwargs={"disable_queue_lookup": True})
     query_params = f"{parse.urlencode(filters_data['params'], doseq=True)}"
-    url = url + f"?{query_params}"
+    url = f"{url}?{query_params}"
     response = authorized_client.get(url)
     assertTemplateUsed(response, "queues/cases.html")
     assert isinstance(response.context["form"], CasesFiltersForm)
 
-    history = requests_mock.request_history
-    case_search_request = history[-6]
-
-    assert parse.unquote(query_params) in case_search_request.url
+    case_search_request = mock_cases.request_history[0]
+    assert query_params in case_search_request.url
     if filters_data.get("field"):
         key = filters_data["field"]
         # The DateInputField that we use in the form is a GDS component which shows it in a
