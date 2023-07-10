@@ -176,6 +176,7 @@ def test_cases_home_page_view_context(authorized_client):
     assert set(actual_fields) == set(expected_fields)
     for context_key in context_keys:
         assert response.context[context_key]
+    assert not response.context["search_form_has_errors"]
     assert response.status_code == 200
 
 
@@ -208,6 +209,18 @@ def test_cases_home_page_post_redirect(authorized_client):
     response = authorized_client.post(url, follow=False)
     assert response.url == "/queues/"
     assert response.status_code == 302
+
+
+def test_case_home_page_invalid_search_form_shows_errors(authorized_client):
+    url = reverse("queues:cases")
+    response = authorized_client.post(
+        url,
+        data={
+            "status": "madeupstatus",
+        },
+    )
+    assert response.status_code == 200
+    assert response.context["search_form_has_errors"]
 
 
 def test_cases_home_page_post_redirect_strips_csrftoken(authorized_client):
