@@ -295,6 +295,13 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         sanitised_url = self._strip_param_from_url(url, "csrfmiddlewaretoken")
         return redirect(sanitised_url)
 
+    def is_filters_visible(self):
+        # when this view instantiates the form on submission, we can do better by using form.is_bound
+        # until then we must interrogate GET parameters
+        params_to_ignore = set(["selected_tab", "page"])
+        all_params = set(self.request.GET.keys())
+        return len(all_params - params_to_ignore) > 0
+
     def get_context_data(self, *args, **kwargs):
         try:
             updated_queue = [
@@ -313,6 +320,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
             "sla_circumference": SLA_CIRCUMFERENCE,
             "data": self.data,
             "queue": self.queue,  # Used for showing current queue
+            "is_filters_visible": self.is_filters_visible(),
             "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
             "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
             "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,

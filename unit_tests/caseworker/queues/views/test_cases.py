@@ -179,6 +179,30 @@ def test_cases_home_page_view_context(authorized_client):
     assert response.status_code == 200
 
 
+@pytest.mark.parametrize(
+    "url_suffix",
+    [
+        "",
+        "?selected_tab=my_cases",
+    ],
+)
+def test_cases_home_page_view_context_is_filter_visible_hidden(authorized_client, url_suffix):
+    response = authorized_client.get(reverse("queues:cases") + url_suffix)
+    assert not response.context["is_filters_visible"]
+
+
+@pytest.mark.parametrize(
+    "url_suffix",
+    [
+        "?case_reference=bar",
+        "?a=b",
+    ],
+)
+def test_cases_home_page_view_context_is_filter_visible_visible(authorized_client, url_suffix):
+    response = authorized_client.get(reverse("queues:cases") + url_suffix)
+    assert response.context["is_filters_visible"]
+
+
 def test_cases_home_page_post_redirect(authorized_client):
     url = reverse("queues:cases")
     response = authorized_client.post(url, follow=False)
