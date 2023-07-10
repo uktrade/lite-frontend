@@ -2189,7 +2189,7 @@ def mock_bookmarks(requests_mock, gov_uk_user_id, flags):
                     "id": str(uuid.uuid4()),
                     "name": "Bookmark1",
                     "description": "",
-                    "filter_json": {"country": "DE", "_id_country": "Germany"},
+                    "filter_json": {"countries": ["DE"]},
                 },
                 {
                     "id": str(uuid.uuid4()),
