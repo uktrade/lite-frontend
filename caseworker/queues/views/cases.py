@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from decimal import Decimal
 from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
@@ -110,8 +110,8 @@ class CaseDataMixin:
 
             # We need to save compressed date values to show the current filter value
             if date_tokens and all(date_tokens):
-                date_str = "-".join(date_tokens)
-                date_obj = datetime.strptime(date_str, "%d-%m-%Y").date()
+                day, month, year = date_tokens
+                date_obj = date(day=int(day), month=int(month), year=int(year))
                 params[param] = date_obj
 
         params["flags"] = self.request.GET.getlist("flags", [])

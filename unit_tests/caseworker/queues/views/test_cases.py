@@ -458,6 +458,47 @@ def test_cases_home_page_countries_search(authorized_client, mock_cases_search):
     }
 
 
+@pytest.mark.parametrize(
+    "date_components, expected_output",
+    [
+        (
+            ("1", "1", "23"),
+            {
+                "submitted_from": ["0023-01-01"],
+                "submitted_from_0": ["1"],
+                "submitted_from_1": ["1"],
+                "submitted_from_2": ["23"],
+                "submitted_from_day": ["1"],
+                "submitted_from_month": ["1"],
+                "submitted_from_year": ["23"],
+            },
+        ),
+        (
+            ("01", "01", "2023"),
+            {
+                "submitted_from": ["2023-01-01"],
+                "submitted_from_0": ["01"],
+                "submitted_from_1": ["01"],
+                "submitted_from_2": ["2023"],
+                "submitted_from_day": ["01"],
+                "submitted_from_month": ["01"],
+                "submitted_from_year": ["2023"],
+            },
+        ),
+    ],
+)
+def test_cases_home_page_date_search(authorized_client, mock_cases_search, date_components, expected_output):
+    day, month, year = date_components
+    url = reverse("queues:cases") + f"?submitted_from_0={day}&submitted_from_1={month}&submitted_from_2={year}"
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        **expected_output,
+    }
+
+
 def test_trigger_list_checkbox_visible_unchecked(authorized_client):
     response = authorized_client.get(reverse("core:index"))
     html = BeautifulSoup(response.content, "html.parser")
