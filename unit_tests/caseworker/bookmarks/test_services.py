@@ -1,6 +1,5 @@
 import datetime
 import pytest
-import requests
 import uuid
 
 from decimal import Decimal
@@ -25,15 +24,6 @@ def all_cles(data_control_list_entries):
 @pytest.fixture()
 def all_regimes(data_regime_entries):
     return [{"id": regime["pk"], "name": regime["name"]} for regime in data_regime_entries]
-
-
-@pytest.fixture()
-def request_with_session(rf, client):
-    request = rf.get("/")
-    request.session = client.session
-    request.requests_session = requests.Session()
-
-    return request
 
 
 @pytest.fixture()
@@ -194,13 +184,12 @@ def mock_form_provider():
     ],
 )
 def test_description_from_filter(
-    request_with_session,
     bookmark_filter,
     expected_description,
     mock_form_provider,
 ):
     bookmarks = new_bookmarks(bookmark_filter)
-    enricher = BookmarkEnricher(request_with_session, "/queues/", mock_form_provider)
+    enricher = BookmarkEnricher("/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 1
@@ -275,7 +264,6 @@ def test_description_from_filter(
     ],
 )
 def test_enrich_bookmark_for_display(
-    request_with_session,
     bookmark_filter,
     expected_description,
     expected_url_params,
@@ -283,7 +271,7 @@ def test_enrich_bookmark_for_display(
 ):
     bookmarks = new_bookmarks(bookmark_filter)
 
-    enricher = BookmarkEnricher(request_with_session, "/queues/", mock_form_provider)
+    enricher = BookmarkEnricher("/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 1
@@ -291,14 +279,10 @@ def test_enrich_bookmark_for_display(
     assert enriched[0]["url"] == f"/queues/?{expected_url_params}"
 
 
-def test_enrich_bookmark_for_display_custom_base_url(
-    request_with_session,
-    mock_form_provider,
-):
+def test_enrich_bookmark_for_display_custom_base_url(mock_form_provider):
     bookmarks = new_bookmarks({"is_trigger_list": True})
 
     enricher = BookmarkEnricher(
-        request_with_session,
         "/queues/abcd",
         mock_form_provider,
     )
@@ -314,14 +298,11 @@ class ObjectToForceException:
         raise Exception("This object breaks when str() called")
 
 
-def test_enrich_bookmark_for_display_filters_out_errors(
-    request_with_session,
-    mock_form_provider,
-):
+def test_enrich_bookmark_for_display_filters_out_errors(mock_form_provider):
     bookmark_filter = {"dodgy_filter_entry": ObjectToForceException()}
     bookmarks = new_bookmarks(bookmark_filter)
 
-    enricher = BookmarkEnricher(request_with_session, "/queues/", mock_form_provider)
+    enricher = BookmarkEnricher("/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 0

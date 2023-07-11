@@ -28,7 +28,7 @@ def fetch_bookmarks(request, bookmark_base_url, bookmark_form_provider):
         return {"user": []}
 
     bookmarks = response.json()["user"]
-    enricher = BookmarkEnricher(request, bookmark_base_url, bookmark_form_provider)
+    enricher = BookmarkEnricher(bookmark_base_url, bookmark_form_provider)
     enriched_bookmarks = enricher.enrich_for_display(bookmarks)
 
     return {"user": enriched_bookmarks}
@@ -97,8 +97,7 @@ def get_description_from_form(form):
 
 
 class BookmarkEnricher:
-    def __init__(self, request, bookmark_base_url, bookmark_form_provider):
-        self.request = request
+    def __init__(self, bookmark_base_url, bookmark_form_provider):
         self.bookmark_base_url = bookmark_base_url
         self.bookmark_form_provider = bookmark_form_provider
 
