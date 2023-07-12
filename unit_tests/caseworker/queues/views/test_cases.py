@@ -404,11 +404,14 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
 
 
 def test_cases_home_page_exclude_regime_entry_search(authorized_client, mock_cases_search):
-    url = reverse("queues:cases") + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed&exclude_regime_entry=true"
+    url = (
+        reverse("queues:cases")
+        + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed&exclude_regime_entry=true"  # /PS-IGNORE
+    )
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
         **default_params,
-        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],
+        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],  # /PS-IGNORE
         "exclude_regime_entry": ["true"],
     }
 
@@ -1039,18 +1042,18 @@ def test_filter_none_pending_gov_users(authorized_client, mock_cases_search):
     response = authorized_client.get(url)
     gov_users = response.context["data"]["results"]["filters"]["gov_users"]
     assert gov_users == [
-        {"full_name": "John Smith", "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "pending": False}
-    ]  # /PS-IGNORE
+        {"full_name": "John Smith", "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "pending": False}  # /PS-IGNORE
+    ]
 
 
 def test_cases_home_page_return_to_search(authorized_client, mock_cases_search):
-    regime_entry = "af8043ee-6657-4d4b-83a2-f1a5cdd016ed"
-    url = reverse("queues:cases") + f"?regime_entry={regime_entry}&return_to=/foobar"  # /PS-IGNORE
+    regime_entry = "af8043ee-6657-4d4b-83a2-f1a5cdd016ed"  # /PS-IGNORE
+    url = reverse("queues:cases") + f"?regime_entry={regime_entry}&return_to=/foobar"
     response = authorized_client.get(url)
     # Ensure return_to not sent in server call
     assert mock_cases_search.last_request.qs == {
         **default_params,
-        "regime_entry": [regime_entry],  # /PS-IGNORE
+        "regime_entry": [regime_entry],
     }
     # Ensure return_to parameter does not appear in return_to url value
     assert response.context["return_to"] == f"/queues/?regime_entry={regime_entry}"
