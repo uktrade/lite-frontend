@@ -364,6 +364,16 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
     def get_bound_bookmark_form(self, form_data):
         form_class = self.get_form_class()
         kwargs = self.get_form_kwargs()
+
+        # It is possible that `get_form_kwargs` will contain a `data` key because of the parent form view due to the
+        # main form being posted to with validation errors.
+        # In this case we just want to remove it as we're going to supply our own and we don't really care about the
+        # what the form view wants to put in as the data.
+        try:
+            del kwargs["data"]
+        except KeyError:
+            pass
+
         return form_class(data=form_data, **kwargs)
 
     def get_bookmark_form_class(self):

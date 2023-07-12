@@ -223,6 +223,32 @@ def test_case_home_page_invalid_search_form_shows_errors(authorized_client):
     assert response.context["search_form_has_errors"]
 
 
+@pytest.mark.parametrize(
+    "form_data",
+    [
+        {
+            "status": "madeupstatus",
+        },
+        {
+            "submitted_from_0": "foo",
+        },
+    ],
+)
+def test_case_home_page_invalid_search_form_with_bookmarks_displays_bookmarks(
+    authorized_client, mock_bookmarks, form_data
+):
+    # This is to test against a bug where an invalid form would cause the bookmarks description generation to raise an
+    # exception
+    url = reverse("queues:cases")
+    response = authorized_client.post(
+        url,
+        data=form_data,
+    )
+    assert response.context["bookmarks"] != {"user": []}
+    assert response.status_code == 200
+    assert response.context["search_form_has_errors"]
+
+
 def test_cases_home_page_post_redirect_strips_csrftoken(authorized_client):
     url = reverse("queues:cases")
     response = authorized_client.post(url, {"csrfmiddlewaretoken": "foobar", "other_param": "bar"}, follow=False)
