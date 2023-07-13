@@ -15,6 +15,7 @@ from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
+from caseworker.picklists.services import get_picklists_list
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
 from core import client
@@ -182,12 +183,19 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_form(self):
         denial_reasons = get_denial_reasons(self.request)
+        picklist_data = get_picklists_list(
+            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+        )
+
         if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
             return forms.FCDORefusalAdviceForm(
-                denial_reasons, services.unadvised_countries(self.caseworker, self.case), **self.get_form_kwargs()
+                denial_reasons,
+                picklist_data,
+                services.unadvised_countries(self.caseworker, self.case),
+                **self.get_form_kwargs(),
             )
         else:
-            return forms.RefusalAdviceForm(denial_reasons, **self.get_form_kwargs())
+            return forms.RefusalAdviceForm(denial_reasons, picklist_data, **self.get_form_kwargs())
 
     def form_valid(self, form):
         services.post_refusal_advice(self.request, self.case, form.cleaned_data)
@@ -262,7 +270,11 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         elif advice["type"]["key"] == "refuse":
             self.template_name = "advice/refusal_advice.html"
             denial_reasons = get_denial_reasons(self.request)
-            return forms.get_refusal_advice_form_factory(advice, denial_reasons, self.request.POST)
+            picklist_data = get_picklists_list(
+                self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+            )
+
+            return forms.get_refusal_advice_form_factory(advice, denial_reasons, picklist_data, self.request.POST)
         else:
             raise ValueError("Invalid advice type encountered")
 
@@ -526,7 +538,10 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
         if self.kwargs.get("advice_type") == "refuse":
             denial_reasons = get_denial_reasons(self.request)
-            return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
+            picklist_data = get_picklists_list(
+                self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+            )
+            return forms.RefusalAdviceForm(denial_reasons=denial_reasons, picklist_data=picklist_data, **form_kwargs)
 
         if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
             team_alias = self.caseworker["team"].get("alias", None)

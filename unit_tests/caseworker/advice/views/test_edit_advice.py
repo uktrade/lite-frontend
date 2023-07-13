@@ -7,7 +7,7 @@ from core import client
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_denial_reasons):
+def setup(mock_queue, mock_case, mock_denial_reasons, mock_picklist):
     yield
 
 
@@ -111,6 +111,7 @@ def test_edit_refuse_advice_post(
     refusal_advice,
     url,
     mock_denial_reasons,
+    mock_picklist,
 ):
     user_advice_create_url = f"/cases/{data_standard_case['case']['id']}/user-advice/"
     requests_mock.post(user_advice_create_url, json={})

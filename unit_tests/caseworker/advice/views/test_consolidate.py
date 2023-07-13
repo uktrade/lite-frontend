@@ -25,7 +25,7 @@ def mock_post_team_advice(requests_mock, standard_case_pk):
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_denial_reasons, mock_post_team_advice):
+def setup(mock_queue, mock_case, mock_denial_reasons, mock_picklist, mock_post_team_advice):
     yield
 
 
@@ -316,6 +316,87 @@ def test_consolidate_review(
         assert advice_teams == {FCDO_TEAM, MOD_ECJU_TEAM}
     elif team_alias == MOD_ECJU_TEAM:
         assert bool(advice_teams.intersection(MOD_CONSOLIDATE_TEAMS)) == True
+
+
+def test_refusal_reasons_mocked(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    url,
+    advice_to_consolidate,
+    gov_user,
+):
+    data_standard_case["case"]["advice"] = advice_to_consolidate
+    gov_user["user"]["team"]["name"] = "LU Team"
+    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
+
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
+    )
+
+    response = authorized_client.get(url + "refuse/")
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert isinstance(form, forms.RefusalAdviceForm)
+    # this is built mock_picklist
+    assert form.fields["refusal_picks"].choices == [
+        ("no_concerns", "no concerns"),
+        ("concerns", "concerns"),
+        ("wmd", "wmd"),
+    ]
+    assert form.refusal_text == {
+        "no_concerns": "No Concerns Text",
+        "concerns": "Concerns Text",
+        "wmd": "Weapons of mass destruction Text",
+    }
+
+
+def test_refusal_reasons_manual(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    url,
+    advice_to_consolidate,
+    gov_user,
+):
+    data_standard_case["case"]["advice"] = advice_to_consolidate
+    gov_user["user"]["team"]["name"] = "LU Team"
+    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
+
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
+    )
+
+    requests_mock.get(
+        client._build_absolute_uri(
+            "/picklist/?type=standard_advice&page=1&disable_pagination=True&show_deactivated=False"
+        ),
+        json={
+            "results": [
+                {"name": "custom Value", "text": "This Casing is Maintained"},
+                {"name": "another custom value with many spaces", "text": "Concerns Text"},
+                {"name": "ALLCAPSNOSPACES", "text": "This is all caps text"},
+            ]
+        },
+    )
+    response = authorized_client.get(url + "refuse/")
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert isinstance(form, forms.RefusalAdviceForm)
+    # this is built mock_picklist
+    # must be == and not is, because it's a django choicefield not a list
+    assert list(form.fields["refusal_picks"].choices) == [
+        ("custom_value", "custom Value"),
+        ("another_custom_value_with_many_spaces", "another custom value with many spaces"),
+        ("allcapsnospaces", "ALLCAPSNOSPACES"),
+    ]
+    assert form.refusal_text == {
+        "custom_value": "This Casing is Maintained",
+        "another_custom_value_with_many_spaces": "Concerns Text",
+        "allcapsnospaces": "This is all caps text",
+    }
 
 
 @pytest.mark.parametrize(

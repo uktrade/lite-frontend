@@ -36,9 +36,10 @@
             <div class="govuk-grid-column-one-third">
                 {% include "advice/case_detail.html" %}
             </div>
-
             {% include "advice/picklist.html" %}
         </div>
     </main>
 </div>
+{{ form.refusal_text|json_script:"refusal_text" }}
+<script src="{% static 'javascripts/review-consolidate.js' %}" type="module"></script>
 {% endblock %}

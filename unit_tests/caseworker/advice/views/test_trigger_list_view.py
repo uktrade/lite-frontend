@@ -17,6 +17,7 @@ def setup(
     mock_queue,
     mock_case,
     mock_denial_reasons,
+    mock_picklist,
     mock_application_good_documents,
 ):
     yield
