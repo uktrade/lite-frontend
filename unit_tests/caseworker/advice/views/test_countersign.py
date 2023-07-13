@@ -12,7 +12,7 @@ from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_denial_reasons, mock_case):
+def setup(mock_queue, mock_denial_reasons, mock_picklist, mock_case):
     yield
 
 

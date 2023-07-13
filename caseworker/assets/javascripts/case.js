@@ -109,10 +109,13 @@ window.addEventListener("scroll", function (e) {
 var title = document.title;
 
 var setTitle = function () {
-  var title_heading = document
-    .getElementsByClassName("lite-tabs__tab--selected")[0]
-    .text.trim();
-  document.title = `${title_heading} ${title}`;
+  var title_heading = document.getElementsByClassName(
+    "lite-tabs__tab--selected"
+  )[0];
+  if (title_heading) {
+    title_heading = title_heading.text.trim();
+    document.title = `${title_heading} ${title}`;
+  }
 };
 var elements = document.getElementsByClassName("lite-tabs__tab");
 
