@@ -30,9 +30,6 @@ common_env_vars: &common_env_vars
 image_python: &image_python
   image: cimg/python:3.7.15
 
-image_python_browsers: &image_python_browsers
-  image: circleci/python:3.7-browsers
-
 image_redis: &image_redis
   image: cimg/redis:6.2.6
 
