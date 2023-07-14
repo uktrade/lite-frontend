@@ -8,9 +8,9 @@ from django.urls import reverse
 
 from core import client
 from core.constants import OrganisationDocumentType
+from core.helpers import decompose_date
 
 from exporter.applications.views.goods.firearm.views.constants import AttachFirearmToApplicationSteps
-from exporter.core.helpers import decompose_date
 from exporter.goods.forms.common import (
     ProductOnwardAlteredProcessedForm,
     ProductOnwardExportedForm,

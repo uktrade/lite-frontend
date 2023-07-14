@@ -255,14 +255,6 @@ def is_document_on_letterhead(wizard):
     return str_to_bool(cleaned_data.get("document_on_letterhead"))
 
 
-def decompose_date(field_name, date):
-    return {
-        f"{field_name}_0": date.day,
-        f"{field_name}_1": date.month,
-        f"{field_name}_2": date.year,
-    }
-
-
 def get_document_data(file):
     return {
         "name": getattr(file, "original_name", file.name),

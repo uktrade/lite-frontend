@@ -1,16 +1,26 @@
 import logging
+
 from collections import OrderedDict
 from datetime import datetime, date
 from decimal import Decimal
 from urllib.parse import urlencode
 
+from crispy_forms_gds.fields import DateInputField
+
+from django import forms
+from django.conf import settings
+
 from caseworker.users.services import get_gov_user
 from core import client
+from core.helpers import decompose_date
 
 logger = logging.getLogger(__name__)
 
 
-def fetch_bookmarks(request, filter_data, all_flags, all_regimes, bookmark_base_url):
+ENRICHED_DATE_FORMAT = "%d-%m-%Y"
+
+
+def fetch_bookmarks(request, bookmark_base_url, bookmark_form_provider):
     response = client.get(request, "/bookmarks/")
     if response.status_code >= 300:
         # Not important enough to break the page, so return an empty set of bookmarks.
@@ -18,50 +28,78 @@ def fetch_bookmarks(request, filter_data, all_flags, all_regimes, bookmark_base_
         return {"user": []}
 
     bookmarks = response.json()["user"]
-    enricher = BookmarkEnricher(filter_data, all_flags, all_regimes, bookmark_base_url)
+    enricher = BookmarkEnricher(bookmark_base_url, bookmark_form_provider)
     enriched_bookmarks = enricher.enrich_for_display(bookmarks)
 
     return {"user": enriched_bookmarks}
 
 
-def add_bookmark(request, data, raw_filters):
-    filter_to_save = enrich_filter_for_saving(data, raw_filters)
+def add_bookmark(request, data, keys_to_remove):
+    filter_to_save = enrich_filter_for_saving(data, keys_to_remove)
     now = datetime.today().strftime("%y%m%d-%H%M%S")
     filter_name = f"New unnamed filter ({now})"
     bookmark_name = filter_name
     user, _ = get_gov_user(request)
     user_id = user["user"]["id"]
 
-    for k, v in filter_to_save.items():
-        if type(v) == date:
-            filter_to_save[k] = v.strftime("%d-%m-%Y")
     data = {
         "filter_json": filter_to_save,
         "name": bookmark_name,
         "user_id": user_id,
     }
-    response = client.post(request, f"/bookmarks", data)
+    response = client.post(request, "/bookmarks", data)
 
     return response
 
 
 def delete_bookmark(request, bookmark_id):
     data = {"id": bookmark_id}
-    response = client.delete(request, f"/bookmarks", data)
+    response = client.delete(request, "/bookmarks", data)
     return response
 
 
 def rename_bookmark(request, bookmark_id, name):
     data = {"id": bookmark_id, "name": name}
-    return client.put(request, f"/bookmarks", data)
+    return client.put(request, "/bookmarks", data)
+
+
+def get_label_from_field(field):
+    return field.label
+
+
+def get_readable_value_from_field(field, value):
+    if isinstance(field, forms.MultipleChoiceField):
+        choice_map = dict(field.choices)
+        sorted_readable_values = sorted((choice_map[v] for v in value), key=lambda v: v[0])
+        return ", ".join(sorted_readable_values)
+
+    if isinstance(field, forms.ChoiceField):
+        return dict(field.choices)[value]
+
+    if isinstance(field, DateInputField):
+        return value.strftime("%d-%m-%Y")
+
+    return value
+
+
+def get_description_from_form(form):
+    labelled_values = []
+    for field_name, field_value in form.cleaned_data.items():
+        if not field_value:
+            continue
+
+        field = form.fields[field_name]
+        label = get_label_from_field(field)
+        readable_value = get_readable_value_from_field(field, field_value)
+        labelled_values.append((label, readable_value))
+
+    return ", ".join(f"{k}: {v}" for k, v in sorted(labelled_values, key=lambda v: v[0]))
 
 
 class BookmarkEnricher:
-    def __init__(self, filter_data, all_flags, all_regimes, bookmark_base_url):
-        self.filter_data = filter_data
-        self.all_flags = all_flags
-        self.all_regimes = all_regimes
+    def __init__(self, bookmark_base_url, bookmark_form_provider):
         self.bookmark_base_url = bookmark_base_url
+        self.bookmark_form_provider = bookmark_form_provider
 
     def enrich_for_display(self, bookmarks):
         enriched_bookmarks = [self._enrich_bookmark_for_display(bookmark) for bookmark in bookmarks]
@@ -75,133 +113,59 @@ class BookmarkEnricher:
             out["url"] = self._url_from_bookmark(bookmark_filter)
 
             return out
-        except Exception as ex:  # pylint: disable=broad-except
-            logger.exception("Error enriching bookmark: %s", str(ex))
+        except Exception:  # pylint: disable=broad-except
+            if settings.DEBUG:
+                raise
+            logger.exception("Error enriching bookmark")
             return None
 
     def _description_from_filter(self, bookmark_filter):
-        filter_dict = {**bookmark_filter}
+        # We split the dates here because the form is expecting data as if it
+        # were originally posted from the form but we store the date as a single
+        # value so we need to split it out again
+        data = self._split_dates(bookmark_filter)
+        form = self.bookmark_form_provider.get_bound_bookmark_form(data)
+        form.full_clean()
+        return get_description_from_form(form)
 
-        self._enrich_value_from_filter_data(filter_dict, "assigned_user", "gov_users", "id", "full_name")
-        self._enrich_value_from_filter_data(filter_dict, "case_officer", "gov_users", "id", "full_name")
-        self._enrich_value_from_filter_data(filter_dict, "case_type", "case_types")
-        self._enrich_value_from_filter_data(filter_dict, "status", "statuses")
-        self._enrich_value_from_filter_data(filter_dict, "team_advice_type", "advice_types")
-        self._enrich_value_from_filter_data(filter_dict, "final_advice_type", "advice_types")
-
-        _swap_ids_for_readable_values(filter_dict)
-
-        self._change_flag_ids_to_comma_seperated_names(filter_dict)
-        self._change_regime_ids_to_comma_seperated_names(filter_dict)
-
-        for filter_key in filter_dict:
-            if isinstance(filter_dict[filter_key], list):
-                filter_dict[filter_key] = ", ".join(sorted(str(item) for item in filter_dict[filter_key]))
-
-        return ", ".join(
-            [f"{k.capitalize().replace('_', ' ')}: {str(v).replace('_', ' ')}" for (k, v) in filter_dict.items()]
-        )
+    def _split_dates(self, bookmark_filter):
+        bookmark_filter = {**bookmark_filter}
+        form_class = self.bookmark_form_provider.get_bookmark_form_class()
+        for field_name, field in form_class.declared_fields.items():
+            if not isinstance(field, DateInputField):
+                continue
+            if field_name not in bookmark_filter:
+                continue
+            d = datetime.strptime(bookmark_filter[field_name], ENRICHED_DATE_FORMAT).date()
+            del bookmark_filter[field_name]
+            bookmark_filter.update(decompose_date(field_name, d))
+        return bookmark_filter
 
     def _url_from_bookmark(self, bookmark_filter):
-        for key in ["submitted_from", "submitted_to", "finalised_from", "finalised_to"]:
-            if key in bookmark_filter:
-                date_str = bookmark_filter[key]
-                d, m, y = date_str.split("-")
-                del bookmark_filter[key]
-                bookmark_filter[f"{key}_0"] = d
-                bookmark_filter[f"{key}_1"] = m
-                bookmark_filter[f"{key}_2"] = y
-
-        # We don't need the _id_ prefixed entries in the url
-        for key in list(bookmark_filter.keys()):
-            if key.startswith("_id_"):
-                del bookmark_filter[key]
-
+        bookmark_filter = self._split_dates(bookmark_filter)
         query = urlencode(bookmark_filter, doseq=True)
         return f"{self.bookmark_base_url}?{query}"
 
-    def _enrich_value_from_filter_data(
-        self, bookmark_filter, bookmark_filter_key, filter_data_key, id_key="key", value_key="value"
-    ):
-        """
-        Some filters (e.g. assigned_user, status) have their ids stored rather than human readable value.
-        For these, we have access to the human readable value in the filter_data lists which are
-        used in the lookups for those filters. This function replaces those ids with the
-        looked up entry in the filter_data for display purposes.
 
-        The filter_data is a dictionary with the data type as key (e.g. 'statuses' or 'gov_users')
-        and a list of the objects for the dropdown as the value. e.g.
-
-        {
-        'statuses': [{'id': '00000000-0000-0000-0000-000000000001', 'key': 'submitted', 'value': 'Submitted', ...],
-        'gov_users': {...
-        }
-
-        Params:
-        bookmark_filter: the bookmark filter we are enriching
-        filter_data: the filter data dictionary to fetch the enrichment data from
-        bookmark_filter_key: the entry in the filter we want to enrich
-        filter_data_key: key for the data type we want to look up
-        id_key: the key in the filter_data object that our id should match. Usually just "key", but "id" for users.
-        value_key: the key in the filter_data object that contains the human readable value we are enriching with.
-        """
-        if bookmark_filter_key in bookmark_filter:
-            entry_id = bookmark_filter[bookmark_filter_key]
-            matching_data_item = [entry for entry in self.filter_data[filter_data_key] if entry[id_key] == entry_id]
-            if matching_data_item:
-                bookmark_filter[bookmark_filter_key] = matching_data_item[0][value_key]
-
-    def _change_flag_ids_to_comma_seperated_names(self, filter_dict):
-        bookmark_flags = filter_dict.get("flags", [])
-        if bookmark_flags:
-            flag_names = [flag["name"] for flag in self.all_flags if flag["id"] in bookmark_flags]
-            filter_dict["flags"] = ", ".join(sorted(flag_names))
-
-    def _change_regime_ids_to_comma_seperated_names(self, filter_dict):
-        entries = filter_dict.get("regime_entry", [])
-        if entries:
-            names = [entry["name"] for entry in self.all_regimes if entry["id"] in entries]
-            filter_dict["regime_entry"] = ", ".join(sorted(names))
-
-
-def enrich_filter_for_saving(data, raw_filters):
-    keys_to_remove = [
+def enrich_filter_for_saving(data, keys_to_remove):
+    common_keys_to_remove = [
         "csrfmiddlewaretoken",
-        "save",
-        "save_filter",
-        "saved_filter_description",
-        "saved_filter_name",
         "return_to",
     ]
+    keys_to_remove = common_keys_to_remove + keys_to_remove
 
-    filters = {k: data[k] for k in data.keys() if data[k] and k not in keys_to_remove}
-
-    # Ensure that Decimal values are cast to string ready for json serialization
-    for key, value in filters.items():
+    filters = {}
+    for key, value in data.items():
+        if not value:
+            continue
+        if key in keys_to_remove:
+            continue
         if isinstance(value, Decimal):
             filters[key] = str(value)
-
-    # Add in _id_ prefixed data to preserve country and regime names. This is to prevent
-    # unnecessary lookup when we display the bookmarks later, as the description and
-    # url display need different values for these filters (status, gov_user etc)
-    # the former needing the display value and the latter an id.
-    for key, value in raw_filters.items():
-        if key.startswith("_id_") and key[4:] in filters:
-            filters[key] = raw_filters[key]
+            continue
+        if isinstance(value, date):
+            filters[key] = value.strftime(ENRICHED_DATE_FORMAT)
+            continue
+        filters[key] = value
 
     return OrderedDict(sorted(filters.items()))
-
-
-def _swap_ids_for_readable_values(filter_dict):
-    """
-    Some filters (e.g. Country filters) store their id in the field entry
-    and (counterintuitively) store the human readable variant of this in an '_id_' prefixed
-    entry in the filter dictionary. We preserve this in the filter_json in order to avoid
-    having to look this data up at this enrichment stage. This function replaces the id in
-    these fields with the human readable value from the _id_ prefixed entry.
-    """
-    for key in list(filter_dict.keys()):
-        if key.startswith("_id_") and key[4:] in filter_dict:
-            filter_dict[key[4:]] = filter_dict[key]
-            # We don't want to display these _id_ fields, so delete them after we've used them.
-            del filter_dict[key]

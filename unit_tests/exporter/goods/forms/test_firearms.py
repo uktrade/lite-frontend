@@ -5,7 +5,8 @@ import uuid
 from dateutil.relativedelta import relativedelta
 from django.core.files.uploadedfile import SimpleUploadedFile
 
-from exporter.core.helpers import decompose_date
+from core.helpers import decompose_date
+
 from exporter.goods.forms.firearms import (
     FirearmAttachFirearmCertificateForm,
     FirearmAttachRFDCertificate,
