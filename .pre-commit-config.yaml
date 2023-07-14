@@ -51,3 +51,8 @@ repos:
     hooks:
       - id: prettier
         files: "^(core|caseworker|exporter)/assets/javascripts"
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: 'v8.44.0'
+    hooks:
+      - id: eslint
+        files: "^(core|caseworker|exporter)/assets/javascripts"
