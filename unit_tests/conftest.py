@@ -37,7 +37,11 @@ def auto_mock_s3():
 
 
 @pytest.fixture(autouse=True)
-def reset_s3_endpoint_url(settings):
+def set_aws_s3_settings(settings):
+    settings.AWS_REGION = "eu-west-2"
+    settings.AWS_ACCESS_KEY_ID = "fake-key-id"
+    settings.AWS_SECRET_ACCESS_KEY = "fake-access-key"
+    settings.AWS_STORAGE_BUCKET_NAME = "test-uploads"
     settings.AWS_S3_ENDPOINT_URL = None
 
 
@@ -2489,16 +2493,16 @@ def post_to_step_factory(authorized_client):
 
 @pytest.fixture()
 def mock_s3_files(settings):
-    def _create_files(bucket_name, *files):
+    def _create_files(*files):
         s3.create_bucket(
-            Bucket=bucket_name,
+            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
             CreateBucketConfiguration={
                 "LocationConstraint": settings.AWS_REGION,
             },
         )
         for key, body, extras in files:
             s3.put_object(
-                Bucket=bucket_name,
+                Bucket=settings.AWS_STORAGE_BUCKET_NAME,
                 Key=key,
                 Body=body,
                 **extras,
