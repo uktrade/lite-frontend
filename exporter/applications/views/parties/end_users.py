@@ -9,6 +9,7 @@ from http import HTTPStatus
 
 from core.common.forms import BaseForm
 from core.file_handler import download_document_from_s3
+from core.helpers import get_document_data
 
 from exporter.applications.forms.parties import (
     PartyReuseForm,
@@ -94,9 +95,7 @@ class AddEndUserView(LoginRequiredMixin, FormView):
 def _post_party_document(request, application_id, party_id, document_type, document):
     data = {
         "type": document_type,
-        "name": getattr(document, "original_name", document.name),
-        "s3_key": document.name,
-        "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
+        **get_document_data(document),
     }
 
     response, status_code = post_party_document(request, application_id, party_id, data)

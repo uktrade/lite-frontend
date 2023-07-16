@@ -7,6 +7,7 @@ from lite_forms.helpers import conditional
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
+from core.helpers import get_document_data
 from core.file_handler import download_document_from_s3
 
 from exporter.core.constants import Permissions
@@ -85,11 +86,7 @@ class AbstractOrganisationUpload(LoginRequiredMixin, FormView):
         file = data.pop("file")
 
         data["document_type"] = self.document_type
-        data["document"] = {
-            "name": getattr(file, "original_name", file.name),
-            "s3_key": file.name,
-            "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-        }
+        data["document"] = get_document_data(file)
 
         formatted_date = data["expiry_date"].isoformat()
         data["expiry_date"] = formatted_date
