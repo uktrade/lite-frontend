@@ -7,14 +7,17 @@ from django.shortcuts import redirect
 from django.urls import reverse, NoReverseMatch
 from django.views.generic import TemplateView, View
 
+from core.file_handler import (
+    download_document_from_s3,
+    s3_client,
+)
+
 from caseworker.cases.services import get_document
 from core.decorators import expect_status
-from core.file_handler import s3_client
 from exporter.applications.forms.documents import attach_document_form, delete_document_confirmation_form
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
 from exporter.applications.services import (
     add_document_data,
-    download_document_from_s3,
     get_application,
     post_party_document,
     get_party_document,

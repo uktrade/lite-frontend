@@ -17,19 +17,20 @@ from core.constants import (
     OrganisationDocumentType,
     ProductCategories,
 )
+from core.file_handler import download_document_from_s3
 from core.helpers import convert_dict_to_query_params
 from core.summaries.summaries import (
     get_summary_type_for_good_on_application,
     NoSummaryForType,
     SummaryTypes,
 )
+
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
     add_document_data,
     delete_application_document_data,
     delete_application_preexisting_good,
-    download_document_from_s3,
     get_application,
     get_application_document,
     get_application_documents,

@@ -7,8 +7,8 @@ from lite_forms.helpers import conditional
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
+from core.file_handler import download_document_from_s3
 
-from exporter.applications.services import download_document_from_s3
 from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
