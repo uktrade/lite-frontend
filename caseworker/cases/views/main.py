@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
+from core.exceptions import APIError
 from core.file_handler import s3_client
 from core.helpers import get_document_data
 
@@ -439,6 +440,8 @@ class AttachDocuments(TemplateView):
         case_documents, _ = post_case_documents(request, case_id, data)
 
         if "errors" in case_documents:
+            if settings.DEBUG:
+                raise APIError(case_documents["errors"])
             return error_page(None, "We had an issue uploading your files. Try again later.")
 
         return redirect(

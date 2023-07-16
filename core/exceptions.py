@@ -9,3 +9,7 @@ class ServiceError(Exception):
         self.response = response
         self.log_message = log_message
         self.user_message = user_message
+
+
+class APIError(Exception):
+    pass
