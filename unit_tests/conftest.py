@@ -30,19 +30,49 @@ def add_test_template_dirs(settings):
     settings.TEMPLATES[0]["DIRS"].append(template_dir)
 
 
+@pytest.fixture(scope="session")
+def s3_settings():
+    # This is slightly awkward due to the fact that we want both `auto_mock_s3`
+    # and `set_aws_s3_settings` to set the same values but due to the fact that
+    # `auto_mock_s3` is session scoped it can't access `settings` and manipulate
+    # it directly so we have been forced to split those two fixtures out even
+    # though we want them to share the same variables
+    return {
+        "AWS_REGION": "eu-west-2",
+        "AWS_ACCESS_KEY_ID": "fake-key-id",
+        "AWS_SECRET_ACCESS_KEY": "fake-access-key",
+        "AWS_STORAGE_BUCKET_NAME": "test-uploads",
+        "AWS_S3_ENDPOINT_URL": None,
+    }
+
+
 @pytest.fixture(autouse=True, scope="session")
-def auto_mock_s3():
+def auto_mock_s3(s3_settings):
+    # This is scoped to session otherwise this slows down each test due to it
+    # having to mock s3 each time and create a new bucket
     with mock_s3():
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=s3_settings["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=s3_settings["AWS_SECRET_ACCESS_KEY"],
+            region_name=s3_settings["AWS_REGION"],
+        )
+        s3.create_bucket(
+            Bucket=s3_settings["AWS_STORAGE_BUCKET_NAME"],
+            CreateBucketConfiguration={
+                "LocationConstraint": s3_settings["AWS_REGION"],
+            },
+        )
         yield
 
 
 @pytest.fixture(autouse=True)
-def set_aws_s3_settings(settings):
-    settings.AWS_REGION = "eu-west-2"
-    settings.AWS_ACCESS_KEY_ID = "fake-key-id"
-    settings.AWS_SECRET_ACCESS_KEY = "fake-access-key"
-    settings.AWS_STORAGE_BUCKET_NAME = "test-uploads"
-    settings.AWS_S3_ENDPOINT_URL = None
+def set_aws_s3_settings(settings, s3_settings):
+    settings.AWS_REGION = s3_settings["AWS_REGION"]
+    settings.AWS_ACCESS_KEY_ID = s3_settings["AWS_ACCESS_KEY_ID"]
+    settings.AWS_SECRET_ACCESS_KEY = s3_settings["AWS_SECRET_ACCESS_KEY"]
+    settings.AWS_STORAGE_BUCKET_NAME = s3_settings["AWS_STORAGE_BUCKET_NAME"]
+    settings.AWS_S3_ENDPOINT_URL = s3_settings["AWS_S3_ENDPOINT_URL"]
 
 
 @pytest.fixture
@@ -2493,13 +2523,14 @@ def post_to_step_factory(authorized_client):
 
 @pytest.fixture()
 def mock_s3_files(settings):
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_REGION,
+    )
+
     def _create_files(*files):
-        s3.create_bucket(
-            Bucket=settings.AWS_STORAGE_BUCKET_NAME,
-            CreateBucketConfiguration={
-                "LocationConstraint": settings.AWS_REGION,
-            },
-        )
         for key, body, extras in files:
             s3.put_object(
                 Bucket=settings.AWS_STORAGE_BUCKET_NAME,
@@ -2508,10 +2539,4 @@ def mock_s3_files(settings):
                 **extras,
             )
 
-    s3 = boto3.client(
-        "s3",
-        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        region_name=settings.AWS_REGION,
-    )
     return _create_files
