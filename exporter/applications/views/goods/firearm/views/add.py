@@ -13,6 +13,7 @@ from core.constants import (
     OrganisationDocumentType,
 )
 from core.decorators import expect_status
+from core.helpers import get_document_data
 
 from exporter.applications.services import (
     post_additional_document,
@@ -20,7 +21,6 @@ from exporter.applications.services import (
 )
 from exporter.applications.views.goods.common.actions import ProductDocumentAction
 from exporter.core.helpers import (
-    get_document_data,
     get_rfd_certificate,
     has_valid_rfd_certificate as has_valid_organisation_rfd_certificate,
 )

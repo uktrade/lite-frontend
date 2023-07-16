@@ -255,14 +255,6 @@ def is_document_on_letterhead(wizard):
     return str_to_bool(cleaned_data.get("document_on_letterhead"))
 
 
-def get_document_data(file):
-    return {
-        "name": getattr(file, "original_name", file.name),
-        "s3_key": file.name,
-        "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-    }
-
-
 def has_organisation_firearm_act_document(application, document_type):
     documents = get_organisation_documents(application)
     return document_type in documents

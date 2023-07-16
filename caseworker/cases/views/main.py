@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
 from core.file_handler import s3_client
+from core.helpers import get_document_data
 
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import (
@@ -429,10 +430,8 @@ class AttachDocuments(TemplateView):
         file = files[0]
         data.append(
             {
-                "name": file.original_name,
-                "s3_key": file.name,
-                "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
                 "description": request.POST["description"],
+                **get_document_data(file),
             }
         )
 

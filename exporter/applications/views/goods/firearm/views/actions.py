@@ -7,6 +7,7 @@ from core.constants import (
     OrganisationDocumentType,
 )
 from core.decorators import expect_status
+from core.helpers import get_document_data
 
 from exporter.applications.services import (
     delete_additional_document,
@@ -18,7 +19,6 @@ from exporter.applications.services import (
 )
 from exporter.core.forms import CurrentFile
 from exporter.core.helpers import (
-    get_document_data,
     get_organisation_firearm_act_document,
     get_rfd_certificate,
     has_organisation_firearm_act_document,

@@ -1,6 +1,8 @@
 from http import HTTPStatus
 
 from core import client
+from core.helpers import get_document_data
+
 from exporter.applications.helpers.date_fields import (
     format_date_fields,
     format_date,
@@ -464,16 +466,7 @@ def add_document_data(request):
     if len(files) != 1:
         return None, "Multiple files attached"
     file = files[0]
-    try:
-        original_name = file.original_name
-    except Exception:  # noqa
-        original_name = file.name
-
-    data = {
-        "name": original_name,
-        "s3_key": file.name,
-        "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-    }
+    data = get_document_data(file)
     if "description" in request.POST:
         data["description"] = request.POST.get("description")
 
