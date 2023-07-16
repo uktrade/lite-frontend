@@ -1,13 +1,15 @@
-import re
-from datetime import timedelta
+import boto3
+import copy
 import datetime
 import pytest
 import os
-import copy
+import re
 
+from datetime import timedelta
 from urllib.parse import urljoin, urlparse
 
-from django.conf import settings
+from moto import mock_s3
+
 from django.urls import resolve
 from django.utils import timezone
 
@@ -26,6 +28,17 @@ def disable_hawk(settings):
 def add_test_template_dirs(settings):
     template_dir = os.path.join(settings.BASE_DIR, "unit_tests", "core", "summaries", "templates")
     settings.TEMPLATES[0]["DIRS"].append(template_dir)
+
+
+@pytest.fixture(autouse=True, scope="session")
+def auto_mock_s3():
+    with mock_s3():
+        yield
+
+
+@pytest.fixture(autouse=True)
+def reset_s3_endpoint_url(settings):
+    settings.AWS_S3_ENDPOINT_URL = None
 
 
 @pytest.fixture
@@ -2472,3 +2485,29 @@ def post_to_step_factory(authorized_client):
         return step_poster
 
     return post_to_step
+
+
+@pytest.fixture()
+def mock_s3_files(settings):
+    def _create_files(bucket_name, *files):
+        s3.create_bucket(
+            Bucket=bucket_name,
+            CreateBucketConfiguration={
+                "LocationConstraint": settings.AWS_REGION,
+            },
+        )
+        for key, body, extras in files:
+            s3.put_object(
+                Bucket=bucket_name,
+                Key=key,
+                Body=body,
+                **extras,
+            )
+
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_REGION,
+    )
+    return _create_files

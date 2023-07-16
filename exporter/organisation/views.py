@@ -1,15 +1,14 @@
-from django.conf import settings
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import FormView, TemplateView, RedirectView
+from django.views.generic import FormView, TemplateView, RedirectView, View
 
 from lite_content.lite_exporter_frontend.organisation import Tabs
 from lite_forms.helpers import conditional
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
-from core.file_handler import s3_client
 
+from exporter.applications.services import download_document_from_s3
 from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
@@ -60,17 +59,17 @@ class Details(LoginRequiredMixin, OrganisationView):
     template_name = "details/index"
 
 
-class DocumentOnOrganisation(LoginRequiredMixin, RedirectView):
-    def get_redirect_url(self, pk):
+class DocumentOnOrganisation(LoginRequiredMixin, View):
+    def get(self, request, pk):
         organisation_id = str(self.request.session["organisation"])
         response = get_document_on_organisation(request=self.request, organisation_id=organisation_id, document_id=pk)
         document_on_organisation = response.json()
-        signed_url = s3_client().generate_presigned_url(
-            "get_object",
-            Params={"Bucket": settings.AWS_STORAGE_BUCKET_NAME, "Key": document_on_organisation["document"]["s3_key"]},
-            ExpiresIn=15,
+        document = document_on_organisation["document"]
+
+        return download_document_from_s3(
+            document["s3_key"],
+            document["name"],
         )
-        return signed_url
 
 
 class AbstractOrganisationUpload(LoginRequiredMixin, FormView):
