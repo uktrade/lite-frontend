@@ -53,7 +53,6 @@ def test_download_document_on_organisation(
     mock_s3_files,
 ):
     mock_s3_files(
-        "uploads",
         ("123", b"test", {"ContentType": "application/doc"}),
     )
 
