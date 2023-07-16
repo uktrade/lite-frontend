@@ -15,11 +15,11 @@ from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
 )
+from core.file_handler import download_document_from_s3
 
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
     add_document_data,
-    download_document_from_s3,
     edit_good_on_application_firearm_details_serial_numbers,
     fetch_and_delete_previous_application_documents,
     get_application,

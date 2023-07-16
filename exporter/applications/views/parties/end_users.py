@@ -7,6 +7,8 @@ from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
 from http import HTTPStatus
 
+from core.file_handler import download_document_from_s3
+
 from exporter.applications.forms.parties import (
     PartyReuseForm,
     PartySubTypeSelectForm,
@@ -29,7 +31,6 @@ from exporter.applications.services import (
     get_party,
     update_party,
     delete_party_document_by_id,
-    download_document_from_s3,
 )
 from exporter.applications.views.parties.base import CopyParties
 from exporter.applications.helpers.parties import party_requires_ec3_document
