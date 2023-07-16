@@ -168,7 +168,7 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
         return get_homepage(request, draft_id)
 
 
-class DownloadDocument(LoginRequiredMixin, TemplateView):
+class DownloadDocument(LoginRequiredMixin, View):
     def get(self, request, **kwargs):
         draft_id = str(kwargs["pk"])
         action = document_switch(request.path)["download"]
@@ -185,7 +185,7 @@ class DownloadDocument(LoginRequiredMixin, TemplateView):
             return error_page(request, strings.applications.AttachDocumentPage.DOWNLOAD_GENERIC_ERROR)
 
 
-class DownloadGeneratedDocument(LoginRequiredMixin, TemplateView):
+class DownloadGeneratedDocument(LoginRequiredMixin, View):
     def get(self, request, case_pk, document_pk):
         document, _ = get_document(request, pk=document_pk)
         client = s3_client()
