@@ -67,12 +67,13 @@ def auto_mock_s3(s3_settings):
 
 
 @pytest.fixture(autouse=True)
-def set_aws_s3_settings(settings, s3_settings):
-    settings.AWS_REGION = s3_settings["AWS_REGION"]
-    settings.AWS_ACCESS_KEY_ID = s3_settings["AWS_ACCESS_KEY_ID"]
-    settings.AWS_SECRET_ACCESS_KEY = s3_settings["AWS_SECRET_ACCESS_KEY"]
-    settings.AWS_STORAGE_BUCKET_NAME = s3_settings["AWS_STORAGE_BUCKET_NAME"]
-    settings.AWS_S3_ENDPOINT_URL = s3_settings["AWS_S3_ENDPOINT_URL"]
+def set_aws_s3_settings(settings, s3_settings, mocker):
+    for key, value in s3_settings.items():
+        mocker.patch(
+            f"django_chunk_upload_handlers.s3.{key}",
+            value,
+        )
+        setattr(settings, key, value)
 
 
 @pytest.fixture

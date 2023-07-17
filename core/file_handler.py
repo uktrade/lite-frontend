@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.files.uploadhandler import UploadFileException
 from django.http import StreamingHttpResponse
 
-from .s3_file_upload_handler import S3FileUploadHandler
+from django_chunk_upload_handlers.s3 import S3FileUploadHandler
 
 
 logger = logging.getLogger(__name__)
