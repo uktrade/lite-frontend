@@ -16,7 +16,7 @@
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "engines": {
-    "node": "16.19.x",
+    "node": "16.20.x",
     "npm": "8.19.x"
   },
   "repository": {

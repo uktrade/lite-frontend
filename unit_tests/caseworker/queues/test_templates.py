@@ -47,7 +47,11 @@ def test_sla_display_days(elapsed, remaining):
 
 
 def test_cases_with_flags(
-    data_standard_case, mock_countries, mock_queues_list, rf, client, flags, all_cles, all_regimes
+    data_standard_case,
+    flags,
+    all_cles,
+    all_regimes,
+    data_countries,
 ):
     context = {}
     context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
@@ -73,12 +77,17 @@ def test_cases_with_flags(
         "advice_types": [],
     }
     queue = {"id": "cfac8bf4-d325-4e8e-9c28-0fe93c0ecf80", "is_system_queue": True}
-    request = rf.get(f"/")
-    request.session = client.session
-    request.requests_session = requests.Session()
 
     context["data"] = {"results": {"cases": [case]}}
-    context["form"] = CasesFiltersForm(request, queue, filters, flags, all_cles, all_regimes)
+    context["form"] = CasesFiltersForm(
+        queue,
+        filters,
+        flags,
+        all_cles,
+        all_regimes,
+        data_countries["countries"],
+        [],
+    )
 
     html = render_to_string("queues/cases.html", context)
     soup = BeautifulSoup(html, "html.parser")
@@ -90,7 +99,11 @@ def test_cases_with_flags(
 
 
 def test_cases_without_flags(
-    data_standard_case, mock_countries, mock_queues_list, rf, client, flags, all_cles, all_regimes
+    data_standard_case,
+    flags,
+    all_cles,
+    all_regimes,
+    data_countries,
 ):
     context = {}
     context["queue"] = {"id": "00000000-0000-0000-0000-000000000001"}
@@ -103,12 +116,17 @@ def test_cases_without_flags(
         "advice_types": [],
     }
     queue = {"id": "cfac8bf4-d325-4e8e-9c28-0fe93c0ecf80", "is_system_queue": True}
-    request = rf.get(f"/")
-    request.session = client.session
-    request.requests_session = requests.Session()
 
     context["data"] = {"results": {"cases": [case]}}
-    context["form"] = CasesFiltersForm(request, queue, filters, flags, all_cles, all_regimes)
+    context["form"] = CasesFiltersForm(
+        queue,
+        filters,
+        flags,
+        all_cles,
+        all_regimes,
+        data_countries["countries"],
+        [],
+    )
 
     html = render_to_string("queues/cases.html", context)
     soup = BeautifulSoup(html, "html.parser")
