@@ -123,7 +123,32 @@
 			{% endif %}
 		</ul>
 	</td>
-
+	{# case recommondation #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="case_recommondation">
+		<ul class="case-rec__list">
+			{% if case.advice %}
+				{% for team_id, team_advice in case.advice.items %}
+					{% for advice in team_advice %}
+					{% if advice.type.key in 'approve, proviso, refuse' %}
+					<li class="case-rec__item">
+					<div class="case-rec__team">{{ advice.user.team.name }}</div>
+					<div class="case-rec__recommandation">
+							{% if advice.type.key == 'approve' %}
+								Approved
+							{% elif advice.type.key == 'proviso' %}
+								Approved with license conditions
+							{% elif advice.type.key == 'refuse' %}
+								Refused under
+								{{ advice.denial_reasons|get_display_values:'display_value' }}
+								{% endif %}
+					</div>
+					</li>
+					{% endif %}
+					{% endfor %}
+				{% endfor %}
+			{% endif %}
+		</ul>
+	</td>
     {# case updates #}
 	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="case_updates">
 		<ul class="app-updates__list">

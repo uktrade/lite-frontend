@@ -947,3 +947,9 @@ def list_to_choice_labels(items, choices):
         if choice[0] in items:
             item_values.append(choice[1])
     return ", ".join(item_values)
+
+
+@register.filter
+def get_display_values(display_value_dict, key):
+    if display_value_dict:
+        return ", ".join([item[key] for item in display_value_dict])
