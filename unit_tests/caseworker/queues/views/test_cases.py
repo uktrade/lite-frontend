@@ -176,6 +176,7 @@ def test_cases_home_page_view_context(authorized_client):
     assert set(actual_fields) == set(expected_fields)
     for context_key in context_keys:
         assert response.context[context_key]
+    assert not response.context["search_form_has_errors"]
     assert response.status_code == 200
 
 
@@ -208,6 +209,44 @@ def test_cases_home_page_post_redirect(authorized_client):
     response = authorized_client.post(url, follow=False)
     assert response.url == "/queues/"
     assert response.status_code == 302
+
+
+def test_case_home_page_invalid_search_form_shows_errors(authorized_client):
+    url = reverse("queues:cases")
+    response = authorized_client.post(
+        url,
+        data={
+            "status": "madeupstatus",
+        },
+    )
+    assert response.status_code == 200
+    assert response.context["search_form_has_errors"]
+
+
+@pytest.mark.parametrize(
+    "form_data",
+    [
+        {
+            "status": "madeupstatus",
+        },
+        {
+            "submitted_from_0": "foo",
+        },
+    ],
+)
+def test_case_home_page_invalid_search_form_with_bookmarks_displays_bookmarks(
+    authorized_client, mock_bookmarks, form_data
+):
+    # This is to test against a bug where an invalid form would cause the bookmarks description generation to raise an
+    # exception
+    url = reverse("queues:cases")
+    response = authorized_client.post(
+        url,
+        data=form_data,
+    )
+    assert response.context["bookmarks"] != {"user": []}
+    assert response.status_code == 200
+    assert response.context["search_form_has_errors"]
 
 
 def test_cases_home_page_post_redirect_strips_csrftoken(authorized_client):
@@ -365,11 +404,14 @@ def test_cases_home_page_regime_entry_search(authorized_client, mock_cases_searc
 
 
 def test_cases_home_page_exclude_regime_entry_search(authorized_client, mock_cases_search):
-    url = reverse("queues:cases") + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed&exclude_regime_entry=true"
+    url = (
+        reverse("queues:cases")
+        + "?regime_entry=af8043ee-6657-4d4b-83a2-f1a5cdd016ed&exclude_regime_entry=true"  # /PS-IGNORE
+    )
     authorized_client.get(url)
     assert mock_cases_search.last_request.qs == {
         **default_params,
-        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],
+        "regime_entry": ["af8043ee-6657-4d4b-83a2-f1a5cdd016ed"],  # /PS-IGNORE
         "exclude_regime_entry": ["true"],
     }
 
@@ -442,6 +484,47 @@ def test_cases_home_page_countries_search(authorized_client, mock_cases_search):
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "countries": ["gb", "fr"],
+    }
+
+
+@pytest.mark.parametrize(
+    "date_components, expected_output",
+    [
+        (
+            ("1", "1", "23"),
+            {
+                "submitted_from": ["0023-01-01"],
+                "submitted_from_0": ["1"],
+                "submitted_from_1": ["1"],
+                "submitted_from_2": ["23"],
+                "submitted_from_day": ["1"],
+                "submitted_from_month": ["1"],
+                "submitted_from_year": ["23"],
+            },
+        ),
+        (
+            ("01", "01", "2023"),
+            {
+                "submitted_from": ["2023-01-01"],
+                "submitted_from_0": ["01"],
+                "submitted_from_1": ["01"],
+                "submitted_from_2": ["2023"],
+                "submitted_from_day": ["01"],
+                "submitted_from_month": ["01"],
+                "submitted_from_year": ["2023"],
+            },
+        ),
+    ],
+)
+def test_cases_home_page_date_search(authorized_client, mock_cases_search, date_components, expected_output):
+    day, month, year = date_components
+    url = reverse("queues:cases") + f"?submitted_from_0={day}&submitted_from_1={month}&submitted_from_2={year}"
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        **expected_output,
     }
 
 
@@ -959,18 +1042,18 @@ def test_filter_none_pending_gov_users(authorized_client, mock_cases_search):
     response = authorized_client.get(url)
     gov_users = response.context["data"]["results"]["filters"]["gov_users"]
     assert gov_users == [
-        {"full_name": "John Smith", "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "pending": False}
-    ]  # /PS-IGNORE
+        {"full_name": "John Smith", "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0", "pending": False}  # /PS-IGNORE
+    ]
 
 
 def test_cases_home_page_return_to_search(authorized_client, mock_cases_search):
-    regime_entry = "af8043ee-6657-4d4b-83a2-f1a5cdd016ed"
-    url = reverse("queues:cases") + f"?regime_entry={regime_entry}&return_to=/foobar"  # /PS-IGNORE
+    regime_entry = "af8043ee-6657-4d4b-83a2-f1a5cdd016ed"  # /PS-IGNORE
+    url = reverse("queues:cases") + f"?regime_entry={regime_entry}&return_to=/foobar"
     response = authorized_client.get(url)
     # Ensure return_to not sent in server call
     assert mock_cases_search.last_request.qs == {
         **default_params,
-        "regime_entry": [regime_entry],  # /PS-IGNORE
+        "regime_entry": [regime_entry],
     }
     # Ensure return_to parameter does not appear in return_to url value
     assert response.context["return_to"] == f"/queues/?regime_entry={regime_entry}"
