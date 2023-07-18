@@ -98,6 +98,7 @@ class CasesFiltersForm(forms.Form):
         label="Nuclear Cooperation Agreement",
         required=False,
     )
+
     includes_refusal_recommendation_from_ogd = forms.BooleanField(
         label="Includes a refusal recommendation",
         required=False,
