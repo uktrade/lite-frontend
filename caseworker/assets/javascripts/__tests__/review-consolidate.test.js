@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
-import populateTextOnRadioInput from "../radio-populate-textarea";
-let radioDocument;
+import PopulateTextOnRadioInput from "../radio-populate-textarea";
+let radio_document;
 
 const createRadioElement = () => {
   document.body.innerHTML = `
@@ -48,7 +48,7 @@ const createRadioElement = () => {
 
 describe("Review Consolidate", () => {
   beforeEach(() => {
-    radioDocument = createRadioElement();
+    radio_document = createRadioElement();
     const refusals_text = {
       no_concerns: "No Concerns",
       concerns: "Concerns",
@@ -56,7 +56,7 @@ describe("Review Consolidate", () => {
       wmd: "Weapons of mass destruction (WMD) concerns",
       other: "",
     };
-    populateTextOnRadioInput(
+    return new PopulateTextOnRadioInput(
       "input[name=refusal_picks]",
       "#id_refusal_reasons",
       refusals_text
@@ -64,9 +64,9 @@ describe("Review Consolidate", () => {
   });
 
   test("click radio button updates text area", async () => {
-    let text_area = radioDocument.querySelector("#id_refusal_reasons");
+    let text_area = radio_document.querySelector("#id_refusal_reasons");
     expect(text_area.value).toBe("");
-    let radio_buttons = radioDocument.querySelectorAll(
+    let radio_buttons = radio_document.querySelectorAll(
       "input[name=refusal_picks]"
     );
     await radio_buttons[0].click();
