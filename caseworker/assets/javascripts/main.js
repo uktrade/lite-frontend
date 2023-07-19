@@ -21,6 +21,7 @@ import initDestinationsList from "./show-hide-destinations.js";
 import initMentionUsers, { initCaseNotes } from "./case-notes";
 import { initExpanders } from "./list-expander";
 import { initCustomisers } from "./customiser";
+import { initRadioTextArea } from "./radio-populate-textarea.js";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
@@ -41,3 +42,4 @@ initCaseNotes();
 initMentionUsers();
 initExpanders();
 initCustomisers();
+initRadioTextArea();

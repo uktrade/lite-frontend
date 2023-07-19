@@ -118,7 +118,7 @@ class GiveApprovalAdviceForm(forms.Form):
         label="What is your reason for approving?",
         required=False,
         widget=forms.RadioSelect,
-        choices=[],
+        choices=(),
     )
 
     def _picklist_reasons(self, picklist_data):
@@ -136,17 +136,10 @@ class GiveApprovalAdviceForm(forms.Form):
         approval_choices, approval_text = self._picklist_reasons(picklist_data)
         self.approval_text = approval_text
 
-        self.approval_radios = forms.ChoiceField(
-            label="What is your reason for approving?",
-            required=False,
-            widget=forms.RadioSelect,
-            choices=approval_choices,
-        )
-
+        self.fields["approval_radios"].choices = approval_choices
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            "approval_radios",
-            RadioTextArea("approval_reasons", "approval_radios", self.approval_text),
+            RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
             ExpandingFieldset(
                 "proviso",
                 "instructions_to_exporter",
@@ -173,7 +166,7 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            RadioTextArea("approval_reasons", "approval_radios", self.approval_text),
+            RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
             "proviso",
             Submit("submit", "Submit recommendation"),
         )

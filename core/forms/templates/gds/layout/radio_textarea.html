@@ -1,10 +1,10 @@
 {% load l10n crispy_forms_gds %}
-<div>
-    {{radio_field}}
-    {{radio_field.help_text}}
-    {{radio_field.html_name}}
-    {{field.html_name}}
-    {% include 'gds/layout/radios.html' with field=radio_field %}
-    {% include 'gds/layout/multifield.html' with field=field %}
+<div data-module="radio-textarea">
+    <div id="div_id_{{radio_field.html_name}}" class="govuk-form-group">
+        {% include 'gds/layout/radios.html' with field=radio_field %}
+    </div>
+    <div id="div_id_{{field.html_name}}" class="govuk-form-group">
+        {% include 'gds/layout/multifield.html' with field=field %}
+    </div>
     {{ json_choices | json_script:field.html_name }}
 </div>

@@ -1,18 +1,26 @@
 class PopulateTextOnRadioInput {
-  constructor($radio_selector, $text_selector, $lookup) {
-    this.$radio_buttons = document.querySelectorAll($radio_selector);
-    this.$text_area = document.querySelector($text_selector);
-    this.$lookup = $lookup;
+  constructor($el) {
+    this.$radio_buttons = $el.querySelectorAll("input[type=radio]");
+    this.$text_area = $el.querySelector("textarea");
+    this.$lookup = JSON.parse(
+      $el.querySelector(`#${this.$text_area.name}`).textContent
+    );
   }
 
   init() {
     this.$radio_buttons.forEach((input) => {
-      input.addEventListener("change", (event) => {
-        const text = this.$lookup[input];
+      input.addEventListener("change", () => {
+        const text = this.$lookup[input.value];
         this.$text_area.value = text;
       });
     });
   }
 }
 
-export { PopulateTextOnRadioInput };
+export default function initRadioTextArea() {
+  document
+    .querySelectorAll("[data-module=radio-textarea]")
+    .forEach(($el) => new PopulateTextOnRadioInput($el).init());
+}
+
+export { PopulateTextOnRadioInput, initRadioTextArea };
