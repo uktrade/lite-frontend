@@ -1,10 +1,9 @@
-from datetime import datetime
+from datetime import date
 from decimal import Decimal
 from urllib.parse import urlparse, urlencode, parse_qs, urlunparse
 
 from dateutil import parser
 from django.http import Http404
-from django.shortcuts import redirect
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 
@@ -17,12 +16,18 @@ from caseworker.core.constants import (
     SLA_CIRCUMFERENCE,
     SLA_RADIUS,
 )
-from caseworker.core.services import get_regime_entries
-from caseworker.core.services import get_user_permissions, get_control_list_entries
+from caseworker.core.services import (
+    get_control_list_entries,
+    get_countries,
+    get_regime_entries,
+    get_user_permissions,
+)
 from caseworker.flags.services import get_flags
-from caseworker.queues.services import get_cases_search_data, head_cases_search_count
 from caseworker.queues.services import (
+    get_cases_search_data,
+    head_cases_search_count,
     get_queue,
+    get_queues,
 )
 from caseworker.queues.views.forms import CasesFiltersForm
 from core.auth.views import LoginRequiredMixin
@@ -62,6 +67,19 @@ class CaseDataMixin:
     def all_regimes(self):
         return get_regime_entries(self.request)
 
+    @cached_property
+    def countries(self):
+        countries_response, _ = get_countries(self.request)
+        return countries_response["countries"]
+
+    @cached_property
+    def queues(self):
+        return get_queues(
+            self.request,
+            convert_to_options=False,
+            users_team_first=True,
+        )
+
     @property
     def filters(self):
         gov_users = self.data["results"]["filters"]["gov_users"]
@@ -92,8 +110,8 @@ class CaseDataMixin:
 
             # We need to save compressed date values to show the current filter value
             if date_tokens and all(date_tokens):
-                date_str = "-".join(date_tokens)
-                date_obj = datetime.strptime(date_str, "%d-%m-%Y").date()
+                day, month, year = date_tokens
+                date_obj = date(day=int(day), month=int(month), year=int(year))
                 params[param] = date_obj
 
         params["flags"] = self.request.GET.getlist("flags", [])
@@ -277,25 +295,35 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["request"] = self.request
         kwargs["filters_data"] = self.filters
         kwargs["all_flags"] = self.all_flags
         kwargs["all_cles"] = self.all_cles
         kwargs["all_regimes"] = self.all_regimes
         kwargs["queue"] = self.queue
+        kwargs["countries"] = self.countries
+        kwargs["queues"] = self.queues
         kwargs["initial"]["return_to"] = self.get_return_url()
         return kwargs
 
-    def post(self, request, *args, **kwargs):
+    def get_success_url(self):
         # This view does most of it's work through GET, but initial form POST submissions
-        # are handled here and redirected to a GET after stripping out csrfmiddlewaretoken
+        # end up here and redirected to a GET after stripping out csrfmiddlewaretoken
         # - this should not be visible in GET params due to security concerns
-        get_params = request.POST.urlencode()
-        url = f"{request.path}?{get_params}"
+        get_params = self.request.POST.urlencode()
+        url = f"{self.request.path}?{get_params}"
         sanitised_url = self._strip_param_from_url(url, "csrfmiddlewaretoken")
-        return redirect(sanitised_url)
+        return sanitised_url
+
+    def is_filters_visible(self):
+        # when this view instantiates the form on submission, we can do better by using form.is_bound
+        # until then we must interrogate GET parameters
+        params_to_ignore = set(["selected_tab", "page"])
+        all_params = set(self.request.GET.keys())
+        return len(all_params - params_to_ignore) > 0
 
     def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
         try:
             updated_queue = [
                 queue for queue in self.data["results"]["queues"] if queue["id"] == UPDATED_CASES_QUEUE_ID
@@ -307,19 +335,46 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
-        bookmarks = fetch_bookmarks(self.request, self.filters, self.all_flags, self.all_regimes, self.request.path)
-        context = {
-            "sla_radius": SLA_RADIUS,
-            "sla_circumference": SLA_CIRCUMFERENCE,
-            "data": self.data,
-            "queue": self.queue,  # Used for showing current queue
-            "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
-            "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
-            "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
-            "show_updated_cases_banner": show_updated_cases_banner,
-            "tab_data": self._tab_data(),
-            "bookmarks": bookmarks,
-            "return_to": self.get_return_url(),
-        }
+        bookmarks = fetch_bookmarks(
+            self.request,
+            self.request.path,
+            self,
+        )
 
-        return super().get_context_data(*args, **context, **kwargs)
+        context.update(
+            {
+                "sla_radius": SLA_RADIUS,
+                "sla_circumference": SLA_CIRCUMFERENCE,
+                "data": self.data,
+                "queue": self.queue,  # Used for showing current queue
+                "is_filters_visible": self.is_filters_visible(),
+                "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
+                "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
+                "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
+                "show_updated_cases_banner": show_updated_cases_banner,
+                "tab_data": self._tab_data(),
+                "bookmarks": bookmarks,
+                "return_to": self.get_return_url(),
+                "search_form_has_errors": bool(context["form"].errors),
+            }
+        )
+
+        return context
+
+    def get_bound_bookmark_form(self, form_data):
+        form_class = self.get_form_class()
+        kwargs = self.get_form_kwargs()
+
+        # It is possible that `get_form_kwargs` will contain a `data` key because of the parent form view due to the
+        # main form being posted to with validation errors.
+        # In this case we just want to remove it as we're going to supply our own and we don't really care about the
+        # what the form view wants to put in as the data.
+        try:
+            del kwargs["data"]
+        except KeyError:
+            pass
+
+        return form_class(data=form_data, **kwargs)
+
+    def get_bookmark_form_class(self):
+        return self.get_form_class()

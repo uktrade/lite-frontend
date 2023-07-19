@@ -1,19 +1,15 @@
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Field, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
-from django import forms
-from django.forms.widgets import HiddenInput
-from django.urls import reverse
+from crispy_forms_gds.layout import Layout, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
 
-from caseworker.core.services import get_countries
-from caseworker.queues.services import get_queues
+from django import forms
+from django.urls import reverse
 
 
 SLA_DAYS_RANGE = 99
 
 
 class CasesFiltersForm(forms.Form):
-
     case_reference = forms.CharField(
         label="Case reference",
         widget=forms.TextInput(attrs={"id": "case_reference"}),
@@ -56,6 +52,7 @@ class CasesFiltersForm(forms.Form):
     max_total_value = forms.DecimalField(
         label="Max total value (£)",
         required=False,
+        widget=forms.TextInput,
     )
     report_summary = forms.CharField(
         label="Report summary",
@@ -102,10 +99,20 @@ class CasesFiltersForm(forms.Form):
         required=False,
     )
 
+    includes_refusal_recommendation_from_ogd = forms.BooleanField(
+        label="Includes a refusal recommendation",
+        required=False,
+    )
+    return_to = forms.CharField(
+        label="",
+        widget=forms.HiddenInput(),
+        required=False,
+    )
+
     def get_field_choices(self, filters_data, field):
         return [("", "Select")] + [(choice["key"], choice["value"]) for choice in filters_data.get(field, [])]
 
-    def __init__(self, request, queue, filters_data, all_flags, all_cles, all_regimes, *args, **kwargs):
+    def __init__(self, queue, filters_data, all_flags, all_cles, all_regimes, countries, queues, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         case_status_choices = self.get_field_choices(filters_data, "statuses")
@@ -116,12 +123,8 @@ class CasesFiltersForm(forms.Form):
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
         regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]
-        countries_response, _ = get_countries(request)
-        country_choices = [(country["id"], country["name"]) for country in countries_response["countries"]]
-        assigned_queues_choices = [
-            (queue["id"], f"{queue['team']['name']}: {queue['name']}")
-            for queue in get_queues(request, convert_to_options=False, users_team_first=True)
-        ]
+        country_choices = [(country["id"], country["name"]) for country in countries]
+        assigned_queues_choices = [(queue["id"], f"{queue['team']['name']}: {queue['name']}") for queue in queues]
 
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
@@ -180,11 +183,6 @@ class CasesFiltersForm(forms.Form):
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "assigned-queues"}),
         )
-        self.fields["return_to"] = forms.CharField(
-            label="",
-            widget=HiddenInput(),
-            required=False,
-        )
 
         case_filters = [
             "case_reference",
@@ -192,15 +190,15 @@ class CasesFiltersForm(forms.Form):
             "case_officer",
             "assigned_user",
             "export_type",
-            Field("submitted_from"),
-            Field("submitted_to"),
-            Field.select("flags"),
-            Field("finalised_from"),
-            Field("finalised_to"),
-            "return_to",
+            "includes_refusal_recommendation_from_ogd",
+            "submitted_from",
+            "submitted_to",
+            "flags",
+            "finalised_from",
+            "finalised_to",
         ]
         if queue.get("is_system_queue"):
-            case_filters.append(Field.select("assigned_queues"))
+            case_filters.append("assigned_queues")
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the
@@ -210,6 +208,7 @@ class CasesFiltersForm(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
+            "return_to",
             Accordion(
                 AccordionSection(
                     "Case",
@@ -218,28 +217,28 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Product",
-                    Field.select("control_list_entry", id="control_list_entry"),
-                    Field("exclude_control_list_entry"),
-                    Field.text("regime_entry"),
-                    Field("exclude_regime_entry"),
-                    Field.text("report_summary"),
-                    Field.text("product_name"),
-                    Field("max_total_value", css_class="govuk-input"),
-                    Field("is_trigger_list"),
-                    Field("is_nca_applicable"),
+                    "control_list_entry",
+                    "exclude_control_list_entry",
+                    "regime_entry",
+                    "exclude_regime_entry",
+                    "report_summary",
+                    "product_name",
+                    "max_total_value",
+                    "is_trigger_list",
+                    "is_nca_applicable",
                 ),
                 AccordionSection(
                     "Applicant",
-                    Field.text("organisation_name"),
-                    Field.text("exporter_site_name"),
-                    Field.select("goods_starting_point"),
+                    "organisation_name",
+                    "exporter_site_name",
+                    "goods_starting_point",
                 ),
                 AccordionSection(
                     "Parties",
-                    Field.text("countries"),
-                    Field.text("party_name"),
-                    Field.checkbox("exclude_denial_matches"),
-                    Field.checkbox("exclude_sanction_matches"),
+                    "countries",
+                    "party_name",
+                    "exclude_denial_matches",
+                    "exclude_sanction_matches",
                 ),
                 css_id="accordion-1",
             ),

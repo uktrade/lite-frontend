@@ -71,14 +71,13 @@ logger = getLogger(__name__)
 class CaseTabsMixin:
     def get_tabs(self):
         tabs = [
+            Tabs.QUICK_SUMMARY,
             Tabs.DETAILS,
             Tabs.LICENCES,
             Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
         ]
-        if settings.FEATURE_QUICK_SUMMARY:
-            tabs.insert(0, Tabs.QUICK_SUMMARY)
 
         return tabs
 
@@ -377,7 +376,9 @@ class ChangeStatus(SingleFormView):
 
     def get_success_url(self):
         messages.success(self.request, cases.ChangeStatusPage.SUCCESS_MESSAGE)
-        return reverse_lazy("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
+        return reverse_lazy(
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
+        )
 
 
 class MoveCase(SingleFormView):
@@ -390,7 +391,7 @@ class MoveCase(SingleFormView):
         self.context = {"case": case}
         self.success_message = cases.Manage.MoveCase.SUCCESS_MESSAGE
         self.success_url = reverse_lazy(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk}
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
         )
 
 

@@ -133,6 +133,9 @@ commands:
 
   lint:
     steps:
+      - run: pipenv install pre-commit
+      - run: pipenv run pre-commit run eslint --from-ref origin/HEAD --to-ref HEAD
+      - run: pipenv run pre-commit run prettier --from-ref origin/HEAD --to-ref HEAD
       - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
       - run: pipenv run prospector
       - run: pipenv run black . --check --diff

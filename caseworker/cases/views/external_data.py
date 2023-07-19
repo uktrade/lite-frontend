@@ -19,7 +19,9 @@ class MatchingDenials(LoginRequiredMixin, View):
             data.append({"application": str(kwargs["pk"]), "denial": match_id, "category": kwargs["category"]})
         response = client.post(request, f"/applications/{kwargs['pk']}/denial-matches/", data)
         response.raise_for_status()
-        return redirect(reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]}))
+        return redirect(
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "details"})
+        )
 
 
 class RemoveMatchingDenials(LoginRequiredMixin, View):
@@ -28,7 +30,9 @@ class RemoveMatchingDenials(LoginRequiredMixin, View):
         data["objects"] = request.POST.getlist("objects", [])
         response = client.delete(request, f"/applications/{kwargs['pk']}/denial-matches/", data)
         response.raise_for_status()
-        return redirect(reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"]}))
+        return redirect(
+            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "details"})
+        )
 
 
 class SanctionRevokeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
@@ -43,7 +47,9 @@ class SanctionRevokeView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         )
 
     def get_success_url(self):
-        return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+        return reverse(
+            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "tab": "details"}
+        )
 
     def form_valid(self, form):
         for pk in self.request.GET.getlist("objects"):

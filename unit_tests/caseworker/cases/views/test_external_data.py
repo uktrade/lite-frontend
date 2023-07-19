@@ -43,7 +43,7 @@ def test_matching_denials(authorized_client, mock_application_denial_match_post,
     response = authorized_client.post(url, data)
 
     assert response.status_code == 302
-    assert response.url == reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": open_case_pk})
+    assert response.url == reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": open_case_pk, "tab": "details"})
 
     assert mock_application_denial_match_post.last_request.json() == [
         {"application": open_case_pk, "denial": "1", "category": "partial"},
@@ -62,7 +62,7 @@ def test_remove_matching_denials(
     response = authorized_client.post(url, data)
 
     assert response.status_code == 302
-    assert response.url == reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": open_case_pk})
+    assert response.url == reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": open_case_pk, "tab": "details"})
 
     assert mock_application_denial_match_delete.last_request.json() == {"objects": ["1", "2", "3"]}
 

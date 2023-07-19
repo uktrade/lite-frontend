@@ -34,3 +34,11 @@ def is_good_on_application_product_type(good_on_application, product_type):
         return good_on_application["firearm_details"]["type"]["key"] == product_type
     except (KeyError, TypeError):
         return False
+
+
+def decompose_date(field_name, date):
+    return {
+        f"{field_name}_0": date.day,
+        f"{field_name}_1": date.month,
+        f"{field_name}_2": date.year,
+    }

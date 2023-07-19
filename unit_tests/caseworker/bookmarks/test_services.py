@@ -1,7 +1,12 @@
+import datetime
+import pytest
 import uuid
+
 from decimal import Decimal
 
-import pytest
+from crispy_forms_gds.fields import DateInputField
+from django import forms
+from django.urls import reverse
 
 from caseworker.bookmarks.services import enrich_filter_for_saving, BookmarkEnricher
 from unit_tests.caseworker.conftest import GOV_USER_ID
@@ -12,43 +17,181 @@ def new_bookmarks(filter):
 
 
 @pytest.fixture()
+def all_cles(data_control_list_entries):
+    return data_control_list_entries["control_list_entries"]
+
+
+@pytest.fixture()
 def all_regimes(data_regime_entries):
     return [{"id": regime["pk"], "name": regime["name"]} for regime in data_regime_entries]
+
+
+@pytest.fixture()
+def mock_form_provider():
+    class MockForm(forms.Form):
+        case_reference = forms.CharField(
+            label="Case reference",
+            widget=forms.TextInput(attrs={"id": "case_reference"}),
+            required=False,
+        )
+        submitted_from = DateInputField(
+            label="Submitted after",
+            required=False,
+        )
+        submitted_to = DateInputField(
+            label="Submitted before",
+            required=False,
+        )
+        finalised_from = DateInputField(
+            label="Finalised after",
+            required=False,
+        )
+        finalised_to = DateInputField(
+            label="Finalised before",
+            required=False,
+        )
+        is_trigger_list = forms.BooleanField(
+            label="Trigger list",
+            required=False,
+        )
+        max_total_value = forms.DecimalField(
+            label="Max total value (£)",
+            required=False,
+            widget=forms.TextInput,
+        )
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.fields["status"] = forms.ChoiceField(
+                choices=[("ogd_advice", "OGD Advice")],
+                label="Case status",
+                required=False,
+            )
+            self.fields["case_officer"] = forms.ChoiceField(
+                choices=[(GOV_USER_ID, "John Smith")],
+                label="Licensing Unit case officer",
+                widget=forms.Select(attrs={"id": "case_officer"}),
+                required=False,
+            )
+            self.fields["assigned_user"] = forms.ChoiceField(
+                choices=[(GOV_USER_ID, "John Smith")],
+                label="Case adviser",
+                widget=forms.Select(attrs={"id": "case_adviser"}),
+                required=False,
+            )
+            self.fields["control_list_entry"] = forms.MultipleChoiceField(
+                label="Control list entry",
+                choices=[("ML1", "ML1"), ("ML1a", "ML1a")],
+                required=False,
+                # setting id for javascript to use
+                widget=forms.SelectMultiple(attrs={"id": "control_list_entry"}),
+            )
+            self.fields["countries"] = forms.MultipleChoiceField(
+                label="Country",
+                choices=[("DE", "Germany")],
+                required=False,
+                # setting id for javascript to use
+                widget=forms.SelectMultiple(attrs={"id": "countries"}),
+            )
+            self.fields["regime_entry"] = forms.MultipleChoiceField(
+                label="Regime entry",
+                choices=[
+                    ("d73d0273-ef94-4951-9c51-c291eba949a0", "wassenaar-1"),  # /PS-IGNORE
+                    ("c760976f-fd14-4356-9f23-f6eaf084475d", "mtcr-1"),  # /PS-IGNORE
+                ],
+                required=False,
+                # setting id for javascript to use
+                widget=forms.SelectMultiple(attrs={"id": "regime_entry"}),
+            )
+            flag_url = reverse("flags:flags")
+            self.fields["flags"] = forms.MultipleChoiceField(
+                label="Flags",
+                choices=[
+                    ("798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2", "BAE"),
+                    ("e50f5cd3-331c-4914-b618-ee6eb67a081c", "AG Review Required"),
+                ],
+                required=False,
+                help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
+                # setting id for javascript to use
+                widget=forms.SelectMultiple(attrs={"id": "flags"}),
+            )
+
+    class MockFormProvider:
+        def get_bound_bookmark_form(self, form_data):
+            return MockForm(data=form_data)
+
+        def get_bookmark_form_class(self):
+            return MockForm
+
+    return MockFormProvider()
 
 
 @pytest.mark.parametrize(
     "bookmark_filter, expected_description",
     [
         ({}, ""),
-        ({"country": "AZ"}, "Country: AZ"),
         ({"case_reference": "GBSIEL/2023"}, "Case reference: GBSIEL/2023"),
-        ({"case_officer": GOV_USER_ID}, "Case officer: John Smith"),
-        ({"assigned_user": GOV_USER_ID}, "Assigned user: John Smith"),
-        ({"case_type": "gift"}, "Case type: MOD Gifting Clearance"),
-        ({"status": "ogd_advice"}, "Status: OGD Advice"),
-        ({"team_advice_type": "no_licence_required"}, "Team advice type: No Licence Required"),
-        ({"final_advice_type": "not_applicable"}, "Final advice type: Not Applicable"),
+        ({"case_officer": GOV_USER_ID}, "Licensing Unit case officer: John Smith"),
+        ({"assigned_user": GOV_USER_ID}, "Case adviser: John Smith"),
+        ({"status": "ogd_advice"}, "Case status: OGD Advice"),
+        ({"control_list_entry": ["ML1", "ML1a"]}, "Control list entry: ML1, ML1a"),
+        ({"submitted_from": "12-12-2010"}, "Submitted after: 12-12-2010"),
+        ({"is_trigger_list": True}, "Trigger list: True"),
+        ({"countries": ["DE"]}, "Country: Germany"),
         (
             {
-                "final_advice_type": "not_applicable",
+                "regime_entry": [
+                    "d73d0273-ef94-4951-9c51-c291eba949a0",  #  /PS-IGNORE
+                    "c760976f-fd14-4356-9f23-f6eaf084475d",  #  /PS-IGNORE
+                ],
+            },
+            "Regime entry: mtcr-1, wassenaar-1",
+        ),
+        (
+            {
                 "case_officer": GOV_USER_ID,
                 "assigned_user": GOV_USER_ID,
-                "case_type": "gift",
                 "status": "ogd_advice",
-                "team_advice_type": "no_licence_required",
-                "country": "AZ",
+                "control_list_entry": ["ML1", "ML1a"],
+                "submitted_from": "12-12-2010",
+                "is_trigger_list": True,
+                "countries": ["DE"],
             },
-            "Final advice type: Not Applicable, Case officer: John Smith, Assigned user: John Smith, Case type: MOD "
-            "Gifting Clearance, Status: OGD Advice, Team advice type: No Licence Required, Country: AZ",
+            "Case adviser: John Smith, Case status: OGD Advice, Control list entry: ML1, ML1a, Country: Germany, Licensing Unit case officer: John Smith, Submitted after: 12-12-2010, Trigger list: True",
+        ),
+        ({"invalid_field_name": "invalid field value"}, ""),
+        (
+            {
+                "case_reference": "GBSIEL/2023",
+                "invalid_field_name": "invalid field value",
+            },
+            "Case reference: GBSIEL/2023",
+        ),
+        (
+            {
+                "case_officer": "not-a-real-id",
+            },
+            "",
+        ),
+        (
+            {
+                "case_reference": "GBSIEL/2023",
+                "case_officer": "not-a-real-id",
+            },
+            "Case reference: GBSIEL/2023",
         ),
     ],
 )
-def test_description_from_filter(filter_data, bookmark_filter, expected_description, flags):
+def test_description_from_filter(
+    bookmark_filter,
+    expected_description,
+    mock_form_provider,
+):
     bookmarks = new_bookmarks(bookmark_filter)
-    enricher = BookmarkEnricher(filter_data, flags, None, "/queues/")
+    enricher = BookmarkEnricher("/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
-    # description = description_from_filter(bookmark_filter, filter_data, flags)
     assert len(enriched) == 1
     assert enriched[0]["description"] == expected_description
 
@@ -58,28 +201,28 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
     [
         (
             {"submitted_from": "07-06-2022"},
-            "Submitted from: 07-06-2022",
-            "submitted_from_0=07&submitted_from_1=06&submitted_from_2=2022",
+            "Submitted after: 07-06-2022",
+            "submitted_from_0=7&submitted_from_1=6&submitted_from_2=2022",
         ),
         (
             {"submitted_to": "23-11-1990"},
-            "Submitted to: 23-11-1990",
+            "Submitted before: 23-11-1990",
             "submitted_to_0=23&submitted_to_1=11&submitted_to_2=1990",
         ),
         (
             {"finalised_from": "31-12-2007"},
-            "Finalised from: 31-12-2007",
+            "Finalised after: 31-12-2007",
             "finalised_from_0=31&finalised_from_1=12&finalised_from_2=2007",
         ),
         (
             {"finalised_to": "01-03-2011"},
-            "Finalised to: 01-03-2011",
-            "finalised_to_0=01&finalised_to_1=03&finalised_to_2=2011",
+            "Finalised before: 01-03-2011",
+            "finalised_to_0=1&finalised_to_1=3&finalised_to_2=2011",
         ),
         (
-            {"country": "DE", "_id_country": "Germany"},
+            {"countries": ["DE"]},
             "Country: Germany",
-            "country=DE",
+            "countries=DE",
         ),
         (
             {
@@ -91,17 +234,17 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
         (
             {
                 "regime_entry": [
-                    "d73d0273-ef94-4951-9c51-c291eba949a0",
-                    "c760976f-fd14-4356-9f23-f6eaf084475d",
-                ],  #  /PS-IGNORE
+                    "d73d0273-ef94-4951-9c51-c291eba949a0",  #  /PS-IGNORE
+                    "c760976f-fd14-4356-9f23-f6eaf084475d",  #  /PS-IGNORE
+                ],
             },
             "Regime entry: mtcr-1, wassenaar-1",
             "regime_entry=d73d0273-ef94-4951-9c51-c291eba949a0&regime_entry=c760976f-fd14-4356-9f23-f6eaf084475d",  #  /PS-IGNORE
         ),
         (
-            {"control_list_entry": ["ML11a", "MEND2"]},
-            "Control list entry: MEND2, ML11a",
-            "control_list_entry=ML11a&control_list_entry=MEND2",
+            {"control_list_entry": ["ML1", "ML1a"]},
+            "Control list entry: ML1, ML1a",
+            "control_list_entry=ML1&control_list_entry=ML1a",
         ),
         (
             {"flags": ["798d5e92-c31a-48cc-9e6b-d3fc6dfd65f2", "e50f5cd3-331c-4914-b618-ee6eb67a081c"]},
@@ -110,27 +253,25 @@ def test_description_from_filter(filter_data, bookmark_filter, expected_descript
         ),
         (
             {"is_trigger_list": True},
-            "Is trigger list: True",
+            "Trigger list: True",
             "is_trigger_list=True",
         ),
         (
-            {"min_sla_days_remaining": 15},
-            "Min sla days remaining: 15",
-            "min_sla_days_remaining=15",
-        ),
-        (
             {"max_total_value": "200.0"},
-            "Max total value: 200.0",
+            "Max total value (£): 200.0",
             "max_total_value=200.0",
         ),
     ],
 )
 def test_enrich_bookmark_for_display(
-    filter_data, bookmark_filter, expected_description, expected_url_params, flags, all_regimes
+    bookmark_filter,
+    expected_description,
+    expected_url_params,
+    mock_form_provider,
 ):
     bookmarks = new_bookmarks(bookmark_filter)
 
-    enricher = BookmarkEnricher(filter_data, flags, all_regimes, "/queues/")
+    enricher = BookmarkEnricher("/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 1
@@ -138,14 +279,17 @@ def test_enrich_bookmark_for_display(
     assert enriched[0]["url"] == f"/queues/?{expected_url_params}"
 
 
-def test_enrich_bookmark_for_display_custom_base_url(filter_data, flags):
+def test_enrich_bookmark_for_display_custom_base_url(mock_form_provider):
     bookmarks = new_bookmarks({"is_trigger_list": True})
 
-    enricher = BookmarkEnricher(filter_data, flags, all_regimes, "/queues/abcd")
+    enricher = BookmarkEnricher(
+        "/queues/abcd",
+        mock_form_provider,
+    )
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 1
-    assert enriched[0]["description"] == "Is trigger list: True"
+    assert enriched[0]["description"] == "Trigger list: True"
     assert enriched[0]["url"] == f"/queues/abcd?is_trigger_list=True"
 
 
@@ -154,65 +298,60 @@ class ObjectToForceException:
         raise Exception("This object breaks when str() called")
 
 
-def test_enrich_bookmark_for_display_filters_out_errors(filter_data, flags):
+def test_enrich_bookmark_for_display_filters_out_errors(mock_form_provider):
     bookmark_filter = {"dodgy_filter_entry": ObjectToForceException()}
     bookmarks = new_bookmarks(bookmark_filter)
 
-    enricher = BookmarkEnricher(filter_data, flags, None, "/queues/")
+    enricher = BookmarkEnricher("/queues/", mock_form_provider)
     enriched = enricher.enrich_for_display(bookmarks)
 
     assert len(enriched) == 0
 
 
 @pytest.mark.parametrize(
-    "name, filter_data, raw_filters, expected_filter_data",
+    "name, filter_data, expected_filter_data",
     [
         (
             "Test unwanted entries are removed",
-            {"case_reference": "ABC/123", "save": True, "saved_filter_description": "Filter_1"},
             {
                 "case_reference": "ABC/123",
-                "_id_country": "Germany",
-                "regime": "",
-                "_id_regime": "",
+                "csrfmiddlewaretoken": "csrfmiddlewaretoken",
                 "save": True,
+                "save_filter": True,
                 "saved_filter_description": "Filter_1",
+                "saved_filter_name": "Name",
+                "return_to": "/return-to/",
             },
             {"case_reference": "ABC/123"},
         ),
         (
-            "Test _id_ entry is copied over if the corresponding entry is present",
-            {"country": "DE"},
-            {"country": "DE", "_id_country": "Germany", "regime": "", "_id_regime": ""},
-            {"country": "DE", "_id_country": "Germany"},
-        ),
-        (
-            "Test _id_ entry is copied over for mulitple entries",
-            {"country": "DE", "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203"},
+            "Test removed falsey values",
             {
-                "country": "DE",
-                "_id_country": "Germany",
-                "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
-                "_id_regime": "Wassenaar Arrangement Sensitive",
+                "None": None,
+                "False": False,
+                "empty string": "",
             },
-            {
-                "country": "DE",
-                "_id_country": "Germany",
-                "regime": "2594daef-8156-4e78-b4c4-e25f6cdbd203",
-                "_id_regime": "Wassenaar Arrangement Sensitive",
-            },
+            {},
         ),
         (
             "Test decimal value converted properly",
             {"max_total_value": Decimal(200)},
-            {
-                "max_total_value": Decimal(200),
-            },
             {"max_total_value": "200"},
+        ),
+        (
+            "Test date value converted properly",
+            {"a_date": datetime.date(2020, 10, 1)},
+            {"a_date": "01-10-2020"},
         ),
     ],
 )
-def test_enrich_filter_for_saving(name, filter_data, raw_filters, expected_filter_data):
-    actual_filter = enrich_filter_for_saving(filter_data, raw_filters)
+def test_enrich_filter_for_saving(name, filter_data, expected_filter_data):
+    keys_to_remove = [
+        "save",
+        "save_filter",
+        "saved_filter_description",
+        "saved_filter_name",
+    ]
+    actual_filter = enrich_filter_for_saving(filter_data, keys_to_remove)
 
     assert sorted(actual_filter.items()) == sorted(expected_filter_data.items())
