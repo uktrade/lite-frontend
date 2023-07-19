@@ -170,7 +170,7 @@ def test_cases_home_page_view_context(authorized_client):
         "is_trigger_list",
         "return_to",
         "product_name",
-        "includes_refusal_recommendation",
+        "includes_refusal_recommendation_from_ogd",
     ]
 
     actual_fields = [field_name for field_name, _ in response.context["form"].fields.items()]
