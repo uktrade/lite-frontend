@@ -159,17 +159,21 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/give-approval-advice.html"
 
     def get_form(self):
-        picklist_data = get_picklists_list(
-            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
-        )
         if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
             return forms.FCDOApprovalAdviceForm(
                 services.unadvised_countries(self.caseworker, self.case),
-                picklist_data=picklist_data,
                 **self.get_form_kwargs(),
             )
         else:
-            return forms.GiveApprovalAdviceForm(picklist_data=picklist_data, **self.get_form_kwargs())
+            return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        picklist_data = get_picklists_list(
+            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+        )
+        kwargs["picklist_data"] = picklist_data
+        return kwargs
 
     def form_valid(self, form):
         services.post_approval_advice(self.request, self.case, form.cleaned_data)
