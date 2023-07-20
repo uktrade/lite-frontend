@@ -1,11 +1,11 @@
-<ul class="case-rec__list">
+<ul class="case-recommendation__list">
     {% if case.advice %}
         {% for team_id, team_advice in case.advice.items %}
             {% for advice in team_advice %}
             {% if advice.type.key in 'approve, proviso, refuse' %}
-            <li class="case-rec__item">
-            <div class="case-rec__team">{{ advice.user.team.name }}</div>
-            <div class="case-rec__recommandation">
+            <li class="case-recommendation__item">
+            <div class="case-recommendation__team">{{ advice.user.team.name }}</div>
+            <div class="case-recommendation__recommendation">
                     {% if advice.type.key == 'approve' %}
                         Approved
                     {% elif advice.type.key == 'proviso' %}
