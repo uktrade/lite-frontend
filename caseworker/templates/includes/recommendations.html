@@ -1,6 +1,6 @@
 <ul class="case-recommendation__list">
     {% for advice in case.advice %}
-        {% if advice.type.key in 'approve, proviso, refuse' %}
+        {% if advice.type.key in approval_types_to_display %}
             <li class="case-recommendation__item">
                 <div class="case-recommendation__team">{{ advice.user.team }}</div>
                 <div class="case-recommendation__recommendation">
