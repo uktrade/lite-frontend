@@ -7,7 +7,7 @@ let radio_document;
 const createRadioElement = () => {
   document.body.innerHTML = `
     <form>
-        <div data-module="radio-textarea">
+        <fieldset data-module="radio-textarea">
             <fieldset>
                 <input type="radio" value="no_clear_concerns" />
                 <input type="radio" value="no_concerns" />
@@ -23,7 +23,7 @@ const createRadioElement = () => {
                     "refuse_licence_application": "Refuse Licence Application TEXT"
                 }
             </script>
-        </div>
+        </fieldset>
     </form>
 
     `;
