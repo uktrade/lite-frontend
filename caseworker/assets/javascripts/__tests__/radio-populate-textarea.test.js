@@ -30,7 +30,7 @@ const createRadioElement = () => {
   return document.querySelector("form");
 };
 
-describe("Radio-populate-textarea", () => {
+describe("Radio Populate Textarea", () => {
   beforeEach(() => {
     radio_document = createRadioElement();
     new PopulateTextOnRadioInput(radio_document).init();

@@ -164,10 +164,12 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         )
         if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
             return forms.FCDOApprovalAdviceForm(
-                services.unadvised_countries(self.caseworker, self.case), **self.get_form_kwargs()
+                services.unadvised_countries(self.caseworker, self.case),
+                picklist_data=picklist_data,
+                **self.get_form_kwargs(),
             )
         else:
-            return forms.GiveApprovalAdviceForm(picklist_data, **self.get_form_kwargs())
+            return forms.GiveApprovalAdviceForm(picklist_data=picklist_data, **self.get_form_kwargs())
 
     def form_valid(self, form):
         services.post_approval_advice(self.request, self.case, form.cleaned_data)
@@ -265,15 +267,15 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
         if advice["type"]["key"] in ["approve", "proviso"]:
             self.template_name = "advice/give-approval-advice.html"
-            return forms.get_approval_advice_form_factory(advice, self.request.POST)
-        elif advice["type"]["key"] == "refuse":
-            self.template_name = "advice/refusal_advice.html"
-            denial_reasons = get_denial_reasons(self.request)
             picklist_data = get_picklists_list(
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
+            return forms.get_approval_advice_form_factory(advice, picklist_data, self.request.POST)
+        elif advice["type"]["key"] == "refuse":
+            self.template_name = "advice/refusal_advice.html"
+            denial_reasons = get_denial_reasons(self.request)
 
-            return forms.get_refusal_advice_form_factory(advice, denial_reasons, picklist_data, self.request.POST)
+            return forms.get_refusal_advice_form_factory(advice, denial_reasons, self.request.POST)
         else:
             raise ValueError("Invalid advice type encountered")
 

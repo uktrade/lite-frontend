@@ -9,7 +9,6 @@ from crispy_forms_gds.layout import Field, Layout, Submit
 
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion, ExpandingFieldset, RadioTextArea
 from core.forms.utils import coerce_str_to_bool
-
 from caseworker.advice import services
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.widgets import GoodsMultipleSelect
@@ -88,7 +87,7 @@ class GiveApprovalAdviceForm(forms.Form):
     approval_reasons = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 10, "class": "govuk-!-margin-top-4"}),
         label="",
-        error_messages={"required": "Enter a reason for refusing"},
+        error_messages={"required": "Enter a reason for approving"},
         required=True,
     )
     proviso = PicklistCharField(
@@ -121,7 +120,7 @@ class GiveApprovalAdviceForm(forms.Form):
         choices=(),
     )
 
-    def _picklist_reasons(self, picklist_data):
+    def _picklist_to_choices(self, picklist_data):
         reasons_choices = []
         reasons_text = {}
 
@@ -131,9 +130,11 @@ class GiveApprovalAdviceForm(forms.Form):
             reasons_text[key] = result.get("text")
         return reasons_choices, reasons_text
 
-    def __init__(self, picklist_data, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
+        picklist_data = kwargs.pop("picklist_data")
         super().__init__(*args, **kwargs)
-        approval_choices, approval_text = self._picklist_reasons(picklist_data)
+        # this follows the same pattern as denial_reasons.
+        approval_choices, approval_text = self._picklist_to_choices(picklist_data)
         self.approval_text = approval_text
 
         self.fields["approval_radios"].choices = approval_choices
