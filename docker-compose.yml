@@ -83,7 +83,7 @@ services:
       - lite
 
   frontend_assets_watcher:
-    image: node:16.19-bullseye
+    image: node:16.20-bullseye
     volumes:
       - .:/app
     command:
