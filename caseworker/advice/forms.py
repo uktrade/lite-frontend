@@ -6,6 +6,7 @@ from django.utils.html import format_html
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, Layout, Submit
+from crispy_forms_gds.choices import Choice
 
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion, ExpandingFieldset, RadioTextArea
 from core.forms.utils import coerce_str_to_bool
@@ -88,7 +89,6 @@ class GiveApprovalAdviceForm(forms.Form):
         widget=forms.Textarea(attrs={"rows": 10, "class": "govuk-!-margin-top-4"}),
         label="",
         error_messages={"required": "Enter a reason for approving"},
-        required=True,
     )
     proviso = PicklistCharField(
         picklist_attrs={"target": "proviso", "type": "proviso", "name": "licence condition"},
@@ -122,12 +122,16 @@ class GiveApprovalAdviceForm(forms.Form):
 
     def _picklist_to_choices(self, picklist_data):
         reasons_choices = []
-        reasons_text = {}
+        reasons_text = {"other": ""}
 
         for result in picklist_data["results"]:
             key = "_".join(result.get("name").lower().split())
-            reasons_choices.append((key, result.get("name")))
+            choice = Choice(key, result.get("name"))
+            if result == picklist_data["results"][-1]:
+                choice = Choice(key, result.get("name"), divider="or")
+            reasons_choices.append(choice)
             reasons_text[key] = result.get("text")
+        reasons_choices.append(Choice("other", "Other"))
         return reasons_choices, reasons_text
 
     def __init__(self, *args, **kwargs):

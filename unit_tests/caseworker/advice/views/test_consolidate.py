@@ -15,6 +15,7 @@ from caseworker.advice.services import (
     LU_SR_MGR_CHECK_REQUIRED_ID,
 )
 from core import client
+from crispy_forms_gds.choices import Choice
 from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 
@@ -340,15 +341,19 @@ def test_approval_reasons_mocked(
     form = response.context["form"]
     assert isinstance(form, forms.GiveApprovalAdviceForm)
     # this is built mock_picklist
-    assert form.fields["approval_radios"].choices == [
-        ("no_concerns", "no concerns"),
-        ("concerns", "concerns"),
-        ("wmd", "wmd"),
+    response_choices = [list(choice) for choice in form.fields["approval_radios"].choices]
+
+    assert response_choices == [
+        ["no_concerns", "no concerns"],
+        ["concerns", "concerns"],
+        ["wmd", "wmd"],
+        ["other", "Other"],
     ]
     assert form.approval_text == {
         "no_concerns": "No Concerns Text",
         "concerns": "Concerns Text",
         "wmd": "Weapons of mass destruction Text",
+        "other": "",
     }
 
 
@@ -387,15 +392,19 @@ def test_approval_reasons_manual(
     assert isinstance(form, forms.GiveApprovalAdviceForm)
     # this is built mock_picklist
     # must be == and not is, because it's a django choicefield not a list
-    assert list(form.fields["approval_radios"].choices) == [
-        ("custom_value", "custom Value"),
-        ("another_custom_value_with_many_spaces", "another custom value with many spaces"),
-        ("allcapsnospaces", "ALLCAPSNOSPACES"),
+    response_choices = [list(choice) for choice in form.fields["approval_radios"].choices]
+
+    assert list(response_choices) == [
+        ["custom_value", "custom Value"],
+        ["another_custom_value_with_many_spaces", "another custom value with many spaces"],
+        ["allcapsnospaces", "ALLCAPSNOSPACES"],
+        ["other", "Other"],
     ]
     assert form.approval_text == {
         "custom_value": "This Casing is Maintained",
         "another_custom_value_with_many_spaces": "Concerns Text",
         "allcapsnospaces": "This is all caps text",
+        "other": "",
     }
 
 
