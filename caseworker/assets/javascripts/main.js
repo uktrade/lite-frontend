@@ -21,7 +21,6 @@ import initDestinationsList from "./show-hide-destinations.js";
 import initMentionUsers, { initCaseNotes } from "./case-notes";
 import { initExpanders } from "./list-expander";
 import { initCustomisers } from "./customiser";
-import { initDenialReasons } from "./advice.js";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
@@ -42,4 +41,3 @@ initCaseNotes();
 initMentionUsers();
 initExpanders();
 initCustomisers();
-initDenialReasons();

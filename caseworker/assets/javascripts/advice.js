@@ -1,10 +1,10 @@
-import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
+/* global $ */
 
-let text_for = "text";
-let text_label = $("label[for=" + text_for + "]");
+let textFor = "text";
+let textLabel = $("label[for=" + textFor + "]");
 
 $(document).ready(function () {
-  text_label.append('<span class="lite-form-optional">(optional)</span>');
+  textLabel.append('<span class="lite-form-optional">(optional)</span>');
   addOrRemoveOptional();
 });
 
@@ -13,24 +13,14 @@ $(".govuk-radios--conditional").on("click", function () {
 });
 
 function addOrRemoveOptional() {
-  let advice_decision = $('input:radio[id="type-refuse"]:checked').val();
+  let adviceDecision = $('input:radio[id="type-refuse"]:checked').val();
 
   // if the advice decision isn't 'Refuse', add (optional) to the reason for decision title
-  if (advice_decision !== "refuse" && !text_label.children().is("span")) {
-    text_label.append('<span class="lite-form-optional">(optional)</span>');
+  if (adviceDecision !== "refuse" && !textLabel.children().is("span")) {
+    textLabel.append('<span class="lite-form-optional">(optional)</span>');
   }
 
-  if (advice_decision === "refuse") {
-    text_label.children().remove();
+  if (adviceDecision === "refuse") {
+    textLabel.children().remove();
   }
 }
-
-const initDenialReasons = () => {
-  const denialReasonField = document.getElementById("id_denial_reasons");
-
-  if (!denialReasonField) return;
-
-  progressivelyEnhanceMultipleSelectField(denialReasonField);
-};
-
-export { initDenialReasons };
