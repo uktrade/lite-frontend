@@ -7,7 +7,7 @@ from caseworker.advice import services
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_denial_reasons, mock_picklist, mock_post_refusal_advice):
+def setup(mock_queue, mock_case, mock_denial_reasons, mock_post_refusal_advice):
     yield
 
 

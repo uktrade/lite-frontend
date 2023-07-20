@@ -169,6 +169,7 @@ class RadioTextArea(TemplateNameMixin):
         for key in choices:
             if not isinstance(choices[key], str):
                 raise TypeError(f"{self.__class__.__name__} only accepts json_choices with string values")
+        return choices
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         template = self.get_template_name(template_pack)

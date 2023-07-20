@@ -704,7 +704,7 @@ def mock_picklist(requests_mock):
             {"name": "wmd", "text": "Weapons of mass destruction Text"},
         ]
     }
-    yield requests_mock.get(url=url, json=data)
+    return requests_mock.get(url=url, json=data)
 
 
 @pytest.fixture
