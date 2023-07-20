@@ -1,17 +1,17 @@
 class PopulateTextOnRadioInput {
   constructor($el) {
-    this.$radio_buttons = $el.querySelectorAll("input[type=radio]");
-    this.$text_area = $el.querySelector("textarea");
+    this.$radioButtons = $el.querySelectorAll("input[type=radio]");
+    this.$textArea = $el.querySelector("textarea");
     this.$lookup = JSON.parse(
-      $el.querySelector(`#${this.$text_area.name}`).textContent
+      $el.querySelector(`#${this.$textArea.name}`).textContent
     );
   }
 
   init() {
-    this.$radio_buttons.forEach((input) => {
+    this.$radioButtons.forEach((input) => {
       input.addEventListener("change", () => {
         const text = this.$lookup[input.value];
-        this.$text_area.value = text;
+        this.$textArea.value = text;
       });
     });
   }
