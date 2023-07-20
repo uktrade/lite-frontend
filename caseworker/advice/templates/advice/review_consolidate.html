@@ -31,7 +31,9 @@
                     {% include "advice/advice_details.html" with team=True %}
                     <br>
                     {% endfor %}
-                    {% crispy form %}
+                    <div class="advice-refusal-labels">
+                        {% crispy form %}
+                    </div>  
             </div>
             <div class="govuk-grid-column-one-third">
                 {% include "advice/case_detail.html" %}

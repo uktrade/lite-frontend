@@ -1,3 +1,5 @@
+import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
+
 let text_for = "text";
 let text_label = $("label[for=" + text_for + "]");
 
@@ -22,3 +24,13 @@ function addOrRemoveOptional() {
     text_label.children().remove();
   }
 }
+
+const initDenialReasons = () => {
+  const denialReasonField = document.getElementById("id_denial_reasons");
+
+  if (!denialReasonField) return;
+
+  progressivelyEnhanceMultipleSelectField(denialReasonField);
+};
+
+export { initDenialReasons };
