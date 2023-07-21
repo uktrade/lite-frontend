@@ -713,33 +713,6 @@ class ChangeStatusPage:
     NOTE = "Explain why you're making this decision (optional)"
 
 
-class CLCReviewGoods:
-    TITLE = "Respond to query"
-    DESCRIPTION = "You won't be able to change this once you've submitted."
-    SUCCESS_MESSAGE = "Reviewed successfully"
-    HEADING = "Query"
-    YOUR_RESPONSE = "Your response"
-    CONTROL_LIST_ENTRY = "What are the correct control list entries for this good?"
-    COMMENT = "Explain why you're making this decision (optional)"
-    SUBMIT_BUTTON = "Submit"
-
-    class Summary:
-        DESCRIPTION = "Description of goods"
-        PART_NUMBER = "Part number"
-        IS_THIS_GOOD_CONTROLLED = "Is this good controlled?"
-        CONTROL_LIST_ENTRIES = "What do you think the control list entry is?"
-        EXPLANATION = "Why do you think this?"
-
-    class Controlled:
-        TITLE = "Is this good controlled?"
-        YES = "Yes"
-        NO = "No"
-
-    class ReportSummary:
-        TITLE = "Which report summary is applicable to this good?"
-        DESCRIPTION = ""
-
-
 class PVGradingForm:
     TITLE = "Respond to PV grading request"
     DESCRIPTION = "You won't be able to change this once you've submitted."

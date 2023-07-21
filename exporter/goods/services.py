@@ -238,14 +238,6 @@ def delete_good(request, pk):
     return data.json(), data.status_code
 
 
-def raise_goods_query(request, pk, json):
-    post_data = json
-    post_data["good_id"] = pk
-
-    data = client.post(request, "/queries/goods-queries/", post_data)
-    return data.json(), data.status_code
-
-
 # Documents
 def get_good_document(request, pk, doc_pk):
     data = client.get(request, f"/goods/{pk}/documents/" + doc_pk)
