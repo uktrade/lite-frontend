@@ -356,6 +356,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
                 "bookmarks": bookmarks,
                 "return_to": self.get_return_url(),
                 "search_form_has_errors": bool(context["form"].errors),
+                "approval_types_to_display": ["approve", "proviso", "refuse"],
             }
         )
 
