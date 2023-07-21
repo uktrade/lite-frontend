@@ -66,11 +66,6 @@ def get_application_default_duration(request, pk):
     return int(client.get(request, f"/applications/{pk}/duration/").json()["licence_duration"])
 
 
-def put_goods_query_pv_grading(request, pk, json):
-    response = client.put(request, f"/queries/goods-queries/{pk}/pv-grading-response/", json)
-    return response.json(), response.status_code
-
-
 # Case Notes
 def get_case_notes(request, pk):
     data = client.get(request, f"/cases/{pk}/case-notes/")

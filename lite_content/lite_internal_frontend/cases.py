@@ -713,29 +713,6 @@ class ChangeStatusPage:
     NOTE = "Explain why you're making this decision (optional)"
 
 
-class PVGradingForm:
-    TITLE = "Respond to PV grading request"
-    DESCRIPTION = "You won't be able to change this once you've submitted."
-    SUBMIT_BUTTON = "Submit"
-    SUCCESS_MESSAGE = "Reviewed successfully"
-    BACK = "Back to case"
-    HEADING = "Query"
-    YOUR_RESPONSE = "Your response"
-    COMMENT = "Explain why you're making this decision (optional)"
-
-    class Summary:
-        DESCRIPTION = "Description of goods"
-        PART_NUMBER = "Part number"
-        IS_THIS_GOOD_CONTROLLED = "Is this good controlled?"
-        CONTROL_LIST_ENTRIES = "What do you think the control list entry is?"
-        EXPLANATION = "Why do you think this?"
-
-    class Grading:
-        PREFIX = "Prefix"
-        GRADING = "Grading"
-        SUFFIX = "Suffix"
-
-
 class EcjuQueries:
     CASE_HAS_NO_QUERIES = "This case has no ECJU queries"
     CLOSED = "Closed queries"
