@@ -19,12 +19,6 @@ PARTY_TYPE_MAPPING = {
     "consignee": "Consignee",
 }
 
-
-class GoodSystemFlags:
-    CLC_FLAG = "00000000-0000-0000-0000-000000000002"
-    PV_GRADING_FLAG = "00000000-0000-0000-0000-000000000003"
-
-
 # Permissions
 MAKE_FINAL_DECISIONS = "MAKE_FINAL_DECISIONS"
 DECISIONS_LIST = ["approve", "refuse", "no_licence_required"]
