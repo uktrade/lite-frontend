@@ -1,4 +1,4 @@
-version: '3.4'
+version: "3.4"
 
 services:
   caseworker:
@@ -44,7 +44,7 @@ services:
     tty: true
 
   chrome:
-    image: 'seleniarm/node-chromium:latest'
+    image: "seleniarm/node-chromium:latest"
     shm_size: 2gb
     depends_on:
       - selenium-hub
@@ -86,11 +86,10 @@ services:
     image: node:16.20-bullseye
     volumes:
       - .:/app
-    command:
-      bash -c "
-        npm set unsafe-perm true
-        && npm install
-        && npm run watch
+    command: bash -c "
+      npm set unsafe-perm true
+      && npm install
+      && npm run watch
       "
     working_dir: /app
     ports:
