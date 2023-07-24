@@ -53,7 +53,7 @@ tippy(".app-case-header__candy", {
   interactiveBorder: 15,
 });
 
-var width = 0;
+let width = 0;
 $(".app-case__flags-wrapper .app-flag").each(function () {
   width += $(this).outerWidth(true);
 });
@@ -61,9 +61,9 @@ if (width > $(".app-case__flags-wrapper .app-flags").outerWidth(true)) {
   $(".app-case__flags-wrapper").addClass("app-case__flags-wrapper--fade");
 }
 
-window.addEventListener("scroll", function (e) {
+window.addEventListener("scroll", function () {
   if (window.innerWidth > 600) {
-    var scrollPosition = window.scrollY;
+    let scrollPosition = window.scrollY;
 
     if (scrollPosition > 10) {
       $("#case-flags").css({ "pointer-events": "none" });
@@ -77,8 +77,8 @@ window.addEventListener("scroll", function (e) {
       $("#tab-bar").removeClass("app-case-tab-bar--float");
     }
 
-    var padding = Math.max(15, 30 - scrollPosition / 3);
-    var paddingFlags = Math.max(20 - scrollPosition, -38); // 38 is the height of the shrunk case header
+    let padding = Math.max(15, 30 - scrollPosition / 3);
+    let paddingFlags = Math.max(20 - scrollPosition, -38); // 38 is the height of the shrunk case header
     $(".app-case-tab-bar").css({
       "padding-top": Math.max(0, 20 - scrollPosition / 2),
     });
@@ -106,20 +106,23 @@ window.addEventListener("scroll", function (e) {
   }
 });
 
-var title = document.title;
+let title = document.title;
 
-var setTitle = function () {
-  var title_heading = document.getElementsByClassName(
+let setTitle = function () {
+  let titleHeading = document.getElementsByClassName(
     "lite-tabs__tab--selected"
   )[0];
-  if (title_heading) {
-    title_heading = title_heading.text.trim();
-    document.title = `${title_heading} ${title}`;
+  if (titleHeading) {
+    titleHeading = titleHeading.text.trim();
+    document.title = `${titleHeading} ${title}`;
   }
 };
-var elements = document.getElementsByClassName("lite-tabs__tab");
+let elements = document.getElementsByClassName("lite-tabs__tab");
 
-for (var i = 0; i < elements.length; i++) {
+for (let i = 0; i < elements.length; i++) {
   elements[i].addEventListener("click", setTitle, false);
 }
 setTitle();
+
+// this is used by case.html, this line solves the eslint issues
+window.popupCenter = popupCenter;

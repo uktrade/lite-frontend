@@ -1,8 +1,7 @@
-import { getByTestId } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import { PopulateTextOnRadioInput } from "../radio-populate-textarea";
-let radio_document;
+let radioDocument;
 
 const createRadioElement = () => {
   document.body.innerHTML = `
@@ -32,36 +31,36 @@ const createRadioElement = () => {
 
 describe("Radio Populate Textarea", () => {
   beforeEach(() => {
-    radio_document = createRadioElement();
-    new PopulateTextOnRadioInput(radio_document).init();
+    radioDocument = createRadioElement();
+    new PopulateTextOnRadioInput(radioDocument).init();
   });
 
   test("click radio button updates text area", async () => {
-    let text_area = radio_document.querySelector("textarea");
-    expect(text_area.value).toBe("");
-    let radio_buttons = radio_document.querySelectorAll("input[type=radio]");
-    await userEvent.click(radio_buttons[0]);
-    expect(text_area.value).toBe("No clear concerns text");
+    let textArea = radioDocument.querySelector("textarea");
+    expect(textArea.value).toBe("");
+    let radioButtons = radioDocument.querySelectorAll("input[type=radio]");
+    await userEvent.click(radioButtons[0]);
+    expect(textArea.value).toBe("No clear concerns text");
   });
 
   test("keyboard navigation updates text area", async () => {
-    let text_area = radio_document.querySelector("textarea");
-    expect(text_area.value).toBe("");
-    let radio_buttons = radio_document.querySelectorAll("input[type=radio]");
+    let textArea = radioDocument.querySelector("textarea");
+    expect(textArea.value).toBe("");
+    let radioButtons = radioDocument.querySelectorAll("input[type=radio]");
     // pressing tab doesn't select the item
     await userEvent.tab();
-    expect(radio_buttons[0]).toHaveFocus();
-    expect(text_area.value).toBe("");
+    expect(radioButtons[0]).toHaveFocus();
+    expect(textArea.value).toBe("");
 
     // space selects the first item
     await userEvent.keyboard("[Space]");
-    expect(radio_buttons[0]).toHaveFocus();
-    expect(text_area.value).toBe("No clear concerns text");
+    expect(radioButtons[0]).toHaveFocus();
+    expect(textArea.value).toBe("No clear concerns text");
 
     // tab takes you to the next item and space selects it
     await userEvent.tab();
     await userEvent.keyboard("[Space]");
-    expect(radio_buttons[1]).toHaveFocus();
-    expect(text_area.value).toBe("No Concerns Text");
+    expect(radioButtons[1]).toHaveFocus();
+    expect(textArea.value).toBe("No Concerns Text");
   });
 });
