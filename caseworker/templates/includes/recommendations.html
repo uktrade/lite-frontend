@@ -1,0 +1,19 @@
+<ul class="case-recommendation__list">
+    {% for advice in case.advice %}
+        {% if advice.type.key in approval_types_to_display %}
+            <li class="case-recommendation__item">
+                <div class="case-recommendation__team">{{ advice.user.team }}</div>
+                <div class="case-recommendation__recommendation">
+                    {% if advice.type.key == 'approve' %}
+                        Approved
+                    {% elif advice.type.key == 'proviso' %}
+                        Approved with license conditions
+                    {% elif advice.type.key == 'refuse' %}
+                        Refused under
+                        {{ advice.denial_reasons|get_display_values:'display_value' }}
+                    {% endif %}
+                </div>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>

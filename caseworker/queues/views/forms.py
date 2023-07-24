@@ -10,7 +10,6 @@ SLA_DAYS_RANGE = 99
 
 
 class CasesFiltersForm(forms.Form):
-
     case_reference = forms.CharField(
         label="Case reference",
         widget=forms.TextInput(attrs={"id": "case_reference"}),
@@ -97,6 +96,11 @@ class CasesFiltersForm(forms.Form):
     )
     is_nca_applicable = forms.BooleanField(
         label="Nuclear Cooperation Agreement",
+        required=False,
+    )
+
+    includes_refusal_recommendation_from_ogd = forms.BooleanField(
+        label="Includes a refusal recommendation",
         required=False,
     )
     return_to = forms.CharField(
@@ -186,6 +190,7 @@ class CasesFiltersForm(forms.Form):
             "case_officer",
             "assigned_user",
             "export_type",
+            "includes_refusal_recommendation_from_ogd",
             "submitted_from",
             "submitted_to",
             "flags",
