@@ -693,6 +693,21 @@ def mock_denial_reasons(requests_mock):
 
 
 @pytest.fixture
+def mock_picklist(requests_mock):
+    url = client._build_absolute_uri(
+        "/picklist/?type=standard_advice&page=1&disable_pagination=True&show_deactivated=False"
+    )
+    data = {
+        "results": [
+            {"name": "no concerns", "text": "No Concerns Text"},
+            {"name": "concerns", "text": "Concerns Text"},
+            {"name": "wmd", "text": "Weapons of mass destruction Text"},
+        ]
+    }
+    return requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture
 def mock_post_refusal_advice(requests_mock, standard_case_pk):
     url = client._build_absolute_uri(f"/cases/{standard_case_pk}/user-advice/")
     yield requests_mock.post(url=url, json={})
