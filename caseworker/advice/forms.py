@@ -201,11 +201,10 @@ class RefusalAdviceForm(forms.Form):
             ),
             error_messages={"required": "Select at least one refusal criteria"},
         )
-        self.fields["refusal_reasons"] = PicklistCharField(
-            picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "standard advice"},
-            label="What are your reasons for this refusal?",
-            help_link_text="Choose a refusal reason from the template list",
-            error_messages={"required": "Enter a reason for refusing"},
+        self.fields["refusal_reasons"] = forms.CharField(
+            widget=forms.Textarea(attrs={"rows": "7"}),
+            label="Enter the refusal note as agreed in the refusal meeting",
+            error_messages={"required": "Enter the meeting refusal note"},
         )
         self.helper = FormHelper()
         self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation"))
