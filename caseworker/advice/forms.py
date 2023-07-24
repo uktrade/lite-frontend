@@ -51,7 +51,6 @@ class PicklistCharField(forms.CharField):
 
 
 class SelectAdviceForm(forms.Form):
-
     CHOICES = [("approve_all", "Approve all"), ("refuse_all", "Refuse all")]
 
     recommendation = forms.ChoiceField(
@@ -86,7 +85,6 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
 
 
 class GiveApprovalAdviceForm(forms.Form):
-
     approval_reasons = PicklistCharField(
         picklist_attrs={"target": "approval_reasons", "type": "standard_advice", "name": "standard advice"},
         label="What are your reasons for approving?",
@@ -168,8 +166,9 @@ class RefusalAdviceForm(forms.Form):
         choices = self._group_denial_reasons(denial_reasons)
         self.fields["denial_reasons"] = forms.MultipleChoiceField(
             choices=choices,
-            widget=GridmultipleSelect(),
-            label=format_html(
+            widget=forms.SelectMultiple(),
+            label="What is the refusal criteria?",
+            help_text=format_html(
                 f'Select all <a class="govuk-link" href={refusal_criteria_link} target="_blank">refusal criteria (opens in a new tab)</a> that apply'
             ),
             error_messages={"required": "Select at least one refusal criteria"},

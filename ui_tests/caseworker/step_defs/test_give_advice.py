@@ -2,6 +2,7 @@ import time
 
 from pytest_bdd import when, then, parsers, scenarios
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.action_chains import ActionChains
 
 from tests_common import functions
 from ui_tests.caseworker.pages.assign_flags_to_case import CaseFlagsPages
@@ -43,10 +44,14 @@ def click_refuse_all(driver):  # noqa
 
 @when(parsers.parse('I select refusal criteria "{criteria}"'))
 def select_refusal_criteria(driver, criteria):  # noqa
-    page = RecommendationsAndDecisionPage(driver)
+    main_div_element = driver.find_element(By.XPATH, "//div[@id='id_denial_reasons']")
+    tokenfield_input = main_div_element.find_element(By.XPATH, "//input[@class='tokenfield-input']")
 
     for crit in criteria.split(","):
-        page.select_refusal_criteria(crit.strip())
+        tokenfield_input.send_keys(crit)
+        suggestion_element = driver.find_element(By.XPATH, "//li[@class='tokenfield-suggest-item selected']")
+        actions = ActionChains(driver)
+        actions.move_to_element(suggestion_element).click().perform()
 
 
 @when(parsers.parse('I select countries "{countries}"'))
