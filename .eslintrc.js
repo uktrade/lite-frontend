@@ -3,6 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
     "jest/globals": true,
+    jquery: true,
   },
   extends: "eslint:recommended",
   plugins: ["jest"],
