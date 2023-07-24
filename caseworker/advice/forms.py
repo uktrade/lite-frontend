@@ -177,6 +177,12 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
 
 
 class RefusalAdviceForm(forms.Form):
+    refusal_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "7"}),
+        label="Enter the refusal note as agreed in the refusal meeting",
+        error_messages={"required": "Enter the refusal meeting note"},
+    )
+
     def _group_denial_reasons(self, denial_reasons):
         grouped = defaultdict(list)
         for item in denial_reasons:
@@ -200,11 +206,6 @@ class RefusalAdviceForm(forms.Form):
                 f'Select all <a class="govuk-link" href={refusal_criteria_link} target="_blank">refusal criteria (opens in a new tab)</a> that apply'
             ),
             error_messages={"required": "Select at least one refusal criteria"},
-        )
-        self.fields["refusal_reasons"] = forms.CharField(
-            widget=forms.Textarea(attrs={"rows": "7"}),
-            label="Enter the refusal note as agreed in the refusal meeting",
-            error_messages={"required": "Enter the meeting refusal note"},
         )
         self.helper = FormHelper()
         self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation"))
