@@ -16,14 +16,14 @@ from caseworker.tau.widgets import GoodsMultipleSelect
 from core.forms.widgets import GridmultipleSelect
 
 
-def get_approval_advice_form_factory(advice, picklist_data, data=None):
+def get_approval_advice_form_factory(advice, approval_reason, proviso, data=None):
     data = data or {
         "proviso": advice["proviso"],
         "approval_reasons": advice["text"],
         "instructions_to_exporter": advice["note"],
         "footnote_details": advice["footnote"],
     }
-    return GiveApprovalAdviceForm(picklist_data=picklist_data, data=data)
+    return GiveApprovalAdviceForm(approval_reason=approval_reason, proviso=proviso, data=data)
 
 
 def get_refusal_advice_form_factory(advice, denial_reasons_choices, data=None):
@@ -85,15 +85,13 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
 
 class GiveApprovalAdviceForm(forms.Form):
     approval_reasons = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 10, "class": "govuk-!-margin-top-4"}),
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
         label="",
         error_messages={"required": "Enter a reason for approving"},
     )
-    proviso = PicklistCharField(
-        picklist_attrs={"target": "proviso", "type": "proviso", "name": "licence condition"},
-        label="Add a licence condition (optional)",
-        help_link_text="Choose a licence condition from the template list",
-        min_rows=3,
+    proviso = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        label="",
         required=False,
     )
     instructions_to_exporter = forms.CharField(
@@ -118,6 +116,12 @@ class GiveApprovalAdviceForm(forms.Form):
         widget=forms.RadioSelect,
         choices=(),
     )
+    proviso_radios = forms.ChoiceField(
+        label="Add a licence condition (optional)",
+        required=False,
+        widget=forms.RadioSelect,
+        choices=(),
+    )
 
     def _picklist_to_choices(self, picklist_data):
         reasons_choices = []
@@ -134,16 +138,23 @@ class GiveApprovalAdviceForm(forms.Form):
         return reasons_choices, reasons_text
 
     def __init__(self, *args, **kwargs):
-        picklist_data = kwargs.pop("picklist_data")
+        approval_reason = kwargs.pop("approval_reason")
+        proviso = kwargs.pop("proviso")
         super().__init__(*args, **kwargs)
         # this follows the same pattern as denial_reasons.
-        approval_choices, approval_text = self._picklist_to_choices(picklist_data)
+        approval_choices, approval_text = self._picklist_to_choices(approval_reason)
         self.approval_text = approval_text
 
+        proviso_choices, proviso_text = self._picklist_to_choices(proviso)
+        self.proviso_text = proviso_text
+
         self.fields["approval_radios"].choices = approval_choices
+        self.fields["proviso_radios"].choices = proviso_choices
+
         self.helper = FormHelper()
         self.helper.layout = Layout(
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
+            RadioTextArea("proviso_radios", "proviso", self.proviso_text),
             ExpandingFieldset(
                 "proviso",
                 "instructions_to_exporter",
@@ -171,7 +182,7 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
-            "proviso",
+            RadioTextArea("proviso_radios", "proviso", self.proviso_text),
             Submit("submit", "Submit recommendation"),
         )
 

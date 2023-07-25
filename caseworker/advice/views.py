@@ -169,10 +169,12 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        picklist_data = get_picklists_list(
+        approval_reason = get_picklists_list(
             self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
         )
-        kwargs["picklist_data"] = picklist_data
+        proviso = get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
+        kwargs["approval_reason"] = approval_reason
+        kwargs["proviso"] = proviso
         return kwargs
 
     def form_valid(self, form):
@@ -271,10 +273,11 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
         if advice["type"]["key"] in ["approve", "proviso"]:
             self.template_name = "advice/give-approval-advice.html"
-            picklist_data = get_picklists_list(
+            approval_reason = get_picklists_list(
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
-            return forms.get_approval_advice_form_factory(advice, picklist_data, self.request.POST)
+            proviso = get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
+            return forms.get_approval_advice_form_factory(advice, approval_reason, proviso, self.request.POST)
         elif advice["type"]["key"] == "refuse":
             self.template_name = "advice/refusal_advice.html"
             denial_reasons = get_denial_reasons(self.request)
@@ -546,11 +549,14 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
 
         if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
-            picklist_data = get_picklists_list(
+            approval_reason = get_picklists_list(
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
+            proviso = get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
             team_alias = self.caseworker["team"].get("alias", None)
-            return forms.ConsolidateApprovalForm(team_alias=team_alias, picklist_data=picklist_data, **form_kwargs)
+            return forms.ConsolidateApprovalForm(
+                team_alias=team_alias, approval_reason=approval_reason, proviso=proviso, **form_kwargs
+            )
 
         team_name = self.caseworker["team"]["name"]
         return forms.ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)
@@ -615,8 +621,8 @@ class ConsolidateEditView(ReviewConsolidateView):
 
     def get_approval_data(self):
         return {
-            "proviso": self.advice["proviso"],
             "approval_reasons": self.advice["text"],
+            "proviso": self.advice["proviso"],
         }
 
     def get_refusal_data(self):

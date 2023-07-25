@@ -218,9 +218,19 @@
 }
 
 .advice-refusal-labels {
-	width: fit-content;
-	
-  .govuk-label {
-    font-weight: 700;
-  }
+	legend {
+		font-weight: 700;
+	}
+	.govuk-label {
+		font-weight:700;
+	}
+	.tokenfield{
+		max-width: 100%;
+	}
+}
+
+.govuk-radios{
+	&__label{
+		font-weight:400 !important;
+	}
 }

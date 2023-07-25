@@ -693,7 +693,7 @@ def mock_denial_reasons(requests_mock):
 
 
 @pytest.fixture
-def mock_picklist(requests_mock):
+def mock_approval_reason(requests_mock):
     url = client._build_absolute_uri(
         "/picklist/?type=standard_advice&page=1&disable_pagination=True&show_deactivated=False"
     )
@@ -702,6 +702,17 @@ def mock_picklist(requests_mock):
             {"name": "no concerns", "text": "No Concerns Text"},
             {"name": "concerns", "text": "Concerns Text"},
             {"name": "wmd", "text": "Weapons of mass destruction Text"},
+        ]
+    }
+    return requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture
+def mock_proviso(requests_mock):
+    url = client._build_absolute_uri("/picklist/?type=proviso&page=1&disable_pagination=True&show_deactivated=False")
+    data = {
+        "results": [
+            {"name": "firearm serial numbers", "text": "Firearm serial numbers text"},
         ]
     }
     return requests_mock.get(url=url, json=data)
