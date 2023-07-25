@@ -6,25 +6,24 @@ from django.utils.html import format_html
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, Layout, Submit
+from crispy_forms_gds.choices import Choice
 
-from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion, ExpandingFieldset
+from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion, ExpandingFieldset, RadioTextArea
 from core.forms.utils import coerce_str_to_bool
-
 from caseworker.advice import services
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.widgets import GoodsMultipleSelect
-
 from core.forms.widgets import GridmultipleSelect
 
 
-def get_approval_advice_form_factory(advice, data=None):
+def get_approval_advice_form_factory(advice, picklist_data, data=None):
     data = data or {
         "proviso": advice["proviso"],
         "approval_reasons": advice["text"],
         "instructions_to_exporter": advice["note"],
         "footnote_details": advice["footnote"],
     }
-    return GiveApprovalAdviceForm(data=data)
+    return GiveApprovalAdviceForm(picklist_data=picklist_data, data=data)
 
 
 def get_refusal_advice_form_factory(advice, denial_reasons_choices, data=None):
@@ -85,11 +84,9 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
 
 
 class GiveApprovalAdviceForm(forms.Form):
-    approval_reasons = PicklistCharField(
-        picklist_attrs={"target": "approval_reasons", "type": "standard_advice", "name": "standard advice"},
-        label="What are your reasons for approving?",
-        help_link_text="Choose an approval reason from the template list",
-        min_rows=3,
+    approval_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 10, "class": "govuk-!-margin-top-4"}),
+        label="",
         error_messages={"required": "Enter a reason for approving"},
     )
     proviso = PicklistCharField(
@@ -115,11 +112,38 @@ class GiveApprovalAdviceForm(forms.Form):
         required=False,
     )
 
+    approval_radios = forms.ChoiceField(
+        label="What is your reason for approving?",
+        required=False,
+        widget=forms.RadioSelect,
+        choices=(),
+    )
+
+    def _picklist_to_choices(self, picklist_data):
+        reasons_choices = []
+        reasons_text = {"other": ""}
+
+        for result in picklist_data["results"]:
+            key = "_".join(result.get("name").lower().split())
+            choice = Choice(key, result.get("name"))
+            if result == picklist_data["results"][-1]:
+                choice = Choice(key, result.get("name"), divider="or")
+            reasons_choices.append(choice)
+            reasons_text[key] = result.get("text")
+        reasons_choices.append(Choice("other", "Other"))
+        return reasons_choices, reasons_text
+
     def __init__(self, *args, **kwargs):
+        picklist_data = kwargs.pop("picklist_data")
         super().__init__(*args, **kwargs)
+        # this follows the same pattern as denial_reasons.
+        approval_choices, approval_text = self._picklist_to_choices(picklist_data)
+        self.approval_text = approval_text
+
+        self.fields["approval_radios"].choices = approval_choices
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            "approval_reasons",
+            RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
             ExpandingFieldset(
                 "proviso",
                 "instructions_to_exporter",
@@ -145,10 +169,20 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
             self.fields["approval_reasons"].label = self.ALIAS_LABELS[team_alias]
 
         self.helper = FormHelper()
-        self.helper.layout = Layout("approval_reasons", "proviso", Submit("submit", "Submit recommendation"))
+        self.helper.layout = Layout(
+            RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
+            "proviso",
+            Submit("submit", "Submit recommendation"),
+        )
 
 
 class RefusalAdviceForm(forms.Form):
+    refusal_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "7"}),
+        label="Enter the refusal note as agreed in the refusal meeting",
+        error_messages={"required": "Enter the refusal meeting note"},
+    )
+
     def _group_denial_reasons(self, denial_reasons):
         grouped = defaultdict(list)
         for item in denial_reasons:
@@ -172,12 +206,6 @@ class RefusalAdviceForm(forms.Form):
                 f'Select all <a class="govuk-link" href={refusal_criteria_link} target="_blank">refusal criteria (opens in a new tab)</a> that apply'
             ),
             error_messages={"required": "Select at least one refusal criteria"},
-        )
-        self.fields["refusal_reasons"] = PicklistCharField(
-            picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "standard advice"},
-            label="What are your reasons for this refusal?",
-            help_link_text="Choose a refusal reason from the template list",
-            error_messages={"required": "Enter a reason for refusing"},
         )
         self.helper = FormHelper()
         self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation"))

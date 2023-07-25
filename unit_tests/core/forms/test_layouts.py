@@ -6,10 +6,7 @@ from django.template import RequestContext, Template
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout
 
-from core.forms.layouts import (
-    ConditionalCheckboxes,
-    ConditionalRadios,
-)
+from core.forms.layouts import ConditionalCheckboxes, ConditionalRadios, RadioTextArea
 
 
 def test_conditional_radios_error_handling(mocker):
@@ -100,3 +97,88 @@ def test_conditional_checkboxes_question_error_handling(mocker, rf):
     c = RequestContext(request, {"form": form})
     with pytest.raises(TypeError):
         t.render(c)
+
+
+def test_radio_textarea_error_handling():
+    class RadioTextAreaForm(forms.Form):
+        radio = forms.ChoiceField()
+        text = forms.CharField()
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.helper = FormHelper()
+            self.helper.layout = Layout(
+                RadioTextArea(None, "text", {}),
+            )
+
+    with pytest.raises(TypeError):
+        RadioTextAreaForm()
+
+
+def test_radio_textarea_radio_form_error_handling():
+    class RadioTextAreaForm(forms.Form):
+        radio = forms.ChoiceField()
+        text = forms.CharField()
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.helper = FormHelper()
+            self.helper.layout = Layout(
+                RadioTextArea(None, "text", {"hello": "world"}),
+            )
+
+    with pytest.raises(TypeError):
+        RadioTextAreaForm()
+
+
+def test_radio_textarea_text_form_error_handling():
+    class RadioTextAreaForm(forms.Form):
+        radio = forms.ChoiceField()
+        text = forms.CharField()
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.helper = FormHelper()
+            self.helper.layout = Layout(
+                RadioTextArea("radio", None, {"hello": "world"}),
+            )
+
+    with pytest.raises(TypeError):
+        RadioTextAreaForm()
+
+
+def test_radio_textarea_json_choices_form_error_handling():
+    class RadioTextAreaForm(forms.Form):
+        radio = forms.ChoiceField()
+        text = forms.CharField()
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.helper = FormHelper()
+            self.helper.layout = Layout(
+                RadioTextArea("radio", "text", None),
+            )
+
+    with pytest.raises(TypeError):
+        RadioTextAreaForm()
+
+
+def test_radio_textarea_json_choices_values_form_error_handling():
+    class RadioTextAreaForm(forms.Form):
+        radio = forms.ChoiceField()
+        text = forms.CharField()
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
+            self.helper = FormHelper()
+            self.helper.layout = Layout(
+                RadioTextArea("radio", "text", {"hello": None}),
+            )
+
+    with pytest.raises(TypeError):
+        RadioTextAreaForm()

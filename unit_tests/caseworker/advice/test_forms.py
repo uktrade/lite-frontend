@@ -11,7 +11,7 @@ from caseworker.advice import forms
     ),
 )
 def test_give_approval_advice_form_valid(data, valid_status):
-    form = forms.GiveApprovalAdviceForm(data=data)
+    form = forms.GiveApprovalAdviceForm(data=data, picklist_data={"results": []})
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors["approval_reasons"] == ["Enter a reason for approving"]
@@ -122,7 +122,58 @@ def test_countersign_decision_advice_form_valid(data, valid_status, errors):
     ),
 )
 def test_give_fcdo_approval_advice_form_valid(data, valid_status):
-    form = forms.FCDOApprovalAdviceForm(data=data, countries={"GB": "United Kingdom"})
+    form = forms.FCDOApprovalAdviceForm(data=data, countries={"GB": "United Kingdom"}, picklist_data={"results": []})
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors["countries"] == ["Select the destinations you want to make recommendations for"]
+
+
+@pytest.mark.parametrize(
+    "data, is_valid",
+    [
+        (
+            {"denial_reasons": ["1a"], "refusal_reasons": "refusal reason"},
+            True,
+        ),
+    ],
+)
+def test_refusal_advice_form(data, is_valid):
+    denial_reasons = [
+        {
+            "id": "1a",
+            "deprecated": False,
+            "description": "denial reason 1a",
+            "display_value": "1a",
+        }
+    ]
+    form = forms.RefusalAdviceForm(denial_reasons, data=data)
+    assert form.is_valid() is is_valid
+    assert form.cleaned_data["denial_reasons"] == ["1a"]
+    assert form.cleaned_data["refusal_reasons"] == "refusal reason"
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    [
+        (
+            {"denial_reasons": [], "refusal_reasons": ""},
+            False,
+            {
+                "denial_reasons": ["Select at least one refusal criteria"],
+                "refusal_reasons": ["Enter the refusal meeting note"],
+            },
+        ),
+    ],
+)
+def test_refusal_advice_form_no_required_fields(data, is_valid, errors):
+    denial_reasons = [
+        {
+            "id": "1a",
+            "deprecated": False,
+            "description": "denial reason 1a",
+            "display_value": "1a",
+        }
+    ]
+    form = forms.RefusalAdviceForm(denial_reasons, data=data)
+    assert form.is_valid() is is_valid
+    assert form.errors == errors

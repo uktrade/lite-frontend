@@ -7,7 +7,7 @@ from core import client
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_denial_reasons):
+def setup(mock_queue, mock_case, mock_denial_reasons, mock_picklist):
     yield
 
 
