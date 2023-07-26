@@ -154,9 +154,8 @@ class GiveApprovalAdviceForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
-            RadioTextArea("proviso_radios", "proviso", self.proviso_text),
             ExpandingFieldset(
-                "proviso",
+                RadioTextArea("proviso_radios", "proviso", self.proviso_text),
                 "instructions_to_exporter",
                 "footnote_details",
                 legend="Add a licence condition, instruction to exporter or footnote",
@@ -169,15 +168,8 @@ class GiveApprovalAdviceForm(forms.Form):
 class ConsolidateApprovalForm(GiveApprovalAdviceForm):
     """Approval form minus some fields."""
 
-    ALIAS_LABELS = {
-        services.MOD_ECJU_TEAM: "Enter MOD’s overall reason for approval",
-        services.LICENSING_UNIT_TEAM: "Enter Licensing Unit’s reason for approval",
-    }
-
     def __init__(self, team_alias, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if team_alias in self.ALIAS_LABELS:
-            self.fields["approval_reasons"].label = self.ALIAS_LABELS[team_alias]
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -218,8 +210,13 @@ class RefusalAdviceForm(forms.Form):
             ),
             error_messages={"required": "Select at least one refusal criteria"},
         )
+        label_size = {"label_size": "govuk-label--s"}
         self.helper = FormHelper()
-        self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation"))
+        self.helper.layout = Layout(
+            Field("denial_reasons", context=label_size),
+            Field("refusal_reasons", context=label_size),
+            Submit("submit", "Submit recommendation"),
+        )
 
 
 class DeleteAdviceForm(forms.Form):

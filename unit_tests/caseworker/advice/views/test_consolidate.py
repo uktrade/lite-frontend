@@ -390,8 +390,6 @@ def test_approval_reasons_manual(
     assert response.status_code == 200
     form = response.context["form"]
     assert isinstance(form, forms.GiveApprovalAdviceForm)
-    # this is built mock_approval_reason
-    # must be == and not is, because it's a django choicefield not a list
     response_choices = [list(choice) for choice in form.fields["approval_radios"].choices]
 
     assert list(response_choices) == [
@@ -439,8 +437,6 @@ def test_proviso_manual(
     assert response.status_code == 200
     form = response.context["form"]
     assert isinstance(form, forms.GiveApprovalAdviceForm)
-    # this is built mock_approval_reason
-    # must be == and not is, because it's a django choicefield not a list
     response_choices = [list(choice) for choice in form.fields["proviso_radios"].choices]
 
     assert list(response_choices) == [
