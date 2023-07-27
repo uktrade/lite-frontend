@@ -556,7 +556,6 @@ def mock_gov_user(requests_mock, mock_notifications, mock_new_mentions_count, mo
                     "MANAGE_PICKLISTS",
                     "MANAGE_TEAM_ADVICE",
                     "MANAGE_TEAM_ROUTING_RULES",
-                    "RESPOND_PV_GRADING",
                     "REVIEW_GOODS",
                 ],
                 "statuses": mock_case_statuses["statuses"],
