@@ -5,7 +5,6 @@ from .sub_helpers.document_templates import DocumentTemplates
 from .sub_helpers.ecju_queries import EcjuQueries
 from .sub_helpers.flags import Flags
 from .sub_helpers.goods import Goods
-from .sub_helpers.goods_queries import GoodsQueries
 from .sub_helpers.gov_users import GovUsers
 from .sub_helpers.organisations import Organisations
 from .sub_helpers.ogel import Ogel
@@ -29,7 +28,6 @@ class TestHelper:
         self.documents = Documents(api_client=self.api_client, request_data=request_data)
         self.organisations = Organisations(api_client=self.api_client, request_data=request_data)
         self.goods = Goods(api_client=self.api_client, documents=self.documents, request_data=request_data)
-        self.goods_queries = GoodsQueries(api_client=self.api_client, request_data=request_data)
         self.parties = Parties(api_client=self.api_client, documents=self.documents, request_data=request_data)
         self.ecju_queries = EcjuQueries(api_client=self.api_client, request_data=request_data)
         self.picklists = Picklists(api_client=self.api_client, request_data=request_data)
