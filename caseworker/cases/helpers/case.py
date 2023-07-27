@@ -71,8 +71,6 @@ class Slices:
     END_USE_DETAILS = Slice("case/slices/end-use-details.html", "End use details")
     ROUTE_OF_GOODS = Slice("case/slices/route-of-goods.html", "Route of goods")
     SUPPORTING_DOCUMENTS = Slice("case/slices/supporting-documents.html", "Supporting documents")
-    GOODS_QUERY = Slice("case/slices/goods-query.html", "Query details")
-    GOODS_QUERY_RESPONSE = Slice("case/slices/goods-query-response.html")
     HMRC_NOTE = Slice("case/slices/hmrc-note.html", "HMRC note")
     END_USER_DETAILS = Slice("case/slices/end-user-details.html", "End user details")
     TEMPORARY_EXPORT_DETAILS = Slice("case/slices/temporary-export-details.html", "Temporary export details")

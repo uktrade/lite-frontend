@@ -51,7 +51,6 @@ urlpatterns = [
     path("<uuid:pk>/documents/<uuid:file_pk>/", views.Document.as_view(), name="document"),
     path("<uuid:pk>/documents/<uuid:file_pk>/delete/", views.DeleteDocument.as_view(), name="delete_document"),
     path("<uuid:pk>/attach/", views.AttachDocuments.as_view(), name="attach_documents"),
-    path("<uuid:pk>/raise-good-query/", views.RaiseGoodsQuery.as_view(), name="raise_goods_query"),
     path("firearm/<uuid:pk>/", FirearmProductDetails.as_view(), name="firearm_detail"),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
@@ -120,11 +119,6 @@ if settings.FEATURE_FLAG_FIREARMS_ENABLED:
             "<uuid:pk>/add-document/application/<uuid:draft_pk>/",
             views.CheckDocumentGrading.as_view(),
             name="add_document_add_application",
-        ),
-        path(
-            "<uuid:pk>/raise-good-query/application/<uuid:draft_pk>/",
-            views.RaiseGoodsQuery.as_view(),
-            name="raise_goods_query_add_application",
         ),
         path(
             "<uuid:pk>/attach/application/<uuid:draft_pk>/",
