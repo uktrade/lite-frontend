@@ -180,12 +180,6 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
 
 
 class RefusalAdviceForm(forms.Form):
-    refusal_reasons = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "7"}),
-        label="Enter the refusal note as agreed in the refusal meeting",
-        error_messages={"required": "Enter the refusal meeting note"},
-    )
-
     def _group_denial_reasons(self, denial_reasons):
         grouped = defaultdict(list)
         for item in denial_reasons:
@@ -211,6 +205,13 @@ class RefusalAdviceForm(forms.Form):
             error_messages={"required": "Select at least one refusal criteria"},
         )
         label_size = {"label_size": "govuk-label--s"}
+        self.fields["refusal_reasons"] = PicklistCharField(
+            picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "standard advice"},
+            label="What are your reasons for this refusal?",
+            help_link_text="Choose a refusal reason from the template list",
+            error_messages={"required": "Enter a reason for refusing"},
+        )
+
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("denial_reasons", context=label_size),

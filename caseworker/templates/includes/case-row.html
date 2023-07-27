@@ -170,7 +170,7 @@
     {# Users #}
     <td class="govuk-table__cell lite-mobile-hide" data-customiser-key="users">
         <ol class="govuk-list app-users__list">
-            {% for user in case.endusers %}
+            {% for user in case.end_users %}
                 <li class="app-cles__item">
                     {% if user.type == "end_user"  %}
                         <strong>End-user:</strong> {{ user.name }}
