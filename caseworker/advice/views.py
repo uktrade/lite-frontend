@@ -714,7 +714,11 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             finalise_case = not (lu_countersign_required or rejected_lu_countersignature)
 
         decisions, _ = get_final_decision_documents(self.request, self.case.id)
-        decisions = decisions["documents"]
+        # Only show decision documents if we have an inform letter
+
+        decisions = {
+            key: decisions.get("documents")[key] for key in decisions.get("documents") if key == "inform_letter"
+        }
         return {
             **super().get_context(**kwargs),
             "consolidated_advice": consolidated_advice,

@@ -98,8 +98,7 @@
                     {% endif %}
                     
                     <br><br>
-                    <!-- TODO: If case has been finalised and countersigned by LU -->
-                    {% if case %}
+                    {% if decisions %}
                         {% include "advice/decision_documents.html" with decisions=decisions case=case queue_id=queue_id %}
                     {% endif %}
 

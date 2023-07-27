@@ -2,7 +2,7 @@
     Decision documents
 </h2>
 
-<table class="govuk-table">
+<table class="govuk-table" name="decision_document">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
 			<th scope="col" class="govuk-table__header">Name</th>
@@ -16,7 +16,7 @@
 			<tr class="govuk-table__row" id="decision-{{ decision }}">
 				{% if data.document %}
                     <td class="govuk-table__cell">
-                        <a class="govuk-link" href="{% url 'cases:finalise_document_preview' queue_id case.id data.value data.document.id %}">
+                            <a class="govuk-link" href="{% url 'cases:document' queue_id case.id data.document.id %}">
                             {{ data.value }}
                         </a>
                     </td>
@@ -29,8 +29,8 @@
 					<td class="govuk-table__cell">
                         <!-- TODO: document.status.sent -->
                         
-                            <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                                Regenerate
+                            <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button">
+                                Recreate
                             </a>
                         
 					</td>
