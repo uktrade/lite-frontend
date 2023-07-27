@@ -10,7 +10,6 @@ from crispy_forms_gds.choices import Choice
 
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion, ExpandingFieldset, RadioTextArea
 from core.forms.utils import coerce_str_to_bool
-from caseworker.advice import services
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.widgets import GoodsMultipleSelect
 from core.forms.widgets import GridmultipleSelect
