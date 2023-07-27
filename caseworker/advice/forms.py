@@ -176,7 +176,7 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
         )
 
 
-class RefusalAdviceForm(forms.Form):
+class BaseRefusalForm(forms.Form):
     def _group_denial_reasons(self, denial_reasons):
         grouped = defaultdict(list)
         for item in denial_reasons:
@@ -201,6 +201,11 @@ class RefusalAdviceForm(forms.Form):
             ),
             error_messages={"required": "Select at least one refusal criteria"},
         )
+
+
+class RefusalAdviceForm(BaseRefusalForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.fields["refusal_reasons"] = PicklistCharField(
             picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "standard advice"},
             label="What are your reasons for this refusal?",
@@ -209,6 +214,19 @@ class RefusalAdviceForm(forms.Form):
         )
         self.helper = FormHelper()
         self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation"))
+
+
+class ConsolidateRefusalForm(BaseRefusalForm):
+    refusal_note = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "7"}),
+        label="Enter the refusal note as agreed in the refusal meeting",
+        error_messages={"required": "Enter the refusal meeting note"},
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout("denial_reasons", "refusal_note", Submit("submit", "Submit recommendation"))
 
 
 class DeleteAdviceForm(forms.Form):

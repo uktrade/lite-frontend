@@ -543,7 +543,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
         if self.kwargs.get("advice_type") == "refuse":
             denial_reasons = get_denial_reasons(self.request)
-            return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
+            return forms.ConsolidateRefusalForm(denial_reasons=denial_reasons, **form_kwargs)
 
         if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
             picklist_data = get_picklists_list(
@@ -572,7 +572,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         try:
             if isinstance(form, forms.ConsolidateApprovalForm):
                 services.post_approval_advice(self.request, self.case, form.cleaned_data, level=level)
-            if isinstance(form, forms.RefusalAdviceForm):
+            if isinstance(form, forms.ConsolidateRefusalForm):
                 services.post_refusal_advice(self.request, self.case, form.cleaned_data, level=level)
         except HTTPError as e:
             errors = e.response.json()["errors"]
@@ -609,6 +609,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         # to debug when this goes south.
         sentry_sdk.set_context("caseworker", self.caseworker)
         sentry_sdk.set_context("advice", {"advice": self.case.advice})
+        self.advices_by_team = services.filter_advice_by_team(team_advice, user_team_alias)
         self.advice = services.filter_advice_by_team(team_advice, user_team_alias)[0]
         self.advice_type = self.advice["type"]["key"]
         self.kwargs["advice_type"] = "refuse" if self.advice_type == "refuse" else "approve"
@@ -620,9 +621,10 @@ class ConsolidateEditView(ReviewConsolidateView):
         }
 
     def get_refusal_data(self):
+        filtered_advices = [advice for advice in self.advices_by_team if advice["is_refusal_note"] == True]
         return {
-            "refusal_reasons": self.advice["text"],
-            "denial_reasons": [r for r in self.advice["denial_reasons"]],
+            "refusal_note": filtered_advices[0]["text"],
+            "denial_reasons": [r for r in filtered_advices[0]["denial_reasons"]],
         }
 
     def get_data(self):
@@ -649,7 +651,7 @@ class ConsolidateEditView(ReviewConsolidateView):
                 services.update_advice(
                     self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
                 )
-            if isinstance(form, forms.RefusalAdviceForm):
+            if isinstance(form, forms.ConsolidateRefusalForm):
                 services.update_advice(
                     self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
                 )

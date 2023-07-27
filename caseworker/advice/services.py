@@ -324,13 +324,21 @@ def post_approval_advice(request, case, data, level="user-advice"):
 
 
 def post_refusal_advice(request, case, data, level="user-advice"):
+    if data.get("refusal_note"):
+        text = data["refusal_note"]
+        is_refusal_note = True
+    else:
+        text = data["refusal_reasons"]
+        is_refusal_note = False
+
     json = [
         {
             "type": "refuse",
-            "text": data["refusal_reasons"],
+            "text": text,
             "footnote_required": False,
             subject_name: subject_id,
             "denial_reasons": data["denial_reasons"],
+            "is_refusal_note": is_refusal_note,
         }
         for subject_name, subject_id, in get_advice_subjects(case, data.get("countries"))
     ]
