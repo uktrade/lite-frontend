@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
 from caseworker.cases.helpers.case import CaseworkerMixin
-from caseworker.cases.services import get_case
+from caseworker.cases.services import get_case, get_final_decision_documents
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons
@@ -713,6 +713,8 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
             finalise_case = not (lu_countersign_required or rejected_lu_countersignature)
 
+        decisions, _ = get_final_decision_documents(self.request, self.case.id)
+        decisions = decisions["documents"]
         return {
             **super().get_context(**kwargs),
             "consolidated_advice": consolidated_advice,
@@ -720,6 +722,9 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "denial_reasons_display": self.denial_reasons_display,
             "lu_countersign_required": lu_countersign_required,
             "finalise_case": finalise_case,
+            "case": self.case,
+            "decisions": decisions,
+            "queue_id": self.queue_id,
         }
 
     def form_valid(self, form):
