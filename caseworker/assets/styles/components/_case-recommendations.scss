@@ -1,0 +1,19 @@
+.case-recommendation {
+    &__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__item {
+        margin-bottom: govuk-spacing(2);
+    }
+
+    &__recommendation {
+        color: $govuk-secondary-text-colour;
+    }
+
+    &__team {
+        font-weight: bold;
+    }
+}

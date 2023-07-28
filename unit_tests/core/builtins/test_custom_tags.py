@@ -297,3 +297,8 @@ def test_goods_value_correct_float_value():
     goods = [good_1, good_2, good_3]
     total_value = custom_tags.goods_value(goods)
     assert str(total_value) == str(good_1_value + good_2_value)
+
+
+def test_get_display_values():
+    display_val_dict = [{"id": "1", "display_value": "reason a"}, {"id": "1", "display_value": "reason b"}]
+    assert custom_tags.get_display_values(display_val_dict, "display_value") == "reason a, reason b"

@@ -148,3 +148,40 @@ class ExpandingFieldset(Fieldset):
         self.summary_css_class = summary_css_class
         self.details_id = details_id
         super().__init__(*args, **kwargs)
+
+
+class RadioTextArea(TemplateNameMixin):
+    template = "%s/layout/radio_textarea.html"
+
+    def __init__(self, radio_field, field, json_choices):
+        if not isinstance(field, str):
+            raise TypeError(f"{self.__class__.__name__} only accepts field as a string parameter")
+        if not isinstance(radio_field, str):
+            raise TypeError(f"{self.__class__.__name__} only accepts radio_field as a string parameter")
+        self.field = field
+        self.radio_field = radio_field
+        self.json_choices = self.sanitise_json_choices(json_choices)
+
+    def sanitise_json_choices(self, choices):
+        if not isinstance(choices, dict):
+            raise TypeError(f"{self.__class__.__name__} only accepts json_choices as a dict parameter")
+
+        for key in choices:
+            if not isinstance(choices[key], str):
+                raise TypeError(f"{self.__class__.__name__} only accepts json_choices with string values")
+        return choices
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        template = self.get_template_name(template_pack)
+
+        bound_field = form[self.field]
+        radio_field = form[self.radio_field]
+        context.update(
+            {
+                "field": bound_field,
+                "radio_field": radio_field,
+                "json_choices": self.json_choices,
+            }
+        )
+
+        return render_to_string(template, context.flatten())

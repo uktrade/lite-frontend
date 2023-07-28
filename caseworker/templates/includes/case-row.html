@@ -51,9 +51,8 @@
 		</a>
 		<address>
 			<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-				{{ case.organisation.name }} <span class="govuk-hint lite-!-display-inline">/ {{ case.organisation.primary_site.address.city }}</span>
+				{{ case.organisation.name }}
 			</p>
-			<p class="govuk-hint govuk-!-margin-0 govuk-!-margin-top-2">{{ case.organisation.primary_site.address.postcode }}</p>
 		</address>
 		<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.status.value }}</p>
 	</td>
@@ -123,7 +122,10 @@
 			{% endif %}
 		</ul>
 	</td>
-
+	{# case recommendations #}
+	<td class="govuk-table__cell lite-mobile-hide case-recommendation" data-customiser-key="case_recommendation">
+		{% include "includes/recommendations.html" with case=case %}
+	</td>
     {# case updates #}
 	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="case_updates">
 		<ul class="app-updates__list">
@@ -164,6 +166,21 @@
 			{% endfor %}
 		</ol>
 	</td>
+
+    {# Users #}
+    <td class="govuk-table__cell lite-mobile-hide" data-customiser-key="users">
+        <ol class="govuk-list app-users__list">
+            {% for user in case.end_users %}
+                <li class="app-cles__item">
+                    {% if user.type == "end_user"  %}
+                        <strong>End-user:</strong> {{ user.name }}
+                    {% elif user.type == "ultimate_end_user"  %}
+                        <strong>Ultimate end-user:</strong> {{ user.name }}
+                {%  endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </td>
 
 	{# CLEs #}
 	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="control_list_entry">

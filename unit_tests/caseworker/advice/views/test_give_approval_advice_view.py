@@ -8,7 +8,7 @@ from caseworker.advice import services
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
+def setup(mock_queue, mock_case, mock_picklist):
     yield
 
 
@@ -98,6 +98,7 @@ def test_fco_give_approval_advice_post(
     countries,
     approval_reasons,
     expected_status_code,
+    mock_picklist,
 ):
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},

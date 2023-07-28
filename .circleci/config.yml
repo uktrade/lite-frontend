@@ -30,11 +30,8 @@ common_env_vars: &common_env_vars
 image_python: &image_python
   image: cimg/python:3.7.15
 
-image_python_browsers: &image_python_browsers
-  image: circleci/python:3.7-browsers
-
 image_redis: &image_redis
-  image: circleci/redis:3.2-alpine
+  image: cimg/redis:6.2.6
 
 image_node: &image_node
   image: cimg/node:16.19
@@ -133,6 +130,9 @@ commands:
 
   lint:
     steps:
+      - run: pipenv install pre-commit
+      - run: pipenv run pre-commit run eslint --from-ref origin/HEAD --to-ref HEAD
+      - run: pipenv run pre-commit run prettier --from-ref origin/HEAD --to-ref HEAD
       - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
       - run: pipenv run prospector
       - run: pipenv run black . --check --diff

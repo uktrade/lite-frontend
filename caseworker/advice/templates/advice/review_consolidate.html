@@ -31,14 +31,21 @@
                     {% include "advice/advice_details.html" with team=True %}
                     <br>
                     {% endfor %}
-                    {% crispy form %}
+                    <div class="advice-refusal-labels">
+                        {% crispy form %}
+                    </div>  
             </div>
             <div class="govuk-grid-column-one-third">
                 {% include "advice/case_detail.html" %}
             </div>
-
             {% include "advice/picklist.html" %}
         </div>
     </main>
 </div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'refusal-review-consolidate.js' %}" type="text/javascript"></script>
 {% endblock %}
