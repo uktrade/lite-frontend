@@ -18,7 +18,7 @@ class ListExpander {
   }
 
   hideListElems() {
-    this.liElems.forEach(($li, currentIndex, listObj) => {
+    this.liElems.forEach(($li, currentIndex) => {
       if (currentIndex < this.visibleElems) {
         return;
       }
@@ -30,7 +30,7 @@ class ListExpander {
   createExpandButton() {
     this.$el.insertAdjacentHTML(
       "beforeend",
-      `<button class="expander__expand-button" type="button" aria-hidden="true"></button>`
+      `<button class="expander__expand-button" type="button"></button>`
     );
     this.$expandButton = this.$el.querySelector(".expander__expand-button");
     this.$expandButton.innerHTML =
@@ -41,7 +41,7 @@ class ListExpander {
   }
 
   showListElems() {
-    this.liElems.forEach(($li, currentIndex, listObj) => {
+    this.liElems.forEach(($li, currentIndex) => {
       if (currentIndex < this.visibleElems) {
         return;
       }
