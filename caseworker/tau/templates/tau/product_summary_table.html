@@ -12,7 +12,7 @@
                     </tr>
                     {% if document.description %}
                         <tr>
-                            <td class="govuk-table__header">Description (optional)</td>
+                            <th class="govuk-table__header">Description (optional)</th>
                             <td class="govuk-table__cell">
                                 {{ document.description }}
                             </td>
@@ -21,14 +21,14 @@
                 {% endfor %}
             {% else %}
                 <tr class="govuk-table__row">
-                    <td class="govuk-table__header">Explain why you are not able to upload a product document</td>
+                    <th class="govuk-table__header">Explain why you are not able to upload a product document</th>
                     <td class="govuk-table__cell">{{ good.no_document_comments }}</td>
                 </tr>
             {% endif %}
         {% endwith %}
         {% for id, value, label in summary %}
             <tr class="govuk-table__row" id="table-product-{{ forloop.counter }}-{{ id }}">
-                <td class="govuk-table__header">{{ label }}</td>
+                <th class="govuk-table__header">{{ label }}</th>
                 <td class="govuk-table__cell">{{ value }}</td>
             </tr>
         {% endfor %}
