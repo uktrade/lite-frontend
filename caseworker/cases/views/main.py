@@ -101,7 +101,7 @@ class CaseTabsMixin:
     def get_assessment_tab(self):
         return Tab(
             "assessment",
-            "Product Assessment",
+            "Product assessment",
             "cases:tau:home",
             has_template=False,
         )
@@ -117,7 +117,6 @@ class CaseTabsMixin:
 
 class CaseDetail(CaseTabsMixin, CaseView):
     def get_advice_additional_context(self):
-
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
         current_advice_level = ["user"]
         blocking_flags = get_blocking_flags(self.request, self.case["id"])
