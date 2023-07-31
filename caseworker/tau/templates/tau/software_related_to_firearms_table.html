@@ -7,26 +7,26 @@
       {% include "tau/includes/product_details.html" %}
       {% include "tau/includes/security_grading.html" %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Describe the purpose of the product</td>
+        <th class="govuk-table__header">Describe the purpose of the product</th>
         <td class="govuk-table__cell">{{ good.software_or_technology_details }}</td>
       </tr>
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Is the product for military use?</td>
+        <th class="govuk-table__header">Is the product for military use?</th>
         <td class="govuk-table__cell">{{ good.is_military_use.value }}</td>
       </tr>
       {% if good.is_military_use.key == "yes_modified" %}
         <tr class="govuk-table__row">
-         <td class="govuk-table__header">Provide details of the modifications?</td>
+         <th class="govuk-table__header">Provide details of the modifications?</th>
          <td class="govuk-table__cell">{{ good.modified_military_use_details }}</td>
         </tr>
       {% endif %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Does the product include security features to protect information?</td>
+        <th class="govuk-table__header">Does the product include security features to protect information?</th>
         <td class="govuk-table__cell">{{ good.uses_information_security|yesno|capfirst }}</td>
       </tr>
       {% if good.information_security_details %}
       <tr class="govuk-table__row">
-        <td class="govuk-table__header">Provide details of the information security features</td>
+        <th class="govuk-table__header">Provide details of the information security features</th>
         <td class="govuk-table__cell">{{ good.information_security_details }}</td>
       </tr>
       {% endif %}
