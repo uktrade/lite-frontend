@@ -360,6 +360,8 @@ def update_advice(request, case, caseworker, advice_type, data, level):
 
     team_advice = filter_advice_by_level(case.advice, ["final"])
     consolidated_advice = filter_advice_by_team(team_advice, user_team_alias)
+    licenceable_products_advice = [item for item in consolidated_advice if item["type"]["key"] != "no_licence_required"]
+    nlr_products_advice = [item for item in consolidated_advice if item["type"]["key"] == "no_licence_required"]
 
     json = []
     if advice_type == "approve" or advice_type == "proviso":
@@ -370,7 +372,7 @@ def update_advice(request, case, caseworker, advice_type, data, level):
                 "proviso": data["proviso"],
                 "type": "proviso" if data["proviso"] else "approve",
             }
-            for advice in consolidated_advice
+            for advice in licenceable_products_advice
         ]
     elif advice_type == "refuse":
         json = [
@@ -379,12 +381,23 @@ def update_advice(request, case, caseworker, advice_type, data, level):
                 "text": data["refusal_reasons"],
                 "denial_reasons": data["denial_reasons"],
             }
-            for advice in consolidated_advice
+            for advice in licenceable_products_advice
         ]
     else:
         raise NotImplementedError(f"Implement advice update for advice type {advice_type}")
 
-    response = client.put(request, f"/cases/{case['id']}/{level}/", json)
+    json_nlr = [
+        {
+            "id": advice["id"],
+            "text": "",
+            "proviso": "",
+            "note": "",
+            "denial_reasons": [],
+        }
+        for advice in nlr_products_advice
+    ]
+
+    response = client.put(request, f"/cases/{case['id']}/{level}/", json + json_nlr)
     response.raise_for_status()
     return response.json(), response.status_code
 

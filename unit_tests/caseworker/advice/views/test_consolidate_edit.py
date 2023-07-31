@@ -254,15 +254,24 @@ def test_edit_advice_get(
     assert isinstance(form, forms.ConsolidateApprovalForm)
 
 
+@pytest.mark.parametrize(
+    "include_nlr",
+    ((False,), (True,)),
+)
 @patch("caseworker.advice.views.get_gov_user")
 def test_edit_consolidated_advice_approve_by_lu_put(
     mock_get_gov_user,
+    include_nlr,
     authorized_client,
     requests_mock,
     data_standard_case,
     url,
     consolidated_advice,
 ):
+    if include_nlr:
+        # Mark last item as NLR
+        consolidated_advice[-1]["type"] = {"key": "no_licence_required", "value": "No licence required"}
+
     case_data = data_standard_case
     case_data["case"]["advice"] = consolidated_advice
 
@@ -277,15 +286,34 @@ def test_edit_consolidated_advice_approve_by_lu_put(
     assert response.status_code == 302
     history = requests_mock.request_history.pop()
     assert history.method == "PUT"
-    assert history.json() == [
-        {"id": advice["id"], "text": data["approval_reasons"], "proviso": data["proviso"], "type": "proviso"}
-        for advice in consolidated_advice
-    ]
+
+    if include_nlr:
+        liceceable_products_advice = consolidated_advice[:-1]
+        nlr_advice = consolidated_advice[-1]
+        nlr_advice_data = [{"id": nlr_advice["id"], "text": "", "proviso": "", "note": "", "denial_reasons": []}]
+        assert (
+            history.json()
+            == [
+                {"id": advice["id"], "text": data["approval_reasons"], "proviso": data["proviso"], "type": "proviso"}
+                for advice in liceceable_products_advice
+            ]
+            + nlr_advice_data
+        )
+    else:
+        assert history.json() == [
+            {"id": advice["id"], "text": data["approval_reasons"], "proviso": data["proviso"], "type": "proviso"}
+            for advice in consolidated_advice
+        ]
 
 
+@pytest.mark.parametrize(
+    "include_nlr",
+    ((False,), (True,)),
+)
 @patch("caseworker.advice.views.get_gov_user")
 def test_edit_consolidated_advice_refuse_by_lu_put(
     mock_get_gov_user,
+    include_nlr,
     authorized_client,
     requests_mock,
     data_standard_case,
@@ -294,6 +322,10 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
 ):
     for item in consolidated_advice:
         item["type"] = {"key": "refuse", "value": "Refuse"}
+
+    if include_nlr:
+        # Mark last item as NLR
+        consolidated_advice[-1]["type"] = {"key": "no_licence_required", "value": "No licence required"}
 
     case_data = data_standard_case
     case_data["case"]["advice"] = consolidated_advice
@@ -309,14 +341,32 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
     assert response.status_code == 302
     history = requests_mock.request_history.pop()
     assert history.method == "PUT"
-    assert history.json() == [
-        {
-            "id": advice["id"],
-            "text": data["refusal_reasons"],
-            "denial_reasons": data["denial_reasons"],
-        }
-        for advice in consolidated_advice
-    ]
+
+    if include_nlr:
+        liceceable_products_advice = consolidated_advice[:-1]
+        nlr_advice = consolidated_advice[-1]
+        nlr_advice_data = [{"id": nlr_advice["id"], "text": "", "proviso": "", "note": "", "denial_reasons": []}]
+        assert (
+            history.json()
+            == [
+                {
+                    "id": advice["id"],
+                    "text": data["refusal_reasons"],
+                    "denial_reasons": data["denial_reasons"],
+                }
+                for advice in liceceable_products_advice
+            ]
+            + nlr_advice_data
+        )
+    else:
+        assert history.json() == [
+            {
+                "id": advice["id"],
+                "text": data["refusal_reasons"],
+                "denial_reasons": data["denial_reasons"],
+            }
+            for advice in consolidated_advice
+        ]
 
 
 @patch("caseworker.advice.views.get_gov_user")
