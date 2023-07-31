@@ -7,7 +7,7 @@
         {% include "tau/includes/product_details.html" %}
         {% include "tau/includes/security_grading.html" %}
         <tr class="govuk-table__row">
-          <td class="govuk-table__header">What is the calibre of the product?</td>
+          <th class="govuk-table__header">What is the calibre of the product?</th>
           <td class="govuk-table__cell">{{ good.firearm_details.calibre }}</td>
         </tr>
 
@@ -16,11 +16,11 @@
         {% include "tau/includes/onward_exported.html" %}
 
         <tr class="govuk-table__row">
-          <td class="govuk-table__header">Number of items</td>
+          <th class="govuk-table__header">Number of items</th>
           <td class="govuk-table__cell">{{ firearm_details.number_of_items }}</td>
         </tr>
         <tr class="govuk-table__row">
-          <td class="govuk-table__header">Total value</td>
+          <th class="govuk-table__header">Total value</th>
           <td class="govuk-table__cell">£{{ good_on_application.value|floatformat:2 }}</td>
         </tr>
 
