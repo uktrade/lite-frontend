@@ -1,62 +1,51 @@
 <h2 class="govuk-heading-m app-bg-colour--light-grey govuk-!-padding-2">
     Decision documents
 </h2>
-
 <table class="govuk-table" name="decision_document">
-	<thead class="govuk-table__head">
-		<tr class="govuk-table__row">
-			<th scope="col" class="govuk-table__header">Name</th>
-			<th scope="col" class="govuk-table__header">Status</th>
-			<th scope="col" class="govuk-table__header">Actions</th>
-			<th scope="col" class="govuk-table__header"></th>
-		</tr>
-	</thead>
-	<tbody class="govuk-table__body">
-		{% for decision, data in decisions.items %}
-			<tr class="govuk-table__row" id="decision-{{ decision }}">
-				{% if data.document %}
-                    <td class="govuk-table__cell">
-                            <a class="govuk-link" href="{% url 'cases:document' queue_id case.id data.document.id %}">
-                            {{ data.value }}
-                        </a>
-                    </td>
-
-					<td class="govuk-table__cell">
-						<div id="status-{{ decision }}" data-status="done" class="govuk-tag govuk-tag--blue">
-							READY TO SEND
-						</div>
-					</td>
-					<td class="govuk-table__cell">
-                        <!-- TODO: document.status.sent -->
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+	  <th scope="col" class="govuk-table__header">Name</th>
+	  <th scope="col" class="govuk-table__header">Status</th>
+	  <th scope="col" class="govuk-table__header">Actions</th>
+	  <th scope="col" class="govuk-table__header"></th>
+	</tr>
+  </thead>
+  <tbody class="govuk-table__body">
+    {% for decision, data in decisions.items %}
+	  <tr class="govuk-table__row" id="decision-{{ decision }}">
+	    {% if data.document %}
+          <td class="govuk-table__cell">
+            <a class="govuk-link" href="{% url 'cases:document' queue_id case.id data.document.id %}">{{ data.value }}</a>
+          </td>
+		  <td class="govuk-table__cell">
+			<div id="status-{{ decision }}" data-status="done" class="govuk-tag govuk-tag--blue">READY TO SEND</div>
+		  </td>
+		  <td class="govuk-table__cell">
+            <!-- TODO: document.status.sent -->            
+		     <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button">
+			Recreate
+		     </a>
                         
-                            <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button">
-                                Recreate
-                            </a>
-                        
-					</td>
-					<td class="govuk-table__cell">
-						<a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}">
-							Edit
-						</a>
-					</td>
-				{% else %}
-                    <td class="govuk-table__cell">
-                        {{ data.value }}
-                    </td>
-
-					<td class="govuk-table__cell">
-						<strong id="status-{{ decision }}" data-status="not-started" class="govuk-tag govuk-tag--grey">
-							NOT STARTED
-                        </strong>
-					</td>
-					<td class="govuk-table__cell">
-						<a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button" id="generate-document-{{ decision }}">
-							Create {{data.value}}
-						</a>
-					</td>
-                    <td class="govuk-table__cell"></td>
-				{% endif %}
-			</tr>
-		{% endfor %}
-	</tbody>
+		  </td>
+		  <td class="govuk-table__cell">
+			<a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}">Edit</a>
+		  </td>
+		{% else %}
+          <td class="govuk-table__cell">{{ data.value }}
+          </td>
+		  <td class="govuk-table__cell">
+			<strong id="status-{{ decision }}" data-status="not-started" class="govuk-tag govuk-tag--grey">
+				NOT STARTED
+			</strong>
+		  </td>
+		  <td class="govuk-table__cell">
+		    <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button" id="generate-document-{{ decision }}">
+			  Create {{data.value}}
+		    </a>
+		  </td>
+          <td class="govuk-table__cell"></td>
+		{% endif %}
+	  </tr>
+	{% endfor %}
+  </tbody>
 </table>
