@@ -384,16 +384,20 @@ def update_advice(request, case, caseworker, advice_type, data, level):
         json = [
             {
                 "id": advice["id"],
-                "text": data["refusal_reasons"],
+                "text": data["refusal_note"],
                 "denial_reasons": data["denial_reasons"],
             }
             for advice in consolidated_advice
+            if advice.get(
+                "is_refusal_note"
+            )  # We are making sure we are not updating the old Advices which are refusal_reasons. Since we are removing it from ReviewCombine we just update is_refusal_note advices
         ]
     else:
         raise NotImplementedError(f"Implement advice update for advice type {advice_type}")
 
     response = client.put(request, f"/cases/{case['id']}/{level}/", json)
     response.raise_for_status()
+
     return response.json(), response.status_code
 
 

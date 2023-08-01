@@ -621,7 +621,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         }
 
     def get_refusal_data(self):
-        filtered_advices = [advice for advice in self.advices_by_team if advice["is_refusal_note"] == True]
+        filtered_advices = [advice for advice in self.advices_by_team if advice["is_refusal_note"]]
         return {
             "refusal_note": filtered_advices[0]["text"],
             "denial_reasons": [r for r in filtered_advices[0]["denial_reasons"]],
@@ -720,6 +720,8 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         decisions = {key: value for key, value in decision_documents.items() if key == "inform_letter"}
         # Only show decision documents if we have an inform letter
 
+        refusal_note = [advice for advice in consolidated_advice if advice["is_refusal_note"]][0]
+
         return {
             **super().get_context(**kwargs),
             "consolidated_advice": consolidated_advice,
@@ -730,6 +732,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "case": self.case,
             "decisions": decisions,
             "queue_id": self.queue_id,
+            "refusal_note": refusal_note,
         }
 
     def form_valid(self, form):
