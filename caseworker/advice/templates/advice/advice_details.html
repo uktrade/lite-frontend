@@ -148,8 +148,14 @@
         <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 recommendation-and-decision" data-nosnippet role="region" aria-label="Reason for refusing">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
-                <h2 class="govuk-heading-m">Reason for refusing</h2>
-                <p class="govuk-body">{{ refusal_note.text|linebreaks }}</p>
+                {% if refusal_note %}
+                    <h2 class="govuk-heading-m">Refusal meeting note</h2>
+                    <p class="govuk-body">{{ refusal_note.text|linebreaks }}</p>
+                {% else %}
+                    <h2 class="govuk-heading-m">Reason for refusing</h2>
+                    <p class="govuk-body">{{ advice.0.text|linebreaks }}</p>
+                {% endif %} 
+                
               </div>
             </div>
         </div>
