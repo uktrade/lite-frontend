@@ -1,6 +1,6 @@
 import pytest
 import uuid
-
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 
@@ -13,6 +13,8 @@ def test_is_good_firearm_form(authorized_client, application_pk):
     url = reverse("applications:is_good_firearm", kwargs={"pk": application_pk})
     response = authorized_client.get(url)
     assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Is it a firearm product? - LITE - GOV.UK"
 
 
 @pytest.mark.parametrize(
@@ -33,6 +35,8 @@ def test_non_firearm_category(authorized_client, application_pk):
     url = reverse("applications:non_firearm_category", kwargs={"pk": application_pk})
     response = authorized_client.get(url)
     assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Select the product category - LITE - GOV.UK"
 
 
 @pytest.mark.parametrize(
@@ -74,3 +78,5 @@ def test_is_material_substance_context_data(authorized_client, application_pk, i
     assert response.context["back_link_url"] == reverse(
         "applications:non_firearm_category", kwargs={"pk": application_pk}
     )
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Is it a material or substance? - LITE - GOV.UK"

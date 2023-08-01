@@ -1,5 +1,6 @@
 from datetime import datetime
 import pytest
+from bs4 import BeautifulSoup
 
 from django.urls import reverse
 
@@ -100,17 +101,19 @@ def test_edit_export_details_post(
 
 
 @pytest.mark.parametrize(
-    "url_name,application_data,initial",
-    (
+    ("url_name", "application_data", "initial", "expected_title"),
+    [
         (
             "edit_security_approvals_f680_reference_number",
             {"f680_reference_number": "new ref number"},
             {"f680_reference_number": "new ref number"},
+            "What is the F680 reference number? - LITE - GOV.UK",
         ),
         (
             "edit_security_approvals_security_other_details",
             {"other_security_approval_details": "other details"},
             {"other_security_approval_details": "other details"},
+            "Provide details of your written approval - LITE - GOV.UK",
         ),
         (
             "edit_security_approvals_f1686_details",
@@ -124,15 +127,12 @@ def test_edit_export_details_post(
                 "f1686_reference_number": "dummy ref",
                 "f1686_approval_date": datetime.fromisoformat("2020-02-02").date(),
             },
+            "Provide details of your F1686 approval - LITE - GOV.UK",
         ),
-    ),
+    ],
 )
 def test_edit_security_approvals_initial(
-    authorized_client,
-    application,
-    url_name,
-    application_data,
-    initial,
+    authorized_client, application, url_name, application_data, initial, expected_title
 ):
     application.update(application_data)
 
@@ -141,6 +141,9 @@ def test_edit_security_approvals_initial(
 
     assert response.status_code == 200
     assert response.context["form"].initial == initial
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == expected_title
 
 
 def test_edit_security_approvals_true(
