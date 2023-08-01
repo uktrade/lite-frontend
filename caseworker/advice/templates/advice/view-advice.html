@@ -96,8 +96,12 @@
                             Edit recommendation
                         </a>
                     {% endif %}
-
+                    
                     <br><br>
+                    {% if decisions %}
+                        {% include "advice/decision_documents.html" with decisions=decisions case=case queue_id=queue_id %}
+                    {% endif %}
+
                     {% include "advice/advice_details.html" with advice=consolidated_advice team=True %}
                     <br>
                 </div>
