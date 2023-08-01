@@ -182,6 +182,22 @@ def test_cases_home_page_view_context(authorized_client):
 
 
 @pytest.mark.parametrize(
+    ("query_string", "expected_title"),
+    [
+        ("", "All cases - LITE Internal"),
+        ("?selected_tab=all_cases", "All cases - LITE Internal"),
+        ("?selected_tab=my_cases", "All cases - My cases - LITE Internal"),
+        ("?selected_tab=open_queries", "All cases - Open queries - LITE Internal"),
+    ],
+)
+def test_cases_page_has_correct_title(authorized_client, query_string, expected_title):
+    response = authorized_client.get(reverse("queues:cases") + query_string)
+    soup = BeautifulSoup(response.content, "html.parser")
+    title = soup.title.string.strip()
+    assert title == expected_title
+
+
+@pytest.mark.parametrize(
     "url_suffix",
     [
         "",
