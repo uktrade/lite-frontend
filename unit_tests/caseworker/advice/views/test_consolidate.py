@@ -31,7 +31,6 @@ def setup(
     mock_approval_reason,
     mock_denial_reasons,
     mock_proviso,
-    mock_picklist,
     mock_post_team_advice,
     mock_finalise_advice_documents,
 ):
