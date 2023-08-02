@@ -279,29 +279,6 @@ class GoodGradingForm:
 
     BUTTON = "Save and continue"
 
-
-class GoodsQueryForm:
-    TITLE = "Product query"
-    DESCRIPTION = ""
-    BACK_LINK = "Back to product"
-    BUTTON = "Submit"
-
-    class CLCQuery:
-        TITLE = "Raise a control list classification (CLC) query"
-
-        class Code:
-            TITLE = "What do you think the CLC is for the product?"
-            DESCRIPTION = "For example, ML1a."
-
-        class Details:
-            TITLE = "Comments"
-
-    class PVGrading:
-        TITLE = "Apply for a private venture (PV) grading"
-
-        class Details:
-            TITLE = "Comments"
-
     class Additional:
         TITLE = "Comments"
         DESCRIPTION = "Include details of why you don't know if the product is controlled."

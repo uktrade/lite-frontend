@@ -10,4 +10,7 @@
   &--grey {
     background: govuk-tint(govuk-colour("dark-grey"), 75);
   }
+  &--light-grey {
+    background: govuk-colour("light-grey");
+  }
 }

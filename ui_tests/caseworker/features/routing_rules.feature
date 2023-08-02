@@ -25,7 +25,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     Then I see previously created application
     When I click on the application previously created
     And I assign myself to the case
-    Then I click on Product Assessment
+    Then I click on Product assessment
     And I select good
     And I select the CLE "ML1a"
     And I select "components for" / "microwave components" as report summary prefix / subject and regime to none and submit

@@ -7,7 +7,7 @@
         {% include "tau/includes/product_details.html" %}
         {% include "tau/includes/security_grading.html" %}
         <tr class="govuk-table__row">
-          <td class="govuk-table__header">What is the calibre of the product?</td>
+          <th class="govuk-table__header">What is the calibre of the product?</th>
           <td class="govuk-table__cell">{{ good.firearm_details.calibre }}</td>
         </tr>
 
@@ -16,12 +16,12 @@
         {% include "tau/includes/onward_exported.html" %}
 
         <tr class="govuk-table__row">
-          <td class="govuk-table__header">Does the product have a valid proof mark?</td>
+          <th class="govuk-table__header">Does the product have a valid proof mark?</th>
           <td class="govuk-table__cell">{{ firearm_details.has_proof_mark|yesno|title }}</td>
         </tr>
         {% if firearm_details.has_proof_mark is False %}
           <tr class="govuk-table__row">
-            <td class="govuk-table__header">Explain why the product doesn’t have a valid proof mark</td>
+            <th class="govuk-table__header">Explain why the product doesn’t have a valid proof mark</th>
             <td class="govuk-table__cell">{{ firearm_details.no_proof_mark_details }}</td>
           </tr>
         {% endif %}

@@ -10,6 +10,7 @@ from django.urls import reverse
 
 from core import client
 from caseworker.advice import forms, services
+from caseworker.advice.constants import AdviceType
 from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 TEAM_ID = "34344324-34234-432"
@@ -281,6 +282,45 @@ def test_edit_consolidated_advice_approve_by_lu_put(
         {"id": advice["id"], "text": data["approval_reasons"], "proviso": data["proviso"], "type": "proviso"}
         for advice in consolidated_advice
     ]
+
+
+@patch("caseworker.advice.views.get_gov_user")
+def test_edit_consolidated_advice_approve__with_nlr_products_by_lu_put(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    consolidated_advice,
+):
+    # Mark last item as NLR
+    case_data = data_standard_case
+    consolidated_advice[-1]["type"] = {"key": AdviceType.NO_LICENCE_REQUIRED, "value": "No licence required"}
+    case_data["case"]["advice"] = consolidated_advice
+
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": TEAM_ID, "alias": services.LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
+
+    data = {"approval_reasons": "meets the requirements updated", "proviso": "updated conditions"}
+    response = authorized_client.post(url, data=data)
+    assert response.status_code == 302
+    history = requests_mock.request_history.pop()
+    assert history.method == "PUT"
+
+    liceceable_products_advice = consolidated_advice[:-1]
+    nlr_advice = consolidated_advice[-1]
+    nlr_advice_data = [{"id": nlr_advice["id"], "text": "", "proviso": "", "note": "", "denial_reasons": []}]
+    assert (
+        history.json()
+        == [
+            {"id": advice["id"], "text": data["approval_reasons"], "proviso": data["proviso"], "type": "proviso"}
+            for advice in liceceable_products_advice
+        ]
+        + nlr_advice_data
+    )
 
 
 @patch("caseworker.advice.views.get_gov_user")
