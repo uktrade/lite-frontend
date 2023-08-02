@@ -9,7 +9,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 import tests_common.tools.helpers as utils
 from ui_tests.exporter.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
-from ui_tests.exporter.fixtures.add_goods_query import add_goods_clc_query  # noqa
 from ui_tests.exporter.fixtures.add_party import add_end_user_to_application  # noqa
 from ui_tests.exporter.fixtures.env import environment  # noqa
 from ui_tests.exporter.fixtures.manage_case import manage_case_status_to_withdrawn, approve_case  # noqa

@@ -57,7 +57,6 @@ from exporter.goods.forms import (
     document_grading_form,
     edit_good_detail_form,
     edit_grading_form,
-    raise_a_goods_query,
     upload_firearms_act_certificate_form,
 )
 from exporter.goods.helpers import (
@@ -81,7 +80,6 @@ from exporter.goods.services import (
     post_good_document_availability,
     post_good_document_sensitivity,
     post_good_documents,
-    raise_goods_query,
 )
 from lite_content.lite_exporter_frontend import goods
 from lite_content.lite_exporter_frontend.goods import AttachDocumentForm
@@ -391,27 +389,6 @@ class GoodInformationSecurityView(LoginRequiredMixin, GoodCommonMixin, FormView)
             return return_to_good_summary(self.kwargs, self.application_id, self.object_id)
         elif self.object_id:
             return reverse("goods:good", kwargs={"pk": self.object_id})
-
-
-class RaiseGoodsQuery(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = str(kwargs["pk"])
-        self.draft_pk = str(kwargs.get("draft_pk", ""))
-        good, _ = get_good(request, self.object_pk)
-
-        raise_a_clc_query = good["is_good_controlled"] is None
-        raise_a_pv_query = "grading_required" == good["is_pv_graded"]["key"]
-
-        self.form = raise_a_goods_query(self.object_pk, raise_a_clc_query, raise_a_pv_query)
-        self.action = raise_goods_query
-
-        if self.draft_pk:
-            self.success_url = reverse_lazy(
-                "goods:good_detail_application",
-                kwargs={"pk": self.object_pk, "type": "application", "draft_pk": self.draft_pk},
-            )
-        else:
-            self.success_url = reverse_lazy("goods:good", kwargs={"pk": self.object_pk})
 
 
 class EditGood(LoginRequiredMixin, SingleFormView):

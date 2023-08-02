@@ -188,18 +188,6 @@ def get_regime_entries(request):
     return [{"id": regime["pk"], "name": regime["name"]} for regime in sorted(data.json(), key=lambda r: r["name"])]
 
 
-def get_gov_pv_gradings(request, convert_to_options=False):
-    pv_gradings = client.get(request, "/static/private-venture-gradings/gov/").json().get("pv_gradings")
-    if convert_to_options:
-        converted_units = []
-        for pv_grading_entry in pv_gradings:
-            for key in pv_grading_entry:
-                converted_units.append(Option(key=key, value=pv_grading_entry[key]))
-        return converted_units
-
-    return pv_gradings
-
-
 def get_pv_gradings(request, convert_to_options=False):
     pv_gradings = client.get(request, "/static/private-venture-gradings/").json().get("pv_gradings")
 

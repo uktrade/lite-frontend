@@ -66,20 +66,6 @@ def get_application_default_duration(request, pk):
     return int(client.get(request, f"/applications/{pk}/duration/").json()["licence_duration"])
 
 
-# Goods Queries
-def put_goods_query_clc(request, pk, json):
-    # This is a workaround due to RespondCLCQuery not using a SingleFormView
-    if "control_list_entries[]" in json:
-        json["control_list_entries"] = json.getlist("control_list_entries[]")
-    response = client.put(request, f"/queries/goods-queries/{pk}/clc-response/", json)
-    return response.json(), response.status_code
-
-
-def put_goods_query_pv_grading(request, pk, json):
-    response = client.put(request, f"/queries/goods-queries/{pk}/pv-grading-response/", json)
-    return response.json(), response.status_code
-
-
 # Case Notes
 def get_case_notes(request, pk):
     data = client.get(request, f"/cases/{pk}/case-notes/")

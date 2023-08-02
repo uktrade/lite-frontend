@@ -426,6 +426,12 @@ def mock_standard_case(requests_mock, data_standard_case):
 
 
 @pytest.fixture
+def mock_finalise_advice_documents(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice-documents/")
+    yield requests_mock.get(url=url, json={"documents": {"refusal": {}, "approval": {}}})
+
+
+@pytest.fixture
 def mock_standard_case_on_post_circulation_queue(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
     joined_queue_at = timezone.now() - timedelta(days=2)
@@ -556,7 +562,6 @@ def mock_gov_user(requests_mock, mock_notifications, mock_new_mentions_count, mo
                     "MANAGE_PICKLISTS",
                     "MANAGE_TEAM_ADVICE",
                     "MANAGE_TEAM_ROUTING_RULES",
-                    "RESPOND_PV_GRADING",
                     "REVIEW_GOODS",
                 ],
                 "statuses": mock_case_statuses["statuses"],

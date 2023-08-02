@@ -14,11 +14,6 @@ def click_on_an_application(driver, exporter_url, context, apply_for_standard_ap
     driver.get(exporter_url.rstrip("/") + "/applications/" + context.app_id)
 
 
-@when("I click on an CLC query previously created")
-def click_on_clc_query(driver, exporter_url, context, add_goods_clc_query):
-    driver.get(exporter_url.rstrip("/") + "/goods/" + context.goods_query_good_id)
-
-
 @when("I confirm I can upload a document")
 def confirm_can_upload_document(driver):
     # Confirm you have a document that is not sensitive
