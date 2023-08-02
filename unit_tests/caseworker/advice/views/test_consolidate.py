@@ -281,7 +281,7 @@ def gov_user():
         ("", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
         ("", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
         ("approve/", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("refuse/", forms.RefusalAdviceForm, LICENSING_UNIT_TEAM, "LU Team"),
+        ("refuse/", forms.LUConsolidateRefusalForm, LICENSING_UNIT_TEAM, "LU Team"),
         ("approve/", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
         ("refuse/", forms.RefusalAdviceForm, MOD_ECJU_TEAM, "MOD Team"),
     ),

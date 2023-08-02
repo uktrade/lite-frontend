@@ -216,7 +216,7 @@ class RefusalAdviceForm(BaseRefusalForm):
         self.helper.layout = Layout("denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation"))
 
 
-class ConsolidateRefusalForm(BaseRefusalForm):
+class LUConsolidateRefusalForm(BaseRefusalForm):
     refusal_note = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "7"}),
         label="Enter the refusal note as agreed in the refusal meeting",

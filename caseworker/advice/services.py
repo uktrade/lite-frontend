@@ -241,6 +241,7 @@ def get_advice_to_consolidate(advice, user_team_alias):
     teams - which is the only difference between this function and
     `get_advice_to_countersign`.
     """
+
     if user_team_alias == LICENSING_UNIT_TEAM:
         # LU needs to review the consolidated advice given by MOD which is at team level
         user_team_advice = filter_advice_by_level(advice, [constants.AdviceLevel.USER, constants.AdviceLevel.TEAM])
@@ -388,9 +389,9 @@ def update_advice(request, case, caseworker, advice_type, data, level):
                 "denial_reasons": data["denial_reasons"],
             }
             for advice in consolidated_advice
-            if advice.get(
-                "is_refusal_note"
-            )  # We are making sure we are not updating the old Advices which are refusal_reasons. Since we are removing it from ReviewCombine we just update is_refusal_note advices
+            if advice.get("is_refusal_note")
+            # We are making sure we are not updating the old Advices which are refusal_reasons.
+            # Since we are removing it from ReviewCombine we just update is_refusal_note advices.
         ]
     else:
         raise NotImplementedError(f"Implement advice update for advice type {advice_type}")

@@ -150,7 +150,7 @@
                 <div class="govuk-grid-column-full">
                 {% if refusal_note %}
                     <h2 class="govuk-heading-m">Refusal meeting note</h2>
-                    <p class="govuk-body">{{ refusal_note.text|linebreaks }}</p>
+                    <p class="govuk-body">{{ refusal_note.0.text|linebreaks }}</p>
                 {% else %}
                     <h2 class="govuk-heading-m">Reason for refusing</h2>
                     <p class="govuk-body">{{ advice.0.text|linebreaks }}</p>
