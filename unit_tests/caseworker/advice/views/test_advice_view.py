@@ -9,7 +9,8 @@ from core import client
 def setup(
     mock_queue,
     mock_denial_reasons,
-    mock_picklist,
+    mock_approval_reason,
+    mock_proviso,
     mock_application_good_documents,
 ):
     yield
