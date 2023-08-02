@@ -179,6 +179,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
@@ -186,6 +187,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "type": "refuse",
@@ -193,6 +195,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "denial_reasons": ["1", "1a", "2", "2a", "2b", "M"],
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": ["1", "1a", "2", "2a", "2b", "M"],
@@ -200,6 +203,7 @@ def test_edit_refuse_advice_post(
             "text": "doesn't meet the requirement",
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": ["1", "1a", "2", "2a", "2b", "M"],
@@ -207,6 +211,7 @@ def test_edit_refuse_advice_post(
             "good": "9fbffa7f-ef50-402e-93ac-2f3f37d09030",
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": [],
@@ -284,7 +289,7 @@ def test_edit_consolidated_advice_approve_by_lu_put(
 
 
 @patch("caseworker.advice.views.get_gov_user")
-def test_edit_consolidated_advice_refuse_by_lu_put(
+def test_edit_consolidated_advice_refuse_note_by_lu_put(
     mock_get_gov_user,
     authorized_client,
     requests_mock,
@@ -294,6 +299,7 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
 ):
     for item in consolidated_advice:
         item["type"] = {"key": "refuse", "value": "Refuse"}
+        item["is_refusal_note"] = True
 
     case_data = data_standard_case
     case_data["case"]["advice"] = consolidated_advice
@@ -304,7 +310,7 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
     )
     requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
 
-    data = {"refusal_reasons": "updating the decision to refuse", "denial_reasons": ["1", "2", "5"]}
+    data = {"refusal_note": "updating the decision to refuse", "denial_reasons": ["1", "2", "5"]}
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
     history = requests_mock.request_history.pop()
@@ -312,7 +318,7 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
     assert history.json() == [
         {
             "id": advice["id"],
-            "text": data["refusal_reasons"],
+            "text": data["refusal_note"],
             "denial_reasons": data["denial_reasons"],
         }
         for advice in consolidated_advice
