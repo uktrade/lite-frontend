@@ -15,7 +15,6 @@ from caseworker.advice.services import (
     LU_SR_MGR_CHECK_REQUIRED_ID,
 )
 from core import client
-from crispy_forms_gds.choices import Choice
 from unit_tests.caseworker.conftest import countersignatures_for_advice
 
 
