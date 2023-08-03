@@ -16,4 +16,4 @@ def test_clc_query_and_pv_grading_application_links():
     html = render_to_string("core/hub.html", context)
     soup = BeautifulSoup(html, "html.parser")
     product_list_tile = soup.find(id="product-list-tile")
-    assert len(product_list_tile.findChildren()) == 4
+    assert len(product_list_tile.findChildren()) == 5
