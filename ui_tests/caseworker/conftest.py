@@ -877,7 +877,7 @@ def click_on_notes_and_timeline(driver):  # noqa
     ApplicationPage(driver).click_on_notes_and_timeline()
 
 
-@then("I click on Product Assessment")
+@then("I click on Product assessment")
 def click_on_product_assessment(driver):  # noqa
     ApplicationPage(driver).click_on_product_assessment()
 

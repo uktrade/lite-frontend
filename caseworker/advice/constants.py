@@ -19,3 +19,10 @@ class AdviceLevel:
     USER = "user"
     TEAM = "team"
     FINAL = "final"
+
+
+class AdviceType:
+    APPROVE = "approve"
+    PROVISO = "proviso"
+    REFUSE = "refuse"
+    NO_LICENCE_REQUIRED = "no_licence_required"

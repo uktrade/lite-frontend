@@ -58,9 +58,11 @@
 		<section class="app-tiles">
 			{# Apply tile #}
 			<div class="app-tile">
-				<a href="{% url 'apply_for_a_licence:start' %}" class="app-tile__heading" id="link-apply">
-					{% lcs 'hub.Tiles.APPLY_FOR_LICENCE' %}
-				</a>
+				<h2 class="govuk-!-margin-top-0">
+					<a href="{% url 'apply_for_a_licence:start' %}" class="app-tile__heading" id="link-apply">
+						{% lcs 'hub.Tiles.APPLY_FOR_LICENCE' %}
+					</a>
+				</h2>
 				<p class="app-tile__body">{% lcs 'hub.Tiles.Apply.APPLY_FOR' %}</p>
 				<ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
 					<li>{% lcs 'hub.Tiles.Apply.EXPORT_LICENCES' %}</li>
@@ -84,9 +86,11 @@
 
 			{# View and manage licences tile #}
 			<div class="app-tile">
-				<a href="{% url 'licences:list-open-and-standard-licences' %}" class="app-tile__heading" id="link-licences">
+				<h2 class="govuk-!-margin-top-0">
+					<a href="{% url 'licences:list-open-and-standard-licences' %}" class="app-tile__heading" id="link-licences">
 					{% lcs 'hub.Tiles.VIEW_AND_MANAGE_LICENCES' %}
-				</a>
+					</a>
+				</h2>
 				{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
 					<p class="app-tile__body">View and manage your SIELs, including NLRs and unsuccessful applications.</p>
 					<div class="app-tile__body">
@@ -101,9 +105,11 @@
 		<section class="app-tiles">
 			{# Product list tile #}
 			<div class="app-tile" id="product-list-tile">
-				<a href="{% url 'goods:goods' %}" class="app-tile__heading" id="link-products">
-					{% lcs 'hub.Tiles.GOODS' %}{% if notifications.notifications.goods %}<span class="lite-notification-bubble" id="product-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.goods }}</span><span class="govuk-visually-hidden"> notifications)</span>{% endif %}
-				</a>
+				<h2 class="govuk-!-margin-top-0">
+					<a href="{% url 'goods:goods' %}" class="app-tile__heading" id="link-products">
+						{% lcs 'hub.Tiles.GOODS' %}{% if notifications.notifications.goods %}<span class="lite-notification-bubble" id="product-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.goods }}</span><span class="govuk-visually-hidden"> notifications)</span>{% endif %}
+					</a>
+				</h2>
 				<p class="app-tile__body">{% lcs 'hub.Tiles.ProductList.MANAGE_PRODUCTS' %}</p>
 				<p class="app-tile__body">{% lcs 'hub.Tiles.ProductList.PRODUCTS_INCLUDE' %}</p>
 			</div>
@@ -112,9 +118,11 @@
 			<div class="app-tile">
 
 				{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
-					<span class="govuk-heading-s" id="link-eua">
-						{% lcs 'hub.Tiles.END_USER_ADVISORIES' %}{% if notifications.notifications.end_user_advisory %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.end_user_advisory }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
-					</span>
+					<h2 class="govuk-!-margin-top-0">
+						<span class="govuk-heading-s" id="link-eua">
+							{% lcs 'hub.Tiles.END_USER_ADVISORIES' %}{% if notifications.notifications.end_user_advisory %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.end_user_advisory }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+						</span>
+					</h2>
 					<div class="app-tile__body">
 						Use <a href="https://www.spire.trade.gov.uk">SPIRE – the online export licensing system</a>
 						 to ask for advice about an overseas organisation, government or individual in your export of products that are not controlled.
@@ -173,15 +181,19 @@
 			{# Compliance licence tile #}
 			<div class="app-tile{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %} app-tile__disabled{% endif %}">
 				{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
-					<span class="govuk-link app-tile__heading" id="link-compliance">
-						{% lcs 'hub.Tiles.Compliance.TITLE' %}
-						{% if notifications.notifications.compliance %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.compliance }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
-					</span>
+					<h2 class="govuk-!-margin-top-0">
+						<span class="govuk-link app-tile__heading" id="link-compliance">
+							{% lcs 'hub.Tiles.Compliance.TITLE' %}
+							{% if notifications.notifications.compliance %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.compliance }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+						</span>
+					</h2>
 				{% else %}
-					<a href="{% url 'compliance:compliance_list' %}" class="govuk-link app-tile__heading" id="link-compliance">
-						{% lcs 'hub.Tiles.Compliance.TITLE' %}
-						{% if notifications.notifications.compliance %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.compliance }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
-					</a>
+					<h2 class="govuk-!-margin-top-0">
+						<a href="{% url 'compliance:compliance_list' %}" class="govuk-link app-tile__heading" id="link-compliance">
+							{% lcs 'hub.Tiles.Compliance.TITLE' %}
+							{% if notifications.notifications.compliance %}<span class="lite-notification-bubble" id="eua-notifications"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.compliance }}<span class="govuk-visually-hidden"> notifications)</span></span>{% endif %}
+						</a>
+					</h2>
 				{% endif %}
 
 				<p class="app-tile__body">{% lcs 'hub.Tiles.Compliance.DESCRIPTION' %}</p>
@@ -189,13 +201,17 @@
 			{# Open licence returns tile #}
 			<div class="app-tile app-tile{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %} app-tile__disabled{% endif %}">
 				{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
-					<span class="app-tile__heading  govuk-link govuk-link--no-visited-state" id="link-open-licence-returns">
-						{% lcs 'hub.Tiles.OPEN_LICENCE_RETURNS' %}
-					</span>
+					<h2 class="govuk-!-margin-top-0">
+						<span class="app-tile__heading  govuk-link govuk-link--no-visited-state" id="link-open-licence-returns">
+							{% lcs 'hub.Tiles.OPEN_LICENCE_RETURNS' %}
+						</span>
+					</h2>
 				{% else %}
-					<a href="{% url 'compliance:open_licence_returns_list' %}" class="app-tile__heading" id="link-open-licence-returns">
-						{% lcs 'hub.Tiles.OPEN_LICENCE_RETURNS' %}
-					</a>
+					<h2 class="govuk-!-margin-top-0">
+						<a href="{% url 'compliance:open_licence_returns_list' %}" class="app-tile__heading" id="link-open-licence-returns">
+							{% lcs 'hub.Tiles.OPEN_LICENCE_RETURNS' %}
+						</a>
+					</h2>
 				{% endif %}
 
 				<p class="app-tile__body">{% lcs 'hub.Tiles.OpenLicenceReturns.DESCRIPTION' %}</p>

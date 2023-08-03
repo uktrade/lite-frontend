@@ -83,7 +83,7 @@
     </tbody>
 </table>
 <div class="govuk-grid-row govuk-details">
-    <div class="govuk-grid-column-three-quarters">
+    <div class="govuk-grid-column-full">
         {% if is_lu_countersigning and case|countersignatures_for_advice:advice %}
             {% if show_rejected_countersignatures or not rejected_lu_countersignature %}
                 <div class="countersignatures">
@@ -160,8 +160,8 @@
             </div>
         </div>
         {% endif %}
-        <br><br>
         {% if nlr_products %}
+        <br><br>
         <table id="table-nlr-products" class="govuk-table">
             <caption class="app-bg-colour--grey govuk-!-padding-2 govuk-table__caption govuk-table__caption--m">No licence required products</caption>
             <thead class="govuk-table__head">

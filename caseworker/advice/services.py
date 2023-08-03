@@ -4,6 +4,7 @@ from requests.exceptions import HTTPError
 
 from core import client
 from caseworker.advice import constants
+from caseworker.advice.constants import AdviceType
 
 # Queues
 BEIS_CHEMICAL_CASES_TO_REVIEW = "BEIS_CHEMICAL_CASES_TO_REVIEW"
@@ -369,34 +370,52 @@ def update_advice(request, case, caseworker, advice_type, data, level):
 
     team_advice = filter_advice_by_level(case.advice, ["final"])
     consolidated_advice = filter_advice_by_team(team_advice, user_team_alias)
+    licenceable_products_advice = [
+        item for item in consolidated_advice if item["type"]["key"] != AdviceType.NO_LICENCE_REQUIRED
+    ]
+    nlr_products_advice = [
+        item for item in consolidated_advice if item["type"]["key"] == AdviceType.NO_LICENCE_REQUIRED
+    ]
 
     json = []
-    if advice_type == "approve" or advice_type == "proviso":
+    if advice_type in (AdviceType.APPROVE, AdviceType.PROVISO):
         json = [
             {
                 "id": advice["id"],
                 "text": data["approval_reasons"],
                 "proviso": data["proviso"],
-                "type": "proviso" if data["proviso"] else "approve",
+                "type": AdviceType.PROVISO if data["proviso"] else AdviceType.APPROVE,
             }
-            for advice in consolidated_advice
+            for advice in licenceable_products_advice
         ]
-    elif advice_type == "refuse":
+    elif advice_type == AdviceType.REFUSE:
         json = [
             {
                 "id": advice["id"],
                 "text": data["refusal_note"],
                 "denial_reasons": data["denial_reasons"],
             }
-            for advice in consolidated_advice
-            if advice.get("is_refusal_note")
+
             # We are making sure we are not updating the old Advices which are refusal_reasons.
             # Since we are removing it from ReviewCombine we just update is_refusal_note advices.
+            for advice in licenceable_products_advice if advice.get("is_refusal_note")
+
         ]
     else:
         raise NotImplementedError(f"Implement advice update for advice type {advice_type}")
 
-    response = client.put(request, f"/cases/{case['id']}/{level}/", json)
+    json_nlr = [
+        {
+            "id": advice["id"],
+            "text": "",
+            "proviso": "",
+            "note": "",
+            "denial_reasons": [],
+        }
+        for advice in nlr_products_advice
+    ]
+
+    response = client.put(request, f"/cases/{case['id']}/{level}/", json + json_nlr)
     response.raise_for_status()
 
     return response.json(), response.status_code
