@@ -128,14 +128,21 @@ commands:
             git submodule update --init
       - run: cd lite-api; docker build -f Dockerfile.e2e -t liteapi .
 
-  lint:
+  check_lint:
     steps:
       - run: pipenv install pre-commit
+      - restore_cache:
+          keys:
+            - pre-commit-cache-{{ checksum ".pre-commit-config.yaml" }}
       - run: pipenv run pre-commit run eslint --from-ref origin/HEAD --to-ref HEAD
       - run: pipenv run pre-commit run prettier --from-ref origin/HEAD --to-ref HEAD
       - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
       - run: pipenv run prospector
       - run: pipenv run black . --check --diff
+      - save_cache:
+          key: pre-commit-cache-{{ checksum ".pre-commit-config.yaml" }}
+          paths:
+            - ~/.cache/pre-commit
 
   prepare_e2e_tests:
     parameters:
@@ -179,7 +186,7 @@ jobs:
       - <<: *image_python
     steps:
       - setup_code
-      - lint
+      - check_lint
 
   caseworker_unit_test:
     working_directory: ~/repo
