@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 
 from lite_content.lite_internal_frontend import picklists
-from lite_forms.components import TextInput, TextArea, Form, Button, MarkdownArea, HiddenField, BackLink, HelpSection
+from lite_forms.components import TextInput, TextArea, Form, Button, HiddenField, BackLink, HelpSection
 from lite_forms.styles import ButtonStyle
 
 
@@ -57,12 +57,9 @@ def add_letter_paragraph_form(picklist_type):
         questions=[
             HiddenField("type", picklist_type),
             TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-full"]),
-            MarkdownArea(
+            TextArea(
                 title=picklists.NewPicklistForm.Text.TITLE,
                 name="text",
-                extras={
-                    "max_length": 5000,
-                },
             ),
         ],
         helpers=[HelpSection(picklists.NewPicklistForm.HELP, None, "teams/markdown-help.html")],
@@ -75,12 +72,9 @@ def edit_letter_paragraph_form(picklist_item):
         questions=[
             HiddenField("type", picklist_item["type"]["key"]),
             TextInput(title=picklists.NewPicklistForm.Name.TITLE, name="name", classes=["govuk-!-width-full"]),
-            MarkdownArea(
+            TextArea(
                 title=picklists.NewPicklistForm.Text.TITLE,
                 name="text",
-                extras={
-                    "max_length": 5000,
-                },
             ),
         ],
         helpers=[HelpSection(picklists.NewPicklistForm.HELP, None, "teams/markdown-help.html")],
