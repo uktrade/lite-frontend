@@ -151,6 +151,7 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
 class SelectAllocateRole(BaseForm):
     class Layout:
         TITLE = "Which role do you want to allocate ?"
+        SUBTITLE = "Select role below"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     class RoleChoices(models.TextChoices):
