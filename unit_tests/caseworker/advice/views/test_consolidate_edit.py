@@ -338,7 +338,6 @@ def test_edit_consolidated_advice_approve__with_nlr_products_by_lu_put(
 
 @patch("caseworker.advice.views.get_gov_user")
 def test_edit_consolidated_advice_refuse_note_by_lu_put(
-
     mock_get_gov_user,
     authorized_client,
     requests_mock,

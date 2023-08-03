@@ -204,6 +204,7 @@ class BaseRefusalForm(forms.Form):
             error_messages={"required": "Select at least one refusal criteria"},
         )
 
+
 class RefusalAdviceForm(BaseRefusalForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -395,11 +395,10 @@ def update_advice(request, case, caseworker, advice_type, data, level):
                 "text": data["refusal_note"],
                 "denial_reasons": data["denial_reasons"],
             }
-
             # We are making sure we are not updating the old Advices which are refusal_reasons.
             # Since we are removing it from ReviewCombine we just update is_refusal_note advices.
-            for advice in licenceable_products_advice if advice.get("is_refusal_note")
-
+            for advice in licenceable_products_advice
+            if advice.get("is_refusal_note")
         ]
     else:
         raise NotImplementedError(f"Implement advice update for advice type {advice_type}")
