@@ -363,8 +363,7 @@ class ProductDocumentUploadForm(BaseForm):
     )
     description = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),
-        label="",
-        help_text="Description (optional)",
+        label="Description (optional)",
         required=False,
     )
 
