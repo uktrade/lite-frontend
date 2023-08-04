@@ -321,6 +321,9 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
         all_params = set(self.request.GET.keys())
         return len(all_params - params_to_ignore) > 0
 
+    def get_selected_tab(self):
+        return self.request.GET.get("selected_tab", CasesListPage.Tabs.ALL_CASES)
+
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
@@ -352,6 +355,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
                 "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
                 "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
                 "show_updated_cases_banner": show_updated_cases_banner,
+                "selected_tab": self.get_selected_tab(),
                 "tab_data": self._tab_data(),
                 "bookmarks": bookmarks,
                 "return_to": self.get_return_url(),

@@ -4,7 +4,7 @@ from django.urls import reverse
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_denial_reasons, mock_picklist, mock_case):
+def setup(mock_queue, mock_denial_reasons, mock_approval_reason, mock_proviso, mock_case):
     yield
 
 

@@ -102,7 +102,7 @@ class EnforcementXMLImportForm(forms.Form):
 class CaseAssignmentsCaseOfficerForm(BaseForm):
     class Layout:
         TITLE = "Who do you want to allocate as Licensing Unit case officer ?"
-        SUBTITLE = "Manages the case until the application outcome (the exporter will see this name until the case officer is changed)"
+        SUBTITLE = "Manages the case until the application outcome (the exporter will see this name until the case officer is changed) – typing into the text input will automatically filter results on the page"  # noqa
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     users = forms.ChoiceField(
@@ -151,6 +151,7 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
 class SelectAllocateRole(BaseForm):
     class Layout:
         TITLE = "Which role do you want to allocate ?"
+        SUBTITLE = "Select role below"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     class RoleChoices(models.TextChoices):
