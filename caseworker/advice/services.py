@@ -396,7 +396,8 @@ def update_advice(request, case, caseworker, advice_type, data, level):
                 "denial_reasons": data["denial_reasons"],
             }
             # We are making sure we are not updating the old Advices which are refusal_reasons.
-            # Since we are removing it from ReviewCombine we just update is_refusal_note advices.
+            # We are removing it from ReviewCombine we just update is_refusal_note advices.
+            # Since this function is being used only for LU Refusal Note now.
             for advice in licenceable_products_advice
             if advice.get("is_refusal_note")
         ]
