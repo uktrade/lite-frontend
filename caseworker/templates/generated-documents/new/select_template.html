@@ -1,0 +1,21 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+<div class="app-letter-preview__container">
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">{% block title %}Select Template{% endblock %}</h1>
+		</div>
+		<div class="lite-app-bar__controls">
+		</div>
+		<div class="govuk-grid-column-full" style="text-align: right;">
+			<form action="" method="POST">
+				{% csrf_token %}
+				<input class="govuk-button" type="submit" value="Select">
+			</form>
+		</div>
+	</div>
+	<div class="app-letter-preview__page" id="preview">
+	</div>
+</div>
+{% endblock %}

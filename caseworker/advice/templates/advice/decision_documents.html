@@ -39,7 +39,7 @@
 			</strong>
 		  </td>
 		  <td class="govuk-table__cell">
-		    <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button" id="generate-document-{{ decision }}">
+		    <a href={% if data.value == 'Inform letter' %} "{% url 'cases:finalisation_letters_select_inform_template' queue_id case.id %}" {% else %}  "{% url 'cases:finalise_document_template' queue_id case.id decision %}" {% endif %} class="govuk-button" data-module="govuk-button" id="generate-document-{{ decision }}">
 			  Create {{data.value}}
 		    </a>
 		  </td>
