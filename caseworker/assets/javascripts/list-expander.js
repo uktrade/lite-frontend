@@ -34,7 +34,10 @@ class ListExpander {
     );
     this.$expandButton = this.$el.querySelector(".expander__expand-button");
     this.$expandButton.innerHTML =
-      this.visibleElems + ` of ` + this.liElems.length;
+      `<span class="govuk-visually-hidden">expand additional list of flags</span>` +
+      this.visibleElems +
+      ` of ` +
+      this.liElems.length;
     this.$expandButton.addEventListener("click", (evt) =>
       this.handleExpandButtonClick(evt)
     );
