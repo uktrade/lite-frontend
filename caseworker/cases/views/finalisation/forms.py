@@ -14,39 +14,50 @@ class SelectInformLetterTemplateForm(BaseForm):
     class Layout:
         TITLE = "Select Inform Letter Template"
 
-    TEMPLATE_INFO_WMD = "WMD", "Weapons of mass destruction (WMD)"
-    TEMPLATE_INFO_MAM = "MAM", "Military and military"
-    TEMPLATE_INFO_MWMD = "MWMD", "Military and weapons of mass destruction (WMD)"
-
-    INFORM_LETTER_CHOICES = [TEMPLATE_INFO_WMD, TEMPLATE_INFO_MAM, TEMPLATE_INFO_MWMD]
-
     select_template = forms.ChoiceField(
-        choices=INFORM_LETTER_CHOICES,
+        choices=(),
         widget=forms.RadioSelect,
         error_messages={
             "required": "please select a template",
         },
     )
 
+    def __init__(self, *args, **kwargs):
+        inform_pargraphs = kwargs.pop("inform_paragraphs")
+        super().__init__(*args, **kwargs)
+
+        self.fields["select_template"].choices = inform_pargraphs
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "select_template",
+            Submit("submit", "Continue"),
+        )
+
     def get_layout_fields(self):
-        return ("select_template",)
+        return "select_template"
 
 
-class InformLetterTemplateTextForm(BaseForm):
+class TemplateTextForm(BaseForm):
     class Layout:
         TITLE = "Edit Text"
 
     text = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "2"}),
+        widget=forms.Textarea(attrs={"rows": "15"}),
         error_messages={"required": "Edit text is Required"},
         label="Add a case note",
     )
 
     def __init__(self, *args, **kwargs):
+        text = kwargs.pop("text")
         super().__init__(*args, **kwargs)
+        self.fields["text"].initial = text
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "text",
+            Submit("submit", "Preview"),
+        )
 
     def get_layout_fields(self):
-        return (
-            "select_template",
-            # Submit("submit", "Submit recommendation"),
-        )
+        return "text"

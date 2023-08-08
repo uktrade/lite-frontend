@@ -136,7 +136,7 @@ urlpatterns = [
         name="finalisation_letters_select_inform_template",
     ),
     path(
-        "letters/select-edit-text/",
+        "letters/select-edit-text/<uuid:paragraph_id>/",
         SelectEditText.as_view(),
         name="inform_edit_text",
     ),
