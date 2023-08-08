@@ -28,15 +28,25 @@ class SelectInformLetterTemplateForm(BaseForm):
         },
     )
 
+    def get_layout_fields(self):
+        return ("select_template",)
+
+
+class InformLetterTemplateTextForm(BaseForm):
+    class Layout:
+        TITLE = "Edit Text"
+
+    text = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "2"}),
+        error_messages={"required": "Edit text is Required"},
+        label="Add a case note",
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # select_template_choices = {"hello": "Hello"}
-
-        ##elect_template_field = self.fields["select_template"]
-        # select_template_field.choices = [("", "Select"), ("key1", "display1"), ("key2", "display2")]
 
     def get_layout_fields(self):
         return (
             "select_template",
-            Submit("submit", "Submit recommendation"),
+            # Submit("submit", "Submit recommendation"),
         )
