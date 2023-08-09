@@ -262,8 +262,7 @@ class GoodSoftwareTechnologyView(LoginRequiredMixin, GoodCommonMixin, FormView):
         return category_type
 
     def get_form_title(self):
-        form_title = CreateGoodForm.TechnologySoftware.TITLE + get_category_display_string(self.get_category_type())
-        return form_title
+        return CreateGoodForm.TechnologySoftware.TITLE + get_category_display_string(self.get_category_type())
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

@@ -4,6 +4,10 @@ from django.urls import reverse
 from unittest.mock import patch
 import pytest
 
+from lite_content.lite_exporter_frontend.goods import CreateGoodForm
+from exporter.goods.helpers import get_category_display_string
+from exporter.goods.views import GoodSoftwareTechnologyView
+
 from pytest_django.asserts import assertContains
 
 from core.constants import CaseStatusEnum
@@ -553,3 +557,24 @@ def test_goods_starting_point_form(authorized_client, requests_mock):
         response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.title.string.strip() == "Where will the products begin their export journey? - LITE - GOV.UK"
+
+
+class TestGoodSoftwareTechnologyView:
+    """
+    This is needed to keep codecov happy
+    """
+
+    @pytest.fixture
+    def instance(self):
+        return GoodSoftwareTechnologyView()
+
+    def mock_get_category_type(self):
+        return "group3_software"
+
+    def test_good_software_technology_view_get_form_title(self, instance):
+        instance.get_category_type = self.mock_get_category_type
+
+        expected_title = CreateGoodForm.TechnologySoftware.TITLE + get_category_display_string("group3_software")
+        actual_title = instance.get_form_title()
+
+        assert expected_title == actual_title
