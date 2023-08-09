@@ -79,7 +79,6 @@ def edit_queue_form(request, queue_id):
 
 
 class EnforcementXMLImportForm(forms.Form):
-
     file = forms.FileField(label="Upload a file", widget=forms.FileInput(attrs={"accept": "text/xml"}))
 
     # the CreateView expects `instance` to be passed in here
@@ -101,7 +100,7 @@ class EnforcementXMLImportForm(forms.Form):
 
 class CaseAssignmentsCaseOfficerForm(BaseForm):
     class Layout:
-        TITLE = "Who do you want to allocate as Licensing Unit case officer ?"
+        TITLE = "Who do you want to allocate as Licensing Unit case officer?"
         SUBTITLE = "Manages the case until the application outcome (the exporter will see this name until the case officer is changed) – typing into the text input will automatically filter results on the page"  # noqa
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
@@ -141,7 +140,6 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
         ]
 
     def get_layout_fields(self):
-
         return (
             HTML(render_to_string("forms/filter_radios.html")),
             "users",
@@ -150,7 +148,7 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
 
 class SelectAllocateRole(BaseForm):
     class Layout:
-        TITLE = "Which role do you want to allocate ?"
+        TITLE = "Which role do you want to allocate?"
         SUBTITLE = "Select role below"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
@@ -219,7 +217,6 @@ class CaseAssignmentUsersForm(BaseForm):
         ]
 
     def get_layout_fields(self):
-
         return (
             HTML(render_to_string("forms/filter_checkboxes.html")),
             "users",
@@ -253,7 +250,6 @@ class CaseAssignmentQueueForm(BaseForm):
         return [(queue_id, queue_name) for queue_id, queue_name in queues["queues"]]
 
     def get_layout_fields(self):
-
         return (
             HTML(render_to_string("forms/filter_radios.html")),
             "queue",
