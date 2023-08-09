@@ -29,7 +29,15 @@ def mock_get_team_advice(requests_mock, standard_case_pk):
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case, mock_denial_reasons, mock_picklist, mock_post_team_advice, mock_get_team_advice):
+def setup(
+    mock_queue,
+    mock_case,
+    mock_denial_reasons,
+    mock_approval_reason,
+    mock_proviso,
+    mock_post_team_advice,
+    mock_get_team_advice,
+):
     yield
 
 

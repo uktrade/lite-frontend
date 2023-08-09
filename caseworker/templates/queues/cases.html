@@ -5,9 +5,7 @@
 
 {% block back_link %}{% endblock %}
 
-{% block title %}
-	{{ queue.name }}
-{% endblock %}
+{% block title %}{% if selected_tab == "my_cases" %}{{ queue.name }} - My cases{% elif selected_tab == "open_queries" %}{{ queue.name }} - Open queries{% else %}{{ queue.name }}{% endif %}{% endblock %}
 
 {% block messages %}
 	{{ block.super }}
