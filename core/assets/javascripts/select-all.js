@@ -2,9 +2,9 @@ export const SELECT_ALL_BUTTON_TEXT = "Select all";
 export const DESELECT_ALL_BUTTON_TEXT = "Deselect all";
 
 class SelectAll {
-  constructor($selectAllButton, $checkboxes) {
-    this.$selectAllButton = $selectAllButton;
+  constructor($checkboxes, $selectAllButton) {
     this.$checkboxes = $checkboxes;
+    this.$selectAllButton = $selectAllButton;
 
     this.isAllSelected = false;
   }
