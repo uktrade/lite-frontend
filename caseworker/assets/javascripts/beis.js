@@ -1,4 +1,4 @@
-import SelectAll from "core/select-all";
+import SelectAllCheckboxes from "core/select-all-checkboxes";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import Headline from "./assessment-form/headline";
 import SelectProducts from "./assessment-form/select-products";
@@ -22,23 +22,26 @@ const initSelectAll = (goods) => {
   let isAllSelected = null;
 
   const checkboxes = goods.querySelectorAll("[name=goods]");
-  const selectAll = new SelectAll(checkboxes, (_isAllSelected) => {
-    isAllSelected = _isAllSelected;
-    if (isAllSelected) {
-      selectAllButton.innerText = DESELECT_ALL_BUTTON_TEXT;
-    } else {
-      selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
+  const selectAllCheckboxes = new SelectAllCheckboxes(
+    checkboxes,
+    (_isAllSelected) => {
+      isAllSelected = _isAllSelected;
+      if (isAllSelected) {
+        selectAllButton.innerText = DESELECT_ALL_BUTTON_TEXT;
+      } else {
+        selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
+      }
     }
-  });
-  selectAll.init();
+  );
+  selectAllCheckboxes.init();
 
   selectAllButton.addEventListener("click", (evt) => {
     evt.preventDefault();
     evt.stopPropagation();
     if (isAllSelected) {
-      selectAll.deselectAll();
+      selectAllCheckboxes.deselectAll();
     } else {
-      selectAll.selectAll();
+      selectAllCheckboxes.selectAll();
     }
   });
 

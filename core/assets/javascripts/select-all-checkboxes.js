@@ -1,7 +1,7 @@
 export const SELECT_ALL_BUTTON_TEXT = "Select all";
 export const DESELECT_ALL_BUTTON_TEXT = "Deselect all";
 
-class SelectAll {
+class SelectAllCheckboxes {
   constructor($checkboxes, allSelectedCallback) {
     this.$checkboxes = $checkboxes;
     this.allSelectedCallback = allSelectedCallback;
@@ -47,4 +47,4 @@ class SelectAll {
   }
 }
 
-export default SelectAll;
+export default SelectAllCheckboxes;

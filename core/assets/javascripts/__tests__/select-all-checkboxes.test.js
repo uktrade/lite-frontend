@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 
-import SelectAll from "../select-all";
+import SelectAllCheckboxes from "../select-all-checkboxes";
 
 let checkboxes;
 
@@ -21,13 +21,13 @@ const createElements = () => {
   return _checkboxes;
 };
 
-describe("Select all", () => {
+describe("Select all checkboxes", () => {
   test("Checkboxes set before init calls callback", () => {
     const allSelectedSpy = jest.fn();
     checkboxes = createElements();
     checkboxes.forEach((checkbox) => (checkbox.checked = true));
 
-    new SelectAll(checkboxes, allSelectedSpy).init();
+    new SelectAllCheckboxes(checkboxes, allSelectedSpy).init();
 
     expect(allSelectedSpy).toBeCalledTimes(1);
     expect(allSelectedSpy).toBeCalledWith(true);
@@ -38,7 +38,7 @@ describe("Select all", () => {
     const allSelectedSpy = jest.fn();
     checkboxes = createElements();
 
-    new SelectAll(checkboxes, allSelectedSpy).init();
+    new SelectAllCheckboxes(checkboxes, allSelectedSpy).init();
 
     expect(allSelectedSpy).toBeCalledTimes(1);
     expect(allSelectedSpy).toBeCalledWith(false);
@@ -48,7 +48,7 @@ describe("Select all", () => {
     const allSelectedSpy = jest.fn();
     checkboxes = createElements();
 
-    new SelectAll(checkboxes, allSelectedSpy).init();
+    new SelectAllCheckboxes(checkboxes, allSelectedSpy).init();
 
     expect(allSelectedSpy).toBeCalledTimes(1);
     expect(allSelectedSpy).toBeCalledWith(false);
@@ -69,8 +69,8 @@ describe("Select all", () => {
     expect(allSelectedSpy).toBeCalledWith(false);
   });
 
-  describe("Calling selectAll", () => {
-    let selectAll, allSelectedSpy, inputSpies;
+  describe("Calling SelectAllCheckboxes", () => {
+    let selectAllCheckboxes, allSelectedSpy, inputSpies;
 
     beforeEach(() => {
       allSelectedSpy = jest.fn();
@@ -82,13 +82,13 @@ describe("Select all", () => {
         inputSpies.push(inputSpy);
       }
 
-      selectAll = new SelectAll(checkboxes, allSelectedSpy);
-      selectAll.init();
+      selectAllCheckboxes = new SelectAllCheckboxes(checkboxes, allSelectedSpy);
+      selectAllCheckboxes.init();
       allSelectedSpy.mockReset();
     });
 
     test("Selects all checkboxes", () => {
-      selectAll.selectAll();
+      selectAllCheckboxes.selectAll();
 
       for (const checkbox of checkboxes) {
         expect(checkbox).toBeChecked();
@@ -96,14 +96,14 @@ describe("Select all", () => {
     });
 
     test("Calls callback", () => {
-      selectAll.selectAll();
+      selectAllCheckboxes.selectAll();
 
       expect(allSelectedSpy).toBeCalledTimes(1);
       expect(allSelectedSpy).toBeCalledWith(true);
     });
 
     test("Input events called on checkboxes", () => {
-      selectAll.selectAll();
+      selectAllCheckboxes.selectAll();
 
       for (const inputSpy of inputSpies) {
         expect(inputSpy).toBeCalled();
@@ -111,8 +111,8 @@ describe("Select all", () => {
     });
   });
 
-  describe("Calling deselectAll", () => {
-    let selectAll, allSelectedSpy, inputSpies;
+  describe("Calling deselect", () => {
+    let selectAllCheckboxes, allSelectedSpy, inputSpies;
 
     beforeEach(() => {
       allSelectedSpy = jest.fn();
@@ -127,13 +127,13 @@ describe("Select all", () => {
         inputSpies.push(inputSpy);
       }
 
-      selectAll = new SelectAll(checkboxes, allSelectedSpy);
-      selectAll.init();
+      selectAllCheckboxes = new SelectAllCheckboxes(checkboxes, allSelectedSpy);
+      selectAllCheckboxes.init();
       allSelectedSpy.mockReset();
     });
 
     test("Deselects all checkboxes", () => {
-      selectAll.deselectAll();
+      selectAllCheckboxes.deselectAll();
 
       for (const checkbox of checkboxes) {
         expect(checkbox).not.toBeChecked();
@@ -141,14 +141,14 @@ describe("Select all", () => {
     });
 
     test("Calls callback", () => {
-      selectAll.deselectAll();
+      selectAllCheckboxes.deselectAll();
 
       expect(allSelectedSpy).toBeCalledTimes(1);
       expect(allSelectedSpy).toBeCalledWith(false);
     });
 
     test("Input events called on checkboxes", () => {
-      selectAll.selectAll();
+      selectAllCheckboxes.deselectAll();
 
       for (const inputSpy of inputSpies) {
         expect(inputSpy).toBeCalled();
