@@ -114,7 +114,7 @@ let setTitle = function () {
   )[0];
   if (titleHeading) {
     titleHeading = titleHeading.text.trim();
-    document.title = `${titleHeading} ${title}`;
+    document.title = `${titleHeading} - ${title}`;
   }
 };
 let elements = document.getElementsByClassName("lite-tabs__tab");
