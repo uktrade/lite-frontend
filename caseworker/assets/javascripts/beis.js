@@ -1,9 +1,12 @@
-import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
+import SelectAll from "core/select-all";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import Headline from "./assessment-form/headline";
 import SelectProducts from "./assessment-form/select-products";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
+
+const SELECT_ALL_BUTTON_TEXT = "Select all";
+const DESELECT_ALL_BUTTON_TEXT = "Deselect all";
 
 const initSelectAll = (goods) => {
   if (!goods) {
@@ -16,8 +19,28 @@ const initSelectAll = (goods) => {
     "assessment-form__select-all"
   );
 
+  let isAllSelected = null;
+
   const checkboxes = goods.querySelectorAll("[name=goods]");
-  new SelectAll(selectAllButton, checkboxes).init();
+  const selectAll = new SelectAll(checkboxes, (_isAllSelected) => {
+    isAllSelected = _isAllSelected;
+    if (isAllSelected) {
+      selectAllButton.innerText = DESELECT_ALL_BUTTON_TEXT;
+    } else {
+      selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
+    }
+  });
+  selectAll.init();
+
+  selectAllButton.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+    if (isAllSelected) {
+      selectAll.deselectAll();
+    } else {
+      selectAll.selectAll();
+    }
+  });
 
   return selectAllButton;
 };
@@ -86,7 +109,6 @@ const initAssessmentForm = () => {
   if (!goods) {
     return;
   }
-  checkboxes = goods.querySelectorAll("[name=goods]");
   const products = JSON.parse(
     document.querySelector("#unassessed-trigger-list-goods-json").textContent
   );
