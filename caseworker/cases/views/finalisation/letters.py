@@ -29,30 +29,22 @@ class SelectInformTemplate(LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+
         params = {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
         self.templates, _ = get_letter_templates(self.request, convert_dict_to_query_params(params))
+
         inform_template_id = self.templates["results"][0]["id"]
         template_details, status = get_letter_template(self.request, inform_template_id)
+
         kwargs["inform_paragraphs"] = self.letter_picklist_to_choices(template_details["inform_letter_picklist"])
         return kwargs
 
     def form_valid(self, form):
-        self.success_url = reverse(
-            "cases:inform_edit_text",
-            kwargs={
-                "queue_pk": str(self.kwargs["queue_pk"]),
-                "pk": str(self.kwargs["pk"]),
-                "paragraph_id": str(form.cleaned_data["select_template"]),
-            },
-        )
+        self.kwargs["paragraph_id"] = str(form.cleaned_data["select_template"])
         return super().form_valid(form)
 
-    # def form_valid(self,form):
-    #     self.kwargs['paragraph_id'] = str(form.cleaned_data['select_template'])
-    #     return super().form_valid(form)
-
-    # def get_success_url(self):
-    #     return reverse("cases:inform_edit_text", kwargs=self.kwargs)
+    def get_success_url(self):
+        return reverse("cases:inform_edit_text", kwargs=self.kwargs)
 
 
 class SelectEditText(LoginRequiredMixin, FormView):
@@ -67,24 +59,23 @@ class SelectEditText(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         paragraph_id = str(self.kwargs.pop("paragraph_id"))
         kwargs = super().get_form_kwargs()
+
         params = {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
         self.templates, _ = get_letter_templates(self.request, convert_dict_to_query_params(params))
-        inform_template_id = self.templates["results"][0]["id"]
-        template_details, status = get_letter_template(self.request, inform_template_id)
+        self.template_id = self.templates["results"][0]["id"]
+
+        template_details, status = get_letter_template(self.request, self.template_id)
         kwargs["text"] = self.get_picklist_text(paragraph_id, template_details["inform_letter_picklist"])
         return kwargs
 
-    # def get_success_url(self):
-    #     return reverse("cases:generate_document_preview", kwargs={"picklist": self.kwargs["queue_pk"]})
-
     def form_valid(self, form):
-        text = str(form.cleaned_data["text"])
-        template_id = self.templates["results"][0]["id"]
-        self.kwargs["tpk"] = template_id
+        self.kwargs["tpk"] = self.template_id
         case_id = str(self.kwargs["pk"])
-        addressee = ""
+        addressee = self.kwargs.get("addressee", "")
+        text = str(form.cleaned_data["text"])
+
         preview, status_code = get_generated_document_preview(
-            self.request, case_id, template=template_id, text=quote(text), addressee=""
+            self.request, case_id, template=self.template_id, text=quote(text), addressee=addressee
         )
         if status_code == 400:
             return generate_document_error_page()
