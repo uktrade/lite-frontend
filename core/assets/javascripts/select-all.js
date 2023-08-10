@@ -2,33 +2,18 @@ export const SELECT_ALL_BUTTON_TEXT = "Select all";
 export const DESELECT_ALL_BUTTON_TEXT = "Deselect all";
 
 class SelectAll {
-  constructor($checkboxes, $selectAllButton) {
+  constructor($checkboxes, allSelectedCallback) {
     this.$checkboxes = $checkboxes;
-    this.$selectAllButton = $selectAllButton;
+    this.allSelectedCallback = allSelectedCallback;
 
-    this.isAllSelected = false;
+    this.isAllSelected = null;
   }
 
   init() {
-    this.$selectAllButton.addEventListener("click", (evt) =>
-      this.handleSelectAllButtonClick(evt)
-    );
     for (const $checkbox of this.$checkboxes) {
       $checkbox.addEventListener("input", () => this.setSelectAll());
     }
     this.setSelectAll();
-  }
-
-  handleSelectAllButtonClick(evt) {
-    evt.preventDefault();
-    this.setCheckboxesChecked(!this.isAllSelected);
-  }
-
-  setCheckboxesChecked(checked) {
-    for (const $checkbox of this.$checkboxes) {
-      $checkbox.checked = checked;
-      $checkbox.dispatchEvent(new Event("input"));
-    }
   }
 
   getNumChecked() {
@@ -40,12 +25,24 @@ class SelectAll {
   }
 
   setSelectAll() {
-    if (this.getNumChecked() === this.$checkboxes.length) {
-      this.$selectAllButton.textContent = DESELECT_ALL_BUTTON_TEXT;
-      this.isAllSelected = true;
-    } else {
-      this.$selectAllButton.textContent = SELECT_ALL_BUTTON_TEXT;
-      this.isAllSelected = false;
+    const isAllSelected = this.getNumChecked() === this.$checkboxes.length;
+    if (this.isAllSelected !== isAllSelected) {
+      this.allSelectedCallback(isAllSelected);
+      this.isAllSelected = isAllSelected;
+    }
+  }
+
+  selectAll() {
+    for (const $checkbox of this.$checkboxes) {
+      $checkbox.checked = true;
+      $checkbox.dispatchEvent(new Event("input"));
+    }
+  }
+
+  deselectAll() {
+    for (const $checkbox of this.$checkboxes) {
+      $checkbox.checked = false;
+      $checkbox.dispatchEvent(new Event("input"));
     }
   }
 }
