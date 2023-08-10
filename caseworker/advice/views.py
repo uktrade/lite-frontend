@@ -635,7 +635,11 @@ class ConsolidateEditView(ReviewConsolidateView):
 
     def get_refusal_data(self):
         # Filtered advices for refusal note so specifically for LU
-        filtered_advices = [advice for advice in self.advices_by_team if advice["is_refusal_note"]]
+        filtered_advices = [
+            advice
+            for advice in self.advices_by_team
+            if advice["is_refusal_note"] and advice["type"].get("key") == "refuse"
+        ]
         refusal_note = ""
         denial_reasons = [r for r in self.advice["denial_reasons"]]
 
