@@ -17,21 +17,21 @@ const createElements = () => {
     </div>
   `;
 
-  const _selectAllButton = document.querySelector(".select-all-button");
   const _checkboxes = document.querySelectorAll("[type=checkbox]");
+  const _selectAllButton = document.querySelector(".select-all-button");
 
-  return [_selectAllButton, _checkboxes];
+  return [_checkboxes, _selectAllButton];
 };
 
 const createComponent = () => {
-  [selectAllButton, checkboxes] = createElements();
-  return new SelectAll(selectAllButton, checkboxes).init();
+  [checkboxes, selectAllButton] = createElements();
+  return new SelectAll(checkboxes, selectAllButton).init();
 };
 
 test("Checkboxes set before init sets button text", () => {
-  [selectAllButton, checkboxes] = createElements();
+  [checkboxes, selectAllButton] = createElements();
   checkboxes.forEach((checkbox) => (checkbox.checked = true));
-  new SelectAll(selectAllButton, checkboxes).init();
+  new SelectAll(checkboxes, selectAllButton).init();
   expect(selectAllButton).toHaveTextContent("Deselect all");
 });
 
