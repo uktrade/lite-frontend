@@ -1,6 +1,3 @@
-export const SELECT_ALL_BUTTON_TEXT = "Select all";
-export const DESELECT_ALL_BUTTON_TEXT = "Deselect all";
-
 class SelectAllCheckboxes {
   constructor($checkboxes, allSelectedCallback) {
     this.$checkboxes = $checkboxes;
