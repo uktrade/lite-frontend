@@ -1,4 +1,4 @@
-import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
+import SelectAll from "core/select-all";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
@@ -11,17 +11,38 @@ import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
 import ShowHideNcscField from "./tau/show-hide-ncsc-field";
 
+const SELECT_ALL_BUTTON_TEXT = "Select all";
+const DESELECT_ALL_BUTTON_TEXT = "Deselect all";
+
 const initSelectAll = (goods) => {
   const selectAllButton = document.createElement("button");
-  selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
   selectAllButton.classList.add(
     "lite-button--link",
     "assessment-form__select-all"
   );
 
-  const checkboxes = goods.querySelectorAll("[name=goods]");
+  let isAllSelected = null;
 
-  new SelectAll(selectAllButton, checkboxes).init();
+  const checkboxes = goods.querySelectorAll("[name=goods]");
+  const selectAll = new SelectAll(checkboxes, (_isAllSelected) => {
+    isAllSelected = _isAllSelected;
+    if (isAllSelected) {
+      selectAllButton.innerText = DESELECT_ALL_BUTTON_TEXT;
+    } else {
+      selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
+    }
+  });
+  selectAll.init();
+
+  selectAllButton.addEventListener("click", (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+    if (isAllSelected) {
+      selectAll.deselectAll();
+    } else {
+      selectAll.selectAll();
+    }
+  });
 
   return selectAllButton;
 };
