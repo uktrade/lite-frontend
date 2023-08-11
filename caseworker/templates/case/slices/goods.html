@@ -18,7 +18,6 @@
 				<tr class="govuk-table__row">
 					{% if not hide_checkboxes %}
 						<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
-							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>
@@ -50,7 +49,7 @@
 						<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Name</span>
 							<span>
-								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=good.id %}">		
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=good.id %}">
 									{% if good.good.name %} {{ good.good.name }} {% else %} {{ good.good.description }} {% endif %}
 								</a>
 							</span>
@@ -110,7 +109,6 @@
 				<tr class="govuk-table__row">
 					{% if not hide_checkboxes %}
 						<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
-							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>

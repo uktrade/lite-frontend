@@ -76,8 +76,6 @@ def test_advice_section_no_user_advice_checkboxes_visible_no_combine_button(data
     html = render_to_string("case/tabs/user-advice.html", context)
     soup = BeautifulSoup(html, "html.parser")
     assert "app-advice__disabled-buttons" in soup.find(id="button-combine-user-advice").parent.get("class", "")
-    assert soup.find(id="link-select-all-goods")
-    assert soup.find(id="link-select-all-destinations")
 
 
 def test_advice_section_no_user_advice_checkboxes_visible_no_combine_button_grouped_view(
