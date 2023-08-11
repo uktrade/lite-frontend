@@ -559,22 +559,15 @@ def test_goods_starting_point_form(authorized_client, requests_mock):
     assert soup.title.string.strip() == "Where will the products begin their export journey? - LITE - GOV.UK"
 
 
-class TestGoodSoftwareTechnologyView:
-    """
-    This is needed to keep codecov happy
-    """
+def test_good_software_technology_view_get_form_title():
+    view_instance = GoodSoftwareTechnologyView()
 
-    @pytest.fixture
-    def instance(self):
-        return GoodSoftwareTechnologyView()
-
-    def mock_get_category_type(self):
+    def mock_get_category_type():
         return "group3_software"
 
-    def test_good_software_technology_view_get_form_title(self, instance):
-        instance.get_category_type = self.mock_get_category_type
+    view_instance.get_category_type = mock_get_category_type
 
-        expected_title = CreateGoodForm.TechnologySoftware.TITLE + get_category_display_string("group3_software")
-        actual_title = instance.get_form_title()
+    expected_title = CreateGoodForm.TechnologySoftware.TITLE + get_category_display_string("group3_software")
+    actual_title = view_instance.get_form_title()
 
-        assert expected_title == actual_title
+    assert expected_title == actual_title
