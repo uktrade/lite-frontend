@@ -647,16 +647,9 @@ class EditFirearmActDetailsView(LoginRequiredMixin, GoodCommonMixin, FormView):
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
 
-    def is_rfd(self):
-        """
-        This determines which title to show in both
-        the form itself and the html title
-        """
-        return has_valid_rfd_certificate(self.application)
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["is_rfd"] = self.is_rfd()
+        kwargs["is_rfd"] = has_valid_rfd_certificate(self.application)
         return kwargs
 
     def get_initial(self):
@@ -671,7 +664,11 @@ class EditFirearmActDetailsView(LoginRequiredMixin, GoodCommonMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form_title"] = self.form_class.rfd_form_title if self.is_rfd() else self.form_class.non_rfd_form_title
+        context["form_title"] = (
+            self.form_class.Layout.RFD_FORM_TITLE
+            if has_valid_rfd_certificate(self.application)
+            else self.form_class.Layout.NON_RFD_FORM_TITLE
+        )
         return context
 
     def form_valid(self, form):

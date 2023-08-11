@@ -1140,8 +1140,9 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
 
 
 class FirearmsActConfirmationForm(forms.Form):
-    rfd_form_title = "Is the product covered by section 5 of the Firearms Act 1968?"
-    non_rfd_form_title = CreateGoodForm.FirearmGood.FirearmsActCertificate.TITLE
+    class Layout:
+        RFD_FORM_TITLE = "Is the product covered by section 5 of the Firearms Act 1968?"
+        NON_RFD_FORM_TITLE = CreateGoodForm.FirearmGood.FirearmsActCertificate.TITLE
 
     is_covered_by_firearm_act_section_one_two_or_five = forms.ChoiceField(
         choices=(
@@ -1173,7 +1174,7 @@ class FirearmsActConfirmationForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         if self.is_rfd:
-            self.title = self.rfd_form_title
+            self.title = self.Layout.RFD_FORM_TITLE
 
             details = [
                 "What does section 5 cover?",
@@ -1184,7 +1185,7 @@ class FirearmsActConfirmationForm(forms.Form):
                 + f"&nbsp;&nbsp;covers weapons and ammunition that are generally prohibited.",
             ]
         else:
-            self.title = self.non_rfd_form_title
+            self.title = self.Layout.NON_RFD_FORM_TITLE
 
             details = [
                 "What do these sections cover?",
