@@ -1,4 +1,4 @@
-from caseworker.cases.views.finalisation.forms import SelectInformLetterTemplateForm, TemplateTextForm
+from caseworker.cases.views.finalisation.forms import SelectInformLetterTemplateForm, LetterEditTextForm
 
 
 def test_select_letter_template_form():
@@ -18,7 +18,7 @@ def test_select_letter_template_form_not_valid():
 
 
 def test_letter_edit_form():
-    form = TemplateTextForm(
+    form = LetterEditTextForm(
         text="this is a letter to inform that this is an owesome test",
         data={"text": "not in agreement"},
     )
@@ -26,7 +26,7 @@ def test_letter_edit_form():
 
 
 def test_letter_edit_form_not_valid():
-    form = TemplateTextForm(text="this is a letter to inform that this is not an owesome test", data={})
+    form = LetterEditTextForm(text="this is a letter to inform that this is not an owesome test", data={})
 
     assert form.is_valid() is False
 

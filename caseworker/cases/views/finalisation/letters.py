@@ -1,4 +1,4 @@
-from caseworker.cases.views.finalisation.forms import SelectInformLetterTemplateForm, TemplateTextForm
+from caseworker.cases.views.finalisation.forms import SelectInformLetterTemplateForm, LetterEditTextForm
 from urllib.parse import quote
 from django.views.generic import FormView
 from caseworker.letter_templates.services import get_letter_templates, get_letter_template
@@ -52,9 +52,9 @@ class SelectInformTemplate(LoginRequiredMixin, FormView):
         return reverse("cases:inform_edit_text", kwargs=self.kwargs)
 
 
-class SelectEditText(LoginRequiredMixin, FormView):
+class EditLetterText(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
-    form_class = TemplateTextForm
+    form_class = LetterEditTextForm
 
     def get_picklist_text(self, id, picklist):
         for x in picklist:

@@ -22,6 +22,7 @@ class SelectInformLetterTemplateForm(BaseForm):
         },
     )
 
+
     def __init__(self, *args, **kwargs):
         inform_pargraphs = kwargs.pop("inform_paragraphs")
         super().__init__(*args, **kwargs)
@@ -35,15 +36,15 @@ class SelectInformLetterTemplateForm(BaseForm):
         )
 
     def get_layout_fields(self):
-        return "select_template"
+        return ("select_template")
 
 
-class TemplateTextForm(BaseForm):
+class LetterEditTextForm(BaseForm):
     class Layout:
         TITLE = "Edit Text"
 
     text = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "15"}),
+        widget=forms.Textarea(attrs={"rows": "1"}),
         error_messages={"required": "Edit text is Required"},
         label="Add a case note",
     )
@@ -51,7 +52,7 @@ class TemplateTextForm(BaseForm):
     def __init__(self, *args, **kwargs):
         text = kwargs.pop("text")
         super().__init__(*args, **kwargs)
-        self.fields["text"].initial = text
+        self.fields['text'].initial = text
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -60,4 +61,6 @@ class TemplateTextForm(BaseForm):
         )
 
     def get_layout_fields(self):
-        return "text"
+        return (
+            "text"
+        )
