@@ -369,6 +369,7 @@ def test_edit_consolidated_advice_refuse_note_by_lu_put(
             "id": advice["id"],
             "text": data["refusal_note"],
             "denial_reasons": data["denial_reasons"],
+            "is_refusal_note": True,
         }
         for advice in consolidated_advice
     ]

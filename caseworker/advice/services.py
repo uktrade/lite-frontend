@@ -389,17 +389,23 @@ def update_advice(request, case, caseworker, advice_type, data, level):
             for advice in licenceable_products_advice
         ]
     elif advice_type == AdviceType.REFUSE:
+        # If refusal_note exists then we will convert the old Advice to refusal note from refusal reason
+        # ATM this function is only being used by LU final-level for updating.
+        # OGDs use post_refusal_advice function for both Create and Update
+        # So essentially we dont need this part of the code since it will always be converted to note from now on.
+        # Just putting here for the future compatibility in case we get refusal_reasons from form. This would make sure things work.
+        is_refusal_note = False
+        if data["refusal_note"]:
+            is_refusal_note = True
+
         json = [
             {
                 "id": advice["id"],
                 "text": data["refusal_note"],
                 "denial_reasons": data["denial_reasons"],
+                "is_refusal_note": is_refusal_note,
             }
-            # We are making sure we are not updating the old Advices which are refusal_reasons.
-            # We are removing it from ReviewCombine we just update is_refusal_note advices.
-            # Since this function is being used only for LU Refusal Note now.
             for advice in licenceable_products_advice
-            if advice.get("is_refusal_note")
         ]
     else:
         raise NotImplementedError(f"Implement advice update for advice type {advice_type}")

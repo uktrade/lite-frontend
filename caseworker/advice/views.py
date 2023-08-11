@@ -623,8 +623,6 @@ class ConsolidateEditView(ReviewConsolidateView):
         # to debug when this goes south.
         sentry_sdk.set_context("caseworker", self.caseworker)
         sentry_sdk.set_context("advice", {"advice": self.case.advice})
-
-        self.advices_by_team = services.filter_advice_by_team(team_advice, user_team_alias)
         self.advice = services.filter_advice_by_team(team_advice, user_team_alias)[0]
         self.advice_type = self.advice["type"]["key"]
         self.kwargs["advice_type"] = "refuse" if self.advice_type == "refuse" else "approve"
@@ -636,25 +634,11 @@ class ConsolidateEditView(ReviewConsolidateView):
         }
 
     def get_refusal_data(self):
-        # Filtered advices for refusal note. ATM only LICENSING_UNIT_TEAM is making note
-        filtered_advices_for_refusal_note = [
-            advice
-            for advice in self.advices_by_team
-            if advice["is_refusal_note"] and advice["type"].get("key") == AdviceType.REFUSE
-        ]
-
-        # The values for refusal_reasons(is_refusal_note = FALSE) for MOD_ECJU
-        refusal_note = ""
         denial_reasons = [r for r in self.advice["denial_reasons"]]
-
-        if filtered_advices_for_refusal_note:
-            # At this point we know this is refusal_note so we are replacing values for the form
-            refusal_note = filtered_advices_for_refusal_note[0]["text"]
-            denial_reasons = [r for r in filtered_advices_for_refusal_note[0]["denial_reasons"]]
 
         return {
             "refusal_reasons": self.advice["text"],
-            "refusal_note": refusal_note,
+            "refusal_note": self.advice["text"],
             "denial_reasons": denial_reasons,
         }
 
