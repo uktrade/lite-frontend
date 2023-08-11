@@ -1,7 +1,10 @@
-class SelectAllCheckboxes {
-  constructor($checkboxes, allSelectedCallback) {
+import EventEmitter from "events";
+
+class SelectAllCheckboxes extends EventEmitter {
+  constructor($checkboxes) {
+    super();
+
     this.$checkboxes = $checkboxes;
-    this.allSelectedCallback = allSelectedCallback;
 
     this.isAllSelected = null;
   }
@@ -23,22 +26,16 @@ class SelectAllCheckboxes {
 
   setSelectAll() {
     const isAllSelected = this.getNumChecked() === this.$checkboxes.length;
+
     if (this.isAllSelected !== isAllSelected) {
-      this.allSelectedCallback(isAllSelected);
+      this.emit("change", isAllSelected);
       this.isAllSelected = isAllSelected;
     }
   }
 
-  selectAll() {
+  selectAll(selectAll) {
     for (const $checkbox of this.$checkboxes) {
-      $checkbox.checked = true;
-      $checkbox.dispatchEvent(new Event("input"));
-    }
-  }
-
-  deselectAll() {
-    for (const $checkbox of this.$checkboxes) {
-      $checkbox.checked = false;
+      $checkbox.checked = selectAll;
       $checkbox.dispatchEvent(new Event("input"));
     }
   }
