@@ -22,11 +22,9 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">
-				<a tabindex="0" id="link-queue" href="{% url 'queues:manage' %}" class="app-dropdown__heading">
+				<a tabindex="0" id="link-queue" class="govuk-heading-l app-dropdown__heading" href="{% url 'queues:manage' %}">
 					{{ queue.name }}<span class="govuk-visually-hidden"> (Click to change queue)</span>
 				</a>
-			</h1>
 		</div>
 		{% if not queue.is_system_queue %}
 			<div class="lite-app-bar__controls lite-buttons-row" >
