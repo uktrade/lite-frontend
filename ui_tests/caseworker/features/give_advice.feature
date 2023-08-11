@@ -323,9 +323,9 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click refuse
     And I click continue
     And I select refusal criteria "1a, 1b, 1c, 1d, 1e, 1f"
-    And I enter "refusal meeting note" as the refusal note
+    And I enter "refusal meeting note" as refusal meeting note
     And I click submit recommendation
-    Then I see "refusal meeting note" as the refusal note
+    Then I see "refusal meeting note" as refusal meeting note
     And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
     And I see countersign required warning message
     When I click move case forward

@@ -18,6 +18,7 @@ from caseworker.core.services import get_denial_reasons
 from caseworker.picklists.services import get_picklists_list
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
+from caseworker.advice.constants import AdviceType
 from core import client
 from core.auth.views import LoginRequiredMixin
 from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
@@ -545,17 +546,17 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         form_kwargs = self.get_form_kwargs()
 
         if (
-            self.kwargs.get("advice_type") == "refuse"
+            self.kwargs.get("advice_type") == AdviceType.REFUSE
             and self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
         ):
             denial_reasons = get_denial_reasons(self.request)
             return forms.LUConsolidateRefusalForm(denial_reasons=denial_reasons, **form_kwargs)
 
-        if self.kwargs.get("advice_type") == "refuse":
+        if self.kwargs.get("advice_type") == AdviceType.REFUSE:
             denial_reasons = get_denial_reasons(self.request)
             return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
 
-        if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
+        if self.kwargs.get("advice_type") == AdviceType.APPROVE or self.is_advice_approve_only():
             approval_reason = get_picklists_list(
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
@@ -622,6 +623,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         # to debug when this goes south.
         sentry_sdk.set_context("caseworker", self.caseworker)
         sentry_sdk.set_context("advice", {"advice": self.case.advice})
+
         self.advices_by_team = services.filter_advice_by_team(team_advice, user_team_alias)
         self.advice = services.filter_advice_by_team(team_advice, user_team_alias)[0]
         self.advice_type = self.advice["type"]["key"]
@@ -634,18 +636,21 @@ class ConsolidateEditView(ReviewConsolidateView):
         }
 
     def get_refusal_data(self):
-        # Filtered advices for refusal note so specifically for LU
-        filtered_advices = [
+        # Filtered advices for refusal note. ATM only LICENSING_UNIT_TEAM is making note
+        filtered_advices_for_refusal_note = [
             advice
             for advice in self.advices_by_team
-            if advice["is_refusal_note"] and advice["type"].get("key") == "refuse"
+            if advice["is_refusal_note"] and advice["type"].get("key") == AdviceType.REFUSE
         ]
+
+        # The values for refusal_reasons(is_refusal_note = FALSE) for MOD_ECJU
         refusal_note = ""
         denial_reasons = [r for r in self.advice["denial_reasons"]]
 
-        if filtered_advices:
-            refusal_note = filtered_advices[0]["text"]
-            denial_reasons = [r for r in filtered_advices[0]["denial_reasons"]]
+        if filtered_advices_for_refusal_note:
+            # At this point we know this is refusal_note so we are replacing values for the form
+            refusal_note = filtered_advices_for_refusal_note[0]["text"]
+            denial_reasons = [r for r in filtered_advices_for_refusal_note[0]["denial_reasons"]]
 
         return {
             "refusal_reasons": self.advice["text"],

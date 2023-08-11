@@ -73,7 +73,7 @@ def enter_reasons_for_refusal(driver, reasons, context):  # noqa
     RecommendationsAndDecisionPage(driver).enter_reasons_for_refusal(reasons)
 
 
-@when(parsers.parse('I enter "{note}" as the refusal note'))
+@when(parsers.parse('I enter "{note}" as refusal meeting note'))
 def enter_refusal_note(driver, note, context):  # noqa
     RecommendationsAndDecisionPage(driver).enter_refusal_note(note)
 
@@ -122,8 +122,8 @@ def should_see_reasons_for_refusal(driver, reasons, context):  # noqa
     assert RecommendationsAndDecisionPage(driver).get_reasons_for_refusal() == reasons
 
 
-@then(parsers.parse('I see "{note}" as the refusal note'))
-def should_see_reasons_for_refusal(driver, note, context):  # noqa
+@then(parsers.parse('I see "{note}" as refusal meeting note'))
+def should_see_refusal_meeting_note(driver, note, context):  # noqa
     assert RecommendationsAndDecisionPage(driver).get_refusal_note() == note
 
 
