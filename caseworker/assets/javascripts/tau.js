@@ -1,4 +1,5 @@
 import SelectAllCheckboxes from "core/select-all-checkboxes";
+import SelectAllButton from "core/select-all-button";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
@@ -11,43 +12,26 @@ import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
 import ShowHideNcscField from "./tau/show-hide-ncsc-field";
 
-const SELECT_ALL_BUTTON_TEXT = "Select all";
-const DESELECT_ALL_BUTTON_TEXT = "Deselect all";
-
 const initSelectAll = (goods) => {
-  const selectAllButton = document.createElement("button");
-  selectAllButton.classList.add(
-    "lite-button--link",
-    "assessment-form__select-all"
-  );
-
-  let isAllSelected = null;
-
   const checkboxes = goods.querySelectorAll("[name=goods]");
-  const selectAllCheckboxes = new SelectAllCheckboxes(
-    checkboxes,
-    (_isAllSelected) => {
-      isAllSelected = _isAllSelected;
-      if (isAllSelected) {
-        selectAllButton.innerText = DESELECT_ALL_BUTTON_TEXT;
-      } else {
-        selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
-      }
-    }
-  );
-  selectAllCheckboxes.init();
+  const selectAllCheckboxes = new SelectAllCheckboxes(checkboxes);
 
-  selectAllButton.addEventListener("click", (evt) => {
-    evt.preventDefault();
-    evt.stopPropagation();
-    if (isAllSelected) {
-      selectAllCheckboxes.deselectAll();
-    } else {
-      selectAllCheckboxes.selectAll();
-    }
+  const button = document.createElement("button");
+  button.classList.add("lite-button--link", "assessment-form__select-all");
+  const selectAllButton = new SelectAllButton(button);
+
+  selectAllCheckboxes.on("change", (isAllSelected) => {
+    selectAllButton.setSelected(isAllSelected);
   });
 
-  return selectAllButton;
+  selectAllButton.on("click", (selectAll) => {
+    selectAllCheckboxes.selectAll(selectAll);
+  });
+
+  selectAllButton.init();
+  selectAllCheckboxes.init();
+
+  return button;
 };
 
 const initExpandAll = (goods) => {
