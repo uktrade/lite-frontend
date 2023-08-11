@@ -76,9 +76,11 @@
 			{# Applications tile #}
 			{% if existing.applications %}
 				<div class="app-tile">
-					<a href="{% url 'applications:applications' %}" class="app-tile__heading" id="link-applications">
-						<p>{% lcs 'hub.Tiles.APPLICATIONS' %}</p>{% if notifications.notifications.application %}<span id="applications-notifications" class="lite-notification-bubble"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.application }} <span class="govuk-visually-hidden">notifications)</span></span>{% endif %}
-					</a>
+					<h2 class="govuk-!-margin-top-0">
+						<a href="{% url 'applications:applications' %}" class="app-tile__heading" id="link-applications">
+							<p>{% lcs 'hub.Tiles.APPLICATIONS' %}</p>{% if notifications.notifications.application %}<span id="applications-notifications" class="lite-notification-bubble"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.application }} <span class="govuk-visually-hidden">notifications)</span></span>{% endif %}
+						</a>
+					</h2>
 					<p class="app-tile__body">{% lcs 'hub.Tiles.Applications.CHECK_PROGRESS' %}</p>
 					<p class="app-tile__body">{% lcs 'hub.Tiles.Applications.EDIT_APPLICATIONS' %}</p>
 				</div>
