@@ -21,6 +21,7 @@ import initMentionUsers, { initCaseNotes } from "./case-notes";
 import { initExpanders } from "./list-expander";
 import { initCustomisers } from "./customiser";
 import { initRadioTextArea } from "./radio-populate-textarea.js";
+import initSelectAllTables from "./select-all-tables.js";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
@@ -42,3 +43,4 @@ initMentionUsers();
 initExpanders();
 initCustomisers();
 initRadioTextArea();
+initSelectAllTables();
