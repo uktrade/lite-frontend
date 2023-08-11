@@ -12,7 +12,13 @@
 			</div>
 	{% endif %}
 
-	<table id="table-goods{% if show_advice %}-{{ level }}-advice{% endif %}" class="govuk-table">
+	<table
+		id="table-goods{% if show_advice %}-{{ level }}-advice{% endif %}"
+		class="govuk-table"
+		data-module="select-all-table"
+		data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+		data-select-all-checkbox-selector="input[type=checkbox]"
+	>
 		{% if goods.0.good %}
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">

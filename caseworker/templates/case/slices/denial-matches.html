@@ -11,7 +11,13 @@
             </div>
             {% endif %}
 
-            <table id="table-denial-matches" class="govuk-table">
+            <table
+                id="table-denial-matches"
+                class="govuk-table"
+                data-module="select-all-table"
+                data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+                data-select-all-checkbox-selector="input[type=checkbox]"
+            >
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         {% if not hide_checkboxes %}
