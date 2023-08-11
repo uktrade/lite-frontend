@@ -1,13 +1,7 @@
 from django import forms
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Field, Layout, Submit
-from crispy_forms_gds.choices import Choice
-from core.forms.layouts import RadioTextArea
-
-from crispy_forms_gds.choices import Choice
-from django.urls import reverse_lazy
-from django.db import models
-from core.common.forms import TextChoice, BaseForm
+from crispy_forms_gds.layout import Layout, Submit
+from core.common.forms import BaseForm
 
 
 class SelectInformLetterTemplateForm(BaseForm):
@@ -22,7 +16,6 @@ class SelectInformLetterTemplateForm(BaseForm):
         },
     )
 
-
     def __init__(self, *args, **kwargs):
         inform_pargraphs = kwargs.pop("inform_paragraphs")
         super().__init__(*args, **kwargs)
@@ -36,7 +29,7 @@ class SelectInformLetterTemplateForm(BaseForm):
         )
 
     def get_layout_fields(self):
-        return ("select_template")
+        return "select_template"
 
 
 class LetterEditTextForm(BaseForm):
@@ -44,7 +37,7 @@ class LetterEditTextForm(BaseForm):
         TITLE = "Edit Text"
 
     text = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "1"}),
+        widget=forms.Textarea(attrs={"rows": "30"}),
         error_messages={"required": "Edit text is Required"},
         label="Add a case note",
     )
@@ -52,7 +45,7 @@ class LetterEditTextForm(BaseForm):
     def __init__(self, *args, **kwargs):
         text = kwargs.pop("text")
         super().__init__(*args, **kwargs)
-        self.fields['text'].initial = text
+        self.fields["text"].initial = text
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -61,6 +54,4 @@ class LetterEditTextForm(BaseForm):
         )
 
     def get_layout_fields(self):
-        return (
-            "text"
-        )
+        return "text"
