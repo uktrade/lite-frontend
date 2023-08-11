@@ -38,9 +38,8 @@ export default function initQueuesMenu() {
     theme: "light",
     placement: "bottom-start",
     arrow: null,
-    onShown(instance) {
+    onShown() {
       $("#filter-queues").val("");
-      $("#filter-queues").focus();
     },
   });
 }
