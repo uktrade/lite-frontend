@@ -100,6 +100,7 @@ class EnforcementXMLImportForm(forms.Form):
 
 class CaseAssignmentsCaseOfficerForm(BaseForm):
     class Layout:
+        DOCUMENT_TITLE = "Allocate Licensing Unit case officer"
         TITLE = "Who do you want to allocate as Licensing Unit case officer?"
         SUBTITLE = "Manages the case until the application outcome (the exporter will see this name until the case officer is changed) – typing into the text input will automatically filter results on the page"  # noqa
         SUBMIT_BUTTON_TEXT = "Save and continue"
@@ -148,6 +149,7 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
 
 class SelectAllocateRole(BaseForm):
     class Layout:
+        DOCUMENT_TITLE = "Allocate case adviser or Licensing Unit case officer"
         TITLE = "Which role do you want to allocate?"
         SUBTITLE = "Select role below"
         SUBMIT_BUTTON_TEXT = "Save and continue"
@@ -177,6 +179,7 @@ class SelectAllocateRole(BaseForm):
 
 class CaseAssignmentUsersForm(BaseForm):
     class Layout:
+        DOCUMENT_TITLE = "Allocate case adviser"
         TITLE = "Who do you want to allocate as case adviser?"
         SUBTITLE = "Reviews or gives advice on the case while it is with your team"
         SUBMIT_BUTTON_TEXT = "Save"
@@ -226,6 +229,7 @@ class CaseAssignmentUsersForm(BaseForm):
 
 class CaseAssignmentQueueForm(BaseForm):
     class Layout:
+        DOCUMENT_TITLE = "Select team queue to add the case to"
         TITLE = "Select a team queue to add the case to"
         SUBMIT_BUTTON_TEXT = "Save"
 

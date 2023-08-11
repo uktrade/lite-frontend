@@ -121,6 +121,10 @@ def test_case_assignment_case_officer(authorized_client, requests_mock, mock_gov
         + f"?cases={cases_ids[0]}&cases={cases_ids[1]}"
     )
 
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Allocate Licensing Unit case officer - LITE Internal"
+
     data = {"users": gov_user_id}
     response = authorized_client.post(url, data)
     assert response.status_code == 302
@@ -172,6 +176,8 @@ def test_case_assignment_select_role(authorized_client, mock_gov_user, user_role
     url = reverse("queues:case_assignment_select_role", kwargs={"pk": queue_pk}) + url_params
     response = authorized_client.get(url)
     assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Allocate case adviser or Licensing Unit case officer - LITE Internal"
 
     response = authorized_client.post(url, {"role": user_role_assigned})
     assert response.status_code == 302
@@ -187,7 +193,6 @@ def test_case_assignments_add_user_system_queue(
     mock_queue,
     mock_gov_users,
 ):
-
     case = data_standard_case
     url_base = reverse(
         "queues:case_assignments_assign_user",
@@ -205,6 +210,7 @@ def test_case_assignments_add_user_system_queue(
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Who do you want to allocate as case adviser?" in html.find("h1").get_text()
+    assert html.title.string.strip() == "Allocate case adviser - LITE Internal"
 
 
 @pytest.fixture
@@ -259,6 +265,7 @@ def test_case_assignments_add_user_system_queue_submit_success(
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Select a team queue to add the case to" in html.find("h1").get_text()
+    assert html.title.string.strip() == "Select team queue to add the case to - LITE Internal"
 
     data = {
         "queue": data_queue["id"],
@@ -359,7 +366,6 @@ def test_case_assignments_add_user_team_queue(
     mock_team_queue,
     mock_gov_users,
 ):
-
     case = data_standard_case
     url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
     url = f"{url_base}?cases={case['case']['id']}"
@@ -372,6 +378,7 @@ def test_case_assignments_add_user_team_queue(
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Who do you want to allocate as case adviser?" in html.find("h1").get_text()
+    assert html.title.string.strip() == "Allocate case adviser - LITE Internal"
 
 
 def test_case_assignments_add_user_team_queue_submit_success(
@@ -436,7 +443,6 @@ def test_case_assignments_add_user_team_queue_submit_validation_error(
     mock_standard_case_activity_filters,
     post_to_step_user_assignment,
 ):
-
     data = {
         "users": [],
         "note": "foobar",

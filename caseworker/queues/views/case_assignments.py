@@ -21,7 +21,6 @@ from caseworker.queues.forms import SelectAllocateRole
 
 
 class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
-
     template_name = "core/form.html"
     form_class = SelectAllocateRole
 
@@ -39,7 +38,7 @@ class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
     def get_context_data(self, *args, **kwargs):
         context = {
             "back_link_url": reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]}),
-            "title": self.form_class.Layout.TITLE,
+            "title": self.form_class.Layout.DOCUMENT_TITLE,
         }
         return super().get_context_data(*args, **context, **kwargs)
 
@@ -101,7 +100,7 @@ class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormVi
         context = {
             "back_link_url": reverse("queues:case_assignment_select_role", kwargs={"pk": self.kwargs["pk"]})
             + f"?{self.request.GET.urlencode()}",
-            "title": self.form_class.Layout.TITLE,
+            "title": self.form_class.Layout.DOCUMENT_TITLE,
         }
         return super().get_context_data(*args, **context, **kwargs)
 
@@ -159,7 +158,7 @@ class CaseAssignmentsCaseAssignee(
         context = super().get_context_data(form, **kwargs)
 
         context["back_link_url"] = self.get_back_link_url()
-        context["title"] = form.Layout.TITLE
+        context["title"] = form.Layout.DOCUMENT_TITLE
 
         return context
 
