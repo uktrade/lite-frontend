@@ -53,8 +53,9 @@ $flag-border-width: 3px;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	background-color: govuk-shade(govuk-colour("light-grey"), 2.5);
-	color: govuk-colour("black");
+	// grey background and text with high contrast of 9.29:1 for improved accessibility
+	background-color: #EEEFEF;
+	color: #383F43;
 	min-height: 36px!important;
 	padding: 0 govuk-spacing(2) 0 (govuk-spacing(2) + ($flag-border-width * 2));
 	min-width: 42px;
@@ -76,48 +77,49 @@ $flag-border-width: 3px;
 		margin-top: -5px;
 	}
 
+	// high contrast colors for improved accessibility
 	&--yellow {
-		background: govuk-tint(govuk-colour("yellow"), 75);
-		color: govuk-shade(govuk-colour("yellow"), 55);
+		background: #FFF7BF;
+		color: #594D00;
 	}
 
 	&--blue {
-		background: govuk-tint(govuk-colour("blue"), 85);
-		color: govuk-colour("blue");
+		background: #D2E2F1;
+		color: #134571;
 	}
 
 	&--purple {
-		background: govuk-tint(govuk-colour("purple"), 85);
-		color: govuk-colour("purple");
+		background: #DBD5E9;
+		color: #3D2375;
 	}
 
 	&--pink {
-		background: govuk-tint(govuk-colour("pink"), 85);
-		color: govuk-colour("pink");
+		background: #F7D7E6;
+		color: #80224D;
 	}
 
 	&--red {
-		background: govuk-tint(govuk-colour("red"), 85);
-		color: govuk-colour("red");
+		background: #F9E5E1;
+		color: #902218;
 	}
 
 	&--green {
-		background: govuk-tint(govuk-colour("green"), 85);
-		color: govuk-colour("green");
+		background: #DBEBE1;
+		color: #00572E;
 	}
 
 	&--orange {
-		background: govuk-tint(govuk-colour("orange"), 85);
-		color: saturate(govuk-shade(govuk-colour("orange"), 15), 10);
+		background: #FCD6C3;
+		color: #6E3619;
 	}
 
 	&--turquoise {
-		background: govuk-tint(govuk-colour("turquoise"), 85);
-		color: govuk-colour("turquoise");
+		background: #BFE3E0;
+		color: #10403C;
 	}
 
 	&--brown {
-		background: govuk-tint(govuk-colour("brown"), 85);
-		color: govuk-colour("brown");
+		background: #F3EADF;
+		color: #664115;
 	}
 }
