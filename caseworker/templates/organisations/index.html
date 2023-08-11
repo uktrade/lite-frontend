@@ -2,13 +2,13 @@
 
 {% block back_link %}{% endblock %}
 
+{% block title %}{% if tab == "in_review" %}All organisations waiting to be reviewed{% elif tab == "rejected" %}All rejected LITE organisations{% else %}{% lcs "organisations.OrganisationsPage.TITLE" %}{% endif %}{% endblock %}
+
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
 			<h1 class="govuk-heading-l">
-				{% block title %}
-					{% lcs "organisations.OrganisationsPage.TITLE" %}
-				{% endblock %}
+				{% lcs "organisations.OrganisationsPage.TITLE" %}
 			</h1>
 		</div>
 		<div class="lite-app-bar__controls">

@@ -3,6 +3,7 @@ from copy import deepcopy
 from uuid import UUID
 
 from django.urls import reverse
+from bs4 import BeautifulSoup
 
 from core import client
 from lite_forms.helpers import flatten_data
@@ -117,3 +118,19 @@ def test_edit_organisation_success(authorized_client, requests_mock, organisatio
     expected.pop("documents")
     assert requests_mock_instance.call_count == 1
     assert requests_mock_instance.request_history[0].json() == {**expected}
+
+
+@pytest.mark.parametrize(
+    ("query_string", "expected_title"),
+    [
+        ("", "Organisations - LITE Internal"),
+        ("?status=in_review", "All organisations waiting to be reviewed - LITE Internal"),
+        ("?status=rejected", "All rejected LITE organisations - LITE Internal"),
+    ],
+)
+def test_organisations_html_title_on_changed_tab(authorized_client, requests_mock, query_string, expected_title):
+    requests_mock.get(client._build_absolute_uri(f"/organisations/"), json={})
+    url = reverse("organisations:organisations") + query_string
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == expected_title
