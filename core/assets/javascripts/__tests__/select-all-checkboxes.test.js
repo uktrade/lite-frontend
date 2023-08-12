@@ -121,6 +121,16 @@ describe("Select all checkboxes", () => {
       }
     });
 
+    test("Change event only called on checkboxes that changed", () => {
+      checkboxes[1].checked = true;
+
+      selectAllCheckboxes.selectAll(true);
+
+      expect(changeSpies[0]).toBeCalled();
+      expect(changeSpies[1]).not.toBeCalled();
+      expect(changeSpies[2]).toBeCalled();
+    });
+
     test("Input events called on checkboxes", () => {
       selectAllCheckboxes.selectAll(true);
 
@@ -177,6 +187,16 @@ describe("Select all checkboxes", () => {
       for (const changeSpy of changeSpies) {
         expect(changeSpy).toBeCalled();
       }
+    });
+
+    test("Change event only called on checkboxes that changed", () => {
+      checkboxes[1].checked = false;
+
+      selectAllCheckboxes.selectAll(false);
+
+      expect(changeSpies[0]).toBeCalled();
+      expect(changeSpies[1]).not.toBeCalled();
+      expect(changeSpies[2]).toBeCalled();
     });
 
     test("Input events called on checkboxes", () => {
