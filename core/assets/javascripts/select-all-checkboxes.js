@@ -37,6 +37,7 @@ class SelectAllCheckboxes extends EventEmitter {
     for (const $checkbox of this.$checkboxes) {
       $checkbox.checked = selectAll;
       $checkbox.dispatchEvent(new Event("change"));
+      $checkbox.dispatchEvent(new Event("input"));
     }
   }
 }
