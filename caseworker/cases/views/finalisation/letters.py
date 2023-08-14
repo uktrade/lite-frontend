@@ -40,7 +40,7 @@ class SelectInformTemplate(LoginRequiredMixin, FormView):
         self.templates, _ = get_letter_templates(self.request, convert_dict_to_query_params(params))
         inform_template_id = self.get_inform_letter_template_id(self.templates["results"])
 
-        template_details, status = get_letter_template(self.request, inform_template_id)
+        template_details, _ = get_letter_template(self.request, inform_template_id)
         kwargs["inform_paragraphs"] = self.letter_picklist_to_choices(template_details["paragraph_details"])
         return kwargs
 
@@ -75,7 +75,7 @@ class EditLetterText(LoginRequiredMixin, FormView):
         self.templates, _ = get_letter_templates(self.request, convert_dict_to_query_params(params))
         self.template_id = self.get_inform_letter_template_id(self.templates["results"])
 
-        template_details, status = get_letter_template(self.request, self.template_id)
+        template_details, _ = get_letter_template(self.request, self.template_id)
 
         kwargs["text"] = self.get_picklist_text(paragraph_id, template_details["paragraph_details"])
         return kwargs

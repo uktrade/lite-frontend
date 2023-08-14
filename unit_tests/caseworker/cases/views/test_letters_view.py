@@ -131,11 +131,38 @@ def test_letter_edit_post(
 
     case_id = data_standard_case["case"]["id"]
     template = "a5896319-9761-423d-88d1-a601f9d2d6e9"
-    text = ""
+    text = "option%201%20text"
     url = client._build_absolute_uri(
-        f"cases/{case_id}/generated-documents/preview/?pk={case_id}&template={template}&text={text}&addressee="
+        f"/cases/{case_id}/generated-documents/preview/?pk={case_id}&template={template}&text={text}&addressee="
     )
-    requests_mock.post(url=url, json={})
-    data = {"text": ""}
+    requests_mock.get(url=url, json={"preview": ""})
+    data = {"text": "option 1 text "}
+    response = authorized_client.post(letter_edit_post_url, data)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert "Generate document" in soup.find(class_="govuk-heading-l").text
+
+    assert response.status_code == 200
+
+
+def test_letter_edit_post_failure(
+    letter_edit_post_url,
+    authorized_client,
+    mock_letter_templates_case,
+    mock_letter_template_details,
+    mock_gov_user,
+    requests_mock,
+    data_standard_case,
+):
+
+    case_id = data_standard_case["case"]["id"]
+    template = "a5896319-9761-423d-88d1-a601f9d2d6e9"
+    text = "option%201%20text"
+    url = client._build_absolute_uri(
+        f"/cases/{case_id}/generated-documents/preview/?pk={case_id}&template={template}&text={text}&addressee="
+    )
+    requests_mock.get(url=url, status_code=400, json={"preview": ""})
+    data = {"text": "option 1 text "}
     response = authorized_client.post(letter_edit_post_url, data)
     assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert "Document generation is not available at this time" in soup.find(class_="govuk-body").text
