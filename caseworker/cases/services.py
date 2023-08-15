@@ -20,6 +20,12 @@ def get_case(request, pk):
     return Case(parsed["case"])
 
 
+def get_case_basic_details(request, pk):
+    response = client.get(request, f"/cases/{pk}/basic")
+    response.raise_for_status()
+    return response.json()
+
+
 def patch_case(request, pk, json):
     response = client.patch(request, f"/cases/{pk}", json)
     return response.json(), response.status_code
