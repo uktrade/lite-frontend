@@ -3,6 +3,7 @@ from datetime import timedelta
 import re
 import os
 import uuid
+from urllib import parse
 
 import pytest
 from dotenv import load_dotenv
@@ -2506,3 +2507,14 @@ def mod_ecju_refusal_reasons(MOD_ECJU_team_user):
             "is_refusal_note": False,
         },
     ]
+
+def mock_cases_search(requests_mock, data_cases_search, queue_pk):
+    encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
+    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
+    return requests_mock.get(url=url, json=data_cases_search)
+
+
+@pytest.fixture
+def mock_cases_search_head(requests_mock):
+    url = client._build_absolute_uri(f"/cases/")
+    yield requests_mock.head(url=re.compile(f"{url}.*"), headers={"resource-count": "350"})

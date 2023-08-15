@@ -19,7 +19,7 @@ if not settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
 
 urlpatterns += [
     path("end-users/", include("exporter.end_users.urls")),
-    path("goods/", include("exporter.goods.urls")),
+    path("product-list/", include("exporter.goods.urls")),
     path("licences/", include("exporter.licences.urls")),
     path("organisation/", include("exporter.organisation.urls")),
     path("ecju-queries/", include("exporter.ecju_queries.urls"), name="ecju-queries"),

@@ -36,13 +36,6 @@ def setup(
 
 
 @pytest.fixture
-def mock_cases_search(requests_mock, data_cases_search, queue_pk):
-    encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
-    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
-    return requests_mock.get(url=url, json=data_cases_search)
-
-
-@pytest.fixture
 def mock_team_queue(requests_mock, data_queue):
     data_queue["is_system_queue"] = False
     url = client._build_absolute_uri("/queues/")
