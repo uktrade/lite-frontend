@@ -554,13 +554,8 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             denial_reasons = get_denial_reasons(self.request)
             choices = group_denial_reasons(denial_reasons)
 
-        if (
-            self.kwargs.get("advice_type") == AdviceType.REFUSE
-            and self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
-        ):
-            return forms.LUConsolidateRefusalForm(choices=choices, **form_kwargs)
-
-        if self.kwargs.get("advice_type") == AdviceType.REFUSE:
+            if self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM:
+                return forms.LUConsolidateRefusalForm(choices=choices, **form_kwargs)
             return forms.RefusalAdviceForm(choices, **form_kwargs)
 
         if self.kwargs.get("advice_type") == AdviceType.APPROVE or self.is_advice_approve_only():
