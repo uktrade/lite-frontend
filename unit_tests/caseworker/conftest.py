@@ -2508,6 +2508,8 @@ def mod_ecju_refusal_reasons(MOD_ECJU_team_user):
         },
     ]
 
+
+@pytest.fixture
 def mock_cases_search(requests_mock, data_cases_search, queue_pk):
     encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
     url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
