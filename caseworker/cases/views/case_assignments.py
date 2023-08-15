@@ -38,13 +38,16 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         case = self.get_case()
-        return super().get_context_data(
+        context = super().get_context_data(
             case=case,
             queue_id=self.kwargs["queue_pk"],
             case_id=self.kwargs["pk"],
             adviser_identifier=self._get_adviser_identifier(case, self.request.GET.get("assignment_id")),
             **kwargs,
         )
+        context["title"] = f"{self.form_class.Layout.DOCUMENT_TITLE} - {case.reference_code} - {case.organisation['name']}"
+
+        return context
 
     def get_success_url(self):
         return reverse(
@@ -92,13 +95,16 @@ class CaseOfficerRemove(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         case = self.get_case()
-        return super().get_context_data(
+        context = super().get_context_data(
             case=case,
             queue_id=self.kwargs["queue_pk"],
             case_id=self.kwargs["pk"],
             case_officer_name=self._get_case_officer_name(case),
             **kwargs,
         )
+        context["title"] = f"{self.form_class.Layout.DOCUMENT_TITLE} - {case.reference_code} - {case.organisation['name']}"
+
+        return context
 
     def get_success_url(self):
         default_success_url = reverse(
