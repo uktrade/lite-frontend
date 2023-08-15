@@ -14,7 +14,7 @@ def setup(requests_mock, mock_queue, mock_standard_case, mock_party_denial_searc
 @pytest.fixture
 def url(data_standard_case):
     return reverse(
-        "cases:finalisation_letters_select_inform_template",
+        "cases:select-inform-template",
         kwargs={"queue_pk": data_standard_case["case"]["id"], "pk": data_standard_case["case"]["id"]},
     )
 
@@ -69,6 +69,26 @@ def test_select_template_paragraph(
     assert response.status_code == 200
 
 
+def test_select_template_paragraph_invalid_letter_type(
+    data_standard_case,
+    requests_mock,
+    authorized_client,
+    url,
+    mock_letter_template_details,
+    mock_gov_user,
+):
+
+    case_id = data_standard_case["case"]["id"]
+    url = client._build_absolute_uri(f"/letter-templates/?case={case_id}&page=1&decision=refuse")
+    requests_mock.get(
+        url=url, json={"results": [{"id": "a5896319-9761-423d-88d1-a601f9d2d6e9", "name": "NotAvailable"}]}
+    )
+
+    response = authorized_client.get(url)
+    # attempting to create an invalid letter_type
+    assert response.status_code == 404
+
+
 def test_select_template_paragraph_send_form(
     authorized_client,
     url,
@@ -102,7 +122,7 @@ def test_letter_edit_get(
     case_id = data_standard_case["case"]["id"]
     response = authorized_client.get(
         reverse(
-            "cases:inform_edit_text",
+            "cases:select-edit-text",
             kwargs={"queue_pk": case_id, "pk": case_id, "paragraph_id": paragraph_id},
         )
     )
@@ -114,7 +134,7 @@ def test_letter_edit_get(
 def letter_edit_post_url(data_standard_case):
     case_id = data_standard_case["case"]["id"]
     return reverse(
-        "cases:inform_edit_text",
+        "cases:select-edit-text",
         kwargs={"queue_pk": case_id, "pk": case_id, "paragraph_id": "90e2056f-b4df-41cb-8454-009cac9a788e"},
     )
 

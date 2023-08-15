@@ -13,13 +13,8 @@ from caseworker.cases.services import (
 )
 
 
-TEXT = "text"
-
-
-class SelectInformTemplate(LoginRequiredMixin, FormView):
-    template_name = "core/form.html"
-    form_class = SelectInformLetterTemplateForm
-    success_url = ""
+class BaseLetter(LoginRequiredMixin, FormView):
+    letter_type = None
 
     def letter_picklist_to_choices(self, picklist):
         picklist_choices = []
@@ -27,21 +22,39 @@ class SelectInformTemplate(LoginRequiredMixin, FormView):
             picklist_choices.append([value["id"], value["name"]])
         return picklist_choices
 
-    def get_inform_letter_template_id(self, templates):
-        for t in templates:
-            if t["name"] == "Inform letter":
-                return t["id"]
+    def get_in_dict(self, values, key, id, return_key):
+        for value in values:
+            if value[key] == id:
+                return value[return_key]
+        raise KeyError(f"{key} not found in dict")
+
+    def get_params(self):
+        raise NotImplementedError("Implement `get_params` on {self.__class__.__name__}")
+
+    def get_template_details(self, params):
+        self.templates, _ = get_letter_templates(self.request, convert_dict_to_query_params(params))
+        self.template_id = self.get_in_dict(self.templates["results"], "name", self.letter_type, "id")
+
+        self.template_details, _ = get_letter_template(self.request, self.template_id)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        params = self.get_params()
+        self.get_template_details(params)
+        return kwargs
 
-        params = {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
 
-        self.templates, _ = get_letter_templates(self.request, convert_dict_to_query_params(params))
-        inform_template_id = self.get_inform_letter_template_id(self.templates["results"])
+class SelectInformTemplate(BaseLetter):
+    template_name = "core/form.html"
+    form_class = SelectInformLetterTemplateForm
+    letter_type = "Inform letter"
 
-        template_details, _ = get_letter_template(self.request, inform_template_id)
-        kwargs["inform_paragraphs"] = self.letter_picklist_to_choices(template_details["paragraph_details"])
+    def get_params(self):
+        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["inform_paragraphs"] = self.letter_picklist_to_choices(self.template_details["paragraph_details"])
         return kwargs
 
     def form_valid(self, form):
@@ -49,35 +62,22 @@ class SelectInformTemplate(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:inform_edit_text", kwargs=self.kwargs)
+        return reverse("cases:select-edit-text", kwargs=self.kwargs)
 
 
-class EditLetterText(LoginRequiredMixin, FormView):
+class EditLetterText(BaseLetter):
     template_name = "case/edit-letter.html"
     form_class = LetterEditTextForm
+    letter_type = "Inform letter"
 
-    def get_picklist_text(self, id, picklist):
-        for x in picklist:
-            if x["id"] == id:
-                return x["text"]
-
-    def get_inform_letter_template_id(self, templates):
-        for t in templates:
-            if t["name"] == "Inform letter":
-                return t["id"]
+    def get_params(self):
+        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
 
     def get_form_kwargs(self):
         paragraph_id = str(self.kwargs.pop("paragraph_id"))
         kwargs = super().get_form_kwargs()
 
-        params = {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
-
-        self.templates, _ = get_letter_templates(self.request, convert_dict_to_query_params(params))
-        self.template_id = self.get_inform_letter_template_id(self.templates["results"])
-
-        template_details, _ = get_letter_template(self.request, self.template_id)
-
-        kwargs["text"] = self.get_picklist_text(paragraph_id, template_details["paragraph_details"])
+        kwargs["text"] = self.get_in_dict(self.template_details["paragraph_details"], "id", paragraph_id, "text")
         return kwargs
 
     def form_valid(self, form):
@@ -96,5 +96,5 @@ class EditLetterText(LoginRequiredMixin, FormView):
         return render(
             self.request,
             "generated-documents/preview.html",
-            {"preview": preview["preview"], TEXT: text, "addressee": addressee, "kwargs": self.kwargs},
+            {"preview": preview["preview"], "text": text, "addressee": addressee, "kwargs": self.kwargs},
         )

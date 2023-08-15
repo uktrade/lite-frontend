@@ -133,11 +133,11 @@ urlpatterns = [
     path(
         "letters/select-inform-template/",
         SelectInformTemplate.as_view(),
-        name="finalisation_letters_select_inform_template",
+        name="select-inform-template",
     ),
     path(
         "letters/select-edit-text/<uuid:paragraph_id>/",
         EditLetterText.as_view(),
-        name="inform_edit_text",
+        name="select-edit-text",
     ),
 ]

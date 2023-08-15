@@ -1,13 +1,9 @@
 from django import forms
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit
-from core.common.forms import BaseForm
 
 
-class SelectInformLetterTemplateForm(BaseForm):
-    class Layout:
-        TITLE = "Select Inform Letter Template"
-
+class SelectInformLetterTemplateForm(forms.Form):
     select_template = forms.ChoiceField(
         choices=(),
         widget=forms.RadioSelect,
@@ -28,14 +24,8 @@ class SelectInformLetterTemplateForm(BaseForm):
             Submit("submit", "Continue"),
         )
 
-    def get_layout_fields(self):
-        return "select_template"
 
-
-class LetterEditTextForm(BaseForm):
-    class Layout:
-        TITLE = "Edit Text"
-
+class LetterEditTextForm(forms.Form):
     text = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "30"}),
         error_messages={"required": "Edit text is Required"},
@@ -52,6 +42,3 @@ class LetterEditTextForm(BaseForm):
             "text",
             Submit("submit", "Preview"),
         )
-
-    def get_layout_fields(self):
-        return "text"
