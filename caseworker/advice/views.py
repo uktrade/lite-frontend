@@ -195,15 +195,15 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_form(self):
         denial_reasons = get_denial_reasons(self.request)
+        choices = group_denial_reasons(denial_reasons)
 
         if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
             return forms.FCDORefusalAdviceForm(
-                denial_reasons,
+                choices,
                 services.unadvised_countries(self.caseworker, self.case),
                 **self.get_form_kwargs(),
             )
         else:
-            choices = group_denial_reasons(denial_reasons)
             return forms.RefusalAdviceForm(choices, **self.get_form_kwargs())
 
     def form_valid(self, form):
@@ -285,8 +285,9 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         elif advice["type"]["key"] == "refuse":
             self.template_name = "advice/refusal_advice.html"
             denial_reasons = get_denial_reasons(self.request)
+            choices = group_denial_reasons(denial_reasons)
 
-            return forms.get_refusal_advice_form_factory(advice, denial_reasons, self.request.POST)
+            return forms.get_refusal_advice_form_factory(advice, choices, self.request.POST)
         else:
             raise ValueError("Invalid advice type encountered")
 
