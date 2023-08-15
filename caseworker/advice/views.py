@@ -14,7 +14,7 @@ from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.services import get_case, get_final_decision_documents
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
-from caseworker.core.services import get_denial_reasons
+from caseworker.core.services import get_denial_reasons, group_denial_reasons
 from caseworker.picklists.services import get_picklists_list
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
@@ -203,10 +203,13 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
                 **self.get_form_kwargs(),
             )
         else:
-            return forms.RefusalAdviceForm(denial_reasons, **self.get_form_kwargs())
+            choices = group_denial_reasons(denial_reasons)
+            return forms.RefusalAdviceForm(choices, **self.get_form_kwargs())
 
     def form_valid(self, form):
-        services.post_refusal_advice(self.request, self.case, form.cleaned_data)
+        data = form.cleaned_data
+        data["text"] = data["refusal_reasons"]
+        services.post_refusal_advice(self.request, self.case, data)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -305,6 +308,7 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         if isinstance(form, forms.GiveApprovalAdviceForm):
             services.post_approval_advice(self.request, self.case, data)
         elif isinstance(form, forms.RefusalAdviceForm):
+            data["text"] = data["refusal_reasons"]
             services.post_refusal_advice(self.request, self.case, data)
         else:
             raise ValueError("Unknown advice type")
@@ -545,16 +549,18 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
 
+        if self.kwargs.get("advice_type") == AdviceType.REFUSE:
+            denial_reasons = get_denial_reasons(self.request)
+            choices = group_denial_reasons(denial_reasons)
+
         if (
             self.kwargs.get("advice_type") == AdviceType.REFUSE
             and self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM
         ):
-            denial_reasons = get_denial_reasons(self.request)
-            return forms.LUConsolidateRefusalForm(denial_reasons=denial_reasons, **form_kwargs)
+            return forms.LUConsolidateRefusalForm(choices=choices, **form_kwargs)
 
         if self.kwargs.get("advice_type") == AdviceType.REFUSE:
-            denial_reasons = get_denial_reasons(self.request)
-            return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
+            return forms.RefusalAdviceForm(choices, **form_kwargs)
 
         if self.kwargs.get("advice_type") == AdviceType.APPROVE or self.is_advice_approve_only():
             approval_reason = get_picklists_list(
@@ -587,7 +593,14 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             if isinstance(form, forms.ConsolidateApprovalForm):
                 services.post_approval_advice(self.request, self.case, form.cleaned_data, level=level)
             if isinstance(form, (forms.LUConsolidateRefusalForm, forms.RefusalAdviceForm)):
-                services.post_refusal_advice(self.request, self.case, form.cleaned_data, level=level)
+                data = form.cleaned_data
+                if data.get("refusal_note"):
+                    data["text"] = data["refusal_note"]
+                    data["is_refusal_note"] = True
+                if data.get("refusal_reasons"):
+                    data["text"] = data["refusal_reasons"]
+
+                services.post_refusal_advice(self.request, self.case, data, level=level)
         except HTTPError as e:
             errors = e.response.json()["errors"]
             form.add_error(None, errors)
@@ -667,9 +680,15 @@ class ConsolidateEditView(ReviewConsolidateView):
                     self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
                 )
             if isinstance(form, forms.LUConsolidateRefusalForm):
-                services.update_advice(
-                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
-                )
+                # If refusal_note exists then we will convert the old Advice to refusal note from refusal reason
+                # ATM this function update_advice is only being used by LU final-level for updating.
+                # OGDs use post_refusal_advice function for both Create and Update
+                data = form.cleaned_data
+                if data["refusal_note"]:
+                    data["text"] = data["refusal_note"]
+                    data["is_refusal_note"] = True
+
+                services.update_advice(self.request, self.case, self.caseworker, self.advice_type, data, level)
         except HTTPError as e:
             errors = e.response.json()["errors"]
             form.add_error(None, errors)
