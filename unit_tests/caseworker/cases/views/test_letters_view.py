@@ -79,14 +79,13 @@ def test_select_template_paragraph_invalid_letter_type(
 ):
 
     case_id = data_standard_case["case"]["id"]
-    url = client._build_absolute_uri(f"/letter-templates/?case={case_id}&page=1&decision=refuse")
+    mock_url = client._build_absolute_uri(f"/letter-templates/?case={case_id}&page=1&decision=refuse")
     requests_mock.get(
-        url=url, json={"results": [{"id": "a5896319-9761-423d-88d1-a601f9d2d6e9", "name": "NotAvailable"}]}
+        url=mock_url, json={"results": [{"id": "a5896319-9761-423d-88d1-a601f9d2d6e9", "name": "NotAvailable"}]}
     )
 
-    response = authorized_client.get(url)
-    # attempting to create an invalid letter_type
-    assert response.status_code == 404
+    with pytest.raises(KeyError):
+        response = authorized_client.get(url)
 
 
 def test_select_template_paragraph_send_form(
