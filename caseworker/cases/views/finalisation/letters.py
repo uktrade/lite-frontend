@@ -38,9 +38,9 @@ class BaseLetter(LoginRequiredMixin, FormView):
         self.template_details, _ = get_letter_template(self.request, self.template_id)
 
     def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
         params = self.get_params()
         self.get_template_details(params)
+        kwargs = super().get_form_kwargs()
         return kwargs
 
 
@@ -73,12 +73,12 @@ class EditLetterText(BaseLetter):
     def get_params(self):
         return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
 
-    def get_form_kwargs(self):
-        paragraph_id = str(self.kwargs.pop("paragraph_id"))
-        kwargs = super().get_form_kwargs()
-
-        kwargs["text"] = self.get_in_dict(self.template_details["paragraph_details"], "id", paragraph_id, "text")
-        return kwargs
+    def get_initial(self):
+        initial = super().get_initial()
+        paragraph_id = str(self.kwargs["paragraph_id"])
+        text = self.get_in_dict(self.template_details["paragraph_details"], "id", paragraph_id, "text")
+        initial["text"] = text
+        return initial
 
     def form_valid(self, form):
         self.kwargs["tpk"] = self.template_id

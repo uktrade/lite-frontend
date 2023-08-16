@@ -33,10 +33,7 @@ class LetterEditTextForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        text = kwargs.pop("text")
         super().__init__(*args, **kwargs)
-        self.fields["text"].initial = text
-
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "text",
