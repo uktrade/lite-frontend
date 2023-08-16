@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, TemplateView
 
 from exporter.applications.forms.appeal import AppealForm
@@ -377,3 +377,24 @@ class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
 class AppealApplication(LoginRequiredMixin, FormView):
     form_class = AppealForm
     template_name = "core/form.html"
+
+    def get_case_url(self):
+        return reverse(
+            "applications:application",
+            kwargs={"pk": self.kwargs["case_pk"]},
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["form_title"] = self.form_class.Layout.TITLE
+        context["back_link_url"] = self.get_case_url()
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        kwargs["cancel_url"] = self.get_case_url()
+
+        return kwargs
