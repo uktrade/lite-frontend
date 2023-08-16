@@ -140,6 +140,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
@@ -147,6 +148,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "type": "refuse",
@@ -154,6 +156,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "denial_reasons": ["3", "4", "5", "5a", "5b"],
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": ["3", "4", "5", "5a", "5b"],
@@ -161,6 +164,7 @@ def test_edit_refuse_advice_post(
             "text": "doesn't meet the requirement",
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": ["3", "4", "5", "5a", "5b"],
@@ -168,6 +172,7 @@ def test_edit_refuse_advice_post(
             "good": "9fbffa7f-ef50-402e-93ac-2f3f37d09030",
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": [],
@@ -185,7 +190,6 @@ def test_edit_refuse_advice_post(
 def test_edit_refuse_advice_get(
     authorized_client, requests_mock, data_standard_case, standard_case_with_advice, refusal_advice, url, mock_gov_user
 ):
-
     case_data = deepcopy(data_standard_case)
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     case_data["case"]["advice"] = refusal_advice

@@ -12,6 +12,7 @@ from core import client
 from caseworker.advice import forms, services
 from caseworker.advice.constants import AdviceType
 from unit_tests.caseworker.conftest import countersignatures_for_advice
+from caseworker.advice.services import LICENSING_UNIT_TEAM, MOD_ECJU_TEAM
 
 TEAM_ID = "34344324-34234-432"
 
@@ -188,6 +189,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
@@ -195,6 +197,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "type": "refuse",
@@ -202,6 +205,7 @@ def test_edit_refuse_advice_post(
             "footnote_required": False,
             "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "denial_reasons": ["1", "1a", "2", "2a", "2b", "M"],
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": ["1", "1a", "2", "2a", "2b", "M"],
@@ -209,6 +213,7 @@ def test_edit_refuse_advice_post(
             "text": "doesn't meet the requirement",
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": ["1", "1a", "2", "2a", "2b", "M"],
@@ -216,6 +221,7 @@ def test_edit_refuse_advice_post(
             "good": "9fbffa7f-ef50-402e-93ac-2f3f37d09030",
             "text": "doesn't meet the requirement",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": [],
@@ -332,7 +338,7 @@ def test_edit_consolidated_advice_approve__with_nlr_products_by_lu_put(
 
 
 @patch("caseworker.advice.views.get_gov_user")
-def test_edit_consolidated_advice_refuse_by_lu_put(
+def test_edit_consolidated_advice_refuse_note_by_lu_put(
     mock_get_gov_user,
     authorized_client,
     requests_mock,
@@ -342,6 +348,7 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
 ):
     for item in consolidated_advice:
         item["type"] = {"key": "refuse", "value": "Refuse"}
+        item["is_refusal_note"] = True
 
     case_data = data_standard_case
     case_data["case"]["advice"] = consolidated_advice
@@ -352,7 +359,7 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
     )
     requests_mock.put(client._build_absolute_uri(f"/cases/{case_data['case']['id']}/final-advice"), json={})
 
-    data = {"refusal_reasons": "updating the decision to refuse", "denial_reasons": ["1", "2", "5"]}
+    data = {"refusal_note": "updating the decision to refuse", "denial_reasons": ["1", "2", "5"]}
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
     history = requests_mock.request_history.pop()
@@ -360,8 +367,9 @@ def test_edit_consolidated_advice_refuse_by_lu_put(
     assert history.json() == [
         {
             "id": advice["id"],
-            "text": data["refusal_reasons"],
+            "text": data["refusal_note"],
             "denial_reasons": data["denial_reasons"],
+            "is_refusal_note": True,
         }
         for advice in consolidated_advice
     ]
@@ -447,3 +455,54 @@ def test_edit_advice_get_displays_correct_counteradvice(
     assert len(countersignatures) == 1
     assert countersignatures[0].find("h2").text == expected_title
     assert countersignatures[0].find("p").text == fcdo_or_mod_advice[0]["countersign_comments"]
+
+
+@patch("caseworker.advice.views.get_gov_user")  # Pass to the mock version; mock_get_gov_user
+def test_edit_refusal_note_exists(
+    mock_get_gov_user,
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    refusal_notes,
+):
+    data_standard_case["case"]["advice"] = refusal_notes
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "21313212-23123-3123-323wq2", "alias": LICENSING_UNIT_TEAM}}},
+        None,
+    )
+    url = reverse(
+        f"cases:consolidate_edit", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    denial_element = soup.find("option", {"value": "2a", "selected": True})
+    note_element = soup.find("textarea", {"id": "id_refusal_note"})
+
+    assert denial_element["value"] == "2a"
+    assert note_element.get_text(strip=True) == "The refusal note assess_1_2"
+
+
+@patch("caseworker.advice.views.get_gov_user")  # Pass to the mock version; mock_get_gov_user
+def test_mod_ecju_edit_exists(
+    mock_get_gov_user,
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    mod_ecju_refusal_reasons,
+):
+    data_standard_case["case"]["advice"] = mod_ecju_refusal_reasons
+    mock_get_gov_user.return_value = (
+        {"user": {"team": {"id": "21313212-23123-3123-323wq2", "alias": MOD_ECJU_TEAM}}},
+        None,
+    )
+    url = reverse(
+        f"cases:consolidate_edit", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    denial_element = soup.find("option", {"value": "5b", "selected": True})
+    refusal_element = soup.find("textarea", {"id": "id_refusal_reasons"})
+
+    assert denial_element["value"] == "5b"
+    assert refusal_element.get_text(strip=True) == "something_test_1"

@@ -101,6 +101,11 @@ urlpatterns = [
         generate_document.CreateDocument.as_view(),
         name="generate_document_create",
     ),
+    path(
+        "generate-document/<uuid:document_pk>/send/",
+        generate_document.SendExistingDocument.as_view(),
+        name="generate_document_send",
+    ),
     path("case-officer/", main.CaseOfficer.as_view(), name="case_officer"),
     path("review-date/", main.NextReviewDate.as_view(), name="review_date"),
     path(
