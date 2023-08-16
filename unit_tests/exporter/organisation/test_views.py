@@ -1,6 +1,8 @@
+from bs4 import BeautifulSoup
 from unittest import mock
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
+import pytest
 
 from core import client
 from unit_tests.helpers import mocked_now
@@ -10,7 +12,6 @@ from unit_tests.helpers import mocked_now
 def test_upload_firearm_registered_dealer_certificate(
     mock_timezone, authorized_client, mock_organisation_document_post
 ):
-
     url = reverse("organisation:upload-firearms-certificate")
     data = {
         "expiry_date_0": 1,  # day
@@ -28,7 +29,6 @@ def test_upload_firearm_registered_dealer_certificate(
 
 @mock.patch("django.utils.timezone.now", side_effect=mocked_now)
 def test_upload_section_five_certificate(mock_timezone, authorized_client, mock_organisation_document_post):
-
     url = reverse("organisation:upload-section-five-certificate")
     data = {
         "expiry_date_0": 1,  # day
@@ -71,3 +71,17 @@ def test_new_site_form_view(authorized_client, mock_exporter_user_me):
     url = reverse("organisation:sites:new")
     response = authorized_client.get(url)
     assert response.status_code == 200
+
+
+def test_upload_firearms_certificate_form_view_html_title(authorized_client):
+    url = reverse("organisation:upload-firearms-certificate")
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Attach your registered firearms dealer certificate - LITE - GOV.UK"
+
+
+def test_upload_section_five_certificate_form_view_html_title(authorized_client):
+    url = reverse("organisation:upload-section-five-certificate")
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Attach your section five certificate - LITE - GOV.UK"

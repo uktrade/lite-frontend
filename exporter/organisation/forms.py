@@ -19,6 +19,9 @@ def validate_expiry_date(value):
 
 
 class UploadSectionFiveCertificateForm(forms.Form):
+    class Layout:
+        TITLE = "Attach your section five certificate"
+
     file = forms.FileField(
         label="",
         help_text="The file must be smaller than 50MB",
@@ -39,7 +42,7 @@ class UploadSectionFiveCertificateForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1("Attach your section five certificate"),
+            HTML.h1(self.Layout.TITLE),
             "file",
             "reference_code",
             "expiry_date",
@@ -51,6 +54,9 @@ class UploadSectionFiveCertificateForm(forms.Form):
 
 
 class UploadFirearmsCertificateForm(forms.Form):
+    class Layout:
+        TITLE = "Attach your registered firearms dealer certificate"
+
     file = forms.FileField(
         label="Upload a DOCX, DOC, PDF or PNG file.",
         help_text="The file must be smaller than 50MB",
@@ -71,7 +77,7 @@ class UploadFirearmsCertificateForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1("Attach your registered firearms dealer certificate"),
+            HTML.h1(self.Layout.TITLE),
             "file",
             "reference_code",
             "expiry_date",
