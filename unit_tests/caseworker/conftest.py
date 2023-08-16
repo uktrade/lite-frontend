@@ -513,6 +513,24 @@ def queue_pk(data_queue):
 
 
 @pytest.fixture
+def mock_get_case_basic(requests_mock, data_standard_case):
+    case_id = data_standard_case["case"]["id"]
+    reference_code = data_standard_case["case"]["reference_code"]
+    org_name = data_standard_case["case"]["data"]["organisation"]["name"]
+    url = client._build_absolute_uri(f"/cases/{case_id}/basic/")
+    yield requests_mock.get(
+        url=url,
+        json={
+            "id": case_id,
+            "reference_code": reference_code,
+            "organisation": {
+                "name": org_name,
+            },
+        },
+    )
+
+
+@pytest.fixture
 def mock_queue(requests_mock, data_queue):
     url = client._build_absolute_uri("/queues/")
     yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)

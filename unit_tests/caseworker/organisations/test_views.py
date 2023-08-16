@@ -123,7 +123,7 @@ def test_edit_organisation_success(authorized_client, requests_mock, organisatio
 @pytest.mark.parametrize(
     ("query_string", "expected_title"),
     [
-        ("", "Organisations - LITE Internal"),
+        ("", "All active organisations on LITE - LITE Internal"),
         ("?status=in_review", "All organisations waiting to be reviewed - LITE Internal"),
         ("?status=rejected", "All rejected LITE organisations - LITE Internal"),
     ],
