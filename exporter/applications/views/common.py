@@ -1,9 +1,9 @@
 from http import HTTPStatus
 
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -371,3 +371,8 @@ class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         return reverse_lazy("applications:success_page", kwargs={"pk": self.object_pk})
+
+
+class AppealApplication(LoginRequiredMixin, View):
+    def get(self, request, **kwargs):
+        return HttpResponse("OK")
