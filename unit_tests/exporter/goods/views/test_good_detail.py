@@ -98,7 +98,7 @@ def test_good_redirect_with_params(authorized_client):
     assert response.status_code == 302
     assert (
         response.url
-        == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/case-notes/?is_preexisting=true&application_id=e0a485d0-156e-4152-bec9-4798c9f2871e"
+        == "/product-list/e0a485d0-156e-4152-bec9-4798c9f2871e/case-notes/?is_preexisting=true&application_id=e0a485d0-156e-4152-bec9-4798c9f2871e"
     )
 
 
@@ -107,4 +107,4 @@ def test_good_redirect(authorized_client):
     response = authorized_client.get(url)
 
     assert response.status_code == 302
-    assert response.url == "/goods/e0a485d0-156e-4152-bec9-4798c9f2871e/case-notes/"
+    assert response.url == "/product-list/e0a485d0-156e-4152-bec9-4798c9f2871e/case-notes/"

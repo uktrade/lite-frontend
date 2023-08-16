@@ -286,7 +286,7 @@ def gov_user():
         ("", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
         ("", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
         ("approve/", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("refuse/", forms.RefusalAdviceForm, LICENSING_UNIT_TEAM, "LU Team"),
+        ("refuse/", forms.LUConsolidateRefusalForm, LICENSING_UNIT_TEAM, "LU Team"),
         ("approve/", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
         ("refuse/", forms.RefusalAdviceForm, MOD_ECJU_TEAM, "MOD Team"),
     ),
@@ -619,6 +619,7 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
             "footnote_required": False,
             "text": "test",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
@@ -626,6 +627,7 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
             "footnote_required": False,
             "text": "test",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": ["1"],
@@ -633,6 +635,7 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
             "text": "test",
             "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": ["1"],
@@ -640,6 +643,7 @@ def test_consolidate_review_refuse(requests_mock, authorized_client, data_standa
             "text": "test",
             "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
             "type": "refuse",
+            "is_refusal_note": False,
         },
         {
             "denial_reasons": [],

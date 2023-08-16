@@ -1,9 +1,10 @@
 from http import HTTPStatus
 from urllib.parse import quote
 
+from django.contrib import messages
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
-from django.views.generic import TemplateView
+from django.urls import reverse_lazy, reverse
+from django.views.generic import TemplateView, View
 
 from caseworker.cases.forms.generate_document import (
     select_template_form,
@@ -13,6 +14,7 @@ from caseworker.cases.forms.generate_document import (
 from caseworker.cases.helpers.helpers import generate_document_error_page
 from caseworker.cases.services import (
     post_generated_document,
+    send_generated_document,
     get_generated_document_preview,
     get_generated_document,
     get_case,
@@ -167,6 +169,22 @@ class CreateDocument(LoginRequiredMixin, TemplateView):
             return redirect(
                 reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": str(pk), "tab": "documents"})
             )
+
+
+class SendExistingDocument(LoginRequiredMixin, View):
+    def post(self, request, queue_pk, pk, document_pk):
+        response = send_generated_document(request, pk, document_pk)
+        case = get_case(request, pk)
+        if response.ok:
+            messages.success(
+                self.request, f"Document sent to {case['data']['organisation']['name']}, {case['reference_code']}"
+            )
+        else:
+            messages.error(
+                self.request,
+                f"An error occurred when sending the document. Please try again later",
+            )
+        return redirect(reverse("queues:cases", kwargs={"queue_pk": queue_pk}))
 
 
 class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):

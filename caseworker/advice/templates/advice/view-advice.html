@@ -101,8 +101,8 @@
                     {% if decisions and FEATURE_FLAG_REFUSALS %}
                         {% include "advice/decision_documents.html" with decisions=decisions case=case queue_id=queue_id %}
                     {% endif %}
-
-                    {% include "advice/advice_details.html" with advice=consolidated_advice team=True %}
+                    
+                    {% include "advice/advice_details.html" with advice=consolidated_advice team=True refusal_note=refusal_note %}
                     <br>
                 </div>
 
