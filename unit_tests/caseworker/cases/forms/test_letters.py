@@ -19,14 +19,13 @@ def test_select_letter_template_form_not_valid():
 
 def test_letter_edit_form():
     form = LetterEditTextForm(
-        text="this is a letter to inform that this is an owesome test",
         data={"text": "not in agreement"},
     )
     assert form.is_valid() is True
 
 
 def test_letter_edit_form_not_valid():
-    form = LetterEditTextForm(text="this is a letter to inform that this is not an owesome test", data={})
+    form = LetterEditTextForm(data={})
 
     assert form.is_valid() is False
 

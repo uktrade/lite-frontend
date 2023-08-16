@@ -1143,7 +1143,10 @@ def test_decision_document_present(
     decision_document,
     expected_decision,
     table_present,
+    settings,
 ):
+    settings.FEATURE_FLAG_REFUSALS = True
+
     data_standard_case["case"]["advice"] = consolidated_advice
 
     decision_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice-documents/")

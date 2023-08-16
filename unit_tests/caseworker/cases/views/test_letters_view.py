@@ -127,7 +127,7 @@ def test_letter_edit_get(
         )
     )
     assert response.status_code == 200
-    assert response.context["form"].fields["text"].initial == expected_text
+    assert response.context["form"].initial["text"] == expected_text
 
 
 @pytest.fixture
