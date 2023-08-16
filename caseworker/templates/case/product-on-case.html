@@ -2,6 +2,10 @@
 
 {% load static %}
 
+{% block title %}
+    Full product details and history for this case - {{ case.reference_code }} - {{ case.organisation.name }}
+{% endblock %}
+
 {% block details %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
