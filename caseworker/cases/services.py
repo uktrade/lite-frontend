@@ -321,6 +321,11 @@ def get_generated_document(request, pk, dpk):
     return data.json(), data.status_code
 
 
+def send_generated_document(request, pk, document_pk):
+    response = client.post(request, f"/cases/{pk}/generated-documents/{document_pk}/send/")
+    return response
+
+
 def get_destination(request, pk):
     data = client.get(request, f"/cases/destinations/{pk}")
     return data.json()

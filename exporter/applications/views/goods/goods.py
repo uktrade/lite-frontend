@@ -148,7 +148,6 @@ class SectionDocumentMixin:
 
 
 class ApplicationGoodsList(LoginRequiredMixin, TemplateView):
-
     template_name = "applications/goods/index.html"
 
     def get_context_data(self, **kwargs):
@@ -273,6 +272,7 @@ class IsGoodFirearm(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
 
 
@@ -292,6 +292,7 @@ class NonFirearmCategory(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["back_link_url"] = reverse("applications:is_good_firearm", kwargs={"pk": self.kwargs["pk"]})
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
 
 
@@ -309,6 +310,7 @@ class IsMaterialSubstanceCategory(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["back_link_url"] = reverse("applications:non_firearm_category", kwargs={"pk": self.kwargs["pk"]})
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
 
 

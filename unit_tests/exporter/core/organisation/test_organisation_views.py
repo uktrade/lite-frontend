@@ -1,5 +1,5 @@
 import pytest
-
+from bs4 import BeautifulSoup
 from django.test import Client
 from django.urls import reverse
 from exporter.core.organisation.constants import RegistrationSteps
@@ -289,12 +289,13 @@ def test_registration_commercial_end_to_end(
 
 
 def test_select_organisation_load(authorized_client, mock_exporter_user_me):
-
     mock_exporter_user_me["organisations"] = mock_exporter_user_me["organisations"] + [
         {"id": "9bc26604-35ee-4383-9f58-1111111", "name": "Org 2"}
     ]
     url = reverse("core:select_organisation")
     response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Select your organisation - LITE - GOV.UK"
 
     assert len(response.context["form"].fields["organisation"].choices) == 2
     assert response.context["form"].fields["organisation"].choices[1] == ("9bc26604-35ee-4383-9f58-1111111", "Org 2")

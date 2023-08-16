@@ -115,6 +115,11 @@ class RecommendationsAndDecisionPage(BasePage):
         el.clear()
         el.send_keys(reasons)
 
+    def enter_refusal_note(self, note):
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='refusal_note']")
+        el.clear()
+        el.send_keys(note)
+
     def enter_licence_condition(self, licence_condition):
         el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='proviso']")
         el.clear()
@@ -145,6 +150,12 @@ class RecommendationsAndDecisionPage(BasePage):
         return self.driver.find_element(
             by=By.XPATH,
             value="//p[preceding-sibling::*[self::h2 or self::h3][contains(text(), 'Reason for refusing') or contains(text(), 'Reasons for refusing')]][2]",
+        ).text
+
+    def get_refusal_note(self):
+        return self.driver.find_element(
+            by=By.XPATH,
+            value="//p[preceding-sibling::*[self::h2 or self::h3][contains(text(), 'Refusal meeting note')]][2]",
         ).text
 
     def get_licence_condition(self):

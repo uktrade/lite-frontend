@@ -242,6 +242,7 @@ def get_advice_to_consolidate(advice, user_team_alias):
     teams - which is the only difference between this function and
     `get_advice_to_countersign`.
     """
+
     if user_team_alias == LICENSING_UNIT_TEAM:
         # LU needs to review the consolidated advice given by MOD which is at team level
         user_team_advice = filter_advice_by_level(advice, [constants.AdviceLevel.USER, constants.AdviceLevel.TEAM])
@@ -328,10 +329,11 @@ def post_refusal_advice(request, case, data, level="user-advice"):
     json = [
         {
             "type": "refuse",
-            "text": data["refusal_reasons"],
+            "text": data["text"],
             "footnote_required": False,
             subject_name: subject_id,
             "denial_reasons": data["denial_reasons"],
+            "is_refusal_note": data.get("is_refusal_note", False),
         }
         for subject_name, subject_id, in get_advice_subjects(case, data.get("countries"))
     ]
@@ -383,8 +385,9 @@ def update_advice(request, case, caseworker, advice_type, data, level):
         json = [
             {
                 "id": advice["id"],
-                "text": data["refusal_reasons"],
+                "text": data["text"],
                 "denial_reasons": data["denial_reasons"],
+                "is_refusal_note": data.get("is_refusal_note", False),
             }
             for advice in licenceable_products_advice
         ]
@@ -404,6 +407,7 @@ def update_advice(request, case, caseworker, advice_type, data, level):
 
     response = client.put(request, f"/cases/{case['id']}/{level}/", json + json_nlr)
     response.raise_for_status()
+
     return response.json(), response.status_code
 
 

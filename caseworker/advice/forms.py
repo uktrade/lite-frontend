@@ -1,5 +1,3 @@
-from collections import defaultdict
-
 from django import forms
 from django.forms.formsets import formset_factory
 from django.utils.html import format_html
@@ -30,7 +28,7 @@ def get_refusal_advice_form_factory(advice, denial_reasons_choices, data=None):
         "refusal_reasons": advice["text"],
         "denial_reasons": [r for r in advice["denial_reasons"]],
     }
-    return RefusalAdviceForm(data=data, denial_reasons=denial_reasons_choices)
+    return RefusalAdviceForm(data=data, choices=denial_reasons_choices)
 
 
 class PicklistCharField(forms.CharField):
@@ -181,30 +179,20 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
 
 
 class RefusalAdviceForm(forms.Form):
-    def _group_denial_reasons(self, denial_reasons):
-        grouped = defaultdict(list)
-        for item in denial_reasons:
-            # skip the ones that are not active anymore
-            if item["deprecated"]:
-                continue
-            grouped[item["id"][0]].append((item["id"], item.get("display_value") or item["id"]))
-        return grouped.items()
+    denial_reasons = forms.MultipleChoiceField(
+        widget=forms.SelectMultiple(),
+        label="What is the refusal criteria?",
+        help_text=format_html(
+            f'Select all <a class="govuk-link" '
+            f'href="https://questions-statements.parliament.uk/written-statements/detail/2021-12-08/hcws449" '
+            f'target="_blank">refusal criteria (opens in a new tab)</a> that apply'
+        ),
+        error_messages={"required": "Select at least one refusal criteria"},
+    )
 
-    def __init__(self, denial_reasons, *args, **kwargs):
+    def __init__(self, choices, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        refusal_criteria_link = (
-            "https://questions-statements.parliament.uk/written-statements/detail/2021-12-08/hcws449"
-        )
-        choices = self._group_denial_reasons(denial_reasons)
-        self.fields["denial_reasons"] = forms.MultipleChoiceField(
-            choices=choices,
-            widget=forms.SelectMultiple(),
-            label="What is the refusal criteria?",
-            help_text=format_html(
-                f'Select all <a class="govuk-link" href={refusal_criteria_link} target="_blank">refusal criteria (opens in a new tab)</a> that apply'
-            ),
-            error_messages={"required": "Select at least one refusal criteria"},
-        )
+        self.fields["denial_reasons"].choices = choices
         label_size = {"label_size": "govuk-label--s"}
         self.fields["refusal_reasons"] = PicklistCharField(
             picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "standard advice"},
@@ -219,6 +207,31 @@ class RefusalAdviceForm(forms.Form):
             Field("refusal_reasons", context=label_size),
             Submit("submit", "Submit recommendation"),
         )
+
+
+class LUConsolidateRefusalForm(forms.Form):
+    refusal_note = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "7"}),
+        label="Enter the refusal note as agreed in the refusal meeting",
+        error_messages={"required": "Enter the refusal meeting note"},
+    )
+
+    denial_reasons = forms.MultipleChoiceField(
+        widget=forms.SelectMultiple(),
+        label="What is the refusal criteria?",
+        help_text=format_html(
+            f'Select all <a class="govuk-link" '
+            f'href="https://questions-statements.parliament.uk/written-statements/detail/2021-12-08/hcws449" '
+            f'target="_blank">refusal criteria (opens in a new tab)</a> that apply'
+        ),
+        error_messages={"required": "Select at least one refusal criteria"},
+    )
+
+    def __init__(self, choices, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["denial_reasons"].choices = choices
+        self.helper = FormHelper()
+        self.helper.layout = Layout("denial_reasons", "refusal_note", Submit("submit", "Submit recommendation"))
 
 
 class DeleteAdviceForm(forms.Form):
@@ -316,8 +329,8 @@ class FCDOApprovalAdviceForm(GiveApprovalAdviceForm):
 
 
 class FCDORefusalAdviceForm(RefusalAdviceForm):
-    def __init__(self, denial_reasons, countries, *args, **kwargs):
-        super().__init__(denial_reasons, *args, **kwargs)
+    def __init__(self, choices, countries, *args, **kwargs):
+        super().__init__(choices, *args, **kwargs)
         self.fields["countries"] = forms.MultipleChoiceField(
             choices=countries.items(),
             widget=GridmultipleSelect(),

@@ -120,6 +120,7 @@ class GoodsStartingPointFormView(LoginRequiredMixin, ApplicationMixin, FormView)
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["back_link_url"] = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
 
     def get_initial(self):
@@ -145,6 +146,7 @@ class TemporaryOrPermanentFormView(LoginRequiredMixin, ApplicationMixin, FormVie
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["back_link_url"] = reverse("applications:edit_location", kwargs={"pk": self.kwargs["pk"]})
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
 
     def form_valid(self, form):
@@ -167,6 +169,7 @@ class GoodsRecipientsFormView(LoginRequiredMixin, ApplicationMixin, FormView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["back_link_url"] = reverse("applications:route_of_goods", kwargs={"pk": self.kwargs["pk"]})
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
 
     def form_valid(self, form):

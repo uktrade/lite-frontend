@@ -182,6 +182,11 @@ class RegisterName(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
     form_class = RegisterNameForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.Layout.TITLE
+        return context
+
     def get_success_url(self):
         return resolve_url(settings.LOGIN_URL)
 

@@ -38,13 +38,6 @@ def setup(
 
 
 @pytest.fixture
-def mock_cases_search(requests_mock, data_cases_search, queue_pk):
-    encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
-    url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
-    return requests_mock.get(url=url, json=data_cases_search)
-
-
-@pytest.fixture
 def mock_cases_search_team_queue(requests_mock, data_cases_search):
     encoded_params = parse.urlencode({"page": 1, "flags": []}, doseq=True)
     url = client._build_absolute_uri(f"/cases/?queue_id={queue_pk}&{encoded_params}")
@@ -122,12 +115,6 @@ def mock_team_cases_search(requests_mock, data_cases_search):
     yield requests_mock.get(url=url, json=data_cases_search)
 
 
-@pytest.fixture
-def mock_cases_search_head(requests_mock):
-    url = client._build_absolute_uri(f"/cases/")
-    yield requests_mock.head(url=re.compile(f"{url}.*"), headers={"resource-count": "350"})
-
-
 def test_cases_home_page_view_context(authorized_client):
     context_keys = [
         "sla_radius",
@@ -193,8 +180,7 @@ def test_cases_home_page_view_context(authorized_client):
 def test_cases_page_has_correct_title_on_changed_tab(authorized_client, query_string, expected_title):
     response = authorized_client.get(reverse("queues:cases") + query_string)
     soup = BeautifulSoup(response.content, "html.parser")
-    title = soup.title.string.strip()
-    assert title == expected_title
+    assert soup.title.string.strip() == expected_title
 
 
 @pytest.mark.parametrize(
