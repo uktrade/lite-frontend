@@ -65,6 +65,7 @@ class SelectAdviceForm(forms.Form):
 
 
 class ConsolidateSelectAdviceForm(SelectAdviceForm):
+    DOCUMENT_TITLE = "Recommend and combine case recommendation case"
     CHOICES = [("approve", "Approve"), ("refuse", "Refuse")]
     recommendation = forms.ChoiceField(
         choices=CHOICES,
@@ -83,6 +84,7 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
 
 
 class GiveApprovalAdviceForm(forms.Form):
+    DOCUMENT_TITLE = "Recommend approval for this case"
     approval_reasons = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
         label="",
@@ -232,6 +234,7 @@ def get_formset(form_class, num=1, data=None, initial=None):
 
 
 class CountersignAdviceForm(forms.Form):
+    DOCUMENT_TITLE = "Review and countersign this case"
     approval_reasons = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}),
         label="Explain why you are agreeing with this recommendation",
