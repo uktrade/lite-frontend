@@ -30,6 +30,11 @@ class StepEditView(FormView):
             action.run(self, form)
         return super().form_valid(form)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["form_title"] = self.get_form_class().Layout.TITLE
+        return context
+
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         step_form_kwargs = self.step.get_form_kwargs(self)

@@ -1,6 +1,7 @@
 {% load svg %}
 
 {% if pages|length > 1 %}
+<nav role="navigation" aria-label="Pagination Navigation">
 	<div class="lite-pagination__container">
 		{% if previous_link_url %}
 			<a id="link-previous-page" href="{{ previous_link_url }}" id="link-previous-page" class="lite-pagination__navigation-link lite-pagination__link">
@@ -18,11 +19,11 @@
 		<ol class="lite-pagination__list">
 			{% for item in pages %}
 				{% if item.type == 'page_item' %}
-					<li id="page-{{ item.number }}" class="lite-pagination__list-item {% if item.selected %}lite-pagination__list-item--selected{% endif %}">
+					<li id="page-{{ item.number }}" {% if item.selected %}aria-current="true"{% endif %}  class="lite-pagination__list-item {% if item.selected %}lite-pagination__list-item--selected{% endif %}">
 						{% if item.selected %}
 							{{ item.number }}
 						{% else %}
-							<a href="{{ item.url }}" class="lite-pagination__link" data-number="{{ item.number }}">
+							<a href="{{ item.url }}" {% if not item.selected %}aria-label="Goto Page {{ item.number}}" {% endif %} class="lite-pagination__link" data-number="{{ item.number }}">
 								{{ item.number }}
 							</a>
 						{% endif %}
@@ -48,4 +49,5 @@
 			</p>
 		{% endif %}
 	</div>
+</nav>
 {% endif %}
