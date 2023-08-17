@@ -133,4 +133,6 @@ def test_organisations_html_title_on_changed_tab(authorized_client, requests_moc
     url = reverse("organisations:organisations") + query_string
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.title.string.strip() == expected_title
+    actual_title = soup.title.string.strip()
+    actual_title = actual_title.replace("\n", "").replace("\t", "")
+    assert actual_title == expected_title
