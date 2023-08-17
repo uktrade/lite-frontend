@@ -398,3 +398,9 @@ class AppealApplication(LoginRequiredMixin, FormView):
         kwargs["cancel_url"] = self.get_case_url()
 
         return kwargs
+
+    def get_success_url(self):
+        return reverse(
+            "applications:application",
+            kwargs={"pk": self.kwargs["case_pk"]},
+        )
