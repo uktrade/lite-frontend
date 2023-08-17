@@ -48,6 +48,7 @@ def test_appeal_view(authorized_client, appeal_url, application_url):
     assert soup.find("a", {"id": "back-link"})["href"] == application_url
     assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Submit appeal request"
     assert soup.find("a", {"id": "cancel-id-cancel"})["href"] == application_url
+    assert soup.find("textarea", {"name": "grounds_for_appeal"})
 
 
 def test_post_appeal(authorized_client, appeal_url, application_url):

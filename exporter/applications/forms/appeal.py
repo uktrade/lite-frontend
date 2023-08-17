@@ -1,3 +1,5 @@
+from django import forms
+
 from crispy_forms_gds.layout import HTML
 
 from core.common.forms import BaseForm
@@ -7,6 +9,8 @@ class AppealForm(BaseForm):
     class Layout:
         TITLE = "Appeal refusal decision"
         SUBMIT_BUTTON_TEXT = "Submit appeal request"
+
+    grounds_for_appeal = forms.CharField(widget=forms.Textarea)
 
     def __init__(self, *args, cancel_url, **kwargs):
         self.cancel_url = cancel_url
@@ -19,6 +23,7 @@ class AppealForm(BaseForm):
                 "We cannot accept business-related factors as valid reasons for appeal."
             ),
             HTML.p("Examples of these would be contractual losses, economic concerns, loss of staff or site closures."),
+            "grounds_for_appeal",
         ]
 
     def get_layout_actions(self):
