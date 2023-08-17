@@ -1126,13 +1126,11 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
 
 
 @pytest.mark.parametrize(
-    "decision_document, expected_decision, table_present",
+    "decision_document, table_present",
     (
-        ({"documents": {"refusal": {}, "approval": {}}}, {}, False),
-        ({"documents": {"inform_letter": {"hello": "world"}}}, {"inform_letter": {"hello": "world"}}, True),
+        ({"documents": {"inform_letter": {"hello": "world"}}}, True),
         (
             {"documents": {"refusal": {}, "approval": {}, "inform_letter": {"hello": "world"}}},
-            {"inform_letter": {"hello": "world"}},
             True,
         ),
     ),
@@ -1142,16 +1140,15 @@ def test_decision_document_present(
     authorized_client,
     data_standard_case,
     view_consolidate_outcome_url,
-    consolidated_advice,
+    consolidated_refusal_outcome,
     mock_gov_lu_user,
     decision_document,
-    expected_decision,
     table_present,
     settings,
 ):
     settings.FEATURE_FLAG_REFUSALS = True
 
-    data_standard_case["case"]["advice"] = consolidated_advice
+    data_standard_case["case"]["advice"] = consolidated_refusal_outcome
 
     decision_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice-documents/")
     requests_mock.get(url=decision_url, json=decision_document)
@@ -1159,8 +1156,34 @@ def test_decision_document_present(
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
-    assert response.context["decisions"] == expected_decision
+    assert response.context["decisions"] == {"inform_letter": {"value": "Inform letter"}}
 
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find("table", attrs={"name": "decision_document"})
     assert bool(table) is table_present
+
+
+def test_decision_document_not_present(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    view_consolidate_outcome_url,
+    consolidated_advice,
+    mock_gov_lu_user,
+    settings,
+):
+    settings.FEATURE_FLAG_REFUSALS = True
+
+    data_standard_case["case"]["advice"] = consolidated_advice
+
+    decision_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice-documents/")
+    requests_mock.get(url=decision_url, json={})
+
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    assert response.context["decisions"] == {}
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    table = soup.find("table", attrs={"name": "decision_document"})
+    assert bool(table) is False

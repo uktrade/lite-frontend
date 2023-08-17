@@ -11,7 +11,7 @@ from requests.exceptions import HTTPError
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
 from caseworker.cases.helpers.case import CaseworkerMixin
-from caseworker.cases.services import get_case, get_final_decision_documents
+from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons, group_denial_reasons
@@ -747,14 +747,16 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
             finalise_case = not (lu_countersign_required or rejected_lu_countersignature)
 
-        decisions, _ = get_final_decision_documents(self.request, self.case.id)
-
-        decision_documents = decisions.get("documents", {})
-
-        decisions = {key: value for key, value in decision_documents.items() if key == "inform_letter"}
-        # Only show decision documents if we have an inform letter
-
         refusal_note = [advice for advice in consolidated_advice if advice["is_refusal_note"]]
+        # Only show decision documents inform letter if we have a refuse
+
+        decisions = {}
+
+        for advice in self.case["advice"]:
+            if advice["type"]["key"] == "refuse":
+                decisions = {"inform_letter": {"value": "Inform letter"}}
+                break
+
         return {
             **super().get_context(**kwargs),
             "consolidated_advice": consolidated_advice,
