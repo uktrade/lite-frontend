@@ -46,6 +46,7 @@ from exporter.applications.services import (
     get_status_properties,
     copy_application,
     post_exhibition,
+    post_appeal,
 )
 from exporter.organisation.members.services import get_user
 
@@ -58,6 +59,7 @@ from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 from core.helpers import convert_dict_to_query_params
 
 
@@ -384,7 +386,7 @@ class AppealApplication(LoginRequiredMixin, FormView):
 
     def dispatch(self, request, **kwargs):
         try:
-            get_application(request, kwargs["case_pk"])
+            self.application = get_application(request, kwargs["case_pk"])
         except HTTPError:
             raise Http404()
 
@@ -419,3 +421,20 @@ class AppealApplication(LoginRequiredMixin, FormView):
             "applications:application",
             kwargs={"pk": self.kwargs["case_pk"]},
         )
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error creating appeal",
+        "Unexpected error creating appeal",
+    )
+    def post_appeal(self, request, application_pk, data):
+        return post_appeal(request, application_pk, data)
+
+    def form_valid(self, form):
+        self.post_appeal(
+            self.request,
+            self.application["id"],
+            form.cleaned_data,
+        )
+
+        return super().form_valid(form)

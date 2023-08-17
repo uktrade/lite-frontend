@@ -1,7 +1,7 @@
 import pytest
 
 from bs4 import BeautifulSoup
-from pytest_django.asserts import assertTemplateUsed
+from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from django.urls import reverse
 
@@ -26,19 +26,42 @@ def application_pk(data_standard_case):
 
 
 @pytest.fixture(autouse=True)
-def mock_get_application(requests_mock, application_pk):
-    return requests_mock.get(
+def mock_get_application(requests_mock, application_pk, data_standard_case):
+    requests_mock.get(
         client._build_absolute_uri(f"/applications/{application_pk}/"),
-        json={},
+        json=data_standard_case["case"],
     )
 
 
 @pytest.fixture(autouse=True)
 def mock_get_application_invalid_pk(requests_mock, invalid_application_pk):
-    return requests_mock.get(
+    requests_mock.get(
         client._build_absolute_uri(f"/applications/{invalid_application_pk}/"),
         json={},
         status_code=404,
+    )
+
+
+@pytest.fixture
+def post_appeal_api_url(application_pk):
+    return client._build_absolute_uri(f"/applications/{application_pk}/appeal/")
+
+
+@pytest.fixture
+def mock_post_appeal(requests_mock, post_appeal_api_url):
+    return requests_mock.post(
+        post_appeal_api_url,
+        json={},
+        status_code=201,
+    )
+
+
+@pytest.fixture
+def mock_post_appeal_failure(requests_mock, post_appeal_api_url):
+    return requests_mock.post(
+        post_appeal_api_url,
+        json={},
+        status_code=500,
     )
 
 
@@ -83,7 +106,7 @@ def test_appeal_view(authorized_client, appeal_url, application_url):
     assert soup.find("textarea", {"name": "grounds_for_appeal"})
 
 
-def test_post_appeal(authorized_client, appeal_url, application_url):
+def test_post_appeal(authorized_client, appeal_url, application_url, mock_post_appeal):
     response = authorized_client.post(
         appeal_url,
         data={"grounds_for_appeal": "These are my grounds for appeal"},
@@ -91,3 +114,14 @@ def test_post_appeal(authorized_client, appeal_url, application_url):
 
     assert response.status_code == 302
     assert response.url == application_url
+    assert mock_post_appeal.called_once
+    assert mock_post_appeal.last_request.json() == {"grounds_for_appeal": "These are my grounds for appeal"}
+
+
+def test_post_appeal_failure(authorized_client, appeal_url, mock_post_appeal_failure):
+    response = authorized_client.post(
+        appeal_url,
+        data={"grounds_for_appeal": "These are my grounds for 4appeal"},
+    )
+
+    assertContains(response, "Unexpected error creating appeal")
