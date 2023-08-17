@@ -79,6 +79,7 @@ class GenerateDocument(MultiFormView):
         )
         self.contacts = get_case_additional_contacts(request, kwargs["pk"])
         self.applicant = get_case_applicant(request, kwargs["pk"])
+
         self.template = request.POST.get(TEMPLATE)
 
         params = {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1)}

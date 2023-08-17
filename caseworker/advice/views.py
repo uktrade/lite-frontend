@@ -23,6 +23,7 @@ from core import client
 from core.auth.views import LoginRequiredMixin
 from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
 from core.decorators import expect_status
+from django.conf import settings
 
 
 class CaseContextMixin:
@@ -379,6 +380,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
+            "FEATURE_FLAG_REFUSALS": settings.FEATURE_FLAG_REFUSALS,
             **services.get_advice_tab_context(
                 self.case,
                 self.caseworker,
@@ -746,7 +748,9 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             finalise_case = not (lu_countersign_required or rejected_lu_countersignature)
 
         decisions, _ = get_final_decision_documents(self.request, self.case.id)
+
         decision_documents = decisions.get("documents", {})
+
         decisions = {key: value for key, value in decision_documents.items() if key == "inform_letter"}
         # Only show decision documents if we have an inform letter
 
