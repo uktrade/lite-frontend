@@ -1,6 +1,8 @@
+from bs4 import BeautifulSoup
 from django.urls import reverse
 from django.conf import settings
 from pytest_django.asserts import assertTemplateUsed
+import pytest
 
 from core import client
 
@@ -13,6 +15,8 @@ def test_register_name(authorized_client):
     url = reverse("core:register_name")
     response = authorized_client.get(url)
     assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "What is your name? - LITE - GOV.UK"
 
 
 def test_register_name_save(authorized_client, requests_mock, mock_get_profile):

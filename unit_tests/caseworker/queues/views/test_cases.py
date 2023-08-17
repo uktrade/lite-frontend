@@ -180,8 +180,7 @@ def test_cases_home_page_view_context(authorized_client):
 def test_cases_page_has_correct_title(authorized_client, query_string, expected_title):
     response = authorized_client.get(reverse("queues:cases") + query_string)
     soup = BeautifulSoup(response.content, "html.parser")
-    title = soup.title.string.strip()
-    assert title == expected_title
+    assert soup.title.string.strip() == expected_title
 
 
 @pytest.mark.parametrize(

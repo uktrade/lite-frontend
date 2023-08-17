@@ -1,5 +1,5 @@
 import pytest
-
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
@@ -175,6 +175,11 @@ def test_edit_onward_altered_processed(
         "is_onward_altered_processed": True,
         "is_onward_altered_processed_comments": "I will alter it real good",
     }
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (
+        soup.title.string.strip()
+        == "Will the item be altered or processed before it is exported again? - LITE - GOV.UK"
+    )
 
     response = authorized_client.post(
         edit_onward_altered_url,
@@ -223,6 +228,11 @@ def test_edit_onward_incorporated(
         "is_onward_incorporated": True,
         "is_onward_incorporated_comments": "I will onward incorporate",
     }
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (
+        soup.title.string.strip()
+        == "Will the product be incorporated into another item before it is onward exported? - LITE - GOV.UK"
+    )
 
     response = authorized_client.post(
         edit_onward_incorporated_url,
@@ -274,6 +284,8 @@ def test_edit_quantity_value(
         "quantity": 3.0,
         "value": "16.32",
     }
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Quantity and value - LITE - GOV.UK"
 
     response = authorized_client.post(
         edit_unit_quantity_value_url,

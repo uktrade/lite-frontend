@@ -221,6 +221,9 @@ def register_an_individual_group(request, location):
 
 
 class RegisterNameForm(forms.Form):
+    class Layout:
+        TITLE = "What is your name?"
+
     first_name = forms.CharField(
         label="First name",
         required=True,
@@ -232,7 +235,7 @@ class RegisterNameForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1("What is your name?"),
+            HTML.h1(self.Layout.TITLE),
             "first_name",
             "last_name",
             Submit("submit", "Continue"),
