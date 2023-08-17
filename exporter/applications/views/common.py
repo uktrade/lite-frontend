@@ -1,3 +1,5 @@
+import rules
+
 from http import HTTPStatus
 
 from django.http import Http404, HttpResponseRedirect
@@ -378,7 +380,13 @@ class AppealApplication(LoginRequiredMixin, FormView):
     form_class = AppealForm
     template_name = "core/form.html"
 
-    def get_case_url(self):
+    def dispatch(self, request, **kwargs):
+        if not rules.test_rule("can_user_appeal_case", request):
+            raise Http404()
+
+        return super().dispatch(request, **kwargs)
+
+    def get_application_url(self):
         return reverse(
             "applications:application",
             kwargs={"pk": self.kwargs["case_pk"]},
@@ -388,14 +396,14 @@ class AppealApplication(LoginRequiredMixin, FormView):
         context = super().get_context_data(**kwargs)
 
         context["form_title"] = self.form_class.Layout.TITLE
-        context["back_link_url"] = self.get_case_url()
+        context["back_link_url"] = self.get_application_url()
 
         return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
-        kwargs["cancel_url"] = self.get_case_url()
+        kwargs["cancel_url"] = self.get_application_url()
 
         return kwargs
 

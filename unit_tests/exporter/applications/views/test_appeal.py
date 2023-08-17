@@ -8,6 +8,11 @@ from django.urls import reverse
 from exporter.applications.forms.appeal import AppealForm
 
 
+@pytest.fixture(autouse=True)
+def feature_switch(settings):
+    settings.FEATURE_FLAG_APPEALS = True
+
+
 @pytest.fixture
 def application_url(data_standard_case):
     case_pk = data_standard_case["case"]["id"]
@@ -20,6 +25,13 @@ def appeal_url(data_standard_case):
     case_pk = data_standard_case["case"]["id"]
 
     return reverse("applications:appeal", kwargs={"case_pk": case_pk})
+
+
+def test_appeal_view_feature_flag_off(authorized_client, appeal_url, settings):
+    settings.FEATURE_FLAG_APPEALS = False
+
+    response = authorized_client.get(appeal_url)
+    assert response.status_code == 404
 
 
 def test_appeal_view(authorized_client, appeal_url, application_url):
