@@ -7,6 +7,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, TemplateView
 
+from requests.exceptions import HTTPError
+
 from exporter.applications.forms.appeal import AppealForm
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -381,6 +383,11 @@ class AppealApplication(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
 
     def dispatch(self, request, **kwargs):
+        try:
+            get_application(request, kwargs["case_pk"])
+        except HTTPError:
+            raise Http404()
+
         if not rules.test_rule("can_user_appeal_case", request):
             raise Http404()
 

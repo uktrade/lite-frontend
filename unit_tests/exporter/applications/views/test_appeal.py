@@ -5,6 +5,8 @@ from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
+from core import client
+
 from exporter.applications.forms.appeal import AppealForm
 
 
@@ -14,23 +16,53 @@ def feature_switch(settings):
 
 
 @pytest.fixture
-def application_url(data_standard_case):
-    case_pk = data_standard_case["case"]["id"]
-
-    return reverse("applications:application", kwargs={"pk": case_pk})
+def invalid_application_pk():
+    return "82617c05-a050-428b-ae68-ed5dc985f4af"
 
 
 @pytest.fixture
-def appeal_url(data_standard_case):
-    case_pk = data_standard_case["case"]["id"]
+def application_pk(data_standard_case):
+    return data_standard_case["case"]["id"]
 
-    return reverse("applications:appeal", kwargs={"case_pk": case_pk})
+
+@pytest.fixture(autouse=True)
+def mock_get_application(requests_mock, application_pk):
+    return requests_mock.get(
+        client._build_absolute_uri(f"/applications/{application_pk}/"),
+        json={},
+    )
+
+
+@pytest.fixture(autouse=True)
+def mock_get_application_invalid_pk(requests_mock, invalid_application_pk):
+    return requests_mock.get(
+        client._build_absolute_uri(f"/applications/{invalid_application_pk}/"),
+        json={},
+        status_code=404,
+    )
+
+
+@pytest.fixture
+def application_url(application_pk):
+    return reverse("applications:application", kwargs={"pk": application_pk})
+
+
+@pytest.fixture
+def appeal_url(application_pk):
+    return reverse("applications:appeal", kwargs={"case_pk": application_pk})
 
 
 def test_appeal_view_feature_flag_off(authorized_client, appeal_url, settings):
     settings.FEATURE_FLAG_APPEALS = False
 
     response = authorized_client.get(appeal_url)
+    assert response.status_code == 404
+
+
+def test_appeal_view_invalid_application_id(authorized_client, invalid_application_pk):
+    url = reverse("applications:appeal", kwargs={"case_pk": invalid_application_pk})
+    response = authorized_client.get(url)
+
     assert response.status_code == 404
 
 
