@@ -7,6 +7,10 @@
 		&::before {
 			border-color: currentColor;
 		}
+
+		&:focus {
+			color: govuk-colour("black")!important;
+		}
 	}
 
 	&::before {
