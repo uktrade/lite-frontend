@@ -1126,13 +1126,10 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
 
 
 @pytest.mark.parametrize(
-    "decision_document, table_present",
+    "decision_document",
     (
-        ({"documents": {"inform_letter": {"hello": "world"}}}, True),
-        (
-            {"documents": {"refusal": {}, "approval": {}, "inform_letter": {"hello": "world"}}},
-            True,
-        ),
+        ({"documents": {"inform_letter": {"hello": "world"}}}),
+        ({"documents": {"refusal": {}, "approval": {}, "inform_letter": {"hello": "world"}}},),
     ),
 )
 def test_decision_document_present(
@@ -1143,7 +1140,6 @@ def test_decision_document_present(
     consolidated_refusal_outcome,
     mock_gov_lu_user,
     decision_document,
-    table_present,
     settings,
 ):
     settings.FEATURE_FLAG_REFUSALS = True
@@ -1160,7 +1156,7 @@ def test_decision_document_present(
 
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find("table", attrs={"name": "decision_document"})
-    assert bool(table) is table_present
+    assert bool(table) is True
 
 
 def test_decision_document_not_present(
