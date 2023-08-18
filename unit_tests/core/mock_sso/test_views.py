@@ -1,9 +1,12 @@
-from django.conf import settings
 from django.urls import reverse
-from django.test import TestCase
+
+from unit_tests.helpers import reload_urlconf
 
 
-def test_mock_authorize(client):
+def test_mock_authorize(settings, client):
+    settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+    reload_urlconf()
+
     url = reverse("mock_sso:authorize")
     redirect_uri = "http://localhost/some-redirect/"
     state = "dummystate"
@@ -21,7 +24,10 @@ def test_mock_authorize(client):
     assert response["Location"] == redirect_uri + f"?code=DUMMYCODE&state={state}"
 
 
-def test_mock_authorize_bad_request(client):
+def test_mock_authorize_bad_request(settings, client):
+    settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+    reload_urlconf()
+
     url = reverse("mock_sso:authorize")
 
     response = client.get(url, {})
@@ -29,7 +35,10 @@ def test_mock_authorize_bad_request(client):
     assert response.status_code == 400
 
 
-def test_mock_token(client):
+def test_mock_token(settings, client):
+    settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+    reload_urlconf()
+
     url = reverse("mock_sso:token")
 
     response = client.post(url)
@@ -38,7 +47,10 @@ def test_mock_token(client):
     assert response.json() == {"access_token": "DUMMYTOKEN", "token_type": "Bearer"}
 
 
-def test_mock_api_user_me(client):
+def test_mock_api_user_me(settings, client):
+    settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+    reload_urlconf()
+
     url = reverse("mock_sso:api_user_me")
 
     response = client.get(url)
