@@ -4,6 +4,8 @@
 {% load static advice_tags %}
 {% load crispy_forms_tags %}
 
+{% block title %} {{ title }} {% endblock %}
+
 {% block body %}
 <div class="govuk-width-container">
     {% if form.has_changed %}

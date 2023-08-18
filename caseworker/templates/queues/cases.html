@@ -5,7 +5,7 @@
 
 {% block back_link %}{% endblock %}
 
-{% block title %}{% if selected_tab == "my_cases" %}{{ queue.name }} - My cases{% elif selected_tab == "open_queries" %}{{ queue.name }} - Open queries{% else %}{{ queue.name }}{% endif %}{% endblock %}
+{% block title %}{% if "All cases" in queue.name and selected_tab == "my_cases" %}View all cases in LITE - My cases{% elif "All cases" in queue.name and selected_tab == "open_queries" %}View all cases in LITE - Open queries{% elif "All cases" in queue.name %}View all cases in LITE{% elif selected_tab == "my_cases" %}{{ queue.name }} - My cases{% elif selected_tab == "open_queries" %}{{ queue.name }} - Open queries{% else %}{{ queue.name }}{% endif %}{% endblock %}
 
 {% block messages %}
 	{{ block.super }}

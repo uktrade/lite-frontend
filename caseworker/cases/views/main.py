@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
@@ -55,6 +56,7 @@ from caseworker.cases.services import (
     get_blocking_flags,
 )
 from caseworker.compliance.services import get_compliance_licences
+from caseworker.cases.services import get_case_basic_details
 from caseworker.core.objects import Tab
 from caseworker.core.services import get_status_properties, get_permissible_statuses
 from caseworker.core.constants import Permission
@@ -66,6 +68,20 @@ from caseworker.users.services import (
 )
 
 logger = getLogger(__name__)
+
+
+class CaseContextBasicMixin:
+    """Most views need a reference to the associated Case details.
+    These are mainly reference code and organisation to format page title.
+    """
+
+    @property
+    def case_id(self):
+        return str(self.request.GET.get("cases"))
+
+    @cached_property
+    def case(self):
+        return get_case_basic_details(self.request, self.case_id)
 
 
 class CaseTabsMixin:
