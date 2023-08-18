@@ -104,9 +104,9 @@
                             Edit recommendation
                         </a>
                     {% endif %}
-                    
+
                     <br><br>
-                    {% if decisions %}
+                    {% if decisions and FEATURE_FLAG_REFUSALS %}
                         {% include "advice/decision_documents.html" with decisions=decisions case=case queue_id=queue_id %}
                     {% endif %}
                     
