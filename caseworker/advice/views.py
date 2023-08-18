@@ -188,7 +188,11 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
+        return {
+            **context,
+            "security_approvals_classified_display": self.security_approvals_classified_display,
+            "title": f"{self.get_form().DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}",
+        }
 
 
 class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -230,8 +234,10 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEIS
         my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = services.unadvised_countries(self.caseworker, self.case) == {}
+        title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
         return {
             **context,
+            "title": title,
             "my_advice": my_advice.values(),
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
@@ -372,6 +378,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
 
     def get_context(self, **kwargs):
         context = {
+            "title": f"Make recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
@@ -401,6 +408,9 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         context["advice_to_countersign"] = advice.values()
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
+        context[
+            "title"
+        ] = f"{self.form_class.DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}"
         return context
 
     def post(self, request, *args, **kwargs):
@@ -582,6 +592,14 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         context["advice_to_consolidate"] = advice_to_consolidate.values()
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
+        title = (
+            f"Review and combine case recommendation - {self.case.reference_code} - {self.case.organisation['name']}"
+        )
+        if self.kwargs.get("advice_type") == "refuse":
+            title = f"Licence refused for case - {self.case.reference_code} - {self.case.organisation['name']}"
+
+        context["title"] = title
+
         return context
 
     def form_valid(self, form):
