@@ -498,6 +498,7 @@ urlpatterns = [
     path("<uuid:pk>/notes/", common.Notes.as_view(), name="notes"),
     path("<uuid:pk>/withdraw/", common.WithdrawApplication.as_view(), name="withdraw"),
     path("<uuid:pk>/surrender/", common.SurrenderApplication.as_view(), name="surrender"),
+    path("<uuid:case_pk>/appeal/", common.AppealApplication.as_view(), name="appeal"),
     # Download generated documents
     path(
         "<uuid:case_pk>/documents/<uuid:document_pk>/download/",
