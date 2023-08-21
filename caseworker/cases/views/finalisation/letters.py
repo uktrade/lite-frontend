@@ -50,7 +50,7 @@ class SelectInformTemplate(BaseLetter):
     letter_type = "Inform letter"
 
     def get_params(self):
-        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
+        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "inform"}
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -71,7 +71,7 @@ class EditLetterText(BaseLetter):
     letter_type = "Inform letter"
 
     def get_params(self):
-        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
+        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "inform"}
 
     def get_initial(self):
         initial = super().get_initial()
@@ -82,6 +82,7 @@ class EditLetterText(BaseLetter):
 
     def form_valid(self, form):
         self.kwargs["tpk"] = self.template_id
+        self.kwargs["decision_key"] = "inform"
         case_id = str(self.kwargs["pk"])
         addressee = self.kwargs.get("addressee", "")
         text = str(form.cleaned_data["text"])
@@ -96,5 +97,13 @@ class EditLetterText(BaseLetter):
         return render(
             self.request,
             "generated-documents/preview.html",
-            {"preview": preview["preview"], "text": text, "addressee": addressee, "kwargs": self.kwargs},
+            {
+                "preview": preview["preview"],
+                "text": text,
+                "addressee": addressee,
+                "kwargs": self.kwargs,
+                "return_url": reverse(
+                    "cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": case_id}
+                ),
+            },
         )
