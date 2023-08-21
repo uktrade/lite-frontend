@@ -25,6 +25,16 @@ def get_denial_reasons(request, convert_to_options=False, group=False):
     return data
 
 
+def group_denial_reasons(denial_reasons):
+    grouped = defaultdict(list)
+    for item in denial_reasons:
+        # skip the ones that are not active anymore
+        if item["deprecated"]:
+            continue
+        grouped[item["id"][0]].append((item["id"], item.get("display_value") or item["id"]))
+    return grouped.items()
+
+
 def get_countries(request, convert_to_options=False, exclude: list = None):
     """
     Returns a list of GOV.UK countries and territories

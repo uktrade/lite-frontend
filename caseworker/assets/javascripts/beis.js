@@ -1,4 +1,5 @@
-import SelectAll, { SELECT_ALL_BUTTON_TEXT } from "core/select-all";
+import SelectAllCheckboxes from "core/select-all-checkboxes";
+import SelectAllButton from "core/select-all-button";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import Headline from "./assessment-form/headline";
 import SelectProducts from "./assessment-form/select-products";
@@ -9,17 +10,26 @@ const initSelectAll = (goods) => {
   if (!goods) {
     return;
   }
-  const selectAllButton = document.createElement("button");
-  selectAllButton.innerText = SELECT_ALL_BUTTON_TEXT;
-  selectAllButton.classList.add(
-    "lite-button--link",
-    "assessment-form__select-all"
-  );
 
   const checkboxes = goods.querySelectorAll("[name=goods]");
-  new SelectAll(selectAllButton, checkboxes).init();
+  const selectAllCheckboxes = new SelectAllCheckboxes(checkboxes);
 
-  return selectAllButton;
+  const button = document.createElement("button");
+  button.classList.add("lite-button--link", "assessment-form__select-all");
+  const selectAllButton = new SelectAllButton(button);
+
+  selectAllCheckboxes.on("change", (isAllSelected) => {
+    selectAllButton.setSelected(isAllSelected);
+  });
+
+  selectAllButton.on("click", (selectAll) => {
+    selectAllCheckboxes.selectAll(selectAll);
+  });
+
+  selectAllButton.init();
+  selectAllCheckboxes.init();
+
+  return button;
 };
 
 const initExpandAll = (goods) => {
@@ -86,7 +96,6 @@ const initAssessmentForm = () => {
   if (!goods) {
     return;
   }
-  checkboxes = goods.querySelectorAll("[name=goods]");
   const products = JSON.parse(
     document.querySelector("#unassessed-trigger-list-goods-json").textContent
   );

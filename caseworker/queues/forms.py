@@ -79,7 +79,6 @@ def edit_queue_form(request, queue_id):
 
 
 class EnforcementXMLImportForm(forms.Form):
-
     file = forms.FileField(label="Upload a file", widget=forms.FileInput(attrs={"accept": "text/xml"}))
 
     # the CreateView expects `instance` to be passed in here
@@ -101,7 +100,8 @@ class EnforcementXMLImportForm(forms.Form):
 
 class CaseAssignmentsCaseOfficerForm(BaseForm):
     class Layout:
-        TITLE = "Who do you want to allocate as Licensing Unit case officer ?"
+        DOCUMENT_TITLE = "Allocate Licensing Unit case officer"
+        TITLE = "Who do you want to allocate as Licensing Unit case officer?"
         SUBTITLE = "Manages the case until the application outcome (the exporter will see this name until the case officer is changed) – typing into the text input will automatically filter results on the page"  # noqa
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
@@ -141,7 +141,6 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
         ]
 
     def get_layout_fields(self):
-
         return (
             HTML(render_to_string("forms/filter_radios.html")),
             "users",
@@ -150,7 +149,8 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
 
 class SelectAllocateRole(BaseForm):
     class Layout:
-        TITLE = "Which role do you want to allocate ?"
+        DOCUMENT_TITLE = "Allocate case adviser or Licensing Unit case officer"
+        TITLE = "Which role do you want to allocate?"
         SUBTITLE = "Select role below"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
@@ -179,6 +179,7 @@ class SelectAllocateRole(BaseForm):
 
 class CaseAssignmentUsersForm(BaseForm):
     class Layout:
+        DOCUMENT_TITLE = "Allocate case adviser"
         TITLE = "Who do you want to allocate as case adviser?"
         SUBTITLE = "Reviews or gives advice on the case while it is with your team"
         SUBMIT_BUTTON_TEXT = "Save"
@@ -219,7 +220,6 @@ class CaseAssignmentUsersForm(BaseForm):
         ]
 
     def get_layout_fields(self):
-
         return (
             HTML(render_to_string("forms/filter_checkboxes.html")),
             "users",
@@ -229,6 +229,7 @@ class CaseAssignmentUsersForm(BaseForm):
 
 class CaseAssignmentQueueForm(BaseForm):
     class Layout:
+        DOCUMENT_TITLE = "Select team queue to add the case to"
         TITLE = "Select a team queue to add the case to"
         SUBMIT_BUTTON_TEXT = "Save"
 
@@ -253,7 +254,6 @@ class CaseAssignmentQueueForm(BaseForm):
         return [(queue_id, queue_name) for queue_id, queue_name in queues["queues"]]
 
     def get_layout_fields(self):
-
         return (
             HTML(render_to_string("forms/filter_radios.html")),
             "queue",

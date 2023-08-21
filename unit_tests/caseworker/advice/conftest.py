@@ -16,6 +16,7 @@ def advice_base_fields():
         "denial_reasons": [],
         "countersigned_by": None,
         "countersign_comments": "",
+        "is_refusal_note": False,
     }
 
 

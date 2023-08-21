@@ -102,7 +102,7 @@ def material_summary(good_id):
         ),
         (
             "product-document",
-            f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good_id}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
+            f'<a class="govuk-link govuk-link--no-visited-state" href="/product-list/{good_id}/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
             "Upload a document that shows what your product is designed to do",
         ),
         (

@@ -93,7 +93,7 @@ def test_technology_product_details_context(
         ("is-document-sensitive", "No", "Is the document rated above Official-sensitive?"),
         (
             "product-document",
-            '<a class="govuk-link govuk-link--no-visited-state" href="/goods/8b730c06-ab4e-401c-aeb0-32b3c92e912c/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
+            '<a class="govuk-link govuk-link--no-visited-state" href="/product-list/8b730c06-ab4e-401c-aeb0-32b3c92e912c/documents/6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335/" target="_blank">data_sheet.pdf</a>',
             "Upload a document that shows what your product is designed to do",
         ),
         ("product-document-description", "product data sheet", "Description (optional)"),

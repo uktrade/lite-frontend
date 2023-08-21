@@ -10,6 +10,7 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.wizard.views import BaseSessionWizardView
 
+from caseworker.cases.views.main import CaseContextBasicMixin
 from caseworker.queues import forms
 from caseworker.queues.services import (
     put_queue_case_assignments,
@@ -20,8 +21,7 @@ from caseworker.cases.services import update_case_officer_on_cases
 from caseworker.queues.forms import SelectAllocateRole
 
 
-class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
-
+class CaseAssignmentAllocateRole(LoginRequiredMixin, CaseContextBasicMixin, FormView):
     template_name = "core/form.html"
     form_class = SelectAllocateRole
 
@@ -39,7 +39,7 @@ class CaseAssignmentAllocateRole(LoginRequiredMixin, FormView):
     def get_context_data(self, *args, **kwargs):
         context = {
             "back_link_url": reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]}),
-            "title": self.form_class.Layout.TITLE,
+            "title": f"{self.form_class.Layout.DOCUMENT_TITLE} - {self.case['reference_code']} - {self.case['organisation']['name']}",
         }
         return super().get_context_data(*args, **context, **kwargs)
 
@@ -67,7 +67,7 @@ class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
         )
 
 
-class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormView):
+class CaseAssignmentsCaseOfficer(LoginRequiredMixin, CaseContextBasicMixin, SuccessMessageMixin, FormView):
     template_name = "core/form.html"
     form_class = forms.CaseAssignmentsCaseOfficerForm
     success_message = "Licensing Unit case officer allocated successfully"
@@ -101,7 +101,7 @@ class CaseAssignmentsCaseOfficer(LoginRequiredMixin, SuccessMessageMixin, FormVi
         context = {
             "back_link_url": reverse("queues:case_assignment_select_role", kwargs={"pk": self.kwargs["pk"]})
             + f"?{self.request.GET.urlencode()}",
-            "title": self.form_class.Layout.TITLE,
+            "title": f"{self.form_class.Layout.DOCUMENT_TITLE} - {self.case['reference_code']} - {self.case['organisation']['name']}",
         }
         return super().get_context_data(*args, **context, **kwargs)
 
@@ -113,6 +113,7 @@ class CaseAssignmentsCaseAssigneeSteps:
 
 class CaseAssignmentsCaseAssignee(
     LoginRequiredMixin,
+    CaseContextBasicMixin,
     BaseSessionWizardView,
 ):
     form_list = [
@@ -159,7 +160,9 @@ class CaseAssignmentsCaseAssignee(
         context = super().get_context_data(form, **kwargs)
 
         context["back_link_url"] = self.get_back_link_url()
-        context["title"] = form.Layout.TITLE
+        context[
+            "title"
+        ] = f"{form.Layout.DOCUMENT_TITLE} - {self.case['reference_code']} - {self.case['organisation']['name']}"
 
         return context
 

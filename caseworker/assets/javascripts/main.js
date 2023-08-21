@@ -8,7 +8,6 @@ import initCookierBanner from "../../../core/assets/javascripts/cookies/banner.j
 
 // core
 // TODO: can't rewrite these as ES6 imports yet as they are used by other templates
-import "../../../core/assets/javascripts/select-buttons.js";
 import "./checkboxes.js";
 import "./snackbar-hide.js";
 
@@ -22,6 +21,7 @@ import initMentionUsers, { initCaseNotes } from "./case-notes";
 import { initExpanders } from "./list-expander";
 import { initCustomisers } from "./customiser";
 import { initRadioTextArea } from "./radio-populate-textarea.js";
+import initSelectAllTables from "./select-all-tables.js";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
@@ -43,3 +43,4 @@ initMentionUsers();
 initExpanders();
 initCustomisers();
 initRadioTextArea();
+initSelectAllTables();

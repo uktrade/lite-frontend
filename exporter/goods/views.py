@@ -63,6 +63,7 @@ from exporter.goods.helpers import (
     COMPONENT_SELECTION_TO_DETAIL_FIELD_MAP,
     is_firearms_act_status_changed,
     return_to_good_summary,
+    get_category_display_string,
 )
 from exporter.goods.services import (
     delete_good,
@@ -82,7 +83,7 @@ from exporter.goods.services import (
     post_good_documents,
 )
 from lite_content.lite_exporter_frontend import goods
-from lite_content.lite_exporter_frontend.goods import AttachDocumentForm
+from lite_content.lite_exporter_frontend.goods import AttachDocumentForm, CreateGoodForm
 from lite_forms.components import BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
@@ -252,14 +253,21 @@ class GoodSoftwareTechnologyView(LoginRequiredMixin, GoodCommonMixin, FormView):
     def good_details(self):
         return get_good_details(self.request, self.object_id)[0]
 
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
+    def get_category_type(self):
         category_type = self.good_details.get("item_category")
 
         if category_type == "group2_firearms":
             category_type = self.good_details["firearm_details"]["type"]["key"]
 
-        kwargs["product_type"] = category_type
+        return category_type
+
+    def get_form_title(self):
+        return CreateGoodForm.TechnologySoftware.TITLE + get_category_display_string(self.get_category_type())
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        kwargs["product_type"] = self.get_category_type()
 
         return kwargs
 
@@ -269,6 +277,11 @@ class GoodSoftwareTechnologyView(LoginRequiredMixin, GoodCommonMixin, FormView):
         return {
             "software_or_technology_details": data["software_or_technology_details"],
         }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.get_form_title()
+        return context
 
     def form_valid(self, form):
         edit_good_details(self.request, self.object_id, form.cleaned_data)
@@ -297,6 +310,11 @@ class GoodMilitaryUseView(LoginRequiredMixin, GoodCommonMixin, FormView):
             "is_military_use": data["is_military_use"],
             "modified_military_use_details": data["modified_military_use_details"],
         }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
 
     def form_valid(self, form):
         edit_good_firearm_details(self.request, self.object_id, form.cleaned_data)
@@ -346,6 +364,11 @@ class GoodComponentView(LoginRequiredMixin, GoodCommonMixin, FormView):
 
         return {"is_component": data.get("is_component")}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
+
     def form_valid(self, form):
         edit_good_details(self.request, self.object_id, form.cleaned_data)
 
@@ -373,6 +396,11 @@ class GoodInformationSecurityView(LoginRequiredMixin, GoodCommonMixin, FormView)
             "uses_information_security": data["uses_information_security"],
             "information_security_details": data["information_security_details"],
         }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
 
     def form_valid(self, form):
         edit_good_details(self.request, self.object_id, form.cleaned_data)
@@ -481,6 +509,11 @@ class EditFirearmProductTypeView(LoginRequiredMixin, GoodCommonMixin, FormView):
 
         return {"type": data["type"]["key"]}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
+
     def form_valid(self, form):
         edit_good_firearm_details(self.request, self.object_id, form.cleaned_data)
 
@@ -514,6 +547,11 @@ class EditYearOfManufactureView(LoginRequiredMixin, GoodCommonMixin, FormView):
             "year_of_manufacture": data["year_of_manufacture"],
         }
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
+
     def form_valid(self, form):
         edit_good_firearm_details(self.request, self.object_id, form.cleaned_data)
 
@@ -546,6 +584,11 @@ class EditFirearmReplicaView(LoginRequiredMixin, GoodCommonMixin, FormView):
             "replica_description": data["replica_description"],
         }
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
+
     def form_valid(self, form):
         edit_good_firearm_details(
             self.request, self.object_id, {"type": self.firearm_details["type"]["key"], **form.cleaned_data}
@@ -575,6 +618,11 @@ class EditCalibreView(LoginRequiredMixin, GoodCommonMixin, FormView):
             "calibre": data["calibre"],
         }
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
+
     def form_valid(self, form):
         edit_good_firearm_details(self.request, self.object_id, form.cleaned_data)
 
@@ -602,7 +650,6 @@ class EditFirearmActDetailsView(LoginRequiredMixin, GoodCommonMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["is_rfd"] = has_valid_rfd_certificate(self.application)
-
         return kwargs
 
     def get_initial(self):
@@ -614,6 +661,15 @@ class EditFirearmActDetailsView(LoginRequiredMixin, GoodCommonMixin, FormView):
             ],
             "firearms_act_section": data["firearms_act_section"],
         }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = (
+            self.form_class.Layout.RFD_FORM_TITLE
+            if has_valid_rfd_certificate(self.application)
+            else self.form_class.Layout.NON_RFD_FORM_TITLE
+        )
+        return context
 
     def form_valid(self, form):
         if "firearms_act_section" not in form.cleaned_data:
@@ -790,6 +846,11 @@ class EditNumberOfItemsView(LoginRequiredMixin, GoodCommonMixin, FormView):
 
         return {"number_of_items": data["number_of_items"]}
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
+
     def form_valid(self, form):
         edit_good_firearm_details(self.request, self.object_id, form.cleaned_data)
 
@@ -819,6 +880,11 @@ class EditIdentificationMarkingsView(LoginRequiredMixin, GoodCommonMixin, FormVi
             "serial_numbers_available": data["serial_numbers_available"],
             "no_identification_markings_details": data["no_identification_markings_details"],
         }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
 
     def form_valid(self, form):
         edit_good_firearm_details(self.request, self.object_id, form.cleaned_data)
@@ -857,6 +923,11 @@ class EditSerialNumbersView(LoginRequiredMixin, GoodCommonMixin, FormView):
         kwargs["number_of_items"] = self.firearm_details["number_of_items"]
 
         return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
 
     def form_valid(self, form):
         edit_good_firearm_details(
@@ -1108,6 +1179,7 @@ class UpdateSerialNumbersView(LoginRequiredMixin, FormView):
 
         ctx["back_link_url"] = self.get_success_url()
         ctx["title"] = self.get_form().title
+        ctx["form_title"] = self.get_form().title
 
         return ctx
 

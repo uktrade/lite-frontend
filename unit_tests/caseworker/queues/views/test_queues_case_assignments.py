@@ -26,6 +26,7 @@ def setup(
     authorized_client,
     queue_pk,
     mock_queue,
+    mock_get_case_basic,
     mock_countries,
     mock_queues_list,
     mock_control_list_entries,
@@ -33,6 +34,19 @@ def setup(
     mock_empty_bookmarks,
 ):
     yield
+
+
+@pytest.fixture
+def case_details_basic(data_standard_case):
+    case_id = data_standard_case["case"]["id"]
+    reference_code = data_standard_case["case"]["reference_code"]
+    organisation_name = data_standard_case["case"]["data"]["organisation"]["name"]
+
+    return {
+        "id": case_id,
+        "reference_code": reference_code,
+        "organisation_name": organisation_name,
+    }
 
 
 @pytest.fixture
@@ -55,11 +69,9 @@ def mock_cases_search_head(requests_mock):
     yield requests_mock.head(url=re.compile(f"{url}.*"), headers={"resource-count": "350"})
 
 
-def test_case_assignment_case_office_no_user_selected(authorized_client, mock_gov_users):
-    url = (
-        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
-        + f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}"
-    )
+def test_case_assignment_case_office_no_user_selected(authorized_client, data_standard_case, mock_gov_users):
+    case_id = data_standard_case["case"]["id"]
+    url = reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk}) + f"?cases={case_id}"
     data = {}
     response = authorized_client.post(url, data)
 
@@ -114,11 +126,17 @@ def mock_put_case_case_officer(requests_mock):
     return requests_mock.put(url=case_officer_put_url, json={})
 
 
-def test_case_assignment_case_officer(authorized_client, requests_mock, mock_gov_users, mock_put_case_case_officer):
-    cases_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
-    url = (
-        reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk})
-        + f"?cases={cases_ids[0]}&cases={cases_ids[1]}"
+def test_case_assignment_case_officer(
+    authorized_client, requests_mock, case_details_basic, mock_gov_users, mock_put_case_case_officer
+):
+    case_id = case_details_basic["id"]
+    url = reverse("queues:case_assignments_case_officer", kwargs={"pk": queue_pk}) + f"?cases={case_id}"
+
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (
+        soup.title.string.strip()
+        == f"Allocate Licensing Unit case officer - {case_details_basic['reference_code']} - {case_details_basic['organisation_name']} - LITE Internal"
     )
 
     data = {"users": gov_user_id}
@@ -127,7 +145,7 @@ def test_case_assignment_case_officer(authorized_client, requests_mock, mock_gov
     assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
     assert mock_put_case_case_officer.last_request.json() == {
         "gov_user_pk": gov_user_id,
-        "case_ids": cases_ids,
+        "case_ids": [case_id],
     }
 
 
@@ -164,14 +182,20 @@ def test_case_assignment_case_officer_with_invalid_return_to(authorized_client):
         ("LU_CASE_OFFICER", "case_assignments_case_officer"),
     ),
 )
-def test_case_assignment_select_role(authorized_client, mock_gov_user, user_role_assigned, expected_url_name):
-    url_params = (
-        f"?cases={str(uuid.uuid4())}&cases={str(uuid.uuid4())}&return_to={parse.quote(example_return_to_url, safe='')}"
-    )
+def test_case_assignment_select_role(
+    authorized_client, case_details_basic, mock_gov_user, user_role_assigned, expected_url_name
+):
+    case_id = case_details_basic["id"]
+    url_params = f"?cases={case_id}&return_to={parse.quote(example_return_to_url, safe='')}"
 
     url = reverse("queues:case_assignment_select_role", kwargs={"pk": queue_pk}) + url_params
     response = authorized_client.get(url)
     assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (
+        soup.title.string.strip()
+        == f"Allocate case adviser or Licensing Unit case officer - {case_details_basic['reference_code']} - {case_details_basic['organisation_name']} - LITE Internal"
+    )
 
     response = authorized_client.post(url, {"role": user_role_assigned})
     assert response.status_code == 302
@@ -187,8 +211,8 @@ def test_case_assignments_add_user_system_queue(
     mock_queue,
     mock_gov_users,
 ):
-
     case = data_standard_case
+    org_name = case["case"]["data"]["organisation"]["name"]
     url_base = reverse(
         "queues:case_assignments_assign_user",
         kwargs={
@@ -205,6 +229,10 @@ def test_case_assignments_add_user_system_queue(
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Who do you want to allocate as case adviser?" in html.find("h1").get_text()
+    assert (
+        html.title.string.strip()
+        == f"Allocate case adviser - {case['case']['reference_code']} - {org_name} - LITE Internal"
+    )
 
 
 @pytest.fixture
@@ -259,6 +287,11 @@ def test_case_assignments_add_user_system_queue_submit_success(
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Select a team queue to add the case to" in html.find("h1").get_text()
+    org_name = data_standard_case["case"]["data"]["organisation"]["name"]
+    assert (
+        html.title.string.strip()
+        == f"Select team queue to add the case to - {data_standard_case['case']['reference_code']} - {org_name} - LITE Internal"
+    )
 
     data = {
         "queue": data_queue["id"],
@@ -359,7 +392,6 @@ def test_case_assignments_add_user_team_queue(
     mock_team_queue,
     mock_gov_users,
 ):
-
     case = data_standard_case
     url_base = reverse("queues:case_assignments_assign_user", kwargs={"pk": data_queue["id"]})
     url = f"{url_base}?cases={case['case']['id']}"
@@ -372,6 +404,11 @@ def test_case_assignments_add_user_team_queue(
 
     html = BeautifulSoup(response.content, "html.parser")
     assert "Who do you want to allocate as case adviser?" in html.find("h1").get_text()
+    org_name = data_standard_case["case"]["data"]["organisation"]["name"]
+    assert (
+        html.title.string.strip()
+        == f"Allocate case adviser - {case['case']['reference_code']} - {org_name} - LITE Internal"
+    )
 
 
 def test_case_assignments_add_user_team_queue_submit_success(
@@ -436,7 +473,6 @@ def test_case_assignments_add_user_team_queue_submit_validation_error(
     mock_standard_case_activity_filters,
     post_to_step_user_assignment,
 ):
-
     data = {
         "users": [],
         "note": "foobar",

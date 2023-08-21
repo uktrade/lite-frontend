@@ -20,6 +20,12 @@ def get_case(request, pk):
     return Case(parsed["case"])
 
 
+def get_case_basic_details(request, pk):
+    response = client.get(request, f"/cases/{pk}/basic")
+    response.raise_for_status()
+    return response.json()
+
+
 def patch_case(request, pk, json):
     response = client.patch(request, f"/cases/{pk}", json)
     return response.json(), response.status_code
@@ -313,6 +319,11 @@ def get_generated_document_preview(request, pk, template, text, addressee):
 def get_generated_document(request, pk, dpk):
     data = client.get(request, f"/cases/{pk}/generated-documents/{dpk}/")
     return data.json(), data.status_code
+
+
+def send_generated_document(request, pk, document_pk):
+    response = client.post(request, f"/cases/{pk}/generated-documents/{document_pk}/send/")
+    return response
 
 
 def get_destination(request, pk):

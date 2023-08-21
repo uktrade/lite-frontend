@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "core.cookies",
     "core.goods",
     "django_chunk_upload_handlers",
+    "rules.apps.AutodiscoverRulesConfig",
 ]
 
 MIDDLEWARE = [
