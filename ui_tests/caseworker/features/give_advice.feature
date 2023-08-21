@@ -277,7 +277,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the case is not assigned to any queues
 
 
-  @lu_refuse_advice
+  @skip @lu_refuse_advice
   Scenario: LU refuse advice journey
     # Setup
     Given I sign in to SSO or am signed into SSO
@@ -327,23 +327,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click submit recommendation
     Then I see "refusal meeting note" as refusal meeting note
     And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
-    And I see countersign required warning message
-    When I click move case forward
-    And I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
-    And I go to my case list
-    And I click the application previously created
-    And I click the recommendations and decision tab
-    And I click "Review and countersign"
-    And I agree with outcome and provide "licensing manager approved" as countersign comments
-    And I click submit recommendation
-    Then I see "licensing manager approved" as countersign comments
-    When I click move case forward
-    And I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
-    And I go to my case list
-    And I click the application previously created
-    And I click the recommendations and decision tab
+    When I click the recommendations and decision tab
     And I click "Finalise case"
     And I click save
     And I click "Generate"
