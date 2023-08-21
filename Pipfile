@@ -33,6 +33,7 @@ python-dotenv = "*"
 ipdb = "*"
 pytest-mock = "*"
 django-requests-debug-toolbar = "*"
+moto = {version = "*", extras = ["s3"]}
 
 [packages]
 beautifulsoup4 = "~=4.8.2"
