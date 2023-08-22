@@ -197,5 +197,7 @@ class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):
         )
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
-        else:
-            return redirect(reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk}))
+        if request.POST.get("return_url"):
+            return redirect(request.POST["return_url"])
+
+        return redirect(reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk}))
