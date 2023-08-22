@@ -47,6 +47,7 @@ from exporter.applications.services import (
     copy_application,
     post_exhibition,
     post_appeal,
+    post_appeal_document,
 )
 from exporter.organisation.members.services import get_user
 
@@ -60,7 +61,7 @@ from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
-from core.helpers import convert_dict_to_query_params
+from core.helpers import convert_dict_to_query_params, get_document_data
 
 
 class ApplicationsList(LoginRequiredMixin, TemplateView):
@@ -430,11 +431,28 @@ class AppealApplication(LoginRequiredMixin, FormView):
     def post_appeal(self, request, application_pk, data):
         return post_appeal(request, application_pk, data)
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error creating appeal document",
+        "Unexpected error creating appeal document",
+    )
+    def post_appeal_document(self, request, appeal_pk, data):
+        return post_appeal_document(request, appeal_pk, data)
+
     def form_valid(self, form):
-        self.post_appeal(
+        cleaned_data = form.cleaned_data.copy()
+        documents = cleaned_data.pop("documents")
+
+        appeal, _ = self.post_appeal(
             self.request,
             self.application["id"],
-            form.cleaned_data,
+            cleaned_data,
         )
+        for document in documents:
+            self.post_appeal_document(
+                self.request,
+                appeal["id"],
+                get_document_data(document),
+            )
 
         return super().form_valid(form)

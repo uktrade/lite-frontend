@@ -1,8 +1,11 @@
 from django import forms
 
-from crispy_forms_gds.layout import HTML
+from crispy_forms_gds.layout import Field, HTML
 
-from core.common.forms import BaseForm
+from core.common.forms import (
+    BaseForm,
+    MultipleFileField,
+)
 
 
 class AppealForm(BaseForm):
@@ -10,7 +13,10 @@ class AppealForm(BaseForm):
         TITLE = "Appeal refusal decision"
         SUBMIT_BUTTON_TEXT = "Submit appeal request"
 
-    grounds_for_appeal = forms.CharField(widget=forms.Textarea)
+    grounds_for_appeal = forms.CharField(widget=forms.Textarea())
+    documents = MultipleFileField(
+        label="Attach any supporting documents",
+    )
 
     def __init__(self, *args, cancel_url, **kwargs):
         self.cancel_url = cancel_url
@@ -24,6 +30,10 @@ class AppealForm(BaseForm):
             ),
             HTML.p("Examples of these would be contractual losses, economic concerns, loss of staff or site closures."),
             "grounds_for_appeal",
+            Field(
+                "documents",
+                css_class="govuk-file-upload",
+            ),
         ]
 
     def get_layout_actions(self):
