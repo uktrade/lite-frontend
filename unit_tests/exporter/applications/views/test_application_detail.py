@@ -19,3 +19,21 @@ def test_edit_button(authorized_client, data_standard_case, mock_application_get
         assert not soup.find(id="button-edit-application")
     else:
         assert soup.find(id="button-edit-application")
+
+
+def test_appeal_refusal_decision_button(authorized_client, data_standard_case, mock_refused_application_get):
+    pk = data_standard_case["case"]["id"]
+
+    application_url = reverse("applications:application", kwargs={"pk": pk})
+    response = authorized_client.get(application_url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="button-appeal-refusal")
+
+
+def test_appeal_button_not_shown_for_successful_application(authorized_client, data_standard_case, mock_application_get):
+    pk = data_standard_case["case"]["id"]
+
+    application_url = reverse("applications:application", kwargs={"pk": pk})
+    response = authorized_client.get(application_url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert not soup.find(id="button-appeal-refusal")

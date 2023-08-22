@@ -44,6 +44,11 @@
 							{% lcs 'applications.ApplicationSummaryPage.Buttons.SURRENDER_APPLICATION_BUTTON' %}
 						</a>
 					{% endif %}
+					{% if not application.licence and application.appeal_deadline %}
+						<a href="{% url 'applications:appeal' application.id %}" id="button-appeal-refusal" class="govuk-button govuk-button--secondary">
+							Appeal refusal decision
+						</a>
+					{% endif %}
 				{% endif %}
 			</div>
 		{% endif %}
