@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b05f25fd7fed1f89fa51465b990e7533638a182a6414bcde2def31040af10d37"
+            "sha256": "256d9cac5f13d5837ccc2264ee38d991f8b06879d06c6b825a5a1040d76614cb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1765,11 +1765,11 @@
                 "s3"
             ],
             "hashes": [
-                "sha256:545afeb4df94dfa730e2d7e87366dc26b4a33c2891f462cbb049f040c80ed1ec",
-                "sha256:7d3bd748a34641715ba469c761f72fb8ec18f349987c98f5a0f9be85a07a9911"
+                "sha256:272236d312457b324c645741ee589924fd61a96b84680dc2e607f8663c563551",
+                "sha256:3fbcf91090692c30117d275fb34b48a075a6f65d4712ba6c4d004ffab976db46"
             ],
             "index": "pypi",
-            "version": "==4.1.14"
+            "version": "==4.1.15"
         },
         "mypy-extensions": {
             "hashes": [
@@ -2346,6 +2346,14 @@
             "markers": "python_version < '3.11'",
             "version": "==2.0.1"
         },
+        "tqdm": {
+            "hashes": [
+                "sha256:d302b3c5b53d47bce91fea46679d9c3c6508cf6332229aa1e7d8653723793386",
+                "sha256:d88e651f9db8d8551a62556d3cff9e3034274ca5d66e93197cf2490e2dcb69c7"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==4.66.1"
+        },
         "traitlets": {
             "hashes": [
                 "sha256:9e6ec080259b9a5940c797d58b613b5e31441c2257b87c2e795c5228ae80d2d8",
@@ -2446,11 +2454,11 @@
         },
         "webdriver-manager": {
             "hashes": [
-                "sha256:1dfc29a786abb97ba28076d4766d931064eeeac71a9685a3e8d46f5d363fcbe3",
-                "sha256:cd1f49ebb325a98b4dc3c41056f5b645e82fff3f83e346607844ec0bdf561c0b"
+                "sha256:7d3aa8d67bd6c92a5d25f4abd75eea2c6dd24ea6617bff986f502280903a0e2b",
+                "sha256:ee788d389b8f45222a8a62f6f39b579360a1f87be46dad6da89918354af3ce73"
             ],
             "index": "pypi",
-            "version": "==3.9.1"
+            "version": "==3.8.6"
         },
         "werkzeug": {
             "hashes": [
