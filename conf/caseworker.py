@@ -23,7 +23,6 @@ INSTALLED_APPS += [
     "caseworker.teams",
     "caseworker.cases",
     "caseworker.activities",
-    "rules.apps.AutodiscoverRulesConfig",
 ]
 
 MIDDLEWARE += [
