@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load rules %}
+
 {% block back_link %}
 	{% if summary_page %}
 		<a href="{% url 'applications:task_list' case_id %}" id="back-link" class="govuk-back-link">
@@ -44,7 +46,8 @@
 							{% lcs 'applications.ApplicationSummaryPage.Buttons.SURRENDER_APPLICATION_BUTTON' %}
 						</a>
 					{% endif %}
-					{% if not application.licence and application.appeal_deadline %}
+					{% test_rule 'can_user_appeal_case' request as can_user_appeal_case %}
+					{% if can_user_appeal_case and not application.licence and application.appeal_deadline %}
 						<a href="{% url 'applications:appeal' application.id %}" id="button-appeal-refusal" class="govuk-button govuk-button--secondary">
 							Appeal refusal decision
 						</a>
