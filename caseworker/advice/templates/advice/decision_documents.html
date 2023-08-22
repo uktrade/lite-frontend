@@ -15,7 +15,7 @@
 	  <tr class="govuk-table__row" id="decision-{{ decision }}">
 	    {% if data.document %}
           <td class="govuk-table__cell">
-            <a class="govuk-link" href="{% url 'cases:document' queue_id case.id data.document.id %}">{{ data.value }}</a>
+            <a class="govuk-link" href="{% url 'cases:generate_document_preview_view' queue_id case.id decision data.document.id %}">{{ data.value }}</a>
           </td>
 		  <td class="govuk-table__cell">
 			<div id="status-{{ decision }}" data-status="done" class="govuk-tag govuk-tag--blue">READY TO SEND</div>
