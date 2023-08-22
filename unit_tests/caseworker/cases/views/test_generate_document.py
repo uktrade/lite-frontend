@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import pytest
 
 from django.urls import reverse
@@ -34,6 +35,26 @@ def send_document_url(data_standard_case, data_generated_document_id):
 @pytest.fixture
 def mock_send_generated_document(requests_mock, send_document_url, mock_gov_user):
     return requests_mock.post(url=send_document_url, json={"notification_sent": False})
+
+
+@pytest.fixture
+def generated_document_create_url(data_standard_case):
+    case_id = data_standard_case["case"]["id"]
+    return client._build_absolute_uri(f"/cases/{case_id}/generated-documents/")
+
+
+@pytest.fixture
+def finalise_document_create_url(data_standard_case, data_generated_document_id, queue_pk):
+    case_id = data_standard_case["case"]["id"]
+    return reverse(
+        "cases:finalise_document_create",
+        kwargs={
+            "queue_pk": queue_pk,
+            "pk": data_standard_case["case"]["id"],
+            "tpk": data_generated_document_id,
+            "decision_key": "inform",
+        },
+    )
 
 
 def test_send_existing_document(
@@ -94,3 +115,56 @@ def test_send_existing_document_ok(
         == f"/cases/{data_standard_case['case']['id']}/generated-documents/{data_generated_document_id}/send/"
     )
     assert mock_send_generated_document.last_request.json() == {}
+
+
+def test_finalise_document_create_return_url(
+    authorized_client,
+    data_standard_case,
+    queue_pk,
+    generated_document_create_url,
+    finalise_document_create_url,
+    send_document_url,
+    requests_mock,
+):
+
+    mock_send_generated_document_create = requests_mock.post(
+        url=generated_document_create_url, json={}, status_code=201
+    )
+
+    response = authorized_client.post(finalise_document_create_url, data={"return_url": send_document_url})
+    assert response.status_code == 302
+    assert response.url == send_document_url
+
+
+def test_finalise_document_create_error(
+    authorized_client,
+    generated_document_create_url,
+    finalise_document_create_url,
+    requests_mock,
+):
+    mock_send_generated_document_create = requests_mock.post(
+        url=generated_document_create_url, json={}, status_code=200
+    )
+
+    response = authorized_client.post(finalise_document_create_url)
+    assert response.status_code == 200
+    assert response.context[0]["description"] == "Document generation is not available at this time"
+
+
+def test_finalise_document_create(
+    authorized_client,
+    generated_document_create_url,
+    finalise_document_create_url,
+    queue_pk,
+    requests_mock,
+    data_standard_case,
+):
+    mock_send_generated_document_create = requests_mock.post(
+        url=generated_document_create_url, json={}, status_code=201
+    )
+
+    pk = data_standard_case["case"]["id"]
+    response = authorized_client.post(finalise_document_create_url)
+    redirect_url = reverse("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk})
+    assert response.status_code == 302
+    assert response.url == redirect_url
