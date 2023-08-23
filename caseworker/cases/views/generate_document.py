@@ -186,6 +186,7 @@ class SendExistingDocument(LoginRequiredMixin, View):
             )
         return redirect(reverse("queues:cases", kwargs={"queue_pk": queue_pk}))
 
+
 class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):
     def post(self, request, queue_pk, pk, decision_key, tpk):
         text = request.POST.get(TEXT)

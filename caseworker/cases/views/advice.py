@@ -298,10 +298,8 @@ class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):
         decisions, _ = get_final_decision_documents(request, self.object_pk)
 
         # Remove the inform letter from finalisation documents
-        import pdb
-        pdb.set_trace()
-        
-        decisions = {key:value for (key, value) in decisions["documents"].items() if key!='inform'}
+
+        decisions = {key: value for (key, value) in decisions["documents"].items() if key != "inform"}
         can_submit = all([decision.get("document") for decision in decisions.values()])
         self.context = {
             "case": case,
