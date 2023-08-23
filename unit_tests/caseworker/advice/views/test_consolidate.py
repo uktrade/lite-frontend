@@ -1127,10 +1127,10 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
 
 @pytest.mark.parametrize(
     "decision_document",
-    (
-        ({"documents": {"inform_letter": {"hello": "world"}}}),
-        ({"documents": {"refusal": {}, "approval": {}, "inform_letter": {"hello": "world"}}},),
-    ),
+    [
+        {"documents": {"inform": {"value": "Inform"}}},
+        {"documents": {"refuse": {"value": "Refuse"}, "inform": {"value": "Inform"}}},
+    ],
 )
 def test_decision_document_present(
     requests_mock,
@@ -1152,7 +1152,7 @@ def test_decision_document_present(
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
-    assert response.context["decisions"] == {"inform_letter": {"value": "Inform letter"}}
+    assert response.context["decisions"] == {"inform": {"value": "Inform"}}
 
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find("table", attrs={"name": "decision_document"})

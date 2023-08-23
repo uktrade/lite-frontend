@@ -82,6 +82,7 @@ class EditLetterText(BaseLetter):
 
     def form_valid(self, form):
         self.kwargs["tpk"] = self.template_id
+        self.kwargs["decision_key"] = "inform"
         case_id = str(self.kwargs["pk"])
         addressee = self.kwargs.get("addressee", "")
         text = str(form.cleaned_data["text"])
@@ -96,5 +97,13 @@ class EditLetterText(BaseLetter):
         return render(
             self.request,
             "generated-documents/preview.html",
-            {"preview": preview["preview"], "text": text, "addressee": addressee, "kwargs": self.kwargs},
+            {
+                "preview": preview["preview"],
+                "text": text,
+                "addressee": addressee,
+                "kwargs": self.kwargs,
+                "return_url": reverse(
+                    "cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": case_id}
+                ),
+            },
         )
