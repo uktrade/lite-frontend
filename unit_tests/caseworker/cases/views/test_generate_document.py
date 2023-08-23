@@ -194,7 +194,7 @@ def test_finalise_documents(
     pk = data_standard_case["case"]["id"]
 
     mock_send_generated_document_create = requests_mock.get(
-        url=f" /cases/{pk}/final-advice-documents/", json=document_data
+        url=f"/cases/{pk}/final-advice-documents/", json=document_data
     )
 
     finalisation_document_url = reverse("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk})
