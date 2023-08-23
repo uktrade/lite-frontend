@@ -195,9 +195,7 @@ class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):
             str(pk),
             {"template": str(tpk), TEXT: text, "visible_to_exporter": False, "advice_type": decision_key},
         )
-        import pdb
 
-        pdb.set_trace()
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
         if request.POST.get("return_url"):
