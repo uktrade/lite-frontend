@@ -390,7 +390,7 @@ class AppealApplication(LoginRequiredMixin, FormView):
         except HTTPError:
             raise Http404()
 
-        if not rules.test_rule("can_user_appeal_case", request):
+        if not rules.test_rule("can_user_appeal_case", request, self.application):
             raise Http404()
 
         return super().dispatch(request, **kwargs)
