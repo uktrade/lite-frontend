@@ -18,13 +18,19 @@
             <a class="govuk-link" href="{% url 'cases:document' queue_id case.id data.document.id %}">{{ data.value }}</a>
           </td>
 		  <td class="govuk-table__cell">
-			<div id="status-{{ decision }}" data-status="done" class="govuk-tag govuk-tag--blue">READY TO SEND</div>
+			<div id="status-{{ decision }}" data-status="done" class="govuk-tag govuk-tag--blue">{% if data.document.visible_to_exporter %}SENT{% else %}READY TO SEND{% endif %}</div>
 		  </td>
 		  <td class="govuk-table__cell">
-            <!-- TODO: document.status.sent -->
+             {% if data.document.visible_to_exporter %}
 		     <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button">
 			Recreate
 		     </a>
+             {% else %}
+             <form action="{% url 'cases:generate_document_send' queue_id case.id data.document.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="govuk-button" data-module="govuk-button">Send{% if data.value == "Inform"%} inform letter{% endif %}</button>
+             </form>
+             {% endif %}
 
 		  </td>
 		  <td class="govuk-table__cell">
