@@ -50,7 +50,7 @@ class SelectInformTemplate(BaseLetter):
     letter_type = "Inform letter"
 
     def get_params(self):
-        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
+        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "inform"}
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -71,7 +71,7 @@ class EditLetterText(BaseLetter):
     letter_type = "Inform letter"
 
     def get_params(self):
-        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "refuse"}
+        return {"case": self.kwargs["pk"], "page": self.request.GET.get("page", 1), "decision": "inform"}
 
     def get_initial(self):
         initial = super().get_initial()
