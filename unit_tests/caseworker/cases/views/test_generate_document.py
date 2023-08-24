@@ -168,3 +168,37 @@ def test_finalise_document_create(
     redirect_url = reverse("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk})
     assert response.status_code == 302
     assert response.url == redirect_url
+
+
+@pytest.mark.parametrize(
+    "document_data, expected",
+    (
+        (
+            {"documents": {"refuse": {"value": "Refuse"}, "inform": {"value": "Inform"}}},
+            {"refuse": {"value": "Refuse"}},
+        ),
+        (
+            {"documents": {"refuse": {"value": "Refuse"}, "nla": {"value": "nla"}}},
+            {"refuse": {"value": "Refuse"}, "nla": {"value": "nla"}},
+        ),
+    ),
+)
+def test_finalise_documents(
+    document_data,
+    expected,
+    authorized_client,
+    queue_pk,
+    requests_mock,
+    data_standard_case,
+):
+    pk = data_standard_case["case"]["id"]
+
+    mock_send_generated_document_create = requests_mock.get(
+        url=f"/cases/{pk}/final-advice-documents/", json=document_data
+    )
+
+    finalisation_document_url = reverse("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk})
+    response = authorized_client.get(finalisation_document_url)
+
+    assert response.status_code == 200
+    assert response.context["decisions"] == expected

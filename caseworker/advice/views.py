@@ -768,6 +768,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         refusal_note = [advice for advice in consolidated_advice if advice["is_refusal_note"]]
 
         # Only show an inform letter on the decision documents
+
         decisions, _ = get_final_decision_documents(self.request, self.case.id)
         decision_documents = {key: value for key, value in decisions.get("documents", {}).items() if key == "inform"}
 
