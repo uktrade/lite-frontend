@@ -31,7 +31,7 @@ def test_appeal_refusal_decision_button(
     application_url = reverse("applications:application", kwargs={"pk": pk})
     response = authorized_client.get(application_url)
     soup = BeautifulSoup(response.content, "html.parser")
-    assert not (not soup.find(id="button-appeal-refusal")) is feature_appeals_status
+    assert bool(soup.find(id="button-appeal-refusal")) == feature_appeals_status
 
 
 def test_appeal_button_not_shown_for_successful_application(

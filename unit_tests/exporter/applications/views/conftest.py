@@ -27,7 +27,12 @@ def mock_application_get(requests_mock, data_standard_case):
 @pytest.fixture
 def mock_refused_application_get(requests_mock, data_standard_case):
     application = data_standard_case["case"]["data"]
-    application = {**application, "licence": None, "appeal_deadline": timezone.localtime().isoformat()}
+    application = {
+        **application,
+        "status": {"key": "finalised", "value": "Finalised"},
+        "licence": None,
+        "appeal_deadline": timezone.localtime().isoformat(),
+    }
     url = client._build_absolute_uri(f'/applications/{application["id"]}/')
     return requests_mock.get(url=url, json=application)
 
