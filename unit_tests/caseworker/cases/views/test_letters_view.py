@@ -22,7 +22,7 @@ def url(data_standard_case):
 @pytest.fixture
 def mock_letter_templates_case(requests_mock, data_standard_case):
     case_id = data_standard_case["case"]["id"]
-    url = client._build_absolute_uri(f"/letter-templates/?case={case_id}&page=1&decision=refuse")
+    url = client._build_absolute_uri(f"/letter-templates/?case={case_id}&page=1&decision=inform")
     return requests_mock.get(
         url=url, json={"results": [{"id": "a5896319-9761-423d-88d1-a601f9d2d6e9", "name": "Inform letter"}]}
     )
