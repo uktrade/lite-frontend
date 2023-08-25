@@ -29,7 +29,7 @@ class LetterEditTextForm(forms.Form):
     text = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "30"}),
         error_messages={"required": "Edit text is Required"},
-        label="Add a case note",
+        label="Edit inform letter",
     )
 
     def __init__(self, *args, **kwargs):

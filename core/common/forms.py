@@ -40,3 +40,18 @@ class BaseForm(forms.Form):
         return [
             Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", submit_button_text)),
         ]
+
+
+class MultipleFileInput(forms.ClearableFileInput):
+    allow_multiple_selected = True
+
+
+class MultipleFileField(forms.FileField):
+    def __init__(self, *args, **kwargs):
+        kwargs.setdefault("widget", MultipleFileInput())
+        super().__init__(*args, **kwargs)
+
+    def clean(self, data, initial=None):
+        single_file_clean = super().clean
+        result = [single_file_clean(d, initial) for d in data]
+        return result

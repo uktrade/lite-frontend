@@ -277,7 +277,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see the case is not assigned to any queues
 
 
-  @skip @lu_refuse_advice
+  @lu_refuse_advice
   Scenario: LU refuse advice journey
     # Setup
     Given I sign in to SSO or am signed into SSO
