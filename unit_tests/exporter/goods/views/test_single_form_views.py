@@ -1,7 +1,12 @@
+from bs4 import BeautifulSoup
 import uuid
 from django.urls import reverse
-
+from unittest.mock import patch
 import pytest
+
+from lite_content.lite_exporter_frontend.goods import CreateGoodForm
+from exporter.goods.helpers import get_category_display_string
+from exporter.goods.views import GoodSoftwareTechnologyView
 
 from pytest_django.asserts import assertContains
 
@@ -31,6 +36,9 @@ def test_edit_number_of_items_view(authorized_client, requests_mock, good_pk):
     assert response.status_code == 302
     assert response.url == reverse("applications:identification_markings", kwargs={"pk": pk, "good_pk": good_pk})
     assert requests_mock.last_request.json()["number_of_items"] == 3
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Number of items - LITE - GOV.UK"
 
 
 def test_edit_firearm_product_type_view(authorized_client, requests_mock, good_pk):
@@ -50,6 +58,9 @@ def test_edit_firearm_product_type_view(authorized_client, requests_mock, good_p
     assert response.status_code == 302
     assert response.url == reverse("goods:edit", kwargs={"pk": good_pk})
     assert requests_mock.last_request.json()["type"] == "firearms"
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Select the type of product - LITE - GOV.UK"
 
 
 def test_edit_identification_markings_view(authorized_client, requests_mock, good_pk):
@@ -70,6 +81,12 @@ def test_edit_identification_markings_view(authorized_client, requests_mock, goo
     assert response.status_code == 302
     assert response.url == reverse("goods:good", kwargs={"pk": good_pk})
     assert requests_mock.last_request.json()["serial_numbers_available"]
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (
+        soup.title.string.strip()
+        == "Will each product have a serial number or other identification marking? - LITE - GOV.UK"
+    )
 
 
 def test_edit_serial_numbers_view(authorized_client, requests_mock, good_pk):
@@ -94,6 +111,9 @@ def test_edit_serial_numbers_view(authorized_client, requests_mock, good_pk):
     data = requests_mock.last_request.json()
     assert data["serial_number_input_0"] == "abcdef"
     assert data["serial_number_input_1"] == "ghijkl"
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Enter the serial numbers for this product - LITE - GOV.UK"
 
 
 def test_update_serial_numbers_view(authorized_client, requests_mock):
@@ -131,6 +151,8 @@ def test_update_serial_numbers_view(authorized_client, requests_mock):
     )
 
     response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Enter the serial numbers for 'Test good' - LITE - GOV.UK"
     ctx = response.context
     form = ctx["form"]
     assert form.initial == {"serial_numbers": serial_numbers}
@@ -304,6 +326,9 @@ def test_good_military_use_view(authorized_client, requests_mock, good_pk):
     data = requests_mock.request_history[-2].json()
     assert data["is_military_use"] == "yes_designed"
     assert data["modified_military_use_details"] == "test details"
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Is the product for military use? - LITE - GOV.UK"
 
 
 def test_good_information_security_view(authorized_client, requests_mock, good_pk):
@@ -324,6 +349,12 @@ def test_good_information_security_view(authorized_client, requests_mock, good_p
     assert response.status_code == 302
     assert response.url == reverse("goods:good", kwargs={"pk": good_pk})
     assert requests_mock.last_request.json()["uses_information_security"]
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (
+        soup.title.string.strip()
+        == "Is the product designed to employ 'information security' features? - LITE - GOV.UK"
+    )
 
 
 def test_edit_year_of_manufacture_view(authorized_client, requests_mock, good_pk):
@@ -344,6 +375,9 @@ def test_edit_year_of_manufacture_view(authorized_client, requests_mock, good_pk
     assert response.status_code == 302
     assert response.url == reverse("goods:good", kwargs={"pk": good_pk})
     assert requests_mock.last_request.json()["firearm_details"]["year_of_manufacture"] == "2001"
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "What is the year of manufacture of the firearm? - LITE - GOV.UK"
 
 
 def test_edit_firearm_replica_view(authorized_client, requests_mock, good_pk):
@@ -364,6 +398,9 @@ def test_edit_firearm_replica_view(authorized_client, requests_mock, good_pk):
     assert response.status_code == 302
     assert response.url == reverse("goods:good", kwargs={"pk": good_pk})
     assert requests_mock.last_request.json()["firearm_details"]["is_replica"] == "False"
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Is the product a replica firearm? - LITE - GOV.UK"
 
 
 def test_edit_calibre_view(authorized_client, requests_mock, good_pk):
@@ -384,6 +421,9 @@ def test_edit_calibre_view(authorized_client, requests_mock, good_pk):
     assert response.status_code == 302
     assert response.url == reverse("goods:good", kwargs={"pk": good_pk})
     assert requests_mock.last_request.json()["firearm_details"]["calibre"] == "9mm"
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "What is the calibre of the product? - LITE - GOV.UK"
 
 
 def test_edit_firearm_act_details_view(authorized_client, requests_mock, good_pk):
@@ -416,6 +456,12 @@ def test_edit_firearm_act_details_view(authorized_client, requests_mock, good_pk
     data = requests_mock.last_request.json()
     assert data["firearm_details"]["is_covered_by_firearm_act_section_one_two_or_five"] == "Yes"
     assert data["firearm_details"]["firearms_act_section"] == "firearms_act_section1"
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (
+        soup.title.string.strip()
+        == "Is the product covered by Section 1, 2 or 5 of the Firearms Act 1968? - LITE - GOV.UK"
+    )
 
 
 def test_good_software_technology_view(authorized_client, requests_mock, good_pk):
@@ -442,6 +488,13 @@ def test_good_software_technology_view(authorized_client, requests_mock, good_pk
     assert response.status_code == 302
     assert response.url == reverse("goods:good", kwargs={"pk": good_pk})
     assert requests_mock.last_request.json()["software_or_technology_details"] == "test details"
+    with patch(
+        "exporter.goods.views.GoodSoftwareTechnologyView.get_form_title",
+        return_value="Describe the purpose of the software",
+    ):
+        response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Describe the purpose of the software - LITE - GOV.UK"
 
 
 def test_good_component_view(authorized_client, requests_mock, good_pk):
@@ -467,3 +520,54 @@ def test_good_component_view(authorized_client, requests_mock, good_pk):
     data = requests_mock.last_request.json()
     assert data["is_component"] == "yes_designed"
     assert data["designed_details"] == "test details"
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Is the product a component? - LITE - GOV.UK"
+
+
+def test_goods_recipients_form_view(authorized_client, requests_mock):
+    pk = str(uuid.uuid4())
+    requests_mock.get(f"/applications/{pk}/", json={})
+    url = reverse("applications:goods_recipients", kwargs={"pk": pk})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Who are the products going to? - LITE - GOV.UK"
+
+
+def test_permanent_or_temporary_export_form_view(authorized_client, requests_mock):
+    pk = str(uuid.uuid4())
+    requests_mock.get(f"/applications/{pk}/", json={})
+    url = reverse("applications:temporary_or_permanent", kwargs={"pk": pk})
+    with patch(
+        "exporter.applications.views.locations.TemporaryOrPermanentFormView.get_initial", return_value="temporary"
+    ):
+        response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Are the products being permanently exported? - LITE - GOV.UK"
+
+
+def test_goods_starting_point_form(authorized_client, requests_mock):
+    pk = str(uuid.uuid4())
+    requests_mock.get(f"/applications/{pk}/", json={})
+    url = reverse("applications:edit_location", kwargs={"pk": pk})
+    with patch(
+        "exporter.applications.views.locations.GoodsStartingPointFormView.get_initial",
+        return_value="Goods Starting Point",
+    ):
+        response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.title.string.strip() == "Where will the products begin their export journey? - LITE - GOV.UK"
+
+
+def test_good_software_technology_view_get_form_title():
+    view_instance = GoodSoftwareTechnologyView()
+
+    def mock_get_category_type():
+        return "group3_software"
+
+    view_instance.get_category_type = mock_get_category_type
+
+    expected_title = CreateGoodForm.TechnologySoftware.TITLE + get_category_display_string("group3_software")
+    actual_title = view_instance.get_form_title()
+
+    assert expected_title == actual_title

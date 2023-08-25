@@ -1,10 +1,15 @@
+import rules
+
 from http import HTTPStatus
 
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from django.views.generic import TemplateView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import FormView, TemplateView
 
+from requests.exceptions import HTTPError
+
+from exporter.applications.forms.appeal import AppealForm
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
     surrender_application_confirmation,
@@ -41,6 +46,7 @@ from exporter.applications.services import (
     get_status_properties,
     copy_application,
     post_exhibition,
+    post_appeal,
 )
 from exporter.organisation.members.services import get_user
 
@@ -53,6 +59,7 @@ from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 from core.helpers import convert_dict_to_query_params
 
 
@@ -371,3 +378,63 @@ class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         return reverse_lazy("applications:success_page", kwargs={"pk": self.object_pk})
+
+
+class AppealApplication(LoginRequiredMixin, FormView):
+    form_class = AppealForm
+    template_name = "core/form.html"
+
+    def dispatch(self, request, **kwargs):
+        try:
+            self.application = get_application(request, kwargs["case_pk"])
+        except HTTPError:
+            raise Http404()
+
+        if not rules.test_rule("can_user_appeal_case", request):
+            raise Http404()
+
+        return super().dispatch(request, **kwargs)
+
+    def get_application_url(self):
+        return reverse(
+            "applications:application",
+            kwargs={"pk": self.kwargs["case_pk"]},
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["form_title"] = self.form_class.Layout.TITLE
+        context["back_link_url"] = self.get_application_url()
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        kwargs["cancel_url"] = self.get_application_url()
+
+        return kwargs
+
+    def get_success_url(self):
+        return reverse(
+            "applications:application",
+            kwargs={"pk": self.kwargs["case_pk"]},
+        )
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error creating appeal",
+        "Unexpected error creating appeal",
+    )
+    def post_appeal(self, request, application_pk, data):
+        return post_appeal(request, application_pk, data)
+
+    def form_valid(self, form):
+        self.post_appeal(
+            self.request,
+            self.application["id"],
+            form.cleaned_data,
+        )
+
+        return super().form_valid(form)

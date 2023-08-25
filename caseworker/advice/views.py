@@ -11,17 +11,19 @@ from requests.exceptions import HTTPError
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
 from caseworker.cases.helpers.case import CaseworkerMixin
-from caseworker.cases.services import get_case, get_final_decision_documents
+from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
-from caseworker.core.services import get_denial_reasons
+from caseworker.core.services import get_denial_reasons, group_denial_reasons
 from caseworker.picklists.services import get_picklists_list
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
+from caseworker.advice.constants import AdviceType
 from core import client
 from core.auth.views import LoginRequiredMixin
 from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
 from core.decorators import expect_status
+from django.conf import settings
 
 
 class CaseContextMixin:
@@ -186,7 +188,11 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
+        return {
+            **context,
+            "security_approvals_classified_display": self.security_approvals_classified_display,
+            "title": f"{self.get_form().DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}",
+        }
 
 
 class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -194,18 +200,21 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
     def get_form(self):
         denial_reasons = get_denial_reasons(self.request)
+        choices = group_denial_reasons(denial_reasons)
 
         if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
             return forms.FCDORefusalAdviceForm(
-                denial_reasons,
+                choices,
                 services.unadvised_countries(self.caseworker, self.case),
                 **self.get_form_kwargs(),
             )
         else:
-            return forms.RefusalAdviceForm(denial_reasons, **self.get_form_kwargs())
+            return forms.RefusalAdviceForm(choices, **self.get_form_kwargs())
 
     def form_valid(self, form):
-        services.post_refusal_advice(self.request, self.case, form.cleaned_data)
+        data = form.cleaned_data
+        data["text"] = data["refusal_reasons"]
+        services.post_refusal_advice(self.request, self.case, data)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -225,8 +234,10 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEIS
         my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = services.unadvised_countries(self.caseworker, self.case) == {}
+        title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
         return {
             **context,
+            "title": title,
             "my_advice": my_advice.values(),
             "nlr_products": nlr_products,
             "advice_completed": advice_completed,
@@ -281,8 +292,9 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         elif advice["type"]["key"] == "refuse":
             self.template_name = "advice/refusal_advice.html"
             denial_reasons = get_denial_reasons(self.request)
+            choices = group_denial_reasons(denial_reasons)
 
-            return forms.get_refusal_advice_form_factory(advice, denial_reasons, self.request.POST)
+            return forms.get_refusal_advice_form_factory(advice, choices, self.request.POST)
         else:
             raise ValueError("Invalid advice type encountered")
 
@@ -304,6 +316,7 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         if isinstance(form, forms.GiveApprovalAdviceForm):
             services.post_approval_advice(self.request, self.case, data)
         elif isinstance(form, forms.RefusalAdviceForm):
+            data["text"] = data["refusal_reasons"]
             services.post_refusal_advice(self.request, self.case, data)
         else:
             raise ValueError("Unknown advice type")
@@ -365,6 +378,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
 
     def get_context(self, **kwargs):
         context = {
+            "title": f"Make recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
             "queue": self.queue,
             "can_advise": self.can_advise(),
             "denial_reasons_display": self.denial_reasons_display,
@@ -373,6 +387,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
+            "FEATURE_FLAG_REFUSALS": settings.FEATURE_FLAG_REFUSALS,
             **services.get_advice_tab_context(
                 self.case,
                 self.caseworker,
@@ -393,6 +408,9 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         context["advice_to_countersign"] = advice.values()
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
+        context[
+            "title"
+        ] = f"{self.form_class.DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}"
         return context
 
     def post(self, request, *args, **kwargs):
@@ -544,11 +562,15 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
 
-        if self.kwargs.get("advice_type") == "refuse":
+        if self.kwargs.get("advice_type") == AdviceType.REFUSE:
             denial_reasons = get_denial_reasons(self.request)
-            return forms.RefusalAdviceForm(denial_reasons=denial_reasons, **form_kwargs)
+            choices = group_denial_reasons(denial_reasons)
 
-        if self.kwargs.get("advice_type") == "approve" or self.is_advice_approve_only():
+            if self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM:
+                return forms.LUConsolidateRefusalForm(choices=choices, **form_kwargs)
+            return forms.RefusalAdviceForm(choices, **form_kwargs)
+
+        if self.kwargs.get("advice_type") == AdviceType.APPROVE or self.is_advice_approve_only():
             approval_reason = get_picklists_list(
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
@@ -570,6 +592,14 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         context["advice_to_consolidate"] = advice_to_consolidate.values()
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
+        title = (
+            f"Review and combine case recommendation - {self.case.reference_code} - {self.case.organisation['name']}"
+        )
+        if self.kwargs.get("advice_type") == "refuse":
+            title = f"Licence refused for case - {self.case.reference_code} - {self.case.organisation['name']}"
+
+        context["title"] = title
+
         return context
 
     def form_valid(self, form):
@@ -578,8 +608,15 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         try:
             if isinstance(form, forms.ConsolidateApprovalForm):
                 services.post_approval_advice(self.request, self.case, form.cleaned_data, level=level)
-            if isinstance(form, forms.RefusalAdviceForm):
-                services.post_refusal_advice(self.request, self.case, form.cleaned_data, level=level)
+            if isinstance(form, (forms.LUConsolidateRefusalForm, forms.RefusalAdviceForm)):
+                data = form.cleaned_data
+                if data.get("refusal_note"):
+                    data["text"] = data["refusal_note"]
+                    data["is_refusal_note"] = True
+                if data.get("refusal_reasons"):
+                    data["text"] = data["refusal_reasons"]
+
+                services.post_refusal_advice(self.request, self.case, data, level=level)
         except HTTPError as e:
             errors = e.response.json()["errors"]
             form.add_error(None, errors)
@@ -626,9 +663,12 @@ class ConsolidateEditView(ReviewConsolidateView):
         }
 
     def get_refusal_data(self):
+        denial_reasons = [r for r in self.advice["denial_reasons"]]
+
         return {
             "refusal_reasons": self.advice["text"],
-            "denial_reasons": [r for r in self.advice["denial_reasons"]],
+            "refusal_note": self.advice["text"],
+            "denial_reasons": denial_reasons,
         }
 
     def get_data(self):
@@ -655,10 +695,16 @@ class ConsolidateEditView(ReviewConsolidateView):
                 services.update_advice(
                     self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
                 )
-            if isinstance(form, forms.RefusalAdviceForm):
-                services.update_advice(
-                    self.request, self.case, self.caseworker, self.advice_type, form.cleaned_data, level
-                )
+            if isinstance(form, forms.LUConsolidateRefusalForm):
+                # If refusal_note exists then we will convert the old Advice to refusal note from refusal reason
+                # ATM this function update_advice is only being used by LU final-level for updating.
+                # OGDs use post_refusal_advice function for both Create and Update
+                data = form.cleaned_data
+                if data["refusal_note"]:
+                    data["text"] = data["refusal_note"]
+                    data["is_refusal_note"] = True
+
+                services.update_advice(self.request, self.case, self.caseworker, self.advice_type, data, level)
         except HTTPError as e:
             errors = e.response.json()["errors"]
             form.add_error(None, errors)
@@ -719,10 +765,15 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
             finalise_case = not (lu_countersign_required or rejected_lu_countersignature)
 
-        decisions, _ = get_final_decision_documents(self.request, self.case.id)
-        decision_documents = decisions.get("documents", {})
-        decisions = {key: value for key, value in decision_documents.items() if key == "inform_letter"}
-        # Only show decision documents if we have an inform letter
+        refusal_note = [advice for advice in consolidated_advice if advice["is_refusal_note"]]
+        # Only show decision documents inform letter if we have a refuse
+
+        decisions = {}
+
+        for advice in self.case["advice"]:
+            if advice["type"]["key"] == "refuse":
+                decisions = {"inform_letter": {"value": "Inform letter"}}
+                break
 
         return {
             **super().get_context(**kwargs),
@@ -734,6 +785,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "case": self.case,
             "decisions": decisions,
             "queue_id": self.queue_id,
+            "refusal_note": refusal_note,
         }
 
     def form_valid(self, form):

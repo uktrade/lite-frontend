@@ -108,13 +108,37 @@ window.addEventListener("scroll", function () {
 
 let title = document.title;
 
+let getFormattedTitle = (titleHeading) => {
+  let formattedTitle = `${titleHeading} - ${title}`;
+
+  if (titleHeading === "Quick summary") {
+    formattedTitle = `View quick summary for case - ${title}`;
+  } else if (titleHeading === "Details") {
+    formattedTitle = `Details for this case - ${title}`;
+  } else if (titleHeading === "Licences") {
+    formattedTitle = `View any licences on this case - ${title}`;
+  } else if (titleHeading === "Contacts") {
+    formattedTitle = `Add a contact to this case - ${title}`;
+  } else if (titleHeading === "Queries") {
+    formattedTitle = `Manage requests for information for this case - ${title}`;
+  } else if (titleHeading === "Documents") {
+    formattedTitle = `Attach or generate a document for this case - ${title}`;
+  } else if (titleHeading === "Notes and timeline") {
+    formattedTitle = `View notes and timeline for this case - ${title}`;
+  } else if (titleHeading === "Product assessment") {
+    formattedTitle = `Make or edit product assessments for this case - ${title}`;
+  }
+
+  return formattedTitle;
+};
+
 let setTitle = function () {
   let titleHeading = document.getElementsByClassName(
     "lite-tabs__tab--selected"
   )[0];
   if (titleHeading) {
     titleHeading = titleHeading.text.trim();
-    document.title = `${titleHeading} ${title}`;
+    document.title = getFormattedTitle(titleHeading);
   }
 };
 let elements = document.getElementsByClassName("lite-tabs__tab");

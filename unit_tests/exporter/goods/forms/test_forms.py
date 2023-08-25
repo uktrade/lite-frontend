@@ -60,7 +60,6 @@ def test_serialize_good_on_app_data(value, serialized):
     ],
 )
 def test_serialize_good_on_app_data_no_value_key(value, serialized):
-
     data = {
         "good_id": "some-uuid",
         "quantity": value,

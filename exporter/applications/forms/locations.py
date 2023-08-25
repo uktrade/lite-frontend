@@ -192,6 +192,9 @@ def sites_form(request, application_type):
 
 
 class GoodsStartingPointForm(forms.Form):
+    class Layout:
+        TITLE = "Where will the products begin their export journey?"
+
     goods_starting_point = forms.ChoiceField(
         label="",
         widget=forms.RadioSelect,
@@ -208,7 +211,7 @@ class GoodsStartingPointForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1("Where will the products begin their export journey?"),
+            HTML.h1(self.Layout.TITLE),
             "goods_starting_point",
             HTML.details(
                 "Help with where the products begin their journey",
@@ -222,6 +225,9 @@ class GoodsStartingPointForm(forms.Form):
 
 
 class PermanentOrTemporaryExportForm(forms.Form):
+    class Layout:
+        TITLE = "Are the products being permanently exported?"
+
     export_type = forms.ChoiceField(
         label="",
         widget=forms.RadioSelect,
@@ -233,13 +239,16 @@ class PermanentOrTemporaryExportForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1("Are the products being permanently exported?"),
+            HTML.h1(self.Layout.TITLE),
             "export_type",
             Submit("submit", "Continue"),
         )
 
 
 class GoodsRecipientsForm(forms.Form):
+    class Layout:
+        TITLE = "Who are the products going to?"
+
     goods_recipients = forms.ChoiceField(
         label="",
         widget=forms.RadioSelect,
@@ -255,7 +264,7 @@ class GoodsRecipientsForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1("Who are the products going to?"),
+            HTML.h1(self.Layout.TITLE),
             "goods_recipients",
             HTML.details(
                 "Help with end user, consignee and third party",

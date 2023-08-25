@@ -193,7 +193,7 @@ def test_firearm_summary():
         (
             "rfd-certificate-document",
             '<a class="govuk-link govuk-link--no-visited-state" '
-            f'href="/goods/{good["id"]}/documents/{rfd_document["id"]}/" '
+            f'href="/product-list/{good["id"]}/documents/{rfd_document["id"]}/" '
             'target="_blank">section5.pdf</a>',
             "Upload a registered firearms dealer certificate",
         ),
@@ -235,7 +235,7 @@ def test_firearm_summary():
         ),
         (
             "product-document",
-            f'<a class="govuk-link govuk-link--no-visited-state" href="/goods/{good["id"]}/documents/{product_document["id"]}/" target="_blank">product-document.pdf</a>',
+            f'<a class="govuk-link govuk-link--no-visited-state" href="/product-list/{good["id"]}/documents/{product_document["id"]}/" target="_blank">product-document.pdf</a>',
             "Upload a document that shows what your product is designed to do",
         ),
         (

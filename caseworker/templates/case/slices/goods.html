@@ -12,13 +12,18 @@
 			</div>
 	{% endif %}
 
-	<table id="table-goods{% if show_advice %}-{{ level }}-advice{% endif %}" class="govuk-table">
+	<table
+		id="table-goods{% if show_advice %}-{{ level }}-advice{% endif %}"
+		class="govuk-table"
+		data-module="select-all-table"
+		data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+		data-select-all-checkbox-selector="input[type=checkbox]"
+	>
 		{% if goods.0.good %}
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 					{% if not hide_checkboxes %}
 						<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
-							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>
@@ -50,7 +55,7 @@
 						<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Name</span>
 							<span>
-								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=good.id %}">		
+								<a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=good.id %}">
 									{% if good.good.name %} {{ good.good.name }} {% else %} {{ good.good.description }} {% endif %}
 								</a>
 							</span>
@@ -110,7 +115,6 @@
 				<tr class="govuk-table__row">
 					{% if not hide_checkboxes %}
 						<th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
-							<button id="link-select-all-goods" type="button" name="button" class="lite-button-checkbox" title="Select all/Deselect all"></button>
 						</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">#</th>

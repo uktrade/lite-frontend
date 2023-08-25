@@ -20,7 +20,7 @@ export default function initQueuesMenu() {
     }
   });
 
-  $("#link-queue").removeAttr("href");
+  $("#link-queue").attr("href", "#");
 
   // deliberately written in vanilla JS not jquery
   const queuesMenu = document.getElementById("queues");

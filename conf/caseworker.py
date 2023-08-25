@@ -23,7 +23,6 @@ INSTALLED_APPS += [
     "caseworker.teams",
     "caseworker.cases",
     "caseworker.activities",
-    "rules.apps.AutodiscoverRulesConfig",
 ]
 
 MIDDLEWARE += [
@@ -131,6 +130,7 @@ CACHES = {
 
 FEATURE_PRODUCTPEDIA_ON = env.bool("FEATURE_PRODUCTPEDIA_ON", False)
 FEATURE_FLAG_PRODUCT_SEARCH = env.bool("FEATURE_FLAG_PRODUCT_SEARCH", False)
+FEATURE_FLAG_REFUSALS = env.bool("FEATURE_FLAG_REFUSALS", False)
 
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):

@@ -555,3 +555,8 @@ def edit_good_on_application_firearm_details_serial_numbers(request, pk, good_on
         request, f"/applications/{pk}/good-on-application/{good_on_application_pk}/update-serial-numbers/", json
     )
     return data.json(), data.status_code
+
+
+def post_appeal(request, application_pk, data):
+    data = client.post(request, f"/applications/{application_pk}/appeal/", data=data)
+    return data.json(), data.status_code

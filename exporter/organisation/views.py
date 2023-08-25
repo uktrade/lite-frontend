@@ -106,9 +106,11 @@ class UploadFirearmsCertificate(AbstractOrganisationUpload):
     document_type = OrganisationDocumentType.RFD_CERTIFICATE
 
     def get_context_data(self, *args, **kwargs):
-        return super().get_context_data(
+        context = super().get_context_data(
             form_action_url=reverse("organisation:upload-firearms-certificate"), *args, **kwargs
         )
+        context["form_title"] = self.form_class.Layout.TITLE
+        return context
 
 
 class UploadSectionFiveCertificate(AbstractOrganisationUpload):
@@ -118,6 +120,8 @@ class UploadSectionFiveCertificate(AbstractOrganisationUpload):
     document_type = "section-five-certificate"
 
     def get_context_data(self, *args, **kwargs):
-        return super().get_context_data(
+        context = super().get_context_data(
             form_action_url=reverse("organisation:upload-section-five-certificate"), *args, **kwargs
         )
+        context["form_title"] = self.form_class.Layout.TITLE
+        return context

@@ -11,13 +11,18 @@
             </div>
             {% endif %}
 
-            <table id="table-sanction-matches" class="govuk-table">
+            <table
+                id="table-sanction-matches"
+                class="govuk-table"
+                data-module="select-all-table"
+                data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+                data-select-all-checkbox-selector="input[type=checkbox]"
+            >
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         {% if not hide_checkboxes %}
                         <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
-                            <button id="link-select-all-sanction-matches" type="button" name="button" class="lite-button-checkbox"
-                                title="Select all/Deselect all"></button>
+
                         </th>
                         {% endif %}
                         <th scope="col" class="govuk-table__header">List</th>

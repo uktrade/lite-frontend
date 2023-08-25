@@ -365,6 +365,11 @@ class BaseMaterialOnApplicationEditView(
 
         return super().form_valid(form)
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["form_title"] = self.form_class.Layout.TITLE
+        return context
+
     def get_edit_payload(self, form):
         return get_cleaned_data(form)
 

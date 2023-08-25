@@ -12,6 +12,14 @@
     </div>
 {% endblock %}
 
+{% block title %}
+    {% if consolidated_advice and lu_countersign_required and not rejected_lu_countersignature %}
+        Move case forward for countersigning - {{ case.reference_code }} - {{ case.organisation.name }}
+    {% else %}
+        {{ title }}
+    {% endif %}
+{% endblock %}
+
 {% block full_width %}
     {% for error in form.non_field_errors %}
         <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
@@ -96,13 +104,13 @@
                             Edit recommendation
                         </a>
                     {% endif %}
-                    
+
                     <br><br>
-                    {% if decisions %}
+                    {% if decisions and FEATURE_FLAG_REFUSALS %}
                         {% include "advice/decision_documents.html" with decisions=decisions case=case queue_id=queue_id %}
                     {% endif %}
-
-                    {% include "advice/advice_details.html" with advice=consolidated_advice team=True %}
+                    
+                    {% include "advice/advice_details.html" with advice=consolidated_advice team=True refusal_note=refusal_note %}
                     <br>
                 </div>
 

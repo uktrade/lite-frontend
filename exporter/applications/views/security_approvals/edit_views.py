@@ -58,6 +58,7 @@ class BaseApplicationEditView(
 
         ctx["back_link_url"] = self.get_back_link_url()
         ctx["title"] = self.form_class.Layout.TITLE
+        ctx["form_title"] = self.form_class.Layout.TITLE
 
         return ctx
 

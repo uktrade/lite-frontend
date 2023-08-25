@@ -138,4 +138,5 @@ class SelectOrganisation(LoginRequiredMixin, FormView):
         elif self.request.GET.get("back_link") == "licences":
             ctx["back_link_text"] = "Back to licences"
         ctx["back_link_url"] = self.get_success_url()
+        ctx["form_title"] = SelectOrganisationForm.Layout.TITLE
         return ctx
