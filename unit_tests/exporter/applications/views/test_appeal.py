@@ -7,8 +7,12 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from core import client
-
 from exporter.applications.forms.appeal import AppealForm
+
+
+@pytest.fixture(autouse=True)
+def setup(mock_refused_application_get):
+    yield
 
 
 @pytest.fixture(autouse=True)
@@ -23,15 +27,7 @@ def invalid_application_pk():
 
 @pytest.fixture
 def application_pk(data_standard_case):
-    return data_standard_case["case"]["id"]
-
-
-@pytest.fixture(autouse=True)
-def mock_get_application(requests_mock, application_pk, data_standard_case):
-    requests_mock.get(
-        client._build_absolute_uri(f"/applications/{application_pk}/"),
-        json=data_standard_case["case"],
-    )
+    return data_standard_case["case"]["data"]["id"]
 
 
 @pytest.fixture(autouse=True)
