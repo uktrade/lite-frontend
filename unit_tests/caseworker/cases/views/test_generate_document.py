@@ -1,6 +1,6 @@
 from http import HTTPStatus
 import pytest
-
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
@@ -24,6 +24,11 @@ def setup(
 @pytest.fixture
 def data_generated_document_id():
     return "2e0b4d2c-3a4b-4b00-8e5d-dac7fc285059"
+
+
+@pytest.fixture
+def data_generated_template_id():
+    return "a5896319-9761-423d-88d1-a601f9d2d6e9"
 
 
 @pytest.fixture
@@ -55,6 +60,47 @@ def finalise_document_create_url(data_standard_case, data_generated_document_id,
             "decision_key": "inform",
         },
     )
+
+
+@pytest.fixture
+def get_document_url(data_standard_case, data_generated_document_id):
+    case_id = data_standard_case["case"]["id"]
+    return client._build_absolute_uri(f"/cases/{case_id}/generated-documents/{data_generated_document_id}")
+
+
+@pytest.fixture
+def get_preview_url(data_standard_case, data_generated_document_id):
+    case_id = data_standard_case["case"]["id"]
+    text = "This is my text"
+    return client._build_absolute_uri(
+        f"/cases/{case_id}/generated-documents/preview/?pk={case_id}&template={data_generated_document_id}&text=This%20is%20my%20text&addressee="
+    )
+
+
+@pytest.fixture
+def preview_view_document_url(data_standard_case, data_generated_document_id):
+    case_id = data_standard_case["case"]["id"]
+    decision = "refuse"
+    return client._build_absolute_uri(
+        f"/cases/{case_id}/generated-documents/{decision}/{data_generated_document_id}/preview-view"
+    )
+
+
+@pytest.fixture
+def mock_get_document(requests_mock, get_document_url, data_generated_document_id, mock_gov_user):
+    return requests_mock.get(
+        url=get_document_url, json={"template": data_generated_document_id, "text": "This is my text"}
+    )
+
+
+@pytest.fixture
+def mock_preview_document(requests_mock, get_preview_url, mock_gov_user):
+    return requests_mock.get(url=get_preview_url, json={"preview": ""})
+
+
+@pytest.fixture
+def mock_preview_fail(requests_mock, get_preview_url, mock_gov_user):
+    return requests_mock.get(url=get_preview_url, status_code=400, json={"preview": ""})
 
 
 def test_send_existing_document(
@@ -202,3 +248,49 @@ def test_finalise_documents(
 
     assert response.status_code == 200
     assert response.context["decisions"] == expected
+
+
+def test_preview_view(
+    authorized_client,
+    data_standard_case,
+    queue_pk,
+    mock_get_document,
+    mock_preview_document,
+    data_generated_document_id,
+):
+    url = reverse(
+        "cases:generate_document_preview_view",
+        kwargs={
+            "queue_pk": queue_pk,
+            "pk": data_standard_case["case"]["id"],
+            "decision_key": "refuse",
+            "dpk": data_generated_document_id,
+        },
+    )
+    response = authorized_client.get(url, follow=True)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert "Generate document" in soup.find(class_="govuk-heading-l").text
+
+
+def test_preview_view_failure(
+    authorized_client,
+    data_standard_case,
+    queue_pk,
+    mock_get_document,
+    mock_preview_fail,
+    data_generated_document_id,
+):
+    url = reverse(
+        "cases:generate_document_preview_view",
+        kwargs={
+            "queue_pk": queue_pk,
+            "pk": data_standard_case["case"]["id"],
+            "decision_key": "refuse",
+            "dpk": data_generated_document_id,
+        },
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert "Document generation is not available at this time" in soup.find(class_="govuk-body").text
