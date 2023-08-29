@@ -5,13 +5,7 @@ import magic
 from django.conf import settings
 from django.core.files.uploadhandler import UploadFileException
 
-from django_chunk_upload_handlers.s3 import (
-    AWS_ACCESS_KEY_ID,
-    AWS_REGION,
-    AWS_S3_ENDPOINT_URL,
-    AWS_SECRET_ACCESS_KEY,
-    S3FileUploadHandler,
-)
+from django_chunk_upload_handlers.s3 import S3FileUploadHandler
 
 
 logger = logging.getLogger(__name__)
@@ -29,14 +23,14 @@ class S3Wrapper:
         if not cls._s3_client:
             logger.debug("Instantiating S3 client")
             extra_kwargs = {}
-            if AWS_S3_ENDPOINT_URL:
-                extra_kwargs["endpoint_url"] = AWS_S3_ENDPOINT_URL
+            if settings.AWS_S3_ENDPOINT_URL:
+                extra_kwargs["endpoint_url"] = settings.AWS_S3_ENDPOINT_URL
 
             cls._s3_client = boto3.client(
                 "s3",
-                aws_access_key_id=AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-                region_name=AWS_REGION,
+                aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                region_name=settings.AWS_REGION,
                 **extra_kwargs,
             )
 

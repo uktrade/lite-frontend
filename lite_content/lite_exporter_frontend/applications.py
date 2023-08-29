@@ -196,6 +196,7 @@ class ApplicationSummaryPage:
         ECJU_QUERIES = "ECJU queries"
         GENERATED_DOCUMENTS = "ECJU documents"
         ACTIVITY = "Activity"
+        APPEAL = "Appeal"
 
 
 class ApplicationsSummaryPage:
