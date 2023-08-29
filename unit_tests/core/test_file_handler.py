@@ -5,7 +5,12 @@ from os import path
 
 from django.core.files.uploadhandler import UploadFileException
 
-from core.file_handler import SafeS3FileUploadHandler, UnacceptableMimeTypeError
+from core.file_handler import (
+    s3_client,
+    SafeS3FileUploadHandler,
+    S3Wrapper,
+    UnacceptableMimeTypeError,
+)
 
 
 TEST_FILES_PATH = path.join(path.dirname(__file__), "test_file_handler_files")
@@ -54,3 +59,71 @@ def test_invalid_file_mime_type_upload(mock_handler):
             mock_handler.receive_data_chunk(content, 0)
         assert isinstance(e.value, UploadFileException)
         mock_handler.abort.assert_called_once()
+
+
+def test_s3_wrapper_get_client(settings, mocker):
+    settings.AWS_ACCESS_KEY_ID = "aws-access-key-id"
+    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"
+    settings.AWS_REGION = "aws-region"
+    settings.AWS_S3_ENDPOINT_URL = None
+
+    S3Wrapper._s3_client = None
+
+    mock_boto3 = mocker.patch("core.file_handler.boto3")
+
+    client = s3_client()
+
+    mock_boto3.client.assert_called_with(
+        "s3",
+        aws_access_key_id="aws-access-key-id",
+        aws_secret_access_key="aws-secret-access-key",
+        region_name="aws-region",
+    )
+
+    assert client == mock_boto3.client()
+
+
+def test_s3_wrapper_get_client_with_endpoint_url(settings, mocker):
+    settings.AWS_ACCESS_KEY_ID = "aws-access-key-id"
+    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"
+    settings.AWS_REGION = "aws-region"
+    settings.AWS_S3_ENDPOINT_URL = "http://example.com"
+
+    S3Wrapper._s3_client = None
+
+    mock_boto3 = mocker.patch("core.file_handler.boto3")
+
+    client = s3_client()
+
+    mock_boto3.client.assert_called_with(
+        "s3",
+        aws_access_key_id="aws-access-key-id",
+        aws_secret_access_key="aws-secret-access-key",
+        region_name="aws-region",
+        endpoint_url="http://example.com",
+    )
+    assert client == mock_boto3.client()
+
+
+def test_s3_wrapper_get_client_acts_as_singleton(settings, mocker):
+    settings.AWS_ACCESS_KEY_ID = "aws-access-key-id"
+    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"
+    settings.AWS_REGION = "aws-region"
+    settings.AWS_S3_ENDPOINT_URL = "http://example.com"
+
+    S3Wrapper._s3_client = None
+
+    mock_boto3 = mocker.patch("core.file_handler.boto3")
+
+    client = s3_client()
+    mock_boto3.client.assert_called_with(
+        "s3",
+        aws_access_key_id="aws-access-key-id",
+        aws_secret_access_key="aws-secret-access-key",
+        region_name="aws-region",
+        endpoint_url="http://example.com",
+    )
+
+    new_client = s3_client()
+    mock_boto3.client.assert_called_once()
+    assert client == new_client

@@ -296,7 +296,10 @@ class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):
         case = get_case(request, self.object_pk)
         self.form = generate_documents_form(kwargs["queue_pk"], self.object_pk)
         decisions, _ = get_final_decision_documents(request, self.object_pk)
-        decisions = decisions["documents"]
+
+        # Remove the inform letter from finalisation documents
+
+        decisions = {key: value for (key, value) in decisions["documents"].items() if key != "inform"}
         can_submit = all([decision.get("document") for decision in decisions.values()])
         self.context = {
             "case": case,

@@ -11,13 +11,14 @@ from requests.exceptions import HTTPError
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
 from caseworker.cases.helpers.case import CaseworkerMixin
-from caseworker.cases.services import get_case
+from caseworker.cases.services import get_case, get_final_decision_documents
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons, group_denial_reasons
 from caseworker.picklists.services import get_picklists_list
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
+
 from caseworker.advice.constants import AdviceType
 from core import client
 from core.auth.views import LoginRequiredMixin
@@ -766,14 +767,10 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             finalise_case = not (lu_countersign_required or rejected_lu_countersignature)
 
         refusal_note = [advice for advice in consolidated_advice if advice["is_refusal_note"]]
-        # Only show decision documents inform letter if we have a refuse
 
-        decisions = {}
-
-        for advice in self.case["advice"]:
-            if advice["type"]["key"] == "refuse":
-                decisions = {"inform_letter": {"value": "Inform letter"}}
-                break
+        # Only show an inform letter on the decision documents
+        decisions, _ = get_final_decision_documents(self.request, self.case.id)
+        decision_documents = {key: value for key, value in decisions.get("documents", {}).items() if key == "inform"}
 
         return {
             **super().get_context(**kwargs),
@@ -783,7 +780,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "lu_countersign_required": lu_countersign_required,
             "finalise_case": finalise_case,
             "case": self.case,
-            "decisions": decisions,
+            "decisions": decision_documents,
             "queue_id": self.queue_id,
             "refusal_note": refusal_note,
         }

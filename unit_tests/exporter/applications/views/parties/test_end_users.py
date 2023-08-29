@@ -3,6 +3,7 @@ from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from unittest.mock import patch
+from bs4 import BeautifulSoup
 
 from core import client
 from exporter.core.constants import (
@@ -431,3 +432,13 @@ def test_edit_end_user_ec3_document(requests_mock, authorized_client, data_stand
         "s3_key": actual["s3_key"],
         "size": 0,
     }
+
+
+def test_add_end_user_view(authorized_client, data_standard_case):
+    application_id = data_standard_case["case"]["id"]
+
+    url = reverse("applications:add_end_user", kwargs={"pk": application_id})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert soup.title.string == "Do you want to reuse an existing party? - LITE - GOV.UK"

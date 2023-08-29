@@ -5,9 +5,10 @@ from inspect import signature
 from django.conf import settings
 from django.shortcuts import redirect
 from django.urls import reverse, NoReverseMatch
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 
 from caseworker.cases.services import get_document
+from core.decorators import expect_status
 from core.file_handler import s3_client
 from exporter.applications.forms.documents import attach_document_form, delete_document_confirmation_form
 from exporter.applications.helpers.check_your_answers import is_application_export_type_permanent
@@ -24,6 +25,7 @@ from exporter.applications.services import (
     post_goods_type_document,
     get_goods_type_document,
     delete_goods_type_document,
+    get_appeal_document,
 )
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import form_page, error_page
@@ -196,6 +198,23 @@ class DownloadGeneratedDocument(LoginRequiredMixin, TemplateView):
             ExpiresIn=15,
         )
         return redirect(signed_url)
+
+
+class DownloadAppealDocument(LoginRequiredMixin, View):
+    @expect_status(
+        HTTPStatus.OK,
+        "Error downloading appeal document",
+        "Unexpected error downloading appeal document",
+    )
+    def get_appeal_document(self, request, appeal_pk, document_pk):
+        return get_appeal_document(request, appeal_pk, document_pk)
+
+    def get(self, request, case_pk, appeal_pk, document_pk):
+        document, _ = self.get_appeal_document(request, appeal_pk, document_pk)
+        if document["safe"]:
+            return download_document_from_s3(document["s3_key"], document["name"])
+        else:
+            return error_page(request, strings.applications.AttachDocumentPage.DOWNLOAD_GENERIC_ERROR)
 
 
 class DeleteDocument(LoginRequiredMixin, TemplateView):

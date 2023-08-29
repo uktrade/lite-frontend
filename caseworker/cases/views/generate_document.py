@@ -135,6 +135,28 @@ class RegenerateExistingDocument(LoginRequiredMixin, SingleFormView):
         self.context = {"case": get_case(request, self.object_pk)}
 
 
+class PreviewViewDocument(LoginRequiredMixin, SingleFormView):
+    def init(self, request, **kwargs):
+        document, _ = get_generated_document(request, str(kwargs["pk"]), str(kwargs["dpk"]))
+        template = document["template"]
+        text = document.get(TEXT)
+        self.object_pk = kwargs["pk"]
+        self.kwargs["tpk"] = template
+
+        preview, status_code = get_generated_document_preview(
+            request, self.object_pk, template=template, text=quote(text), addressee=""
+        )
+
+        if status_code == 400:
+            return generate_document_error_page()
+
+        return render(
+            request,
+            "generated-documents/preview.html",
+            {"preview": preview["preview"], TEXT: text, "addressee": "", "kwargs": self.kwargs},
+        )
+
+
 class PreviewDocument(LoginRequiredMixin, TemplateView):
     def post(self, request, **kwargs):
         template_id = str(kwargs["tpk"])
@@ -149,9 +171,9 @@ class PreviewDocument(LoginRequiredMixin, TemplateView):
             return generate_document_error_page()
 
         return render(
-            request,
+            self.request,
             "generated-documents/preview.html",
-            {"preview": preview["preview"], TEXT: text, "addressee": addressee, "kwargs": kwargs},
+            {"preview": preview["preview"], "text": text, "addressee": addressee, "kwargs": self.kwargs},
         )
 
 
@@ -195,7 +217,10 @@ class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):
             str(pk),
             {"template": str(tpk), TEXT: text, "visible_to_exporter": False, "advice_type": decision_key},
         )
+
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
-        else:
-            return redirect(reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk}))
+        if request.POST.get("return_url"):
+            return redirect(request.POST["return_url"])
+
+        return redirect(reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk}))
