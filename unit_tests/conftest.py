@@ -1000,6 +1000,7 @@ def data_standard_case(
                 "compliant_limitations_eu_ref": None,
                 "intended_end_use": "44",
                 "licence": None,
+                "appeal_deadline": "",
                 "is_shipped_waybill_or_lading": False,
                 "non_waybill_or_lading_route_details": "44",
                 "is_mod_security_approved": None,
