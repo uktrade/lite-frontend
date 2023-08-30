@@ -1,9 +1,12 @@
 import pytest
 
+from datetime import timedelta
+
 from bs4 import BeautifulSoup
 from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils import timezone
 from django.urls import reverse
 
 from core import client
@@ -11,8 +14,9 @@ from exporter.applications.forms.appeal import AppealForm
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_refused_application_get, mock_application_get):
-    yield
+def setup(mock_refused_application_get, mock_application_get, data_standard_case):
+    data_standard_case["case"]["data"]["status"] = "finalised"
+    data_standard_case["case"]["data"]["appeal_deadline"] = (timezone.now() + timedelta(days=1)).isoformat()
 
 
 @pytest.fixture(autouse=True)
