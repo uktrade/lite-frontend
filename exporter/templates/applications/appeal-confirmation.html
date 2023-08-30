@@ -1,0 +1,34 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Appeal request complete - {{ application.reference_code }}{% endblock %}
+
+{% block back_link %}
+    <a href="{% url "applications:application" application.id %}" id="back-link" class="govuk-back-link">Back to application</a>
+{% endblock %}
+
+{% block body %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    Appeal request complete
+                </h1>
+                <div class="govuk-panel__body">
+                    Application reference number<br><strong>{{ application.reference_code }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        <div class="govuk-grid-column-two-thirds">
+            <h2 class="govuk-heading-m">What happens next</h2>
+            <p class="govuk-body">ECJU will review your grounds for appeal to decide if they are valid. You'll receive an email to let you know the outcome.</p>
+            <p class="govuk-body">If your appeal is considered valid, ECJU will start a review of the refusal decision.</p>
+        </div>
+    </div>
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+        <div class="govuk-grid-column-two-thirds">
+            <a class="govuk-button" href="{% url "applications:application" application.id %}">Back to application</a>
+        </div>
+    </div>
+{% endblock %}
