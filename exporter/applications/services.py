@@ -568,7 +568,7 @@ def post_appeal_document(request, appeal_pk, data):
 
 
 def get_appeal(request, application_pk, appeal_pk):
-    response = client.get(request, f"/applications/{application_pk}/appeal/{appeal_pk}/")
+    response = client.get(request, f"/applications/{application_pk}/appeals/{appeal_pk}/")
     response.raise_for_status()
     return response.json(), response.status_code
 
