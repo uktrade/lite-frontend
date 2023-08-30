@@ -59,6 +59,7 @@ def test_select_template_paragraph(
     mock_letter_templates_case,
     mock_letter_template_details,
     mock_gov_user,
+    data_standard_case,
 ):
     response = authorized_client.get(url)
     response.context_data["form"].fields["select_template"].choices == [
@@ -67,6 +68,10 @@ def test_select_template_paragraph(
     ]
 
     assert response.status_code == 200
+
+    case_id = data_standard_case["case"]["id"]
+    back_link_url = reverse("cases:consolidate_view", kwargs={"queue_pk": case_id, "pk": case_id})
+    assert response.context["back_link_url"] == back_link_url
 
 
 def test_select_template_paragraph_invalid_letter_type(

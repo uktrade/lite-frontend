@@ -64,6 +64,18 @@ class SelectInformTemplate(BaseLetter):
     def get_success_url(self):
         return reverse("cases:select-edit-text", kwargs=self.kwargs)
 
+    def get_back_link_url(self):
+        case_id = str(self.kwargs["pk"])
+        default_back_url = reverse(
+            "cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": case_id}
+        )
+        return self.request.GET.get("return_to", default_back_url)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = self.get_back_link_url()
+        return context
+
 
 class EditLetterText(BaseLetter):
     template_name = "case/edit-letter.html"
