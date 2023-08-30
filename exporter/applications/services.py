@@ -576,3 +576,12 @@ def get_appeal(request, application_pk, appeal_pk):
 def get_appeal_document(request, appeal_pk, document_pk):
     data = client.get(request, f"/appeals/{appeal_pk}/documents/{document_pk}/")
     return data.json(), data.status_code
+
+
+def set_case_queue_from_application(request, application_pk, data):
+    """
+    This is only for special cases which bypass routing e.g. to push an appeal
+    onto the appeals queue
+    """
+    data = client.put(request, f"/cases/{application_pk}/queues/", data=data)
+    return data.json(), data.status_code

@@ -49,10 +49,11 @@ from exporter.applications.services import (
     post_appeal,
     post_appeal_document,
     get_appeal,
+    set_case_queue_from_application,
 )
 from exporter.organisation.members.services import get_user
 
-from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
+from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD, LICENSING_UNIT_APPEALS_QUEUE_ID
 from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
@@ -230,7 +231,6 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
         return super(ApplicationSummary, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, **kwargs):
-
         context = {
             "case_id": self.application_id,
             "application": self.application,
@@ -443,6 +443,10 @@ class AppealApplication(LoginRequiredMixin, FormView):
     def post_appeal_document(self, request, appeal_pk, data):
         return post_appeal_document(request, appeal_pk, data)
 
+    @expect_status(HTTPStatus.OK, "Error setting queue", "Unexpected error setting case queue from application")
+    def set_case_queue_from_application(self, request, application_pk, data):
+        return set_case_queue_from_application(request, application_pk, data)
+
     def form_valid(self, form):
         cleaned_data = form.cleaned_data.copy()
         documents = cleaned_data.pop("documents")
@@ -458,6 +462,12 @@ class AppealApplication(LoginRequiredMixin, FormView):
                 appeal["id"],
                 get_document_data(document),
             )
+
+        self.set_case_queue_from_application(
+            self.request,
+            self.application["id"],
+            {"queues": [LICENSING_UNIT_APPEALS_QUEUE_ID]},
+        )
 
         self.appeal = appeal
 

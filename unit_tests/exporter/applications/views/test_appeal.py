@@ -11,6 +11,7 @@ from django.urls import reverse
 
 from core import client
 from exporter.applications.forms.appeal import AppealForm
+from exporter.core.constants import LICENSING_UNIT_APPEALS_QUEUE_ID
 
 
 @pytest.fixture(autouse=True)
@@ -137,6 +138,29 @@ def appeal_confirmation_url(application_pk, appeal_pk):
     return reverse("applications:appeal_confirmation", kwargs={"case_pk": application_pk, "appeal_pk": appeal_pk})
 
 
+@pytest.fixture
+def set_queues_api_url(application_pk):
+    return client._build_absolute_uri(f"/cases/{application_pk}/queues/")
+
+
+@pytest.fixture
+def mock_put_set_queues(requests_mock, set_queues_api_url):
+    return requests_mock.put(
+        set_queues_api_url,
+        json={},
+        status_code=200,
+    )
+
+
+@pytest.fixture
+def mock_put_set_queues_failure(requests_mock, set_queues_api_url):
+    return requests_mock.put(
+        set_queues_api_url,
+        json={},
+        status_code=500,
+    )
+
+
 def test_appeal_view_feature_flag_off(authorized_client, appeal_url, settings):
     settings.FEATURE_FLAG_APPEALS = False
 
@@ -168,7 +192,13 @@ def test_appeal_view(authorized_client, appeal_url, application_url):
     assert soup.find("textarea", {"name": "grounds_for_appeal"})
 
 
-def test_post_appeal(authorized_client, appeal_url, appeal_confirmation_url, mock_post_appeal):
+def test_post_appeal(
+    authorized_client,
+    appeal_url,
+    appeal_confirmation_url,
+    mock_post_appeal,
+    mock_put_set_queues,
+):
     response = authorized_client.post(
         appeal_url,
         data={"grounds_for_appeal": "These are my grounds for appeal"},
@@ -176,8 +206,12 @@ def test_post_appeal(authorized_client, appeal_url, appeal_confirmation_url, moc
 
     assert response.status_code == 302
     assert response.url == appeal_confirmation_url
+
     assert mock_post_appeal.called_once
     assert mock_post_appeal.last_request.json() == {"grounds_for_appeal": "These are my grounds for appeal"}
+
+    assert mock_put_set_queues.called_once
+    assert mock_put_set_queues.last_request.json() == {"queues": [LICENSING_UNIT_APPEALS_QUEUE_ID]}
 
 
 def test_post_appeal_with_files(
@@ -186,6 +220,7 @@ def test_post_appeal_with_files(
     appeal_confirmation_url,
     mock_post_appeal,
     mock_post_appeal_document,
+    mock_put_set_queues,
 ):
     response = authorized_client.post(
         appeal_url,
@@ -207,6 +242,9 @@ def test_post_appeal_with_files(
     assert mock_post_appeal_document.call_count == 2
     assert mock_post_appeal_document.request_history[0].json() == {"name": "file 1", "s3_key": "file 1", "size": 0}
     assert mock_post_appeal_document.request_history[1].json() == {"name": "file 2", "s3_key": "file 2", "size": 0}
+
+    assert mock_put_set_queues.called_once
+    assert mock_put_set_queues.last_request.json() == {"queues": [LICENSING_UNIT_APPEALS_QUEUE_ID]}
 
 
 def test_post_appeal_failure(authorized_client, appeal_url, mock_post_appeal_failure):
@@ -236,6 +274,22 @@ def test_post_appeal_with_files_failure(
     )
 
     assertContains(response, "Unexpected error creating appeal document")
+
+
+def test_post_appeal_with_set_queue_failure(
+    authorized_client,
+    appeal_url,
+    mock_post_appeal,
+    mock_put_set_queues_failure,
+):
+    response = authorized_client.post(
+        appeal_url,
+        data={
+            "grounds_for_appeal": "These are my grounds for appeal",
+        },
+    )
+
+    assertContains(response, "Unexpected error setting case queue from application")
 
 
 def test_appeal_confirmation_view(

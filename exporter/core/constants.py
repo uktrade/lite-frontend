@@ -15,6 +15,8 @@ EXHIBITION = "exhibition_clearance"
 GIFTING = "gifting_clearance"
 F680 = "f680_clearance"
 
+LICENSING_UNIT_APPEALS_QUEUE_ID = "0533d0df-7fb5-4681-8c64-7c35674cab9b"
+
 
 class CaseTypes:
     OIEL = "oiel"
