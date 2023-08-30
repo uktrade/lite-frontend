@@ -34,7 +34,7 @@
 
 		  </td>
 		  <td class="govuk-table__cell">
-			<a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}">Edit</a>
+			<a href="{% url 'cases:edit-letter-text' queue_id case.id data.document.id decision %}">Edit</a>
 		  </td>
 		{% else %}
           <td class="govuk-table__cell">{{ data.value }}

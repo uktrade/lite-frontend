@@ -142,6 +142,7 @@ class PreviewViewDocument(LoginRequiredMixin, SingleFormView):
         text = document.get(TEXT)
         self.object_pk = kwargs["pk"]
         self.kwargs["tpk"] = template
+        self.kwargs["dpk"] = kwargs["dpk"]
 
         preview, status_code = get_generated_document_preview(
             request, self.object_pk, template=template, text=quote(text), addressee=""
@@ -152,7 +153,7 @@ class PreviewViewDocument(LoginRequiredMixin, SingleFormView):
 
         return render(
             request,
-            "generated-documents/preview.html",
+            "generated-documents/preview-edit.html",
             {"preview": preview["preview"], TEXT: text, "addressee": "", "kwargs": self.kwargs},
         )
 

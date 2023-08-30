@@ -1,0 +1,33 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+	<div class="app-letter-preview__container">
+		<div class="lite-app-bar">
+			<div class="lite-app-bar__content">
+				<h1 class="govuk-heading-l">{% block title %}Generate document{% endblock %}</h1>
+			</div>
+			<div class="lite-app-bar__controls-buttons">
+				<a href="{% url 'cases:edit-letter-text' queue.id kwargs.pk kwargs.dpk kwargs.decision_key %}" class="govuk-button govuk-button--secondary" type="submit">Edit</a>
+				{% if kwargs.decision_key %}
+					<form action="{% url 'cases:finalise_document_create' queue.id kwargs.pk kwargs.decision_key kwargs.tpk %}" method="post">
+				{% else %}
+					<form action="{% url 'cases:generate_document_create' queue.id kwargs.pk kwargs.tpk %}" method="post">
+				{% endif %}
+				{% csrf_token %}
+				<input name="text" type="hidden" value="{{ text }}">
+				{% if return_url %}
+					<input name="return_url" type="hidden" value="{{ return_url }}">
+                {% endif %}
+				<input name="addressee" type="hidden" value="{{ addressee }}">
+				<button class="govuk-button" type="submit">Continue</button>
+				</form>
+				<a href="{% url 'cases:consolidate_view' queue.id kwargs.pk %}" class="govuk-body govuk-link govuk-link--no-visited-state" type="submit">Cancel</a>
+
+			</div>
+		</div>
+		<div class="app-letter-preview__page" id="preview">
+			{{ preview|safe }}
+		</div>
+
+	</div>
+{% endblock %}

@@ -11,7 +11,7 @@ from caseworker.cases.views import (
     case_assignments,
 )
 from caseworker.flags.views import AssignFlags
-from caseworker.cases.views.finalisation.letters import SelectInformTemplate, EditLetterText
+from caseworker.cases.views.finalisation.letters import SelectInformTemplate, EditLetterText, EditInformLetterText
 
 app_name = "cases"
 
@@ -147,7 +147,12 @@ urlpatterns = [
     ),
     path(
         "letters/select-edit-text/<uuid:paragraph_id>/",
-        EditLetterText.as_view(),
+        EditInformLetterText.as_view(),
         name="select-edit-text",
+    ),
+    path(
+        "<uuid:dpk>/edit-letter/<str:decision_key>",
+        EditLetterText.as_view(),
+        name="edit-letter-text",
     ),
 ]
