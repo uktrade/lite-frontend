@@ -18,6 +18,7 @@ from caseworker.core.services import get_denial_reasons, group_denial_reasons
 from caseworker.picklists.services import get_picklists_list
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
+
 from caseworker.advice.constants import AdviceType
 from core import client
 from core.auth.views import LoginRequiredMixin
@@ -768,7 +769,6 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         refusal_note = [advice for advice in consolidated_advice if advice["is_refusal_note"]]
 
         # Only show an inform letter on the decision documents
-
         decisions, _ = get_final_decision_documents(self.request, self.case.id)
         decision_documents = {key: value for key, value in decisions.get("documents", {}).items() if key == "inform"}
 

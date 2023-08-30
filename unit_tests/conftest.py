@@ -4,10 +4,12 @@ import datetime
 import pytest
 import os
 import copy
+import boto3
 
 from urllib.parse import urljoin, urlparse
 
-from django.conf import settings
+from moto import mock_s3
+
 from django.urls import resolve
 from django.utils import timezone
 
@@ -26,6 +28,52 @@ def disable_hawk(settings):
 def add_test_template_dirs(settings):
     template_dir = os.path.join(settings.BASE_DIR, "unit_tests", "core", "summaries", "templates")
     settings.TEMPLATES[0]["DIRS"].append(template_dir)
+
+
+@pytest.fixture(scope="session")
+def s3_settings():
+    # This is slightly awkward due to the fact that we want both `auto_mock_s3`
+    # and `set_aws_s3_settings` to set the same values but due to the fact that
+    # `auto_mock_s3` is session scoped it can't access `settings` and manipulate
+    # it directly so we have been forced to split those two fixtures out even
+    # though we want them to share the same variables
+    return {
+        "AWS_REGION": "eu-west-2",
+        "AWS_ACCESS_KEY_ID": "fake-key-id",
+        "AWS_SECRET_ACCESS_KEY": "fake-access-key",
+        "AWS_STORAGE_BUCKET_NAME": "test-uploads",
+        "AWS_S3_ENDPOINT_URL": None,
+    }
+
+
+@pytest.fixture(autouse=True, scope="session")
+def auto_mock_s3(s3_settings):
+    # This is scoped to session otherwise this slows down each test due to it
+    # having to mock s3 each time and create a new bucket
+    with mock_s3():
+        s3 = boto3.client(
+            "s3",
+            aws_access_key_id=s3_settings["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=s3_settings["AWS_SECRET_ACCESS_KEY"],
+            region_name=s3_settings["AWS_REGION"],
+        )
+        s3.create_bucket(
+            Bucket=s3_settings["AWS_STORAGE_BUCKET_NAME"],
+            CreateBucketConfiguration={
+                "LocationConstraint": s3_settings["AWS_REGION"],
+            },
+        )
+        yield
+
+
+@pytest.fixture(autouse=True)
+def set_aws_s3_settings(settings, s3_settings, mocker):
+    for key, value in s3_settings.items():
+        mocker.patch(
+            f"django_chunk_upload_handlers.s3.{key}",
+            value,
+        )
+        setattr(settings, key, value)
 
 
 @pytest.fixture
@@ -1000,6 +1048,7 @@ def data_standard_case(
                 "compliant_limitations_eu_ref": None,
                 "intended_end_use": "44",
                 "licence": None,
+                "appeal_deadline": "",
                 "is_shipped_waybill_or_lading": False,
                 "non_waybill_or_lading_route_details": "44",
                 "is_mod_security_approved": None,
@@ -2472,3 +2521,24 @@ def post_to_step_factory(authorized_client):
         return step_poster
 
     return post_to_step
+
+
+@pytest.fixture()
+def mock_s3_files(settings):
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_REGION,
+    )
+
+    def _create_files(*files):
+        for key, body, extras in files:
+            s3.put_object(
+                Bucket=settings.AWS_STORAGE_BUCKET_NAME,
+                Key=key,
+                Body=body,
+                **extras,
+            )
+
+    return _create_files

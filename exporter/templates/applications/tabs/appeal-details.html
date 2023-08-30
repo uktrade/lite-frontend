@@ -1,0 +1,24 @@
+<section class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-visually-hidden">Appeal details</a>
+        <h3 class="govuk-heading-m">Grounds for appeal</h2>
+        <div class="govuk-body">
+            {{ application.appeal.grounds_for_appeal|linebreaks }}
+        </div>
+
+        {% if application.appeal.documents %}
+            <h3 class="govuk-heading-m">Documents</h2>
+            <ul class="app-appeal-details-files-list">
+                {% for document in application.appeal.documents %}
+                    <li class="app-appeal-details-files-list__item">
+                        {% if document.safe %}
+                            <a class="govuk-link govuk-link--no-visited-state govuk-body-m" href="{% url 'applications:appeal_document' case_pk=case_id appeal_pk=application.appeal.id document_pk=document.id %}" >{{ document.name }}</a>
+                        {% else %}
+                            {{ document.name }}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</section>
