@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load rules %}
+
 {% block back_link %}
 	{% if summary_page %}
 		<a href="{% url 'applications:task_list' case_id %}" id="back-link" class="govuk-back-link">
@@ -39,9 +41,15 @@
 						</a>
 					{% endif %}
 					{# Using licence_duration to check that there is a licence to surrender #}
-					{% if application.licence.status.key != "surrendered" %}
+					{% if application.licence and application.licence.status.key != "surrendered" %}
 						<a href="{% url 'applications:surrender' application.id %}" id="button-surrender-application" class="govuk-button govuk-button--secondary">
 							{% lcs 'applications.ApplicationSummaryPage.Buttons.SURRENDER_APPLICATION_BUTTON' %}
+						</a>
+					{% endif %}
+					{% test_rule 'can_user_appeal_case' request application as can_user_appeal_case %}
+					{% if can_user_appeal_case %}
+						<a href="{% url 'applications:appeal' application.id %}" id="button-appeal-refusal" class="govuk-button govuk-button--secondary">
+							Appeal refusal decision
 						</a>
 					{% endif %}
 				{% endif %}
@@ -234,6 +242,9 @@
 				</a>
 				<a href="{% url 'applications:application' application.id 'activity' %}" class="lite-tabs__tab {% if type == 'activity' %}lite-tabs__tab--selected{% endif %}" id="link-activity">
 					{% lcs 'applications.ApplicationSummaryPage.Tabs.ACTIVITY' %}
+				</a>
+				<a href="{% url 'applications:application' application.id 'appeal-details' %}" class="lite-tabs__tab {% if type == 'appeal-details' %}lite-tabs__tab--selected{% endif %}" id="link-appeal-details">
+					{% lcs 'applications.ApplicationSummaryPage.Tabs.APPEAL' %}
 				</a>
 			</div>
 		</div>

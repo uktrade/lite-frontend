@@ -85,6 +85,8 @@
                         <div class="govuk-grid-column-full">
                             {% if decision_advice.decision == "Approve" or decision_advice.decision == "Proviso" %}
                                 <h3 class="govuk-heading-s">Reasons for approving</h3>
+                            {% elif decision_advice.decision == "Refuse" and advice.is_refusal_note %}
+                                <h3 class="govuk-heading-s">Refusal meeting note</h3>
                             {% elif decision_advice.decision == "Refuse" %}
                                 <h3 class="govuk-heading-s">Reasons for refusing</h3>
                             {% endif %}
