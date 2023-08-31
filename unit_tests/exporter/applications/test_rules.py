@@ -49,3 +49,25 @@ def test_can_user_appeal_case_based_on_feature_flag(
 
     request = rf.get("/")
     assert rules.test_rule("can_user_appeal_case", request, application) is expected
+
+
+@pytest.mark.parametrize(
+    "flag_value, appeal, expected",
+    (
+        (True, None, False),
+        (True, {"grounds_for_appeal": "test appeal"}, True),
+    ),
+)
+def test_appeal_tab_display(
+    settings, rf, data_standard_case, flag_value, appeal, expected
+):
+    settings.FEATURE_FLAG_APPEALS = flag_value
+    data_standard_case["case"]["data"]["status"] = {"key": 'finalised', "value": 'Finalised'}
+    data_standard_case["case"]["data"]["licence"] = None
+    data_standard_case["case"]["data"]["appeal_deadline"] = timezone.localtime().isoformat()
+    data_standard_case["case"]["data"]["appeal"] = appeal
+
+    application = Application(data_standard_case["case"]["data"])
+
+    request = rf.get("/")
+    assert rules.test_rule("appeal_exists_for_case", request, application) is expected
