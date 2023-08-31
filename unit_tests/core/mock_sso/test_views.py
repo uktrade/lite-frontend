@@ -9,6 +9,9 @@ def use_mock_sso(settings):
     # reload_urlconf is a little expensive, so while autouse=True is set
     # for these tests, this fixture should not be moved to conftest as-is.
     settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+    settings.MOCK_SSO_USER_EMAIL = "test@example.net"
+    settings.MOCK_SSO_USER_FIRST_NAME = "test"
+    settings.MOCK_SSO_USER_LAST_NAME = "user"
     reload_urlconf()
 
 
