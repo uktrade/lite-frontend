@@ -500,6 +500,11 @@ urlpatterns = [
     path("<uuid:pk>/surrender/", common.SurrenderApplication.as_view(), name="surrender"),
     path("<uuid:case_pk>/appeal/", common.AppealApplication.as_view(), name="appeal"),
     path(
+        "<uuid:case_pk>/appeal/<uuid:appeal_pk>/confirmation/",
+        common.AppealApplicationConfirmation.as_view(),
+        name="appeal_confirmation",
+    ),
+    path(
         "<uuid:case_pk>/appeal/<uuid:appeal_pk>/document/<uuid:document_pk>/download/",
         documents.DownloadAppealDocument.as_view(),
         name="appeal_document",
