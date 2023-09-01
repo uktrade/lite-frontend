@@ -38,7 +38,24 @@ def appeal_within_deadline(request, application):
     return appeal_deadline.date() >= datetime.today().date()
 
 
+@rules.predicate
+def is_application_appealed(request, application):
+    if not application:
+        return False
+
+    return bool(application.appeal)
+
+
 rules.add_rule(
     "can_user_appeal_case",
-    is_appeal_feature_flag_set & is_application_finalised & is_application_refused & appeal_within_deadline,
+    is_appeal_feature_flag_set
+    & is_application_finalised
+    & is_application_refused
+    & appeal_within_deadline
+    & ~is_application_appealed,  # noqa
+)
+
+rules.add_rule(
+    "can_view_appeal_details",
+    is_appeal_feature_flag_set & is_application_refused & is_application_appealed,
 )
