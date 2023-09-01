@@ -1112,6 +1112,7 @@ def data_standard_case(
                 "agreed_to_foi": "True",
                 "foi_reason": "internal details",
                 "agreed_to_declaration_text": "I AGREE",
+                "appeal": None,
             },
             "next_review_date": None,
             "licences": [],
