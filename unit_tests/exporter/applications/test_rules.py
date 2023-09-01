@@ -17,6 +17,7 @@ def test_can_user_appeal_case_rule_predicates(settings, rf, data_standard_case):
     assert not appeal_rules.is_application_finalised(request, None)
     assert not appeal_rules.is_application_refused(request, None)
     assert not appeal_rules.appeal_within_deadline(request, None)
+    assert not appeal_rules.is_application_appealed(request, None)
 
     application = Application(data_standard_case["case"]["data"])
     assert not appeal_rules.appeal_within_deadline(request, application)
