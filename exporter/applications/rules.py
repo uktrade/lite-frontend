@@ -52,6 +52,6 @@ rules.add_rule(
 )
 
 rules.add_rule(
-    "appeal_exists_for_case",
+    "can_view_appeal_details",
     is_appeal_feature_flag_set & is_application_refused & is_application_appealed,
 )

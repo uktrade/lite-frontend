@@ -47,8 +47,8 @@
 						</a>
 					{% endif %}
 					{% test_rule 'can_user_appeal_case' request application as can_user_appeal_case %}
-					{% test_rule 'appeal_exists_for_case' request application as appeal_exists_for_case %}
-					{% if can_user_appeal_case and not appeal_exists_for_case %}
+					{% test_rule 'can_view_appeal_details' request application as can_view_appeal_details %}
+					{% if can_user_appeal_case and not can_view_appeal_details %}
 						<a href="{% url 'applications:appeal' application.id %}" id="button-appeal-refusal" class="govuk-button govuk-button--secondary">
 							Appeal refusal decision
 						</a>
@@ -245,8 +245,8 @@
 					{% lcs 'applications.ApplicationSummaryPage.Tabs.ACTIVITY' %}
 				</a>
 
-				{% test_rule 'appeal_exists_for_case' request application as appeal_exists_for_case %}
-				{% if appeal_exists_for_case %}
+				{% test_rule 'can_view_appeal_details' request application as can_view_appeal_details %}
+				{% if can_view_appeal_details %}
 					<a href="{% url 'applications:application' application.id 'appeal-details' %}" class="lite-tabs__tab {% if type == 'appeal-details' %}lite-tabs__tab--selected{% endif %}" id="link-appeal-details">
 						{% lcs 'applications.ApplicationSummaryPage.Tabs.APPEAL' %}
 					</a>
