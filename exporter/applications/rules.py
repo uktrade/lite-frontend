@@ -48,7 +48,11 @@ def is_application_appealed(request, application):
 
 rules.add_rule(
     "can_user_appeal_case",
-    is_appeal_feature_flag_set & is_application_finalised & is_application_refused & appeal_within_deadline,
+    is_appeal_feature_flag_set
+    & is_application_finalised
+    & is_application_refused
+    & appeal_within_deadline
+    & ~is_application_appealed,
 )
 
 rules.add_rule(
