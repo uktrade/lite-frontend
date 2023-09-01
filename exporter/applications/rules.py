@@ -52,7 +52,7 @@ rules.add_rule(
     & is_application_finalised
     & is_application_refused
     & appeal_within_deadline
-    & ~is_application_appealed,
+    & ~is_application_appealed,  # noqa
 )
 
 rules.add_rule(
