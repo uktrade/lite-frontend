@@ -58,15 +58,10 @@ def invalid_appeal_pk():
     return "155eca7b-0528-4922-b652-03246b7fd0a8"
 
 
-@pytest.fixture
-def get_appeal_api_url(application_pk, appeal_pk):
-    return client._build_absolute_uri(f"/applications/{application_pk}/appeal/{appeal_pk}/")
-
-
 @pytest.fixture(autouse=True)
 def mock_get_appeal(requests_mock, application_pk, appeal_pk):
     return requests_mock.get(
-        client._build_absolute_uri(f"/applications/{application_pk}/appeal/{appeal_pk}/"),
+        client._build_absolute_uri(f"/applications/{application_pk}/appeals/{appeal_pk}/"),
         json={"id": appeal_pk},
         status_code=200,
     )
@@ -75,7 +70,7 @@ def mock_get_appeal(requests_mock, application_pk, appeal_pk):
 @pytest.fixture(autouse=True)
 def mock_get_appeal_invalid_pk(requests_mock, application_pk, invalid_appeal_pk):
     return requests_mock.get(
-        client._build_absolute_uri(f"/applications/{application_pk}/appeal/{invalid_appeal_pk}/"),
+        client._build_absolute_uri(f"/applications/{application_pk}/appeals/{invalid_appeal_pk}/"),
         json={},
         status_code=404,
     )

@@ -13,7 +13,10 @@ class AppealForm(BaseForm):
         TITLE = "Appeal refusal decision"
         SUBMIT_BUTTON_TEXT = "Submit appeal request"
 
-    grounds_for_appeal = forms.CharField(widget=forms.Textarea())
+    grounds_for_appeal = forms.CharField(
+        label="Describe your grounds for appeal",
+        widget=forms.Textarea(),
+    )
     documents = MultipleFileField(
         label="Attach any supporting documents",
     )
