@@ -1,4 +1,5 @@
 import pytest
+import uuid
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
@@ -1127,10 +1128,10 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
 
 @pytest.mark.parametrize(
     "decision_document",
-    (
-        ({"documents": {"inform_letter": {"hello": "world"}}}),
-        ({"documents": {"refusal": {}, "approval": {}, "inform_letter": {"hello": "world"}}},),
-    ),
+    [
+        {"documents": {"inform": {"value": "Inform"}}},
+        {"documents": {"refuse": {"value": "Refuse"}, "inform": {"value": "Inform"}}},
+    ],
 )
 def test_decision_document_present(
     requests_mock,
@@ -1152,11 +1153,53 @@ def test_decision_document_present(
     response = authorized_client.get(view_consolidate_outcome_url)
     assert response.status_code == 200
 
-    assert response.context["decisions"] == {"inform_letter": {"value": "Inform letter"}}
+    assert response.context["decisions"] == {"inform": {"value": "Inform"}}
 
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find("table", attrs={"name": "decision_document"})
     assert bool(table) is True
+
+
+@pytest.mark.parametrize(
+    "visible_to_exporter, expected_status",
+    [
+        [False, "READY TO SEND"],
+        [True, "SENT"],
+    ],
+)
+def test_decision_document_status(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    view_consolidate_outcome_url,
+    consolidated_refusal_outcome,
+    mock_gov_lu_user,
+    visible_to_exporter,
+    expected_status,
+    settings,
+):
+    settings.FEATURE_FLAG_REFUSALS = True
+
+    data_standard_case["case"]["advice"] = consolidated_refusal_outcome
+
+    decision_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice-documents/")
+    response_json = {
+        "documents": {
+            "refuse": {"value": "Refuse"},
+            "inform": {
+                "value": "Inform",
+                "document": {"id": str(uuid.uuid4()), "visible_to_exporter": visible_to_exporter},
+            },
+        }
+    }
+    requests_mock.get(url=decision_url, json=response_json)
+
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    table = soup.find("table", attrs={"name": "decision_document"})
+    assert table.find("div", {"id": "status-inform"}).text == expected_status
 
 
 def test_decision_document_not_present(

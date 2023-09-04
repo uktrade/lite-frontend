@@ -3,11 +3,16 @@ import pytest
 from bs4 import BeautifulSoup
 from pytest_django.asserts import assertContains, assertTemplateUsed
 
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from core import client
-
 from exporter.applications.forms.appeal import AppealForm
+
+
+@pytest.fixture(autouse=True)
+def setup(mock_refused_application_get):
+    yield
 
 
 @pytest.fixture(autouse=True)
@@ -22,15 +27,7 @@ def invalid_application_pk():
 
 @pytest.fixture
 def application_pk(data_standard_case):
-    return data_standard_case["case"]["id"]
-
-
-@pytest.fixture(autouse=True)
-def mock_get_application(requests_mock, application_pk, data_standard_case):
-    requests_mock.get(
-        client._build_absolute_uri(f"/applications/{application_pk}/"),
-        json=data_standard_case["case"],
-    )
+    return data_standard_case["case"]["data"]["id"]
 
 
 @pytest.fixture(autouse=True)
@@ -48,10 +45,15 @@ def post_appeal_api_url(application_pk):
 
 
 @pytest.fixture
-def mock_post_appeal(requests_mock, post_appeal_api_url):
+def appeal_pk():
+    return "c7e010b4-6c0c-4640-9a68-5bdee38c47d1"
+
+
+@pytest.fixture
+def mock_post_appeal(requests_mock, post_appeal_api_url, appeal_pk):
     return requests_mock.post(
         post_appeal_api_url,
-        json={},
+        json={"id": appeal_pk},
         status_code=201,
     )
 
@@ -60,6 +62,29 @@ def mock_post_appeal(requests_mock, post_appeal_api_url):
 def mock_post_appeal_failure(requests_mock, post_appeal_api_url):
     return requests_mock.post(
         post_appeal_api_url,
+        json={},
+        status_code=500,
+    )
+
+
+@pytest.fixture
+def post_appeal_document_api_url(appeal_pk):
+    return client._build_absolute_uri(f"/appeals/{appeal_pk}/documents/")
+
+
+@pytest.fixture
+def mock_post_appeal_document(requests_mock, post_appeal_document_api_url):
+    return requests_mock.post(
+        post_appeal_document_api_url,
+        json={},
+        status_code=201,
+    )
+
+
+@pytest.fixture
+def mock_post_appeal_document_failure(requests_mock, post_appeal_document_api_url):
+    return requests_mock.post(
+        post_appeal_document_api_url,
         json={},
         status_code=500,
     )
@@ -118,6 +143,35 @@ def test_post_appeal(authorized_client, appeal_url, application_url, mock_post_a
     assert mock_post_appeal.last_request.json() == {"grounds_for_appeal": "These are my grounds for appeal"}
 
 
+def test_post_appeal_with_files(
+    authorized_client,
+    appeal_url,
+    application_url,
+    mock_post_appeal,
+    mock_post_appeal_document,
+):
+    response = authorized_client.post(
+        appeal_url,
+        data={
+            "grounds_for_appeal": "These are my grounds for appeal",
+            "documents": [
+                SimpleUploadedFile("file 1", b"File 1 contents"),
+                SimpleUploadedFile("file 2", b"File 2 contents"),
+            ],
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == application_url
+
+    assert mock_post_appeal.called_once
+    assert mock_post_appeal.last_request.json() == {"grounds_for_appeal": "These are my grounds for appeal"}
+
+    assert mock_post_appeal_document.call_count == 2
+    assert mock_post_appeal_document.request_history[0].json() == {"name": "file 1", "s3_key": "file 1", "size": 0}
+    assert mock_post_appeal_document.request_history[1].json() == {"name": "file 2", "s3_key": "file 2", "size": 0}
+
+
 def test_post_appeal_failure(authorized_client, appeal_url, mock_post_appeal_failure):
     response = authorized_client.post(
         appeal_url,
@@ -125,3 +179,23 @@ def test_post_appeal_failure(authorized_client, appeal_url, mock_post_appeal_fai
     )
 
     assertContains(response, "Unexpected error creating appeal")
+
+
+def test_post_appeal_with_files_failure(
+    authorized_client,
+    appeal_url,
+    mock_post_appeal,
+    mock_post_appeal_document_failure,
+):
+    response = authorized_client.post(
+        appeal_url,
+        data={
+            "grounds_for_appeal": "These are my grounds for appeal",
+            "documents": [
+                SimpleUploadedFile("file 1", b"File 1 contents"),
+                SimpleUploadedFile("file 2", b"File 2 contents"),
+            ],
+        },
+    )
+
+    assertContains(response, "Unexpected error creating appeal document")

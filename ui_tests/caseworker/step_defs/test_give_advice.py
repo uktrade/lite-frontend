@@ -3,6 +3,8 @@ import time
 from pytest_bdd import when, then, parsers, scenarios
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from tests_common import functions
 from ui_tests.caseworker.pages.assign_flags_to_case import CaseFlagsPages
@@ -49,6 +51,11 @@ def select_refusal_criteria(driver, criteria):  # noqa
 
     for crit in criteria.split(","):
         tokenfield_input.send_keys(crit)
+        WebDriverWait(driver, 30).until(
+            expected_conditions.visibility_of_element_located(
+                (By.XPATH, "//li[@class='tokenfield-suggest-item selected']"),
+            ),
+        )
         suggestion_element = driver.find_element(By.XPATH, "//li[@class='tokenfield-suggest-item selected']")
         actions = ActionChains(driver)
         actions.move_to_element(suggestion_element).click().perform()

@@ -560,3 +560,13 @@ def edit_good_on_application_firearm_details_serial_numbers(request, pk, good_on
 def post_appeal(request, application_pk, data):
     data = client.post(request, f"/applications/{application_pk}/appeal/", data=data)
     return data.json(), data.status_code
+
+
+def post_appeal_document(request, appeal_pk, data):
+    data = client.post(request, f"/appeals/{appeal_pk}/documents/", data=data)
+    return data.json(), data.status_code
+
+
+def get_appeal_document(request, appeal_pk, document_pk):
+    data = client.get(request, f"/appeals/{appeal_pk}/documents/{document_pk}/")
+    return data.json(), data.status_code
