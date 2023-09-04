@@ -243,9 +243,13 @@
 				<a href="{% url 'applications:application' application.id 'activity' %}" class="lite-tabs__tab {% if type == 'activity' %}lite-tabs__tab--selected{% endif %}" id="link-activity">
 					{% lcs 'applications.ApplicationSummaryPage.Tabs.ACTIVITY' %}
 				</a>
-				<a href="{% url 'applications:application' application.id 'appeal-details' %}" class="lite-tabs__tab {% if type == 'appeal-details' %}lite-tabs__tab--selected{% endif %}" id="link-appeal-details">
-					{% lcs 'applications.ApplicationSummaryPage.Tabs.APPEAL' %}
-				</a>
+
+				{% test_rule 'can_view_appeal_details' request application as can_view_appeal_details %}
+				{% if can_view_appeal_details %}
+					<a href="{% url 'applications:application' application.id 'appeal-details' %}" class="lite-tabs__tab {% if type == 'appeal-details' %}lite-tabs__tab--selected{% endif %}" id="link-appeal-details">
+						{% lcs 'applications.ApplicationSummaryPage.Tabs.APPEAL' %}
+					</a>
+				{% endif %}
 			</div>
 		</div>
 	{% endif %}
