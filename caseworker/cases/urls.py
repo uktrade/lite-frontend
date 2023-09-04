@@ -98,7 +98,7 @@ urlpatterns = [
         name="generate_document_preview",
     ),
     path(
-        "generate-document/<str:decision_key>/<uuid:dpk>/preview-view/",
+        "generate-document/<uuid:dpk>/preview-view/<str:decision_key>",
         generate_document.PreviewViewDocument.as_view(),
         name="generate_document_preview_view",
     ),

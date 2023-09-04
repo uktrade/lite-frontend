@@ -153,7 +153,7 @@ class PreviewViewDocument(LoginRequiredMixin, SingleFormView):
 
         return render(
             request,
-            "generated-documents/preview-edit.html",
+            "generated-documents/preview-view.html",
             {"preview": preview["preview"], TEXT: text, "addressee": "", "kwargs": self.kwargs},
         )
 
