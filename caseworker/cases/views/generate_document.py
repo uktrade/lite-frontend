@@ -195,13 +195,17 @@ class CreateDocument(LoginRequiredMixin, TemplateView):
 
 
 class SendExistingDocument(LoginRequiredMixin, View):
+    def get_success_message(self, send_response, case):
+        if send_response.json()["document"]["advice_type"] == "inform":
+            return f"Inform letter sent to {case['data']['organisation']['name']}, {case['reference_code']}"
+        return f"Document sent to {case['data']['organisation']['name']}, {case['reference_code']}"
+
     def post(self, request, queue_pk, pk, document_pk):
         response = send_generated_document(request, pk, document_pk)
         case = get_case(request, pk)
         if response.ok:
-            messages.success(
-                self.request, f"Document sent to {case['data']['organisation']['name']}, {case['reference_code']}"
-            )
+            success_message = self.get_success_message(response, case)
+            messages.success(self.request, success_message)
         else:
             messages.error(
                 self.request,
