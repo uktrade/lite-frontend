@@ -1,9 +1,12 @@
 import pytest
 
+from datetime import timedelta
+
 from bs4 import BeautifulSoup
 from pytest_django.asserts import assertContains, assertTemplateUsed
 
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.utils import timezone
 from django.urls import reverse
 
 from core import client
@@ -11,8 +14,9 @@ from exporter.applications.forms.appeal import AppealForm
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_refused_application_get):
-    yield
+def setup(mock_refused_application_get, mock_application_get, data_standard_case):
+    data_standard_case["case"]["data"]["status"] = "finalised"
+    data_standard_case["case"]["data"]["appeal_deadline"] = (timezone.now() + timedelta(days=1)).isoformat()
 
 
 @pytest.fixture(autouse=True)
@@ -30,6 +34,11 @@ def application_pk(data_standard_case):
     return data_standard_case["case"]["data"]["id"]
 
 
+@pytest.fixture
+def application_reference_number(data_standard_case):
+    return data_standard_case["case"]["reference_code"]
+
+
 @pytest.fixture(autouse=True)
 def mock_get_application_invalid_pk(requests_mock, invalid_application_pk):
     requests_mock.get(
@@ -40,13 +49,36 @@ def mock_get_application_invalid_pk(requests_mock, invalid_application_pk):
 
 
 @pytest.fixture
-def post_appeal_api_url(application_pk):
-    return client._build_absolute_uri(f"/applications/{application_pk}/appeal/")
+def appeal_pk():
+    return "c7e010b4-6c0c-4640-9a68-5bdee38c47d1"
 
 
 @pytest.fixture
-def appeal_pk():
-    return "c7e010b4-6c0c-4640-9a68-5bdee38c47d1"
+def invalid_appeal_pk():
+    return "155eca7b-0528-4922-b652-03246b7fd0a8"
+
+
+@pytest.fixture(autouse=True)
+def mock_get_appeal(requests_mock, application_pk, appeal_pk):
+    return requests_mock.get(
+        client._build_absolute_uri(f"/applications/{application_pk}/appeals/{appeal_pk}/"),
+        json={"id": appeal_pk},
+        status_code=200,
+    )
+
+
+@pytest.fixture(autouse=True)
+def mock_get_appeal_invalid_pk(requests_mock, application_pk, invalid_appeal_pk):
+    return requests_mock.get(
+        client._build_absolute_uri(f"/applications/{application_pk}/appeals/{invalid_appeal_pk}/"),
+        json={},
+        status_code=404,
+    )
+
+
+@pytest.fixture
+def post_appeal_api_url(application_pk):
+    return client._build_absolute_uri(f"/applications/{application_pk}/appeals/")
 
 
 @pytest.fixture
@@ -100,6 +132,11 @@ def appeal_url(application_pk):
     return reverse("applications:appeal", kwargs={"case_pk": application_pk})
 
 
+@pytest.fixture
+def appeal_confirmation_url(application_pk, appeal_pk):
+    return reverse("applications:appeal_confirmation", kwargs={"case_pk": application_pk, "appeal_pk": appeal_pk})
+
+
 def test_appeal_view_feature_flag_off(authorized_client, appeal_url, settings):
     settings.FEATURE_FLAG_APPEALS = False
 
@@ -131,14 +168,14 @@ def test_appeal_view(authorized_client, appeal_url, application_url):
     assert soup.find("textarea", {"name": "grounds_for_appeal"})
 
 
-def test_post_appeal(authorized_client, appeal_url, application_url, mock_post_appeal):
+def test_post_appeal(authorized_client, appeal_url, appeal_confirmation_url, mock_post_appeal):
     response = authorized_client.post(
         appeal_url,
         data={"grounds_for_appeal": "These are my grounds for appeal"},
     )
 
     assert response.status_code == 302
-    assert response.url == application_url
+    assert response.url == appeal_confirmation_url
     assert mock_post_appeal.called_once
     assert mock_post_appeal.last_request.json() == {"grounds_for_appeal": "These are my grounds for appeal"}
 
@@ -146,7 +183,7 @@ def test_post_appeal(authorized_client, appeal_url, application_url, mock_post_a
 def test_post_appeal_with_files(
     authorized_client,
     appeal_url,
-    application_url,
+    appeal_confirmation_url,
     mock_post_appeal,
     mock_post_appeal_document,
 ):
@@ -162,7 +199,7 @@ def test_post_appeal_with_files(
     )
 
     assert response.status_code == 302
-    assert response.url == application_url
+    assert response.url == appeal_confirmation_url
 
     assert mock_post_appeal.called_once
     assert mock_post_appeal.last_request.json() == {"grounds_for_appeal": "These are my grounds for appeal"}
@@ -199,3 +236,42 @@ def test_post_appeal_with_files_failure(
     )
 
     assertContains(response, "Unexpected error creating appeal document")
+
+
+def test_appeal_confirmation_view(
+    authorized_client,
+    appeal_confirmation_url,
+    application_reference_number,
+):
+    response = authorized_client.get(appeal_confirmation_url)
+
+    assertTemplateUsed(response, "applications/appeal-confirmation.html")
+    assertContains(response, "Appeal request complete")
+    assertContains(response, "Application reference number")
+    assertContains(response, application_reference_number)
+
+
+def test_appeal_confirmation_view_invalid_application_pk(
+    authorized_client,
+    invalid_application_pk,
+    appeal_pk,
+):
+    url = reverse(
+        "applications:appeal_confirmation", kwargs={"case_pk": invalid_application_pk, "appeal_pk": appeal_pk}
+    )
+    response = authorized_client.get(url)
+
+    assert response.status_code == 404
+
+
+def test_appeal_confirmation_view_invalid_appeal_pk(
+    authorized_client,
+    application_pk,
+    invalid_appeal_pk,
+):
+    url = reverse(
+        "applications:appeal_confirmation", kwargs={"case_pk": application_pk, "appeal_pk": invalid_appeal_pk}
+    )
+    response = authorized_client.get(url)
+
+    assert response.status_code == 404

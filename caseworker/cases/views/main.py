@@ -238,6 +238,7 @@ class CaseDetail(CaseTabsMixin, CaseView):
             Slices.END_USE_DETAILS,
             Slices.SUPPORTING_DOCUMENTS,
             Slices.FREEDOM_OF_INFORMATION,
+            conditional(self.case.data["appeal"], Slices.APPEAL_DETAILS),
         ]
         self.additional_context = self.get_advice_additional_context()
 
