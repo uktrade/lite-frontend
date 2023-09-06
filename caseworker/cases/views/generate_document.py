@@ -141,10 +141,11 @@ class PreviewViewDocument(LoginRequiredMixin, SingleFormView):
         template = document["template"]
         text = document.get(TEXT)
         self.object_pk = kwargs["pk"]
+        addressee = request.POST.get("addressee", "")
         self.kwargs["tpk"] = template
 
         preview, status_code = get_generated_document_preview(
-            request, self.object_pk, template=template, text=quote(text), addressee=""
+            request, self.object_pk, template=template, text=quote(text), addressee=addressee
         )
 
         if status_code == 400:
