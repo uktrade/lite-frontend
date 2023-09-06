@@ -22,9 +22,9 @@
 		  </td>
 		  <td class="govuk-table__cell">
              {% if data.document.visible_to_exporter %}
-		     <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button">
-			Recreate
-		     </a>
+			 <a href={% if data.value == 'Inform' %} "{% url 'cases:select-inform-template' queue_id case.id %}" {% else %}  "{% url 'cases:finalise_document_template' queue_id case.id decision %}" {% endif %} class="govuk-button" data-module="govuk-button" id="generate-document-{{ decision }}">
+                Recreate
+             </a>
              {% else %}
              <form action="{% url 'cases:generate_document_send' queue_id case.id data.document.id %}" method="POST">
                 {% csrf_token %}
