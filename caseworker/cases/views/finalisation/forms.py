@@ -7,7 +7,6 @@ from core.common.forms import BaseForm
 class SelectInformLetterTemplateForm(BaseForm):
     class Layout:
         TITLE = "Select a template"
-        SUBTITLE = "Select a template"
 
     select_template = forms.ChoiceField(
         label="",
@@ -24,12 +23,6 @@ class SelectInformLetterTemplateForm(BaseForm):
 
         self.fields["select_template"].choices = inform_pargraphs
 
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            "select_template",
-            Submit("submit", "Continue"),
-        )
-
     def get_layout_fields(self):
         return ("select_template",)
 
@@ -37,7 +30,7 @@ class SelectInformLetterTemplateForm(BaseForm):
 class LetterEditTextForm(BaseForm):
     class Layout:
         TITLE = "Edit inform letter header"
-        SUBTITLE = "Edit inform letter header"
+        SUBMIT_BUTTON_TEXT = "Preview"
 
     text = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "30"}),
@@ -45,10 +38,5 @@ class LetterEditTextForm(BaseForm):
         label="",
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            "text",
-            Submit("submit", "Preview"),
-        )
+    def get_layout_fields(self):
+        return ("text",)
