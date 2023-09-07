@@ -63,7 +63,7 @@
                     <span class="govuk-details__summary-text-closed">Show filters</span>
                     <span class="govuk-details__summary-text-open">Hide filters</span>
                   </span>
-                </summary>
+                </summary>case_sub_status
                 <div class="govuk-details__text">
 	                {% include 'queues/case-filters.html' %}
                     {% include 'bookmarks/bookmarks.html' %}
@@ -72,7 +72,7 @@
         </div>
         <div class="app-queue-view__content">
 
-            <div class="customiser" data-customiser-spec='{"options_label": "Customise queue view", "identifier": "queue-view", "analytics_prefix": "qv", "options_hint": "Select columns to show", "toggleable_elements": [{"label": "Destination", "key": "destination", "default_visible": true}, {"label": "Case allocation", "key": "case_allocation", "default_visible": true}, {"label": "Case recommendation", "key": "case_recommendation", "default_visible": false}, {"label": "Case updates", "key": "case_updates", "default_visible": true}, {"label": "Products", "key": "products"}, {"label": "Users", "key": "users"}, {"label": "Control list entry", "key": "control_list_entry"}, {"label": "Report summary", "key": "report_summary"}, {"label": "Regime", "key": "regime"}, {"label": "Total value", "key": "total_value"}, {"label": "Queries", "key": "queries"}, {"label": "Denial matches", "key": "denial_matches"}, {"label": "Intended end use", "key": "intended_end_use"}, {"label": "Flags", "key": "flags", "default_visible": true}]}'>
+            <div class="customiser" data-customiser-spec='{"options_label": "Customise queue view", "identifier": "queue-view", "analytics_prefix": "qv", "options_hint": "Select columns to show", "toggleable_elements": [{"label": "Destination", "key": "destination", "default_visible": true}, {"label": "Case allocation", "key": "case_allocation", "default_visible": true}, {"label": "Sub Status", "key": "case_sub_status", "default_visible": false}, {"label": "Case recommendation", "key": "case_recommendation", "default_visible": false}, {"label": "Case updates", "key": "case_updates", "default_visible": true}, {"label": "Products", "key": "products"}, {"label": "Users", "key": "users"}, {"label": "Control list entry", "key": "control_list_entry"}, {"label": "Report summary", "key": "report_summary"}, {"label": "Regime", "key": "regime"}, {"label": "Total value", "key": "total_value"}, {"label": "Queries", "key": "queries"}, {"label": "Denial matches", "key": "denial_matches"}, {"label": "Intended end use", "key": "intended_end_use"}, {"label": "Flags", "key": "flags", "default_visible": true}]}'>
                 <div class="customiser__header">
 	                {% include 'queues/search-tabs.html' %}
                 </div>
@@ -104,6 +104,7 @@
 	            	    			<th class="govuk-table__header app-table__header--skeleton" scope="col">Case</th>
 	            	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="destination" scope="col">Destination</th>
 	            	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="case_allocation" scope="col">Case allocation</th>
+									<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="case_sub_status" scope="col">Sub Status</th>
 									<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="case_recommendation" scope="col">Case recommendation</th>
 	            	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="case_updates" scope="col">Case updates</th>
 	            	    			<th class="govuk-table__header app-table__header--skeleton" data-customiser-key="products" scope="col">Products</th>

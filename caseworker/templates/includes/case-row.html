@@ -122,6 +122,10 @@
 			{% endif %}
 		</ul>
 	</td>
+	{# case sub-status #}
+	<td class="govuk-table__cell lite-mobile-hide" data-customiser-key="case_sub_status">
+		<span class="app-case-substatus-value">{{case.status.value}}</span>
+	</td>
 	{# case recommendations #}
 	<td class="govuk-table__cell lite-mobile-hide case-recommendation" data-customiser-key="case_recommendation">
 		{% include "includes/recommendations.html" with case=case %}
