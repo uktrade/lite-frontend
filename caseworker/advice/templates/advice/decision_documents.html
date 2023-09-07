@@ -15,16 +15,16 @@
 	  <tr class="govuk-table__row" id="decision-{{ decision }}">
 	    {% if data.document %}
           <td class="govuk-table__cell">
-            <a class="govuk-link" href="{% url 'cases:generate_document_preview_view' queue_id case.id decision data.document.id %}">{{ data.value }}</a>
+            <a class="govuk-link" href="{% url 'cases:generate_document_preview_view' queue_id case.id decision data.document.id %}">{{ data.value }} letter</a>
           </td>
 		  <td class="govuk-table__cell">
 			<div id="status-{{ decision }}" data-status="done" class="govuk-tag govuk-tag--blue">{% if data.document.visible_to_exporter %}SENT{% else %}READY TO SEND{% endif %}</div>
 		  </td>
 		  <td class="govuk-table__cell">
              {% if data.document.visible_to_exporter %}
-		     <a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}" class="govuk-button" data-module="govuk-button">
-			Recreate
-		     </a>
+			 <a href={% if data.value == 'Inform' %} "{% url 'cases:select-inform-template' queue_id case.id %}" {% else %}  "{% url 'cases:finalise_document_template' queue_id case.id decision %}" {% endif %} class="govuk-button" data-module="govuk-button" id="generate-document-{{ decision }}">
+                Recreate
+             </a>
              {% else %}
              <form action="{% url 'cases:generate_document_send' queue_id case.id data.document.id %}" method="POST">
                 {% csrf_token %}
@@ -37,7 +37,7 @@
 			<a href="{% url 'cases:finalise_document_template' queue_id case.id decision %}">Edit</a>
 		  </td>
 		{% else %}
-          <td class="govuk-table__cell">{{ data.value }}
+          <td class="govuk-table__cell">{{ data.value }} letter
           </td>
 		  <td class="govuk-table__cell">
 			<strong id="status-{{ decision }}" data-status="not-started" class="govuk-tag govuk-tag--grey">
@@ -46,7 +46,7 @@
 		  </td>
 		  <td class="govuk-table__cell">
 		    <a href={% if data.value == 'Inform' %} "{% url 'cases:select-inform-template' queue_id case.id %}" {% else %}  "{% url 'cases:finalise_document_template' queue_id case.id decision %}" {% endif %} class="govuk-button" data-module="govuk-button" id="generate-document-{{ decision }}">
-			  Create {{data.value}}
+			  Create {{data.value}} letter
 		    </a>
 		  </td>
           <td class="govuk-table__cell"></td>

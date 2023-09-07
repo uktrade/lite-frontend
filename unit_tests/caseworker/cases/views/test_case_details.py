@@ -1,8 +1,12 @@
 import pytest
-from bs4 import BeautifulSoup
-from datetime import timedelta
+import re
 
-from pytest_django.asserts import assertTemplateUsed
+from bs4 import BeautifulSoup
+
+from pytest_django.asserts import (
+    assertTemplateNotUsed,
+    assertTemplateUsed,
+)
 
 from copy import deepcopy
 from dateutil.parser import parse
@@ -179,3 +183,33 @@ def test_case_assign_me_button_when_user_is_not_assigned(
     assert needs_allocation.find(id="allocate-case-link").text == "Allocate case"
     if not is_system_queue:
         assert needs_allocation.find(id="allocate-to-me-button").text == "Allocate to me"
+
+
+def test_case_details_appeal_details(
+    data_standard_case,
+    data_queue,
+    authorized_client,
+):
+    data_standard_case["case"]["data"]["appeal"] = {
+        "grounds_for_appeal": "This is my reason for appeal",
+    }
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+
+    assertTemplateUsed(response, "case/slices/appeal-details.html")
+
+    html = BeautifulSoup(response.content, "html.parser")
+    dt = html.find("dt", string=re.compile("Grounds for appeal"))
+    assert dt
+    assert dt.find_next().find("p").string == "This is my reason for appeal"
+
+
+def test_case_details_appeal_details_no_appeal(
+    data_standard_case,
+    data_queue,
+    authorized_client,
+):
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+
+    assertTemplateNotUsed(response, "case/slices/appeal-details.html")

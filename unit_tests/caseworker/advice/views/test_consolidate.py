@@ -1226,3 +1226,40 @@ def test_decision_document_not_present(
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find("table", attrs={"name": "decision_document"})
     assert bool(table) is False
+
+
+def test_decision_document_recreate_url(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    data_queue,
+    view_consolidate_outcome_url,
+    consolidated_refusal_outcome,
+    mock_gov_lu_user,
+    settings,
+):
+    settings.FEATURE_FLAG_REFUSALS = True
+
+    case_id = data_standard_case["case"]["id"]
+    data_standard_case["case"]["advice"] = consolidated_refusal_outcome
+
+    decision_url = client._build_absolute_uri(f"/cases/{case_id}/final-advice-documents/")
+    create_inform_letter_url = f"/queues/{data_queue['id']}/cases/{case_id}/letters/select-inform-template/"
+
+    response_json = {
+        "documents": {
+            "refuse": {"value": "Refuse", "document": {"id": str(uuid.uuid4()), "visible_to_exporter": True}},
+            "inform": {
+                "value": "Inform",
+                "document": {"id": str(uuid.uuid4()), "visible_to_exporter": True},
+            },
+        }
+    }
+
+    requests_mock.get(url=decision_url, json=response_json)
+
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="generate-document-inform").attrs["href"] == create_inform_letter_url
