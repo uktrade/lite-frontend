@@ -431,6 +431,15 @@ class ChangeSubStatus(LoginRequiredMixin, FormView):
 
         return kwargs
 
+    def get_initial(self):
+        initial = super().get_initial()
+
+        sub_status = self.case["data"].get("sub_status")
+        if sub_status:
+            initial["sub_status"] = sub_status["id"]
+
+        return initial
+
     @expect_status(
         HTTPStatus.OK,
         "Error changing case sub status",
