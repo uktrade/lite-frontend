@@ -1,16 +1,22 @@
 import datetime
 from logging import getLogger
 
+from http import HTTPStatus
+
 from django.conf import settings
 from django.contrib import messages
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
+
+from requests.exceptions import HTTPError
 
 from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
+from core.decorators import expect_status
 from core.file_handler import s3_client
 
 from lite_content.lite_internal_frontend import cases
@@ -31,6 +37,7 @@ from caseworker.cases.forms.additional_contacts import add_additional_contact_fo
 from caseworker.cases.forms.assign_users import assign_case_officer_form
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import change_status_form
+from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
 from caseworker.cases.forms.done_with_case import done_with_case_form
 from caseworker.cases.forms.move_case import move_case_form
 from caseworker.cases.forms.next_review_date import set_next_review_date_form
@@ -54,6 +61,8 @@ from caseworker.cases.services import (
     post_case_documents,
     get_document,
     get_blocking_flags,
+    get_case_sub_statuses,
+    put_case_sub_status,
 )
 from caseworker.compliance.services import get_compliance_licences
 from caseworker.cases.services import get_case_basic_details
@@ -389,6 +398,63 @@ class ChangeStatus(SingleFormView):
         messages.success(self.request, cases.ChangeStatusPage.SUCCESS_MESSAGE)
         return reverse_lazy(
             "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
+        )
+
+
+class ChangeSubStatus(LoginRequiredMixin, FormView):
+    form_class = ChangeSubStatusForm
+    template_name = "case/form.html"
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.case = get_case(self.request, self.kwargs["pk"])
+        except HTTPError:
+            raise Http404()
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        context["case"] = self.case
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        case_sub_statuses = get_case_sub_statuses(self.request, self.case.id)
+        case_sub_status_choices = [
+            (case_sub_status["id"], case_sub_status["name"]) for case_sub_status in case_sub_statuses
+        ]
+        kwargs["sub_statuses"] = case_sub_status_choices
+
+        return kwargs
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error changing case sub status",
+        "Unexpected error changing case sub status",
+    )
+    def put_case_sub_status(self, request, case_id, data):
+        return put_case_sub_status(request, case_id, data)
+
+    def form_valid(self, form):
+        self.put_case_sub_status(
+            self.request,
+            self.case.id,
+            form.cleaned_data,
+        )
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(
+            "cases:case",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.case.id,
+                "tab": "details",
+            },
         )
 
 
