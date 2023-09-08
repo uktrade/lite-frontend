@@ -90,6 +90,34 @@ def test_get_change_sub_status(
     ]
 
 
+def test_get_change_sub_status_initial_value(
+    authorized_client,
+    mock_queue,
+    mock_case,
+    mock_get_case_sub_statuses,
+    change_sub_status_url,
+    data_standard_case,
+):
+    data_standard_case["case"]["data"]["sub_status"] = {
+        "id": "status-2",
+        "name": "Status 2",
+    }
+
+    response = authorized_client.get(change_sub_status_url)
+    assert response.status_code == 200
+    assertTemplateUsed("case/form.html")
+    soup = BeautifulSoup(response.content, "html.parser")
+    select = soup.find(id="id_sub_status")
+    option_elements = select.find_all("option")
+    options = [(option["value"], option.text) for option in option_elements]
+    assert options == [
+        ("status-1", "Status 1"),
+        ("status-2", "Status 2"),
+    ]
+    assert "selected" not in option_elements[0].attrs
+    assert "selected" in option_elements[1].attrs
+
+
 def test_change_sub_status_invalid_case_pk(
     authorized_client,
     queue_id,
