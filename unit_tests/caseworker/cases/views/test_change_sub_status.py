@@ -85,6 +85,7 @@ def test_get_change_sub_status(
     select = soup.find(id="id_sub_status")
     options = [(option["value"], option.text) for option in select.find_all("option")]
     assert options == [
+        ("", ""),
         ("status-1", "Status 1"),
         ("status-2", "Status 2"),
     ]
@@ -104,18 +105,12 @@ def test_get_change_sub_status_initial_value(
     }
 
     response = authorized_client.get(change_sub_status_url)
-    assert response.status_code == 200
-    assertTemplateUsed("case/form.html")
     soup = BeautifulSoup(response.content, "html.parser")
     select = soup.find(id="id_sub_status")
     option_elements = select.find_all("option")
-    options = [(option["value"], option.text) for option in option_elements]
-    assert options == [
-        ("status-1", "Status 1"),
-        ("status-2", "Status 2"),
-    ]
     assert "selected" not in option_elements[0].attrs
-    assert "selected" in option_elements[1].attrs
+    assert "selected" not in option_elements[1].attrs
+    assert "selected" in option_elements[2].attrs
 
 
 def test_change_sub_status_invalid_case_pk(
@@ -159,4 +154,27 @@ def test_post_change_sub_status(
     assert mock_put_case_sub_status.called
     assert mock_put_case_sub_status.last_request.json() == {
         "sub_status": "status-1",
+    }
+
+
+def test_post_change_sub_status_setting_none(
+    authorized_client,
+    change_sub_status_url,
+    case_url,
+    mock_case,
+    mock_queue,
+    mock_get_case_sub_statuses,
+    mock_put_case_sub_status,
+):
+    response = authorized_client.post(
+        change_sub_status_url,
+        data={
+            "sub_status": "",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == case_url
+    assert mock_put_case_sub_status.called
+    assert mock_put_case_sub_status.last_request.json() == {
+        "sub_status": "",
     }
