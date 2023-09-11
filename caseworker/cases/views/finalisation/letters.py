@@ -71,6 +71,7 @@ class SelectInformTemplate(BaseLetter):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["back_link_url"] = self.get_back_link_url()
+        context["title"] = self.form_class.Layout.TITLE
         return context
 
 
@@ -159,3 +160,8 @@ class EditInformLetterText(BaseLetter):
                 ),
             },
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = self.form_class.Layout.TITLE
+        return context

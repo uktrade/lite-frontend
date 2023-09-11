@@ -39,7 +39,18 @@ def send_document_url(data_standard_case, data_generated_document_id):
 
 @pytest.fixture
 def mock_send_generated_document(requests_mock, send_document_url, mock_gov_user):
-    return requests_mock.post(url=send_document_url, json={"notification_sent": False})
+    return requests_mock.post(
+        url=send_document_url,
+        json={"notification_sent": False, "document": {"template": "foobar123", "advice_type": None, "text": ""}},
+    )
+
+
+@pytest.fixture
+def mock_send_generated_inform_letter(requests_mock, send_document_url, mock_gov_user):
+    return requests_mock.post(
+        url=send_document_url,
+        json={"notification_sent": False, "document": {"template": "foobar123", "advice_type": "inform", "text": ""}},
+    )
 
 
 @pytest.fixture
@@ -94,7 +105,7 @@ def mock_preview_fail(requests_mock, get_preview_url, mock_gov_user):
     return requests_mock.get(url=get_preview_url, status_code=400, json={"preview": ""})
 
 
-def test_send_existing_document(
+def test_send_existing_document_error(
     authorized_client,
     requests_mock,
     data_standard_case,
@@ -152,6 +163,35 @@ def test_send_existing_document_ok(
         == f"/cases/{data_standard_case['case']['id']}/generated-documents/{data_generated_document_id}/send/"
     )
     assert mock_send_generated_document.last_request.json() == {}
+
+
+def test_send_existing_inform_letter_ok(
+    authorized_client,
+    data_standard_case,
+    queue_pk,
+    mock_send_generated_inform_letter,
+    data_generated_document_id,
+):
+    url = reverse(
+        "cases:generate_document_send",
+        kwargs={
+            "queue_pk": queue_pk,
+            "pk": data_standard_case["case"]["id"],
+            "document_pk": data_generated_document_id,
+        },
+    )
+    response = authorized_client.post(url, follow=True)
+    assert response.status_code == 200
+    messages = [str(msg) for msg in response.context["messages"]]
+    expected_message = f"Inform letter sent to {data_standard_case['case']['data']['organisation']['name']}, {data_standard_case['case']['reference_code']}"
+    assert response.redirect_chain[-1][0] == f"/queues/{queue_pk}/"
+    assert messages == [expected_message]
+    assert mock_send_generated_inform_letter.called
+    assert (
+        mock_send_generated_inform_letter.last_request.path
+        == f"/cases/{data_standard_case['case']['id']}/generated-documents/{data_generated_document_id}/send/"
+    )
+    assert mock_send_generated_inform_letter.last_request.json() == {}
 
 
 def test_finalise_document_create_return_url(
