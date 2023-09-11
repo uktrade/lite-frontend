@@ -7,6 +7,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
+from core.exceptions import ServiceError
 
 
 @pytest.fixture
@@ -45,6 +46,15 @@ def mock_put_case_sub_status(post_sub_status_api_url, requests_mock):
     return requests_mock.put(
         url=post_sub_status_api_url,
         json={},
+    )
+
+
+@pytest.fixture
+def mock_put_case_sub_status_failure(post_sub_status_api_url, requests_mock):
+    return requests_mock.put(
+        url=post_sub_status_api_url,
+        json={},
+        status_code=500,
     )
 
 
@@ -178,3 +188,24 @@ def test_post_change_sub_status_setting_none(
     assert mock_put_case_sub_status.last_request.json() == {
         "sub_status": "",
     }
+
+
+def test_post_change_sub_status_setting_failure(
+    authorized_client,
+    change_sub_status_url,
+    case_url,
+    mock_case,
+    mock_queue,
+    mock_get_case_sub_statuses,
+    mock_put_case_sub_status_failure,
+):
+    with pytest.raises(ServiceError) as ex:
+        authorized_client.post(
+            change_sub_status_url,
+            data={
+                "sub_status": "",
+            },
+        )
+
+    assert ex.value.status_code == 500
+    assert ex.value.user_message == "Unexpected error changing case sub status"
