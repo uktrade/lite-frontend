@@ -411,6 +411,10 @@ class ChangeSubStatus(LoginRequiredMixin, FormView):
         except HTTPError:
             raise Http404()
 
+        self.case_sub_statuses = get_case_sub_statuses(self.request, self.case.id)
+        if not self.case_sub_statuses:
+            raise Http404()
+
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
@@ -423,9 +427,8 @@ class ChangeSubStatus(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
-        case_sub_statuses = get_case_sub_statuses(self.request, self.case.id)
         case_sub_status_choices = [
-            (case_sub_status["id"], case_sub_status["name"]) for case_sub_status in case_sub_statuses
+            (case_sub_status["id"], case_sub_status["name"]) for case_sub_status in self.case_sub_statuses
         ]
         kwargs["sub_statuses"] = case_sub_status_choices
 

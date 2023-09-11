@@ -144,6 +144,23 @@ def test_change_sub_status_invalid_case_pk(
     assert response.status_code == 404
 
 
+def test_change_sub_status_no_available_sub_statuses(
+    authorized_client,
+    mock_queue,
+    mock_case,
+    change_sub_status_url,
+    data_standard_case,
+    get_sub_status_api_url,
+    requests_mock,
+):
+    requests_mock.get(
+        url=get_sub_status_api_url,
+        json=[],
+    )
+    response = authorized_client.get(change_sub_status_url)
+    assert response.status_code == 404
+
+
 def test_post_change_sub_status(
     authorized_client,
     change_sub_status_url,
