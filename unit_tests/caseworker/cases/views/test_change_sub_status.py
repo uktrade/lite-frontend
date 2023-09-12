@@ -225,4 +225,4 @@ def test_post_change_sub_status_setting_failure(
         )
 
     assert ex.value.status_code == 500
-    assert ex.value.user_message == "Unexpected error changing case sub status"
+    assert ex.value.user_message == "Unexpected error changing case sub-status"
