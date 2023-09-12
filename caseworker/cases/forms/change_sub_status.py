@@ -5,7 +5,7 @@ from core.common.forms import BaseForm
 
 class ChangeSubStatusForm(BaseForm):
     class Layout:
-        TITLE = "Change case sub status"
+        TITLE = "Change case sub-status"
         SUBMIT_BUTTON_TEXT = "Save"
 
     sub_status = forms.ChoiceField(

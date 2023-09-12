@@ -445,8 +445,8 @@ class ChangeSubStatus(LoginRequiredMixin, FormView):
 
     @expect_status(
         HTTPStatus.OK,
-        "Error changing case sub status",
-        "Unexpected error changing case sub status",
+        "Error changing case sub-status",
+        "Unexpected error changing case sub-status",
     )
     def put_case_sub_status(self, request, case_id, data):
         return put_case_sub_status(request, case_id, data)
