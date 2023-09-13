@@ -13,22 +13,24 @@ from caseworker.tau.widgets import GoodsMultipleSelect
 from core.forms.widgets import GridmultipleSelect
 
 
-def get_approval_advice_form_factory(advice, approval_reason, proviso, data=None):
+def get_approval_advice_form_factory(advice, approval_reason, proviso, footnote_details, data=None):
     data = data or {
         "proviso": advice["proviso"],
         "approval_reasons": advice["text"],
         "instructions_to_exporter": advice["note"],
         "footnote_details": advice["footnote"],
     }
-    return GiveApprovalAdviceForm(approval_reason=approval_reason, proviso=proviso, data=data)
+    return GiveApprovalAdviceForm(
+        approval_reason=approval_reason, proviso=proviso, footnote_details=footnote_details, data=data
+    )
 
 
-def get_refusal_advice_form_factory(advice, denial_reasons_choices, data=None):
+def get_refusal_advice_form_factory(advice, denial_reasons_choices, refusal_reasons, data=None):
     data = data or {
         "refusal_reasons": advice["text"],
         "denial_reasons": [r for r in advice["denial_reasons"]],
     }
-    return RefusalAdviceForm(data=data, choices=denial_reasons_choices)
+    return RefusalAdviceForm(data=data, choices=denial_reasons_choices, refusal_reasons=refusal_reasons)
 
 
 class PicklistCharField(forms.CharField):
@@ -358,7 +360,10 @@ class FCDORefusalAdviceForm(RefusalAdviceForm):
             error_messages={"required": "Select the destinations you want to make recommendations for"},
         )
         self.helper.layout = Layout(
-            "countries", "denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation")
+            "countries",
+            "denial_reasons",
+            RadioTextArea("refusal_reasons_radios", "refusal_reasons", self.refusal_text),
+            Submit("submit", "Submit recommendation"),
         )
 
 

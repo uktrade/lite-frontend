@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from typing import Any, Dict
 
 import sentry_sdk
 from django.http import Http404, HttpResponseRedirect
@@ -304,13 +305,21 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
             proviso = get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
-            return forms.get_approval_advice_form_factory(advice, approval_reason, proviso, self.request.POST)
+            footnote_details = get_picklists_list(
+                self.request, type="footnotes", disable_pagination=True, show_deactivated=False
+            )
+
+            return forms.get_approval_advice_form_factory(
+                advice, approval_reason, proviso, footnote_details, self.request.POST
+            )
         elif advice["type"]["key"] == "refuse":
             self.template_name = "advice/refusal_advice.html"
             denial_reasons = get_denial_reasons(self.request)
             choices = group_denial_reasons(denial_reasons)
-
-            return forms.get_refusal_advice_form_factory(advice, choices, self.request.POST)
+            refusal_reasons = get_picklists_list(
+                self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+            )
+            return forms.get_refusal_advice_form_factory(advice, choices, refusal_reasons, self.request.POST)
         else:
             raise ValueError("Invalid advice type encountered")
 
@@ -581,20 +590,26 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         if self.kwargs.get("advice_type") == AdviceType.REFUSE:
             denial_reasons = get_denial_reasons(self.request)
             choices = group_denial_reasons(denial_reasons)
-
             if self.caseworker["team"]["alias"] == services.LICENSING_UNIT_TEAM:
                 return forms.LUConsolidateRefusalForm(choices=choices, **form_kwargs)
+            form_kwargs["refusal_reasons"] = get_picklists_list(
+                self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+            )
             return forms.RefusalAdviceForm(choices, **form_kwargs)
 
         if self.kwargs.get("advice_type") == AdviceType.APPROVE or self.is_advice_approve_only():
-            approval_reason = get_picklists_list(
+            form_kwargs["approval_reason"] = get_picklists_list(
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
-            proviso = get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
-            team_alias = self.caseworker["team"].get("alias", None)
-            return forms.ConsolidateApprovalForm(
-                team_alias=team_alias, approval_reason=approval_reason, proviso=proviso, **form_kwargs
+            form_kwargs["proviso"] = get_picklists_list(
+                self.request, type="proviso", disable_pagination=True, show_deactivated=False
             )
+            form_kwargs["footnote_details"] = get_picklists_list(
+                self.request, type="footnotes", disable_pagination=True, show_deactivated=False
+            )
+
+            team_alias = self.caseworker["team"].get("alias", None)
+            return forms.ConsolidateApprovalForm(team_alias=team_alias, **form_kwargs)
 
         team_name = self.caseworker["team"]["name"]
         return forms.ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)
