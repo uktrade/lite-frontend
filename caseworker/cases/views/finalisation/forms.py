@@ -27,7 +27,7 @@ class SelectInformLetterTemplateForm(BaseForm):
 
 class LetterEditTextForm(BaseForm):
     class Layout:
-        TITLE = "Edit inform letter header"
+        TITLE = "Edit inform letter"
         SUBMIT_BUTTON_TEXT = "Preview"
 
     text = forms.CharField(
