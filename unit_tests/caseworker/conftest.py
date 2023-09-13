@@ -388,6 +388,10 @@ def data_cases_search(filter_data):
                     "denials": [],
                     "ecju_queries": [],
                     "intended_end_use": "replica",
+                    "sub_status": {
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "name": "test sub status",
+                    },
                 },
             ],
             "filters": filter_data,
