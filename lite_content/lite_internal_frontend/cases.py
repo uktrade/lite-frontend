@@ -131,6 +131,7 @@ class CasePage:
         SUBMITTED_AT = "Submitted at"
         SUBMITTED_BY = "Submitted by"
         STATUS = "Status"
+        SUB_STATUS = "Sub-status"
         ASSIGNED_QUEUES = "Assigned queues"
         TYPE = "Type"
         LAST_UPDATED = "Last updated"
