@@ -176,8 +176,16 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
             self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
         )
         proviso = get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
+
+        footnote_details = get_picklists_list(
+            self.request, type="footnotes", disable_pagination=True, show_deactivated=False
+        )
+
+        #     picklist_attrs={"target": "footnote_details", "type": "footnotes", "name": "reporting footnote"},
+
         kwargs["approval_reason"] = approval_reason
         kwargs["proviso"] = proviso
+        kwargs["footnote_details"] = footnote_details
         return kwargs
 
     def form_valid(self, form):
@@ -211,6 +219,13 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
             )
         else:
             return forms.RefusalAdviceForm(choices, **self.get_form_kwargs())
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["refusal_reasons"] = get_picklists_list(
+            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+        )
+        return kwargs
 
     def form_valid(self, form):
         data = form.cleaned_data
