@@ -2,6 +2,7 @@ import pytest
 
 from bs4 import BeautifulSoup
 
+from django.contrib.messages import constants, get_messages
 from django.urls import reverse
 
 from pytest_django.asserts import assertTemplateUsed
@@ -182,6 +183,9 @@ def test_post_change_sub_status(
     assert mock_put_case_sub_status.last_request.json() == {
         "sub_status": "status-1",
     }
+    assert [(m.level, m.message) for m in get_messages(response.wsgi_request)] == [
+        (constants.SUCCESS, "Case sub-status successfully changed")
+    ]
 
 
 def test_post_change_sub_status_setting_none(
