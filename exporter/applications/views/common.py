@@ -48,6 +48,7 @@ from exporter.applications.services import (
     post_exhibition,
     post_appeal,
     post_appeal_document,
+    get_appeal,
 )
 from exporter.organisation.members.services import get_user
 
@@ -419,8 +420,11 @@ class AppealApplication(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse(
-            "applications:application",
-            kwargs={"pk": self.kwargs["case_pk"]},
+            "applications:appeal_confirmation",
+            kwargs={
+                "case_pk": self.kwargs["case_pk"],
+                "appeal_pk": self.appeal["id"],
+            },
         )
 
     @expect_status(
@@ -455,4 +459,30 @@ class AppealApplication(LoginRequiredMixin, FormView):
                 get_document_data(document),
             )
 
+        self.appeal = appeal
+
         return super().form_valid(form)
+
+
+class AppealApplicationConfirmation(LoginRequiredMixin, TemplateView):
+    template_name = "applications/appeal-confirmation.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.application = get_application(self.request, self.kwargs["case_pk"])
+        except HTTPError:
+            raise Http404()
+
+        try:
+            self.appeal = get_appeal(self.request, self.application["id"], self.kwargs["appeal_pk"])
+        except HTTPError:
+            raise Http404()
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        context["application"] = get_application(self.request, self.kwargs["case_pk"])
+
+        return context

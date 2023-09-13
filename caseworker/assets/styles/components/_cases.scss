@@ -642,6 +642,20 @@ $case-header-text-colour: govuk-colour('white');
   }
 }
 
+.app-case__appeal-documents {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  &__item {
+    margin-bottom: govuk-spacing(2);
+
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+}
+
 .app-template__case-body {
   #related-cases-tab {
     overflow: hidden;

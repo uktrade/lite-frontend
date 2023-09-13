@@ -81,6 +81,7 @@ class Slices:
     COMPLIANCE_VISITS = Slice("case/slices/compliance-visits.html", "Visit reports")
     COMPLIANCE_VISIT_DETAILS = Slice("case/slices/compliance-visit-details.html")
     FREEDOM_OF_INFORMATION = Slice("case/slices/freedom-of-information.html", "Freedom of Information")
+    APPEAL_DETAILS = Slice("case/slices/appeal-details.html", "Appeal")
 
 
 class CaseworkerMixin:

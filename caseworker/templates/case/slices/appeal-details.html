@@ -1,0 +1,26 @@
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            Grounds for appeal
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ case.data.appeal.grounds_for_appeal|linebreaks }}
+        </dd>
+    </div>
+    {% if case.data.appeal.documents %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Appeal documents
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <ul class="app-case__appeal-documents">
+                    {% for document in case.data.appeal.documents %}
+                        <li class="app-case__appeal-documents__item">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "cases:document" queue.id case.id document.id %}">{{ document.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </dd>
+        </div>
+    {% endif %}
+</dl>
