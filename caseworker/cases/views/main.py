@@ -5,6 +5,7 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
@@ -401,9 +402,10 @@ class ChangeStatus(SingleFormView):
         )
 
 
-class ChangeSubStatus(LoginRequiredMixin, FormView):
+class ChangeSubStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = ChangeSubStatusForm
     template_name = "case/form.html"
+    success_message = "Case sub-status successfully changed"
 
     def dispatch(self, *args, **kwargs):
         try:
