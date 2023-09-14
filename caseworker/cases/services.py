@@ -439,3 +439,19 @@ def post_compliance_person_present(request, case_id, json):
 
         return {**json, "errors": translated_errors}, data.status_code
     return data.json(), data.status_code
+
+
+def get_case_sub_statuses(request, case_id):
+    response = client.get(request, f"/applications/{case_id}/sub-statuses/")
+    response.raise_for_status()
+    return response.json()
+
+
+def put_case_sub_status(request, case_id, data):
+    response = client.put(
+        request,
+        f"/applications/{case_id}/sub-status/",
+        data=data,
+    )
+    response.raise_for_status()
+    return response.json(), response.status_code
