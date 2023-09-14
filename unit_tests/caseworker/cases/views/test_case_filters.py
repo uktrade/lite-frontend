@@ -40,6 +40,7 @@ def setup(
         ),
         ({"field": "finalised_to", "params": {"finalised_to_0": "1", "finalised_to_1": "1", "finalised_to_2": "2022"}}),
         ({"params": {"export_type": "permanent", "assigned_queues": "fake-queue-id-1"}}),
+        ({"params": {"case_type": "siel", "sub_status": "inform_letter_sent"}}),
     ],
 )
 def test_case_filters(

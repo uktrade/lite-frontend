@@ -148,6 +148,7 @@ def test_cases_home_page_view_context(authorized_client):
         "exclude_denial_matches",
         "exclude_sanction_matches",
         "status",
+        "sub_status",
         "case_officer",
         "assigned_user",
         "flags",
