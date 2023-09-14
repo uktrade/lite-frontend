@@ -226,6 +226,7 @@ def test_case_details_appeal_details_no_appeal(
             },
             "Status 1",
         ),
+        
     ),
 )
 def test_case_details_sub_status(
@@ -244,3 +245,36 @@ def test_case_details_sub_status(
     assert dt
     dd = dt.find_next()
     assert dd.get_text().replace("\n", "").replace("\t", "") == expected
+    
+    
+@pytest.mark.parametrize(
+"value, expected",
+(
+    (None, "No sub-status set"),
+    (
+    {
+        "id": "status-1",
+        "name": "Status 1",
+    },
+    "Change",
+    ),
+
+),
+    )
+    
+def test_case_details_sub_status_change(
+    data_standard_case,
+    data_queue,
+    authorized_client,
+    value,
+    expected,
+    ):
+      data_standard_case["case"]["data"]["sub_status"] = value
+      case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+      response = authorized_client.get(case_url)
+
+      html = BeautifulSoup(response.content, "html.parser")
+      dt = html.find("dt", string=re.compile("Sub-status"))
+      assert dt
+      dd = dt.find_next().find_next()
+      assert dd.get_text().replace("\n", "").replace("\t", "") == expected
