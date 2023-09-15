@@ -204,6 +204,7 @@ class RefusalAdviceForm(PicklistAdviceForm):
     refusal_reasons_radios = forms.ChoiceField(
         label="What are your reasons for this refusal?",
         widget=forms.RadioSelect,
+        required=False,
         choices=(),
     )
     refusal_reasons = forms.CharField(

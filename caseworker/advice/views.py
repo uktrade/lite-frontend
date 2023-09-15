@@ -1,6 +1,4 @@
 from http import HTTPStatus
-from typing import Any, Dict
-
 import sentry_sdk
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect
