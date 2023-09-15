@@ -1,0 +1,6 @@
+{% extends 'generated-documents/preview-base.html' %}
+
+{% block preview-buttons %}
+    <a href="{% url 'cases:edit-letter-text' queue.id kwargs.pk kwargs.dpk kwargs.decision_key %}" class="govuk-button govuk-button--secondary" type="submit">Edit</a>
+    <a href="{% url 'cases:consolidate_view' queue.id kwargs.pk %}" class="govuk-body govuk-link govuk-link--no-visited-state" type="submit">Cancel</a>
+{% endblock %}

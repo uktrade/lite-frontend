@@ -12,47 +12,68 @@
 	@include govuk-media-query($until: tablet) {
 		display: block;
 	}
-}
 
-.lite-app-bar__content {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	&__controls-buttons {
+		align-items: center;
+		display: flex;
 
-	& > * {
-		display: block;
-		white-space: normal;
-	}
+		&:last-child {
+		  margin-left: 0;
+		}
 
-	.govuk-caption-m {
-		line-height: 1.66;
-		max-width: 650px;
-	}
-}
+		& > * {
+		  margin-left: govuk-spacing(4);
+		  display: block;
 
-.lite-app-bar__controls {
-	display: flex;
-	align-items: flex-start;
-	justify-content: center;
-
-	&:last-child {
-		margin-left: 0;
-	}
-
-	& > * {
-		margin-left: govuk-spacing(4);
-		display: block;
-
-		@include govuk-media-query($until: tablet) {
+		  @include govuk-media-query($until: tablet) {
 			margin-left: 0;
 			margin-bottom: govuk-spacing(3);
+		  }
+		}
+		@include govuk-media-query($until: tablet) {
+		  display: block;
 		}
 	}
-	@include govuk-media-query($until: tablet) {
-		display: block;
-	}
-}
+	&__content {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 
+		& > * {
+			display: block;
+			white-space: normal;
+		}
+
+		.govuk-caption-m {
+			line-height: 1.66;
+			max-width: 650px;
+		}
+	}
+
+	&__controls {
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+
+		&:last-child {
+			margin-left: 0;
+		}
+
+		& > * {
+			margin-left: govuk-spacing(4);
+			display: block;
+
+			@include govuk-media-query($until: tablet) {
+				margin-left: 0;
+				margin-bottom: govuk-spacing(3);
+			}
+		}
+		@include govuk-media-query($until: tablet) {
+			display: block;
+		}
+	}
+
+}
 
 .lite-input-with-label {
 	display: grid;
