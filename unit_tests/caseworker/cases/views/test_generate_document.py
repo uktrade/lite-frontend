@@ -89,15 +89,6 @@ def get_preview_url(data_standard_case, data_generated_document_id):
 
 
 @pytest.fixture
-def preview_view_document_url(data_standard_case, data_generated_document_id):
-    case_id = data_standard_case["case"]["id"]
-    decision = "refuse"
-    return client._build_absolute_uri(
-        f"/cases/{case_id}/generated-documents/{decision}/{data_generated_document_id}/preview-view"
-    )
-
-
-@pytest.fixture
 def mock_get_document(requests_mock, get_document_url, data_generated_document_id, mock_gov_user):
     return requests_mock.get(
         url=get_document_url, json={"template": data_generated_document_id, "text": "This is my text"}

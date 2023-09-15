@@ -1,3 +1,4 @@
+import re
 from decimal import Decimal
 import pytest
 from bs4 import BeautifulSoup
@@ -146,3 +147,34 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
 
     expected_end_user = data_standard_case["case"]["data"]["end_user"]["name"]
     assert expected_end_user in table_text
+
+
+@pytest.mark.parametrize(
+    "value, expected",
+    (
+        (None, "No sub-status set"),
+        (
+            {
+                "id": "status-1",
+                "name": "Status 1",
+            },
+            "Status 1",
+        ),
+    ),
+)
+def test_case_summary_sub_status(
+    data_standard_case,
+    data_queue,
+    authorized_client,
+    value,
+    expected,
+):
+    # Based on test_case_details_sub_status
+    data_standard_case["case"]["data"]["sub_status"] = value
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    th = html.find("th", text="Sub-status")
+    td = th.find_next()
+    assert td.text.strip() == expected
