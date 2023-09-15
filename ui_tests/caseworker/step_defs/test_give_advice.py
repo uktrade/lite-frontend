@@ -262,3 +262,53 @@ def disagree_with_outcome(driver, comments):  # noqa
 @then(parsers.parse('I see "{comments}" as countersign comments'))
 def check_countersign_comments(driver, comments):  # noqa
     assert RecommendationsAndDecisionPage(driver).get_countersign_comments() == comments
+
+
+@then(parsers.parse('I see "{inform_letter}" in decision documents'))
+def see_inform_letter(driver, inform_letter):
+    assert driver.find_elements_by_xpath(
+        f"//td[contains(@class, 'govuk-table__cell') and contains(text(), '{inform_letter}')]"
+    ), "No elements found with class 'govuk-table__cell' and text 'Inform letter'"
+
+
+@when(parsers.parse('I click "{inform_letter_button}" button'))
+def create_inform_letter(driver, inform_letter_button):
+    if inform_letter_button == "Create Inform letter" or inform_letter_button == "Recreate":
+        id = "generate-document-inform"
+        driver.find_element_by_id(id).click()
+    if inform_letter_button == "Send Inform letter":
+        row = driver.find_element_by_xpath("//tr[@id='decision-inform']")
+        button = row.find_element_by_xpath(".//button[contains(text(), 'Send inform letter')]")
+        button.click()
+
+
+@when(parsers.parse('I select "{template}" radio button'))
+def select_template_radio(driver, template):
+    element = driver.find_element_by_xpath(f"//label[contains(text(), '{template}')]/preceding-sibling::input")
+    element.click()
+
+
+@then(parsers.parse('I see "{status}" inform letter status in decision documents'))
+def check_status(driver, status):
+    element = driver.find_element_by_id("status-inform")
+    assert element.text == status
+
+
+@when(parsers.parse("I click inform letter edit link"))
+def click_edit_inform_letter(driver):
+    row = driver.find_element_by_xpath("//tr[@id='decision-inform']")
+    link = row.find_element_by_xpath(".//a[contains(text(), 'Edit')]")
+    link.click()
+
+
+@when(parsers.parse('I edit template with "{text}"'))
+def edit_template(driver, text):
+    textarea = driver.find_element_by_id("text")
+    textarea.clear()
+    textarea.send_keys(text)
+
+
+@then(parsers.parse('I see the "{content}" text on the document preview'))
+def should_see_content_on_inform_letter(driver, content):
+    text = GeneratedDocument(driver).get_document_preview_text()
+    assert content in text
