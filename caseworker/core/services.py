@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from caseworker.advice.services import LICENSING_UNIT_TEAM
 from caseworker.cases.constants import CaseType
 from caseworker.users.services import get_gov_user
 from core import client
@@ -69,7 +70,6 @@ def get_permissible_statuses(request, case):
     user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
     user_permissible_statuses = user["user"]["role"]["statuses"]
     statuses, _ = get_statuses(request)
-    case_sub_type = case["case_type"]["sub_type"]["key"]
     case_type = case["case_type"]["type"]["key"]
     case_type_applicable_statuses = []
 
@@ -88,6 +88,12 @@ def get_permissible_statuses(request, case):
                 CaseStatusEnum.SURRENDERED,
             ]
         ]
+
+        user_team_alias = user["user"]["team"].get("alias")
+        # Allow LU users to set Finalised status as required for Appeals
+        if user_team_alias and user_team_alias == LICENSING_UNIT_TEAM:
+            finalised_status = [status for status in statuses if status["key"] == CaseStatusEnum.FINALISED]
+            case_type_applicable_statuses.extend(finalised_status)
 
     return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
 
