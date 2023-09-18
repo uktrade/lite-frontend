@@ -117,8 +117,7 @@
 		</dd>
 			{% if case_sub_statuses_options %}
 				<dd class="app-case__summary-list__actions">
-					<a id="link-case-sub-status-change" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:change_sub_status' queue.id case.id  %}">
-						Change
+					<a id="link-case-sub-status-change" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:change_sub_status' queue.id case.id  %}">Change</a>
 				</dd>
 			{% endif %}
 	</div>
