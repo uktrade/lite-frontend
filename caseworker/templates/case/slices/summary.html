@@ -104,6 +104,18 @@
 			{% endif %}
 		</dd>
 	</div>
+	<div class="app-case__summary-list__row" id="case-sub-status">
+		<dt class="app-case__summary-list__key">
+			{% lcs 'cases.CasePage.DetailsTab.SUB_STATUS' %}
+		</dt>
+		<dd class="app-case__summary-list__value">
+			{% if case.data.sub_status %}
+				{{ case.data.sub_status.name }}
+			{% else %}
+				<span class="govuk-hint govuk-!-margin-0">No sub-status set</span>
+			{% endif %}
+		</dd>
+	</div>
 	<div class="app-case__summary-list__row">
 		<dt class="app-case__summary-list__key">
 			{% lcs 'cases.CasePage.DetailsTab.ASSIGNED_QUEUES' %}

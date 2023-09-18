@@ -1,0 +1,15 @@
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% if errors %}
+    {% include "forms-errors.html" %}
+{% endif %}
+
+<form action="{{ form_action_url }}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% error_summary form %}
+
+    <div class="govuk-body">
+        {% crispy form %}
+    </div>
+</form>

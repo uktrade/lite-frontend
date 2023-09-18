@@ -55,6 +55,9 @@
 			</p>
 		</address>
 		<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.status.value }}</p>
+		{% if case.sub_status %}
+			<div class="govuk-tag govuk-tag--blue govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.sub_status.name }}</div>
+		{% endif %}
 	</td>
 
 	{# destinations #}

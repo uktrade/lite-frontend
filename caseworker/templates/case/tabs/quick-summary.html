@@ -45,6 +45,19 @@
                     <th scope="row" class="govuk-table__header">Status</th>
                     <td class="govuk-table__cell"><span class="govuk-tag govuk-tag--grey govuk-!-margin-0">{{ case.data.status.value }}</span></td>
                 </tr>
+                <tr class="govuk-table__row app-table__row" data-customiser-key="sub_status">
+                    <th scope="row" class="govuk-table__header">Sub-status</th>
+                    <td class="govuk-table__cell">
+                        {% if case.data.sub_status %}
+                            <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
+                            {{ case.data.sub_status.name }}
+                            </span>
+                        {% else %}
+                            <span class="govuk-hint govuk-!-margin-0">No sub-status set</span
+                        {% endif %}
+                    </td>
+                </tr>
+
                 <tr class="govuk-table__row app-table__row" data-customiser-key="lu_case_officer">
                     <th scope="row" class="govuk-table__header">Licensing Unit case officer</th>
                     <td class="govuk-table__cell">

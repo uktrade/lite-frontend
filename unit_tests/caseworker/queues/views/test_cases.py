@@ -148,6 +148,7 @@ def test_cases_home_page_view_context(authorized_client):
         "exclude_denial_matches",
         "exclude_sanction_matches",
         "status",
+        "sub_status",
         "case_officer",
         "assigned_user",
         "flags",
@@ -1060,3 +1061,13 @@ def test_cases_home_page_return_to_search(authorized_client, mock_cases_search):
     }
     # Ensure return_to parameter does not appear in return_to url value
     assert response.context["return_to"] == f"/queues/?regime_entry={regime_entry}"
+
+
+def test_case_row_sub_status(
+    authorized_client,
+):
+    response = authorized_client.get(reverse("core:index"))
+
+    html = BeautifulSoup(response.content, "html.parser")
+    sub_status = html.find(string=re.compile("test sub status"))
+    assert sub_status == "test sub status"
