@@ -1,0 +1,19 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+	<div class="app-letter-preview__container">
+		<div class="lite-app-bar">
+			<div class="lite-app-bar__content">
+				<h1 class="govuk-heading-l">{% block title %}Generate document{% endblock %}</h1>
+			</div>
+			<div class="lite-app-bar__controls-buttons">
+                {% block preview-buttons%}
+                {% endblock %}
+			</div>
+		</div>
+		<div class="app-letter-preview__page" id="preview">
+			{{ preview|safe }}
+		</div>
+
+	</div>
+{% endblock %}

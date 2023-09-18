@@ -11,7 +11,7 @@ from caseworker.cases.views import (
     case_assignments,
 )
 from caseworker.flags.views import AssignFlags
-from caseworker.cases.views.finalisation.letters import SelectInformTemplate, EditLetterText
+from caseworker.cases.views.finalisation.letters import SelectInformTemplate, EditLetterText, EditInformLetterText
 
 app_name = "cases"
 
@@ -99,7 +99,7 @@ urlpatterns = [
         name="generate_document_preview",
     ),
     path(
-        "generate-document/<str:decision_key>/<uuid:dpk>/preview-view/",
+        "generate-document/<uuid:dpk>/preview-view/<str:decision_key>",
         generate_document.PreviewViewDocument.as_view(),
         name="generate_document_preview_view",
     ),
@@ -148,7 +148,12 @@ urlpatterns = [
     ),
     path(
         "letters/select-edit-text/<uuid:paragraph_id>/",
-        EditLetterText.as_view(),
+        EditInformLetterText.as_view(),
         name="select-edit-text",
+    ),
+    path(
+        "<uuid:dpk>/edit-letter/<str:decision_key>",
+        EditLetterText.as_view(),
+        name="edit-letter-text",
     ),
 ]
