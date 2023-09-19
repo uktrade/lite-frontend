@@ -9,10 +9,14 @@ from caseworker.core import rules as caseworker_rules
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
 
 
-def get_mock_request(user):
-    request = HttpRequest()
-    request.lite_user = user
-    return request
+@pytest.fixture
+def get_mock_request():
+    def request_factory(user):
+        request = HttpRequest()
+        request.lite_user = user
+        return request
+
+    return request_factory
 
 
 @pytest.mark.parametrize(
@@ -51,7 +55,7 @@ def get_mock_request(user):
         ({"fake queue": []}, False),
     ),
 )
-def test_is_user_assigned(data, mock_gov_user, expected_result):
+def test_is_user_assigned(data, mock_gov_user, get_mock_request, expected_result):
     assigned_users = {"assigned_users": data}
     assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) == expected_result
 
@@ -70,7 +74,7 @@ def test_is_user_assigned_request_missing_attribute():
     assert not caseworker_rules.is_user_assigned(None, assigned_users)
 
 
-def test_is_user_case_officer_none():
+def test_is_user_case_officer_none(get_mock_request):
     assert not caseworker_rules.is_user_case_officer(get_mock_request(None), {"case_officer": None})
 
 
@@ -82,7 +86,7 @@ def test_is_user_case_officer_none():
         ({"case_officer": None}, False),
     ),
 )
-def test_is_user_case_officer(data, mock_gov_user, expected_result):
+def test_is_user_case_officer(data, mock_gov_user, get_mock_request, expected_result):
     assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) == expected_result
 
 
@@ -139,7 +143,7 @@ def test_is_user_case_officer_request_missing_attribute():
         ),
     ),
 )
-def test_user_assignment_based_rules(data, mock_gov_user, expected_result):
+def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expected_result):
     for rule_name in (
         "can_user_change_case",
         "can_user_move_case_forward",
@@ -198,5 +202,5 @@ def test_user_assignment_based_rules(data, mock_gov_user, expected_result):
         ),
     ),
 )
-def test_can_user_attach_document(data, mock_gov_user):
+def test_can_user_attach_document(data, mock_gov_user, get_mock_request):
     assert rules.test_rule("can_user_attach_document", get_mock_request(mock_gov_user["user"]), data)
