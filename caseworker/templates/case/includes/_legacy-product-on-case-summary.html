@@ -237,7 +237,7 @@
                         {% endif %}
                         <div>
                             {% if organisation_documents.rfd_certificate %}
-                                <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=organisation_documents.rfd_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.rfd_certificate.document.name }}</a>
+                                <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=organisation_documents.rfd_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.rfd_certificate.document.name }}</a>
                             {% endif %}
                         </div>
                     </td>
@@ -258,17 +258,17 @@
                             {% if firearm_details.firearms_act_section == "firearms_act_section1" %}
                                 Section 1
                                 <div>
-                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_one_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_one_certificate.document.name }}</a>
+                                    <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_one_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_one_certificate.document.name }}</a>
                                 </div>
                             {% elif firearm_details.firearms_act_section == "firearms_act_section2" %}
                                 Section 2
                                 <div>
-                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_two_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_two_certificate.document.name }}</a>
+                                    <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_two_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_two_certificate.document.name }}</a>
                                 </div>
                             {% elif firearm_details.firearms_act_section == "firearms_act_section5" %}
                                 Section 5
                                 <div>
-                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_five_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_five_certificate.document.name }}</a>
+                                    <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=organisation_documents.section_five_certificate.document.id %}" class="govuk-link--no-visited-state">{{ organisation_documents.section_five_certificate.document.name }}</a>
                                 </div>
                             {% endif %}
                         {% elif firearm_details.is_covered_by_firearm_act_section_one_two_or_five == "No" %}
