@@ -250,12 +250,14 @@ def test_case_details_sub_status(
 @pytest.mark.parametrize(
     "value, expected",
     (
-        ({}, 0),
+        ([], 0),
         (
-            {
-                "id": "status-1",
-                "name": "Status 1",
-            },
+            [
+                {
+                    "id": "status-1",
+                    "name": "Status 1",
+                }
+            ],
             1,
         ),
     ),

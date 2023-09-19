@@ -27,17 +27,6 @@ def get_sub_status_api_url(case_id):
 
 
 @pytest.fixture
-def mock_get_case_sub_statuses(get_sub_status_api_url, requests_mock):
-    requests_mock.get(
-        url=get_sub_status_api_url,
-        json=[
-            {"id": "status-1", "name": "Status 1"},
-            {"id": "status-2", "name": "Status 2"},
-        ],
-    )
-
-
-@pytest.fixture
 def post_sub_status_api_url(case_id):
     return client._build_absolute_uri(f"/applications/{case_id}/sub-status/")
 
@@ -86,7 +75,6 @@ def test_get_change_sub_status(
     authorized_client,
     mock_queue,
     mock_case,
-    mock_get_case_sub_statuses,
     change_sub_status_url,
 ):
     response = authorized_client.get(change_sub_status_url)
@@ -106,7 +94,6 @@ def test_get_change_sub_status_initial_value(
     authorized_client,
     mock_queue,
     mock_case,
-    mock_get_case_sub_statuses,
     change_sub_status_url,
     data_standard_case,
 ):
@@ -168,7 +155,6 @@ def test_post_change_sub_status(
     case_url,
     mock_case,
     mock_queue,
-    mock_get_case_sub_statuses,
     mock_put_case_sub_status,
 ):
     response = authorized_client.post(
@@ -194,7 +180,6 @@ def test_post_change_sub_status_setting_none(
     case_url,
     mock_case,
     mock_queue,
-    mock_get_case_sub_statuses,
     mock_put_case_sub_status,
 ):
     response = authorized_client.post(
@@ -217,7 +202,6 @@ def test_post_change_sub_status_setting_failure(
     case_url,
     mock_case,
     mock_queue,
-    mock_get_case_sub_statuses,
     mock_put_case_sub_status_failure,
 ):
     with pytest.raises(ServiceError) as ex:
