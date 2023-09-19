@@ -4,6 +4,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
+from core.constants import CaseStatusEnum
 
 
 @pytest.fixture
@@ -30,6 +31,47 @@ def test_change_status_GET(
     html = BeautifulSoup(response.content, "html.parser")
     all_h1s = [elem.get_text().strip() for elem in html.find_all("h1")]
     assert "Change case status" in all_h1s
+
+
+@pytest.mark.parametrize(
+    "gov_user_type,expected",
+    [
+        ("mock_gov_tau_user", False),
+        ("mock_gov_fcdo_user", False),
+        ("mock_gov_beis_nuclear_user", False),
+        ("mock_gov_lu_user", True),
+    ],
+)
+def test_change_status_GET_provides_finalise_status(
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    data_assignment,
+    mock_standard_case,
+    mock_queue,
+    gov_user_type,
+    expected,
+    request,
+):
+    case = data_standard_case
+    _ = request.getfixturevalue(gov_user_type)
+    url = (
+        # Who knows why this url name is what it is
+        reverse("cases:manage", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assertTemplateUsed(response, "layouts/case.html")
+    context = response.context
+    assert context["case"].id == case["case"]["id"]
+
+    html = BeautifulSoup(response.content, "html.parser")
+    all_h1s = [elem.get_text().strip() for elem in html.find_all("h1")]
+    assert "Change case status" in all_h1s
+
+    # Only LU users get an option set the status as 'Finalised'
+    statuses = [item["value"] for item in html.find_all("option")]
+    assert (CaseStatusEnum.FINALISED in statuses) == expected
 
 
 def test_change_status_POST(
