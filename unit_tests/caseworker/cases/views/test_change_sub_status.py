@@ -84,7 +84,7 @@ def test_get_change_sub_status(
     select = soup.find(id="id_sub_status")
     options = [(option["value"], option.text) for option in select.find_all("option")]
     assert options == [
-        ("", ""),
+        ("", "None"),
         ("status-1", "Status 1"),
         ("status-2", "Status 2"),
     ]
