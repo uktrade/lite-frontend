@@ -180,8 +180,6 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
             self.request, type="footnotes", disable_pagination=True, show_deactivated=False
         )
 
-        #     picklist_attrs={"target": "footnote_details", "type": "footnotes", "name": "reporting footnote"},
-
         kwargs["approval_reason"] = approval_reason
         kwargs["proviso"] = proviso
         kwargs["footnote_details"] = footnote_details
@@ -296,28 +294,25 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         sentry_sdk.set_context("caseworker", self.caseworker)
         sentry_sdk.set_context("advice", {"advice": self.case.advice})
         advice = my_advice[0]
+        approval_refusal_reasons = get_picklists_list(
+            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+        )
 
         if advice["type"]["key"] in ["approve", "proviso"]:
             self.template_name = "advice/give-approval-advice.html"
-            approval_reason = get_picklists_list(
-                self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
-            )
             proviso = get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
             footnote_details = get_picklists_list(
                 self.request, type="footnotes", disable_pagination=True, show_deactivated=False
             )
 
             return forms.get_approval_advice_form_factory(
-                advice, approval_reason, proviso, footnote_details, self.request.POST
+                advice, approval_refusal_reasons, proviso, footnote_details, self.request.POST
             )
         elif advice["type"]["key"] == "refuse":
             self.template_name = "advice/refusal_advice.html"
             denial_reasons = get_denial_reasons(self.request)
             choices = group_denial_reasons(denial_reasons)
-            refusal_reasons = get_picklists_list(
-                self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
-            )
-            return forms.get_refusal_advice_form_factory(advice, choices, refusal_reasons, self.request.POST)
+            return forms.get_refusal_advice_form_factory(advice, choices, approval_refusal_reasons, self.request.POST)
         else:
             raise ValueError("Invalid advice type encountered")
 
