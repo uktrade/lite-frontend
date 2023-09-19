@@ -15,6 +15,7 @@ from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.cases.objects import Slice, Case
 from caseworker.cases.services import (
     get_case,
+    get_case_sub_statuses,
     get_user_case_queues,
     get_case_documents,
     get_case_additional_contacts,
@@ -232,6 +233,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "has_future_next_review_date": future_next_review_date,
             "user": self.caseworker,
+            "case_sub_statuses_options": get_case_sub_statuses(self.request, self.case_id),
             **self.additional_context,
         }
 
