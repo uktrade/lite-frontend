@@ -11,6 +11,11 @@ from core import client
 from core.exceptions import ServiceError
 
 
+@pytest.fixture(autouse=True)
+def setup(data_standard_case, mock_gov_user):
+    data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
+
+
 @pytest.fixture
 def queue_id(data_queue):
     return data_queue["id"]
