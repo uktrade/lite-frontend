@@ -157,7 +157,7 @@
 				<tbody class="govuk-table__body">
 					{% for document in application.documents %}
 						<tr class="govuk-table__row">
-							<td class="govuk-table__cell"><a href="{% url 'spire:document-detail' id=document.id %}" target="_blank">{{ document.file_name }}</a></td>
+							<td class="govuk-table__cell"><a href="{% url 'spire:document-detail' id=document.id %}" target="_blank" rel="noopener noreferrer">{{ document.file_name }}</a></td>
 							<td class="govuk-table__cell">{{ document.description }}</td>
 						</tr>
 					{% endfor %}

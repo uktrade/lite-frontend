@@ -10,7 +10,7 @@ class ChangeSubStatusForm(BaseForm):
 
     sub_status = forms.ChoiceField(
         choices=[
-            ("", ""),
+            ("", "None"),
         ],  # updated in init
         label="",
         required=False,

@@ -182,7 +182,7 @@
             </dt>
             <dd class="govuk-summary-list__value">
               {% if case.data.end_user.end_user_document_available %}
-                <a target="_blank" href="{% url 'cases:document' queue_pk=queue_pk pk=case.id file_pk=case.data.end_user.document.id %}" class="govuk-link--no-visited-state">
+                <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue_pk pk=case.id file_pk=case.data.end_user.document.id %}" class="govuk-link--no-visited-state">
                   {{ case.data.end_user.document.name }} (opens in new tab)
                 </a>
               {% else %}

@@ -2566,3 +2566,16 @@ def mock_cases_search(requests_mock, data_cases_search, queue_pk):
 def mock_cases_search_head(requests_mock):
     url = client._build_absolute_uri(f"/cases/")
     yield requests_mock.head(url=re.compile(f"{url}.*"), headers={"resource-count": "350"})
+
+
+@pytest.fixture(autouse=True)
+def mock_get_case_sub_statuses(data_standard_case, requests_mock):
+    case_id = data_standard_case["case"]["id"]
+    url = client._build_absolute_uri(f"/applications/{case_id}/sub-statuses/")
+    requests_mock.get(
+        url=url,
+        json=[
+            {"id": "status-1", "name": "Status 1"},
+            {"id": "status-2", "name": "Status 2"},
+        ],
+    )
