@@ -9,4 +9,6 @@ urlpatterns = [
     path("authorize/", views.Authorize.as_view(), name="authorize"),
     path("token/", views.Token.as_view(), name="token"),
     path("userinfo/", views.UserInfo.as_view(), name="userinfo"),
+    # api_user_me is legacy, enabled here for testing.
+    path("api/v1/user/me/", views.APIUserMe.as_view(), name="api_user_me"),
 ]
