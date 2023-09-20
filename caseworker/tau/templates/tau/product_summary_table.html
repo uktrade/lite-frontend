@@ -5,7 +5,7 @@
                 {% for document in good.documents %}
                     <tr class="govuk-table__row">
                         <td class="govuk-table__cell" colspan="2">
-                            <a target="_blank" href="{{ document.url }}" class="govuk-link--no-visited-state">
+                            <a target="_blank" rel="noopener noreferrer" href="{{ document.url }}" class="govuk-link--no-visited-state">
                                 Product document ({{ document.type }}, opens in new tab)
                             </a>
                         </td>
