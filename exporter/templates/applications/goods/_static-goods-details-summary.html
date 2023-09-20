@@ -166,7 +166,7 @@
                                     <span class="govuk-hint govuk-!-margin-0">
                                         Reference {{ organisation_documents.rfd_certificate.reference_code }}
                                     </span>
-                                    <a href="{% url 'organisation:document' pk=organisation_documents.rfd_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank">{{ organisation_documents.rfd_certificate.document.name }}</a>
+                                    <a href="{% url 'organisation:document' pk=organisation_documents.rfd_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank" rel="noopener noreferrer">{{ organisation_documents.rfd_certificate.document.name }}</a>
                                 {% else %}
                                     No
                                 {% endif %}

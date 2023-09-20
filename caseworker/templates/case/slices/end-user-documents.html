@@ -9,7 +9,7 @@
                             <th scope="row" class="govuk-table__header">Upload an end-user document</th>
                             <td class="govuk-table__cell">
                                 {% if document.safe %}
-                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                    <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
                                         End-user document ({{ document.name|document_extension|upper}} opens in new tab)
                                     </a>
                                 {% else %}
@@ -32,7 +32,7 @@
                             <th scope="row" class="govuk-table__header">Upload an English translation of the end-user document</th>
                             <td class="govuk-table__cell">
                                 {% if document.safe %}
-                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                    <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
                                         English translation ({{ document.name|document_extension|upper}} opens in new tab)
                                     </a>
                                 {% else %}
@@ -47,7 +47,7 @@
                             <th scope="row" class="govuk-table__header">Upload a document on company letterhead</th>
                             <td class="govuk-table__cell">
                                 {% if document.safe %}
-                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                    <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
                                         Company letterhead ({{ document.name|document_extension|upper}} opens in new tab)
                                     </a>
                                 {% else %}
@@ -76,7 +76,7 @@
                             <th scope="row" class="govuk-table__header">Upload an EC3 form</th>
                             <td class="govuk-table__cell">
                                 {% if document.safe %}
-                                    <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                    <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
                                         EC3 form ({{ document.name|document_extension|upper}} opens in new tab)
                                     </a>
                                 {% else %}
@@ -101,7 +101,7 @@
                         <th scope="row" class="govuk-table__header">Upload a consignee document</th>
                         <td class="govuk-table__cell">
                             {% if document.safe %}
-                                <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
                                     Consignee document ({{ document.name|document_extension|upper}} opens in new tab)
                                 </a>
                             {% else %}
@@ -118,7 +118,7 @@
                         <th scope="row" class="govuk-table__header">Upload an ultimate end-user document</th>
                         <td class="govuk-table__cell">
                             {% if document.safe %}
-                                <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
                                     Ultimate end-user document ({{ document.name|document_extension|upper}} opens in new tab)
                                 </a>
                             {% else %}
@@ -135,7 +135,7 @@
                         <th scope="row" class="govuk-table__header">Upload a third party ({{ party.role.key }}) document</th>
                         <td class="govuk-table__cell">
                             {% if document.safe %}
-                                <a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+                                <a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
                                     Third party document ({{ document.name|document_extension|upper}} opens in new tab)
                                 </a>
                             {% else %}

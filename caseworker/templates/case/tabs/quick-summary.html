@@ -11,6 +11,7 @@
     "options_hint": "Select items to show",
     "toggleable_elements": [
         {"label": "Status", "key": "status", "default_visible": false},
+        {"label": "Sub-status", "key": "sub_status", "default_visible": false},
         {"label": "Licensing Unit case officer", "key": "lu_case_officer", "default_visible": true},
         {"label": "Case adviser", "key": "case_advisers", "default_visible": false},
         {"label": "Temporary or permanent", "key": "temporary_permanent", "default_visible": false},
@@ -251,7 +252,7 @@
                     <th scope="row" class="govuk-table__header">End-user document</th>
                     <td class="govuk-table__cell">
         				{% for document in case.data.end_user.documents %}
-        					<a target="_blank" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
+        					<a target="_blank" rel="noopener noreferrer" href="{% url 'cases:document' queue_pk=queue.id pk=case.id file_pk=document.id %}" class="govuk-link--no-visited-state">
         						{% if document.type == "end_user_undertaking_document" or document.type == "supporting_document" %}End-user document{% elif document.type == "end_user_english_translation_document" %}English translation{% elif document.type == "end_user_english_translation_document" %}Company letterhead{% endif %} ({{ document.name|document_extension|upper }} opens in new tab)
         					</a><br/>
         				{% endfor %}

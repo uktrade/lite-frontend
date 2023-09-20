@@ -1,5 +1,6 @@
 from collections import defaultdict
 
+from caseworker.advice.services import LICENSING_UNIT_TEAM
 from caseworker.cases.constants import CaseType
 from caseworker.users.services import get_gov_user
 from core import client
@@ -69,8 +70,8 @@ def get_permissible_statuses(request, case):
     user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
     user_permissible_statuses = user["user"]["role"]["statuses"]
     statuses, _ = get_statuses(request)
-    case_sub_type = case["case_type"]["sub_type"]["key"]
     case_type = case["case_type"]["type"]["key"]
+    case_type_applicable_statuses = []
 
     if case_type == CaseType.APPLICATION.value:
         case_type_applicable_statuses = [
@@ -87,64 +88,13 @@ def get_permissible_statuses(request, case):
                 CaseStatusEnum.SURRENDERED,
             ]
         ]
-    elif case_type == CaseType.QUERY.value:
-        if case_sub_type == CaseType.END_USER_ADVISORY.value:
-            case_type_applicable_statuses = [
-                status for status in statuses if status["key"] in CaseStatusEnum.base_query_statuses()
-            ]
-        else:
-            # if the query is not an end user advisory, then check if CLC/PV statuses are required
-            goods_query_status_keys = CaseStatusEnum.base_query_statuses().copy()
 
-            if case.data["clc_responded"] is not None:
-                goods_query_status_keys.insert(1, CaseStatusEnum.CLC)
+        user_team_alias = user["user"]["team"].get("alias")
+        # Allow LU users to set Finalised status as required for Appeals
+        if user_team_alias and user_team_alias == LICENSING_UNIT_TEAM:
+            finalised_status = [status for status in statuses if status["key"] == CaseStatusEnum.FINALISED]
+            case_type_applicable_statuses.extend(finalised_status)
 
-            if case.data["pv_grading_responded"] is not None:
-                # add PV status into the correct location
-                if case.data["clc_responded"] is not None:
-                    goods_query_status_keys.insert(2, CaseStatusEnum.PV)
-                else:
-                    goods_query_status_keys.insert(1, CaseStatusEnum.PV)
-
-            case_type_applicable_statuses = [status for status in statuses if status["key"] in goods_query_status_keys]
-    elif case_type == CaseType.COMPLIANCE.value:
-        if case_sub_type == CaseType.COMPLIANCE_SITE.value:
-            case_type_applicable_statuses = [
-                status
-                for status in statuses
-                if status["key"]
-                in [
-                    CaseStatusEnum.OPEN,
-                    CaseStatusEnum.CLOSED,
-                ]
-            ]
-        elif case_sub_type == CaseType.COMPLIANCE_VISIT.value:
-            case_type_applicable_statuses = [
-                status
-                for status in statuses
-                if status["key"]
-                in [
-                    CaseStatusEnum.OPEN,
-                    CaseStatusEnum.UNDER_INTERNAL_REVIEW,
-                    CaseStatusEnum.RETURN_TO_INSPECTOR,
-                    CaseStatusEnum.AWAITING_EXPORTER_RESPONSE,
-                    CaseStatusEnum.CLOSED,
-                ]
-            ]
-    elif case_type == CaseType.REGISTRATION.value:
-        case_type_applicable_statuses = [
-            status
-            for status in statuses
-            if status["key"]
-            in [
-                CaseStatusEnum.REGISTERED,
-                CaseStatusEnum.UNDER_ECJU_REVIEW,
-                CaseStatusEnum.REVOKED,
-                CaseStatusEnum.SUSPENDED,
-                CaseStatusEnum.SURRENDERED,
-                CaseStatusEnum.DEREGISTERED,
-            ]
-        ]
     return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
 
 
