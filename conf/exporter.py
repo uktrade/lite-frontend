@@ -6,6 +6,10 @@ from django.urls import reverse_lazy
 from conf.base import *
 
 
+# Temporarily force authbroker URL to verify CI works
+AUTHBROKER_URL = "http://localhost:8300/"
+print("FORCE AUTHBROKER URL TO ", AUTHBROKER_URL)
+
 ROOT_URLCONF = "exporter.urls"
 
 MOCK_SSO_SECRET_KEY = env.str("MOCK_SSO_SECRET_KEY", "")
