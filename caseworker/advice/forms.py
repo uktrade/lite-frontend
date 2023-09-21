@@ -13,22 +13,24 @@ from caseworker.tau.widgets import GoodsMultipleSelect
 from core.forms.widgets import GridmultipleSelect
 
 
-def get_approval_advice_form_factory(advice, approval_reason, proviso, data=None):
+def get_approval_advice_form_factory(advice, approval_reason, proviso, footnote_details, data=None):
     data = data or {
         "proviso": advice["proviso"],
         "approval_reasons": advice["text"],
         "instructions_to_exporter": advice["note"],
         "footnote_details": advice["footnote"],
     }
-    return GiveApprovalAdviceForm(approval_reason=approval_reason, proviso=proviso, data=data)
+    return GiveApprovalAdviceForm(
+        approval_reason=approval_reason, proviso=proviso, footnote_details=footnote_details, data=data
+    )
 
 
-def get_refusal_advice_form_factory(advice, denial_reasons_choices, data=None):
+def get_refusal_advice_form_factory(advice, denial_reasons_choices, refusal_reasons, data=None):
     data = data or {
         "refusal_reasons": advice["text"],
         "denial_reasons": [r for r in advice["denial_reasons"]],
     }
-    return RefusalAdviceForm(data=data, choices=denial_reasons_choices)
+    return RefusalAdviceForm(data=data, choices=denial_reasons_choices, refusal_reasons=refusal_reasons)
 
 
 class PicklistCharField(forms.CharField):
@@ -81,7 +83,23 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
         self.fields["recommendation"].label = f"{recommendation_label}?"
 
 
-class GiveApprovalAdviceForm(forms.Form):
+class PicklistAdviceForm(forms.Form):
+    def _picklist_to_choices(self, picklist_data):
+        reasons_choices = []
+        reasons_text = {"other": ""}
+
+        for result in picklist_data["results"]:
+            key = "_".join(result.get("name").lower().split())
+            choice = Choice(key, result.get("name"))
+            if result == picklist_data["results"][-1]:
+                choice = Choice(key, result.get("name"), divider="or")
+            reasons_choices.append(choice)
+            reasons_text[key] = result.get("text")
+        reasons_choices.append(Choice("other", "Other"))
+        return reasons_choices, reasons_text
+
+
+class GiveApprovalAdviceForm(PicklistAdviceForm):
     DOCUMENT_TITLE = "Recommend approval for this case"
     approval_reasons = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
@@ -99,13 +117,16 @@ class GiveApprovalAdviceForm(forms.Form):
         help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
         required=False,
     )
-    footnote_details = PicklistCharField(
-        picklist_attrs={"target": "footnote_details", "type": "footnotes", "name": "reporting footnote"},
+
+    footnote_details_radios = forms.ChoiceField(
         label="Add a reporting footnote (optional)",
-        help_link_text="Choose a reporting footnote from the template list",
-        help_text_extra="Footnotes explain why products to a destination have been approved or refused. "
-        + "They will be publicly available in reports and data tables.",
-        min_rows=3,
+        required=False,
+        widget=forms.RadioSelect,
+        choices=(),
+    )
+    footnote_details = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 3, "class": "govuk-!-margin-top-4"}),
+        label="",
         required=False,
     )
 
@@ -122,23 +143,10 @@ class GiveApprovalAdviceForm(forms.Form):
         choices=(),
     )
 
-    def _picklist_to_choices(self, picklist_data):
-        reasons_choices = []
-        reasons_text = {"other": ""}
-
-        for result in picklist_data["results"]:
-            key = "_".join(result.get("name").lower().split())
-            choice = Choice(key, result.get("name"))
-            if result == picklist_data["results"][-1]:
-                choice = Choice(key, result.get("name"), divider="or")
-            reasons_choices.append(choice)
-            reasons_text[key] = result.get("text")
-        reasons_choices.append(Choice("other", "Other"))
-        return reasons_choices, reasons_text
-
     def __init__(self, *args, **kwargs):
         approval_reason = kwargs.pop("approval_reason")
         proviso = kwargs.pop("proviso")
+        footnote_details = kwargs.pop("footnote_details")
         super().__init__(*args, **kwargs)
         # this follows the same pattern as denial_reasons.
         approval_choices, approval_text = self._picklist_to_choices(approval_reason)
@@ -147,8 +155,12 @@ class GiveApprovalAdviceForm(forms.Form):
         proviso_choices, proviso_text = self._picklist_to_choices(proviso)
         self.proviso_text = proviso_text
 
+        footnote_details_choices, footnote_text = self._picklist_to_choices(footnote_details)
+        self.footnote_text = footnote_text
+
         self.fields["approval_radios"].choices = approval_choices
         self.fields["proviso_radios"].choices = proviso_choices
+        self.fields["footnote_details_radios"].choices = footnote_details_choices
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
@@ -156,7 +168,7 @@ class GiveApprovalAdviceForm(forms.Form):
             ExpandingFieldset(
                 RadioTextArea("proviso_radios", "proviso", self.proviso_text),
                 "instructions_to_exporter",
-                "footnote_details",
+                RadioTextArea("footnote_details_radios", "footnote_details", self.footnote_text),
                 legend="Add a licence condition, instruction to exporter or footnote",
                 summary_css_class="supplemental-approval-fields",
             ),
@@ -178,7 +190,7 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
         )
 
 
-class RefusalAdviceForm(forms.Form):
+class RefusalAdviceForm(PicklistAdviceForm):
     denial_reasons = forms.MultipleChoiceField(
         widget=forms.SelectMultiple(),
         label="What is the refusal criteria?",
@@ -189,22 +201,33 @@ class RefusalAdviceForm(forms.Form):
         ),
         error_messages={"required": "Select at least one refusal criteria"},
     )
+    refusal_reasons_radios = forms.ChoiceField(
+        label="What are your reasons for this refusal?",
+        widget=forms.RadioSelect,
+        required=False,
+        choices=(),
+    )
+    refusal_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        label="",
+        error_messages={"required": "Enter a reason for refusing"},
+    )
 
     def __init__(self, choices, *args, **kwargs):
+        refusal_reasons = kwargs.pop("refusal_reasons")
         super().__init__(*args, **kwargs)
         self.fields["denial_reasons"].choices = choices
         label_size = {"label_size": "govuk-label--s"}
-        self.fields["refusal_reasons"] = PicklistCharField(
-            picklist_attrs={"target": "refusal_reasons", "type": "standard_advice", "name": "standard advice"},
-            label="What are your reasons for this refusal?",
-            help_link_text="Choose a refusal reason from the template list",
-            error_messages={"required": "Enter a reason for refusing"},
-        )
+
+        refusal_reasons_choices, refusal_text = self._picklist_to_choices(refusal_reasons)
+        self.refusal_text = refusal_text
+
+        self.fields["refusal_reasons_radios"].choices = refusal_reasons_choices
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Field("denial_reasons", context=label_size),
-            Field("refusal_reasons", context=label_size),
+            RadioTextArea("refusal_reasons_radios", "refusal_reasons", refusal_text),
             Submit("submit", "Submit recommendation"),
         )
 
@@ -338,7 +361,10 @@ class FCDORefusalAdviceForm(RefusalAdviceForm):
             error_messages={"required": "Select the destinations you want to make recommendations for"},
         )
         self.helper.layout = Layout(
-            "countries", "denial_reasons", "refusal_reasons", Submit("submit", "Submit recommendation")
+            "countries",
+            "denial_reasons",
+            RadioTextArea("refusal_reasons_radios", "refusal_reasons", self.refusal_text),
+            Submit("submit", "Submit recommendation"),
         )
 
 

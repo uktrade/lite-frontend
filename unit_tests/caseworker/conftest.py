@@ -747,6 +747,30 @@ def mock_proviso(requests_mock):
 
 
 @pytest.fixture
+def mock_footnote_details(requests_mock):
+    url = client._build_absolute_uri("/picklist/?type=footnotes&page=1&disable_pagination=True&show_deactivated=False")
+    data = {
+        "results": [
+            {"name": "somename", "text": "Some Footnote Text"},
+        ]
+    }
+    return requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture
+def mock_refusal_reasons(requests_mock):
+    url = client._build_absolute_uri(
+        "/picklist/?type=standard_advice&page=1&disable_pagination=True&show_deactivated=False"
+    )
+    data = {
+        "results": [
+            {"name": "somename", "text": "Some Refusal Text"},
+        ]
+    }
+    return requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture
 def mock_post_refusal_advice(requests_mock, standard_case_pk):
     url = client._build_absolute_uri(f"/cases/{standard_case_pk}/user-advice/")
     yield requests_mock.post(url=url, json={})
