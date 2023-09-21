@@ -267,10 +267,11 @@ def test_case_details_sub_status_change_displayed(
     requests_mock,
     data_queue,
     authorized_client,
+    mock_gov_user,
     value,
     expected,
 ):
-
+    data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
     case_id = data_standard_case["case"]["id"]
     requests_mock.get(
         client._build_absolute_uri(f"/applications/{case_id}/sub-statuses/"),
