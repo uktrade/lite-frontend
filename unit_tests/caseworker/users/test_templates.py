@@ -29,7 +29,7 @@ def test_pending_users_in_all_users(john_smith, gov_uk_user_id):
     }
     html = render_to_string("users/index.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    rows = soup.find_all(id=re.compile("^row-\d+"))
+    rows = soup.find_all(id=re.compile(r"^row-\d+"))
     assert rows[0].find(class_="govuk-tag govuk-tag--blue").text.strip() == "Pending"
     assert rows[1].find(class_="govuk-table__header").text.strip() == "John Smith"
 
