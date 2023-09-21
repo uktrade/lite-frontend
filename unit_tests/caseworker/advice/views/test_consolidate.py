@@ -32,6 +32,7 @@ def setup(
     mock_approval_reason,
     mock_denial_reasons,
     mock_proviso,
+    mock_footnote_details,
     mock_post_team_advice,
     mock_finalise_advice_documents,
 ):
@@ -350,7 +351,6 @@ def test_approval_reasons_mocked(
     assert isinstance(form, forms.GiveApprovalAdviceForm)
     # this is built mock_approval_reason
     response_choices = [list(choice) for choice in form.fields["approval_radios"].choices]
-
     assert response_choices == [
         ["no_concerns", "no concerns"],
         ["concerns", "concerns"],
