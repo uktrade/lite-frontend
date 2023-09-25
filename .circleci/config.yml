@@ -82,7 +82,9 @@ commands:
       - run:
           name: Run unit tests
           command: |
-            pipenv run pytest --cov=.  --cov-report xml --cov-config=.coveragerc
+            pipenv run pytest --cov=. --cov-config=.coveragerc
+      - store_artifacts:
+          path: .coverage.*
 
   ui_tests:
     steps:
@@ -192,6 +194,7 @@ jobs:
       PIPENV_DOTENV_LOCATION: tests.caseworker.env
       PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
+      COV_CORE_DATAFILE: .coverage.caseworker
     steps:
       - setup_code
       - backend_unit_tests:
@@ -207,6 +210,7 @@ jobs:
       PIPENV_DOTENV_LOCATION: tests.exporter.env
       PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
+      COV_CORE_DATAFILE: .coverage.exporter
     steps:
       - setup_code
       - backend_unit_tests:
@@ -222,6 +226,7 @@ jobs:
       PIPENV_DOTENV_LOCATION: tests.exporter.env
       PYTEST_ADDOPTS: unit_tests/core --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
+      COV_CORE_DATAFILE: .coverage.core
     steps:
       - setup_code
       - backend_unit_tests:
