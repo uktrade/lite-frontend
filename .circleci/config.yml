@@ -247,6 +247,8 @@ jobs:
       - run: coverage xml
       - run: diff-cover coverage.xml --compare-branch=origin/dev --fail-under=100
       - run: coverage html
+      - store_artifacts:
+          path: htmlcov
 
   frontend_unit_test:
     docker:
