@@ -83,12 +83,6 @@ commands:
           name: Run unit tests
           command: |
             pipenv run pytest --cov=.  --cov-report xml --cov-config=.coveragerc
-      - run:
-          name: Code coverage report
-          command: |
-            curl -Os https://uploader.codecov.io/latest/linux/codecov
-            chmod +x codecov
-            ./codecov
 
   ui_tests:
     steps:
