@@ -246,6 +246,7 @@ jobs:
       - run: coverage combine tmp
       - run: coverage xml
       - run: diff-cover coverage.xml --compare-branch=origin/dev --fail-under=100
+      - run: coverage html
 
   frontend_unit_test:
     docker:
