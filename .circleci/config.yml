@@ -239,8 +239,13 @@ jobs:
     docker:
       - <<: *image_python
     steps:
+      - checkout
       - attach_workspace:
           at: ~/repo/tmp
+      - run: pip install coverage diff_cover
+      - run: coverage combine tmp
+      - run: coverage xml
+      - run: diff-cover coverage.xml --compare-branch=origin/dev --fail-under=100
 
   frontend_unit_test:
     docker:
