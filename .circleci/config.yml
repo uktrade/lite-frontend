@@ -85,9 +85,11 @@ commands:
             pipenv run pytest --cov=. --cov-config=.coveragerc
       - run:
           name: Rename coverage file
-          command: mv .coverage .coverage.<<parameters.alias>>
-      - store_artifacts:
-          path: .coverage.*
+          command: mkdir coverage-output && mv .coverage coverage-output/.coverage.<<parameters.alias>>
+      - persist_to_workspace:
+          root: coverage-output
+          paths:
+            - .coverage.*
 
   ui_tests:
     steps:
