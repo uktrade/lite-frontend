@@ -234,6 +234,14 @@ jobs:
       - backend_unit_tests:
           alias: core
 
+  combine_coverage:
+    working_directory: ~/repo
+    docker:
+      - <<: *image_python
+    steps:
+      - attach_workspace:
+          at: ~/repo/tmp
+
   frontend_unit_test:
     docker:
       - <<: *image_node
@@ -304,6 +312,11 @@ workflows:
       - frontend_artefacts_check
       - caseworker_e2e_test
       - exporter_e2e_test
+      - combine_coverage:
+          requires:
+              - caseworker_unit_test
+              - exporter_unit_test
+              - core_unit_test
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
