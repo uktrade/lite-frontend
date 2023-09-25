@@ -234,7 +234,7 @@ jobs:
       - backend_unit_tests:
           alias: core
 
-  combine_coverage:
+  check_coverage:
     working_directory: ~/repo
     docker:
       - <<: *image_python
@@ -245,10 +245,13 @@ jobs:
       - run: pip install coverage diff_cover
       - run: coverage combine tmp
       - run: coverage xml
-      - run: diff-cover coverage.xml --compare-branch=origin/dev --fail-under=100
       - run: coverage html
       - store_artifacts:
           path: htmlcov
+      - run: diff-cover coverage.xml --compare-branch=origin/dev --html-report coverage-report.html
+      - store_artifacts:
+          path: coverage-report.html
+      - run: diff-cover coverage.xml --compare-branch=origin/dev --fail-under=100
 
   frontend_unit_test:
     docker:
@@ -316,15 +319,15 @@ workflows:
       - caseworker_unit_test
       - exporter_unit_test
       - core_unit_test
-      - frontend_unit_test
-      - frontend_artefacts_check
-      - caseworker_e2e_test
-      - exporter_e2e_test
-      - combine_coverage:
+      - check_coverage:
           requires:
               - caseworker_unit_test
               - exporter_unit_test
               - core_unit_test
+      - frontend_unit_test
+      - frontend_artefacts_check
+      - caseworker_e2e_test
+      - exporter_e2e_test
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
