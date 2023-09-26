@@ -168,7 +168,7 @@ def is_product_type(product_type):
             "ammunition_or_component": is_ammunition_or_component,
             "firearms_accessory": is_firearms_accessory,
             "firearms_software_or_tech": is_firearms_software_or_tech,
-        }[product_type]
+        }.get(product_type)
 
     return _is_product_type
 
