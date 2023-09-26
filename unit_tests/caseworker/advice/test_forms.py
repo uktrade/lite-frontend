@@ -11,7 +11,9 @@ from caseworker.advice import forms
     ),
 )
 def test_give_approval_advice_form_valid(data, valid_status):
-    form = forms.GiveApprovalAdviceForm(data=data, approval_reason={"results": []}, proviso={"results": []})
+    form = forms.GiveApprovalAdviceForm(
+        data=data, approval_reason={"results": []}, proviso={"results": []}, footnote_details={"results": []}
+    )
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors["approval_reasons"] == ["Enter a reason for approving"]
@@ -123,7 +125,11 @@ def test_countersign_decision_advice_form_valid(data, valid_status, errors):
 )
 def test_give_fcdo_approval_advice_form_valid(data, valid_status):
     form = forms.FCDOApprovalAdviceForm(
-        data=data, countries={"GB": "United Kingdom"}, approval_reason={"results": []}, proviso={"results": []}
+        data=data,
+        countries={"GB": "United Kingdom"},
+        approval_reason={"results": []},
+        proviso={"results": []},
+        footnote_details={"results": []},
     )
     assert form.is_valid() == valid_status
     if not valid_status:

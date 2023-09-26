@@ -1,4 +1,6 @@
 import datetime
+import rules
+
 from logging import getLogger
 
 from http import HTTPStatus
@@ -413,8 +415,7 @@ class ChangeSubStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
         except HTTPError:
             raise Http404()
 
-        self.case_sub_statuses = get_case_sub_statuses(self.request, self.case.id)
-        if not self.case_sub_statuses:
+        if not rules.test_rule("can_user_change_sub_status", self.request, self.case):
             raise Http404()
 
         return super().dispatch(*args, **kwargs)
@@ -429,8 +430,9 @@ class ChangeSubStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
+        case_sub_statuses = get_case_sub_statuses(self.request, self.case.id)
         case_sub_status_choices = [
-            (case_sub_status["id"], case_sub_status["name"]) for case_sub_status in self.case_sub_statuses
+            (case_sub_status["id"], case_sub_status["name"]) for case_sub_status in case_sub_statuses
         ]
         kwargs["sub_statuses"] = case_sub_status_choices
 

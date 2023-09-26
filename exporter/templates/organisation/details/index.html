@@ -124,7 +124,7 @@
             </dd>
             <dt class="certificate-action">
                     {% if documents.rfd_certificate %}
-                <a href="{% url 'organisation:document' pk=documents.rfd_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank">View certificate</a>
+                <a href="{% url 'organisation:document' pk=documents.rfd_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank" rel="noopener noreferrer">View certificate</a>
                 </br>
                 {% endif %}
                 <a href="{% url 'organisation:upload-firearms-certificate' %}" class="govuk-link govuk-link--no-visited-state">{{ documents.rfd_certificate|yesno:'Replace,Upload'}} certificate</a>
@@ -143,7 +143,7 @@
             </dd>
             <dt class="certificate-action">
                 {% if documents.section_five_certificate %}
-                    <a href="{% url 'organisation:document' pk=documents.section_five_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank">View certificate</a>
+                    <a href="{% url 'organisation:document' pk=documents.section_five_certificate.id %}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-bottom-2" target="_blank" rel="noopener noreferrer">View certificate</a>
                     </br>
                 {% endif %}
                 <a href="{% url 'organisation:upload-section-five-certificate' %}" class="govuk-link govuk-link--no-visited-state">{{ documents.section_five_certificate|yesno:'Replace,Upload'}} certificate</a>

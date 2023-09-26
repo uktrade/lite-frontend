@@ -747,6 +747,30 @@ def mock_proviso(requests_mock):
 
 
 @pytest.fixture
+def mock_footnote_details(requests_mock):
+    url = client._build_absolute_uri("/picklist/?type=footnotes&page=1&disable_pagination=True&show_deactivated=False")
+    data = {
+        "results": [
+            {"name": "somename", "text": "Some Footnote Text"},
+        ]
+    }
+    return requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture
+def mock_refusal_reasons(requests_mock):
+    url = client._build_absolute_uri(
+        "/picklist/?type=standard_advice&page=1&disable_pagination=True&show_deactivated=False"
+    )
+    data = {
+        "results": [
+            {"name": "somename", "text": "Some Refusal Text"},
+        ]
+    }
+    return requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture
 def mock_post_refusal_advice(requests_mock, standard_case_pk):
     url = client._build_absolute_uri(f"/cases/{standard_case_pk}/user-advice/")
     yield requests_mock.post(url=url, json={})
@@ -2542,3 +2566,16 @@ def mock_cases_search(requests_mock, data_cases_search, queue_pk):
 def mock_cases_search_head(requests_mock):
     url = client._build_absolute_uri(f"/cases/")
     yield requests_mock.head(url=re.compile(f"{url}.*"), headers={"resource-count": "350"})
+
+
+@pytest.fixture(autouse=True)
+def mock_get_case_sub_statuses(data_standard_case, requests_mock):
+    case_id = data_standard_case["case"]["id"]
+    url = client._build_absolute_uri(f"/applications/{case_id}/sub-statuses/")
+    requests_mock.get(
+        url=url,
+        json=[
+            {"id": "status-1", "name": "Status 1"},
+            {"id": "status-2", "name": "Status 2"},
+        ],
+    )

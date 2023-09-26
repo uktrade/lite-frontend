@@ -1,5 +1,12 @@
 import rules
 
+from caseworker.cases.services import get_case_sub_statuses
+
+
+@rules.predicate
+def has_available_sub_statuses(request, case):
+    return bool(get_case_sub_statuses(request, case["id"]))
+
 
 @rules.predicate
 def is_user_case_officer(request, case):
@@ -36,3 +43,4 @@ rules.add_rule("can_user_add_an_ejcu_query", is_user_allocated)
 rules.add_rule("can_user_attach_document", rules.always_allow)
 rules.add_rule("can_user_generate_document", is_user_allocated)
 rules.add_rule("can_user_add_contact", is_user_allocated)
+rules.add_rule("can_user_change_sub_status", is_user_allocated & has_available_sub_statuses)
