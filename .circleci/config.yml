@@ -251,6 +251,9 @@ jobs:
       - run: diff-cover coverage.xml --compare-branch=origin/dev --html-report coverage-report.html
       - store_artifacts:
           path: coverage-report.html
+      - run: zip -r coverage.zip htmlcov coverage-report.html
+      - store_artifacts:
+          path: coverage.zip
       - run: diff-cover coverage.xml --compare-branch=origin/dev --fail-under=100
 
   frontend_unit_test:
