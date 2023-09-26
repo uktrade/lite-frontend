@@ -405,7 +405,6 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclea
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:advice_view",
-            "FEATURE_FLAG_REFUSALS": settings.FEATURE_FLAG_REFUSALS,
             **services.get_advice_tab_context(
                 self.case,
                 self.caseworker,
