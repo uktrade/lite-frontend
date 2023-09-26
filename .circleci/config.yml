@@ -85,11 +85,18 @@ commands:
             pipenv run pytest --cov=. --cov-config=.coveragerc
       - run:
           name: Rename coverage file
-          command: mkdir coverage-output && mv .coverage coverage-output/.coverage.<<parameters.alias>>
+          command: mkdir coverage-output && cp .coverage coverage-output/.coverage.<<parameters.alias>>
       - persist_to_workspace:
           root: coverage-output
           paths:
             - .coverage.*
+      - run:
+          name: Code coverage report
+          command: |
+            pipenv run coverage xml
+            curl -Os https://uploader.codecov.io/latest/linux/codecov
+            chmod +x codecov
+            ./codecov
 
   ui_tests:
     steps:
