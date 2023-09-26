@@ -1,4 +1,4 @@
-FROM python:3.7-stretch AS selenium_base
+FROM python:3.8-stretch AS selenium_base
 
 RUN apt-get update && apt-get install -yq \
     firefox-esr \
