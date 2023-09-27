@@ -7,7 +7,7 @@ from conf.base import *
 
 
 # Temporarily force authbroker URL to verify CI works
-AUTHBROKER_URL = "http://localhost:8300/"
+AUTHBROKER_URL = "http://exporter:8300/"
 print("FORCE AUTHBROKER URL TO ", AUTHBROKER_URL)
 
 ROOT_URLCONF = "exporter.urls"

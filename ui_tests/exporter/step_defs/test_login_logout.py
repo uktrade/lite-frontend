@@ -16,7 +16,14 @@ def click_the_logout_link(driver):
 
 
 @then("I am taken to the GOV UK page")
-def taken_to_the_great_page(driver):
+def taken_to_the_great_page(driver, settings):
     SIGN_IN_BUTTON_ID = "button-sign-in"
     driver.find_element(by=By.ID, value=SIGN_IN_BUTTON_ID).click()
-    assert "signin" in driver.current_url
+    if not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+        assert "signin" in driver.current_url
+    else:
+        # This is a concession to mock_sso not being a full
+        # implementation of the GovOne SSO - in this case
+        # the redirection points at the settings.AUTHBROKER_URL
+        # (which is the mock_sso service)
+        assert driver.current_url == f"{settings.AUTHBROKER_URL}select-organisation/"
