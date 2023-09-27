@@ -18,6 +18,9 @@ MOCK_SSO_USER_EMAIL = env.str("MOCK_SSO_USER_EMAIL", "")
 MOCK_SSO_USER_FIRST_NAME = env.str("MOCK_SSO_USER_FIRST_NAME", "")
 MOCK_SSO_USER_LAST_NAME = env.str("MOCK_SSO_USER_LAST_NAME", "")
 
+# post-logout-redirect-uri is set in GovOne SSO itself, for MOCK_SSO it must be set.
+MOCK_SSO_POST_LOGOUT_REDIRECT_URL = "/" if MOCK_SSO_ACTIVATE_ENDPOINTS else ""
+
 INSTALLED_APPS += [
     "exporter.core",
     "exporter.applications",
@@ -55,7 +58,9 @@ LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 
 FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = env.bool("FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED", False)
 
-LOGOUT_URL = f"{AUTHBROKER_URL}/logout"
+LOGOUT_URL = ""
+# LOGOUT_URL = f"{AUTHBROKER_URL}/logout"
+# LOGOUT_REDIRECT_URL = "http://testserver"
 AUTHBROKER_SCOPE = "openid,email,offline_access"
 AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "/authorize/")
 AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "/token/")
