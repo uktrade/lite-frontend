@@ -200,7 +200,6 @@ def test_finalise_document_create_return_url(
     queue_pk,
     generated_document_create_url,
     finalise_document_create_url,
-    send_document_url,
     requests_mock,
 ):
 
@@ -208,9 +207,10 @@ def test_finalise_document_create_return_url(
         url=generated_document_create_url, json={}, status_code=201
     )
 
-    response = authorized_client.post(finalise_document_create_url, data={"return_url": send_document_url})
+    return_to_case_url = reverse("queues:cases", kwargs={"queue_pk": data_standard_case["case"]["id"]})
+    response = authorized_client.post(finalise_document_create_url, data={"return_url": return_to_case_url})
     assert response.status_code == 302
-    assert response.url == send_document_url
+    assert response.url == return_to_case_url
 
 
 def test_finalise_document_create_error(
