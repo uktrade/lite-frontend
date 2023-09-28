@@ -52,7 +52,7 @@ class APIUserMe(View):
 
 class UserInfo(View):
     """
-    GovUK OneLogin style UserInfo with client claims.
+    GovUK OneLogin style UserInfo with minimal client claim.
     """
 
     def get(self, request, **kwargs):

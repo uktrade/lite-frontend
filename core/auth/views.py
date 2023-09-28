@@ -1,7 +1,7 @@
 import logging
 import abc
 import uuid
-from urllib.parse import urlparse, urlunparse, urljoin
+from urllib.parse import urlparse, urlunparse
 from core.ip_filter import get_client_ip
 
 from django.conf import settings
@@ -45,7 +45,7 @@ class AuthLogoutView(RedirectView):
             settings.LOGOUT_URL,
             get_client_ip(self.request),
         )
-        redirect_url = self.request.build_absolute_uri(urljoin(settings.LOGOUT_URL, "/"))
+        redirect_url = settings.LOGOUT_URL + self.request.build_absolute_uri("/")
         if self.request.authbroker_client.token:
             if self.request.authbroker_client.token.get("id_token"):
                 # if we have an ID token then the logout call to SSO service will require this.

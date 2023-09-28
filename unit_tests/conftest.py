@@ -20,23 +20,6 @@ from core.constants import OrganisationDocumentType
 
 
 @pytest.fixture(autouse=True)
-def disable_debug_toolbar(settings):
-    # Disable the debug toolbar so its markup doesn't pollute output
-    # and cause unexpected outcomes
-    if settings.FEATURE_DEBUG_TOOLBAR_ON:
-        settings.FEATURE_DEBUG_TOOLBAR_ON = False
-        # pytest wants the scope to be 'function', it's possible to get
-        # here with the INSTALLED_APPS and MIDDLEWARE already having been
-        # edited.
-        if "debug_toolbar" in settings.INSTALLED_APPS:
-            settings.INSTALLED_APPS.remove("debug_toolbar")
-        if "requests_panel" in settings.INSTALLED_APPS:
-            settings.INSTALLED_APPS.remove("requests_panel")
-        if "debug_toolbar.middleware.DebugToolbarMiddleware" in settings.MIDDLEWARE:
-            settings.MIDDLEWARE.remove("debug_toolbar.middleware.DebugToolbarMiddleware")
-
-
-@pytest.fixture(autouse=True)
 def disable_hawk(settings):
     settings.HAWK_AUTHENTICATION_ENABLED = False
 
