@@ -1,3 +1,6 @@
+import time
+
+import jwt
 import pytest
 from django.urls import reverse
 
@@ -54,6 +57,7 @@ def test_token_endpoint_mock_sso(client):
 
 
 def test_api_user_me_endpoint_mock_sso(settings, client):
+    # Pre GovUK OneLogin SSO user info endpoint
     url = reverse("mock_sso:api_user_me")
 
     response = client.get(url)
@@ -71,3 +75,54 @@ def test_api_user_me_endpoint_mock_sso(settings, client):
         "permitted_applications": [],
         "access_profiles": [],
     }
+
+
+def test_api_userinfo_endpoint_mock_sso(settings, client):
+    # GovUK OneLogin SSO user info endpoint
+    # Test the UserInfo endpoint with a minimal client claim
+    settings.MOCK_SSO_SECRET_KEY = "cd8a0206dee80a90c61bb1251637b4785e5716e13ce4d064fdd932ffc0546682"
+
+    url = reverse("mock_sso:userinfo")
+
+    # Build the client claim
+    # Timestamps must be ints, representing seconds from the epoch
+    issued_at = int(time.time())
+    expiration_time = issued_at + 3600
+    mock_client_id = "20a0353f-a7d1-4851-9af8-1bcaff152b60"
+    secret_key = settings.MOCK_SSO_SECRET_KEY
+    audience = "https://oidc.integration.account.gov.uk/token"
+
+    # JWT spec: https://docs.sign-in.service.gov.uk/integrate-with-integration-environment/integrate-with-code-flow/#create-a-jwt
+    core_identity_jwt_payload = {
+        "iss": mock_client_id,
+        "sub": mock_client_id,
+        "aud": audience,
+        "iat": issued_at,
+        "exp": f"{expiration_time}",
+        "jti": "dummy-jti",
+    }
+
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+    response_data = response.json()
+    # JWT needs special handling so remove it and verify rest of the data first
+    core_identity_jwt = response_data.pop("https://vocab.account.gov.uk/v1/coreIdentityJWT")
+
+    assert response_data == {
+        "email": settings.MOCK_SSO_USER_EMAIL,
+        "contact_email": settings.MOCK_SSO_USER_EMAIL,
+        "email_user_id": settings.MOCK_SSO_USER_EMAIL,
+        "user_id": "20a0353f-a7d1-4851-9af8-1bcaff152b60",
+        "first_name": settings.MOCK_SSO_USER_FIRST_NAME,
+        "last_name": settings.MOCK_SSO_USER_LAST_NAME,
+        "related_emails": [],
+        "groups": [],
+        "permitted_applications": [],
+        "access_profiles": [],
+    }
+
+    # Verify the round trip works (jwt verifies some fields, e.g. expiration must be an int not a float)
+    actual_core_identity_payload = jwt.decode(core_identity_jwt, secret_key, "HS256", audience=audience)
+    assert actual_core_identity_payload == core_identity_jwt_payload
