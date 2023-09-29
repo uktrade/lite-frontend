@@ -56,15 +56,24 @@ class UserInfo(View):
     """
 
     def get(self, request, **kwargs):
-        expiration = time.time() + 3600
-        subject_id = "20a0353f-a7d1-4851-9af8-1bcaff152b60"
+        # Build the client claim
+        # Timestamps must be ints, representing seconds from the epoch
+        issued_at = int(time.time())
+        expiration_time = issued_at + 3600
+        mock_client_id = "mock-client-id"
         secret_key = settings.MOCK_SSO_SECRET_KEY
+        audience = "https://oidc.integration.account.gov.uk/token"
+
+        # JWT spec: https://docs.sign-in.service.gov.uk/integrate-with-integration-environment/integrate-with-code-flow/#create-a-jwt
         core_identity_jwt_payload = {
-            "iss": "mock_issuer",
-            "sub": subject_id,
-            "aud": "mock_client_id",
-            "exp": f"{expiration}",
+            "iss": mock_client_id,
+            "sub": mock_client_id,
+            "aud": audience,
+            "iat": issued_at,
+            "exp": f"{expiration_time}",
+            "jti": "dummy-jti",
         }
+
         core_identity_jwt = jwt.encode(core_identity_jwt_payload, secret_key, "HS256")
         response_data = {
             "email": settings.MOCK_SSO_USER_EMAIL,

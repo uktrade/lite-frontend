@@ -88,7 +88,7 @@ def test_api_userinfo_endpoint_mock_sso(settings, client):
     # Timestamps must be ints, representing seconds from the epoch
     issued_at = int(time.time())
     expiration_time = issued_at + 3600
-    mock_client_id = "20a0353f-a7d1-4851-9af8-1bcaff152b60"
+    mock_client_id = "mock-client-id"
     secret_key = settings.MOCK_SSO_SECRET_KEY
     audience = "https://oidc.integration.account.gov.uk/token"
 
