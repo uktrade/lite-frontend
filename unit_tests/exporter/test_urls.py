@@ -39,3 +39,27 @@ def test_url_respects_feature_flag_on(settings):
 
     # then nothing bad happens
     lookup_urls()
+
+
+EXPORTER_MOCK_URL_NAMES = [
+    "mock_sso:authorize",
+    "mock_sso:token",
+    "mock_sso:api_user_me",
+]
+
+
+def test_mock_sso_enabled_endpoints(settings):
+    settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+    reload_urlconf(["exporter.urls", settings.ROOT_URLCONF])
+
+    for url_name in EXPORTER_MOCK_URL_NAMES:
+        reverse(url_name)
+
+
+def test_mock_sso_disabled_endpoints(settings):
+    settings.MOCK_SSO_ACTIVATE_ENDPOINTS = False
+    reload_urlconf(["exporter.urls", settings.ROOT_URLCONF])
+
+    for url_name in EXPORTER_MOCK_URL_NAMES:
+        with pytest.raises(NoReverseMatch):
+            reverse(url_name)
