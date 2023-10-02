@@ -1,14 +1,14 @@
 $(".lite-search__container").show();
 
 $("#filter-box").on("input", function () {
-  var value = $(this).val().toLowerCase();
+  let value = $(this).val().toLowerCase();
 
   $(".govuk-checkboxes__item").each(function (i, obj) {
-    var checkboxText = $(obj)
+    let checkboxText = $(obj)
       .find(".govuk-checkboxes__label")
       .text()
       .toLowerCase();
-    var checkboxDescription = $(obj)
+    let checkboxDescription = $(obj)
       .find(".govuk-checkboxes__hint")
       .text()
       .toLowerCase();
@@ -42,7 +42,7 @@ function addCheckedCheckboxesToList() {
     $("input[type='checkbox']:checked").length + " Selected"
   );
   $("input[type='checkbox']:checked").each(function () {
-    var checkboxText = $(this).parent().find(".govuk-checkboxes__label").text();
+    let checkboxText = $(this).parent().find(".govuk-checkboxes__label").text();
     $.find("#checkbox-list").append(
       "<div><a class='govuk-link govuk-link--no-visited-state lite-checkbox-filter-link' href='#" +
         checkboxText.trim() +
@@ -64,7 +64,7 @@ function addCheckedCheckboxesToList() {
       event.preventDefault();
 
       // Store hash
-      var hash = this.hash.substr(1);
+      const hash = this.hash.substr(1);
 
       // Using jQuery's animate() method to add smooth page scroll
       // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
@@ -84,8 +84,8 @@ function addCheckedCheckboxesToList() {
 
 addCheckedCheckboxesToList();
 
-var mark = function () {
-  var keyword = $("#filter-box").val();
+let mark = function () {
+  let keyword = $("#filter-box").val();
 
   // Remove previous marked elements and mark
   // the new keyword inside the context
