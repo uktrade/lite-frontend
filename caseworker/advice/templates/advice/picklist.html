@@ -97,9 +97,9 @@
 							</p>
 						</div>
 					`
-                $(".lite-modal #picklist-picker__container").append(html)
+                $.find(".lite-modal #picklist-picker__container").append(html)
             });
-            notice = $(".lite-modal #picklist-picker__container").next();
+            notice = $.find(".lite-modal #picklist-picker__container").next();
             if (data.results.length == 0) {
                 notice.css({ "visibility": "visible" });
             } else {

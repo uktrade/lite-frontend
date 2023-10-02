@@ -53,7 +53,7 @@ export default function initAddGood() {
   function populateUploadedCertificate() {
     var existingCertificate = $("input[name='uploaded_file_name']").val();
     if (existingCertificate) {
-      $("input[type=file]")
+      $.find("input[type=file]")
         .next()
         .html(
           existingCertificate +

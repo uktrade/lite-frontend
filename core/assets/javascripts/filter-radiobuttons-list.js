@@ -41,7 +41,7 @@ function addCheckedCheckboxesToList() {
   );
   $("input[type='checkbox']:checked").each(function () {
     var checkboxText = $(this).parent().find(".govuk-radios__label").text();
-    $("#checkbox-list").append(
+    $.find("#checkbox-list").append(
       "<div><a class='govuk-link govuk-link--no-visited-state lite-checkbox-filter-link' href='#" +
         checkboxText.trim() +
         "'>" +
