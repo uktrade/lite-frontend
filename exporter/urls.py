@@ -28,6 +28,11 @@ urlpatterns += [
     path("cookies/", include("core.cookies.urls")),
 ]
 
+if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+    urlpatterns = [
+        path("", include("exporter.mock_sso.urls")),
+    ] + urlpatterns
+
 handler403 = exporter.core.views.handler403
 
 if settings.FEATURE_DEBUG_TOOLBAR_ON:

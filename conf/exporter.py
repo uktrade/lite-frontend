@@ -8,11 +8,21 @@ from conf.base import *
 
 ROOT_URLCONF = "exporter.urls"
 
+MOCK_SSO_ACTIVATE_ENDPOINTS = env.bool("MOCK_SSO_ACTIVATE_ENDPOINTS", False)
+MOCK_SSO_USER_EMAIL = env.str("MOCK_SSO_USER_EMAIL", "")
+MOCK_SSO_USER_FIRST_NAME = env.str("MOCK_SSO_USER_FIRST_NAME", "")
+MOCK_SSO_USER_LAST_NAME = env.str("MOCK_SSO_USER_LAST_NAME", "")
+
 INSTALLED_APPS += [
     "exporter.core",
     "exporter.applications",
     "exporter.organisation",
 ]
+
+if MOCK_SSO_ACTIVATE_ENDPOINTS:
+    INSTALLED_APPS += [
+        "exporter.mock_sso",
+    ]
 
 TEMPLATES = [
     {
