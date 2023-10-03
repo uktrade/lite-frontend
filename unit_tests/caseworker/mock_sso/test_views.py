@@ -1,9 +1,13 @@
+from urllib import parse
+
 from django.conf import settings
 from django.urls import reverse
 
 
 def test_mock_authorize(client):
     url = reverse("mock_sso:authorize")
+    assert parse.urljoin(settings.AUTHBROKER_URL, url) == settings.AUTHBROKER_AUTHORIZATION_URL
+
     redirect_uri = "http://localhost/some-redirect/"
     state = "dummystate"
     get_params = {
@@ -30,6 +34,7 @@ def test_mock_authorize_bad_request(client):
 
 def test_mock_token(client):
     url = reverse("mock_sso:token")
+    assert parse.urljoin(settings.AUTHBROKER_URL, url) == settings.AUTHBROKER_TOKEN_URL
 
     response = client.post(url)
 
@@ -39,6 +44,7 @@ def test_mock_token(client):
 
 def test_mock_api_user_me(client):
     url = reverse("mock_sso:api_user_me")
+    assert parse.urljoin(settings.AUTHBROKER_URL, url) == settings.AUTHBROKER_PROFILE_URL
 
     response = client.get(url)
 
