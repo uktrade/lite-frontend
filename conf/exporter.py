@@ -39,10 +39,6 @@ LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 
 FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = env.bool("FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED", False)
 
-# TODO: Remove this before merging (it will break CI though)
-#       Temporarily force authbroker URL to verify CI works
-AUTHBROKER_URL = "http://localhost:8300/"
-
 MOCK_SSO_ACTIVATE_ENDPOINTS = env.bool("MOCK_SSO_ACTIVATE_ENDPOINTS", False)
 if MOCK_SSO_ACTIVATE_ENDPOINTS:
     INSTALLED_APPS += [
