@@ -23,7 +23,13 @@ class Authorize(View):
 @method_decorator(csrf_exempt, name="dispatch")
 class Token(View):
     def post(self, request, **kwargs):
-        return JsonResponse({"access_token": "DUMMYTOKEN", "token_type": "Bearer"})
+        return JsonResponse(
+            {
+                "access_token": "DUMMYTOKEN",
+                "token_type": "Bearer",
+                "id_token": "DUMMYIDTOKEN",
+            }
+        )
 
 
 class APIUserMe(View):

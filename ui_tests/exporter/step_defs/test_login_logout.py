@@ -1,3 +1,5 @@
+from django.conf import settings
+
 from pytest_bdd import scenarios, then, parsers, when
 
 from selenium.webdriver.common.by import By
@@ -16,7 +18,8 @@ def click_the_logout_link(driver):
 
 
 @then("I am taken to the GOV UK page")
-def taken_to_the_great_page(driver):
-    SIGN_IN_BUTTON_ID = "button-sign-in"
-    driver.find_element(by=By.ID, value=SIGN_IN_BUTTON_ID).click()
-    assert "signin" in driver.current_url
+def taken_to_the_gov_uk_page(driver):
+    if not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+        SIGN_IN_BUTTON_ID = "button-sign-in"
+        driver.find_element(by=By.ID, value=SIGN_IN_BUTTON_ID).click()
+        assert "signin" in driver.current_url

@@ -39,7 +39,7 @@ def test_mock_token(client):
     response = client.post(url)
 
     assert response.status_code == 200
-    assert response.json() == {"access_token": "DUMMYTOKEN", "token_type": "Bearer"}
+    assert response.json() == {"access_token": "DUMMYTOKEN", "token_type": "Bearer", "id_token": "DUMMYIDTOKEN"}
 
 
 def test_mock_api_user_me(client):
