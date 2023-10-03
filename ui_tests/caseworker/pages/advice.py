@@ -178,7 +178,7 @@ class RecommendationsAndDecisionPage(BasePage):
 
     def get_refusal_criteria(self):
         """Return the refusal criteria for each destination as a list."""
-        table = self.driver.find_element(by=By.CLASS_NAME, value="govuk-table")
+        table = self.driver.find_element(by=By.CLASS_NAME, value="advice-table")
         return [
             r.find_element(by=By.XPATH, value="td[5]").text
             for r in table.find_elements(
