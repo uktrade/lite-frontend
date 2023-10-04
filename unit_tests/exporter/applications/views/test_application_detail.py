@@ -45,11 +45,20 @@ def test_appeal_button_not_shown_for_successful_application(
     assert not soup.find(id="button-appeal-refusal")
 
 
+@pytest.mark.parametrize(
+    "date_string",
+    (
+        "2023-11-01T13:16:05.918259Z",
+        "2023-10-04T17:12:51.271415",
+        "2023-10-04T16:14:19.907345+00:00",
+    ),
+)
 def test_appeal_deadline_date_format(
     authorized_client,
     data_standard_case,
     mock_application_get,
     settings,
+    date_string,
 ):
     settings.FEATURE_FLAG_APPEALS = True
 
@@ -57,7 +66,7 @@ def test_appeal_deadline_date_format(
         "key": "finalised",
         "value": "Finalised",
     }
-    data_standard_case["case"]["data"]["appeal_deadline"] = "2023-11-01T13:16:05.918259Z"
+    data_standard_case["case"]["data"]["appeal_deadline"] = date_string
 
     pk = data_standard_case["case"]["id"]
 
