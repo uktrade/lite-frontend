@@ -30,12 +30,6 @@ urlpatterns += [
 
 handler403 = exporter.core.views.handler403
 
-if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
-    urlpatterns = [
-        path("", include("core.mock_sso.urls_onelogin")),
-    ] + urlpatterns
-
-
 if settings.FEATURE_DEBUG_TOOLBAR_ON:
     import debug_toolbar
 

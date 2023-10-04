@@ -32,6 +32,13 @@ def pytest_configure(config):
     if not os.environ.get("PIPENV_DOTENV_LOCATION"):
         load_dotenv(dotenv_path=DEFAULT_ENVFILE, override=True)
 
+    # Force mock_sso django application to be activated for test environments;
+    # must be activated up front for mock_sso django app urls to be added
+    settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+    settings.MOCK_SSO_USER_EMAIL = "test@example.net"
+    settings.MOCK_SSO_USER_FIRST_NAME = "test"
+    settings.MOCK_SSO_USER_LAST_NAME = "user"
+
 
 @pytest.fixture
 def gov_uk_user_id():
