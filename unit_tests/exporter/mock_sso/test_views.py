@@ -61,3 +61,13 @@ def test_mock_api_user_me(client):
         "permitted_applications": [],
         "access_profiles": [],
     }
+
+
+def test_mock_logout(client):
+    url = reverse("mock_sso:logout")
+    assert parse.urljoin(settings.AUTHBROKER_URL, url) == settings.LOGOUT_URL
+
+    response = client.get(f"{url}?post_logout_redirect_uri=http://example.com")
+
+    assert response.status_code == 302
+    assert response.url == "http://example.com"
