@@ -1,3 +1,4 @@
+import dateparser
 import rules
 
 from datetime import datetime
@@ -34,7 +35,7 @@ def appeal_within_deadline(request, application):
     if not application.appeal_deadline:
         return False
 
-    appeal_deadline = datetime.fromisoformat(application.appeal_deadline)
+    appeal_deadline = dateparser.parse(application.appeal_deadline)
     return appeal_deadline.date() >= datetime.today().date()
 
 

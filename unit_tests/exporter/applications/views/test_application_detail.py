@@ -43,3 +43,25 @@ def test_appeal_button_not_shown_for_successful_application(
     response = authorized_client.get(application_url)
     soup = BeautifulSoup(response.content, "html.parser")
     assert not soup.find(id="button-appeal-refusal")
+
+
+def test_appeal_deadline_date_format(
+    authorized_client,
+    data_standard_case,
+    mock_application_get,
+    settings,
+):
+    settings.FEATURE_FLAG_APPEALS = True
+
+    data_standard_case["case"]["data"]["status"] = {
+        "key": "finalised",
+        "value": "Finalised",
+    }
+    data_standard_case["case"]["data"]["appeal_deadline"] = "2023-11-01T13:16:05.918259Z"
+
+    pk = data_standard_case["case"]["id"]
+
+    application_url = reverse("applications:application", kwargs={"pk": pk})
+    response = authorized_client.get(application_url)
+
+    assert response.status_code == 200
