@@ -39,12 +39,32 @@ LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 
 FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = env.bool("FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED", False)
 
-LOGOUT_URL = f"{AUTHBROKER_URL}/logout"
-AUTHBROKER_SCOPE = "openid,email,offline_access"
-AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "authorize")
-AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "token")
-AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "userinfo")
+MOCK_SSO_ACTIVATE_ENDPOINTS = env.bool("MOCK_SSO_ACTIVATE_ENDPOINTS", False)
+if MOCK_SSO_ACTIVATE_ENDPOINTS:
+    INSTALLED_APPS += [
+        "core.mock_sso",
+    ]
+    # When Mocking GovOne SSO core.views.AuthbrokerLogoutView redirect has no prefix:
+    LOGOUT_URL = ""
 
+    # MOCK SSO defaults are setup here, since the selenium just calls as via http during e2e
+    # (setup can't be placed in conftest, and there is not a separate settings file for tests)
+    MOCK_SSO_USER_EMAIL = env.str("MOCK_SSO_USER_EMAIL", "test-uat-user@digital.trade.gov.uk")
+    MOCK_SSO_USER_FIRST_NAME = env.str("MOCK_SSO_FIRST_NAME", "LITE")
+    MOCK_SSO_USER_LAST_NAME = env.str("MOCK_SSO_USER_EMAIL", "Testing")
+    # Secret key is derived from the example data in mock_sso
+    MOCK_SSO_SECRET_KEY = env.str(
+        "MOCK_SSO_SECRET_KEY", "cd8a0206dee80a90c61bb1251637b4785e5716e13ce4d064fdd932ffc0546682"
+    )
+else:
+    LOGOUT_URL = f"{AUTHBROKER_URL}/logout"
+
+AUTHBROKER_SCOPE = "openid,email,offline_access"
+
+# Setup authbroker URLs in the style of GovUK OneLogin
+AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "/authorize/")
+AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "/token/")
+AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "/userinfo/")
 
 AUTHENTICATION_BACKENDS = []
 

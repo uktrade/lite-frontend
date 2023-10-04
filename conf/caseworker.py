@@ -32,7 +32,7 @@ MIDDLEWARE += [
 
 if MOCK_SSO_ACTIVATE_ENDPOINTS:
     INSTALLED_APPS += [
-        "caseworker.mock_sso",
+        "core.mock_sso",
     ]
 
 

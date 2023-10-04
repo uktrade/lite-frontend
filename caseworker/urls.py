@@ -37,7 +37,7 @@ if settings.FEATURE_SPIRE_SEARCH_ON:
 
 if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
     urlpatterns = [
-        path("", include("caseworker.mock_sso.urls")),
+        path("", include("core.mock_sso.urls")),
     ] + urlpatterns
 
 
