@@ -1,7 +1,7 @@
 {% load advice_tags %}
 {% load parse_date from spire_tags %}
 {% with user=advice.0.user decision=advice.0.type.key %}
-<table id="table-licenceable-products" class="govuk-table">
+<table id="table-licenceable-products" class="govuk-table advice-table">
     {% if decision == 'approve' or decision == 'proviso' %}
     <h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 app-advice-recommendation-heading app-bg-colour--green">
         {% if team %} Approved by {{ user.team.name }} {% else %} Approved by {{ user|full_name }} {% endif %}
@@ -154,8 +154,8 @@
                 {% else %}
                     <h2 class="govuk-heading-m">Reason for refusing</h2>
                     <p class="govuk-body">{{ advice.0.text|linebreaks }}</p>
-                {% endif %} 
-                
+                {% endif %}
+
               </div>
             </div>
         </div>
