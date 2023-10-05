@@ -133,6 +133,10 @@ class EditInformLetterText(BaseLetter):
         initial["text"] = text
         return initial
 
+    def get_success_url(self):
+        case_id = str(self.kwargs["pk"])
+        return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": case_id})
+
     def form_valid(self, form):
         self.kwargs["tpk"] = self.template_id
         self.kwargs["decision_key"] = "inform"
@@ -155,13 +159,12 @@ class EditInformLetterText(BaseLetter):
                 "text": text,
                 "addressee": addressee,
                 "kwargs": self.kwargs,
-                "return_url": reverse(
-                    "cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": case_id}
-                ),
+                "return_url": self.get_success_url(),
             },
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["title"] = self.form_class.Layout.TITLE
+        context["back_link_url"] = self.get_success_url()
         return context
