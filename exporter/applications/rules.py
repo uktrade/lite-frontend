@@ -3,13 +3,6 @@ import rules
 
 from datetime import datetime
 
-from django.conf import settings
-
-
-@rules.predicate
-def is_appeal_feature_flag_set(request, application):
-    return settings.FEATURE_FLAG_APPEALS
-
 
 @rules.predicate
 def is_application_finalised(request, application):
@@ -49,14 +42,10 @@ def is_application_appealed(request, application):
 
 rules.add_rule(
     "can_user_appeal_case",
-    is_appeal_feature_flag_set
-    & is_application_finalised
-    & is_application_refused
-    & appeal_within_deadline
-    & ~is_application_appealed,  # noqa
+    is_application_finalised & is_application_refused & appeal_within_deadline & ~is_application_appealed,  # noqa
 )
 
 rules.add_rule(
     "can_view_appeal_details",
-    is_appeal_feature_flag_set & is_application_refused & is_application_appealed,
+    is_application_refused & is_application_appealed,
 )
