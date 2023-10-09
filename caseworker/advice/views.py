@@ -23,7 +23,6 @@ from core import client
 from core.auth.views import LoginRequiredMixin
 from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
 from core.decorators import expect_status
-from django.conf import settings
 
 
 class CaseContextMixin:
