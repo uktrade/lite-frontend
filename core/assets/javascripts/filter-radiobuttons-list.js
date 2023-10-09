@@ -22,7 +22,6 @@ $("#filter-box").on("input", function () {
 });
 
 $("input[type='checkbox']").change(function () {
-  let checkboxText = $(this).parent().find(".govuk-radios__label").text();
   addCheckedCheckboxesToList();
 });
 
