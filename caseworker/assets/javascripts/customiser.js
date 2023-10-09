@@ -60,17 +60,17 @@ class Customiser {
          </div>`;
       customiserOptions += `<li>${checkbox}</li>`;
     }
-    this.$el.querySelector(".customiser__header").insertAdjacentHTML(
+
+    const $header = this.$el.querySelector(".customiser__header");
+    $header.insertAdjacentHTML(
       "beforeend",
       `
           <details class="customiser__options govuk-details lite-mobile-hide">
             <summary class="govuk-details__summary">
-              <span class="govuk-details__summary-text">${
-                this.spec.options_label
-              }</span>
+              <span class="govuk-details__summary-text customiser__label"></span>
             </summary>
             <div class="govuk-details__text">
-              <p>${this.spec.options_hint ? this.spec.options_hint : ""}</p>
+              <p class="customiser__hint"></p>
               <ul class="customiser__choices">
                 ${customiserOptions}
               </ul>
@@ -78,6 +78,13 @@ class Customiser {
           </details>
         `
     );
+
+    $header.querySelector(".customiser__label").textContent =
+      this.spec.options_label;
+    $header.querySelector(".customiser__hint").textContent = this.spec
+      .options_hint
+      ? this.spec.options_hint
+      : "";
 
     this.$el
       .querySelectorAll("input.customiser__option")
