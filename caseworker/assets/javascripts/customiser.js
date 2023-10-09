@@ -6,7 +6,7 @@ class Customiser {
     this.toggleableElems = {};
     this.localStorageKey = "customiser-preferences-" + this.spec.identifier;
     this.countToggleableElements = 0;
-    this.spec.toggleable_elements.forEach((toggleable_details, index, obj) => {
+    this.spec.toggleable_elements.forEach((toggleable_details) => {
       const key = toggleable_details.key;
       const label = toggleable_details.label;
 
