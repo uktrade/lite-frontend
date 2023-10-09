@@ -10,10 +10,7 @@ class Customiser {
       const key = toggleableDetails.key;
       const label = toggleableDetails.label;
 
-      let visible = false;
-      if (toggleableDetails.hasOwnProperty("default_visible")) {
-        visible = toggleableDetails.default_visible;
-      }
+      const visible = Boolean(toggleableDetails.default_visible);
       let $elems = $el.querySelectorAll(`[data-customiser-key=${key}]`);
       this.countToggleableElements += $elems.length;
       this.toggleableElems[key] = {
