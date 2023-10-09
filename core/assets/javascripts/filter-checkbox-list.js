@@ -1,14 +1,14 @@
 $(".lite-search__container").show();
 
 $("#filter-box").on("input", function () {
-  var value = $(this).val().toLowerCase();
+  let value = $(this).val().toLowerCase();
 
   $(".govuk-checkboxes__item").each(function (i, obj) {
-    var checkboxText = $(obj)
+    let checkboxText = $(obj)
       .find(".govuk-checkboxes__label")
       .text()
       .toLowerCase();
-    var checkboxDescription = $(obj)
+    let checkboxDescription = $(obj)
       .find(".govuk-checkboxes__hint")
       .text()
       .toLowerCase();
@@ -24,8 +24,8 @@ $("#filter-box").on("input", function () {
   });
 });
 
-var mark = function () {
-  var keyword = $("#filter-box").val();
+let mark = function () {
+  let keyword = $("#filter-box").val();
 
   // Remove previous marked elements and mark
   // the new keyword inside the context
