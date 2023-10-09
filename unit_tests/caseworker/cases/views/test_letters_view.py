@@ -155,6 +155,7 @@ def test_letter_inform_edit_get(
     )
     assert response.status_code == 200
     assert response.context["form"].initial["text"] == expected_text
+    assert response.context["back_link_url"] == f"/queues/{case_id}/cases/{case_id}/advice/consolidate/view-advice/"
 
 
 @pytest.fixture
