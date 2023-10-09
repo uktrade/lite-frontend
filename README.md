@@ -11,7 +11,7 @@
 
 ### Requirements
 
-- [Python 3.7](https://www.python.org/downloads/release/python-37/)
+- [Python 3.9](https://www.python.org/downloads/release/python-39/)
 - [Pipenv](https://pipenv.pypa.io/en/latest/)
 
 ### Installing

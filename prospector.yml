@@ -2,8 +2,17 @@ ignore-paths:
   - exporter/ui_tests
   - caseworker/ui_tests
   - unit_tests
+  - ui_tests
   - tests_common
   - conf/caseworker.py
   - conf/exporter.py
 uses:
     - django
+
+pycodestyle:
+  disable:
+    - E712
+pyflakes:
+  disable:
+    - F541
+    - F811

@@ -18,19 +18,15 @@ def driver(request, api_client, environment, tmp_download_path):
     prefs = {"download.default_directory": str(tmp_download_path)}
     chrome_options.add_experimental_option("prefs", prefs)
 
-    desired_capabilities = DesiredCapabilities.CHROME.copy()
-    desired_capabilities["acceptInsecureCerts"] = True
-
     is_headless = request.config.getoption("--headless")
     if is_headless:
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--window-size=1920,1080")
-        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+        driver = webdriver.Chrome(options=chrome_options)
     else:
         driver = webdriver.Remote(
             command_executor="http://selenium-hub:4444/wd/hub",
             options=chrome_options,
-            desired_capabilities=desired_capabilities,
         )
     driver.implicitly_wait(20)
     driver.get("about:blank")
