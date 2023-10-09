@@ -6,13 +6,13 @@ class Customiser {
     this.toggleableElems = {};
     this.localStorageKey = "customiser-preferences-" + this.spec.identifier;
     this.countToggleableElements = 0;
-    this.spec.toggleable_elements.forEach((toggleable_details) => {
-      const key = toggleable_details.key;
-      const label = toggleable_details.label;
+    this.spec.toggleable_elements.forEach((toggleableDetails) => {
+      const key = toggleableDetails.key;
+      const label = toggleableDetails.label;
 
       let visible = false;
-      if (toggleable_details.hasOwnProperty("default_visible")) {
-        visible = toggleable_details.default_visible;
+      if (toggleableDetails.hasOwnProperty("default_visible")) {
+        visible = toggleableDetails.default_visible;
       }
       let $elems = $el.querySelectorAll(`[data-customiser-key=${key}]`);
       this.countToggleableElements += $elems.length;
@@ -35,8 +35,8 @@ class Customiser {
   }
 
   showHideElems() {
-    for (const [key, value] of Object.entries(this.toggleableElems)) {
-      value.elements.forEach((element, index, obj) => {
+    for (const [, value] of Object.entries(this.toggleableElems)) {
+      value.elements.forEach((element) => {
         this.setElemVisibility(element, value.visible);
       });
     }
@@ -84,7 +84,7 @@ class Customiser {
 
     this.$el
       .querySelectorAll("input.customiser__option")
-      .forEach(($checkbox, index, obj) => {
+      .forEach(($checkbox) => {
         $checkbox.addEventListener("click", (evt) =>
           this.handleOptionClick(evt)
         );
