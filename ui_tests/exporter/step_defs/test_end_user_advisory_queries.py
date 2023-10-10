@@ -29,7 +29,15 @@ def select_end_user_type(driver, type):
 
 @when(
     parsers.parse(
-        'I enter "{nature}" for the nature of business, "{name}" for the primary contact name, "{job}" for primary contact_job_title, "{email}" for the primary contact email, "{telephone}" for the primary contact telephone, "{address}" for the address, "{country}" as the country and continue'
+        """
+        I enter "{nature}" for the nature of business, "{name}"
+        for the primary contact name,
+        "{job}" for primary contact_job_title,
+        "{email}" for the primary contact email,
+        "{telephone}" for the primary contact telephone,
+        "{address}" for the address,
+        "{country}" as the country and continue
+        """
     )
 )
 def add_user_details(driver, context, nature, name, job, email, telephone, address, country):
