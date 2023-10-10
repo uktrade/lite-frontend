@@ -419,10 +419,10 @@ def subtract(num1, num2):
 
 
 @register.filter()
-def filter_advice_by_user(advice, id):
+def filter_advice_by_user(advices, id):
     return_list = []
 
-    for advice in advice:
+    for advice in advices:
         if advice["user"]["id"] == id:
             return_list.append(advice)
 
@@ -430,10 +430,10 @@ def filter_advice_by_user(advice, id):
 
 
 @register.filter()
-def filter_advice_by_id(advice, id):
+def filter_advice_by_id(advices, id):
     return_list = []
 
-    for advice in advice:
+    for advice in advices:
         for key in ["good", "goods_type", "country", "end_user", "ultimate_end_user", "consignee", "third_party"]:
             if key in advice and advice[key] == id:
                 return_list.append(advice)

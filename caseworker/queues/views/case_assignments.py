@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
+from core.helpers import check_url
 from core.wizard.views import BaseSessionWizardView
 
 from caseworker.cases.views.main import CaseContextBasicMixin
@@ -183,4 +184,5 @@ class CaseAssignmentsCaseAssignee(
     def done(self, form_list, form_dict, **kwargs):
         self.update_case_adviser(form_dict)
         messages.success(self.request, f"Case adviser was added successfully")
-        return redirect(self.get_success_url())
+        url = check_url(self.request, self.get_success_url())
+        return redirect(url)
