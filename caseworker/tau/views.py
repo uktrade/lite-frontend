@@ -23,7 +23,7 @@ from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
 
-from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
+from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm, TAUPreviousAssessmentsForm
 from caseworker.tau.services import (
     get_first_precedents,
     get_good_precedents,
@@ -281,6 +281,32 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         del payload["ag_entries"]
         del payload["regimes"]
         return payload
+
+
+class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, FormView):
+
+    template_name = "tau/previous_assessments.html"
+    form_class = TAUPreviousAssessmentsForm
+
+    def get_success_url(self):
+        return reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+
+        form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods if item["latest_precedent"]}
+        form_kwargs["data"] = self.request.POST or None
+
+        return form_kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "case": self.case,
+            "queue_id": self.queue_id,
+            "previously_assessed_goods": [good for good in self.unassessed_goods if good["latest_precedent"]],
+        }
 
 
 class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):

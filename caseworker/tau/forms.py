@@ -16,7 +16,7 @@ from core.forms.layouts import (
 from caseworker.regimes.enums import Regimes
 
 from .summaries import get_good_on_application_tau_summary
-from .widgets import GoodsMultipleSelect
+from .widgets import GoodsMultipleSelect, GoodsPreviousAssessmentMultipleSelect
 from ..report_summary.services import get_report_summary_prefix, get_report_summary_subject
 
 REPORT_SUMMARY_SUBJECT_KEY = "report_summary_subject"
@@ -24,6 +24,38 @@ REPORT_SUMMARY_PREFIX_KEY = "report_summary_prefix"
 MISSING_REPORT_SUMMARY_SUBJECT = "Enter a report summary subject"
 INVALID_REPORT_SUMMARY_SUBJECT = "Enter a valid report summary subject"
 INVALID_REPORT_SUMMARY_PREFIX = "Enter a valid report summary prefix"
+
+
+class TAUPreviousAssessmentsForm(forms.Form):
+    def __init__(
+        self,
+        goods,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        self.fields["goods"] = forms.MultipleChoiceField(
+            choices=self.get_goods_choices(goods),
+            widget=GoodsPreviousAssessmentMultipleSelect(),
+            required=False,
+            label="",
+            error_messages={"required": "Select the products that you want to assess"},
+        )
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+
+    def get_goods_choices(self, goods):
+        return [
+            (
+                good_on_application_id,
+                {
+                    "good_on_application": good_on_application,
+                },
+            )
+            for good_on_application_id, good_on_application in goods.items()
+        ]
 
 
 class TAUEditForm(forms.Form):
