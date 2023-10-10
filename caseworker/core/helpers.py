@@ -4,6 +4,7 @@ from typing import List
 from django.conf import settings
 from django.urls import reverse
 
+
 from caseworker.core import decorators
 from caseworker.core.constants import Permission
 from caseworker.core.services import get_user_permissions

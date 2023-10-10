@@ -21,7 +21,7 @@ from caseworker.cases.services import (
     get_case_additional_contacts,
     get_case_applicant,
 )
-from core.helpers import convert_dict_to_query_params
+from core.helpers import check_url, convert_dict_to_query_params
 from caseworker.letter_templates.services import get_letter_template, get_letter_templates
 from lite_content.lite_internal_frontend import letter_templates
 from lite_forms.components import FormGroup
@@ -227,6 +227,6 @@ class CreateDocumentFinalAdvice(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.CREATED:
             return generate_document_error_page()
         if request.POST.get("return_url"):
-            return redirect(request.POST["return_url"])
+            return redirect(check_url(request, request.POST["return_url"]))
 
         return redirect(reverse_lazy("cases:finalise_documents", kwargs={"queue_pk": queue_pk, "pk": pk}))
