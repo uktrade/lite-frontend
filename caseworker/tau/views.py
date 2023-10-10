@@ -15,6 +15,7 @@ from core.decorators import expect_status
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
 from caseworker.cases.views.main import CaseTabsMixin
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.core.services import get_control_list_entries
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.cases.services import post_review_good
@@ -23,7 +24,12 @@ from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
 
 from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
-from caseworker.tau.services import get_first_precedents
+from caseworker.tau.services import (
+    get_first_precedents,
+    get_good_precedents,
+    get_latest_precedents,
+    group_gonas_by_good,
+)
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.utils import get_cle_suggestions_json
 from caseworker.cases.helpers.case import CaseworkerMixin
@@ -66,11 +72,19 @@ class TAUMixin(CaseTabsMixin):
     @cached_property
     def goods(self):
         goods = []
-        precedents = get_first_precedents(self.request, self.case)
+        all_precedents = get_good_precedents(self.request, self.case.id)["results"]
+        # assign default queues if precedents do not have any
+        for precedent in all_precedents:
+            precedent["queue"] = precedent.get("queue") or ALL_CASES_QUEUE_ID
+        good_precedents = group_gonas_by_good(all_precedents)
+        oldest_precedents = get_first_precedents(self.case, good_precedents)
+        latest_precedents = get_latest_precedents(self.case, good_precedents)
+
         for item in self.case.goods:
             item_id = item["id"]
             # Populate precedents
-            item["precedents"] = precedents.get(item_id, [])
+            item["precedents"] = oldest_precedents.get(item_id, [])
+            item["latest_precedent"] = latest_precedents.get(item_id, None)
             # Populate document urls
             for document in item["good"]["documents"]:
                 _, fext = os.path.splitext(document["name"])
