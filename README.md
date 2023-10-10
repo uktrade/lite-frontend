@@ -31,6 +31,7 @@
 - After this initial setup, pre-commit should run automatically whenever you run `git commit` locally.
 - All developers must use the pre-commit hooks for the project. This is to make routine tasks easier (e.g. linting, style checking) and to help ensure secrets and personally identifiable information (PII) are not leaked.
 - You should be able to use the project python environment to run pre-commit, but if the project python does not work for you, you should find a workaround for your dev environment (e.g. running a different higher python version just for pre-commit) or raise it with other developers. **Ignoring pre-commit errors is not an option.**
+- This Repo is private and not avilable for public viewing due to sensitive material.
 
 ### Configuration
 
