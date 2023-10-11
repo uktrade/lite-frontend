@@ -1,20 +1,14 @@
-from django.conf import settings
-from django.http import Http404
-from django.views.generic import TemplateView
+from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 
+from .forms import ProductSearchForm
 from .services import get_product_search_results
 
 
-class ProductSearchView(LoginRequiredMixin, TemplateView):
+class ProductSearchView(LoginRequiredMixin, FormView):
     template_name = "search/products.html"
-
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_PRODUCT_SEARCH:
-            raise Http404("No feature flag")
-
-        return super().dispatch(request, *args, **kwargs)
+    form_class = ProductSearchForm
 
     def get_search_results(self, request, query):
         search_results = get_product_search_results(request, query)
