@@ -1,4 +1,6 @@
 from urllib.parse import urlencode
+from django.http import Http404
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 def dummy_quote(string, safe="", encoding=None, errors=None):
@@ -42,3 +44,16 @@ def decompose_date(field_name, date):
         f"{field_name}_1": date.month,
         f"{field_name}_2": date.year,
     }
+
+
+def check_url(request, url):
+    url_is_safe = url_has_allowed_host_and_scheme(
+        url=url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    )
+
+    if url_is_safe:
+        return url
+    else:
+        raise Http404
