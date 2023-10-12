@@ -291,7 +291,7 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         return payload
 
 
-class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
+class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, TemplateView):
     template_name = "tau/previous_assessments.html"
 
     def get_formset_initial(self, goods_on_applications):
