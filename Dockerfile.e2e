@@ -1,16 +1,38 @@
-FROM gcr.io/sre-docker-registry/lite-frontend-dependencies:latest
+FROM python:3.9.18-slim-bullseye
+
+ENV DOCKERIZE_VERSION      v0.7.0
 
 WORKDIR /app
 
-# Use pyenv to install python packages
+# Install dependencies
+RUN apt-get -y update
+RUN apt-get update --fix-missing
+RUN apt-get install -y gcc build-essential python3-dev libmagic1 wget
+
+# Install dockerize
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+# Install pyenv
+RUN pip3 install pipenv
+
+# Install Chrome
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+RUN apt-get update --fix-missing
+RUN apt-get -y install chromium chromium-driver
+
+# Install node dependencies
+ENV NODE_MAJOR=16
+RUN apt-get install -y ca-certificates curl gnupg
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+RUN apt-get update
+RUN apt-get install nodejs -y
+# Install Pip
+RUN pip3 install pipenv
 ADD Pipfile* /app/
 RUN pipenv install --dev --system --deploy
-
-ADD package.json .
-ADD package-lock.json .
-
-# Build application
-RUN npm install
-
-# Add application directory to image
 ADD . /app

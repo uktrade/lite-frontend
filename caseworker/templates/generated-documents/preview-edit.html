@@ -15,5 +15,5 @@
 		<input name="addressee" type="hidden" value="{{ addressee }}">
 		<button class="govuk-button" type="submit">Continue</button>
 	</form>
-	<a href="{% url 'cases:consolidate_view' queue.id kwargs.pk %}" class="govuk-body govuk-link govuk-link--no-visited-state" type="submit">Cancel</a>
+	<a href="{% url 'cases:consolidate_view' queue.id kwargs.pk %}" class="govuk-body govuk-link govuk-link--inverse" type="submit">Cancel</a>
 {% endblock %}

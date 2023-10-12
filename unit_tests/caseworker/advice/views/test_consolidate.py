@@ -1143,8 +1143,6 @@ def test_decision_document_present(
     decision_document,
     settings,
 ):
-    settings.FEATURE_FLAG_REFUSALS = True
-
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
 
     decision_url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice-documents/")
@@ -1178,7 +1176,6 @@ def test_decision_document_status(
     expected_status,
     settings,
 ):
-    settings.FEATURE_FLAG_REFUSALS = True
 
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
 
@@ -1211,7 +1208,6 @@ def test_decision_document_not_present(
     mock_gov_lu_user,
     settings,
 ):
-    settings.FEATURE_FLAG_REFUSALS = True
 
     data_standard_case["case"]["advice"] = consolidated_advice
 
@@ -1238,7 +1234,6 @@ def test_decision_document_recreate_url(
     mock_gov_lu_user,
     settings,
 ):
-    settings.FEATURE_FLAG_REFUSALS = True
 
     case_id = data_standard_case["case"]["id"]
     data_standard_case["case"]["advice"] = consolidated_refusal_outcome
