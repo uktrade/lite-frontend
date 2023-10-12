@@ -13,14 +13,14 @@
             <h1 class="govuk-heading-l">Search products</h1>
         </div>
     </div>
+
     <div class="govuk-!-margin-top-4">
-        <div class="govuk-grid-row"></div>
+        <div class="search-div">
             <div class="product-search">
                 {% crispy form %}
             </div>
         </div>
     </div>
-
 
     <section class="search-results govuk-!-margin-top-4">
         {% if search_results.count %}

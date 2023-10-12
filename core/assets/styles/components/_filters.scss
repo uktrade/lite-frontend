@@ -195,3 +195,36 @@
 		border-bottom: 1px solid currentColor;
 	}
 }
+
+.search-div {
+	background-color: govuk-colour("light-grey");
+	margin-left: calc(((100vw - 100%) / 2) * -1);
+	margin-right: calc(((100vw - 100%) / 2) * -1);
+	padding-left: calc(((100vw - 100%) / 2));
+	padding-right: calc(((100vw - 100%) / 2));
+	padding-top: calc(((100vw - 100%) / 2));
+	margin-top: calc(((100vw - 100%) / 2) * -1);
+}
+
+.product-search * {
+	padding: 0;
+	display: inline-block;
+	vertical-align: baseline;
+
+	.govuk-form-group {
+		margin-right: govuk-spacing(1);
+		margin-bottom: govuk-spacing(4);
+	}
+
+	#id_search_string {
+		max-width: 100%;
+	}
+
+	.govuk-input {
+		padding-left: govuk-spacing(1);
+	}
+
+	.govuk-button {
+		padding: govuk-spacing(1) govuk-spacing(4) govuk-spacing(1);
+	}
+}
