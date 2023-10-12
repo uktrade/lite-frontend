@@ -303,7 +303,7 @@ def click_edit_inform_letter(driver):
 
 @when(parsers.parse('I edit template with "{text}"'))
 def edit_template(driver, text):
-    textarea = driver.find_element(By.ID, "text")
+    textarea = driver.find_element(By.ID, "id_text")
     textarea.clear()
     textarea.send_keys(text)
 

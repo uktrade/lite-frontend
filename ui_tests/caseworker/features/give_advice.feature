@@ -510,8 +510,6 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see "SENT" inform letter status in decision documents
     # Edit Inform letter
     When I click inform letter edit link
-    And I select the template "Inform letter"
-    And I click continue
     And I edit template with "something"
     And I click preview
     Then I see the "something" text on the document preview
