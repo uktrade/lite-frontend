@@ -1,6 +1,6 @@
 from django.urls import path
 
-from caseworker.mock_sso import views
+from core.mock_sso import views
 
 
 app_name = "mock_sso"
