@@ -448,7 +448,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
 
-@lu_refuse_advice_inform_letter @skip
+@lu_refuse_advice_inform_letter
   Scenario: LU inform letter
     # Setup
     Given I sign in to SSO or am signed into SSO
