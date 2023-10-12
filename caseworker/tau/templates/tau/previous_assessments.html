@@ -1,0 +1,40 @@
+{% extends 'layouts/case.html' %}
+
+{% load advice_tags crispy_forms_tags custom_tags rules static tau_tags %}
+
+{% block header_tabs %}
+    <div id="tab-bar" class="app-case-tab-bar">
+        <div class="govuk-width-container lite-tabs__container">
+            <div class="lite-tabs ">
+                {% include "includes/case-tabs.html" %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block full_width %}
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper assessment-form tau-assessment-form">
+            <div class="govuk-grid-row assessment-form__display--flex">
+                <!-- Heading -->
+                <div class="govuk-grid-column-two-thirds">
+                    <h1 class="govuk-heading-l">Previously assessed products</h1>
+                    <p id="subtitle" class="govuk-body">Unselect any products where you disagree with the previous assessment</p>
+                </div>
+            </div>
+
+            <!-- Form -->
+            <div class="govuk-grid-row">
+                <form id="tau-form" action="." method="POST" >
+                    <div class="govuk-grid-column-full assessment-form__first-column">
+                        {% crispy form %}
+                        {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
+                        {% if can_user_assess_products %}
+                            <input type="submit" name="submit" value="Approve and continue" class="govuk-button" id="submit-id-submit" />
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+{% endblock %}
