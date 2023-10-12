@@ -21,7 +21,7 @@ def test_edit_button(authorized_client, data_standard_case, mock_application_get
         assert soup.find(id="button-edit-application")
 
 
-def test_appeal_refusal_decision_button(authorized_client, settings, data_standard_case, mock_refused_application_get):
+def test_appeal_refusal_decision_button(authorized_client, data_standard_case, mock_refused_application_get):
     pk = data_standard_case["case"]["id"]
 
     application_url = reverse("applications:application", kwargs={"pk": pk})
@@ -53,7 +53,6 @@ def test_appeal_deadline_date_format(
     authorized_client,
     data_standard_case,
     mock_application_get,
-    settings,
     date_string,
 ):
     data_standard_case["case"]["data"]["status"] = {
