@@ -6,14 +6,11 @@ class Customiser {
     this.toggleableElems = {};
     this.localStorageKey = "customiser-preferences-" + this.spec.identifier;
     this.countToggleableElements = 0;
-    this.spec.toggleable_elements.forEach((toggleable_details, index, obj) => {
-      const key = toggleable_details.key;
-      const label = toggleable_details.label;
+    this.spec.toggleable_elements.forEach((toggleableDetails) => {
+      const key = toggleableDetails.key;
+      const label = toggleableDetails.label;
 
-      let visible = false;
-      if (toggleable_details.hasOwnProperty("default_visible")) {
-        visible = toggleable_details.default_visible;
-      }
+      const visible = Boolean(toggleableDetails.default_visible);
       let $elems = $el.querySelectorAll(`[data-customiser-key=${key}]`);
       this.countToggleableElements += $elems.length;
       this.toggleableElems[key] = {
@@ -35,8 +32,8 @@ class Customiser {
   }
 
   showHideElems() {
-    for (const [key, value] of Object.entries(this.toggleableElems)) {
-      value.elements.forEach((element, index, obj) => {
+    for (const [, value] of Object.entries(this.toggleableElems)) {
+      value.elements.forEach((element) => {
         this.setElemVisibility(element, value.visible);
       });
     }
@@ -63,17 +60,17 @@ class Customiser {
          </div>`;
       customiserOptions += `<li>${checkbox}</li>`;
     }
-    this.$el.querySelector(".customiser__header").insertAdjacentHTML(
+
+    const $header = this.$el.querySelector(".customiser__header");
+    $header.insertAdjacentHTML(
       "beforeend",
       `
           <details class="customiser__options govuk-details lite-mobile-hide">
             <summary class="govuk-details__summary">
-              <span class="govuk-details__summary-text">${
-                this.spec.options_label
-              }</span>
+              <span class="govuk-details__summary-text customiser__label"></span>
             </summary>
             <div class="govuk-details__text">
-              <p>${this.spec.options_hint ? this.spec.options_hint : ""}</p>
+              <p class="customiser__hint"></p>
               <ul class="customiser__choices">
                 ${customiserOptions}
               </ul>
@@ -82,9 +79,16 @@ class Customiser {
         `
     );
 
+    $header.querySelector(".customiser__label").textContent =
+      this.spec.options_label;
+    $header.querySelector(".customiser__hint").textContent = this.spec
+      .options_hint
+      ? this.spec.options_hint
+      : "";
+
     this.$el
       .querySelectorAll("input.customiser__option")
-      .forEach(($checkbox, index, obj) => {
+      .forEach(($checkbox) => {
         $checkbox.addEventListener("click", (evt) =>
           this.handleOptionClick(evt)
         );
