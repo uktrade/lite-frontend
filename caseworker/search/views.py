@@ -10,14 +10,18 @@ class ProductSearchView(LoginRequiredMixin, FormView):
     template_name = "search/products.html"
     form_class = ProductSearchForm
 
-    def get_search_results(self, request, query):
-        search_results = get_product_search_results(request, query)
-
-        return search_results
-
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-
-        context["search_results"] = self.get_search_results(self.request, self.request.GET)
-
-        return context
+    def form_valid(self, form):
+        query_params = {
+            "search": form.cleaned_data["search_string"],
+            "page": form.cleaned_data["page"],
+        }
+        results = get_product_search_results(self.request, query_params)
+        context = super().get_context_data()
+        context = {
+            **context,
+            "search_results": results,
+            "data": {
+                "total_pages": results["count"] // form.page_size,
+            },
+        }
+        return self.render_to_response(context)
