@@ -299,12 +299,12 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
 
         for good_on_application in goods_on_applications:
             latest_precedent = good_on_application["latest_precedent"]
-            initial.append(
-                {
-                    "good_on_application_id": good_on_application["id"],
-                    "control_list_entries": latest_precedent["control_list_entries"],
-                }
-            )
+            _initial = {
+                "good_on_application_id": good_on_application["id"],
+            }
+            if latest_precedent:
+                _initial["control_list_entries"] = latest_precedent["control_list_entries"]
+            initial.append(_initial)
 
         return initial
 
@@ -322,8 +322,8 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
             form_kwargs={"control_list_entries_choices": self.control_list_entries},
         )
 
-    def get_unassessed_goods_on_applications(self):
-        return [good for good in self.unassessed_goods if good["latest_precedent"]]
+    def get_goods_on_application_to_assess(self):
+        return self.goods
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -335,7 +335,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
-            "formset": self.get_formset(self.get_unassessed_goods_on_applications()),
+            "formset": self.get_formset(self.get_goods_on_application_to_assess()),
             "formset_helper": formset_helper,
         }
 
