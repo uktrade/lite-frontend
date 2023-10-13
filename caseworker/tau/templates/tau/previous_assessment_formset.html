@@ -1,0 +1,46 @@
+{% load crispy_forms_tags %}
+{% load crispy_forms_utils %}
+{% load crispy_forms_field %}
+
+{% specialspaceless %}
+{% if formset_tag %}
+<form {{ flat_attrs }} method="{{ form_method }}" {% if formset.is_multipart %} enctype="multipart/form-data"{% endif %}>
+{% endif %}
+    {% if formset_method|lower == 'post' and not disable_csrf %}
+        {% csrf_token %}
+    {% endif %}
+
+    <div>
+        {{ formset.management_form|crispy }}
+    </div>
+
+    <table{% if form_id %} id="{{ form_id }}_table"{% endif%} class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                {% for field in formset.forms.0 %}
+                    {% if field.label and not field.is_hidden %}
+                        <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header">
+                            {{ field.label }}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody class="govuk-table__body">
+            {% for form in formset %}
+                <tr class="govuk-table__row">
+                    {% for field in form %}
+                        {% if not field.is_hidden %}
+                            <td>{{ field }}</td>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% if formset_tag %}</form>{% endif %}
+{% endspecialspaceless %}

@@ -9,6 +9,8 @@ from django.views.generic import FormView, View, TemplateView
 from django.utils.functional import cached_property
 from django.urls import reverse
 
+from crispy_forms_gds.helper import FormHelper
+
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
 from core.decorators import expect_status
@@ -309,11 +311,15 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        formset_helper = FormHelper()
+        formset_helper.template = "tau/previous_assessment_formset.html"
+
         return {
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
             "formset": self.get_formset(self.get_unassessed_goods_on_applications()),
+            "formset_helper": formset_helper,
         }
 
 
