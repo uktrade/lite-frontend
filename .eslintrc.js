@@ -7,6 +7,7 @@ module.exports = {
     },
     globals: {
         tippy: "readonly",
+        dataLayer: "readonly"
     },
     extends: "eslint:recommended",
     plugins: ["jest"],

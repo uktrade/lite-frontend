@@ -1,0 +1,16 @@
+<div class="govuk-checkboxes__item">
+    <input
+        class="govuk-checkboxes__input"
+        id="{{ widget.attrs.id }}"
+        name="{{ widget.name }}"
+        type="checkbox"
+        value="{{ widget.value }}"
+        checked
+    >
+    <label class="tau__label govuk-label govuk-checkboxes__label" for="{{ widget.attrs.id }}">
+        {% with good=widget.label.good_on_application %}
+            {{good.good.name}} - {{good.latest_precedent.control_list_entries|join:", "}}
+            {{good.latest_precedent}}
+        {% endwith %}
+    </label>
+</div>
