@@ -2,6 +2,7 @@ import os
 
 from http import HTTPStatus
 
+from django.forms import formset_factory
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import FormView, View, TemplateView
@@ -23,7 +24,11 @@ from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
 
-from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm
+from caseworker.tau.forms import (
+    TAUAssessmentForm,
+    TAUEditForm,
+    TAUPreviousAssessmentForm,
+)
 from caseworker.tau.services import (
     get_first_precedents,
     get_good_precedents,
@@ -286,13 +291,29 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
 class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
     template_name = "tau/previous_assessments.html"
 
+    def get_formset_initial(self, goods_on_applications):
+        initial = []
+
+        for good_on_application in goods_on_applications:
+            initial.append({"good_on_application_id": good_on_application["id"]})
+
+        return initial
+
+    def get_formset(self, goods_on_applications):
+        TAUPreviousAssessmentFormSet = formset_factory(TAUPreviousAssessmentForm, extra=0)
+        return TAUPreviousAssessmentFormSet(initial=self.get_formset_initial(goods_on_applications))
+
+    def get_unassessed_goods_on_applications(self):
+        return [good for good in self.unassessed_goods if good["latest_precedent"]]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
         return {
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
-            "previously_assessed_goods": [good for good in self.unassessed_goods if good["latest_precedent"]],
+            "formset": self.get_formset(self.get_unassessed_goods_on_applications()),
         }
 
 

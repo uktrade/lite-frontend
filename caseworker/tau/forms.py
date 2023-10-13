@@ -392,3 +392,10 @@ class TAUAssessmentForm(TAUEditForm):
             )
             for good_on_application_id, good_on_application in goods.items()
         ]
+
+
+class TAUPreviousAssessmentForm(forms.Form):
+    good_on_application_id = forms.UUIDField(
+        widget=forms.HiddenInput(),
+    )
+    use_latest_precedent = forms.BooleanField(initial=True)

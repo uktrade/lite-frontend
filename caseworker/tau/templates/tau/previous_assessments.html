@@ -24,6 +24,7 @@
 
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-full">
+                    {% crispy formset %}
                     {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
                     {% if can_user_assess_products %}
                         <button class="govuk-button">Approve and continue</button>
