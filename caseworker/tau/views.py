@@ -298,10 +298,11 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         initial = []
 
         for good_on_application in goods_on_applications:
+            latest_precedent = good_on_application["latest_precedent"]
             initial.append(
                 {
                     "good_on_application_id": good_on_application["id"],
-                    "control_list_entries": good_on_application["latest_precedent"]["control_list_entries"],
+                    "control_list_entries": latest_precedent["control_list_entries"],
                 }
             )
 

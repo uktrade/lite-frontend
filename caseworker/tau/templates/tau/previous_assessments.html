@@ -34,3 +34,8 @@
         </main>
     </div>
 {% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'tau-previous-assessments.js' %}" type="text/javascript"></script>
+{% endblock %}
