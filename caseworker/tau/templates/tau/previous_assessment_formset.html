@@ -14,7 +14,7 @@
         {{ formset.management_form|crispy }}
     </div>
 
-    <table{% if form_id %} id="{{ form_id }}_table"{% endif%} class="govuk-table">
+    <table id="tau-form" class="govuk-table">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 {% for field in formset.forms.0 %}
@@ -25,6 +25,7 @@
                     {% endif %}
                 {% endfor %}
                 <th scope="col" class="govuk-table__header">Name</th>
+                <th scope="col" class="govuk-table__header">Control entry</th>
             </tr>
         </thead>
 
@@ -38,7 +39,8 @@
                             {{ field }}
                         {% endif %}
                     {% endfor %}
-                    <td class="govuk-table__cell">{{ form.good_on_application.good.name }}</td>
+                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.name }}</td>
+                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}
                 </tr>
             {% endfor %}
         </tbody>
