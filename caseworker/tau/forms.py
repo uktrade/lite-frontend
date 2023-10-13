@@ -399,12 +399,21 @@ class TAUPreviousAssessmentForm(forms.Form):
     good_on_application_id = forms.UUIDField(
         widget=forms.HiddenInput(),
     )
-    use_latest_precedent = forms.BooleanField(initial=True)
+    control_list_entries = forms.MultipleChoiceField(
+        label="Add a control list entry or end-use control",
+        help_text="Or type for suggestions",
+        choices=(),  # set in __init__
+        required=False,
+        # setting id for javascript to use
+        widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
+    )
 
-    def __init__(self, *args, good_on_application, **kwargs):
+    def __init__(self, *args, control_list_entries_choices, good_on_application, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.good_on_application = good_on_application
+
+        self.fields["control_list_entries"].choices = control_list_entries_choices
 
 
 class BaseTAUPreviousAssessmentFormSet(BaseFormSet):

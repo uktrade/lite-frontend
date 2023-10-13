@@ -298,7 +298,12 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         initial = []
 
         for good_on_application in goods_on_applications:
-            initial.append({"good_on_application_id": good_on_application["id"]})
+            initial.append(
+                {
+                    "good_on_application_id": good_on_application["id"],
+                    "control_list_entries": good_on_application["latest_precedent"]["control_list_entries"],
+                }
+            )
 
         return initial
 
@@ -313,6 +318,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         return TAUPreviousAssessmentFormSet(  # pylint: disable=unexpected-keyword-arg
             initial=self.get_formset_initial(goods_on_applications),
             goods_on_applications=goods_on_applications,
+            form_kwargs={"control_list_entries_choices": self.control_list_entries},
         )
 
     def get_unassessed_goods_on_applications(self):

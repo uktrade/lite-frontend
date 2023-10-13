@@ -18,6 +18,7 @@
     <table id="tau-form" class="govuk-table">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Name</th>
                 {% for field in formset.forms.0 %}
                     {% if field.label and not field.is_hidden %}
                         <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header">
@@ -25,14 +26,13 @@
                         </th>
                     {% endif %}
                 {% endfor %}
-                <th scope="col" class="govuk-table__header">Name</th>
-                <th scope="col" class="govuk-table__header">Control entry</th>
             </tr>
         </thead>
 
         <tbody class="govuk-table__body">
             {% for form in formset %}
                 <tr class="govuk-table__row">
+                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.name }}</td>
                     {% for field in form %}
                         {% if not field.is_hidden %}
                             <td class="govuk-table__cell">{{ field }}</td>
@@ -40,8 +40,6 @@
                             {{ field }}
                         {% endif %}
                     {% endfor %}
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.name }}</td>
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}
                 </tr>
             {% endfor %}
         </tbody>
