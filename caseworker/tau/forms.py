@@ -405,7 +405,7 @@ class TAUPreviousAssessmentForm(forms.Form):
         choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
+        widget=forms.SelectMultiple(attrs={"class": "control-list-entries"}),
     )
     report_summary_prefix = forms.CharField(
         label="Add a prefix for report summary (optional)",
