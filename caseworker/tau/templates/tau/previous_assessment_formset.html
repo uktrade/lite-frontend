@@ -33,12 +33,12 @@
                 <tr class="govuk-table__row">
                     {% for field in form %}
                         {% if not field.is_hidden %}
-                            <td>{{ field }}</td>
+                            <td class="govuk-table__cell">{{ field }}</td>
                         {% else %}
                             {{ field }}
                         {% endif %}
                     {% endfor %}
-                    <td>{{ form.good_on_application.good.name }}</td>
+                    <td class="govuk-table__cell">{{ form.good_on_application.good.name }}</td>
                 </tr>
             {% endfor %}
         </tbody>
