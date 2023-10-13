@@ -27,6 +27,7 @@ from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
 
 from caseworker.tau.forms import (
+    BaseTAUPreviousAssessmentFormSet,
     TAUAssessmentForm,
     TAUEditForm,
     TAUPreviousAssessmentForm,
@@ -302,8 +303,15 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         return initial
 
     def get_formset(self, goods_on_applications):
-        TAUPreviousAssessmentFormSet = formset_factory(TAUPreviousAssessmentForm, extra=0)
-        return TAUPreviousAssessmentFormSet(initial=self.get_formset_initial(goods_on_applications))
+        TAUPreviousAssessmentFormSet = formset_factory(
+            TAUPreviousAssessmentForm,
+            extra=0,
+            formset=BaseTAUPreviousAssessmentFormSet,
+        )
+        return TAUPreviousAssessmentFormSet(
+            initial=self.get_formset_initial(goods_on_applications),
+            goods_on_applications=goods_on_applications,
+        )
 
     def get_unassessed_goods_on_applications(self):
         return [good for good in self.unassessed_goods if good["latest_precedent"]]

@@ -24,6 +24,7 @@
                         </th>
                     {% endif %}
                 {% endfor %}
+                <th scope="col" class="govuk-table__header">Name</th>
             </tr>
         </thead>
 
@@ -37,6 +38,7 @@
                             {{ field }}
                         {% endif %}
                     {% endfor %}
+                    <td>{{ form.good_on_application.good.name }}</td>
                 </tr>
             {% endfor %}
         </tbody>
