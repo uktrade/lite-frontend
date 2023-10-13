@@ -330,6 +330,9 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
             "formset_helper": formset_helper,
         }
 
+    def post(self, request, *args, **kwargs):
+        return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
+
 
 class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
     """This renders a form for editing product assessment for TAU 2.0."""
