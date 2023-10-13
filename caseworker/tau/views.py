@@ -304,6 +304,18 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
             }
             if latest_precedent:
                 _initial["control_list_entries"] = latest_precedent["control_list_entries"]
+                _initial["report_summary_prefix"] = (
+                    latest_precedent["report_summary_prefix"] and latest_precedent["report_summary_prefix"]["id"]
+                )
+                _initial["report_summary_prefix_name"] = (
+                    latest_precedent["report_summary_prefix"] and latest_precedent["report_summary_prefix"]["name"]
+                )
+                _initial["report_summary_subject"] = (
+                    latest_precedent["report_summary_subject"] and latest_precedent["report_summary_subject"]["id"]
+                )
+                _initial["report_summary_subject_name"] = (
+                    latest_precedent["report_summary_subject"] and latest_precedent["report_summary_subject"]["name"]
+                )
             initial.append(_initial)
 
         return initial

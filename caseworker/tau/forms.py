@@ -428,6 +428,12 @@ class TAUPreviousAssessmentForm(forms.Form):
         self.good_on_application = good_on_application
 
         self.fields["control_list_entries"].choices = control_list_entries_choices
+        if self.initial.get("report_summary_prefix_name"):
+            self.fields["report_summary_prefix"].widget.attrs["data-name"] = self.initial["report_summary_prefix_name"]
+        if self.initial.get("report_summary_subject_name"):
+            self.fields["report_summary_subject"].widget.attrs["data-name"] = self.initial[
+                "report_summary_subject_name"
+            ]
 
 
 class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
