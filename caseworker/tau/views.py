@@ -308,7 +308,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
             extra=0,
             formset=BaseTAUPreviousAssessmentFormSet,
         )
-        return TAUPreviousAssessmentFormSet(
+        return TAUPreviousAssessmentFormSet(  # pylint: disable=unexpected-keyword-arg
             initial=self.get_formset_initial(goods_on_applications),
             goods_on_applications=goods_on_applications,
         )
