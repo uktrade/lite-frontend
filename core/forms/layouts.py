@@ -194,7 +194,9 @@ class RadioTextArea(TemplateNameMixin):
         return render_to_string(template, context.flatten())
 
 
-class TableFormHelper(FormHelper):
+class TableFormSetHelper(FormHelper):
+    template = "layout/table_form_set.html"
+
     def get_attributes(self, template_pack=TEMPLATE_PACK):
         attributes = super().get_attributes(template_pack)
         attributes["table_header"] = self.layout.get_table_header()

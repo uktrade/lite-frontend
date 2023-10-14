@@ -17,7 +17,7 @@ from core.forms.layouts import (
     ConditionalCheckboxesQuestion,
     Property,
     TableCell,
-    TableFormHelper,
+    TableFormSetHelper,
     TableLayout,
 )
 
@@ -346,7 +346,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        formset_helper = TableFormHelper()
+        formset_helper = TableFormSetHelper()
         formset_helper.layout = TableLayout(
             TableCell(
                 Property("good_name"),
@@ -392,7 +392,6 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
                 label="Regime",
             ),
         )
-        formset_helper.template = "tau/previous_assessment_formset.html"
 
         return {
             **context,
