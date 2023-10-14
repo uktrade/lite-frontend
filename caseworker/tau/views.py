@@ -10,10 +10,16 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import HTML, Layout
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
 from core.decorators import expect_status
+from core.forms.layouts import (
+    ConditionalCheckboxes,
+    ConditionalCheckboxesQuestion,
+    TableCell,
+)
 
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.services import get_case
@@ -341,6 +347,37 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         formset_helper = FormHelper()
+        formset_helper.layout = Layout(
+            TableCell("control_list_entries"),
+            TableCell("report_summary_prefix"),
+            TableCell("report_summary_subject"),
+            TableCell(
+                ConditionalCheckboxes(
+                    "regimes",
+                    ConditionalCheckboxesQuestion(
+                        "Wassenaar Arrangement",
+                        "wassenaar_entries",
+                    ),
+                    ConditionalCheckboxesQuestion(
+                        "Missile Technology Control Regime",
+                        "mtcr_entries",
+                    ),
+                    ConditionalCheckboxesQuestion(
+                        "Chemical Weapons Convention",
+                        "cwc_entries",
+                    ),
+                    ConditionalCheckboxesQuestion(
+                        "Nuclear Suppliers Group",
+                        "nsg_entries",
+                    ),
+                    ConditionalCheckboxesQuestion(
+                        "Australia Group",
+                        "ag_entries",
+                    ),
+                    "None",
+                ),
+            ),
+        )
         formset_helper.template = "tau/previous_assessment_formset.html"
 
         return {

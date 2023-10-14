@@ -400,26 +400,80 @@ class TAUPreviousAssessmentForm(forms.Form):
         widget=forms.HiddenInput(),
     )
     control_list_entries = forms.MultipleChoiceField(
-        label="Add a control list entry or end-use control",
-        help_text="Or type for suggestions",
+        label="",
         choices=(),  # set in __init__
         required=False,
         # setting id for javascript to use
         widget=forms.SelectMultiple(attrs={"class": "control-list-entries"}),
     )
     report_summary_prefix = forms.CharField(
-        label="Add a prefix for report summary (optional)",
-        help_text="For example 'components for'. Type for suggestions.",
+        label="",
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"class": "report-summary-prefix"}),
         required=False,
     )
     report_summary_subject = forms.CharField(
-        label="Add a subject for the report summary",
-        help_text="For example 'sniper rifles'. Type for suggestions.",
+        label="",
         # setting id for javascript to use
         widget=forms.TextInput(attrs={"class": "report-summary-subject"}),
         required=False,
+    )
+    regimes = forms.MultipleChoiceField(
+        label="",
+        choices=(
+            (Regimes.WASSENAAR.value, "Wassenaar Arrangement"),
+            (Regimes.MTCR.value, "Missile Technology Control Regime"),
+            (Regimes.NSG.value, "Nuclear Suppliers Group"),
+            (Regimes.CWC.value, "Chemical Weapons Convention"),
+            (Regimes.AG.value, "Australia Group"),
+            ("NONE", "None"),
+        ),
+        error_messages={
+            "required": "Add a regime, or select none",
+        },
+        widget=forms.CheckboxSelectMultiple,
+    )
+    wassenaar_entries = forms.ChoiceField(
+        label="Choose the highest applicable sensitivity level",
+        choices=(),  # set in __init__
+        required=False,
+        widget=forms.RadioSelect,
+    )
+    mtcr_entries = forms.MultipleChoiceField(
+        label="What is the entry (for example M1A2)? Type for suggestions",
+        choices=(),  # set in __init__
+        required=False,
+        # setting id for javascript to use
+        widget=forms.SelectMultiple(
+            attrs={
+                "id": "mtcr_entries",
+                "data-module": "regimes-multi-select",
+            }
+        ),
+    )
+    nsg_entries = forms.MultipleChoiceField(
+        label="What is the entry (for example M1A2)? Type for suggestions",
+        choices=(),  # set in __init__
+        required=False,
+        # setting id for javascript to use
+        widget=forms.SelectMultiple(
+            attrs={
+                "id": "nsg_entries",
+                "data-module": "regimes-multi-select",
+            }
+        ),
+    )
+    cwc_entries = forms.ChoiceField(
+        label="",
+        choices=(),  # set in __init__
+        required=False,
+        widget=forms.RadioSelect,
+    )
+    ag_entries = forms.ChoiceField(
+        label="",
+        choices=(),  # set in __init__
+        required=False,
+        widget=forms.RadioSelect,
     )
 
     def __init__(self, *args, control_list_entries_choices, good_on_application, **kwargs):

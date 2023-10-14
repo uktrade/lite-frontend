@@ -1,7 +1,11 @@
 from crispy_forms.layout import TemplateNameMixin
 from crispy_forms.utils import render_field, TEMPLATE_PACK
 
-from crispy_forms_gds.layout import Field, HTML, Fieldset
+from crispy_forms_gds.layout import (
+    Field,
+    Fieldset,
+    HTML,
+)
 
 from django.template.loader import render_to_string
 
@@ -181,6 +185,24 @@ class RadioTextArea(TemplateNameMixin):
                 "field": bound_field,
                 "radio_field": radio_field,
                 "json_choices": self.json_choices,
+            }
+        )
+
+        return render_to_string(template, context.flatten())
+
+
+class TableCell(TemplateNameMixin):
+    template = "%s/layout/table_cell.html"
+
+    def __init__(self, field):
+        self.field = field
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        template = self.get_template_name(template_pack)
+
+        context.update(
+            {
+                "field": render_field(self.field, form, form_style, context, template_pack=template_pack, **kwargs),
             }
         )
 

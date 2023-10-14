@@ -19,13 +19,10 @@
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Name</th>
-                {% for field in formset.forms.0 %}
-                    {% if field.label and not field.is_hidden %}
-                        <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header">
-                            {{ field.label }}
-                        </th>
-                    {% endif %}
-                {% endfor %}
+                <th scope="col" class="govuk-table__header">Control entry</th>
+                <th scope="col" class="govuk-table__header">Report summary prefix</th>
+                <th scope="col" class="govuk-table__header">Report summary subject</th>
+                <th scope="col" class="govuk-table__header">Regimes</th>
             </tr>
         </thead>
 
@@ -33,13 +30,7 @@
             {% for form in formset %}
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.name }}</td>
-                    {% for field in form %}
-                        {% if not field.is_hidden %}
-                            <td class="govuk-table__cell">{{ field }}</td>
-                        {% else %}
-                            {{ field }}
-                        {% endif %}
-                    {% endfor %}
+                    {{ form.form_html }}
                 </tr>
             {% endfor %}
         </tbody>
