@@ -9,9 +9,6 @@ from django.views.generic import FormView, View, TemplateView
 from django.utils.functional import cached_property
 from django.urls import reverse
 
-from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout
-
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
 from core.decorators import expect_status
@@ -20,6 +17,8 @@ from core.forms.layouts import (
     ConditionalCheckboxesQuestion,
     Property,
     TableCell,
+    TableFormHelper,
+    TableLayout,
 )
 
 from caseworker.advice.services import move_case_forward
@@ -347,12 +346,24 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        formset_helper = FormHelper()
-        formset_helper.layout = Layout(
-            TableCell(Property("good_name")),
-            TableCell("control_list_entries"),
-            TableCell("report_summary_prefix"),
-            TableCell("report_summary_subject"),
+        formset_helper = TableFormHelper()
+        formset_helper.layout = TableLayout(
+            TableCell(
+                Property("good_name"),
+                label="Product name",
+            ),
+            TableCell(
+                "control_list_entries",
+                label="Control entry",
+            ),
+            TableCell(
+                "report_summary_prefix",
+                label="Report summary prefix",
+            ),
+            TableCell(
+                "report_summary_subject",
+                label="Report summary subject",
+            ),
             TableCell(
                 ConditionalCheckboxes(
                     "regimes",
@@ -378,6 +389,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
                     ),
                     "None",
                 ),
+                label="Regime",
             ),
         )
         formset_helper.template = "tau/previous_assessment_formset.html"

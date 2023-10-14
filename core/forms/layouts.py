@@ -1,3 +1,7 @@
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
+
+from crispy_forms.helper import FormHelper
 from crispy_forms.layout import TemplateNameMixin
 from crispy_forms.utils import render_field, TEMPLATE_PACK
 
@@ -5,9 +9,8 @@ from crispy_forms_gds.layout import (
     Field,
     Fieldset,
     HTML,
+    Layout,
 )
-
-from django.template.loader import render_to_string
 
 
 def summary_list(items):
@@ -191,11 +194,32 @@ class RadioTextArea(TemplateNameMixin):
         return render_to_string(template, context.flatten())
 
 
+class TableFormHelper(FormHelper):
+    def get_attributes(self, template_pack=TEMPLATE_PACK):
+        attributes = super().get_attributes(template_pack)
+        attributes["table_header"] = self.layout.get_table_header()
+        return attributes
+
+
+class TableLayout(Layout):
+    def __init__(self, *fields):
+        if not all(isinstance(table_cell, TableCell) for table_cell in fields):
+            raise TypeError("TableLayout requires only TableCell objects")
+        super().__init__(*fields)
+
+    def get_table_header(self):
+        table_header = "".join(
+            f'<th scope="col" class="govuk-table__header">{table_cell.label or ""}</th>' for table_cell in self.fields
+        )
+        return mark_safe(table_header)
+
+
 class TableCell(TemplateNameMixin):
     template = "%s/layout/table_cell.html"
 
-    def __init__(self, field):
+    def __init__(self, field, label=None):
         self.field = field
+        self.label = label
 
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
         template = self.get_template_name(template_pack)
