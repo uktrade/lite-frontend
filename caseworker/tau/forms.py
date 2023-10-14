@@ -489,6 +489,10 @@ class TAUPreviousAssessmentForm(forms.Form):
                 "report_summary_subject_name"
             ]
 
+    @property
+    def good_name(self):
+        return self.good_on_application["good"]["name"]
+
 
 class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
     def __init__(self, *args, goods_on_applications, **kwargs):

@@ -10,7 +10,7 @@ from django.utils.functional import cached_property
 from django.urls import reverse
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import HTML, Layout
+from crispy_forms_gds.layout import Layout
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
@@ -18,6 +18,7 @@ from core.decorators import expect_status
 from core.forms.layouts import (
     ConditionalCheckboxes,
     ConditionalCheckboxesQuestion,
+    Property,
     TableCell,
 )
 
@@ -348,6 +349,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
 
         formset_helper = FormHelper()
         formset_helper.layout = Layout(
+            TableCell(Property("good_name")),
             TableCell("control_list_entries"),
             TableCell("report_summary_prefix"),
             TableCell("report_summary_subject"),

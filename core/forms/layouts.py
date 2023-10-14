@@ -207,3 +207,11 @@ class TableCell(TemplateNameMixin):
         )
 
         return render_to_string(template, context.flatten())
+
+
+class Property:
+    def __init__(self, property_name):
+        self.property_name = property_name
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        return getattr(form, self.property_name)
