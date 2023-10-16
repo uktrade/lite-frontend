@@ -4,6 +4,7 @@ from core.auth.views import LoginRequiredMixin
 
 from .forms import ProductSearchForm
 from .services import get_product_search_results
+from ..core.constants import ALL_CASES_QUEUE_ID
 
 
 class ProductSearchView(LoginRequiredMixin, FormView):
@@ -19,6 +20,7 @@ class ProductSearchView(LoginRequiredMixin, FormView):
         context = super().get_context_data()
         context = {
             **context,
+            "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
             "search_results": results,
             "data": {
                 "total_pages": results["count"] // form.page_size,
