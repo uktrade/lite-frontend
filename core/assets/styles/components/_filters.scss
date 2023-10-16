@@ -212,7 +212,7 @@
 	vertical-align: baseline;
 
 	.govuk-form-group {
-		margin-right: govuk-spacing(1);
+		margin-right: govuk-spacing(2);
 		margin-bottom: govuk-spacing(4);
 	}
 
@@ -225,6 +225,6 @@
 	}
 
 	.govuk-button {
-		padding: govuk-spacing(1) govuk-spacing(4) govuk-spacing(1);
+		padding: govuk-spacing(2) govuk-spacing(6) 8px;
 	}
 }
