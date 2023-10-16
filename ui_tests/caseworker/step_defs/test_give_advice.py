@@ -266,9 +266,10 @@ def check_countersign_comments(driver, comments):  # noqa
 
 @then(parsers.parse('I see "{inform_letter}" in decision documents'))
 def see_inform_letter(driver, inform_letter):
-    assert driver.find_element(
-        By.XPATH, f"//td[contains(@class, 'govuk-table__cell') and contains(text(), '{inform_letter}')]"
-    ), "No elements found with class 'govuk-table__cell' and text 'Inform letter'"
+    elements = driver.find_elements(By.CSS_SELECTOR, "td.govuk-table__cell")
+    matching_elements = [e for e in elements if inform_letter in e.text]
+
+    assert matching_elements[0]
 
 
 @when(parsers.parse('I click "{inform_letter_button}" button'))
@@ -276,16 +277,21 @@ def create_inform_letter(driver, inform_letter_button):
     if inform_letter_button == "Create Inform letter" or inform_letter_button == "Recreate":
         id = "generate-document-inform"
         driver.find_element(By.ID, id).click()
-    if inform_letter_button == "Send Inform letter":
-        row = driver.find_element(By.XPATH, "//tr[@id='decision-inform']")
-        button = row.find_element(By.XPATH, ".//button[contains(text(), 'Send inform letter')]")
-        button.click()
+    if inform_letter_button == "Send inform letter":
+        row = driver.find_element(By.CSS_SELECTOR, "tr#decision-inform")
+        button = row.find_element(By.CSS_SELECTOR, "button")
+        if button.text == "Send inform letter":
+            button.click()
 
 
 @when(parsers.parse('I select "{template}" radio button'))
 def select_template_radio(driver, template):
-    element = driver.find_element(By.XPATH, f"//label[contains(text(), '{template}')]/preceding-sibling::input")
-    element.click()
+    labels = driver.find_elements(By.CSS_SELECTOR, "label.govuk-label")
+    for label in labels:
+        if template in label.text:
+            input_id = label.get_attribute("for")
+            driver.find_element(By.ID, input_id).click()
+            break
 
 
 @then(parsers.parse('I see "{status}" inform letter status in decision documents'))
@@ -296,9 +302,8 @@ def check_status(driver, status):
 
 @when(parsers.parse("I click inform letter edit link"))
 def click_edit_inform_letter(driver):
-    row = driver.find_element(By.XPATH, "//tr[@id='decision-inform']")
-    link = row.find_element(By.XPATH, ".//a[contains(text(), 'Edit')]")
-    link.click()
+    row = driver.find_element(By.CSS_SELECTOR, "tr#decision-inform")
+    row.find_element(By.CSS_SELECTOR, "a[href*='edit-letter/inform']").click()
 
 
 @when(parsers.parse('I edit template with "{text}"'))

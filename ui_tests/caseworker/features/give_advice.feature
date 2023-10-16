@@ -504,7 +504,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click continue
     # Sending Inform letter
     Then I see "READY TO SEND" inform letter status in decision documents
-    When I click "Send Inform letter" button
+    When I click "Send inform letter" button
     And I click the application previously created
     And I click the recommendations and decision tab
     Then I see "SENT" inform letter status in decision documents
@@ -518,7 +518,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
-    # Recreaate Inform letter
+    # Re-create Inform letter
     When I click "Recreate" button
     And I select "Military" radio button
     And I click continue
