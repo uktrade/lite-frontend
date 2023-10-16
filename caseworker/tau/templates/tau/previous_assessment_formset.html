@@ -1,6 +1,7 @@
 {% load crispy_forms_tags %}
 {% load crispy_forms_utils %}
 {% load crispy_forms_field %}
+{% load rules %}
 
 {% specialspaceless %}
 {% if formset_tag %}
@@ -45,6 +46,10 @@
             {% endfor %}
         </tbody>
     </table>
+    {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
+    {% if can_user_assess_products %}
+        <button class="govuk-button">Approve and continue</button>
+    {% endif %}
 
 {% if formset_tag %}</form>{% endif %}
 {% endspecialspaceless %}

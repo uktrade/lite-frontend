@@ -303,6 +303,8 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         return initial
 
     def get_formset(self, goods_on_applications):
+        if not goods_on_applications:
+            return None
         TAUPreviousAssessmentFormSet = formset_factory(
             TAUPreviousAssessmentForm,
             extra=0,
