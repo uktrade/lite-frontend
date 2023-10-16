@@ -8,11 +8,21 @@ from conf.base import *
 
 ROOT_URLCONF = "exporter.urls"
 
+MOCK_SSO_ACTIVATE_ENDPOINTS = env.bool("MOCK_SSO_ACTIVATE_ENDPOINTS", False)
+MOCK_SSO_USER_EMAIL = env.str("MOCK_SSO_USER_EMAIL", "")
+MOCK_SSO_USER_FIRST_NAME = env.str("MOCK_SSO_USER_FIRST_NAME", "")
+MOCK_SSO_USER_LAST_NAME = env.str("MOCK_SSO_USER_LAST_NAME", "")
+
 INSTALLED_APPS += [
     "exporter.core",
     "exporter.applications",
     "exporter.organisation",
 ]
+
+if MOCK_SSO_ACTIVATE_ENDPOINTS:
+    INSTALLED_APPS += [
+        "exporter.mock_sso",
+    ]
 
 TEMPLATES = [
     {
@@ -39,7 +49,7 @@ LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 
 FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = env.bool("FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED", False)
 
-LOGOUT_URL = f"{AUTHBROKER_URL}/logout"
+LOGOUT_URL = urljoin(AUTHBROKER_URL, "logout")
 AUTHBROKER_SCOPE = "openid,email,offline_access"
 AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "authorize")
 AUTHBROKER_TOKEN_URL = urljoin(AUTHBROKER_URL, "token")
@@ -76,7 +86,6 @@ LITE_API_AUTH_HEADER_NAME = "EXPORTER-USER-TOKEN"
 
 FEATURE_FLAG_ONLY_ALLOW_SIEL = env.bool("FEATURE_FLAG_ONLY_ALLOW_SIEL", True)
 FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = env.bool("FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING", False)
-FEATURE_FLAG_APPEALS = env.bool("FEATURE_FLAG_APPEALS", True)
 
 SPIRE_URL = "https://www.spire.trade.gov.uk/spire/fox/espire/LOGIN/login"
 

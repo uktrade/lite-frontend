@@ -10,7 +10,6 @@ from exporter.core.objects import Application
 
 
 def test_can_user_appeal_case_rule_predicates(settings, rf, data_standard_case):
-    settings.FEATURE_FLAG_APPEALS = True
     data_standard_case["case"]["data"]["appeal_deadline"] = ""
 
     request = rf.get("/")
@@ -24,21 +23,19 @@ def test_can_user_appeal_case_rule_predicates(settings, rf, data_standard_case):
 
 
 @pytest.mark.parametrize(
-    "flag_value, status, licence, days_until_deadline, appeal_details, expected",
+    "status, licence, days_until_deadline, appeal_details, expected",
     (
-        (False, "submitted", None, None, None, False),
-        (True, "under_final_review", {"reference_code": "GBSIEL/2023/0000001/P"}, None, None, False),
-        (True, "finalised", {"reference_code": "GBSIEL/2023/0000001/P"}, None, None, False),
-        (True, "finalised", None, -1, None, False),  # we are past deadline by 1 day
-        (True, "finalised", None, 0, None, True),  # today is the deadline
-        (True, "finalised", None, 5, None, True),  # deadline is 5 days from today
-        (True, "finalised", None, 5, {"grounds_for_appeal": "test appeal"}, False),
+        ("under_final_review", {"reference_code": "GBSIEL/2023/0000001/P"}, None, None, False),
+        ("finalised", {"reference_code": "GBSIEL/2023/0000001/P"}, None, None, False),
+        ("finalised", None, -1, None, False),  # we are past deadline by 1 day
+        ("finalised", None, 0, None, True),  # today is the deadline
+        ("finalised", None, 5, None, True),  # deadline is 5 days from today
+        ("finalised", None, 5, {"grounds_for_appeal": "test appeal"}, False),
     ),
 )
 def test_can_user_appeal_case_based_on_feature_flag(
-    settings, rf, data_standard_case, flag_value, status, licence, days_until_deadline, appeal_details, expected
+    rf, data_standard_case, status, licence, days_until_deadline, appeal_details, expected
 ):
-    settings.FEATURE_FLAG_APPEALS = flag_value
     data_standard_case["case"]["data"]["status"] = {"key": status, "value": status.title()}
     data_standard_case["case"]["data"]["licence"] = licence
     data_standard_case["case"]["data"]["appeal_deadline"] = ""
@@ -55,14 +52,13 @@ def test_can_user_appeal_case_based_on_feature_flag(
 
 
 @pytest.mark.parametrize(
-    "flag_value, appeal, expected",
+    "appeal, expected",
     (
-        (True, None, False),
-        (True, {"grounds_for_appeal": "test appeal"}, True),
+        (None, False),
+        ({"grounds_for_appeal": "test appeal"}, True),
     ),
 )
-def test_view_appeal_details(settings, rf, data_standard_case, flag_value, appeal, expected):
-    settings.FEATURE_FLAG_APPEALS = flag_value
+def test_view_appeal_details(settings, rf, data_standard_case, appeal, expected):
     data_standard_case["case"]["data"]["status"] = {"key": "finalised", "value": "Finalised"}
     data_standard_case["case"]["data"]["licence"] = None
     data_standard_case["case"]["data"]["appeal_deadline"] = timezone.localtime().isoformat()

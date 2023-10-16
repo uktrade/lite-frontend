@@ -1,7 +1,6 @@
 from collections import defaultdict
-from core import client
 
-from caseworker.core.constants import ALL_CASES_QUEUE_ID
+from core import client
 
 
 def get_good_precedents(request, case_id):
@@ -11,6 +10,15 @@ def get_good_precedents(request, case_id):
     return response.json()
 
 
+def get_first_precedents(case, good_precedents):
+    """For all the goods in the given case, return the first
+    precedent per CLEs"""
+    results = {}
+    for gona in case.goods:
+        results[gona["id"]] = get_first_cles_precedents(gona, good_precedents)
+    return results
+
+
 def group_gonas_by_good(gonas):
     goods = defaultdict(list)
     for gona in gonas:
@@ -18,17 +26,13 @@ def group_gonas_by_good(gonas):
     return goods
 
 
-def get_first_precedents(request, case):
-    """For all the goods in the given case, return the first
-    precedent per CLEs"""
-    results = get_good_precedents(request, case.id)["results"]
-    # assign default queues if precedents do not have any
-    for precedent in results:
-        precedent["queue"] = precedent.get("queue") or ALL_CASES_QUEUE_ID
-    good_precedents = group_gonas_by_good(results)
+def get_latest_precedents(case, good_precedents):
     results = {}
     for gona in case.goods:
-        results[gona["id"]] = get_first_cles_precedents(gona, good_precedents)
+        precedents = [p for p in good_precedents[gona["good"]["id"]] if p["submitted_at"]]
+        precedents.sort(key=lambda p: p["submitted_at"], reverse=True)
+        if precedents:
+            results[gona["id"]] = precedents[0]
     return results
 
 
