@@ -14,26 +14,22 @@
 
 {% block full_width %}
     <div class="govuk-width-container">
-        <main class="govuk-main-wrapper assessment-form tau-assessment-form">
-            <div class="govuk-grid-row assessment-form__display--flex">
-                <!-- Heading -->
+        <main class="govuk-main-wrapper">
+            <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
                     <h1 class="govuk-heading-l">Previously assessed products</h1>
                     <p id="subtitle" class="govuk-body">Unselect any products where you disagree with the previous assessment</p>
                 </div>
             </div>
 
-            <!-- Form -->
             <div class="govuk-grid-row">
-                <form id="tau-form" action="." method="POST" >
-                    <div class="govuk-grid-column-full assessment-form__first-column">
-                        {% crispy form %}
-                        {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
-                        {% if can_user_assess_products %}
-                            <input type="submit" name="submit" value="Approve and continue" class="govuk-button" id="submit-id-submit" />
-                        {% endif %}
-                    </div>
-                </form>
+                <div class="govuk-grid-column-full">
+                    {% if formset %}
+                        {% crispy formset formset_helper %}
+                    {% else %}
+                       <p id="previous-assessments-missing" class="govuk-body">No products have been assessed previously.  <a href="{% url 'cases:tau:home' queue_pk=queue_id pk=case.id %}" class="govuk-link govuk-link--no-visited-state">Continue to assess all products</a>
+                    {% endif %}
+                </div>
             </div>
         </main>
     </div>

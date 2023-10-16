@@ -2,11 +2,14 @@ import os
 
 from http import HTTPStatus
 
+from django.forms import formset_factory
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import FormView, View, TemplateView
 from django.utils.functional import cached_property
 from django.urls import reverse
+
+from crispy_forms_gds.helper import FormHelper
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
@@ -23,7 +26,12 @@ from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
 
-from caseworker.tau.forms import TAUAssessmentForm, TAUEditForm, TAUPreviousAssessmentsForm
+from caseworker.tau.forms import (
+    BaseTAUPreviousAssessmentFormSet,
+    TAUAssessmentForm,
+    TAUEditForm,
+    TAUPreviousAssessmentForm,
+)
 from caseworker.tau.services import (
     get_first_precedents,
     get_good_precedents,
@@ -283,30 +291,49 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         return payload
 
 
-class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, FormView):
-
+class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
     template_name = "tau/previous_assessments.html"
-    form_class = TAUPreviousAssessmentsForm
 
-    def get_success_url(self):
-        return reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
+    def get_formset_initial(self, goods_on_applications):
+        initial = []
 
-    def get_form_kwargs(self):
-        form_kwargs = super().get_form_kwargs()
+        for good_on_application in goods_on_applications:
+            initial.append({"good_on_application_id": good_on_application["id"]})
 
-        form_kwargs["goods"] = {item["id"]: item for item in self.unassessed_goods if item["latest_precedent"]}
-        form_kwargs["data"] = self.request.POST or None
+        return initial
 
-        return form_kwargs
+    def get_formset(self, goods_on_applications):
+        if not goods_on_applications:
+            return None
+        TAUPreviousAssessmentFormSet = formset_factory(
+            TAUPreviousAssessmentForm,
+            extra=0,
+            formset=BaseTAUPreviousAssessmentFormSet,
+        )
+        return TAUPreviousAssessmentFormSet(  # pylint: disable=unexpected-keyword-arg
+            initial=self.get_formset_initial(goods_on_applications),
+            goods_on_applications=goods_on_applications,
+        )
+
+    def get_unassessed_goods_on_applications(self):
+        return [good for good in self.unassessed_goods if good["latest_precedent"]]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        formset_helper = FormHelper()
+        formset_helper.template = "tau/previous_assessment_formset.html"
+
         return {
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
-            "previously_assessed_goods": [good for good in self.unassessed_goods if good["latest_precedent"]],
+            "formset": self.get_formset(self.get_unassessed_goods_on_applications()),
+            "formset_helper": formset_helper,
         }
+
+    def post(self, request, *args, **kwargs):
+        return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
 
 
 class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):

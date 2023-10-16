@@ -81,8 +81,41 @@ def test_previous_assessments_GET(
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
-    # TODO: Flesh this out as we develop the page more
-    assert "p1 - ML1a" in soup.find("form", id="tau-form").text
+    table = soup.find("table", id="tau-form")
+    assert table
+    assert [td.text.strip() for td in table.findAll("td", {"class": "readonly-field"})] == ["p1", "ML1a"]
+
+
+def test_previous_assessments_GET_no_precedents(
+    authorized_client,
+    previous_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    requests_mock,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    case_id = data_standard_case["case"]["id"]
+    precedents_url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
+    requests_mock.get(
+        precedents_url,
+        json={"results": []},
+    )
+
+    response = authorized_client.get(previous_assessments_url)
+    assert response.status_code == 200
+
+    # Test elements of case info panel
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
+    missing_message_paragraph = soup.find("p", id="previous-assessments-missing")
+    assert missing_message_paragraph
 
 
 def test_previous_assessments_POST(
@@ -99,5 +132,5 @@ def test_previous_assessments_POST(
     # TODO: Flesh this out when the form submission is properly handled
     assert (
         response["location"]
-        == "/queues/1b926457-5c9e-4916-8497-51886e51863a/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/"
+        == "/queues/1b926457-5c9e-4916-8497-51886e51863a/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/"  # /PS-IGNORE
     )
