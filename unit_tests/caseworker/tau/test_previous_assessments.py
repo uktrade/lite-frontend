@@ -86,6 +86,38 @@ def test_previous_assessments_GET(
     assert [td.text.strip() for td in table.findAll("td", {"class": "readonly-field"})] == ["p1", "ML1a"]
 
 
+def test_previous_assessments_GET_no_precedents(
+    authorized_client,
+    previous_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    requests_mock,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    case_id = data_standard_case["case"]["id"]
+    precedents_url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
+    requests_mock.get(
+        precedents_url,
+        json={"results": []},
+    )
+
+    response = authorized_client.get(previous_assessments_url)
+    assert response.status_code == 200
+
+    # Test elements of case info panel
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
+    missing_message_paragraph = soup.find("p", id="previous-assessments-missing")
+    assert missing_message_paragraph
+
+
 def test_previous_assessments_POST(
     authorized_client,
     previous_assessments_url,

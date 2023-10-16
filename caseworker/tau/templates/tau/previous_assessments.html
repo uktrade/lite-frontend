@@ -26,6 +26,8 @@
                 <div class="govuk-grid-column-full">
                     {% if formset %}
                         {% crispy formset formset_helper %}
+                    {% else %}
+                       <p id="previous-assessments-missing" class="govuk-body">No products have been assessed previously.  <a href="{% url 'cases:tau:home' queue_pk=queue_id pk=case.id %}" class="govuk-link govuk-link--no-visited-state">Continue to assess all products</a>
                     {% endif %}
                 </div>
             </div>
