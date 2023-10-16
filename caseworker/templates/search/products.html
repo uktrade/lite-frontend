@@ -1,4 +1,5 @@
 {% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block back_link %}{% endblock %}
 
@@ -12,8 +13,19 @@
             <h1 class="govuk-heading-l">Search products</h1>
         </div>
     </div>
+
+    <div class="govuk-!-margin-top-4">
+        <div class="search-div">
+            <div class="product-search">
+                {% crispy form %}
+            </div>
+        </div>
+    </div>
+
     <section class="search-results govuk-!-margin-top-4">
-        <h1 class="govuk-body">{{ search_results.count }} products found</h1>
+        {% if search_results.count %}
+            <h1 class="govuk-body">{{ search_results.count }} products found</h1>
+        {% endif %}
         {% for good in search_results.results %}
             <article class="search-result">
                 <header class="search-result__header">
@@ -59,5 +71,7 @@
                 </table>
             </article>
         {% endfor %}
+
+        {% pagination %}
     </section>
 {% endblock %}

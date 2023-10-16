@@ -1,6 +1,8 @@
 from collections import defaultdict
 import re
 
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Layout, Submit
 from django import forms
 
 from caseworker.spire.forms import StyledCharField
@@ -73,3 +75,29 @@ class AutocompleteForm(forms.Form):
 
 class CommentForm(forms.Form):
     text = forms.CharField()
+
+
+class ProductSearchForm(forms.Form):
+    page_size = 25
+
+    search_string = forms.CharField(
+        label="Enter a product name, part number, control entry or report summary",
+        required=False,
+    )
+    page = forms.IntegerField(widget=forms.HiddenInput(), required=False, initial=1)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            "search_string",
+            Submit("submit", "Search"),
+        )
+
+    def clean(self):
+        super().clean()
+        # pagination
+        self.cleaned_data["limit"] = self.page_size
+        self.cleaned_data["page"] = self.cleaned_data["page"] or 1
+        self.cleaned_data["offset"] = (self.cleaned_data["page"] - 1) * self.page_size
