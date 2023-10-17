@@ -366,6 +366,13 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Temp
             # investigation to happen in sentry
             post_review_good(self.request, self.kwargs["pk"], payload)
 
+    def get(self, request, *args, **kwargs):
+        if not self.get_unassessed_goods_on_applications():
+            result = redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
+            return result
+
+        return super().get(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         formset = self.get_formset(self.get_unassessed_goods_on_applications())
         if not formset.is_valid():
