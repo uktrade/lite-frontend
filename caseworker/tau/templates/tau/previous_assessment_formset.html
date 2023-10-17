@@ -15,6 +15,15 @@
         {{ formset.management_form|crispy }}
     </div>
 
+
+    <div class="previous-assessment-formset-errors">
+        {% for error in formset.non_form_errors %}
+        <span class="govuk-error-message">
+          Error: {{error}}
+        </span>
+        {% endfor %}
+    </div>
+
     <table id="tau-form" class="govuk-table">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
@@ -35,7 +44,12 @@
                 <tr class="govuk-table__row">
                     {% for field in form %}
                         {% if not field.is_hidden %}
-                            <td class="govuk-table__cell">{{ field }}</td>
+                            <td class="govuk-table__cell">
+                                {% for error in field.errors %}
+                                <span class="govuk-error-message">{{error}}</span>
+                                {% endfor %}
+                                {{ field }}
+                            </td>
                         {% else %}
                             {{ field }}
                         {% endif %}
