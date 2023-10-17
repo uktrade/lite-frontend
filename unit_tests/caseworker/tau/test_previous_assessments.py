@@ -237,6 +237,35 @@ def test_previous_assessments_POST_no_products_selected(
     assert response.redirect_chain[-1][0] == tau_assessment_url
 
 
+def test_previous_assessments_POST_form_invalid(
+    authorized_client,
+    previous_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    mock_good_precedent_endpoint,
+    data_good_precedent,
+    requests_mock,
+):
+    mocked_assessment_endpoint = requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
+    )
+
+    good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 0,
+        "form-0-use_latest_precedent": False,
+        "form-0-good_on_application_id": good_on_application_id,
+        "form-0-latest_precedent_id": "invalid-uuid",
+    }
+    response = authorized_client.post(previous_assessments_url, data)
+    assert response.status_code == 200
+    assert not mocked_assessment_endpoint.called
+    assert response.context["formset"].forms[0].errors == {"latest_precedent_id": ["Enter a valid UUID."]}
+
+
 @pytest.mark.parametrize(
     "is_system_queue",
     (
