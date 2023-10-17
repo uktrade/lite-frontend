@@ -134,3 +134,72 @@ def test_previous_assessments_POST(
         response["location"]
         == "/queues/1b926457-5c9e-4916-8497-51886e51863a/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/"  # /PS-IGNORE
     )
+
+
+@pytest.mark.parametrize(
+    "is_system_queue",
+    (
+        True,
+        False,
+    ),
+)
+def test_case_assign_me_button_when_user_is_already_assigned(
+    is_system_queue,
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    mock_gov_user,
+    assign_user_to_case,
+    good_precedent,
+    previous_assessments_url,
+):
+    # Ported from test_case_assign_me_button_when_user_is_already_assigned in test_case_details
+
+    data_queue["is_system_queue"] = is_system_queue
+    assign_user_to_case(
+        mock_gov_user,
+        data_standard_case,
+    )
+
+    response = authorized_client.get(previous_assessments_url)
+    assert response.status_code == 200
+
+    html = BeautifulSoup(response.content, "html.parser")
+    needs_allocation = html.find(id="allocation-warning")
+
+    assert not needs_allocation
+
+
+@pytest.mark.parametrize(
+    "is_system_queue",
+    (
+        True,
+        False,
+    ),
+)
+def test_case_assign_me_button_when_user_is_not_assigned(
+    is_system_queue,
+    authorized_client,
+    data_queue,
+    data_standard_case,
+    mock_gov_user,
+    good_precedent,
+    previous_assessments_url,
+):
+    # Ported from test_case_assign_me_button_when_user_is_not_assigned in test_case_details
+
+    data_queue["is_system_queue"] = is_system_queue
+    response = authorized_client.get(previous_assessments_url)
+    assert response.status_code == 200
+
+    html = BeautifulSoup(response.content, "html.parser")
+    needs_allocation = html.find(id="allocation-warning")
+    banner_form = html.find("form", attrs={"class": "app-case-warning-banner__action-form"})
+
+    assert "You need to allocate yourself or someone else to this case to work on it" in needs_allocation.text
+    assert needs_allocation.find(id="allocate-case-link").text == "Allocate case"
+    if not is_system_queue:
+        assert needs_allocation.find(id="allocate-to-me-button").text == "Allocate to me"
+        assert banner_form.find(id="id_return_to").get("value") == f"http://testserver{previous_assessments_url}"
+        assert banner_form.find(id="id_case_id").get("value") == data_standard_case["case"]["id"]
+        assert banner_form.find(id="id_user_id").get("value") == mock_gov_user["user"]["id"]
