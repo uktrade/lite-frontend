@@ -99,7 +99,16 @@ def test_previous_assessments_GET(
     assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
     table = soup.find("table", id="tau-form")
     assert table
-    assert [td.text.strip() for td in table.findAll("td", {"class": "readonly-field"})] == ["p1", "ML1a"]
+    assert [td.text.strip().strip() for td in table.findAll("td", {"class": "readonly-field"})] == [
+        "p1",
+        "44",
+        "ML1a",
+        "Yes",
+        "some regime",
+        "some prefix some subject",
+        "woop!",
+        "No",
+    ]
 
 
 def test_previous_assessments_GET_no_precedents(
