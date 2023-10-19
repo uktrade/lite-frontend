@@ -24,12 +24,18 @@
         {% endfor %}
     </div>
 
-    <table id="tau-form" class="govuk-table">
+    <table
+        id="tau-form"
+        class="govuk-table"
+        data-module="select-all-table"
+        data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+        data-select-all-checkbox-selector="input[type=checkbox]"
+    >
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 {% for field in formset.forms.0 %}
-                    {% if field.label and not field.is_hidden %}
-                        <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header">
+                    {% if not field.is_hidden %}
+                        <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
                             {{ field.label }}
                         </th>
                     {% endif %}
@@ -44,11 +50,11 @@
                 <tr class="govuk-table__row">
                     {% for field in form %}
                         {% if not field.is_hidden %}
-                            <td class="govuk-table__cell">
+                            <td class="govuk-table__cell{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
                                 {% for error in field.errors %}
                                 <span class="govuk-error-message">{{error}}</span>
                                 {% endfor %}
-                                {{ field }}
+                                {{ field|as_crispy_field }}
                             </td>
                         {% else %}
                             {{ field }}

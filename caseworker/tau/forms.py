@@ -403,7 +403,11 @@ class TAUPreviousAssessmentForm(forms.Form):
     latest_precedent_id = forms.UUIDField(
         widget=forms.HiddenInput(),
     )
-    use_latest_precedent = forms.BooleanField(initial=True, required=False)
+    use_latest_precedent = forms.BooleanField(
+        initial=True,
+        label="",
+        required=False,
+    )
 
     def __init__(self, *args, good_on_application, **kwargs):
         super().__init__(*args, **kwargs)
