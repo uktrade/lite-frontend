@@ -24,16 +24,16 @@
         {% endfor %}
     </div>
 
-    <table id="tau-form" class="govuk-table">
+    <table
+        id="tau-form"
+        class="govuk-table"
+        data-module="select-all-table"
+        data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+        data-select-all-checkbox-selector="input[type=checkbox]"
+    >
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                {% for field in formset.forms.0 %}
-                    {% if field.label and not field.is_hidden %}
-                        <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header">
-                            {{ field.label }}
-                        </th>
-                    {% endif %}
-                {% endfor %}
+                <th scope="col" class="govuk-table__header govuk-table__cell--checkbox"></th>
                 <th scope="col" class="govuk-table__header">Name</th>
                 <th scope="col" class="govuk-table__header">Control entry</th>
             </tr>
