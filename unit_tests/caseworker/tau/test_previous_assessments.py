@@ -111,6 +111,7 @@ def test_previous_assessments_GET_no_precedents(
     mock_gov_user,
     requests_mock,
 ):
+    """If there are no precedents then the previous assessments page should redirect to the all assessments page"""
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
@@ -125,13 +126,11 @@ def test_previous_assessments_GET_no_precedents(
     )
 
     response = authorized_client.get(previous_assessments_url)
-    assert response.status_code == 200
-
-    # Test elements of case info panel
-    soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
-    missing_message_paragraph = soup.find("p", id="previous-assessments-missing")
-    assert missing_message_paragraph
+    assert response.status_code == 302
+    assert (
+        response["location"]
+        == "/queues/1b926457-5c9e-4916-8497-51886e51863a/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/"  # /PS-IGNORE
+    )
 
 
 def test_previous_assessments_POST(
