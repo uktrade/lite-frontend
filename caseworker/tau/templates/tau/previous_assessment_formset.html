@@ -71,14 +71,12 @@
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}</td>
                     <td class="govuk-table__cell readonly-field">
-                        {% for regime in form.good_on_application.latest_precedent.regime_entries %}
-                            {{regime.name}}<br/>
-                        {% endfor %}
+                        {% include "tau/includes/regime_short_name.html" with regime_entries=form.good_on_application.latest_precedent.regime_entries %}
                     </td>
 
                     {% spaceless %}
                     <td class="govuk-table__cell readonly-field">
-                        {% if not form.good_on_application.latest_precedent.report_summary_prefix or form.good_on_application.latest_precedent.report_summary_subject %}
+                        {% if not form.good_on_application.latest_precedent.report_summary_subject %}
                             <span class="previous-assessments__report-summary">{{form.good_on_application.latest_precedent.report_summary|default:""}}</span>
                         {% else %}
                             {% if form.good_on_application.latest_precedent.report_summary_prefix %}
