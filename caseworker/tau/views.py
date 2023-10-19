@@ -325,7 +325,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Temp
             goods_on_applications=goods_on_applications,
         )
 
-    def get_unassessed_goods_on_applications(self):
+    def get_goods_on_application_to_assess(self):
         return [good for good in self.unassessed_goods if good["latest_precedent"]]
 
     def get_context_data(self, **kwargs):
@@ -338,7 +338,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Temp
             **context,
             "case": self.case,
             "queue_id": self.queue_id,
-            "formset": self.get_formset(self.get_unassessed_goods_on_applications()),
+            "formset": self.get_formset(self.get_goods_on_application_to_assess()),
             "formset_helper": formset_helper,
         }
 
@@ -367,14 +367,14 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Temp
             post_review_good(self.request, self.kwargs["pk"], payload)
 
     def get(self, request, *args, **kwargs):
-        if not self.get_unassessed_goods_on_applications():
+        if not self.get_goods_on_application_to_assess():
             result = redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
             return result
 
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        formset = self.get_formset(self.get_unassessed_goods_on_applications())
+        formset = self.get_formset(self.get_goods_on_application_to_assess())
         if not formset.is_valid():
             return super().get(request, *args, **kwargs)
 
