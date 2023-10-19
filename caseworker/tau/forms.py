@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet
 
 from requests.exceptions import HTTPError
@@ -399,7 +400,10 @@ class TAUPreviousAssessmentForm(forms.Form):
     good_on_application_id = forms.UUIDField(
         widget=forms.HiddenInput(),
     )
-    use_latest_precedent = forms.BooleanField(initial=True)
+    latest_precedent_id = forms.UUIDField(
+        widget=forms.HiddenInput(),
+    )
+    use_latest_precedent = forms.BooleanField(initial=True, required=False)
 
     def __init__(self, *args, good_on_application, **kwargs):
         super().__init__(*args, **kwargs)
@@ -416,3 +420,15 @@ class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
         kwargs = super().get_form_kwargs(index)
         kwargs["good_on_application"] = self.goods_on_applications[index]
         return kwargs
+
+    def clean(self):
+        if any(self.errors):
+            return
+        for form in self.forms:
+            if form.cleaned_data["use_latest_precedent"] and form.good_on_application["latest_precedent"]["id"] != str(
+                form.cleaned_data["latest_precedent_id"]
+            ):
+                # Error out if the latest precedent ID that we have does not match the one
+                # submitted in the form; we do not want to assess a product with values that
+                # a caseworker has not verified themselves.
+                raise ValidationError("A new assessment was made which supersedes your chosen previous assessment.")

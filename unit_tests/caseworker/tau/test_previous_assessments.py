@@ -33,7 +33,41 @@ def previous_assessments_url(data_standard_case):
 
 
 @pytest.fixture
-def good_precedent(requests_mock, data_standard_case, data_queue):
+def tau_assessment_url(data_standard_case):
+    return reverse(
+        "cases:tau:home",
+        kwargs={"queue_pk": "1b926457-5c9e-4916-8497-51886e51863a", "pk": data_standard_case["case"]["id"]},
+    )
+
+
+@pytest.fixture
+def data_good_precedent(data_standard_case, data_queue):
+    case_id = data_standard_case["case"]["id"]
+    return {
+        "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
+        "application": case_id,
+        "queue": data_queue["id"],
+        "reference": data_standard_case["case"]["reference_code"],
+        "destinations": ["France"],
+        "control_list_entries": ["ML1a"],
+        "wassenaar": False,
+        "quantity": 10.0,
+        "value": "test-value",
+        "report_summary": "test-report-summary",
+        "submitted_at": "2021-06-21T11:27:36.145000Z",
+        "goods_starting_point": "GB",
+        "is_good_controlled": True,
+        "regime_entries": [{"pk": "regime-0001", "name": "some regime"}],
+        "report_summary_prefix": {"id": "0001", "name": "some prefix"},
+        "report_summary_subject": {"id": "0002", "name": "some subject"},
+        "comment": "woop!",
+        "is_ncsc_military_information_security": False,
+    }
+
+
+@pytest.fixture
+def mock_good_precedent_endpoint(requests_mock, data_standard_case, data_good_precedent):
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
@@ -44,25 +78,7 @@ def good_precedent(requests_mock, data_standard_case, data_queue):
     precedents_url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
     requests_mock.get(
         precedents_url,
-        json={
-            "results": [
-                {
-                    "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-                    "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
-                    "application": case_id,
-                    "queue": data_queue["id"],
-                    "reference": data_standard_case["case"]["reference_code"],
-                    "destinations": ["France"],
-                    "control_list_entries": ["ML1a"],
-                    "wassenaar": False,
-                    "quantity": 10.0,
-                    "value": "test-value",
-                    "report_summary": "test-report-summary",
-                    "submitted_at": "2021-06-21T11:27:36.145000Z",
-                    "goods_starting_point": "GB",
-                },
-            ]
-        },
+        json={"results": [data_good_precedent]},
     )
 
 
@@ -73,7 +89,7 @@ def test_previous_assessments_GET(
     data_standard_case,
     mock_control_list_entries,
     mock_gov_user,
-    good_precedent,
+    mock_good_precedent_endpoint,
 ):
     response = authorized_client.get(previous_assessments_url)
     assert response.status_code == 200
@@ -125,15 +141,129 @@ def test_previous_assessments_POST(
     data_standard_case,
     mock_control_list_entries,
     mock_gov_user,
-    good_precedent,
+    mock_good_precedent_endpoint,
+    data_good_precedent,
+    requests_mock,
+    tau_assessment_url,
 ):
-    response = authorized_client.post(previous_assessments_url, follow=False)
-    assert response.status_code == 302
-    # TODO: Flesh this out when the form submission is properly handled
-    assert (
-        response["location"]
-        == "/queues/1b926457-5c9e-4916-8497-51886e51863a/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/"  # /PS-IGNORE
+    mocked_assessment_endpoint = requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
     )
+
+    good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 0,
+        "form-0-use_latest_precedent": True,
+        "form-0-good_on_application_id": good_on_application_id,
+        "form-0-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+    }
+    response = authorized_client.post(previous_assessments_url, data, follow=True)
+    assert response.status_code == 200
+    assert mocked_assessment_endpoint.last_request.json() == {
+        "control_list_entries": data_good_precedent["control_list_entries"],
+        "report_summary_subject": data_good_precedent["report_summary_subject"]["id"],
+        "report_summary_prefix": data_good_precedent["report_summary_prefix"]["id"],
+        "comment": data_good_precedent["comment"],
+        "objects": [good_on_application_id],
+        "is_good_controlled": data_good_precedent["is_good_controlled"],
+        "regime_entries": [data_good_precedent["regime_entries"][0]["pk"]],
+        "is_ncsc_military_information_security": data_good_precedent["is_ncsc_military_information_security"],
+        "report_summary": data_good_precedent["report_summary"],
+    }
+    messages = [str(msg) for msg in response.context["messages"]]
+    expected_message = "Assessed 1 products using previous assessments."
+    assert messages == [expected_message]
+    assert response.redirect_chain[-1][0] == tau_assessment_url
+
+
+def test_previous_assessments_POST_mismatched_latest_precedent(
+    authorized_client,
+    previous_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    mock_good_precedent_endpoint,
+    requests_mock,
+):
+    mocked_assessment_endpoint = requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
+    )
+
+    good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 0,
+        "form-0-use_latest_precedent": True,
+        "form-0-good_on_application_id": good_on_application_id,
+        "form-0-latest_precedent_id": "00000000-0000-0000-0000-000000000001",
+    }
+    response = authorized_client.post(previous_assessments_url, data)
+    assert response.status_code == 200
+    assert not mocked_assessment_endpoint.called
+    assert response.context["formset"].non_form_errors() == [
+        "A new assessment was made which supersedes your chosen previous assessment."
+    ]
+
+
+def test_previous_assessments_POST_no_products_selected(
+    authorized_client,
+    previous_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    mock_good_precedent_endpoint,
+    data_good_precedent,
+    requests_mock,
+    tau_assessment_url,
+):
+    mocked_assessment_endpoint = requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
+    )
+
+    good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 0,
+        "form-0-use_latest_precedent": False,
+        "form-0-good_on_application_id": good_on_application_id,
+        "form-0-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+    }
+    response = authorized_client.post(previous_assessments_url, data, follow=True)
+    assert response.status_code == 200
+    assert not mocked_assessment_endpoint.called
+    assert response.redirect_chain[-1][0] == tau_assessment_url
+
+
+def test_previous_assessments_POST_form_invalid(
+    authorized_client,
+    previous_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    mock_good_precedent_endpoint,
+    data_good_precedent,
+    requests_mock,
+):
+    mocked_assessment_endpoint = requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
+    )
+
+    good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 0,
+        "form-0-use_latest_precedent": False,
+        "form-0-good_on_application_id": good_on_application_id,
+        "form-0-latest_precedent_id": "invalid-uuid",
+    }
+    response = authorized_client.post(previous_assessments_url, data)
+    assert response.status_code == 200
+    assert not mocked_assessment_endpoint.called
+    assert response.context["formset"].forms[0].errors == {"latest_precedent_id": ["Enter a valid UUID."]}
 
 
 @pytest.mark.parametrize(
@@ -150,7 +280,7 @@ def test_case_assign_me_button_when_user_is_already_assigned(
     data_standard_case,
     mock_gov_user,
     assign_user_to_case,
-    good_precedent,
+    mock_good_precedent_endpoint,
     previous_assessments_url,
 ):
     # Ported from test_case_assign_me_button_when_user_is_already_assigned in test_case_details
@@ -183,7 +313,7 @@ def test_case_assign_me_button_when_user_is_not_assigned(
     data_queue,
     data_standard_case,
     mock_gov_user,
-    good_precedent,
+    mock_good_precedent_endpoint,
     previous_assessments_url,
 ):
     # Ported from test_case_assign_me_button_when_user_is_not_assigned in test_case_details
