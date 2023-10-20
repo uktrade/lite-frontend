@@ -129,6 +129,7 @@ class CasePage:
         ADMINISTRATIVE_CENTRE = "Administrative Centre"
         EXPORTER_REFERENCE = "Exporter reference"
         SUBMITTED_AT = "Submitted at"
+        FIRST_SUBMITTED_AT = "First submitted at"
         SUBMITTED_BY = "Submitted by"
         STATUS = "Status"
         SUB_STATUS = "Sub-status"
