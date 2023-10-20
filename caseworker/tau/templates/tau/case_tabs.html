@@ -19,11 +19,11 @@
 			<a id="tab-activity" href="{% url 'cases:case' queue.id case.id 'activity' %}" class="lite-tabs__tab ">
 				Notes and timeline
 			</a>
-			<a id="tab-advice" href="{% url 'cases:case' queue.id case.id 'advice' %}" class="lite-tabs__tab">
-				Recommendations and decision
-			</a>
 			<a id="tab-assessment" href="{% url 'cases:tau:home' queue.id case.id %}" class="lite-tabs__tab lite-tabs__tab--selected">
 				Product assessment
+			</a>
+			<a id="tab-advice" href="{% url 'cases:case' queue.id case.id 'advice' %}" class="lite-tabs__tab">
+				Recommendations and decision
 			</a>
 		</div>
 	</div>

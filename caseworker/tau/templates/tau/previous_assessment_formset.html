@@ -1,0 +1,107 @@
+{% load crispy_forms_tags %}
+{% load crispy_forms_utils %}
+{% load crispy_forms_field %}
+{% load rules %}
+
+{% specialspaceless %}
+{% if formset_tag %}
+<form {{ flat_attrs }} method="{{ form_method }}" {% if formset.is_multipart %} enctype="multipart/form-data"{% endif %}>
+{% endif %}
+    {% if formset_method|lower == 'post' and not disable_csrf %}
+        {% csrf_token %}
+    {% endif %}
+
+    <div>
+        {{ formset.management_form|crispy }}
+    </div>
+
+
+    <div class="previous-assessment-formset-errors">
+        {% for error in formset.non_form_errors %}
+        <span class="govuk-error-message">
+          Error: {{error}}
+        </span>
+        {% endfor %}
+    </div>
+
+    <table
+        id="tau-form"
+        class="govuk-table"
+        data-module="select-all-table"
+        data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+        data-select-all-checkbox-selector="input[type=checkbox]"
+    >
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                {% for field in formset.forms.0 %}
+                    {% if not field.is_hidden %}
+                        <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
+                            {{ field.label }}
+                        </th>
+                    {% endif %}
+                {% endfor %}
+                <th scope="col" class="govuk-table__header">Product Name</th>
+                <th scope="col" class="govuk-table__header">Part number</th>
+                <th scope="col" class="govuk-table__header">Control entry</th>
+                <th scope="col" class="govuk-table__header">Licence</th>
+                <th scope="col" class="govuk-table__header">Regimes</th>
+                <th scope="col" class="govuk-table__header">Report summary</th>
+                <th scope="col" class="govuk-table__header">Assessment note</th>
+                <th scope="col" class="govuk-table__header">Refer to NCSC</th>
+            </tr>
+        </thead>
+
+        <tbody class="govuk-table__body">
+            {% for form in formset %}
+                <tr class="govuk-table__row">
+                    {% for field in form %}
+                        {% if not field.is_hidden %}
+                            <td class="govuk-table__cell{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
+                                {% for error in field.errors %}
+                                <span class="govuk-error-message">{{error}}</span>
+                                {% endfor %}
+                                {{ field|as_crispy_field }}
+                            </td>
+                        {% else %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.name }}</td>
+                    <td class="govuk-table__cell readonly-field">{{form.good_on_application.good.part_number}}</td>
+                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
+                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}</td>
+                    <td class="govuk-table__cell readonly-field">
+                        {% include "tau/includes/regime_short_name.html" with regime_entries=form.good_on_application.latest_precedent.regime_entries %}
+                    </td>
+
+                    {% spaceless %}
+                    <td class="govuk-table__cell readonly-field">
+                        {% if not form.good_on_application.latest_precedent.report_summary_subject %}
+                            <span class="previous-assessments__report-summary">{{form.good_on_application.latest_precedent.report_summary|default:""}}</span>
+                        {% else %}
+                            {% if form.good_on_application.latest_precedent.report_summary_prefix %}
+                                <span class="previous-assessments__report-summary-prefix">{{form.good_on_application.latest_precedent.report_summary_prefix.name}} </span>
+                            {% endif %}
+                            {% if form.good_on_application.latest_precedent.report_summary_subject %}
+                                <span class="previous-assessments__report-summary-subject">{{form.good_on_application.latest_precedent.report_summary_subject.name}}</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    {% endspaceless %}
+                    <td class="govuk-table__cell readonly-field">
+                        {{ form.good_on_application.latest_precedent.comment|default:"" }}
+                    </td>
+                    <td class="govuk-table__cell readonly-field">
+                        {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
+    {% if can_user_assess_products %}
+        <button class="govuk-button">Approve and continue</button>
+    {% endif %}
+
+{% if formset_tag %}</form>{% endif %}
+{% endspecialspaceless %}
