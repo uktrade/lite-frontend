@@ -1,4 +1,5 @@
 {% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block back_link %}{% endblock %}
 
@@ -12,8 +13,19 @@
             <h1 class="govuk-heading-l">Search products</h1>
         </div>
     </div>
+
+    <div class="govuk-!-margin-top-4">
+        <div class="search-div">
+            <div class="product-search">
+                {% crispy form %}
+            </div>
+        </div>
+    </div>
+
     <section class="search-results govuk-!-margin-top-4">
-        <h1 class="govuk-body">{{ search_results.count }} products found</h1>
+        {% if search_results.count %}
+            <h1 class="govuk-body">{{ search_results.count }} products found</h1>
+        {% endif %}
         {% for good in search_results.results %}
             <article class="search-result">
                 <header class="search-result__header">
@@ -48,7 +60,11 @@
                     <tbody class="govuk-table__body">
                         {% for good_on_application in good.inner_hits.hits %}
                             <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__cell govuk-body">{{ good_on_application.application.reference_code }}</th>
+                                <th scope="row" class="govuk-table__cell govuk-body">
+                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' ALL_CASES_QUEUE_ID good_on_application.application.id %}">
+                                        <span class="govuk-visually-hidden">View</span> {{ good_on_application.application.reference_code }}
+                                    </a>
+                                </th>
                                 <td class="govuk-table__cell">{{ good_on_application.destination }}</td>
                                 <td class="govuk-table__cell">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                                 <td class="govuk-table__cell">{{ good_on_application.report_summary|default:"" }}</td>
@@ -59,5 +75,7 @@
                 </table>
             </article>
         {% endfor %}
+
+        {% pagination %}
     </section>
 {% endblock %}
