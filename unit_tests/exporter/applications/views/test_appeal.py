@@ -19,11 +19,6 @@ def setup(mock_refused_application_get, mock_application_get, data_standard_case
     data_standard_case["case"]["data"]["appeal_deadline"] = (timezone.now() + timedelta(days=1)).isoformat()
 
 
-@pytest.fixture(autouse=True)
-def feature_switch(settings):
-    settings.FEATURE_FLAG_APPEALS = True
-
-
 @pytest.fixture
 def invalid_application_pk():
     return "82617c05-a050-428b-ae68-ed5dc985f4af"
@@ -135,13 +130,6 @@ def appeal_url(application_pk):
 @pytest.fixture
 def appeal_confirmation_url(application_pk, appeal_pk):
     return reverse("applications:appeal_confirmation", kwargs={"case_pk": application_pk, "appeal_pk": appeal_pk})
-
-
-def test_appeal_view_feature_flag_off(authorized_client, appeal_url, settings):
-    settings.FEATURE_FLAG_APPEALS = False
-
-    response = authorized_client.get(appeal_url)
-    assert response.status_code == 404
 
 
 def test_appeal_view_invalid_application_id(authorized_client, invalid_application_pk):

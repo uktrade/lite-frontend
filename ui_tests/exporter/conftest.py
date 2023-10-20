@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from django.utils import timezone
 from faker import Faker  # noqa
 from pytest_bdd import given, when, then, parsers
@@ -120,7 +121,7 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
 
-    if "signin" in driver.current_url:
+    if "signin" in driver.current_url and not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         GovukSigninPage(driver).sign_in(exporter_info["email"], exporter_info["password"])
 
     if "select-organisation" in driver.current_url:

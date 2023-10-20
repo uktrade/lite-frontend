@@ -49,8 +49,7 @@ confidence=
 # multiple time. See also the "--disable" option for examples.
 disable=all
 
-enable=import-error,
-       import-self,
+enable=import-self,
        reimported,
        wildcard-import,
        misplaced-future,
@@ -170,7 +169,6 @@ enable=import-error,
        not-context-manager,
        repeated-keyword,
        missing-kwoa,
-       no-value-for-parameter,
        invalid-sequence-index,
        invalid-slice-index,
        unexpected-keyword-arg,
