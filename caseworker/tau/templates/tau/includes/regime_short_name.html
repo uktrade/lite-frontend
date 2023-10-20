@@ -1,0 +1,3 @@
+{% for regime_entry in regime_entries %}
+    {{ regime_entry.shortened_name|default:regime_entry.name }}<br>
+{% endfor %}
