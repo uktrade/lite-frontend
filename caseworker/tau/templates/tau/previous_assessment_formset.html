@@ -40,7 +40,7 @@
                         </th>
                     {% endif %}
                 {% endfor %}
-                <th scope="col" class="govuk-table__header">Product Name</th>
+                <th scope="col" class="govuk-table__header">Product name</th>
                 <th scope="col" class="govuk-table__header">Part number</th>
                 <th scope="col" class="govuk-table__header">Control entry</th>
                 <th scope="col" class="govuk-table__header">Licence</th>
@@ -60,7 +60,16 @@
                                 {% for error in field.errors %}
                                 <span class="govuk-error-message">{{error}}</span>
                                 {% endfor %}
-                                {{ field|as_crispy_field }}
+                                {% if field|is_checkbox %}
+                                    <div class="previous-assessment-checkbox-cell">
+                                        {{ field|as_crispy_field }}
+                                        <div class="previous-assessment-checkbox-cell__line-number">
+                                            {{ form.good_on_application.line_number }}.
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    {{ field|as_crispy_field }}
+                                {% endif %}
                             </td>
                         {% else %}
                             {{ field }}

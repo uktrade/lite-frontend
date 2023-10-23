@@ -54,4 +54,20 @@
   &__action {
     margin-bottom: 0;
   }
+
+  td {
+    vertical-align: middle;
+  }
+
+}
+
+
+div.previous-assessment-checkbox-cell {
+  display: flex;
+  align-items: center;
+
+  .govuk-form-group {
+    margin-bottom: 20px;
+  }
+
 }
