@@ -19,7 +19,7 @@
     <div class="previous-assessment-formset__errors">
         {% for error in formset.non_form_errors %}
         <span class="govuk-error-message">
-          Error: {{error}}
+          Error: {{ error }}
         </span>
         {% endfor %}
     </div>
@@ -76,7 +76,7 @@
                         {% endif %}
                     {% endfor %}
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.name }}</td>
-                    <td class="govuk-table__cell readonly-field">{{form.good_on_application.good.part_number}}</td>
+                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.part_number }}</td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}</td>
                     <td class="govuk-table__cell readonly-field">
@@ -86,13 +86,13 @@
                     {% spaceless %}
                     <td class="govuk-table__cell readonly-field">
                         {% if not form.good_on_application.latest_precedent.report_summary_subject %}
-                            <span class="previous-assessments__report-summary">{{form.good_on_application.latest_precedent.report_summary|default:""}}</span>
+                            <span class="previous-assessments__report-summary">{{ form.good_on_application.latest_precedent.report_summary|default:"" }}</span>
                         {% else %}
                             {% if form.good_on_application.latest_precedent.report_summary_prefix %}
-                                <span class="previous-assessments__report-summary-prefix">{{form.good_on_application.latest_precedent.report_summary_prefix.name}} </span>
+                                <span class="previous-assessments__report-summary-prefix">{{ form.good_on_application.latest_precedent.report_summary_prefix.name }} </span>
                             {% endif %}
                             {% if form.good_on_application.latest_precedent.report_summary_subject %}
-                                <span class="previous-assessments__report-summary-subject">{{form.good_on_application.latest_precedent.report_summary_subject.name}}</span>
+                                <span class="previous-assessments__report-summary-subject">{{ form.good_on_application.latest_precedent.report_summary_subject.name }}</span>
                             {% endif %}
                         {% endif %}
                     </td>
