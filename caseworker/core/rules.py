@@ -38,24 +38,14 @@ is_user_allocated = is_user_case_officer | is_user_assigned  # noqa
 
 @rules.predicate
 def is_user_in_admin_team(request):
-    try:
-        user = request.lite_user
-    except AttributeError:
-        return False
-    if user:
-        return user["team"]["id"] == ADMIN_TEAM_ID
-    return False
+    user = getattr(request, "lite_user", None)
+    return user and user.get("team", {}).get("id") == ADMIN_TEAM_ID
 
 
 @rules.predicate
 def is_user_in_tau_team(request):
-    try:
-        user = request.lite_user
-    except AttributeError:
-        return False
-    if user:
-        return user["team"]["id"] == TAU_TEAM_ID
-    return False
+    user = getattr(request, "lite_user", None)
+    return user and user.get("team", {}).get("id") == TAU_TEAM_ID
 
 
 rules.add_rule("can_user_change_case", is_user_allocated)
