@@ -261,12 +261,10 @@ def test_can_use_change_sub_status(
         ({"id": LICENSING_UNIT_TEAM_ID, "name": "Licensing Unit", "alias": "LICENSING_UNIT"}, False),
     ),
 )
-def test_can_user_see_link_to_product_search_in_app_header(
-    mock_gov_user, get_mock_request, mock_gov_user_team, expected
-):
+def test_can_user_search_products(mock_gov_user, get_mock_request, mock_gov_user_team, expected):
     user = mock_gov_user
     user["team"] = mock_gov_user_team
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_see_link_to_product_search_in_app_header", request) == expected
+    assert rules.test_rule("can_user_search_products", request) == expected

@@ -54,8 +54,8 @@
 				</span>
 			</a>
 			<span></span>
-			{% test_rule 'can_user_see_link_to_product_search_in_app_header' request as is_product_search_visible %}
-			{% if is_product_search_visible %}
+			{% test_rule 'can_user_search_products' request as show_product_search %}
+			{% if show_product_search %}
 			<a id="link-product-search" class="app-header__link" href="{% url 'search:products' %}">Search for products</a>
 			{% else %}
 			<span></span>

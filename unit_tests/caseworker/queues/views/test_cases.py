@@ -1075,7 +1075,7 @@ def test_case_row_sub_status(
 
 
 @pytest.mark.parametrize(
-    ("gov_user_obj", "expected"),
+    ("mock_gov_user_team", "expected"),
     (
         ({"id": ADMIN_TEAM_ID, "name": "Admin", "alias": None}, True),
         ({"id": TAU_TEAM_ID, "name": "TAU", "alias": "TAU"}, True),
@@ -1084,9 +1084,9 @@ def test_case_row_sub_status(
     ),
 )
 def test_product_search_is_visible_to_specific_users_only(
-    authorized_client, requests_mock, mock_gov_user, gov_uk_user_id, gov_user_obj, expected
+    authorized_client, requests_mock, mock_gov_user, gov_uk_user_id, mock_gov_user_team, expected
 ):
-    mock_gov_user["user"]["team"] = gov_user_obj
+    mock_gov_user["user"]["team"] = mock_gov_user_team
     url = client._build_absolute_uri("/gov-users/")
     requests_mock.get(url=f"{url}me/", json=mock_gov_user)
 
