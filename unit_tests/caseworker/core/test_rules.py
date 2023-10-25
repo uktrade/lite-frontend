@@ -6,6 +6,7 @@ from django.http import HttpRequest
 
 from core import client
 from caseworker.core import rules as caseworker_rules
+from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
@@ -249,3 +250,23 @@ def test_can_use_change_sub_status(
     }
     request = get_mock_request(mock_gov_user["user"])
     assert rules.test_rule("can_user_change_sub_status", request, assigned_case) is expected
+
+
+@pytest.mark.parametrize(
+    ("mock_gov_user_team", "expected"),
+    (
+        ({"id": ADMIN_TEAM_ID, "name": "Admin", "alias": None}, True),
+        ({"id": TAU_TEAM_ID, "name": "TAU", "alias": "TAU"}, True),
+        ({"id": FCDO_TEAM_ID, "name": "FCDO", "alias": "FCO"}, False),
+        ({"id": LICENSING_UNIT_TEAM_ID, "name": "Licensing Unit", "alias": "LICENSING_UNIT"}, False),
+    ),
+)
+def test_can_user_see_link_to_product_search_in_app_header(
+    mock_gov_user, get_mock_request, mock_gov_user_team, expected
+):
+    user = mock_gov_user
+    user["team"] = mock_gov_user_team
+
+    request = get_mock_request(user)
+
+    assert rules.test_rule("can_user_see_link_to_product_search_in_app_header", request) == expected

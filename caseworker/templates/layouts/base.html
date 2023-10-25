@@ -1,6 +1,7 @@
 {% load svg from svg %}
 {% load static %}
 {% load gtm %}
+{% load rules %}
 
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -53,6 +54,7 @@
 				</span>
 			</a>
 			<span></span>
+			{% test_rule 'can_user_see_link_to_product_search_in_app_header' request as is_product_search_visible %}
 			{% if is_product_search_visible %}
 			<a id="link-product-search" class="app-header__link" href="{% url 'search:products' %}">Search for products</a>
 			{% else %}

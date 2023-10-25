@@ -51,7 +51,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.messages.context_processors.messages",
                 "caseworker.core.context_processors.current_queue_and_user",
-                "caseworker.core.context_processors.is_product_search_visible",
                 "caseworker.core.context_processors.export_vars",
                 "caseworker.core.context_processors.lite_menu",
                 "caseworker.core.context_processors.new_mentions",

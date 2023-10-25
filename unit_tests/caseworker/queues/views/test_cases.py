@@ -1075,7 +1075,7 @@ def test_case_row_sub_status(
 
 
 @pytest.mark.parametrize(
-    ("gov_user_obj", "is_product_search_visible"),
+    ("gov_user_obj", "expected"),
     (
         ({"id": ADMIN_TEAM_ID, "name": "Admin", "alias": None}, True),
         ({"id": TAU_TEAM_ID, "name": "TAU", "alias": "TAU"}, True),
@@ -1084,12 +1084,13 @@ def test_case_row_sub_status(
     ),
 )
 def test_product_search_is_visible_to_specific_users_only(
-    authorized_client, requests_mock, mock_gov_user, gov_uk_user_id, gov_user_obj, is_product_search_visible
+    authorized_client, requests_mock, mock_gov_user, gov_uk_user_id, gov_user_obj, expected
 ):
     mock_gov_user["user"]["team"] = gov_user_obj
     url = client._build_absolute_uri("/gov-users/")
     requests_mock.get(url=f"{url}me/", json=mock_gov_user)
-    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
 
     response = authorized_client.get(reverse("queues:cases"))
-    assert response.context["is_product_search_visible"] == is_product_search_visible
+    soup = BeautifulSoup(response.content, "html.parser")
+    is_product_search_visible = soup.find(id="link-product-search") is not None
+    assert is_product_search_visible == expected
