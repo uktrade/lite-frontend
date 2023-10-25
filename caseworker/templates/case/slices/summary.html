@@ -65,23 +65,23 @@
 			</dd>
 		</div>
 	{% endif %}
-	{% if case.data.submitted_at and not case.case_type.reference.key in "comp_c,comp_v" %}
+	{% if case.original_submitted_at and not case.case_type.reference.key in "comp_c,comp_v" %}
 		<div class="app-case__summary-list__row">
 			<dt class="app-case__summary-list__key">
 				{% lcs 'cases.CasePage.DetailsTab.SUBMITTED_AT' %}
 			</dt>
 			<dd class="app-case__summary-list__value">
-				{{ case.data.submitted_at|str_date }}
+				{{ case.original_submitted_at|str_date }}
 			</dd>
 		</div>
 	{% endif %}
-	{% if case.first_submitted_at and not case.case_type.reference.key in "comp_c,comp_v" %}
+	{% if case.data.submitted_at and not case.case_type.reference.key in "comp_c,comp_v" %}
 		<div class="app-case__summary-list__row">
 			<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.DetailsTab.FIRST_SUBMITTED_AT' %}
+				{% lcs 'cases.CasePage.DetailsTab.RE_SUBMITTED_AT' %}
 			</dt>
 			<dd class="app-case__summary-list__value">
-				{{ case.first_submitted_at|str_date }}
+				{{ case.data.submitted_at|str_date }}
 			</dd>
 		</div>
 	{% endif %}
