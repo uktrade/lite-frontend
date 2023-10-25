@@ -1092,5 +1092,5 @@ def test_product_search_is_visible_to_specific_users_only(
 
     response = authorized_client.get(reverse("queues:cases"))
     soup = BeautifulSoup(response.content, "html.parser")
-    is_product_search_visible = soup.find(id="link-product-search") is not None
+    is_product_search_visible = "Search for products" in str(soup.find(id="link-product-search"))
     assert is_product_search_visible == expected
