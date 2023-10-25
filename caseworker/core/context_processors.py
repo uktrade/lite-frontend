@@ -14,7 +14,7 @@ from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.helpers import conditional
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
-from caseworker.core.constants import ALL_CASES_QUEUE_ID
+from caseworker.core.constants import ALL_CASES_QUEUE_ID, TAU_TEAM_ID, ADMIN_TEAM_ID
 
 
 def current_queue_and_user(request):
@@ -31,6 +31,20 @@ def current_queue_and_user(request):
         user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
         current_user = user.get("user", None)
     extra_context["current_user"] = current_user
+
+    return extra_context
+
+
+def is_product_search_visible(request):
+    extra_context = {}
+    is_product_search_visible = False
+    if "lite_api_user_id" in request.session:
+        user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
+        current_user = user.get("user", None)
+        is_product_search_visible = (current_user["team"]["id"] == TAU_TEAM_ID) or (
+            current_user["team"]["id"] == ADMIN_TEAM_ID
+        )
+    extra_context["is_product_search_visible"] = is_product_search_visible
 
     return extra_context
 

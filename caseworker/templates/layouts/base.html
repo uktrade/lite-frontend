@@ -53,6 +53,11 @@
 				</span>
 			</a>
 			<span></span>
+			{% if is_product_search_visible %}
+			<a id="link-product-search" class="app-header__link" href="{% url 'search:products' %}">Search for products</a>
+			{% else %}
+			<span></span>
+			{% endif %}
 			<a id="link-mentions" class="app-header__link" href="{% url 'users:user_case_note_mentions' %}">
 				{% if NEW_MENTIONS_COUNT > 0 %}
 					<strong>
