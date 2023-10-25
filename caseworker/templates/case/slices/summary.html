@@ -68,7 +68,7 @@
 	{% if case.original_submitted_at and not case.case_type.reference.key in "comp_c,comp_v" %}
 		<div class="app-case__summary-list__row">
 			<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.DetailsTab.SUBMITTED_AT' %}
+				Submitted at
 			</dt>
 			<dd class="app-case__summary-list__value">
 				{{ case.original_submitted_at|str_date }}
@@ -78,7 +78,7 @@
 	{% if case.data.submitted_at and not case.case_type.reference.key in "comp_c,comp_v" %}
 		<div class="app-case__summary-list__row">
 			<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.DetailsTab.RE_SUBMITTED_AT' %}
+				Re-submitted at
 			</dt>
 			<dd class="app-case__summary-list__value">
 				{{ case.data.submitted_at|str_date }}
