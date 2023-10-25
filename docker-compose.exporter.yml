@@ -27,6 +27,7 @@ services:
       - 8300:8300
     volumes:
       - ./ui_tests/screenshots:/app/ui_tests/screenshots
+      - ./circleci:/app/circleci
       - ./test_results:/app/test_results
     entrypoint: ["/bin/sh","-c"]
     command:

@@ -261,6 +261,7 @@ jobs:
   caseworker_e2e_test:
     machine:
       image: ubuntu-2204:current
+    parallelism: 5
     resource_class: large
     steps:
       - prepare_e2e_tests:
@@ -271,6 +272,7 @@ jobs:
   exporter_e2e_test:
     machine:
       image: ubuntu-2204:current
+    parallelism: 5
     resource_class: large
     steps:
       - prepare_e2e_tests:
