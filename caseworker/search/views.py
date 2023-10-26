@@ -16,6 +16,7 @@ class ProductSearchView(LoginRequiredMixin, FormView):
         query_params = {
             "search": form.cleaned_data["search_string"],
             "page": form.cleaned_data["page"],
+            "query_type": form.cleaned_data["query_type"],
         }
         results = get_product_search_results(self.request, query_params)
         results = group_results_by_cle(results)

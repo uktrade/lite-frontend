@@ -79,11 +79,18 @@ class CommentForm(forms.Form):
 
 class ProductSearchForm(forms.Form):
     page_size = 25
+    QUERY_TYPE_CHOICES = [
+        ("query_string", "Query string (AND, OR, NOT ...)"),
+        ("simple_query_string", "Simple query string (+, |, -  ...)"),
+    ]
 
     search_string = forms.CharField(
         label="Enter a product name, part number, control entry or report summary",
         required=False,
     )
+
+    query_type = forms.ChoiceField(choices=QUERY_TYPE_CHOICES, widget=forms.RadioSelect, label="", required=False)
+
     page = forms.IntegerField(widget=forms.HiddenInput(), required=False, initial=1)
 
     def __init__(self, *args, **kwargs):
@@ -92,6 +99,7 @@ class ProductSearchForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "search_string",
+            "query_type",
             Submit("submit", "Search"),
         )
 

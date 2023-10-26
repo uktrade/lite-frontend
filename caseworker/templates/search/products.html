@@ -20,6 +20,40 @@
             <div class="product-search">
                 {% crispy form %}
             </div>
+            <div class="govuk-body">
+                <strong>Example queries</strong><br>
+
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">
+                                Query string
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                Simple query string
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                sporting AND rifle<br>
+                                name:rifle AND part_number:2*<br>
+                                name:rifles AND "cleaning kit"<br>
+                                name:Therm* AND sensor NOT camera<br>
+                                report_summary:components AND name:sensor NOT camera<br>
+                                (components for military) AND name:rifle<br>
+                            </td>
+                            <td class="govuk-table__cell">
+                                sporting + rifle<br>
+                                *imag + camera<br>
+                                rifles + "cleaning kit"<br>
+                                Therm* + (sensor -camera)<br>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
