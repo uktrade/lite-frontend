@@ -367,7 +367,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
             # The call here includes a raise_for_status() invocation, so further error handling
             # is unnecessary for now as we would prefer the user hit a hard error and further
             # investigation to happen in sentry
-            post_review_good(self.request, self.kwargs["pk"], payload)
+            return post_review_good(self.request, self.kwargs["pk"], payload)
 
     def formset_valid(self, formset):
         # Build a datastructure of previous assessments for each good on application
