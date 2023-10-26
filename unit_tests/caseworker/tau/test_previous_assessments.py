@@ -8,6 +8,7 @@ from django.urls import reverse
 
 from core import client
 from caseworker.tau import views
+from core.exceptions import ServiceError
 
 
 @pytest.fixture(autouse=True)
@@ -351,3 +352,38 @@ def test_case_assign_me_button_when_user_is_not_assigned(
         assert banner_form.find(id="id_return_to").get("value") == f"http://testserver{previous_assessments_url}"
         assert banner_form.find(id="id_case_id").get("value") == data_standard_case["case"]["id"]
         assert banner_form.find(id="id_user_id").get("value") == mock_gov_user["user"]["id"]
+
+
+@pytest.fixture
+def mock_previous_assessments_POST_failure(
+    requests_mock,
+    data_standard_case,
+):
+    return requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"),
+        json={},
+        status_code=500,
+    )
+
+
+def test_previous_assessments_POST_failure(
+    authorized_client,
+    mock_previous_assessments_POST_failure,
+    mock_good_precedent_endpoint,
+    previous_assessments_url,
+    data_standard_case,
+):
+    good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 0,
+        "form-0-use_latest_precedent": True,
+        "form-0-good_on_application_id": good_on_application_id,
+        "form-0-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+    }
+
+    with pytest.raises(ServiceError) as ex:
+        authorized_client.post(previous_assessments_url, data, follow=True)
+
+    assert ex.value.status_code == 500
+    assert ex.value.user_message == "Unexpected error asseing good with previous assessments"

@@ -340,6 +340,11 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
 
         return super().get(request, *args, **kwargs)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error asseing good with previous assessments",
+        "Unexpected error asseing good with previous assessments",
+    )
     def assess_with_previous_assessments(self, previous_assessments):
         for good_on_application_id, previous_assessment in previous_assessments.items():
             payload = {
