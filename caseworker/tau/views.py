@@ -40,7 +40,7 @@ from caseworker.tau.services import (
     group_gonas_by_good,
 )
 from caseworker.tau.summaries import get_good_on_application_tau_summary
-from caseworker.tau.utils import get_cle_suggestions_json
+from caseworker.tau.utils import get_cle_suggestions_json, get_tau_tab_url_name
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 
@@ -179,7 +179,7 @@ class TAUMixin(CaseTabsMixin):
         context.update(
             {
                 "tabs": self.get_standard_application_tabs(),
-                "current_tab": "cases:tau:home",
+                "current_tab": get_tau_tab_url_name(),
             }
         )
 

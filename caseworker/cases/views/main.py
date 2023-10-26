@@ -74,6 +74,7 @@ from caseworker.core.services import get_status_properties, get_permissible_stat
 from caseworker.core.constants import Permission
 from caseworker.external_data.services import search_denials
 from caseworker.queues.services import get_queue
+from caseworker.tau.utils import get_tau_tab_url_name
 from caseworker.teams.services import get_teams
 from caseworker.users.services import (
     get_gov_user,
@@ -130,7 +131,7 @@ class CaseTabsMixin:
         return Tab(
             "assessment",
             "Product assessment",
-            "cases:tau:home",
+            get_tau_tab_url_name(),
             has_template=False,
         )
 
