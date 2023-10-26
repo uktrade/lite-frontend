@@ -112,8 +112,8 @@ class CaseTabsMixin:
     def get_standard_application_tabs(self):
         tabs = self.get_tabs()
         tabs.append(self.get_notes_and_timelines_tab())
-        tabs.append(self.get_advice_tab())
         tabs.append(self.get_assessment_tab())
+        tabs.append(self.get_advice_tab())
 
         return tabs
 

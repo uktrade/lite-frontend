@@ -262,3 +262,58 @@ def disagree_with_outcome(driver, comments):  # noqa
 @then(parsers.parse('I see "{comments}" as countersign comments'))
 def check_countersign_comments(driver, comments):  # noqa
     assert RecommendationsAndDecisionPage(driver).get_countersign_comments() == comments
+
+
+@then(parsers.parse('I see "{inform_letter}" in decision documents'))
+def see_inform_letter(driver, inform_letter):
+    elements = driver.find_elements(By.CSS_SELECTOR, "td.govuk-table__cell")
+    matching_elements = [e for e in elements if inform_letter in e.text]
+
+    assert matching_elements[0]
+
+
+@when(parsers.parse('I click "{inform_letter_button}" button'))
+def create_inform_letter(driver, inform_letter_button):
+    if inform_letter_button == "Create Inform letter" or inform_letter_button == "Recreate":
+        id = "generate-document-inform"
+        driver.find_element(By.ID, id).click()
+    if inform_letter_button == "Send inform letter":
+        row = driver.find_element(By.CSS_SELECTOR, "tr#decision-inform")
+        button = row.find_element(By.CSS_SELECTOR, "button")
+        if button.text == "Send inform letter":
+            button.click()
+
+
+@when(parsers.parse('I select "{template}" radio button'))
+def select_template_radio(driver, template):
+    labels = driver.find_elements(By.CSS_SELECTOR, "label.govuk-label")
+    for label in labels:
+        if template in label.text:
+            input_id = label.get_attribute("for")
+            driver.find_element(By.ID, input_id).click()
+            break
+
+
+@then(parsers.parse('I see "{status}" inform letter status in decision documents'))
+def check_status(driver, status):
+    element = driver.find_element(By.ID, "status-inform")
+    assert element.text == status
+
+
+@when(parsers.parse("I click inform letter edit link"))
+def click_edit_inform_letter(driver):
+    row = driver.find_element(By.CSS_SELECTOR, "tr#decision-inform")
+    row.find_element(By.CSS_SELECTOR, "a[href*='edit-letter/inform']").click()
+
+
+@when(parsers.parse('I edit template with "{text}"'))
+def edit_template(driver, text):
+    textarea = driver.find_element(By.ID, "id_text")
+    textarea.clear()
+    textarea.send_keys(text)
+
+
+@then(parsers.parse('I see the "{content}" text on the document preview'))
+def should_see_content_on_inform_letter(driver, content):
+    text = GeneratedDocument(driver).get_document_preview_text()
+    assert content in text
