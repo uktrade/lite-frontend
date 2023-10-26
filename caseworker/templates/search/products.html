@@ -58,7 +58,7 @@
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                        {% for good_on_application in good.inner_hits.hits %}
+                        {% for good_on_application in good.distinct_rating_hits %}
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__cell govuk-body">
                                     <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:home' ALL_CASES_QUEUE_ID good_on_application.application.id %}">
@@ -73,6 +73,36 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                {% if good.remaining_hits|length %}
+                    <div class="product-search-cle-remaining-hits">
+                        <details class="govuk-details" data-module="govuk-details">
+                            <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text">
+                                Show more cases for this product
+                            </span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                <table class="govuk-table">
+                                    <tbody class="govuk-table__body">
+                                        {% for good_on_application in good.remaining_hits %}
+                                            <tr class="govuk-table__row">
+                                                <th scope="row" class="govuk-table__cell govuk-body">
+                                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' ALL_CASES_QUEUE_ID good_on_application.application.id %}">
+                                                        <span class="govuk-visually-hidden">View</span> {{ good_on_application.application.reference_code }}
+                                                    </a>
+                                                </th>
+                                                <td class="govuk-table__cell">{{ good_on_application.destination }}</td>
+                                                <td class="govuk-table__cell">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                                                <td class="govuk-table__cell">{{ good_on_application.report_summary|default:"" }}</td>
+                                                <td class="govuk-table__cell">{{ good_on_application.rating_comment|default:"" }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>
+                    </div>
+                {% endif %}
             </article>
         {% endfor %}
 
