@@ -386,4 +386,4 @@ def test_previous_assessments_POST_failure(
         authorized_client.post(previous_assessments_url, data, follow=True)
 
     assert ex.value.status_code == 500
-    assert ex.value.user_message == "Unexpected error asseing good with previous assessments"
+    assert ex.value.user_message == "Unexpected error assessing good with previous assessments"

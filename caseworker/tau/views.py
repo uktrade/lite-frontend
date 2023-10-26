@@ -342,8 +342,8 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
 
     @expect_status(
         HTTPStatus.OK,
-        "Error asseing good with previous assessments",
-        "Unexpected error asseing good with previous assessments",
+        "Error assessing good with previous assessments",
+        "Unexpected error assessing good with previous assessments",
     )
     def assess_with_previous_assessments(self, previous_assessments):
         for good_on_application_id, previous_assessment in previous_assessments.items():
@@ -368,6 +368,8 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
             # is unnecessary for now as we would prefer the user hit a hard error and further
             # investigation to happen in sentry
             return post_review_good(self.request, self.kwargs["pk"], payload)
+
+        return {}, HTTPStatus.OK
 
     def formset_valid(self, formset):
         # Build a datastructure of previous assessments for each good on application
