@@ -1763,6 +1763,40 @@ def data_search():
                 "highlight": {"goods.part_number.raw": ["<b>44</b>"]},
                 "index": "lite",
                 "score": 1.0,
+                "inner_hits": {
+                    "hits": [
+                        {
+                            "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",
+                            "control_list_entries": [{"rating": "ML1a", "text": "Rifles"}],
+                            "queues": [],
+                            "name": "RIFLE",
+                            "destination": "France",
+                            "date": "21 December 2022",
+                            "application": {
+                                "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",
+                                "reference_code": "GBSIEL/2020/0000001/P",
+                            },
+                            "rating_comment": "Rifle",
+                            "report_summary": "guns",
+                            "part_number": "",
+                        },
+                        {
+                            "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",
+                            "control_list_entries": [{"rating": "ML1a", "text": "Rifles"}],
+                            "queues": [],
+                            "name": "RIFLE",
+                            "destination": "Germany",
+                            "date": "21 December 2022",
+                            "application": {
+                                "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",
+                                "reference_code": "GBSIEL/2020/0000001/P",
+                            },
+                            "rating_comment": "Rifle",
+                            "report_summary": "guns",
+                            "part_number": "",
+                        },
+                    ],
+                },
             }
         ],
     }

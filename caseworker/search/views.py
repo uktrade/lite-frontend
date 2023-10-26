@@ -2,6 +2,7 @@ from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 
+from .helpers import group_results_by_cle
 from .forms import ProductSearchForm
 from .services import get_product_search_results
 from ..core.constants import ALL_CASES_QUEUE_ID
@@ -17,6 +18,7 @@ class ProductSearchView(LoginRequiredMixin, FormView):
             "page": form.cleaned_data["page"],
         }
         results = get_product_search_results(self.request, query_params)
+        results = group_results_by_cle(results)
         context = super().get_context_data()
         context = {
             **context,
