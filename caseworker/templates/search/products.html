@@ -1,5 +1,6 @@
 {% extends 'layouts/base.html' %}
 {% load crispy_forms_tags %}
+{% load parse_date from spire_tags %}
 
 {% block back_link %}{% endblock %}
 
@@ -44,6 +45,9 @@
                                 Case reference
                             </th>
                             <th scope="col" class="govuk-table__header">
+                                Assessment date
+                            </th>
+                            <th scope="col" class="govuk-table__header">
                                 Destination
                             </th>
                             <th scope="col" class="govuk-table__header">
@@ -65,6 +69,7 @@
                                         <span class="govuk-visually-hidden">View</span> {{ good_on_application.application.reference_code }}
                                     </a>
                                 </th>
+                                <td class="govuk-table__cell">{{ good_on_application.assessment_date|parse_date|date:"d M Y" }}</td>
                                 <td class="govuk-table__cell">{{ good_on_application.destination }}</td>
                                 <td class="govuk-table__cell">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                                 <td class="govuk-table__cell">{{ good_on_application.report_summary|default:"" }}</td>
@@ -91,6 +96,7 @@
                                                         <span class="govuk-visually-hidden">View</span> {{ good_on_application.application.reference_code }}
                                                     </a>
                                                 </th>
+                                                <td class="govuk-table__cell">{{ good_on_application.assessment_date|parse_date|date:"d M Y" }}</td>
                                                 <td class="govuk-table__cell">{{ good_on_application.destination }}</td>
                                                 <td class="govuk-table__cell">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
                                                 <td class="govuk-table__cell">{{ good_on_application.report_summary|default:"" }}</td>
