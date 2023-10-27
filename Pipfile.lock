@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b96ad2d06cd9e29bd0b9ecc04e346987ce4cb9a7903358bc43a8c1720fec4700"
+            "sha256": "700ec87011d73a076c0dfb584072fd666327039f60684676b54813d398ff5406"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -363,6 +363,13 @@
             "index": "pypi",
             "markers": "python_version >= '3.4' and python_version < '4'",
             "version": "==0.9.0"
+        },
+        "django-extra-views": {
+            "hashes": [
+                "sha256:2b9daf99c79e91035aa3f269232afcb3ccf837f0f49f2dc6da6916fe34bc1e0a"
+            ],
+            "index": "pypi",
+            "version": "==0.14.0"
         },
         "django-formtools": {
             "hashes": [

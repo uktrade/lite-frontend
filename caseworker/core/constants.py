@@ -33,6 +33,11 @@ GENERATED_DOCUMENT = "GENERATED"
 APPLICATION_CASE_TYPES = ["open", "standard", "hmrc"]
 CLEARANCE_CASE_TYPES = ["exhibition_clearance", "gifting_clearance", "f680_clearance"]
 
+ADMIN_TEAM_ID = "00000000-0000-0000-0000-000000000001"
+FCDO_TEAM_ID = "67b9a4a3-6f3d-4511-8a19-23ccff221a74"
+LICENSING_UNIT_TEAM_ID = "58e77e47-42c8-499f-a58d-94f94541f8c6"
+TAU_TEAM_ID = "b359f92b-15f8-4ec8-87ee-c0fff0a5332b"
+
 
 class AdviceType:
     CONFLICTING = "conflicting"
