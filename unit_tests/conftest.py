@@ -319,6 +319,7 @@ def data_open_case():
             "reference_code": "GBOIEL/2020/0000045/P",
             "copy_of": None,
             "sla_days": 0,
+            "processing_time": 0,
             "sla_remaining_days": 60,
             "data": {
                 "id": "094eed9a-23cc-478a-92ad-9a05ac17fad0",
@@ -647,6 +648,7 @@ def data_standard_case(
             "reference_code": "GBSIEL/2020/0002687/T",
             "copy_of": None,
             "sla_days": 2,
+            "processing_time": 2,
             "sla_remaining_days": 18,
             "data": {
                 "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",

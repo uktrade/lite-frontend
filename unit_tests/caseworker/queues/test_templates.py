@@ -39,6 +39,7 @@ def test_sla_display_hours(duration):
 def test_sla_display_days(elapsed, remaining):
     context = {
         "case": {
+            "processing_time": elapsed,
             "sla_days": elapsed,
             "sla_remaining_days": remaining,
         }
