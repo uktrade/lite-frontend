@@ -85,6 +85,17 @@
 			</dd>
 		</div>
 	{% endif %}
+	{% if case.processing_time is not none and not case.case_type.reference.key in "comp_c,comp_v" %}
+		<div class="app-case__summary-list__row">
+			<dt class="app-case__summary-list__key">
+				Processing time
+			</dt>
+			<dd class="app-case__summary-list__value">
+				{{ case.processing_time }}
+			</dd>
+		</div>
+	{% endif %}
+
 	<div class="app-case__summary-list__row">
 		<dt class="app-case__summary-list__key">
 			{% lcs 'cases.CasePage.DetailsTab.STATUS' %}
