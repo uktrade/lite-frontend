@@ -97,7 +97,8 @@ def test_home_content(
 
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find(id="subtitle").text == "Assess 1 product going from Great Britain to Abu Dhabi and United Kingdom"
+    element = soup.find("p", class_="govuk-notification-banner__heading")
+    assert element.get_text() == "1 product going from Great Britain to Abu Dhabi and United Kingdom."
     assert get_cells(soup, "assessed-products") == [
         "2.",
         "p2",

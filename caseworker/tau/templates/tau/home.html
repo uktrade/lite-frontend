@@ -30,7 +30,7 @@
                             </h2>
                         </div>
                         <div class="govuk-notification-banner__content">
-                            <p class="govuk-notification-banner__heading">{{ unassessed_goods|length }} products going from {{ case.data.goods_starting_point|verbose_goods_starting_point }} to {{ case|get_destinations|humanise_list }}.</p>
+                            <p class="govuk-notification-banner__heading">{{ unassessed_goods|length }} product{{ unassessed_goods|pluralize }} going from {{ case.data.goods_starting_point|verbose_goods_starting_point }} to {{ case|get_destinations|humanise_list }}.</p>
                         </div>
                         </div>
                         
