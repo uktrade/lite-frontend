@@ -24,7 +24,7 @@
 
     <section class="search-results govuk-!-margin-top-4">
         {% if search_results.count %}
-            <h1 class="govuk-body">{{ search_results.count }} products found</h1>
+            <h1 class="govuk-body">{{ search_results.count }} results found</h1>
         {% endif %}
         {% for good in search_results.results %}
             <article class="search-result">
