@@ -53,13 +53,12 @@ def test_product_search_view_get(authorized_client, product_search_url):
     ],
 )
 def test_product_search_run_query(authorized_client, product_search_url, requests_mock, data):
-    response = authorized_client.post(
+    response = authorized_client.get(
         product_search_url,
         data=data,
     )
     assert response.status_code == 200
-    # assert response.url == appeal_confirmation_url
-    search_query = requests_mock.request_history[-4]
+    search_query = requests_mock.request_history[1]
 
     url = client._build_absolute_uri("/search/product/search/")
     query_params = f'{parse.urlencode({"search": data["search_string"], "page": data["page"]}, doseq=True)}'
