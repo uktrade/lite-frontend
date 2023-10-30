@@ -331,6 +331,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
                 "case": self.case,
                 "queue_id": self.queue_id,
                 "formset_helper": formset_helper,
+                "unassessed_goods": self.unassessed_goods,
             }
         )
         return context
