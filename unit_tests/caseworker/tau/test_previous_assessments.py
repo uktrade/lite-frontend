@@ -383,7 +383,8 @@ def test_previous_assessments_POST_failure(
     }
 
     with pytest.raises(ServiceError) as ex:
-        authorized_client.post(previous_assessments_url, data, follow=True)
+        response = authorized_client.post(previous_assessments_url, data, follow=True)
 
     assert ex.value.status_code == 500
+    assert str(ex.value) == "Error assessing good with previous assessments"
     assert ex.value.user_message == "Unexpected error assessing good with previous assessments"
