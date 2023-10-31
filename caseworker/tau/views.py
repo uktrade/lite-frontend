@@ -3,7 +3,6 @@ import os
 from http import HTTPStatus
 
 from django.contrib import messages
-from django.forms import formset_factory
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import FormView, View, TemplateView
@@ -26,6 +25,7 @@ from caseworker.cases.services import post_review_good
 from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries
 from caseworker.users.services import get_gov_user
+from extra_views import FormSetView
 
 from caseworker.tau.forms import (
     BaseTAUPreviousAssessmentFormSet,
@@ -40,7 +40,7 @@ from caseworker.tau.services import (
     group_gonas_by_good,
 )
 from caseworker.tau.summaries import get_good_on_application_tau_summary
-from caseworker.tau.utils import get_cle_suggestions_json
+from caseworker.tau.utils import get_cle_suggestions_json, get_tau_tab_url_name
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 
@@ -65,7 +65,7 @@ class TAUMixin(CaseTabsMixin):
     @cached_property
     def case(self):
         case = get_case(self.request, self.case_id)
-        for (i, good) in enumerate(case.goods):
+        for i, good in enumerate(case.goods):
             good["line_number"] = i + 1
         return case
 
@@ -179,7 +179,7 @@ class TAUMixin(CaseTabsMixin):
         context.update(
             {
                 "tabs": self.get_standard_application_tabs(),
-                "current_tab": "cases:tau:home",
+                "current_tab": get_tau_tab_url_name(),
             }
         )
 
@@ -292,10 +292,21 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         return payload
 
 
-class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, TemplateView):
+class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
     template_name = "tau/previous_assessments.html"
+    form_class = TAUPreviousAssessmentForm
+    factory_kwargs = {"extra": 0, "formset": BaseTAUPreviousAssessmentFormSet}
 
-    def get_formset_initial(self, goods_on_applications):
+    def get_goods_on_application_to_assess(self):
+        return [good for good in self.unassessed_goods if good["latest_precedent"]]
+
+    def get_formset_kwargs(self):
+        kwargs = super().get_formset_kwargs()
+        kwargs["goods_on_applications"] = self.get_goods_on_application_to_assess()
+        return kwargs
+
+    def get_initial(self):
+        goods_on_applications = self.get_goods_on_application_to_assess()
         initial = []
 
         for good_on_application in goods_on_applications:
@@ -308,39 +319,26 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Temp
 
         return initial
 
-    def get_formset(self, goods_on_applications):
-        if not goods_on_applications:
-            return None
-        TAUPreviousAssessmentFormSet = formset_factory(
-            TAUPreviousAssessmentForm,
-            extra=0,
-            formset=BaseTAUPreviousAssessmentFormSet,
-        )
-        data = None
-        if self.request.method == "POST":
-            data = self.request.POST
-        return TAUPreviousAssessmentFormSet(  # pylint: disable=unexpected-keyword-arg
-            data,
-            initial=self.get_formset_initial(goods_on_applications),
-            goods_on_applications=goods_on_applications,
-        )
-
-    def get_goods_on_application_to_assess(self):
-        return [good for good in self.unassessed_goods if good["latest_precedent"]]
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         formset_helper = FormHelper()
         formset_helper.template = "tau/previous_assessment_formset.html"
 
-        return {
-            **context,
-            "case": self.case,
-            "queue_id": self.queue_id,
-            "formset": self.get_formset(self.get_goods_on_application_to_assess()),
-            "formset_helper": formset_helper,
-        }
+        context.update(
+            {
+                "case": self.case,
+                "queue_id": self.queue_id,
+                "formset_helper": formset_helper,
+            }
+        )
+        return context
+
+    def get(self, request, *args, **kwargs):
+        if not self.get_goods_on_application_to_assess():
+            return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
+
+        return super().get(request, *args, **kwargs)
 
     def assess_with_previous_assessments(self, previous_assessments):
         for good_on_application_id, previous_assessment in previous_assessments.items():
@@ -366,18 +364,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Temp
             # investigation to happen in sentry
             post_review_good(self.request, self.kwargs["pk"], payload)
 
-    def get(self, request, *args, **kwargs):
-        if not self.get_goods_on_application_to_assess():
-            result = redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
-            return result
-
-        return super().get(request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        formset = self.get_formset(self.get_goods_on_application_to_assess())
-        if not formset.is_valid():
-            return super().get(request, *args, **kwargs)
-
+    def formset_valid(self, formset):
         # Build a datastructure of previous assessments for each good on application
         # that the user has approved the previous assessment
         previous_assessments = {}

@@ -6,6 +6,7 @@ import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
+from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.queues.views.forms import CasesFiltersForm
 from core import client
@@ -1071,3 +1072,25 @@ def test_case_row_sub_status(
     html = BeautifulSoup(response.content, "html.parser")
     sub_status = html.find(string=re.compile("test sub status"))
     assert sub_status == "test sub status"
+
+
+@pytest.mark.parametrize(
+    ("mock_gov_user_team", "expected"),
+    (
+        ({"id": ADMIN_TEAM_ID, "name": "Admin", "alias": None}, True),
+        ({"id": TAU_TEAM_ID, "name": "TAU", "alias": "TAU"}, True),
+        ({"id": FCDO_TEAM_ID, "name": "FCDO", "alias": "FCO"}, False),
+        ({"id": LICENSING_UNIT_TEAM_ID, "name": "Licensing Unit", "alias": "LICENSING_UNIT"}, False),
+    ),
+)
+def test_product_search_is_visible_to_specific_users_only(
+    authorized_client, requests_mock, mock_gov_user, gov_uk_user_id, mock_gov_user_team, expected
+):
+    mock_gov_user["user"]["team"] = mock_gov_user_team
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+
+    response = authorized_client.get(reverse("queues:cases"))
+    soup = BeautifulSoup(response.content, "html.parser")
+    is_product_search_visible = "Search for products" in str(soup.find(id="link-product-search"))
+    assert is_product_search_visible == expected

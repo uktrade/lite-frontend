@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "core.goods",
     "django_chunk_upload_handlers",
     "rules.apps.AutodiscoverRulesConfig",
+    "extra_views",
 ]
 
 MIDDLEWARE = [

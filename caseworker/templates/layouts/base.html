@@ -1,6 +1,7 @@
 {% load svg from svg %}
 {% load static %}
 {% load gtm %}
+{% load rules %}
 
 <!DOCTYPE html>
 <html lang="en" class="govuk-template">
@@ -53,6 +54,12 @@
 				</span>
 			</a>
 			<span></span>
+			{% test_rule 'can_user_search_products' request as show_product_search %}
+			{% if show_product_search %}
+			<a id="link-product-search" class="app-header__link" href="{% url 'search:products' %}">Search for products</a>
+			{% else %}
+			<span></span>
+			{% endif %}
 			<a id="link-mentions" class="app-header__link" href="{% url 'users:user_case_note_mentions' %}">
 				{% if NEW_MENTIONS_COUNT > 0 %}
 					<strong>
