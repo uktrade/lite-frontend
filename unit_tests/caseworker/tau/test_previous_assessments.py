@@ -68,18 +68,47 @@ def data_good_precedent(data_standard_case, data_queue):
 
 
 @pytest.fixture
-def mock_good_precedent_endpoint(requests_mock, data_standard_case, data_good_precedent):
+def mock_good_precedent_endpoint(requests_mock, data_standard_case, data_good_precedent, data_queue):
+    case_id = data_standard_case["case"]["id"]
+    results = [data_good_precedent]
+    results.append(
+        {
+            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "good": "6a7fc61f-698b-46b6-9876-6ac0fddfb1a2",
+            "application": case_id,
+            "queue": data_queue["id"],
+            "reference": data_standard_case["case"]["reference_code"],
+            "destinations": ["France"],
+            "control_list_entries": ["ML1a"],
+            "wassenaar": False,
+            "quantity": 10.0,
+            "value": "test-value",
+            "report_summary": "test-report-summary",
+            "submitted_at": "2021-06-21T11:27:36.145000Z",
+            "goods_starting_point": "GB",
+            "is_good_controlled": True,
+            "regime_entries": [{"pk": "regime-0001", "name": "some regime"}],
+            "report_summary_prefix": {"id": "0001", "name": "some prefix"},
+            "report_summary_subject": {"id": "0002", "name": "some subject"},
+            "comment": "woop!",
+            "is_ncsc_military_information_security": False,
+        }
+    )
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
     good["firearm_details"]["year_of_manufacture"] = "1930"
 
+    good_1 = data_standard_case["case"]["data"]["goods"][1]
+    good_1["is_good_controlled"] = None
+    good_1["control_list_entries"] = []
+
     case_id = data_standard_case["case"]["id"]
     precedents_url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
     requests_mock.get(
         precedents_url,
-        json={"results": [data_good_precedent]},
+        json={"results": results},
     )
 
 
@@ -111,6 +140,14 @@ def test_previous_assessments_GET(
     assert table
     assert [td.text.strip().strip() for td in table.findAll("td", {"class": "readonly-field"})] == [
         "p1",
+        "44",
+        "ML1a",
+        "Yes",
+        "some regime",
+        "some prefix some subject",
+        "woop!",
+        "No",
+        "p2",
         "44",
         "ML1a",
         "Yes",
@@ -388,3 +425,43 @@ def test_previous_assessments_POST_failure(
     assert ex.value.status_code == 500
     assert str(ex.value) == "Error assessing good with previous assessments"
     assert ex.value.user_message == "Unexpected error assessing good with previous assessments"
+
+
+def test_multiple_previous_assesments_POST(
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    previous_assessments_url,
+    mock_good_precedent_endpoint,
+    mock_control_list_entries,
+):
+    good_1 = data_standard_case["case"]["data"]["goods"][0]
+    good_on_application_id_1 = good_1["id"]
+
+    good_2 = data_standard_case["case"]["data"]["goods"][1]
+    good_on_application_id_2 = good_2["id"]
+
+    mocked_assessment_endpoint = requests_mock.post(
+        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
+    )
+
+    data = {
+        "form-TOTAL_FORMS": 2,
+        "form-INITIAL_FORMS": 0,
+        "form-0-use_latest_precedent": True,
+        "form-0-good_on_application_id": good_on_application_id_1,
+        "form-0-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "form-1-use_latest_precedent": True,
+        "form-1-good_on_application_id": good_on_application_id_2,
+        "form-1-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+    }
+
+    response = authorized_client.post(previous_assessments_url, data, follow=True)
+    assert response.status_code == 200
+
+    assert mocked_assessment_endpoint.request_history[-2].json()["objects"] == [good_on_application_id_1]
+    assert mocked_assessment_endpoint.last_request.json()["objects"] == [good_on_application_id_2]
+
+    messages = [str(msg) for msg in response.context["messages"]]
+    expected_message = "Assessed 2 products using previous assessments."
+    assert messages == [expected_message]

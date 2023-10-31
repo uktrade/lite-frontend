@@ -1,4 +1,5 @@
 import os
+import requests
 
 from http import HTTPStatus
 
@@ -367,7 +368,10 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
             # The call here includes a raise_for_status() invocation, so further error handling
             # is unnecessary for now as we would prefer the user hit a hard error and further
             # investigation to happen in sentry
-            return post_review_good(self.request, self.kwargs["pk"], payload)
+            try:
+                post_review_good(self.request, self.kwargs["pk"], payload)
+            except requests.exceptions.HTTPError:
+                return {}, HTTPStatus.INTERNAL_SERVER_ERROR
 
         return {}, HTTPStatus.OK
 
@@ -381,7 +385,6 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
             previous_assessments[str(form.cleaned_data["good_on_application_id"])] = form.good_on_application[
                 "latest_precedent"
             ]
-
         # Assess these good on applications with the values from the approved previous assessments
         self.assess_with_previous_assessments(previous_assessments)
         messages.success(self.request, f"Assessed {len(previous_assessments)} products using previous assessments.")
