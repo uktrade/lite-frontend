@@ -33,6 +33,9 @@
 		<script nonce="{{ request.csp_nonce }}" src="{% static 'main.js' %}"></script>
 		{% block head %}{% endblock %}
 	</head>
+	
+	<input type="hidden" id="user_id" value="{{ request.session.lite_api_user_id }}">
+
 	<body class="govuk-template__body ">
 		{% google_tag_manager_noscript %}
 		<script nonce="{{ request.csp_nonce }}">

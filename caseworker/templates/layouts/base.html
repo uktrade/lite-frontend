@@ -33,6 +33,7 @@
 </head>
 
 <body class="govuk-template__body js-disabled {% block body_classes %}{% endblock %}">
+	<input type="hidden" id="user_id" value="{{ request.session.lite_api_user_id }}">
 	{% google_tag_manager_noscript %}
 	<script nonce="{{ request.csp_nonce }}">
 		document.body.className = (
