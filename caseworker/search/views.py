@@ -1,21 +1,31 @@
 from django.views.generic import FormView
+from django.urls import reverse_lazy
 
 from core.auth.views import LoginRequiredMixin
 
-from .helpers import group_results_by_cle
 from .forms import ProductSearchForm
+from .helpers import group_results_by_cle
 from .services import get_product_search_results
 from ..core.constants import ALL_CASES_QUEUE_ID
 
 
 class ProductSearchView(LoginRequiredMixin, FormView):
-    template_name = "search/products.html"
     form_class = ProductSearchForm
+    template_name = "search/products.html"
+    success_url = reverse_lazy("search:products")
 
-    def form_valid(self, form):
+    def get_initial(self):
+        return {
+            "search_string": self.request.GET.get("search_string"),
+            "page": self.request.GET.get("page", 1),
+        }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = self.get_form()
         query_params = {
-            "search": form.cleaned_data["search_string"],
-            "page": form.cleaned_data["page"],
+            "search": self.request.GET.get("search_string"),
+            "page": self.request.GET.get("page", 1),
         }
         results = get_product_search_results(self.request, query_params)
         results = group_results_by_cle(results)
@@ -28,4 +38,4 @@ class ProductSearchView(LoginRequiredMixin, FormView):
                 "total_pages": results["count"] // form.page_size,
             },
         }
-        return self.render_to_response(context)
+        return context

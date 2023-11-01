@@ -90,6 +90,7 @@ class ProductSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
+        self.helper.form_method = "GET"
         self.helper.layout = Layout(
             "search_string",
             Submit("submit", "Search"),
