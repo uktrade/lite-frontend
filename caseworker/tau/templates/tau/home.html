@@ -20,19 +20,7 @@
                 <div class="govuk-grid-column-two-thirds">
                     {% if unassessed_goods %}
                         <h1 class="govuk-heading-l">Product assessment</h1>
-
-                        <div class="govuk-notification-banner tau-notification-banner" role="region"
-                        aria-labelledby="govuk-notification-banner-title"
-                        data-module="govuk-notification-banner">
-                        <div class="govuk-notification-banner__header">
-                            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                            Remaining products to assess
-                            </h2>
-                        </div>
-                        <div class="govuk-notification-banner__content">
-                            <p class="govuk-notification-banner__heading">{{ unassessed_goods|length }} product{{ unassessed_goods|pluralize }} going from {{ case.data.goods_starting_point|verbose_goods_starting_point }} to {{ case|get_destinations|humanise_list }}.</p>
-                        </div>
-                        </div>
+                        {% include "tau/includes/notification_banner.html" with case=case unassessed_goods=unassessed_goods%}
                         
                     {% endif %}
                 </div>

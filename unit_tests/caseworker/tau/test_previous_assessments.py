@@ -140,6 +140,9 @@ def test_previous_assessments_GET(
     ]
     table = soup.find("table", id="tau-form")
 
+    notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
+    assert notification_banner.get_text() == "1 product going from Great Britain to Abu Dhabi and United Kingdom"
+
 
 def test_previous_assessments_GET_no_precedents(
     authorized_client,
