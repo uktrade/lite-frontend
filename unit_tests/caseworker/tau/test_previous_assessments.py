@@ -70,30 +70,12 @@ def data_good_precedent(data_standard_case, data_queue):
 @pytest.fixture
 def mock_good_precedent_endpoint(requests_mock, data_standard_case, data_good_precedent, data_queue):
     case_id = data_standard_case["case"]["id"]
-    results = [data_good_precedent]
-    results.append(
-        {
-            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-            "good": "6a7fc61f-698b-46b6-9876-6ac0fddfb1a2",
-            "application": case_id,
-            "queue": data_queue["id"],
-            "reference": data_standard_case["case"]["reference_code"],
-            "destinations": ["France"],
-            "control_list_entries": ["ML1a"],
-            "wassenaar": False,
-            "quantity": 10.0,
-            "value": "test-value",
-            "report_summary": "test-report-summary",
-            "submitted_at": "2021-06-21T11:27:36.145000Z",
-            "goods_starting_point": "GB",
-            "is_good_controlled": True,
-            "regime_entries": [{"pk": "regime-0001", "name": "some regime"}],
-            "report_summary_prefix": {"id": "0001", "name": "some prefix"},
-            "report_summary_subject": {"id": "0002", "name": "some subject"},
-            "comment": "woop!",
-            "is_ncsc_military_information_security": False,
-        }
-    )
+
+    data_good_precedent_copy = data_good_precedent.copy()
+    data_good_precedent_copy["good"] = "6a7fc61f-698b-46b6-9876-6ac0fddfb1a2"
+
+    results = [data_good_precedent, data_good_precedent_copy]
+
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
