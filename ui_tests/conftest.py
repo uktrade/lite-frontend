@@ -49,6 +49,9 @@ def pytest_configure(config):
 def pytest_addoption(parser):
     parser.addoption("--headless", action="store_true", default=False)
     parser.addoption(
+        "--chrome-binary-location", action="store", default="", help="Custom chrome binary path for selenium to use"
+    )
+    parser.addoption(
         "--step-through", action="store_true", default=STEP_THROUGH, help="Allow stepping through each scenario step"
     )
     parser.addoption(
