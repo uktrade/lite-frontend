@@ -17,7 +17,9 @@ def driver(request, api_client, environment, tmp_download_path):
     tmp_download_path.chmod(0o777)
     prefs = {"download.default_directory": str(tmp_download_path)}
     chrome_options.add_experimental_option("prefs", prefs)
-    chrome_options.binary_location = "/usr/bin/chromium"
+    chrome_binary_location = request.config.getoption("--chrome-binary-location")
+    if chrome_binary_location:
+        chrome_options.binary_location = chrome_binary_location
 
     is_headless = request.config.getoption("--headless")
     if is_headless:
