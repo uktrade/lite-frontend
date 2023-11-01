@@ -21,7 +21,7 @@ RUN pip3 install pipenv
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
 RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
 RUN apt-get update --fix-missing
-RUN apt-get -y install chromium=116.0.5845.180-1~deb11u1 chromium-driver=116.0.5845.180-1~deb11u1 chromium-sandbox=116.0.5845.180-1~deb11u1  chromium-common=116.0.5845.180-1~deb11u1
+RUN apt-get -y install chromium chromium-driver
 
 # Install node dependencies
 ENV NODE_MAJOR=16
