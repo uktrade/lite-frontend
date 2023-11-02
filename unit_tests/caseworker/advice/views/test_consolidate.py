@@ -754,13 +754,11 @@ def test_consolidate_raises_exception_for_other_team(
     authorized_client, data_standard_case, url, advice, path, form_class
 ):
     data_standard_case["case"]["advice"] = advice
-    response = authorized_client.get(url + path)
 
-    soup = BeautifulSoup(response.content, "html.parser")
-    error_message = soup.find("p", {"class": "govuk-body"})
-    assert "Consolidate/combine operation not allowed for team 00000000-0000-0000-0000-000000000001" in str(
-        error_message
-    )
+    with pytest.raises(Exception) as err:
+        authorized_client.get(url + path)
+
+    assert str(err.value) == "Consolidate/combine operation not allowed for team 00000000-0000-0000-0000-000000000001"
 
 
 @pytest.mark.parametrize(

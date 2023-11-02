@@ -57,10 +57,7 @@ def test_beis_assess_trigger_list_products_get(authorized_client, url):
 
 def test_beis_edit_trigger_list_assessment_before_assessing(authorized_client, edit_assessment_url):
     response = authorized_client.get(edit_assessment_url)
-    soup = BeautifulSoup(response.content, "html.parser")
-    error_message = soup.find("h1")
-    assert "An error occurred" in str(error_message)
-    assert response.status_code == 200
+    assert response.status_code == 404
 
 
 def test_beis_edit_trigger_list_assessment_get(
