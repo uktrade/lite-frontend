@@ -6,10 +6,10 @@
             <span class="govuk-visually-hidden">View</span> {{ good_on_application.application.reference_code }}
         </a>
     </th>
-    <td class="govuk-table__cell">{{ good_on_application.assessment_date|parse_date|date:"j F Y" }}</td>
-    <td class="govuk-table__cell">{{ good_on_application.destination }}</td>
-    <td class="govuk-table__cell">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-    <td class="govuk-table__cell">{{ good_on_application.report_summary|default:"" }}</td>
-    <td class="govuk-table__cell">{{ good_on_application.rating_comment|default:"" }}</td>
+    <td class="govuk-table__cell" data-customiser-key="assessment_date">{{ good_on_application.assessment_date|parse_date|date:"j F Y" }}</td>
+    <td class="govuk-table__cell" data-customiser-key="destination">{{ good_on_application.destination }}</td>
+    <td class="govuk-table__cell" data-customiser-key="control_entry">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+    <td class="govuk-table__cell" data-customiser-key="report_summary">{{ good_on_application.report_summary|default:"" }}</td>
+    <td class="govuk-table__cell" data-customiser-key="assessment_notes">{{ good_on_application.rating_comment|default:"" }}</td>
 </tr>
 {% endfor %}
