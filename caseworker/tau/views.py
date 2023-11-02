@@ -303,21 +303,21 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
 
     def get_formset_kwargs(self):
         kwargs = super().get_formset_kwargs()
-        kwargs["goods_on_applications"] = self.get_goods_on_application_to_assess()
+        kwargs["goods_on_applications"] = self.unassessed_goods
         return kwargs
 
     def get_initial(self):
-        goods_on_applications = self.get_goods_on_application_to_assess()
         initial = []
 
-        for good_on_application in goods_on_applications:
-            initial.append(
-                {
-                    "good_on_application_id": good_on_application["id"],
-                    "latest_precedent_id": good_on_application["latest_precedent"]["id"],
-                }
-            )
+        for good_on_application in self.unassessed_goods:
+            good = {}
 
+            good["good_on_application_id"] = good_on_application["id"]
+
+            if good_on_application.get("latest_precedent"):
+                good["latest_precedent_id"] = good_on_application["latest_precedent"]["id"]
+
+            initial.append(good)
         return initial
 
     def get_context_data(self, **kwargs):
@@ -381,8 +381,9 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
         # that the user has approved the previous assessment
         previous_assessments = {}
         for form in formset.forms:
-            if not form.cleaned_data["use_latest_precedent"]:
+            if not form.cleaned_data.get("use_latest_precedent"):
                 continue
+
             previous_assessments[str(form.cleaned_data["good_on_application_id"])] = form.good_on_application[
                 "latest_precedent"
             ]
