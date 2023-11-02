@@ -245,4 +245,10 @@ class HttpErrorHandlerMiddleware:
     def process_exception(self, request, exception):
         if isinstance(exception, requests.HTTPError):
             logger.info(exception.response.text)
-        return None
+        description = exception
+        try:
+            # When the exception was thrown by the server deliberately
+            description = exception.response.text
+        except:
+            pass
+        return error_page(request, description)
