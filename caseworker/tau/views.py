@@ -1,4 +1,5 @@
 import os
+import requests
 
 from http import HTTPStatus
 
@@ -330,6 +331,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
                 "case": self.case,
                 "queue_id": self.queue_id,
                 "formset_helper": formset_helper,
+                "unassessed_goods": self.unassessed_goods,
             }
         )
         return context
@@ -340,6 +342,11 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
 
         return super().get(request, *args, **kwargs)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error assessing good with previous assessments",
+        "Unexpected error assessing good with previous assessments",
+    )
     def assess_with_previous_assessments(self, previous_assessments):
         for good_on_application_id, previous_assessment in previous_assessments.items():
             payload = {
@@ -362,7 +369,12 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
             # The call here includes a raise_for_status() invocation, so further error handling
             # is unnecessary for now as we would prefer the user hit a hard error and further
             # investigation to happen in sentry
-            post_review_good(self.request, self.kwargs["pk"], payload)
+            try:
+                post_review_good(self.request, self.kwargs["pk"], payload)
+            except requests.exceptions.HTTPError:
+                return {}, HTTPStatus.INTERNAL_SERVER_ERROR
+
+        return {}, HTTPStatus.OK
 
     def formset_valid(self, formset):
         # Build a datastructure of previous assessments for each good on application
@@ -374,7 +386,6 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
             previous_assessments[str(form.cleaned_data["good_on_application_id"])] = form.good_on_application[
                 "latest_precedent"
             ]
-
         # Assess these good on applications with the values from the approved previous assessments
         self.assess_with_previous_assessments(previous_assessments)
         messages.success(self.request, f"Assessed {len(previous_assessments)} products using previous assessments.")

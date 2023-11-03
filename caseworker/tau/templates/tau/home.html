@@ -20,7 +20,8 @@
                 <div class="govuk-grid-column-two-thirds">
                     {% if unassessed_goods %}
                         <h1 class="govuk-heading-l">Product assessment</h1>
-                        <p id="subtitle" class="govuk-body">Assess {{ unassessed_goods|length }} product{{ unassessed_goods|pluralize }} going from <strong>{{ case.data.goods_starting_point|verbose_goods_starting_point }}</strong> to <strong>{{ case|get_destinations|humanise_list }}</strong></p>
+                        {% include "tau/includes/notification_banner.html" with case=case unassessed_goods=unassessed_goods%}
+                        
                     {% endif %}
                 </div>
                 <!-- Move case forward form -->

@@ -46,13 +46,14 @@ def test_product_search_view_get(authorized_client, product_search_url):
 
 
 @pytest.mark.parametrize(
-    "data",
+    "data, expected_query_params",
     [
-        ({"search_string": "Rifle", "page": 1}),
-        ({"search_string": "Propellant, ML22", "page": 2}),
+        ({"page": 1}, {"search": "", "page": 1}),
+        ({"search_string": "Rifle", "page": 1}, {"search": "Rifle", "page": 1}),
+        ({"search_string": "Propellant, ML22", "page": 2}, {"search": "Propellant, ML22", "page": 2}),
     ],
 )
-def test_product_search_run_query(authorized_client, product_search_url, requests_mock, data):
+def test_product_search_run_query(authorized_client, product_search_url, requests_mock, data, expected_query_params):
     response = authorized_client.get(
         product_search_url,
         data=data,
@@ -61,7 +62,6 @@ def test_product_search_run_query(authorized_client, product_search_url, request
     search_query = requests_mock.request_history[1]
 
     url = client._build_absolute_uri("/search/product/search/")
-    query_params = f'{parse.urlencode({"search": data["search_string"], "page": data["page"]}, doseq=True)}'
-    url = f"{url}?{query_params}"
+    url = f"{url}?{parse.urlencode(expected_query_params, doseq=True)}"
 
     assert search_query.url == url

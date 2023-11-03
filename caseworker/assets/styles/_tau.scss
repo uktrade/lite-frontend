@@ -58,9 +58,7 @@
   td {
     vertical-align: middle;
   }
-
 }
-
 
 .previous-assessment-checkbox-cell {
   display: flex;
@@ -69,5 +67,9 @@
   .govuk-form-group {
     margin-bottom: 20px;
   }
+}
 
+.tau-notification-banner {
+  background-color: #1d70b8;
+  border: 5px solid #1d70b8;
 }

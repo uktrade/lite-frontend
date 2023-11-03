@@ -44,6 +44,9 @@
                                 Case reference
                             </th>
                             <th scope="col" class="govuk-table__header">
+                                Assessment date
+                            </th>
+                            <th scope="col" class="govuk-table__header">
                                 Destination
                             </th>
                             <th scope="col" class="govuk-table__header">
@@ -58,19 +61,7 @@
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                        {% for good_on_application in good.distinct_rating_hits %}
-                            <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__cell govuk-body">
-                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:home' ALL_CASES_QUEUE_ID good_on_application.application.id %}">
-                                        <span class="govuk-visually-hidden">View</span> {{ good_on_application.application.reference_code }}
-                                    </a>
-                                </th>
-                                <td class="govuk-table__cell">{{ good_on_application.destination }}</td>
-                                <td class="govuk-table__cell">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                                <td class="govuk-table__cell">{{ good_on_application.report_summary|default:"" }}</td>
-                                <td class="govuk-table__cell">{{ good_on_application.assessment_note|default:"" }}</td>
-                            </tr>
-                        {% endfor %}
+                        {% include 'search/includes/product-search-results.html' with hits=good.distinct_rating_hits %}
                     </tbody>
                 </table>
                 {% if good.remaining_hits|length %}
@@ -84,19 +75,7 @@
                             <div class="govuk-details__text">
                                 <table class="govuk-table">
                                     <tbody class="govuk-table__body">
-                                        {% for good_on_application in good.remaining_hits %}
-                                            <tr class="govuk-table__row">
-                                                <th scope="row" class="govuk-table__cell govuk-body">
-                                                    <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' ALL_CASES_QUEUE_ID good_on_application.application.id %}">
-                                                        <span class="govuk-visually-hidden">View</span> {{ good_on_application.application.reference_code }}
-                                                    </a>
-                                                </th>
-                                                <td class="govuk-table__cell">{{ good_on_application.destination }}</td>
-                                                <td class="govuk-table__cell">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
-                                                <td class="govuk-table__cell">{{ good_on_application.report_summary|default:"" }}</td>
-                                                <td class="govuk-table__cell">{{ good_on_application.assessment_note|default:"" }}</td>
-                                            </tr>
-                                        {% endfor %}
+                                        {% include 'search/includes/product-search-results.html' with hits=good.remaining_hits %}
                                     </tbody>
                                 </table>
                             </div>
