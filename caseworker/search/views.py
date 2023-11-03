@@ -16,15 +16,19 @@ class ProductSearchView(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         return {
-            "search_string": self.request.GET.get("search_string"),
+            "search_string": self.request.GET.get("search_string", ""),
             "page": self.request.GET.get("page", 1),
         }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         form = self.get_form()
+
+        # when we first get to the page query_params are empty.
+        # if we don't use empty string then search term becomes None
+        # and we get some results even though the input field is empty
         query_params = {
-            "search": self.request.GET.get("search_string"),
+            "search": self.request.GET.get("search_string", ""),
             "page": self.request.GET.get("page", 1),
         }
         results = get_product_search_results(self.request, query_params)

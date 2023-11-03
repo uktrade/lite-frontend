@@ -97,7 +97,8 @@ def test_home_content(
 
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find(id="subtitle").text == "Assess 1 product going from Great Britain to Abu Dhabi and United Kingdom"
+    element = soup.find("p", class_="govuk-notification-banner__heading")
+    assert element.get_text() == "1 product going from Great Britain to Abu Dhabi and United Kingdom"
     assert get_cells(soup, "assessed-products") == [
         "2.",
         "p2",
@@ -529,3 +530,24 @@ def test_form_rendered_once(
     tau_form = soup.find(id="tau-form")
     assert tau_form is not None
     assert not tau_form.select("form")
+
+
+def test_notification_banner_not_there_when_all_goods_assesed(
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+    assign_user_to_case,
+):
+    """GET /tau would return a case info panel"""
+    assign_user_to_case(mock_gov_user, data_standard_case)
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    banner = soup.find("div", class_="tau-notification-banner")
+    assert banner is None
