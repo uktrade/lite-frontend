@@ -86,7 +86,6 @@ def mock_good_precedent_endpoint(requests_mock, data_standard_case, data_good_pr
     good_1["is_good_controlled"] = None
     good_1["control_list_entries"] = []
 
-    case_id = data_standard_case["case"]["id"]
     precedents_url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
     requests_mock.get(
         precedents_url,
@@ -139,6 +138,9 @@ def test_previous_assessments_GET(
         "No",
     ]
     table = soup.find("table", id="tau-form")
+
+    notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
+    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom"
 
 
 def test_previous_assessments_GET_no_precedents(
