@@ -244,7 +244,8 @@ class HttpErrorHandlerMiddleware:
 
     def process_exception(self, request, exception):
         if isinstance(exception, requests.HTTPError):
-            description = exception.response.text
-            logger.info(description)
-            return error_page(request, description)
+            logger.info(exception.response.text)
+            description = exception.response.json().get("errors")
+            if description:
+                return error_page(request, description)
         return None

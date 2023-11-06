@@ -2,6 +2,8 @@ from requests import HTTPError
 from requests.models import Response
 from unittest import mock
 from core.middleware import HttpErrorHandlerMiddleware
+import pytest
+from json import JSONDecodeError
 
 
 def test_http_error_handler_non_http_error_exception(rf, mocker, caplog):
@@ -15,7 +17,14 @@ def test_http_error_handler_non_http_error_exception(rf, mocker, caplog):
 
 
 @mock.patch("core.middleware.error_page")
-def test_http_error_handler_with_http_error(mock_error_page, rf, mocker, caplog):
+@pytest.mark.parametrize(
+    "content, returned_value, error_log",
+    (
+        (b'{"errors": "this is an error"}', "Error Page", '{"errors": "this is an error"}'),
+        (b'{"error": "this is an error"}', None, '{"error": "this is an error"}'),
+    ),
+)
+def test_http_error_handler_with_http_errors(mock_error_page, rf, mocker, caplog, content, returned_value, error_log):
     get_response = mocker.MagicMock()
     http_error_handler = HttpErrorHandlerMiddleware(get_response)
 
@@ -23,9 +32,49 @@ def test_http_error_handler_with_http_error(mock_error_page, rf, mocker, caplog)
 
     response = Response()
     response.status_code = 400
-    response._content = b'{"error": "this is an error"}'
+    response._content = content
 
     http_error = HTTPError(response=response)
     request = rf.get("/")
-    assert http_error_handler.process_exception(request, http_error) is "Error Page"
-    assert ("INFO", '{"error": "this is an error"}') in [(r.levelname, r.msg) for r in caplog.records]
+    assert http_error_handler.process_exception(request, http_error) is returned_value
+    assert ("INFO", error_log) in [(r.levelname, r.msg) for r in caplog.records]
+
+
+@mock.patch("core.middleware.error_page")
+def test_http_error_handler_with_invalid_json(mock_error_page, rf, mocker, caplog):
+    get_response = mocker.MagicMock()
+    http_error_handler = HttpErrorHandlerMiddleware(get_response)
+
+    mock_error_page.return_value = "Error Page"
+
+    response = Response()
+    response.status_code = 400
+    response._content = b"this is an error"
+
+    http_error = HTTPError(response=response)
+    request = rf.get("/")
+    with pytest.raises(JSONDecodeError) as ex:
+        http_error_handler.process_exception(request, http_error)
+    assert ex.value.msg == "Expecting value"
+
+    assert ("INFO", "this is an error") in [(r.levelname, r.msg) for r in caplog.records]
+
+
+@mock.patch("core.middleware.error_page")
+def test_http_error_handler_with_text(mock_error_page, rf, mocker, caplog):
+    get_response = mocker.MagicMock()
+    http_error_handler = HttpErrorHandlerMiddleware(get_response)
+
+    mock_error_page.return_value = "Error Page"
+
+    response = Response()
+    response.status_code = 400
+    response._content = b'"this is an error"'
+
+    http_error = HTTPError(response=response)
+    request = rf.get("/")
+    with pytest.raises(AttributeError) as ex:
+        http_error_handler.process_exception(request, http_error)
+    assert str(ex.value) == "'str' object has no attribute 'get'"
+
+    assert ("INFO", '"this is an error"') in [(r.levelname, r.msg) for r in caplog.records]
