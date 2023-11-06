@@ -19,6 +19,7 @@ from django.http import HttpResponseForbidden
 from core.file_handler import UploadFailed
 from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
+from json import JSONDecodeError
 
 SESSION_TIMEOUT_KEY = "_session_timeout_seconds_"
 logger = logging.getLogger(__name__)
@@ -245,7 +246,10 @@ class HttpErrorHandlerMiddleware:
     def process_exception(self, request, exception):
         if isinstance(exception, requests.HTTPError):
             logger.info(exception.response.text)
-            description = exception.response.json().get("errors")
-            if description:
-                return error_page(request, description)
+            try:
+                description = exception.response.json().get("errors")
+                if description:
+                    return error_page(request, description)
+            except (JSONDecodeError, AttributeError) as e:
+                pass
         return None
