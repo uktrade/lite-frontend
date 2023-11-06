@@ -250,6 +250,7 @@ class HttpErrorHandlerMiddleware:
                 description = exception.response.json().get("errors")
                 if description:
                     return error_page(request, description)
+            # AttributeError is to catch text is json serializable
             except (JSONDecodeError, AttributeError) as e:
                 pass
         return None
