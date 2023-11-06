@@ -251,6 +251,6 @@ class HttpErrorHandlerMiddleware:
                 if description:
                     return error_page(request, description)
             # AttributeError is to catch text is json serializable
-            except (JSONDecodeError, AttributeError) as e:
+            except (JSONDecodeError, AttributeError):
                 pass
         return None
