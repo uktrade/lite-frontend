@@ -212,12 +212,14 @@
 	vertical-align: baseline;
 
 	.govuk-form-group {
+		margin-top: govuk-spacing(4);
 		margin-right: govuk-spacing(2);
 		margin-bottom: govuk-spacing(4);
 	}
 
 	#id_search_string {
-		max-width: 100%;
+		display: block;
+		min-width: 40em;
 	}
 
 	.govuk-input {
