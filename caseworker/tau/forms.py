@@ -404,15 +404,26 @@ class TAUPreviousAssessmentForm(forms.Form):
 
     def __init__(self, *args, good_on_application, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.good_on_application = good_on_application
 
         # Only add the 'use_latest_precedent' field if 'latest_precedent' is present
         if good_on_application.get("latest_precedent"):
-            self.fields["use_latest_precedent"] = forms.BooleanField(initial=True, label="", required=False)
+            self.fields["use_latest_precedent"] = forms.BooleanField(
+                initial=True,
+                label="",
+                required=False,
+                widget=forms.CheckboxInput(attrs={"class": "previous-assessment-checkbox-cell"}),
+            )
 
-        else:
-            self.fields["empty"] = forms.CharField(required=False, initial=None, label="")
+        existing_field_count = len(self.fields)
+        # Specify how many fields
+        fields_to_add = 3 - existing_field_count
+
+        for i in range(fields_to_add):
+            # Add the fields to make sure all formset have equal numbers.
+            self.fields[f"dynamic_field_{i}"] = forms.CharField(
+                required=False, label="", widget=forms.TextInput(attrs={"class": "empty-field-hide"})
+            )
 
 
 class BaseTAUPreviousAssessmentFormSet(BaseFormSet):

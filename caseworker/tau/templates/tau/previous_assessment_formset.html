@@ -33,13 +33,7 @@
     >
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                {% for field in formset.forms.0 %}
-                    {% if not field.is_hidden %}
-                        <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
-                            {{ field.label }}
-                        </th>
-                    {% endif %}
-                {% endfor %}
+                <th scope="col" class="govuk-table__header govuk-table__cell--checkbox"></th>
                 <th scope="col" class="govuk-table__header"></th>
                 <th scope="col" class="govuk-table__header">Product name</th>
                 <th scope="col" class="govuk-table__header">Control entry</th>
@@ -57,15 +51,7 @@
                     {% for field in form %}
                         {% if not field.is_hidden %}
                             <td class="govuk-table__cell{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
-                                {% if field|is_checkbox %}
-                                    <div class="previous-assessment-checkbox-cell">
-                                        {{ field|as_crispy_field }}
-                                    </div>
-                                {% else %}
-                                    <div class="empty-field-hide">
-                                        {{ field|as_crispy_field }}
-                                    </div>
-                                {% endif %}
+                                {{ field|as_crispy_field }}
                             </td>
                         {% else %}
                             {{ field }}
@@ -74,7 +60,7 @@
 
                     
                     <td class="govuk-table__cell readonly-field">
-                        <div class="previous-assessment-checkbox-cell__line-number">
+                        <div>
                             {{ form.good_on_application.line_number }}.
                         </div>
                     </td>
