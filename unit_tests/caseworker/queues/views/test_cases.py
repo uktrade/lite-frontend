@@ -92,6 +92,20 @@ def test_cases_view(url, authorized_client):
     assert response.status_code == 200
 
 
+@pytest.mark.parametrize(
+    "url",
+    [
+        reverse("core:index"),
+        reverse("queues:cases"),
+        reverse("queues:cases", kwargs={"queue_pk": "00000000-0000-0000-0000-000000000001"}),
+    ],
+)
+def test_cases_view_hidden_user_id(url, mock_gov_user, authorized_client):
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="user_id")["value"] == mock_gov_user["user"]["id"]
+
+
 @pytest.fixture
 def mock_team_queue(requests_mock, data_queue):
     data_queue["is_system_queue"] = False
