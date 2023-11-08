@@ -298,9 +298,6 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
     form_class = TAUPreviousAssessmentForm
     factory_kwargs = {"extra": 0, "formset": BaseTAUPreviousAssessmentFormSet}
 
-    def get_goods_on_application_to_assess(self):
-        return [good for good in self.unassessed_goods if good["latest_precedent"]]
-
     def get_formset_kwargs(self):
         kwargs = super().get_formset_kwargs()
         kwargs["goods_on_applications"] = self.unassessed_goods
@@ -337,7 +334,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
         return context
 
     def get(self, request, *args, **kwargs):
-        if not self.get_goods_on_application_to_assess():
+        if not [good for good in self.unassessed_goods if good["latest_precedent"]]:
             return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
 
         return super().get(request, *args, **kwargs)
