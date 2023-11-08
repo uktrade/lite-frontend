@@ -38,6 +38,7 @@
                     <span class="govuk-visuallyhidden">Line number</span>
                 </th>
                 <th scope="col" class="govuk-table__header">Product name</th>
+                <th scope="col" class="govuk-table__header">Reference for last assessment</th>
                 <th scope="col" class="govuk-table__header">Control entry</th>
                 <th scope="col" class="govuk-table__header">Licence</th>
                 <th scope="col" class="govuk-table__header">Regimes</th>
@@ -72,7 +73,7 @@
                             <p class="govuk-tag govuk-tag--blue"> NOT YET ASSESSED </p>
                         {% endif %}
                     </td>
-
+                    <td class="govuk-table__cell readonly-field"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:home' queue_pk=queue_id pk=form.good_on_application.latest_precedent.application %}">{{ form.good_on_application.latest_precedent.reference }}</a></td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}</td>
                     <td class="govuk-table__cell readonly-field">
