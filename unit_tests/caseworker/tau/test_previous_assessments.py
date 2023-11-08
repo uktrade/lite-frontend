@@ -117,19 +117,17 @@ def test_previous_assessments_GET(
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find("a", id="tab-assessment")["href"].endswith(expected_product_assessment_tab_url)
     assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
+
     table = soup.find("table", id="tau-form")
     assert table
-    assert [td.text.strip().strip() for td in table.findAll("td", {"class": "readonly-field"})] == [
-        "p1",
-        "44",
-        "ML1a",
-        "Yes",
-        "some regime",
-        "some prefix some subject",
-        "woop!",
-        "No",
-        "p2",
-        "44",
+    table_rows = table.select("tbody tr")
+    assert len(table_rows) == 2
+
+    def get_td_text(table_row):
+        return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "readonly-field"})]
+
+    assert get_td_text(table_rows[0]) == [
+        "p1 44",
         "ML1a",
         "Yes",
         "some regime",
@@ -137,7 +135,15 @@ def test_previous_assessments_GET(
         "woop!",
         "No",
     ]
-    table = soup.find("table", id="tau-form")
+    assert get_td_text(table_rows[1]) == [
+        "p2 44",
+        "ML1a",
+        "Yes",
+        "some regime",
+        "some prefix some subject",
+        "woop!",
+        "No",
+    ]
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
     assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom"

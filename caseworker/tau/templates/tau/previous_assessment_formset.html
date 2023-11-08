@@ -41,7 +41,6 @@
                     {% endif %}
                 {% endfor %}
                 <th scope="col" class="govuk-table__header">Product name</th>
-                <th scope="col" class="govuk-table__header">Part number</th>
                 <th scope="col" class="govuk-table__header">Control entry</th>
                 <th scope="col" class="govuk-table__header">Licence</th>
                 <th scope="col" class="govuk-table__header">Regimes</th>
@@ -75,8 +74,10 @@
                             {{ field }}
                         {% endif %}
                     {% endfor %}
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.name }}</td>
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.part_number }}</td>
+                    <td class="govuk-table__cell readonly-field">
+                        <div class="govuk-!-margin-bottom-2">{{ form.good_on_application.good.name }}</div>
+                        <div>{{ form.good_on_application.good.part_number }}</div>
+                    </td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}</td>
                     <td class="govuk-table__cell readonly-field">
