@@ -400,7 +400,6 @@ class TAUPreviousAssessmentForm(forms.Form):
     good_on_application_id = forms.UUIDField(
         widget=forms.HiddenInput(),
     )
-    latest_precedent_id = forms.UUIDField(widget=forms.HiddenInput(), required=False)
 
     def __init__(self, *args, good_on_application, **kwargs):
         super().__init__(*args, **kwargs)
@@ -414,15 +413,8 @@ class TAUPreviousAssessmentForm(forms.Form):
                 required=False,
                 widget=forms.CheckboxInput(attrs={"class": "previous-assessment-checkbox-cell"}),
             )
-
-        existing_field_count = len(self.fields)
-        # Specify how many fields
-        fields_to_add = 3 - existing_field_count
-
-        for i in range(fields_to_add):
-            # Add the fields to make sure all formset have equal numbers.
-            self.fields[f"dynamic_field_{i}"] = forms.CharField(
-                required=False, label="", widget=forms.TextInput(attrs={"class": "empty-field-hide"})
+            self.fields["latest_precedent_id"] = forms.UUIDField(
+                widget=forms.HiddenInput(),
             )
 
 

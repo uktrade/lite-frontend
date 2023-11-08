@@ -34,7 +34,9 @@
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header govuk-table__cell--checkbox"></th>
-                <th scope="col" class="govuk-table__header"></th>
+                <th scope="col" class="govuk-table__header">
+                    <span class="govuk-visuallyhidden">Line number</span>
+                </th>
                 <th scope="col" class="govuk-table__header">Product name</th>
                 <th scope="col" class="govuk-table__header">Control entry</th>
                 <th scope="col" class="govuk-table__header">Licence</th>
@@ -49,22 +51,20 @@
             {% for form in formset %}
                 <tr class="govuk-table__row">
                     {% for field in form %}
-                        {% if not field.is_hidden %}
-                            <td class="govuk-table__cell{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
-                                {{ field|as_crispy_field }}
-                            </td>
-                        {% else %}
+                        {% if field.is_hidden %}
                             {{ field }}
                         {% endif %}
                     {% endfor %}
 
-                    
-                    <td class="govuk-table__cell readonly-field">
-                        <div>
-                            {{ form.good_on_application.line_number }}.
-                        </div>
+                    <td class="govuk-table__cell govuk-table__cell--checkbox">
+                        {% if form.good_on_application.latest_precedent %}
+                            {{ form.use_latest_precedent|as_crispy_field }}
+                        {% endif %}
                     </td>
-                           
+                    <td class="govuk-table__cell readonly-field">
+                        {{ form.good_on_application.line_number }}.
+                    </td>
+                    
                     <td class="govuk-table__cell readonly-field">
                         <div class="govuk-!-margin-bottom-2">{{ form.good_on_application.good.name }}</div>
                         <div>{{ form.good_on_application.good.part_number }}</div>
