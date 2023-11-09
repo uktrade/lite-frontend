@@ -81,6 +81,7 @@ class ProductSearchForm(forms.Form):
     page_size = 25
 
     search_string = forms.CharField(
+        label="",
         required=False,
     )
     page = forms.IntegerField(widget=forms.HiddenInput(), required=False, initial=1)
