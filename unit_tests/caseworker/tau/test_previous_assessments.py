@@ -129,6 +129,7 @@ def test_previous_assessments_GET(
     assert get_td_text(table_rows[0]) == [
         "1.",
         "p1 44",
+        data_standard_case["case"]["reference_code"],
         "ML1a",
         "Yes",
         "some regime",
@@ -139,6 +140,7 @@ def test_previous_assessments_GET(
     assert get_td_text(table_rows[1]) == [
         "2.",
         "p2 44",
+        data_standard_case["case"]["reference_code"],
         "ML1a",
         "Yes",
         "some regime",
