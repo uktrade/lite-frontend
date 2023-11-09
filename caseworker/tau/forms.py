@@ -416,6 +416,12 @@ class TAUPreviousAssessmentForm(forms.Form):
             self.fields["latest_precedent_id"] = forms.UUIDField(
                 widget=forms.HiddenInput(),
             )
+            self.fields["comment"] = forms.CharField(
+                widget=forms.Textarea(attrs={"class": "govuk-textarea"}),
+                required=False,
+                label="",
+                initial=good_on_application["latest_precedent"].get("comment", ""),
+            )
 
 
 class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
