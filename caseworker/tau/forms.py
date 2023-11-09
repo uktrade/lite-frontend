@@ -400,19 +400,22 @@ class TAUPreviousAssessmentForm(forms.Form):
     good_on_application_id = forms.UUIDField(
         widget=forms.HiddenInput(),
     )
-    latest_precedent_id = forms.UUIDField(
-        widget=forms.HiddenInput(),
-    )
-    use_latest_precedent = forms.BooleanField(
-        initial=True,
-        label="",
-        required=False,
-    )
 
     def __init__(self, *args, good_on_application, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.good_on_application = good_on_application
+
+        # Only add the 'use_latest_precedent' field if 'latest_precedent' is present
+        if good_on_application.get("latest_precedent"):
+            self.fields["use_latest_precedent"] = forms.BooleanField(
+                initial=True,
+                label="",
+                required=False,
+                widget=forms.CheckboxInput(attrs={"class": "previous-assessment-checkbox-cell"}),
+            )
+            self.fields["latest_precedent_id"] = forms.UUIDField(
+                widget=forms.HiddenInput(),
+            )
 
 
 class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
@@ -429,6 +432,9 @@ class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
         if any(self.errors):
             return
         for form in self.forms:
+            if "use_latest_precedent" not in form.fields:
+                continue
+
             if form.cleaned_data["use_latest_precedent"] and form.good_on_application["latest_precedent"]["id"] != str(
                 form.cleaned_data["latest_precedent_id"]
             ):
