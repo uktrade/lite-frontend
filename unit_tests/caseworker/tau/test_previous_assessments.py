@@ -213,17 +213,7 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
         "woop!",
         "No",
     ]
-    assert get_td_text(table_rows[1]) == [
-        "2.",
-        "p2 44  NOT YET ASSESSED",
-        "",
-        "",
-        "No",  # TODO: this should be empty string
-        "",
-        "",
-        "",
-        "No",  # TODO: this should be empty string
-    ]
+    assert get_td_text(table_rows[1]) == ["2.", "p2 44  NOT YET ASSESSED", "", "", "", "", "", "", ""]
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
     assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom"
