@@ -226,7 +226,7 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
     ]
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
-    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom"
+    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom."
 
 
 def test_previous_assessments_GET_no_precedents(
