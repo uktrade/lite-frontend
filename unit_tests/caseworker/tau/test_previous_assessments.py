@@ -127,6 +127,7 @@ def test_previous_assessments_GET(
         return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "readonly-field"})]
 
     assert get_td_text(table_rows[0]) == [
+        "1.",
         "p1 44",
         "ML1a",
         "Yes",
@@ -136,6 +137,7 @@ def test_previous_assessments_GET(
         "No",
     ]
     assert get_td_text(table_rows[1]) == [
+        "2.",
         "p2 44",
         "ML1a",
         "Yes",
@@ -425,6 +427,45 @@ def test_multiple_previous_assesments_POST(
     mock_good_precedent_endpoint,
     mock_control_list_entries,
 ):
+    additional_good = {
+        "id": "6daad1c3-5b71-44e3-9022-bb57c351081f",
+        "good": {
+            "id": "6a7fc61f-54d4-471e-bf37-c00e2ef126c1",
+            "name": "test",
+            "control_list_entries": [
+                {
+                    "id": "0b9116c2-3aa0-49fb-a590-944b47312345",
+                    "rating": "ML1a",
+                    "text": "test",
+                }
+            ],
+            "is_good_controlled": {"key": "True", "value": "Yes"},
+            "flags": [],
+            "documents": [
+                {
+                    "id": "6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335",
+                    "name": "data_sheet.pdf",
+                    "description": "product data sheet",
+                    "safe": True,
+                }
+            ],
+            "status": {"key": "verified", "value": "Verified"},
+            "item_category": {"key": "group2_firearms", "value": "Firearm"},
+            "is_document_available": True,
+            "firearm_details": {},
+            "is_precedent": False,
+        },
+        "quantity": 1.0,
+        "unit": {"key": "NAR", "value": "Items"},
+        "value": "1",
+        "flags": [],
+        "is_good_controlled": None,
+        "control_list_entries": [],
+        "precedents": [],
+        "latest_precedent": None,
+    }
+
+    data_standard_case["case"]["data"]["goods"].append(additional_good)
     good_1 = data_standard_case["case"]["data"]["goods"][0]
     good_on_application_id_1 = good_1["id"]
 
@@ -436,7 +477,7 @@ def test_multiple_previous_assesments_POST(
     )
 
     data = {
-        "form-TOTAL_FORMS": 2,
+        "form-TOTAL_FORMS": 3,
         "form-INITIAL_FORMS": 0,
         "form-0-use_latest_precedent": True,
         "form-0-good_on_application_id": good_on_application_id_1,
@@ -444,6 +485,9 @@ def test_multiple_previous_assesments_POST(
         "form-1-use_latest_precedent": True,
         "form-1-good_on_application_id": good_on_application_id_2,
         "form-1-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "form-2-use_latest_precedent": "",
+        "form-2-good_on_application_id": data_standard_case["case"]["data"]["goods"][2]["id"],
+        "form-2-latest_precedent_id": "",
     }
 
     response = authorized_client.post(previous_assessments_url, data, follow=True)
