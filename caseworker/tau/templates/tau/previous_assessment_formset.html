@@ -65,7 +65,7 @@
                     <td class="govuk-table__cell readonly-field">
                         {{ form.good_on_application.line_number }}.
                     </td>
-                    
+
                     <td class="govuk-table__cell readonly-field">
                         <div class="govuk-!-margin-bottom-2">{{ form.good_on_application.good.name }}</div>
                         <div>{{ form.good_on_application.good.part_number }}</div>
@@ -73,7 +73,11 @@
                             <p class="govuk-tag govuk-tag--blue"> NOT YET ASSESSED </p>
                         {% endif %}
                     </td>
-                    <td class="govuk-table__cell readonly-field"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:home' queue_pk=queue_id pk=form.good_on_application.latest_precedent.application %}">{{ form.good_on_application.latest_precedent.reference }}</a></td>
+                    <td class="govuk-table__cell readonly-field">
+                        {% if form.good_on_application.latest_precedent.application %}
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:home' queue_pk=queue_id pk=form.good_on_application.latest_precedent.application %}">{{ form.good_on_application.latest_precedent.reference }}</a>
+                        {% endif %}
+                    </td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}</td>
                     <td class="govuk-table__cell readonly-field">
