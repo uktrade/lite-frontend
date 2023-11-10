@@ -93,6 +93,31 @@ def mock_good_precedent_endpoint(requests_mock, data_standard_case, data_good_pr
     )
 
 
+@pytest.fixture
+def mock_single_good_precedent_endpoint(requests_mock, data_standard_case, data_good_precedent, data_queue):
+    case_id = data_standard_case["case"]["id"]
+
+    # Single good with previous assessment
+    results = [data_good_precedent]
+
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    # Remove assessment from other good
+    good = data_standard_case["case"]["data"]["goods"][1]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+
+    precedents_url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
+    requests_mock.get(
+        precedents_url,
+        json={"results": results},
+    )
+
+
 @pytest.mark.parametrize(
     "feature_flag_active, expected_product_assessment_tab_url",
     ((True, "tau/previous-assessments/"), (False, "tau/")),
@@ -150,7 +175,58 @@ def test_previous_assessments_GET(
     ]
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
-    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom"
+    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom."
+
+
+def test_previous_assessments_GET_single_precedent_and_single_new_product(
+    authorized_client,
+    previous_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    mock_single_good_precedent_endpoint,
+):
+    response = authorized_client.get(previous_assessments_url)
+    assert response.status_code == 200
+
+    # Test elements of case info panel
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
+
+    table = soup.find("table", id="tau-form")
+    assert table
+    table_rows = table.select("tbody tr")
+    assert len(table_rows) == 2
+
+    def get_td_text(table_row):
+        return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "readonly-field"})]
+
+    assert get_td_text(table_rows[0]) == [
+        "1.",
+        "p1 44",
+        data_standard_case["case"]["reference_code"],
+        "ML1a",
+        "Yes",
+        "some regime",
+        "some prefix some subject",
+        "woop!",
+        "No",
+    ]
+    assert get_td_text(table_rows[1]) == [
+        "2.",
+        "p2 44  NOT YET ASSESSED",
+        "",
+        "",
+        "No",  # TODO: this should be empty string
+        "",
+        "",
+        "",
+        "No",  # TODO: this should be empty string
+    ]
+
+    notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
+    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom."
 
 
 def test_previous_assessments_GET_no_precedents(
