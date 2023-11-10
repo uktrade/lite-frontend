@@ -443,7 +443,9 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     end_user_address = data_standard_case["case"]["data"]["end_user"]["address"]
 
     requests_mock.get(
-        client._build_absolute_uri(f"/external-data/denial-search/?search={end_user_name}&search={end_user_address}"),
+        client._build_absolute_uri(
+            f"/external-data/denial-search/?search=name:{end_user_name}&search=address:{end_user_address}"
+        ),
         json={"count": "26", "total_pages": "2", "results": denials_data * 26},
     )
 
