@@ -22,7 +22,7 @@ Search - Products
     </div>
 </div>
 
-<div id="product-search-customiser" class="customiser" data-customiser-spec='{"options_label": "Customise search results", "identifier": "product-search-view", "analytics_prefix": "psv", "options_hint": "Select columns to show", "toggleable_elements": [{"label": "Assessment date", "key": "assessment_date", "default_visible": true}, {"label": "Destination", "key": "destination", "default_visible": true}, {"label": "Control entry", "key": "control_entry", "default_visible": true}, {"label": "Regime", "key": "regime", "default_visible": true}, {"label": "Report summary", "key": "report_summary", "default_visible": true}, {"label": "Assessment notes", "key": "assessment_notes", "default_visible": true}]}'>
+<div id="product-search-customiser" class="customiser" data-customiser-spec="{{ customiser_spec }}">
     {% if search_results.count %}
     <div class="govuk-!-margin-top-4 customiser__header">
         <h1 class="govuk-body">{{ search_results.count }} results found</h1>
