@@ -79,7 +79,11 @@
                         {% endif %}
                     </td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}</td>
+                    <td class="govuk-table__cell readonly-field">
+                        {% if form.good_on_application.latest_precedent %}
+                            {{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}
+                        {% endif %}
+                    </td>
                     <td class="govuk-table__cell readonly-field">
                         {% include "tau/includes/regime_short_name.html" with regime_entries=form.good_on_application.latest_precedent.regime_entries %}
                     </td>
@@ -102,7 +106,9 @@
                         {{ form.good_on_application.latest_precedent.comment|default:"" }}
                     </td>
                     <td class="govuk-table__cell readonly-field">
-                        {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
+                        {% if form.good_on_application.latest_precedent %}
+                            {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
