@@ -77,16 +77,6 @@ urlpatterns = [
         name="finalise_document_create",
     ),
     path("ecju-queries/new/", ecju.NewECJUQueryView.as_view(), name="new_ecju_query"),
-    path(
-        "review-standard-application-goods/",
-        goods.ReviewStandardApplicationGoodWizardView.as_view(),
-        name="review_standard_application_goods",
-    ),
-    path(
-        "review-open-application-goods/",
-        goods.ReviewOpenApplicationGoodWizardView.as_view(),
-        name="review_open_application_goods",
-    ),
     path("generate-document/", generate_document.GenerateDocument.as_view(), name="generate_document"),
     path(
         "generate-document/<uuid:dpk>/",
