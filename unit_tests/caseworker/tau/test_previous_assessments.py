@@ -42,6 +42,11 @@ def tau_assessment_url(data_standard_case):
 
 
 @pytest.fixture
+def api_make_assessment_url(data_standard_case):
+    return client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/")
+
+
+@pytest.fixture
 def data_good_precedent(data_standard_case, data_queue):
     case_id = data_standard_case["case"]["id"]
     return {
@@ -261,10 +266,9 @@ def test_previous_assessments_POST(
     data_good_precedent,
     requests_mock,
     tau_assessment_url,
+    api_make_assessment_url,
 ):
-    mocked_assessment_endpoint = requests_mock.put(
-        client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
     data = {
@@ -305,10 +309,9 @@ def test_previous_assessments_POST_mismatched_latest_precedent(
     mock_gov_user,
     mock_good_precedent_endpoint,
     requests_mock,
+    api_make_assessment_url,
 ):
-    mocked_assessment_endpoint = requests_mock.put(
-        client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
     data = {
@@ -337,10 +340,9 @@ def test_previous_assessments_POST_no_products_selected(
     data_good_precedent,
     requests_mock,
     tau_assessment_url,
+    api_make_assessment_url,
 ):
-    mocked_assessment_endpoint = requests_mock.put(
-        client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
     data = {
@@ -366,10 +368,9 @@ def test_previous_assessments_POST_form_invalid(
     mock_good_precedent_endpoint,
     data_good_precedent,
     requests_mock,
+    api_make_assessment_url,
 ):
-    mocked_assessment_endpoint = requests_mock.put(
-        client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
     data = {
@@ -458,9 +459,10 @@ def test_case_assign_me_button_when_user_is_not_assigned(
 def mock_previous_assessments_POST_failure(
     requests_mock,
     data_standard_case,
+    api_make_assessment_url,
 ):
     return requests_mock.put(
-        client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/"),
+        api_make_assessment_url,
         json={},
         status_code=500,
     )
@@ -497,6 +499,7 @@ def test_multiple_previous_assesments_POST(
     previous_assessments_url,
     mock_good_precedent_endpoint,
     mock_control_list_entries,
+    api_make_assessment_url,
 ):
     additional_good = {
         "id": "6daad1c3-5b71-44e3-9022-bb57c351081f",
@@ -543,9 +546,7 @@ def test_multiple_previous_assesments_POST(
     good_2 = data_standard_case["case"]["data"]["goods"][1]
     good_on_application_id_2 = good_2["id"]
 
-    mocked_assessment_endpoint = requests_mock.put(
-        client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     data = {
         "form-TOTAL_FORMS": 3,
