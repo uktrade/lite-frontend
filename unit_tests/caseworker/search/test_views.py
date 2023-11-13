@@ -32,7 +32,7 @@ def test_product_search_renders_template(authorized_client, product_search_url):
     assertTemplateUsed(response, "layouts/base.html")
 
 
-def test_product_search_view_get(authorized_client, product_search_url):
+def test_product_search_view_get(authorized_client, product_search_url, mock_product_search):
     response = authorized_client.get(product_search_url)
     assert response.status_code == 200
 
@@ -43,6 +43,33 @@ def test_product_search_view_get(authorized_client, product_search_url):
     assert soup.find("h1").string == "Search products"
     assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Search"
     assert soup.find("input", {"name": "search_string"})
+
+    expected_fields = {
+        "id",
+        "name",
+        "description",
+        "part_number",
+        "destination",
+        "application",
+        "date",
+        "queues",
+        "organisation",
+        "control_list_entries",
+        "ratings",
+        "report_summary",
+        "assessment_note",
+        "assessment_date",
+        "assessed_by",
+        "regime_entries",
+        "regimes",
+    }
+    # check for presence of expected fields in search results
+    # We have a fixture with example search results and currently we group them
+    # based on unique rating so extract the first one
+    result = response.context["search_results"]["results"][0]["distinct_rating_hits"][0]
+    actual_fields = set(result.keys())
+
+    assert expected_fields == actual_fields
 
 
 @pytest.mark.parametrize(
