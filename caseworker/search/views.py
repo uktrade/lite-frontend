@@ -1,5 +1,6 @@
 from django.views.generic import FormView
 from django.urls import reverse_lazy
+import json
 
 from core.auth.views import LoginRequiredMixin
 
@@ -37,9 +38,28 @@ class ProductSearchView(LoginRequiredMixin, FormView):
         context = {
             **context,
             "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
+            "customiser_spec": self.customiser_spec(),
             "search_results": results,
             "data": {
                 "total_pages": results["count"] // form.page_size,
             },
         }
         return context
+
+    def customiser_spec(self) -> str:
+        return json.dumps(
+            {
+                "options_label": "Customise search results",
+                "identifier": "product-search-view",
+                "analytics_prefix": "psv",
+                "options_hint": "Select columns to show",
+                "toggleable_elements": [
+                    {"label": "Assessment date", "key": "assessment_date", "default_visible": True},
+                    {"label": "Destination", "key": "destination", "default_visible": True},
+                    {"label": "Control entry", "key": "control_entry", "default_visible": True},
+                    {"label": "Regime", "key": "regime", "default_visible": True},
+                    {"label": "Report summary", "key": "report_summary", "default_visible": True},
+                    {"label": "Assessment notes", "key": "assessment_notes", "default_visible": True},
+                ],
+            }
+        )
