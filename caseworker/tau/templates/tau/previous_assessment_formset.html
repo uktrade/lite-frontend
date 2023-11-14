@@ -43,8 +43,8 @@
                 <th scope="col" class="govuk-table__header">Licence</th>
                 <th scope="col" class="govuk-table__header">Regimes</th>
                 <th scope="col" class="govuk-table__header">Report summary</th>
-                <th scope="col" class="govuk-table__header">Assessment note</th>
                 <th scope="col" class="govuk-table__header">Refer to NCSC</th>
+                <th scope="col" class="govuk-table__header">Assessment note</th>
             </tr>
         </thead>
 
@@ -104,12 +104,12 @@
                     {% endspaceless %}
                     <td class="govuk-table__cell readonly-field">
                         {% if form.good_on_application.latest_precedent %}
-                            {{ form.comment|as_crispy_field }}
+                            {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
                         {% endif %}
                     </td>
                     <td class="govuk-table__cell readonly-field">
                         {% if form.good_on_application.latest_precedent %}
-                            {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
+                            {{ form.comment|as_crispy_field }}
                         {% endif %}
                     </td>
                 </tr>
