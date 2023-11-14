@@ -272,6 +272,7 @@ def test_form(
     report_summary_subject,
     assign_user_to_case,
     mock_gov_user,
+    mock_assessment_put,
 ):
     """
     Tests the submission of a valid form only. More tests on the form itself are in test_forms.py
@@ -282,10 +283,6 @@ def test_form(
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
-    requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
-    # unassessed products should have 1 entry
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     unassessed_products = soup.find(id="unassessed-products").find_all("input")
@@ -304,16 +301,18 @@ def test_form(
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
 
-    assert requests_mock.last_request.json() == {
-        "control_list_entries": [],
-        "report_summary_subject": report_summary_subject["id"],
-        "report_summary_prefix": "",
-        "comment": "",
-        "objects": ["0bedd1c3-cf97-4aad-b711-d5c9a9f4586e"],
-        "is_good_controlled": False,
-        "regime_entries": [],
-        "is_ncsc_military_information_security": False,
-    }
+    assert mock_assessment_put.last_request.json() == [
+        {
+            "control_list_entries": [],
+            "report_summary_subject": report_summary_subject["id"],
+            "report_summary_prefix": "",
+            "comment": "",
+            "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "is_good_controlled": False,
+            "regime_entries": [],
+            "is_ncsc_military_information_security": False,
+        }
+    ]
 
 
 @pytest.mark.parametrize(
@@ -372,6 +371,7 @@ def test_form_regime_entries(
     regimes_form_data,
     regime_entries,
     report_summary_subject,
+    mock_assessment_put,
 ):
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
@@ -390,16 +390,18 @@ def test_form_regime_entries(
 
     response = authorized_client.post(url, data=data)
     assert response.status_code == 302
-    assert requests_mock.last_request.json() == {
-        "control_list_entries": [],
-        "report_summary_subject": report_summary_subject["id"],
-        "report_summary_prefix": "",
-        "comment": "",
-        "objects": ["0bedd1c3-cf97-4aad-b711-d5c9a9f4586e"],
-        "is_good_controlled": False,
-        "regime_entries": regime_entries,
-        "is_ncsc_military_information_security": False,
-    }
+    assert mock_assessment_put.last_request.json() == [
+        {
+            "control_list_entries": [],
+            "report_summary_subject": report_summary_subject["id"],
+            "report_summary_prefix": "",
+            "comment": "",
+            "id": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "is_good_controlled": False,
+            "regime_entries": regime_entries,
+            "is_ncsc_military_information_security": False,
+        }
+    ]
 
 
 @pytest.mark.parametrize(
