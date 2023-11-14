@@ -67,3 +67,11 @@ def test_appeal_deadline_date_format(
     response = authorized_client.get(application_url)
 
     assert response.status_code == 200
+
+
+def test_user_id_hidden_field(authorized_client, data_standard_case, mock_application_get, mock_exporter_user):
+    pk = data_standard_case["case"]["id"]
+    application_url = reverse("applications:application", kwargs={"pk": pk})
+    response = authorized_client.get(application_url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find(id="user_id")["value"] == mock_exporter_user["user"]["lite_api_user_id"]

@@ -5,12 +5,12 @@ import { initAll } from "govuk-frontend";
 import "../../../core/assets/javascripts/definitions.js";
 import "../../../core/assets/javascripts/back-link.js";
 import initCookierBanner from "../../../core/assets/javascripts/cookies/banner.js";
+import { gaPushUserID } from "../../../core/assets/javascripts/ga-events.js";
 
 // core
 // TODO: can't rewrite these as ES6 imports yet as they are used by other templates
 import "./checkboxes.js";
 import "./snackbar-hide.js";
-
 // caseworker
 import initMenuTooltips from "./menu-tooltips.js";
 import initQueuesMenu from "./queues-menu.js";
@@ -31,6 +31,7 @@ import "../styles/styles.scss";
 
 // init govuk
 initAll();
+
 // init our JS
 initMenuTooltips();
 initQueuesMenu();
@@ -44,3 +45,6 @@ initExpanders();
 initCustomisers();
 initRadioTextArea();
 initSelectAllTables();
+
+// Push GA user_id
+gaPushUserID();

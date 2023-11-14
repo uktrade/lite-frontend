@@ -93,6 +93,31 @@ def mock_good_precedent_endpoint(requests_mock, data_standard_case, data_good_pr
     )
 
 
+@pytest.fixture
+def mock_single_good_precedent_endpoint(requests_mock, data_standard_case, data_good_precedent, data_queue):
+    case_id = data_standard_case["case"]["id"]
+
+    # Single good with previous assessment
+    results = [data_good_precedent]
+
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    # Remove assessment from other good
+    good = data_standard_case["case"]["data"]["goods"][1]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+
+    precedents_url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
+    requests_mock.get(
+        precedents_url,
+        json={"results": results},
+    )
+
+
 @pytest.mark.parametrize(
     "feature_flag_active, expected_product_assessment_tab_url",
     ((True, "tau/previous-assessments/"), (False, "tau/")),
@@ -117,19 +142,19 @@ def test_previous_assessments_GET(
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find("a", id="tab-assessment")["href"].endswith(expected_product_assessment_tab_url)
     assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
+
     table = soup.find("table", id="tau-form")
     assert table
-    assert [td.text.strip().strip() for td in table.findAll("td", {"class": "readonly-field"})] == [
-        "p1",
-        "44",
-        "ML1a",
-        "Yes",
-        "some regime",
-        "some prefix some subject",
-        "woop!",
-        "No",
-        "p2",
-        "44",
+    table_rows = table.select("tbody tr")
+    assert len(table_rows) == 2
+
+    def get_td_text(table_row):
+        return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "readonly-field"})]
+
+    assert get_td_text(table_rows[0]) == [
+        "1.",
+        "p1 44",
+        data_standard_case["case"]["reference_code"],
         "ML1a",
         "Yes",
         "some regime",
@@ -137,10 +162,61 @@ def test_previous_assessments_GET(
         "woop!",
         "No",
     ]
-    table = soup.find("table", id="tau-form")
+    assert get_td_text(table_rows[1]) == [
+        "2.",
+        "p2 44",
+        data_standard_case["case"]["reference_code"],
+        "ML1a",
+        "Yes",
+        "some regime",
+        "some prefix some subject",
+        "woop!",
+        "No",
+    ]
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
-    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom"
+    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom."
+
+
+def test_previous_assessments_GET_single_precedent_and_single_new_product(
+    authorized_client,
+    previous_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    mock_single_good_precedent_endpoint,
+):
+    response = authorized_client.get(previous_assessments_url)
+    assert response.status_code == 200
+
+    # Test elements of case info panel
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Previously assessed products"
+
+    table = soup.find("table", id="tau-form")
+    assert table
+    table_rows = table.select("tbody tr")
+    assert len(table_rows) == 2
+
+    def get_td_text(table_row):
+        return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "readonly-field"})]
+
+    assert get_td_text(table_rows[0]) == [
+        "1.",
+        "p1 44",
+        data_standard_case["case"]["reference_code"],
+        "ML1a",
+        "Yes",
+        "some regime",
+        "some prefix some subject",
+        "woop!",
+        "No",
+    ]
+    assert get_td_text(table_rows[1]) == ["2.", "p2 44  NOT YET ASSESSED", "", "", "", "", "", "", ""]
+
+    notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
+    assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom."
 
 
 def test_previous_assessments_GET_no_precedents(
@@ -419,6 +495,45 @@ def test_multiple_previous_assesments_POST(
     mock_good_precedent_endpoint,
     mock_control_list_entries,
 ):
+    additional_good = {
+        "id": "6daad1c3-5b71-44e3-9022-bb57c351081f",
+        "good": {
+            "id": "6a7fc61f-54d4-471e-bf37-c00e2ef126c1",
+            "name": "test",
+            "control_list_entries": [
+                {
+                    "id": "0b9116c2-3aa0-49fb-a590-944b47312345",
+                    "rating": "ML1a",
+                    "text": "test",
+                }
+            ],
+            "is_good_controlled": {"key": "True", "value": "Yes"},
+            "flags": [],
+            "documents": [
+                {
+                    "id": "6c48a2cc-1ed9-49a5-8ca7-df8af5fc2335",
+                    "name": "data_sheet.pdf",
+                    "description": "product data sheet",
+                    "safe": True,
+                }
+            ],
+            "status": {"key": "verified", "value": "Verified"},
+            "item_category": {"key": "group2_firearms", "value": "Firearm"},
+            "is_document_available": True,
+            "firearm_details": {},
+            "is_precedent": False,
+        },
+        "quantity": 1.0,
+        "unit": {"key": "NAR", "value": "Items"},
+        "value": "1",
+        "flags": [],
+        "is_good_controlled": None,
+        "control_list_entries": [],
+        "precedents": [],
+        "latest_precedent": None,
+    }
+
+    data_standard_case["case"]["data"]["goods"].append(additional_good)
     good_1 = data_standard_case["case"]["data"]["goods"][0]
     good_on_application_id_1 = good_1["id"]
 
@@ -430,7 +545,7 @@ def test_multiple_previous_assesments_POST(
     )
 
     data = {
-        "form-TOTAL_FORMS": 2,
+        "form-TOTAL_FORMS": 3,
         "form-INITIAL_FORMS": 0,
         "form-0-use_latest_precedent": True,
         "form-0-good_on_application_id": good_on_application_id_1,
@@ -438,6 +553,9 @@ def test_multiple_previous_assesments_POST(
         "form-1-use_latest_precedent": True,
         "form-1-good_on_application_id": good_on_application_id_2,
         "form-1-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "form-2-use_latest_precedent": "",
+        "form-2-good_on_application_id": data_standard_case["case"]["data"]["goods"][2]["id"],
+        "form-2-latest_precedent_id": "",
     }
 
     response = authorized_client.post(previous_assessments_url, data, follow=True)

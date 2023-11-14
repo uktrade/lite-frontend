@@ -33,15 +33,12 @@
     >
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                {% for field in formset.forms.0 %}
-                    {% if not field.is_hidden %}
-                        <th for="{{ field.auto_id }}" scope="col" class="govuk-table__header{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
-                            {{ field.label }}
-                        </th>
-                    {% endif %}
-                {% endfor %}
+                <th scope="col" class="govuk-table__header govuk-table__cell--checkbox"></th>
+                <th scope="col" class="govuk-table__header">
+                    <span class="govuk-visuallyhidden">Line number</span>
+                </th>
                 <th scope="col" class="govuk-table__header">Product name</th>
-                <th scope="col" class="govuk-table__header">Part number</th>
+                <th scope="col" class="govuk-table__header">Reference for last assessment</th>
                 <th scope="col" class="govuk-table__header">Control entry</th>
                 <th scope="col" class="govuk-table__header">Licence</th>
                 <th scope="col" class="govuk-table__header">Regimes</th>
@@ -55,30 +52,38 @@
             {% for form in formset %}
                 <tr class="govuk-table__row">
                     {% for field in form %}
-                        {% if not field.is_hidden %}
-                            <td class="govuk-table__cell{% if field|is_checkbox %} govuk-table__cell--checkbox{% endif %}">
-                                {% for error in field.errors %}
-                                <span class="govuk-error-message">{{error}}</span>
-                                {% endfor %}
-                                {% if field|is_checkbox %}
-                                    <div class="previous-assessment-checkbox-cell">
-                                        {{ field|as_crispy_field }}
-                                        <div class="previous-assessment-checkbox-cell__line-number">
-                                            {{ form.good_on_application.line_number }}.
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    {{ field|as_crispy_field }}
-                                {% endif %}
-                            </td>
-                        {% else %}
+                        {% if field.is_hidden %}
                             {{ field }}
                         {% endif %}
                     {% endfor %}
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.name }}</td>
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.good.part_number }}</td>
+
+                    <td class="govuk-table__cell govuk-table__cell--checkbox">
+                        {% if form.good_on_application.latest_precedent %}
+                            {{ form.use_latest_precedent|as_crispy_field }}
+                        {% endif %}
+                    </td>
+                    <td class="govuk-table__cell readonly-field">
+                        {{ form.good_on_application.line_number }}.
+                    </td>
+
+                    <td class="govuk-table__cell readonly-field">
+                        <div class="govuk-!-margin-bottom-2">{{ form.good_on_application.good.name }}</div>
+                        <div>{{ form.good_on_application.good.part_number }}</div>
+                        {% if not form.good_on_application.latest_precedent %}
+                            <p class="govuk-tag govuk-tag--blue"> NOT YET ASSESSED </p>
+                        {% endif %}
+                    </td>
+                    <td class="govuk-table__cell readonly-field">
+                        {% if form.good_on_application.latest_precedent.application %}
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:home' queue_pk=queue_id pk=form.good_on_application.latest_precedent.application %}">{{ form.good_on_application.latest_precedent.reference }}</a>
+                        {% endif %}
+                    </td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}</td>
+                    <td class="govuk-table__cell readonly-field">
+                        {% if form.good_on_application.latest_precedent %}
+                            {{ form.good_on_application.latest_precedent.is_good_controlled|yesno:"Yes,No," }}
+                        {% endif %}
+                    </td>
                     <td class="govuk-table__cell readonly-field">
                         {% include "tau/includes/regime_short_name.html" with regime_entries=form.good_on_application.latest_precedent.regime_entries %}
                     </td>
@@ -101,7 +106,9 @@
                         {{ form.good_on_application.latest_precedent.comment|default:"" }}
                     </td>
                     <td class="govuk-table__cell readonly-field">
-                        {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
+                        {% if form.good_on_application.latest_precedent %}
+                            {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
