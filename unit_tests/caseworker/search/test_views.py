@@ -1,4 +1,5 @@
 import pytest
+import json
 
 from pytest_django.asserts import assertTemplateUsed
 from urllib import parse
@@ -109,3 +110,62 @@ def test_product_search_run_query(authorized_client, product_search_url, request
     url = f"{url}?{parse.urlencode(expected_query_params, doseq=True)}"
 
     assert search_query.url == url
+
+
+@pytest.mark.parametrize(
+    ("expected_data_customiser_keys"),
+    [
+        ["assessment_date", "destination", "control_entry", "regime", "report_summary", "assessment_notes"],
+    ],
+)
+def test_product_search_columns_are_toggleable(product_search_url, authorized_client, expected_data_customiser_keys):
+    response = authorized_client.get(product_search_url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    # check th elements
+    actual_data_customiser_keys = [
+        th.attrs["data-customiser-key"]
+        for th in soup.find(id="product-search-customiser").find_all("th", class_="govuk-table__header")
+        if "data-customiser-key" in th.attrs.keys()
+    ]
+    assert set(expected_data_customiser_keys) == set(actual_data_customiser_keys)
+    # check td elements
+    actual_data_customiser_keys = [
+        td.attrs["data-customiser-key"]
+        for td in soup.find(id="product-search-customiser").find_all("td", class_="govuk-table__cell")
+        if "data-customiser-key" in td.attrs.keys()
+    ]
+    assert set(expected_data_customiser_keys) == set(actual_data_customiser_keys)
+
+
+@pytest.mark.parametrize(
+    ("expected_data_customiser_spec"),
+    [
+        {
+            "options_label": "Customise search results",
+            "identifier": "product-search-view",
+            "analytics_prefix": "psv",
+            "options_hint": "Select columns to show",
+            "toggleable_elements": [
+                {"label": "Assessment date", "key": "assessment_date", "default_visible": True},
+                {"label": "Destination", "key": "destination", "default_visible": True},
+                {"label": "Control entry", "key": "control_entry", "default_visible": True},
+                {"label": "Regime", "key": "regime", "default_visible": True},
+                {"label": "Report summary", "key": "report_summary", "default_visible": True},
+                {"label": "Assessment notes", "key": "assessment_notes", "default_visible": True},
+            ],
+        }
+    ],
+)
+def test_product_search_data_customiser_spec(authorized_client, product_search_url, expected_data_customiser_spec):
+    """
+    We can't directly test if the columns are visible or not using BeautifulSoup, as it just parses the html and is not a browser. Therefore we just check if
+    the data-customiser-spec is as expected. The data-customiser-spec is where column visibility is set. The customiser.js component has its own tests so we
+    don't need to duplicate those tests here. Instead we test that, assuming customiser js is working, we have the spec set correctly.
+    """
+    response = authorized_client.get(product_search_url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    expected_data_customiser_spec_string = str(json.dumps(expected_data_customiser_spec))
+    actual_data_customiser_spec_string = str(soup.find(id="product-search-customiser").attrs["data-customiser-spec"])
+    assert expected_data_customiser_spec_string == actual_data_customiser_spec_string
