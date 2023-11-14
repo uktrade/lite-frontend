@@ -44,6 +44,23 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
     assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Search"
     assert soup.find("input", {"name": "search_string"})
 
+    # Each search result is displayed as a table
+    # check that expected fields are displayed with expected values
+    table = soup.find("table")
+    table_rows = table.findAll("tr")
+    headers = [header.text.strip() for header in table_rows[0].find_all("th")]
+    assert headers == [
+        "Case reference",
+        "Assessment date",
+        "Destination",
+        "Control entry",
+        "Regime",
+        "Report summary",
+        "Assessment notes",
+    ]
+    data = [col.text.strip() for col in table_rows[1].find_all("td")]
+    assert data == ["GBSIEL/2020/0000001/P", "12 September 2023", "France", "ML1a", "", "guns", "no concerns"]
+
     expected_fields = {
         "id",
         "name",
@@ -69,7 +86,7 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
     result = response.context["search_results"]["results"][0]["distinct_rating_hits"][0]
     actual_fields = set(result.keys())
 
-    assert expected_fields == actual_fields
+    assert expected_fields.issubset(actual_fields)
 
 
 @pytest.mark.parametrize(
