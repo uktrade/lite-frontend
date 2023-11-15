@@ -381,9 +381,10 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
             if not form.cleaned_data.get("use_latest_precedent"):
                 continue
 
-            previous_assessments[str(form.cleaned_data["good_on_application_id"])] = form.good_on_application[
-                "latest_precedent"
-            ]
+            application_id = str(form.cleaned_data["good_on_application_id"])
+            previous_assessments[application_id] = form.good_on_application["latest_precedent"]
+            previous_assessments[application_id]["comment"] = form.cleaned_data.get("comment", "")
+
         # Assess these good on applications with the values from the approved previous assessments
         self.assess_with_previous_assessments(previous_assessments)
         messages.success(self.request, f"Assessed {len(previous_assessments)} products using previous assessments.")

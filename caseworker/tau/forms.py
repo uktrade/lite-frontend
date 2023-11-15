@@ -417,6 +417,15 @@ class TAUPreviousAssessmentForm(forms.Form):
                 widget=forms.HiddenInput(),
             )
 
+            latest_precedent = good_on_application.get("latest_precedent", {})
+            if latest_precedent:
+                self.fields["comment"] = forms.CharField(
+                    widget=forms.Textarea(attrs={"rows": 7}),
+                    required=False,
+                    label="",
+                    initial=latest_precedent.get("comment", ""),
+                )
+
 
 class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
     def __init__(self, *args, goods_on_applications, **kwargs):
