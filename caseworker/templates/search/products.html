@@ -4,90 +4,95 @@
 {% block back_link %}{% endblock %}
 
 {% block title %}
-    Search - Products
+Search - Products
 {% endblock %}
 
 {% block body %}
-    <div class="lite-app-bar govuk-!-margin-bottom-0">
-        <div class="lite-app-bar__content">
-            <h1 class="govuk-heading-l">Search products</h1>
-        </div>
+<div class="lite-app-bar govuk-!-margin-bottom-0">
+    <div class="lite-app-bar__content">
+        <h1 class="govuk-heading-l">Search products</h1>
     </div>
+</div>
 
-    <div class="govuk-!-margin-top-4">
-        <div class="search-div">
-            <div class="product-search">
-                {% crispy form %}
-            </div>
+<div class="govuk-!-margin-top-4">
+    <div class="search-div">
+        <div class="product-search">
+            {% crispy form %}
         </div>
     </div>
+</div>
+
+<div id="product-search-customiser" class="customiser" data-customiser-spec="{{ customiser_spec }}">
+    {% if search_results.count %}
+    <div class="govuk-!-margin-top-4 customiser__header">
+        <h1 class="govuk-body">{{ search_results.count }} results found</h1>
+    </div>
+    {% endif %}
 
     <section class="search-results govuk-!-margin-top-4">
-        {% if search_results.count %}
-            <h1 class="govuk-body">{{ search_results.count }} results found</h1>
-        {% endif %}
         {% for good in search_results.results %}
-            <article class="search-result">
-                <header class="search-result__header">
-                    <div class="search-result__header-wrapper">
-                        <h1 class="search-result__product-name govuk-heading-m">{{ good.name }}</h1>
-                        <div class="search-result__company-name">{{ good.organisation }}</div>
-                    </div>
-                    {% if good.part_number %}
-                        <div class="search-result__part-number">{{ good.part_number }}</div>
-                    {% endif %}
-                </header>
-                <table class="govuk-table">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">
-                                Case reference
-                            </th>
-                            <th scope="col" class="govuk-table__header">
-                                Assessment date
-                            </th>
-                            <th scope="col" class="govuk-table__header">
-                                Destination
-                            </th>
-                            <th scope="col" class="govuk-table__header">
-                                Control entry
-                            </th>
-                            <th scope="col" class="govuk-table__header">
-                                Regime
-                            </th>
-                            <th scope="col" class="govuk-table__header">
-                                Report summary
-                            </th>
-                            <th scope="col" class="govuk-table__header">
-                                Assessment notes
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        {% include 'search/includes/product-search-results.html' with hits=good.distinct_rating_hits %}
-                    </tbody>
-                </table>
-                {% if good.remaining_hits|length %}
-                    <div class="product-search-cle-remaining-hits">
-                        <details class="govuk-details" data-module="govuk-details">
-                            <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                Show more cases for this product
-                            </span>
-                            </summary>
-                            <div class="govuk-details__text">
-                                <table class="govuk-table">
-                                    <tbody class="govuk-table__body">
-                                        {% include 'search/includes/product-search-results.html' with hits=good.remaining_hits %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </details>
-                    </div>
+        <article class="search-result">
+            <header class="search-result__header">
+                <div class="search-result__header-wrapper">
+                    <h1 class="search-result__product-name govuk-heading-m">{{ good.name }}</h1>
+                    <div class="search-result__company-name">{{ good.organisation }}</div>
+                </div>
+                {% if good.part_number %}
+                <div class="search-result__part-number">{{ good.part_number }}</div>
                 {% endif %}
-            </article>
+            </header>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">
+                            Case reference
+                        </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="assessment_date">
+                            Assessment date
+                        </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="destination">
+                            Destination
+                        </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="control_entry">
+                            Control entry
+                        </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="regime">
+                            Regime
+                        </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="report_summary">
+                            Report summary
+                        </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="assessment_notes">
+                            Assessment notes
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% include 'search/includes/product-search-results.html' with hits=good.distinct_rating_hits %}
+                </tbody>
+            </table>
+            {% if good.remaining_hits|length %}
+            <div class="product-search-cle-remaining-hits">
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Show more cases for this product
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <table class="govuk-table">
+                            <tbody class="govuk-table__body">
+                                {% include 'search/includes/product-search-results.html' with hits=good.remaining_hits %}
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+            </div>
+            {% endif %}
+        </article>
         {% endfor %}
 
         {% pagination %}
     </section>
+</div>
 {% endblock %}
