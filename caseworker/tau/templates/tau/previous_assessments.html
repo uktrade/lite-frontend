@@ -17,13 +17,14 @@
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-l">Previously assessed products</h1>
-                    
+                    <h1 class="govuk-heading-l">Product Assessment</h1>
+                    <h2 class="govuk-heading-m">Check product assessments from previous cases</h2>
+
                     {% if unassessed_goods %}
                         {% include "tau/includes/notification_banner.html" with case=case unassessed_goods=unassessed_goods%}
                     {% endif %}
-                    
-                    <p id="subtitle" class="govuk-body">Unselect any products where you disagree with the previous assessment</p>
+
+                    <p id="subtitle" class="govuk-body">Select products where the suggested assessment is correct. Or choose 'Continue to assess all products' to make new assessments on all products.</p>
                 </div>
             </div>
 
