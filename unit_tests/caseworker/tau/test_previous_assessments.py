@@ -273,6 +273,7 @@ def test_previous_assessments_POST(
         "form-0-use_latest_precedent": True,
         "form-0-good_on_application_id": good_on_application_id,
         "form-0-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "form-0-comment": "test comment",
     }
     response = authorized_client.post(previous_assessments_url, data, follow=True)
     assert response.status_code == 200
@@ -280,7 +281,7 @@ def test_previous_assessments_POST(
         "control_list_entries": data_good_precedent["control_list_entries"],
         "report_summary_subject": data_good_precedent["report_summary_subject"]["id"],
         "report_summary_prefix": data_good_precedent["report_summary_prefix"]["id"],
-        "comment": data_good_precedent["comment"],
+        "comment": "test comment",
         "objects": [good_on_application_id],
         "is_good_controlled": data_good_precedent["is_good_controlled"],
         "regime_entries": [data_good_precedent["regime_entries"][0]["pk"]],

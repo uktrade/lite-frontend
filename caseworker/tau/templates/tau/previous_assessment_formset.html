@@ -103,7 +103,9 @@
                     </td>
                     {% endspaceless %}
                     <td class="govuk-table__cell readonly-field">
-                        {{ form.good_on_application.latest_precedent.comment|default:"" }}
+                        {% if form.good_on_application.latest_precedent %}
+                            {{ form.comment|as_crispy_field }}
+                        {% endif %}
                     </td>
                     <td class="govuk-table__cell readonly-field">
                         {% if form.good_on_application.latest_precedent %}
