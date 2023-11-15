@@ -14,9 +14,11 @@
             <table
                 id="table-denial-matches"
                 class="govuk-table"
-                data-module="select-all-table"
-                data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
-                data-select-all-checkbox-selector="input[type=checkbox]"
+                {% if not hide_checkboxes %}
+                    data-module="select-all-table"
+                    data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+                    data-select-all-checkbox-selector="input[type=checkbox]"
+                {% endif %}
             >
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
