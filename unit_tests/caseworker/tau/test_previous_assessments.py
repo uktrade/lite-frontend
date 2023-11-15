@@ -164,8 +164,8 @@ def test_previous_assessments_GET(
         "Yes",
         "some regime",
         "some prefix some subject",
-        "woop!",
         "No",
+        "woop!",
     ]
     assert get_td_text(table_rows[1]) == [
         "2.",
@@ -175,8 +175,8 @@ def test_previous_assessments_GET(
         "Yes",
         "some regime",
         "some prefix some subject",
-        "woop!",
         "No",
+        "woop!",
     ]
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
@@ -215,8 +215,8 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
         "Yes",
         "some regime",
         "some prefix some subject",
-        "woop!",
         "No",
+        "woop!",
     ]
     assert get_td_text(table_rows[1]) == ["2.", "p2 44  NOT YET ASSESSED", "", "", "", "", "", "", ""]
 
