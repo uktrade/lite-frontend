@@ -36,18 +36,30 @@ def keypath_lookup(level, keys):
         yield level
 
 
-def group_results_by_cle(results):
+def group_results_by_combination(results):
+    """
+    Previously we grouped results by unique control entry (CLE) and these were also
+    used as keys to group results in a dictionary. This function now
+    groups results by a distinct combination of control entry and report summary and
+    regime, and so uses frozenset objects as keys in the grouped results dictionary.
+    """
     grouped_results = deepcopy(results)
 
     for item in grouped_results["results"]:
-        item["distinct_rating_hits"] = []
+        item["distinct_combination_hits"] = []
         item["remaining_hits"] = []
-        distinct_cles = {}
+        distinct_combinations = {}
         for hit in item["inner_hits"]["hits"]:
-            cles_key = ", ".join(cle["rating"] for cle in hit["control_list_entries"])
-            if cles_key not in distinct_cles:
-                distinct_cles[cles_key] = hit["id"]
-                item["distinct_rating_hits"].append(hit)
+            combinations_key = frozenset(
+                [
+                    frozenset(cle["rating"] for cle in hit["control_list_entries"]),
+                    hit["report_summary"],
+                    frozenset(regime_entry["name"] for regime_entry in hit["regime_entries"]),
+                ]
+            )
+            if combinations_key not in distinct_combinations:
+                distinct_combinations[combinations_key] = hit["id"]
+                item["distinct_combination_hits"].append(hit)
             else:
                 item["remaining_hits"].append(hit)
 
