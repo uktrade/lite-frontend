@@ -253,26 +253,6 @@ def get_goods_type(request, pk):
     return {"good": data.json()}, data.status_code
 
 
-def post_review_goods(request, case_id, json):
-    # the post shouldn't be aware of the dataset like this.
-    # this should likely be in cases/views/goods.py ReviewGoods and then call the new below function as currently the input json isn't used.
-    json = {
-        "objects": request.GET.getlist("goods", request.GET.getlist("goods_types")),
-        "comment": request.POST.get("comment"),
-        "control_list_entries": request.POST.getlist("control_list_entries[]", []),
-        "is_good_controlled": request.POST.get("is_good_controlled") == "True",
-        "report_summary": request.POST.get("report_summary"),
-    }
-    response = client.post(request, f"/goods/control-list-entries/{case_id}/", json)
-    return response.json(), response.status_code
-
-
-def post_review_good(request, case_id, data):
-    response = client.post(request, f"/goods/control-list-entries/{case_id}/", data)
-    response.raise_for_status()
-    return response.json(), response.status_code
-
-
 # Good Flags
 def get_flags_for_team_of_level(request, level, team_id, include_system_flags=False):
     """
