@@ -1,5 +1,4 @@
 import os
-import requests
 
 from http import HTTPStatus
 
@@ -39,6 +38,7 @@ from caseworker.tau.services import (
     get_good_precedents,
     get_latest_precedents,
     group_gonas_by_good,
+    put_bulk_assessment,
 )
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.utils import get_cle_suggestions_json, get_tau_tab_url_name
@@ -345,33 +345,30 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
         "Unexpected error assessing good with previous assessments",
     )
     def assess_with_previous_assessments(self, previous_assessments):
+        payload = []
         for good_on_application_id, previous_assessment in previous_assessments.items():
-            payload = {
-                "objects": [good_on_application_id],
-                "is_good_controlled": previous_assessment["is_good_controlled"],
-                "control_list_entries": previous_assessment["control_list_entries"],
-                "regime_entries": [entry["pk"] for entry in previous_assessment["regime_entries"]],
-                "report_summary_prefix": previous_assessment["report_summary_prefix"]["id"]
-                if previous_assessment["report_summary_prefix"]
-                else None,
-                "report_summary_subject": previous_assessment["report_summary_subject"]["id"]
-                if previous_assessment["report_summary_subject"]
-                else None,
-                "report_summary": previous_assessment["report_summary"]
-                if previous_assessment["report_summary"]
-                else None,
-                "comment": previous_assessment["comment"],
-                "is_ncsc_military_information_security": previous_assessment["is_ncsc_military_information_security"],
-            }
-            # The call here includes a raise_for_status() invocation, so further error handling
-            # is unnecessary for now as we would prefer the user hit a hard error and further
-            # investigation to happen in sentry
-            try:
-                post_review_good(self.request, self.kwargs["pk"], payload)
-            except requests.exceptions.HTTPError:
-                return {}, HTTPStatus.INTERNAL_SERVER_ERROR
-
-        return {}, HTTPStatus.OK
+            payload.append(
+                {
+                    "id": good_on_application_id,
+                    "is_good_controlled": previous_assessment["is_good_controlled"],
+                    "control_list_entries": previous_assessment["control_list_entries"],
+                    "regime_entries": [entry["pk"] for entry in previous_assessment["regime_entries"]],
+                    "report_summary_prefix": previous_assessment["report_summary_prefix"]["id"]
+                    if previous_assessment["report_summary_prefix"]
+                    else None,
+                    "report_summary_subject": previous_assessment["report_summary_subject"]["id"]
+                    if previous_assessment["report_summary_subject"]
+                    else None,
+                    "report_summary": previous_assessment["report_summary"]
+                    if previous_assessment["report_summary"]
+                    else None,
+                    "comment": previous_assessment["comment"],
+                    "is_ncsc_military_information_security": previous_assessment[
+                        "is_ncsc_military_information_security"
+                    ],
+                }
+            )
+        return put_bulk_assessment(self.request, self.kwargs["pk"], payload)
 
     def formset_valid(self, formset):
         # Build a datastructure of previous assessments for each good on application
@@ -385,11 +382,15 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
             previous_assessments[application_id] = form.good_on_application["latest_precedent"]
             previous_assessments[application_id]["comment"] = form.cleaned_data.get("comment", "")
 
+        redirect_response = redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
+        if not previous_assessments:
+            return redirect_response
+
         # Assess these good on applications with the values from the approved previous assessments
         self.assess_with_previous_assessments(previous_assessments)
         messages.success(self.request, f"Assessed {len(previous_assessments)} products using previous assessments.")
 
-        return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
+        return redirect_response
 
 
 class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
