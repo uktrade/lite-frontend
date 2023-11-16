@@ -71,3 +71,9 @@ def edit_good_on_application_document(request, doc_pk, data):
     response = client.put(request, f"/goods/document_internal_good_on_application_detail/{doc_pk}/", data)
     response.raise_for_status()
     return response.json(), response.status_code
+
+
+def put_bulk_assessment(request, case_pk, data):
+    response = client.put(request, f"/assessments/make-assessments/{case_pk}/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
