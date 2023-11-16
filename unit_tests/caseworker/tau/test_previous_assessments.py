@@ -42,6 +42,11 @@ def tau_assessment_url(data_standard_case):
 
 
 @pytest.fixture
+def api_make_assessment_url(data_standard_case):
+    return client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/")
+
+
+@pytest.fixture
 def data_good_precedent(data_standard_case, data_queue):
     case_id = data_standard_case["case"]["id"]
     return {
@@ -261,10 +266,9 @@ def test_previous_assessments_POST(
     data_good_precedent,
     requests_mock,
     tau_assessment_url,
+    api_make_assessment_url,
 ):
-    mocked_assessment_endpoint = requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
     data = {
@@ -273,20 +277,23 @@ def test_previous_assessments_POST(
         "form-0-use_latest_precedent": True,
         "form-0-good_on_application_id": good_on_application_id,
         "form-0-latest_precedent_id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "form-0-comment": "test comment",
     }
     response = authorized_client.post(previous_assessments_url, data, follow=True)
     assert response.status_code == 200
-    assert mocked_assessment_endpoint.last_request.json() == {
-        "control_list_entries": data_good_precedent["control_list_entries"],
-        "report_summary_subject": data_good_precedent["report_summary_subject"]["id"],
-        "report_summary_prefix": data_good_precedent["report_summary_prefix"]["id"],
-        "comment": data_good_precedent["comment"],
-        "objects": [good_on_application_id],
-        "is_good_controlled": data_good_precedent["is_good_controlled"],
-        "regime_entries": [data_good_precedent["regime_entries"][0]["pk"]],
-        "is_ncsc_military_information_security": data_good_precedent["is_ncsc_military_information_security"],
-        "report_summary": data_good_precedent["report_summary"],
-    }
+    assert mocked_assessment_endpoint.last_request.json() == [
+        {
+            "control_list_entries": data_good_precedent["control_list_entries"],
+            "report_summary_subject": data_good_precedent["report_summary_subject"]["id"],
+            "report_summary_prefix": data_good_precedent["report_summary_prefix"]["id"],
+            "comment": "test comment",
+            "id": good_on_application_id,
+            "is_good_controlled": data_good_precedent["is_good_controlled"],
+            "regime_entries": [data_good_precedent["regime_entries"][0]["pk"]],
+            "is_ncsc_military_information_security": data_good_precedent["is_ncsc_military_information_security"],
+            "report_summary": data_good_precedent["report_summary"],
+        }
+    ]
     messages = [str(msg) for msg in response.context["messages"]]
     expected_message = "Assessed 1 products using previous assessments."
     assert messages == [expected_message]
@@ -302,10 +309,9 @@ def test_previous_assessments_POST_mismatched_latest_precedent(
     mock_gov_user,
     mock_good_precedent_endpoint,
     requests_mock,
+    api_make_assessment_url,
 ):
-    mocked_assessment_endpoint = requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
     data = {
@@ -334,10 +340,9 @@ def test_previous_assessments_POST_no_products_selected(
     data_good_precedent,
     requests_mock,
     tau_assessment_url,
+    api_make_assessment_url,
 ):
-    mocked_assessment_endpoint = requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
     data = {
@@ -363,10 +368,9 @@ def test_previous_assessments_POST_form_invalid(
     mock_good_precedent_endpoint,
     data_good_precedent,
     requests_mock,
+    api_make_assessment_url,
 ):
-    mocked_assessment_endpoint = requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     good_on_application_id = data_standard_case["case"]["data"]["goods"][0]["id"]
     data = {
@@ -455,9 +459,10 @@ def test_case_assign_me_button_when_user_is_not_assigned(
 def mock_previous_assessments_POST_failure(
     requests_mock,
     data_standard_case,
+    api_make_assessment_url,
 ):
-    return requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"),
+    return requests_mock.put(
+        api_make_assessment_url,
         json={},
         status_code=500,
     )
@@ -494,6 +499,7 @@ def test_multiple_previous_assesments_POST(
     previous_assessments_url,
     mock_good_precedent_endpoint,
     mock_control_list_entries,
+    api_make_assessment_url,
 ):
     additional_good = {
         "id": "6daad1c3-5b71-44e3-9022-bb57c351081f",
@@ -540,9 +546,7 @@ def test_multiple_previous_assesments_POST(
     good_2 = data_standard_case["case"]["data"]["goods"][1]
     good_on_application_id_2 = good_2["id"]
 
-    mocked_assessment_endpoint = requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
 
     data = {
         "form-TOTAL_FORMS": 3,
@@ -561,8 +565,9 @@ def test_multiple_previous_assesments_POST(
     response = authorized_client.post(previous_assessments_url, data, follow=True)
     assert response.status_code == 200
 
-    assert mocked_assessment_endpoint.request_history[-2].json()["objects"] == [good_on_application_id_1]
-    assert mocked_assessment_endpoint.last_request.json()["objects"] == [good_on_application_id_2]
+    request_body = mocked_assessment_endpoint.request_history[0].json()
+    assert request_body[0]["id"] == good_on_application_id_1
+    assert request_body[1]["id"] == good_on_application_id_2
 
     messages = [str(msg) for msg in response.context["messages"]]
     expected_message = "Assessed 2 products using previous assessments."
