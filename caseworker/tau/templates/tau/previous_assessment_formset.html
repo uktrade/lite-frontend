@@ -67,7 +67,7 @@
                     </td>
 
                     <td class="govuk-table__cell readonly-field">
-                        <div class="govuk-!-margin-bottom-2">{{ form.good_on_application.good.name }}</div>
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=form.good_on_application.id %}">{{ form.good_on_application.good.name }}</a>
                         <div>{{ form.good_on_application.good.part_number }}</div>
                         {% if not form.good_on_application.latest_precedent %}
                             <p class="govuk-tag govuk-tag--blue"> NOT YET ASSESSED </p>
