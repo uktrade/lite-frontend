@@ -72,6 +72,7 @@ def tau_assessment_url(data_standard_case):
     return reverse(
         "cases:tau:home",
         kwargs={"queue_pk": "1b926457-5c9e-4916-8497-51886e51863a", "pk": data_standard_case["case"]["id"]},
+    )
 
 
 @pytest.fixture

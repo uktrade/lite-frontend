@@ -87,7 +87,7 @@ def test_no_precedent_redirect_to_tau(
     url,
     data_standard_case,
     requests_mock,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_good_precedent_endpoint_empty,
 ):
