@@ -38,10 +38,8 @@ def keypath_lookup(level, keys):
 
 def group_results_by_combination(results):
     """
-    Previously we grouped results by unique control entry (CLE) and these were also
-    used as keys to group results in a dictionary. This function now
-    groups results by a distinct combination of control entry and report summary and
-    regime, and so uses frozenset objects as keys in the grouped results dictionary.
+    This function groups results by a distinct combination of control entry and report summary
+    and regime, using frozenset objects as keys in the grouped results dictionary.
     """
     grouped_results = deepcopy(results)
 
