@@ -705,8 +705,8 @@ class Denials(LoginRequiredMixin, TemplateView):
                 )
 
         for party in parties_to_search:
-            search.append(party["name"])
-            search.append(party["address"])
+            search.append(f'name:{party["name"]}')
+            search.append(f'address:{party["address"]}')
             filter["country"].add(party["country"]["name"])
 
         total_pages = 0
