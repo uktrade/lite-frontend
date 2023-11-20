@@ -67,7 +67,7 @@ def data_good_precedent(data_standard_case, data_queue):
         "regime_entries": [{"pk": "regime-0001", "name": "some regime"}],
         "report_summary_prefix": {"id": "0001", "name": "some prefix"},
         "report_summary_subject": {"id": "0002", "name": "some subject"},
-        "comment": "woop!",
+        "comment": "some assessment note",
         "is_ncsc_military_information_security": False,
     }
 
@@ -164,8 +164,8 @@ def test_previous_assessments_GET(
         "Yes",
         "some regime",
         "some prefix some subject",
-        "woop!",
         "No",
+        "some assessment note",
     ]
     assert get_td_text(table_rows[1]) == [
         "2.",
@@ -175,8 +175,8 @@ def test_previous_assessments_GET(
         "Yes",
         "some regime",
         "some prefix some subject",
-        "woop!",
         "No",
+        "some assessment note",
     ]
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
@@ -215,8 +215,8 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
         "Yes",
         "some regime",
         "some prefix some subject",
-        "woop!",
         "No",
+        "some assessment note",
     ]
     assert get_td_text(table_rows[1]) == ["2.", "p2 44  NOT YET ASSESSED", "", "", "", "", "", "", ""]
 
