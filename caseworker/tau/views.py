@@ -32,6 +32,8 @@ from caseworker.tau.forms import (
     TAUAssessmentForm,
     TAUEditForm,
     TAUPreviousAssessmentForm,
+    TAUBulkEditForm,
+    TAUBulkEditFormSet,
 )
 from caseworker.tau.services import (
     get_first_precedents,
@@ -571,3 +573,48 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
         post_review_good(self.request, case_id=pk, data=payload)
         return redirect(reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}))
+
+
+class TAUBulkEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
+    template_name = "tau/bulk_edit.html"
+    form_class = TAUBulkEditForm
+    factory_kwargs = {"extra": 0, "formset": TAUBulkEditFormSet}
+
+    def get_formset_kwargs(self):
+        kwargs = super().get_formset_kwargs()
+        kwargs["goods_on_applications"] = self.assessed_goods
+        return kwargs
+
+    def get_initial(self):
+        initial = []
+
+        for good_on_application in self.assessed_goods:
+            good = {}
+            good["good_on_application"] = good_on_application
+            good["id"] = good_on_application["id"]
+            good["licence"] = good_on_application["is_good_controlled"]
+            good["refer_to_ncsc"] = good_on_application["is_ncsc_military_information_security"]
+            good["comment"] = good_on_application["comment"]
+            initial.append(good)
+
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        formset_helper = FormHelper()
+        formset_helper.template = "tau/edit_formset.html"
+
+        context.update(
+            {
+                "case": self.case,
+                "queue_id": self.queue_id,
+                "formset_helper": formset_helper,
+                "assessed_goods": self.assessed_goods,
+            }
+        )
+        return context
+
+    def formset_valid(self, formset):
+        # TODO
+        pass

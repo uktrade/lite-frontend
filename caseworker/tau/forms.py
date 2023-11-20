@@ -451,3 +451,42 @@ class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
                 # submitted in the form; we do not want to assess a product with values that
                 # a caseworker has not verified themselves.
                 raise ValidationError("A new assessment was made which supersedes your chosen previous assessment.")
+
+
+class TAUBulkEditForm(forms.Form):
+    id = forms.UUIDField(
+        widget=forms.HiddenInput(),
+    )
+    selected = forms.BooleanField(
+        initial=True,
+        label="",
+        required=False,
+    )
+    licence = forms.BooleanField(
+        label="",
+        required=False,
+    )
+    refer_to_ncsc = forms.BooleanField(
+        label="",
+        required=False,
+    )
+    comment = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7}),
+        required=False,
+        label="",
+    )
+
+    def __init__(self, *args, good_on_application, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.good_on_application = good_on_application
+
+
+class TAUBulkEditFormSet(BaseFormSet):
+    def __init__(self, *args, goods_on_applications, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.goods_on_applications = goods_on_applications
+
+    def get_form_kwargs(self, index):
+        kwargs = super().get_form_kwargs(index)
+        kwargs["good_on_application"] = self.goods_on_applications[index]
+        return kwargs

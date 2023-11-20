@@ -1,0 +1,104 @@
+{% load crispy_forms_tags %}
+{% load crispy_forms_utils %}
+{% load crispy_forms_field %}
+{% load rules %}
+
+{% specialspaceless %}
+{% if formset_tag %}
+<form class="assessment-edit-formset" {{ flat_attrs }} method="{{ form_method }}" {% if formset.is_multipart %} enctype="multipart/form-data"{% endif %}>
+{% endif %}
+    {% if formset_method|lower == 'post' and not disable_csrf %}
+        {% csrf_token %}
+    {% endif %}
+
+    <div>
+        {{ formset.management_form|crispy }}
+    </div>
+
+
+    <div class="previous-assessment-formset__errors">
+        {% for error in formset.non_form_errors %}
+        <span class="govuk-error-message">
+          Error: {{ error }}
+        </span>
+        {% endfor %}
+    </div>
+
+    <table
+        id="tau-form"
+        class="govuk-table assessment-edit-formset__table"
+        data-module="select-all-table"
+        data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
+        data-select-all-checkbox-selector="input[type=checkbox]"
+    >
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header govuk-table__cell--checkbox"></th>
+                <th scope="col" class="govuk-table__header">
+                    <span class="govuk-visuallyhidden">Line number</span>
+                </th>
+                <th scope="col" class="govuk-table__header">Product name</th>
+                <th scope="col" class="govuk-table__header">Control entry</th>
+                <th scope="col" class="govuk-table__header">Licence</th>
+                <th scope="col" class="govuk-table__header">Regimes</th>
+                <th scope="col" class="govuk-table__header">Report summary</th>
+                <th scope="col" class="govuk-table__header">Refer to NCSC</th>
+                <th scope="col" class="govuk-table__header">Assessment note</th>
+            </tr>
+        </thead>
+
+        <tbody class="govuk-table__body">
+            {% for form in formset %}
+                <tr class="govuk-table__row {% if not form.good_on_application.latest_precedent %}tau-not-yet-assessed-box{% endif %}">
+                    {% for field in form %}
+                        {% if field.is_hidden %}
+                            {{ field }}
+                        {% endif %}
+                    {% endfor %}
+
+                    <td class="govuk-table__cell govuk-table__cell--checkbox">
+                        {{ form.selected|as_crispy_field }}
+                    </td>
+                    <td class="govuk-table__cell readonly-field">
+                        {{ form.good_on_application.line_number }}.
+                    </td>
+
+                    <td class="govuk-table__cell readonly-field">
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=form.good_on_application.id %}">{{ form.good_on_application.good.name }}</a>
+                        <div>{{ form.good_on_application.good.part_number }}</div>
+                    </td>
+                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.control_list_entries|join:", " }}</td>
+                    <td class="govuk-table__cell readonly-field">
+                        {{ form.licence|as_crispy_field }}
+                    </td>
+                    <td class="govuk-table__cell readonly-field">
+                        {% include "tau/includes/regime_short_name.html" with regime_entries=form.good_on_application.regime_entries %}
+                    </td>
+
+                    {% spaceless %}
+                    <td class="govuk-table__cell readonly-field">
+                            <span class="previous-assessments__report-summary-prefix">{{ form.good_on_application.report_summary_prefix.name }} </span>
+                            <span class="previous-assessments__report-summary-subject">{{ form.good_on_application.report_summary_subject.name }}</span>
+                    </td>
+                    {% endspaceless %}
+
+                    <td class="govuk-table__cell readonly-field">
+                        {{ form.refer_to_ncsc|as_crispy_field }}
+                    </td>
+                    <td class="govuk-table__cell readonly-field">
+                        {{ form.comment|as_crispy_field }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
+    {% if can_user_assess_products %}
+        <div class="previous-assessment-formset__actions govuk-body">
+            <button class="govuk-button assessment-edit-formset__action">Submit</button>
+            <a href="{% url 'cases:tau:home' queue_pk=queue_id pk=case.id %}" class="govuk-link govuk-link--no-visited-state previous-assessment-formset__action">Cancel</a>
+        </div>
+    {% endif %}
+
+{% if formset_tag %}</form>{% endif %}
+{% endspecialspaceless %}
