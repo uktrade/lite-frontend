@@ -454,7 +454,60 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find(id="table-denials")
+    table = soup.find(id="table-denials")
+    assert table
+    v = {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "address": "726 example road",
+        "country": "Germany",
+        "end_use": 'For the needs of "example company"',
+        "item_description": "example something",
+        "item_list_codes": "FR3a",
+        "name": "Example Name",
+        "notifying_government": "Lithuania",
+        "reference": "abc123/abc123",
+        "regime_reg_ref": "ABC-1234",
+        "entity_type": "End-user",
+    }
+
+    # first tr is headers second onward are data
+    row = table.find_all("tr")
+    headers = row[0].find_all("th")
+
+    # assert headers
+    header_order = [
+        "\n",
+        "Reference",
+        "Regime reference",
+        "Name",
+        "Address",
+        "Country",
+        "Item list codes",
+        "Item description",
+        "End use",
+        "Entity type",
+    ]
+    header_values = [header.text for header in headers]
+    assert header_values == header_order
+
+    # get each column, see that it has data present
+    table_body = row[1].find_all("td")[1:]
+    table_body_values = [table_values.text.strip("\n") for table_values in table_body]
+    # maintains order of the table values
+    data_key_map = [
+        "reference",
+        "regime_reg_ref",
+        "name",
+        "address",
+        "country",
+        "item_list_codes",
+        "item_description",
+        "end_use",
+        "entity_type",
+    ]
+    for i, value in enumerate(table_body_values):
+        assert value == denials_data[0][data_key_map[i]]
+
     page_2 = soup.find(id="page-2")
     assert page_2.a["href"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
 
