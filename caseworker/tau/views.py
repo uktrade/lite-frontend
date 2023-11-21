@@ -639,5 +639,35 @@ class TAUBulkEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
         )
         return context
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error editing assessments",
+        "Unexpected error editing assessments",
+    )
+    def put_assessment_edits(self, payload):
+        return put_bulk_assessment(self.request, self.kwargs["pk"], payload)
+
     def formset_valid(self, formset):
-        pass
+        assessment_edits = []
+        for form in formset.forms:
+            if not form.cleaned_data.get("selected"):
+                continue
+
+            assessment_edits.append(
+                {
+                    "id": str(form.cleaned_data["id"]),
+                    "is_good_controlled": form.cleaned_data["licence"],
+                    "control_list_entries": form.cleaned_data["control_list_entries"],
+                    "regime_entries": form.cleaned_data["regimes"],
+                    "report_summary_prefix": form.cleaned_data["report_summary_prefix"],
+                    "report_summary_subject": form.cleaned_data["report_summary_subject"],
+                    "comment": form.cleaned_data["comment"],
+                    "is_ncsc_military_information_security": form.cleaned_data["refer_to_ncsc"],
+                }
+            )
+
+        # Assess these good on applications with the values from the approved previous assessments
+        self.put_assessment_edits(assessment_edits)
+        messages.success(self.request, f"Edited assessments for {len(assessment_edits)} products.")
+
+        return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
