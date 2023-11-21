@@ -583,6 +583,7 @@ class TAUBulkEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
     def get_formset_kwargs(self):
         kwargs = super().get_formset_kwargs()
         kwargs["goods_on_applications"] = self.assessed_goods
+        kwargs["form_kwargs"] = {"control_list_entries_choices": self.control_list_entries}
         return kwargs
 
     def get_initial(self):
@@ -595,6 +596,20 @@ class TAUBulkEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
             good["licence"] = good_on_application["is_good_controlled"]
             good["refer_to_ncsc"] = good_on_application["is_ncsc_military_information_security"]
             good["comment"] = good_on_application["comment"]
+            good["control_list_entries"] = [cle["rating"] for cle in good_on_application["control_list_entries"]]
+            good["report_summary_prefix"] = (
+                good_on_application["report_summary_prefix"] and good_on_application["report_summary_prefix"]["id"]
+            )
+            good["report_summary_prefix_name"] = (
+                good_on_application["report_summary_prefix"] and good_on_application["report_summary_prefix"]["name"]
+            )
+            good["report_summary_subject"] = (
+                good_on_application["report_summary_subject"] and good_on_application["report_summary_subject"]["id"]
+            )
+            good["report_summary_subject_name"] = (
+                good_on_application["report_summary_subject"] and good_on_application["report_summary_subject"]["name"]
+            )
+
             initial.append(good)
 
         return initial

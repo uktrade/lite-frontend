@@ -67,7 +67,7 @@
                         <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=form.good_on_application.id %}">{{ form.good_on_application.good.name }}</a>
                         <div>{{ form.good_on_application.good.part_number }}</div>
                     </td>
-                    <td class="govuk-table__cell readonly-field">{{ form.good_on_application.control_list_entries|join:", " }}</td>
+                    <td class="govuk-table__cell readonly-field">{{ form.control_list_entries|as_crispy_field }}</td>
                     <td class="govuk-table__cell readonly-field">
                         {{ form.licence|as_crispy_field }}
                     </td>
@@ -76,9 +76,9 @@
                     </td>
 
                     {% spaceless %}
-                    <td class="govuk-table__cell readonly-field">
-                            <span class="previous-assessments__report-summary-prefix">{{ form.good_on_application.report_summary_prefix.name }} </span>
-                            <span class="previous-assessments__report-summary-subject">{{ form.good_on_application.report_summary_subject.name }}</span>
+                    <td class="govuk-table__cell">
+                            {{ form.report_summary_prefix|as_crispy_field }}
+                            {{ form.report_summary_subject|as_crispy_field }}
                     </td>
                     {% endspaceless %}
 
