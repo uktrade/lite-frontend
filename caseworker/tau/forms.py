@@ -479,25 +479,33 @@ class TAUBulkEditForm(forms.Form):
         label="",
         choices=(),  # set in __init__
         required=False,
-        # setting id for javascript to use
+        # setting class for javascript to use
         widget=forms.SelectMultiple(attrs={"class": "control-list-entries"}),
     )
     report_summary_prefix = forms.CharField(
         label="",
-        # setting id for javascript to use
+        # setting class for javascript to use
         widget=forms.TextInput(attrs={"class": "report-summary-prefix"}),
         required=False,
     )
     report_summary_subject = forms.CharField(
         label="",
-        # setting id for javascript to use
+        # setting class for javascript to use
         widget=forms.TextInput(attrs={"class": "report-summary-subject"}),
         required=False,
     )
+    regimes = forms.MultipleChoiceField(
+        label="",
+        choices=(),  # set in __init__
+        required=False,
+        # setting class for javascript to use
+        widget=forms.SelectMultiple(attrs={"class": "regime-entries"}),
+    )
 
-    def __init__(self, *args, control_list_entries_choices, good_on_application, **kwargs):
+    def __init__(self, *args, control_list_entries_choices, regime_choices, good_on_application, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["control_list_entries"].choices = control_list_entries_choices
+        self.fields["regimes"].choices = regime_choices
         self.good_on_application = good_on_application
         if self.initial.get("report_summary_prefix_name"):
             self.fields["report_summary_prefix"].widget.attrs["data-name"] = self.initial["report_summary_prefix_name"]

@@ -91,5 +91,16 @@ const initCLEs = () => {
   }
 };
 
+const initRegimes = () => {
+  const regimeEntryFields = document.querySelectorAll(".regime-entries");
+
+  for (const regimeEntryField of regimeEntryFields) {
+    progressivelyEnhanceMultipleSelectField(regimeEntryField, (option) => {
+      return { id: option.value, name: option.label, classes: [] };
+    });
+  }
+};
+
 initARS();
+initRegimes();
 initCLEs();

@@ -72,7 +72,7 @@
                         {{ form.licence|as_crispy_field }}
                     </td>
                     <td class="govuk-table__cell readonly-field">
-                        {% include "tau/includes/regime_short_name.html" with regime_entries=form.good_on_application.regime_entries %}
+                        {{form.regimes|as_crispy_field}}
                     </td>
 
                     {% spaceless %}

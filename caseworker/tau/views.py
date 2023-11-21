@@ -23,7 +23,7 @@ from caseworker.core.services import get_control_list_entries
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.cases.services import post_review_good
 from caseworker.regimes.enums import Regimes
-from caseworker.regimes.services import get_regime_entries
+from caseworker.regimes.services import get_regime_entries, get_regime_entries_all
 from caseworker.users.services import get_gov_user
 from extra_views import FormSetView
 
@@ -126,6 +126,11 @@ class TAUMixin(CaseTabsMixin):
     )
     def get_regime_entries(self, regime_type):
         return get_regime_entries(self.request, regime_type)
+
+    @cached_property
+    def all_regime_entries(self):
+        regime_entries, _ = get_regime_entries_all(self.request)
+        return [(entry["pk"], entry["name"]) for entry in regime_entries]
 
     def get_regime_choices(self, regime_type):
         entries, _ = self.get_regime_entries(regime_type)
@@ -583,7 +588,10 @@ class TAUBulkEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
     def get_formset_kwargs(self):
         kwargs = super().get_formset_kwargs()
         kwargs["goods_on_applications"] = self.assessed_goods
-        kwargs["form_kwargs"] = {"control_list_entries_choices": self.control_list_entries}
+        kwargs["form_kwargs"] = {
+            "control_list_entries_choices": self.control_list_entries,
+            "regime_choices": self.all_regime_entries,
+        }
         return kwargs
 
     def get_initial(self):
@@ -597,6 +605,7 @@ class TAUBulkEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
             good["refer_to_ncsc"] = good_on_application["is_ncsc_military_information_security"]
             good["comment"] = good_on_application["comment"]
             good["control_list_entries"] = [cle["rating"] for cle in good_on_application["control_list_entries"]]
+            good["regimes"] = [regime["pk"] for regime in good_on_application["regime_entries"]]
             good["report_summary_prefix"] = (
                 good_on_application["report_summary_prefix"] and good_on_application["report_summary_prefix"]["id"]
             )
@@ -631,5 +640,4 @@ class TAUBulkEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
         return context
 
     def formset_valid(self, formset):
-        # TODO
         pass
