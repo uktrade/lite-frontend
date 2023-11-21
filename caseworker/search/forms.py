@@ -77,6 +77,25 @@ class CommentForm(forms.Form):
     text = forms.CharField()
 
 
+product_filter_names = "|".join(
+    [
+        "name",
+        "part_number",
+        "consignee_country",
+        "end_user_country",
+        "ultimate_end_user_country",
+        "ratings",
+        "regimes",
+        "report_summary",
+        "organisation",
+        "assessed_by",
+        "assessment_note",
+    ]
+)
+
+product_filters_regex_pattern = re.compile(f'({product_filter_names}?):"(.*?)"')
+
+
 class ProductSearchForm(forms.Form):
     page_size = 25
 
@@ -102,3 +121,10 @@ class ProductSearchForm(forms.Form):
         self.cleaned_data["limit"] = self.page_size
         self.cleaned_data["page"] = self.cleaned_data["page"] or 1
         self.cleaned_data["offset"] = (self.cleaned_data["page"] - 1) * self.page_size
+
+
+class ProductSearchSuggestForm(forms.Form):
+    q = forms.CharField()
+
+    def clean_q(self):
+        return product_filters_regex_pattern.sub("", self.cleaned_data["q"])
