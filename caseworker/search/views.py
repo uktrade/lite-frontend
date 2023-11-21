@@ -1,12 +1,16 @@
+import json
+
+from rest_framework import views
+from rest_framework.response import Response
+
 from django.views.generic import FormView
 from django.urls import reverse_lazy
-import json
 
 from core.auth.views import LoginRequiredMixin
 
-from .forms import ProductSearchForm
+from .forms import ProductSearchForm, ProductSearchSuggestForm
 from .helpers import group_results_by_combination
-from .services import get_product_search_results
+from .services import get_product_search_results, get_product_autocomplete
 from ..core.constants import ALL_CASES_QUEUE_ID
 
 
@@ -63,3 +67,15 @@ class ProductSearchView(LoginRequiredMixin, FormView):
                 ],
             }
         )
+
+
+class ProductSearchSuggestView(LoginRequiredMixin, views.APIView):
+    def get(self, request):
+        query = ""
+
+        form = ProductSearchSuggestForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data["q"]
+
+        results = get_product_autocomplete(self.request, query)
+        return Response(results)
