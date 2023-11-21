@@ -1,0 +1,27 @@
+.table-expander {
+
+	@keyframes load-remaining-hits {
+		from {
+			opacity: 0;
+			transform: scaleX(0.8) scaleY(0.5) translateY(-10px);
+			margin-bottom: -30px;
+		}
+	}
+
+	&__show-more-cases-table-body {
+		&__hidden {
+			display: none;
+		}
+	}
+
+	&__remaining-hits {
+		&__animate {
+			animation: load-remaining-hits .2s;
+		}
+
+		&__hidden {
+			display: none;
+		}
+	}
+
+}

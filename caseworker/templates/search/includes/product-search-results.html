@@ -17,7 +17,7 @@
         {% include "tau/includes/regime_short_name.html" with regime_entries=good_on_application.regime_entries %}
     </td>
     <td class="govuk-table__cell" data-customiser-key="report_summary">{{ good_on_application.report_summary|default:"" }}</td>
-    <td class="govuk-table__cell" data-customiser-key="assessment_notes">{{ good_on_application.assessment_note|linebreaks|default:"" }}</td>
+    <td class="govuk-table__cell" data-customiser-key="assessment_notes">{{ good_on_application.assessment_note|linebreaksbr|default:"" }}</td>
     <td class="govuk-table__cell" data-customiser-key="tau_assessor">{% if good_on_application.assessed_by_full_name %}{{ good_on_application.assessed_by_full_name }}{% endif %}</td>
     <td class="govuk-table__cell" data-customiser-key="quantity">{{ good_on_application.quantity|format_quantity_units }}</td>
     <td class="govuk-table__cell" data-customiser-key="value">£{{ good_on_application.value|floatformat:2|intcomma }}</td>
