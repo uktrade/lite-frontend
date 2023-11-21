@@ -6,7 +6,7 @@ import Lightpick from "./lightpick.js";
 (function () {
   var inputElement = document.getElementById("id_search_string");
   var pageInputElement = document.getElementById("id_page");
-  var searchButtonElement = document.getElementById("search-button");
+  var searchButtonElement = document.getElementById("submit-id-submit");
   var resultsElement = document.getElementById("results-table");
   var currentSearch = inputElement.value || "";
   var lastSearch = inputElement.value || "";
@@ -112,14 +112,15 @@ import Lightpick from "./lightpick.js";
         currentSearch,
         appendValue + " "
       );
-      pageInputElement.value = 1;
+      // pageInputElement.value = 1;
       handleSearch();
     },
   });
 
   function handleSearch() {
     var query = (lastSearch = inputElement.value);
-    var pageNumber = pageInputElement.value;
+    // var pageNumber = pageInputElement.value;
+    var pageNumber = 1;
     setTimeout(function () {
       inputElement.focus();
     });
@@ -162,7 +163,7 @@ import Lightpick from "./lightpick.js";
 
   searchButtonElement.addEventListener("click", function (event) {
     event.preventDefault();
-    pageInputElement.value = 1;
+    // pageInputElement.value = 1;
     handleSearch();
   });
 

@@ -25,6 +25,7 @@ Search - Products
 </div>
 
 <div id="product-search-customiser" class="customiser" data-customiser-spec="{{ customiser_spec }}">
+    <div class="results-area">
     {% if search_results.count %}
     <div class="govuk-!-margin-top-4 customiser__header">
         <h1 class="govuk-body">{{ search_results.count }} results found</h1>
@@ -96,6 +97,7 @@ Search - Products
 
         {% pagination %}
     </section>
+    </div>
 </div>
 {% endblock %}
 
