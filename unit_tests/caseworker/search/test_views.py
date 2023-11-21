@@ -60,6 +60,8 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
         "Report summary",
         "Assessment notes",
     ]
+    data = [col.text.strip() for col in distinct_combination_hits_table.find_all("td")]
+    assert data == ["GBSIEL/2020/0000001/P", "12 September 2023", "France", "ML1a", "", "guns", "no concerns"]
     remaining_hits_table = soup.find_all("table")[1]
     data = [col.text.strip() for col in remaining_hits_table.find_all("td")]
     assert data == ["GBSIEL/2020/0000001/P", "12 October 2023", "Germany", "ML1a", "", "guns", "no concerns"]
