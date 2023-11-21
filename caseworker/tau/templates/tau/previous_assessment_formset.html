@@ -43,14 +43,14 @@
                 <th scope="col" class="govuk-table__header">Licence</th>
                 <th scope="col" class="govuk-table__header">Regimes</th>
                 <th scope="col" class="govuk-table__header">Report summary</th>
-                <th scope="col" class="govuk-table__header">Assessment note</th>
                 <th scope="col" class="govuk-table__header">Refer to NCSC</th>
+                <th scope="col" class="govuk-table__header">Assessment note</th>
             </tr>
         </thead>
 
         <tbody class="govuk-table__body">
             {% for form in formset %}
-                <tr class="govuk-table__row">
+                <tr class="govuk-table__row {% if not form.good_on_application.latest_precedent %}tau-not-yet-assessed-box{% endif %}">
                     {% for field in form %}
                         {% if field.is_hidden %}
                             {{ field }}
@@ -67,7 +67,7 @@
                     </td>
 
                     <td class="govuk-table__cell readonly-field">
-                        <div class="govuk-!-margin-bottom-2">{{ form.good_on_application.good.name }}</div>
+                        <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=form.good_on_application.id %}">{{ form.good_on_application.good.name }}</a>
                         <div>{{ form.good_on_application.good.part_number }}</div>
                         {% if not form.good_on_application.latest_precedent %}
                             <p class="govuk-tag govuk-tag--blue"> NOT YET ASSESSED </p>
@@ -104,12 +104,12 @@
                     {% endspaceless %}
                     <td class="govuk-table__cell readonly-field">
                         {% if form.good_on_application.latest_precedent %}
-                            {{ form.comment|as_crispy_field }}
+                            {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
                         {% endif %}
                     </td>
                     <td class="govuk-table__cell readonly-field">
                         {% if form.good_on_application.latest_precedent %}
-                            {{ form.good_on_application.latest_precedent.is_ncsc_military_information_security|yesno:"Yes,No," }}
+                            {{ form.comment|as_crispy_field }}
                         {% endif %}
                     </td>
                 </tr>
