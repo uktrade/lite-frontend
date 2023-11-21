@@ -70,7 +70,7 @@ Search - Products
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                    {% include 'search/includes/product-search-results.html' with hits=good.distinct_rating_hits %}
+                    {% include 'search/includes/product-search-results.html' with hits=good.distinct_combination_hits %}
                 </tbody>
             </table>
             {% if good.remaining_hits|length %}
