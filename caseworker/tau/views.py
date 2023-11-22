@@ -601,7 +601,8 @@ class TAUBulkEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
             good = {}
             good["good_on_application"] = good_on_application
             good["id"] = good_on_application["id"]
-            good["licence"] = good_on_application["is_good_controlled"]
+            raw_is_good_controlled = good_on_application["is_good_controlled"]["key"]
+            good["licence"] = raw_is_good_controlled == "True"
             good["refer_to_ncsc"] = good_on_application["is_ncsc_military_information_security"]
             good["comment"] = good_on_application["comment"]
             good["control_list_entries"] = [cle["rating"] for cle in good_on_application["control_list_entries"]]

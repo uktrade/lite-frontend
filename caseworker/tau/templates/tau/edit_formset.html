@@ -49,7 +49,7 @@
 
         <tbody class="govuk-table__body">
             {% for form in formset %}
-                <tr class="govuk-table__row {% if not form.good_on_application.latest_precedent %}tau-not-yet-assessed-box{% endif %}">
+                <tr class="govuk-table__row">
                     {% for field in form %}
                         {% if field.is_hidden %}
                             {{ field }}
@@ -69,7 +69,7 @@
                     </td>
                     <td class="govuk-table__cell readonly-field">{{ form.control_list_entries|as_crispy_field }}</td>
                     <td class="govuk-table__cell readonly-field">
-                        {{ form.licence|as_crispy_field }}
+                        {{form.licence|as_crispy_field}}
                     </td>
                     <td class="govuk-table__cell readonly-field">
                         {{form.regimes|as_crispy_field}}
