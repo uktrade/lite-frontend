@@ -77,3 +77,12 @@
 .tau-not-yet-assessed-box {
   background-color: govuk-tint(govuk-colour("blue"), 95);
 }
+
+.assessment-edit-formset__table {
+    thead {
+        position: sticky;
+        top: 127px;
+        z-index: 1000;
+        background: white;
+    }
+}
