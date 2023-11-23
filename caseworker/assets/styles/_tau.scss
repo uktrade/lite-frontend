@@ -77,3 +77,23 @@
 .tau-not-yet-assessed-box {
   background-color: govuk-tint(govuk-colour("blue"), 95);
 }
+
+.assessment-form-panel {
+    display: flex;
+
+    .assessment-form__first-column {
+      flex-basis: 66.66%;
+    }
+
+    .assessment-form__second-column {
+      flex-basis: 33.33%;
+      position: sticky;
+      top: 12vh;
+      align-self: flex-start;
+      overflow-y: scroll;
+      max-height: 88vh;
+      padding: 15px;
+      margin: 10px;
+      background: govuk-tint(govuk-colour("blue"), 95);
+    }
+}

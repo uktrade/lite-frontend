@@ -22,7 +22,7 @@
                     {% if unassessed_goods %}
                         <h1 class="govuk-heading-l">Product assessment</h1>
                         {% include "tau/includes/notification_banner.html" with case=case unassessed_goods=unassessed_goods%}
-                        
+
                     {% endif %}
                 </div>
                 <!-- Move case forward form -->
@@ -45,12 +45,12 @@
             <div class="govuk-grid-row">
                 {% if unassessed_goods %}
                     {{ cle_suggestions_json|json_script:"cle-suggestions-json" }}
-                    <form id="tau-form" action="." method="POST" {% if form.helper.attrs.enctype %}enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
-                        <div class="govuk-grid-column-two-thirds assessment-form__first-column">
+                    <form id="tau-form" class="assessment-form-panel" action="." method="POST" {% if form.helper.attrs.enctype %}enctype="{{ form.helper.attrs.enctype }}"{% endif %}>
+                        <div class="assessment-form__first-column">
                             {{ form.goods|as_crispy_field }}
                         </div>
 
-                        <div class="govuk-grid-column-one-third assessment-form__second-column">
+                        <div class="assessment-form__second-column">
                             <h1 class="govuk-heading-m assessment-form__headline"></h1>
                             {% crispy form %}
                             {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
