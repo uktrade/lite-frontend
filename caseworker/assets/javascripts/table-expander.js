@@ -34,7 +34,7 @@ class TableExpander {
       "afterend",
       `<tbody class="govuk-table__body table-expander__show-more-cases-table-body"><tr class="govuk-table__row"><td class="govuk-table__cell govuk-body" colspan="` +
         numCols +
-        `"><button class="table-expander__show-more-cases-button">+ Show more cases for this product</button></td></tr></tbody>`
+        `"><button class="table-expander__show-more-cases-button lite-button--link">+ Show more cases for this product</button></td></tr></tbody>`
     );
 
     this.$showMoreCasesTableBody = this.$element.querySelector(
@@ -53,9 +53,6 @@ class TableExpander {
   showRemainingHits() {
     this.$remainingHits.classList.remove(
       "table-expander__remaining-hits__hidden"
-    );
-    this.$remainingHits.classList.add(
-      "table-expander__remaining-hits__animate"
     );
     this.$showMoreCasesTableBody.classList.add(
       "table-expander__show-more-cases-table-body__hidden"
