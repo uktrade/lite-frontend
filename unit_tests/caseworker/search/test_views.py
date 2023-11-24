@@ -7,6 +7,8 @@ from urllib import parse
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
+import re
+
 from core import client
 from caseworker.search.forms import ProductSearchForm
 
@@ -47,9 +49,8 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
 
     # Each search result is displayed as a table
     # check that expected fields are displayed with expected values
-    table = soup.find("table")
-    table_rows = table.findAll("tr")
-    headers = [header.text.strip() for header in table_rows[0].find_all("th")]
+    distinct_combination_hits_table = soup.find_all("table")[0]
+    headers = [header.text.strip() for header in distinct_combination_hits_table.find_all("th")]
     assert headers == [
         "Case reference",
         "Assessment date",
@@ -59,8 +60,11 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
         "Report summary",
         "Assessment notes",
     ]
-    data = [col.text.strip() for col in table_rows[1].find_all("td")]
+    data = [col.text.strip() for col in distinct_combination_hits_table.find_all("td")]
     assert data == ["GBSIEL/2020/0000001/P", "12 September 2023", "France", "ML1a", "", "guns", "no concerns"]
+    remaining_hits_table = soup.find_all("table")[1]
+    data = [col.text.strip() for col in remaining_hits_table.find_all("td")]
+    assert data == ["GBSIEL/2020/0000001/P", "12 October 2023", "Germany", "ML1a", "", "guns", "no concerns"]
 
     expected_fields = {
         "id",
@@ -83,8 +87,8 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
     }
     # check for presence of expected fields in search results
     # We have a fixture with example search results and currently we group them
-    # based on unique rating so extract the first one
-    result = response.context["search_results"]["results"][0]["distinct_rating_hits"][0]
+    # based on distinct combination (control entry, report summary, regime) so extract the first one
+    result = response.context["search_results"]["results"][0]["distinct_combination_hits"][0]
     actual_fields = set(result.keys())
 
     assert expected_fields.issubset(actual_fields)
@@ -169,3 +173,182 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
     expected_data_customiser_spec_string = str(json.dumps(expected_data_customiser_spec))
     actual_data_customiser_spec_string = str(soup.find(id="product-search-customiser").attrs["data-customiser-spec"])
     assert expected_data_customiser_spec_string == actual_data_customiser_spec_string
+
+
+@pytest.mark.parametrize(
+    ("input_data", "results", "summary_visible_count"),
+    [
+        (
+            {"search_string": "hybrid", "page": 1},
+            {
+                "count": 1,
+                "results": [
+                    {
+                        "inner_hits": {
+                            "hits": [
+                                {
+                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "hybrid shotriflegun",
+                                    "control_list_entries": [{"rating": "ML1a"}],
+                                    "report_summary": "sporting shotguns",
+                                    "regime_entries": [],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                },
+                                {
+                                    "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "hybrid shotriflegun",
+                                    "control_list_entries": [{"rating": "ML1a"}],
+                                    "report_summary": "sporting shotguns",
+                                    "regime_entries": [],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                },
+                            ]
+                        },
+                    }
+                ],
+            },
+            1,
+        ),
+        (
+            {"search_string": "hybrid", "page": 1},
+            {
+                "count": 1,
+                "results": [
+                    {
+                        "inner_hits": {
+                            "hits": [
+                                {
+                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "hybrid shotriflegun",
+                                    "control_list_entries": [{"rating": "ML1a"}],
+                                    "report_summary": "sporting shotguns",
+                                    "regime_entries": [],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                },
+                                {
+                                    "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "hybrid shotriflegun",
+                                    "control_list_entries": [{"rating": "ML1a"}],
+                                    "report_summary": "sporting guns",
+                                    "regime_entries": [],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                },
+                            ]
+                        },
+                    }
+                ],
+            },
+            0,
+        ),
+        (
+            {"search_string": "liquid", "page": 1},
+            {
+                "count": 1,
+                "results": [
+                    {
+                        "inner_hits": {
+                            "hits": [
+                                {
+                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "orange red liquid",
+                                    "control_list_entries": [{"rating": "1C35064"}],
+                                    "report_summary": "chemicals used for industrial/commercial processes",
+                                    "regime_entries": [],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                },
+                                {
+                                    "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "orange red liquid",
+                                    "control_list_entries": [{"rating": "1C35064"}],
+                                    "report_summary": "chemicals used for industrial/commercial processes",
+                                    "regime_entries": [],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                },
+                            ]
+                        },
+                    }
+                ],
+            },
+            1,
+        ),
+        (
+            {"search_string": "liquid", "page": 1},
+            {
+                "count": 1,
+                "results": [
+                    {
+                        "inner_hits": {
+                            "hits": [
+                                {
+                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "orange red liquid",
+                                    "control_list_entries": [{"rating": "1C35064"}],
+                                    "report_summary": "chemicals used for industrial/commercial processes",
+                                    "regime_entries": [],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                },
+                                {
+                                    "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "orange red liquid",
+                                    "control_list_entries": [{"rating": "1C35064"}],
+                                    "report_summary": "chemicals used for industrial/commercial processes",
+                                    "regime_entries": [{"name": "AG Chemical List"}],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                },
+                            ]
+                        },
+                    }
+                ],
+            },
+            0,
+        ),
+    ],
+)
+def test_group_results_by_combination(
+    authorized_client, requests_mock, product_search_url, input_data, results, summary_visible_count
+):
+    """
+    Test whether the results are grouped i.e. whether the summary (dropdown) component appears for certain kinds of search results.
+    (1) Two similar products with matching control entry, report summary
+    (2) Two similar products with matching control entry, but different report summary
+    (3) Two similar products with matching control entry, report summary, regime
+    (4) Two similar products with matching control entry and report summary but different regime
+    """
+    url = client._build_absolute_uri("/search/product/search/")
+    requests_mock.get(
+        url=url,
+        json=results,
+    )
+
+    response = authorized_client.get(product_search_url, input_data)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert len(soup.find_all("summary", class_="govuk-details__summary")) == summary_visible_count
+    assert len(soup.find_all("span", class_="govuk-details__summary-text")) == summary_visible_count
+    assert len(soup.find_all(string=re.compile(r"\s*Show more cases for this product\s*"))) == summary_visible_count
