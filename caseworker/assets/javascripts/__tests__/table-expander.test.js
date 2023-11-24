@@ -7,14 +7,11 @@ import { TableExpander } from "../table-expander";
 const createTableElement = () => {
   document.body.innerHTML = `
     <table class="table-expander">
-      <thead>
-        <tr><!-- Column headers here --></tr>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row"><!-- Column headers here --></tr>
       </thead>
-      <tbody>
+      <tbody class="table-expander__distinct-hits">
         <tr><!-- Distinct hits here --></tr>
-      </tbody>
-      <tbody class="table-expander__show-more-cases-table-body">
-        <tr><td><a href="#" class="table-expander__show-more-cases-link">Show More</a></td></tr>
       </tbody>
       <tbody class="table-expander__remaining-hits">
         <tr><!-- Remaining hits here --></tr>
@@ -31,13 +28,29 @@ const createComponent = () => {
 };
 
 describe("Table Expander", () => {
-  test("Initial state hides the table body and remaining hits", () => {
-    const table = createComponent();
+  test("Initial state without JS has no link and shows remaining hits", () => {
+    let table = createTableElement();
 
-    const tableBody = table.querySelector(
+    const showMoreCasesTableBody = table.querySelector(
       ".table-expander__show-more-cases-table-body"
     );
-    expect(tableBody).toBeInTheDocument();
+    expect(showMoreCasesTableBody).not.toBeInTheDocument();
+
+    const remainingHits = table.querySelector(
+      ".table-expander__remaining-hits"
+    );
+    expect(remainingHits).not.toHaveClass(
+      "table-expander__remaining-hits__hidden"
+    );
+  });
+
+  test("Initial state with JS has link and hides remaining hits", () => {
+    const table = createComponent();
+
+    const showMoreCasesTableBody = table.querySelector(
+      ".table-expander__show-more-cases-table-body"
+    );
+    expect(showMoreCasesTableBody).toBeInTheDocument();
 
     const remainingHits = table.querySelector(
       ".table-expander__remaining-hits"
@@ -45,10 +58,10 @@ describe("Table Expander", () => {
     expect(remainingHits).toHaveClass("table-expander__remaining-hits__hidden");
   });
 
-  test("Clicking 'Show More' link reveals remaining hits and hides link", async () => {
+  test("Clicking 'Show more' link reveals remaining hits and hides link", async () => {
     const table = createComponent();
 
-    const showMoreLink = getByText(table, "Show More");
+    const showMoreLink = getByText(table, "+ Show more cases for this product");
     expect(showMoreLink).toBeInTheDocument();
 
     await userEvent.click(showMoreLink);

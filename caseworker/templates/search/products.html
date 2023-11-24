@@ -76,22 +76,13 @@ Search - Products
                         </th>
                     </tr>
                 </thead>
-                <tbody class="govuk-table__body">
+                <tbody class="govuk-table__body table-expander__distinct-hits">
                     {% include 'search/includes/product-search-results.html' with hits=good.distinct_combination_hits %}
                 </tbody>
                 {% if good.remaining_hits|length %}
-                <tbody class="govuk-table__body table-expander__show-more-cases-table-body">
-                    <tr class="govuk-table__row">
-                        <td scope="row" class="govuk-table__cell govuk-body" colspan="100%">
-                            <a class="govuk-link govuk-link--no-visited-state table-expander__show-more-cases-link" href="#">+ Show more cases for this product</a>
-                        </td>
-                    </tr>
+                <tbody class="govuk-table__body table-expander__remaining-hits">
+                    {% include 'search/includes/product-search-results.html' with hits=good.remaining_hits %}
                 </tbody>
-                <div class="product-search-cle-remaining-hits">
-                    <tbody class="govuk-table__body table-expander__remaining-hits">
-                        {% include 'search/includes/product-search-results.html' with hits=good.remaining_hits %}
-                    </tbody>
-                </div>
                 {% endif %}
             </table>
         </article>

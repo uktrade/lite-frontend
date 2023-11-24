@@ -1,8 +1,8 @@
 class TableExpander {
   constructor($element) {
     this.$element = $element;
-    this.$showMoreCasesTableBody = this.$element.querySelector(
-      ".table-expander__show-more-cases-table-body"
+    this.$distinctHits = this.$element.querySelector(
+      ".table-expander__distinct-hits"
     );
     this.$remainingHits = this.$element.querySelector(
       ".table-expander__remaining-hits"
@@ -10,21 +10,43 @@ class TableExpander {
   }
 
   init() {
-    this.hideTableBody();
-    this.createShowMoreCasesLink();
+    this.hideRemainingHitsTableBody();
+    this.createShowMoreCasesButton();
   }
 
-  hideTableBody() {
+  hideRemainingHitsTableBody() {
     this.$remainingHits.classList.add("table-expander__remaining-hits__hidden");
     this.$remainingHits.setAttribute("aria-hidden", "false");
   }
 
-  createShowMoreCasesLink() {
-    this.$showMoreCasesLink = this.$element.querySelector(
-      ".table-expander__show-more-cases-link"
+  getNumCols() {
+    this.$head = this.$element.querySelector(".govuk-table__head");
+    this.$headRow = this.$head.querySelector(".govuk-table__row");
+    const numCols = this.$headRow.querySelectorAll(
+      ".govuk-table__header"
+    ).length;
+    return numCols;
+  }
+
+  createShowMoreCasesButton() {
+    const numCols = this.getNumCols();
+    this.$distinctHits.insertAdjacentHTML(
+      "afterend",
+      `<tbody class="govuk-table__body table-expander__show-more-cases-table-body"><tr class="govuk-table__row"><td class="govuk-table__cell govuk-body" colspan="` +
+        numCols +
+        `"><button class="table-expander__show-more-cases-button">+ Show more cases for this product</button></td></tr></tbody>`
     );
-    this.$showMoreCasesLink.addEventListener("click", (event) =>
-      this.handleShowMoreCasesLinkClick(event)
+
+    this.$showMoreCasesTableBody = this.$element.querySelector(
+      ".table-expander__show-more-cases-table-body"
+    );
+
+    this.$showMoreCasesButton = this.$element.querySelector(
+      ".table-expander__show-more-cases-button"
+    );
+
+    this.$showMoreCasesButton.addEventListener("click", (event) =>
+      this.handleShowMoreCasesButtonClick(event)
     );
   }
 
@@ -40,10 +62,10 @@ class TableExpander {
     );
   }
 
-  handleShowMoreCasesLinkClick(event) {
+  handleShowMoreCasesButtonClick(event) {
     event.preventDefault();
     this.showRemainingHits();
-    this.$showMoreCasesLink.remove();
+    this.$showMoreCasesButton.remove();
   }
 }
 

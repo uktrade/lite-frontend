@@ -1,27 +1,54 @@
 .table-expander {
+  @keyframes load-remaining-hits {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+      margin-bottom: -30px;
+    }
+  }
 
-	@keyframes load-remaining-hits {
-		from {
-			opacity: 0;
-			transform: scaleX(0.8) scaleY(0.5) translateY(-10px);
-			margin-bottom: -30px;
-		}
-	}
+  &__show-more-cases-table-body {
+    &__hidden {
+      display: none;
+    }
+  }
 
-	&__show-more-cases-table-body {
-		&__hidden {
-			display: none;
-		}
-	}
+  &__remaining-hits {
+    &__animate {
+      animation: load-remaining-hits 0.2s;
+    }
 
-	&__remaining-hits {
-		&__animate {
-			animation: load-remaining-hits .2s;
-		}
+    &__hidden {
+      display: none;
+    }
+  }
 
-		&__hidden {
-			display: none;
-		}
-	}
+  &__show-more-cases-button {
+    @include appearance(none);
+    @include govuk-font($size: 19);
+    color: $govuk-link-colour;
+    background-color: transparent;
+    outline: 0;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+	text-decoration: underline;
+    cursor: pointer;
+    display: inline-flex;
 
+    &:hover {
+      color: $govuk-link-hover-colour
+    }
+
+    &:active {
+      color: $govuk-text-colour;
+      border-bottom-color: $govuk-text-colour;
+    }
+
+    &:focus {
+      @include govuk-focused-text;
+    }
+  }
 }
