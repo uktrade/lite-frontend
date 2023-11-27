@@ -62,10 +62,28 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
         "TAU assessor",
     ]
     data = [col.text.strip() for col in distinct_combination_hits_table.find_all("td")]
-    assert data == ["GBSIEL/2020/0000001/P", "12 September 2023", "France", "ML1a", "", "guns", "no concerns", ""]
+    assert data == [
+        "GBSIEL/2020/0000001/P",
+        "12 September 2023",
+        "France",
+        "ML1a",
+        "",
+        "guns",
+        "no concerns",
+        "Firstname Lastname",  # /PS-IGNORE
+    ]
     remaining_hits_table = soup.find_all("table")[1]
     data = [col.text.strip() for col in remaining_hits_table.find_all("td")]
-    assert data == ["GBSIEL/2020/0000001/P", "12 October 2023", "Germany", "ML1a", "", "guns", "no concerns", ""]
+    assert data == [
+        "GBSIEL/2020/0000001/P",
+        "12 October 2023",
+        "Germany",
+        "ML1a",
+        "",
+        "guns",
+        "no concerns",
+        "Firstname Lastname",  # /PS-IGNORE
+    ]
 
     expected_fields = {
         "id",
@@ -362,132 +380,3 @@ def test_group_results_by_combination(
     assert len(soup.find_all("summary", class_="govuk-details__summary")) == summary_visible_count
     assert len(soup.find_all("span", class_="govuk-details__summary-text")) == summary_visible_count
     assert len(soup.find_all(string=re.compile(r"\s*Show more cases for this product\s*"))) == summary_visible_count
-
-
-@pytest.mark.parametrize(
-    ("results", "expected_td_contents"),
-    [
-        (
-            {
-                "count": 1,
-                "results": [
-                    {
-                        "inner_hits": {
-                            "hits": [
-                                {
-                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
-                                    "name": "medium size shotgun",
-                                    "control_list_entries": [{"rating": "ML1a"}],
-                                    "report_summary": "sporting shotguns",
-                                    "regime_entries": [],
-                                    "application": {
-                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
-                                        "reference_code": "GBSIEL/2020/0000001/P",
-                                    },
-                                    "assessed_by": ["Firstname", "Lastname", "email@email.com"],  # /PS-IGNORE
-                                }
-                            ]
-                        },
-                    }
-                ],
-            },
-            ["Firstname Lastname"],  # /PS-IGNORE
-        ),
-        (
-            {
-                "count": 1,
-                "results": [
-                    {
-                        "inner_hits": {
-                            "hits": [
-                                {
-                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
-                                    "name": "medium size shotgun",
-                                    "control_list_entries": [{"rating": "ML1a"}],
-                                    "report_summary": "sporting shotguns",
-                                    "regime_entries": [],
-                                    "application": {
-                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
-                                        "reference_code": "GBSIEL/2020/0000001/P",
-                                    },
-                                    "assessed_by": ["Lastname", "email@email.com"],  # /PS-IGNORE
-                                }
-                            ]
-                        },
-                    }
-                ],
-            },
-            [],
-        ),
-        (
-            {
-                "count": 1,
-                "results": [
-                    {
-                        "inner_hits": {
-                            "hits": [
-                                {
-                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
-                                    "name": "medium size shotgun",
-                                    "control_list_entries": [{"rating": "ML1a"}],
-                                    "report_summary": "sporting shotguns",
-                                    "regime_entries": [],
-                                    "application": {
-                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
-                                        "reference_code": "GBSIEL/2020/0000001/P",
-                                    },
-                                }
-                            ]
-                        },
-                    }
-                ],
-            },
-            [],
-        ),
-        (
-            {
-                "count": 1,
-                "results": [
-                    {
-                        "inner_hits": {
-                            "hits": [
-                                {
-                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
-                                    "name": "medium size shotgun",
-                                    "control_list_entries": [{"rating": "ML1a"}],
-                                    "report_summary": "sporting shotguns",
-                                    "regime_entries": [],
-                                    "application": {
-                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
-                                        "reference_code": "GBSIEL/2020/0000001/P",
-                                    },
-                                    "assessed_by": [None, "Lastname", "email@email.com"],  # /PS-IGNORE
-                                }
-                            ]
-                        },
-                    }
-                ],
-            },
-            ["Lastname"],  # /PS-IGNORE
-        ),
-    ],
-)
-def test_tau_assessor(authorized_client, requests_mock, product_search_url, results, expected_td_contents):
-    url = client._build_absolute_uri("/search/product/search/")
-    requests_mock.get(
-        url=url,
-        json=results,
-    )
-
-    response = authorized_client.get(product_search_url, {"search_string": "shotgun", "page": 1})
-    assert response.status_code == 200
-
-    soup = BeautifulSoup(response.content, "html.parser")
-
-    search_results = soup.find_all("table")
-
-    tau_assessor_td_contents = [
-        str(td).strip() for td in search_results[0].find("td", attrs={"data-customiser-key": "tau_assessor"})
-    ]
-
-    assert tau_assessor_td_contents == expected_td_contents

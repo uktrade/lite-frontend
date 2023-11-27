@@ -1,5 +1,4 @@
 {% load parse_date from spire_tags %}
-{% load parse_tau_assessor from tau_tags %}
 {% for good_on_application in hits %}
 <tr class="govuk-table__row">
     <td scope="row" class="govuk-table__cell govuk-body">
@@ -15,6 +14,6 @@
     </td>
     <td class="govuk-table__cell" data-customiser-key="report_summary">{{ good_on_application.report_summary|default:"" }}</td>
     <td class="govuk-table__cell" data-customiser-key="assessment_notes">{{ good_on_application.assessment_note|linebreaks|default:"" }}</td>
-    <td class="govuk-table__cell" data-customiser-key="tau_assessor">{% if good_on_application.assessed_by %}{{ good_on_application.assessed_by|parse_tau_assessor }}{% endif %}</td>
+    <td class="govuk-table__cell" data-customiser-key="tau_assessor">{% if good_on_application.assessed_by_full_name %}{{ good_on_application.assessed_by_full_name }}{% endif %}</td>
 </tr>
 {% endfor %}
