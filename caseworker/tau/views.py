@@ -23,7 +23,7 @@ from caseworker.core.services import get_control_list_entries
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.cases.services import post_review_good
 from caseworker.regimes.enums import Regimes
-from caseworker.regimes.services import get_regime_entries
+from caseworker.regimes.services import get_regime_entries, get_regime_entries_all
 from caseworker.users.services import get_gov_user
 from extra_views import FormSetView
 
@@ -32,6 +32,8 @@ from caseworker.tau.forms import (
     TAUAssessmentForm,
     TAUEditForm,
     TAUPreviousAssessmentForm,
+    TAUMultipleEditForm,
+    TAUMultipleEditFormSet,
 )
 from caseworker.tau.services import (
     get_first_precedents,
@@ -124,6 +126,11 @@ class TAUMixin(CaseTabsMixin):
     )
     def get_regime_entries(self, regime_type):
         return get_regime_entries(self.request, regime_type)
+
+    @cached_property
+    def all_regime_entries(self):
+        regime_entries, _ = get_regime_entries_all(self.request)
+        return [(entry["pk"], entry["name"]) for entry in regime_entries]
 
     def get_regime_choices(self, regime_type):
         entries, _ = self.get_regime_entries(regime_type)
@@ -571,3 +578,101 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
         post_review_good(self.request, case_id=pk, data=payload)
         return redirect(reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}))
+
+
+class TAUMultipleEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
+    template_name = "tau/multiple_edit.html"
+    form_class = TAUMultipleEditForm
+    factory_kwargs = {"extra": 0, "formset": TAUMultipleEditFormSet}
+
+    def get_formset_kwargs(self):
+        kwargs = super().get_formset_kwargs()
+        kwargs["goods_on_applications"] = self.assessed_goods
+        kwargs["form_kwargs"] = {
+            "control_list_entries_choices": self.control_list_entries,
+            "regime_choices": self.all_regime_entries,
+        }
+        return kwargs
+
+    def get_initial(self):
+        all_initial_data = []
+
+        for good_on_application in self.assessed_goods:
+            initial_form_data = {}
+            initial_form_data["good_on_application"] = good_on_application
+            initial_form_data["id"] = good_on_application["id"]
+            raw_is_good_controlled = good_on_application["is_good_controlled"]["key"]
+            initial_form_data["licence"] = raw_is_good_controlled == "True"
+            initial_form_data["refer_to_ncsc"] = good_on_application["is_ncsc_military_information_security"]
+            initial_form_data["comment"] = good_on_application["comment"]
+            initial_form_data["control_list_entries"] = [
+                cle["rating"] for cle in good_on_application["control_list_entries"]
+            ]
+            initial_form_data["regimes"] = [regime["pk"] for regime in good_on_application["regime_entries"]]
+            if good_on_application.get("report_summary_prefix"):
+                initial_form_data["report_summary_prefix"] = (
+                    good_on_application["report_summary_prefix"] and good_on_application["report_summary_prefix"]["id"]
+                )
+                initial_form_data["report_summary_prefix_name"] = (
+                    good_on_application["report_summary_prefix"]
+                    and good_on_application["report_summary_prefix"]["name"]
+                )
+            if good_on_application.get("report_summary_subject"):
+                initial_form_data["report_summary_subject"] = (
+                    good_on_application["report_summary_subject"]
+                    and good_on_application["report_summary_subject"]["id"]
+                )
+                initial_form_data["report_summary_subject_name"] = (
+                    good_on_application["report_summary_subject"]
+                    and good_on_application["report_summary_subject"]["name"]
+                )
+
+            all_initial_data.append(initial_form_data)
+
+        return all_initial_data
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        formset_helper = FormHelper()
+        formset_helper.template = "tau/multiple_edit_formset.html"
+
+        context.update(
+            {
+                "case": self.case,
+                "queue_id": self.queue_id,
+                "formset_helper": formset_helper,
+                "assessed_goods": self.assessed_goods,
+            }
+        )
+        return context
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error editing assessments",
+        "Unexpected error editing assessments",
+    )
+    def put_assessment_edits(self, payload):
+        return put_bulk_assessment(self.request, self.kwargs["pk"], payload)
+
+    def formset_valid(self, formset):
+        assessment_edits = []
+        for form in formset.forms:
+            assessment_edits.append(
+                {
+                    "id": str(form.cleaned_data["id"]),
+                    "is_good_controlled": form.cleaned_data["licence"],
+                    "control_list_entries": form.cleaned_data["control_list_entries"],
+                    "regime_entries": form.cleaned_data["regimes"],
+                    "report_summary_prefix": form.cleaned_data["report_summary_prefix"],
+                    "report_summary_subject": form.cleaned_data["report_summary_subject"],
+                    "comment": form.cleaned_data["comment"],
+                    "is_ncsc_military_information_security": form.cleaned_data["refer_to_ncsc"],
+                }
+            )
+
+        # Assess these good on applications with the values from the approved previous assessments
+        self.put_assessment_edits(assessment_edits)
+        messages.success(self.request, f"Edited assessments for {len(assessment_edits)} products.")
+
+        return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
