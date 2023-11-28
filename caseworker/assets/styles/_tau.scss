@@ -44,7 +44,7 @@
   display: none;
 }
 
-.previous-assessment-formset {
+.assessment-formset {
   &__actions {
     align-items: center;
     display: flex;
@@ -55,9 +55,6 @@
     margin-bottom: 0;
   }
 
-  td {
-    vertical-align: middle;
-  }
 }
 
 .previous-assessment-checkbox-cell {
