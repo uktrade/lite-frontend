@@ -11,11 +11,11 @@
         </a>
     </td>
     <td class="govuk-table__cell" data-customiser-key="assessment_date">{{ good_on_application.assessment_date|parse_date|date:"j F Y" }}</td>
-    <td class="govuk-table__cell" data-customiser-key="destination">{% spaceless %}
-        {% if good_on_application.end_user_country %}{{ good_on_application.end_user_country }}{% else %}{{ good_on_application.destination }}{% endif %}
-        {% if good_on_application.consignee_country %}<br>{{ good_on_application.consignee_country }}{% endif %}
-        {% if good_on_application.ultimate_end_user_country %}<br>{% for country in good_on_application.ultimate_end_user_country %}{{ country }}{% if not forloop.last %}<br>{% endif %}{% endfor %}{% endif %}
-    {% endspaceless %}</td>
+    <td class="govuk-table__cell" data-customiser-key="destination"><ul class="govuk-list">
+        {% if good_on_application.end_user_country %}<li>{{ good_on_application.end_user_country }}</li>{% else %}<li>{{ good_on_application.destination }}</li>{% endif %}
+        {% if good_on_application.consignee_country %}<li>{{ good_on_application.consignee_country }}</li>{% endif %}
+        {% if good_on_application.ultimate_end_user_country %}{% for country in good_on_application.ultimate_end_user_country %}<li>{{ country }}</li>{% endfor %}{% endif %}
+    </ul></td>
     <td class="govuk-table__cell" data-customiser-key="control_list_entry">{% for cle in good_on_application.control_list_entries %}{{ cle.rating }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
     <td class="govuk-table__cell" data-customiser-key="regime">
         {% include "tau/includes/regime_short_name.html" with regime_entries=good_on_application.regime_entries %}
