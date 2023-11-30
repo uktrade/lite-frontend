@@ -77,6 +77,16 @@
 
 .assessment-edit-formset__table {
 
+    table-layout: fixed;
+
+    th.header-narrow {
+        width: 2rem;
+    }
+
+    th.header-medium {
+        width: 4rem;
+    }
+
     thead {
         position: sticky;
         top: 127px;
