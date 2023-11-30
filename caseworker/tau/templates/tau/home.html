@@ -22,7 +22,7 @@
                     {% if unassessed_goods %}
                         <h1 class="govuk-heading-l">Product assessment</h1>
                         {% include "tau/includes/notification_banner.html" with case=case unassessed_goods=unassessed_goods%}
-                        
+
                     {% endif %}
                 </div>
                 <!-- Move case forward form -->
@@ -77,12 +77,12 @@
                                     <th scope="col" class="govuk-table__header">
                                         <span class="govuk-visually-hidden">Line number</span>
                                     </th>
-                                    <th scope="col" class="govuk-table__header">Name</th>
-                                    <th scope="col" class="govuk-table__header">Control entry</th>
-                                    <th scope="col" class="govuk-table__header">Licence</th>
+                                    <th scope="col" class="govuk-table__header">Product Details</th>
+                                    <th scope="col" class="govuk-table__header">Control list entry</th>
                                     <th scope="col" class="govuk-table__header">Regime</th>
                                     <th scope="col" class="govuk-table__header">Report summary</th>
-                                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Assessment notes and evidence</th>
+                                    <th scope="col" class="govuk-table__header">Refer to NCSC</th>
+                                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Assessment note</th>
                                     <th scope="col" class="govuk-table__header">
                                         <span class="govuk-visually-hidden">Actions</span>
                                     </th>
@@ -94,11 +94,11 @@
                                         <td class="govuk-table__cell">{{ good.line_number }}.</td>
                                         <td class="govuk-table__cell">{{ good.good.name }}</td>
                                         <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
-                                        <td class="govuk-table__cell">{{ good.is_good_controlled.value }}</td>
                                         <td class="govuk-table__cell">
                                             {% include "tau/includes/regime_short_name.html" with regime_entries=good.regime_entries %}
                                         </td>
                                         <td class="govuk-table__cell">{{ good.report_summary|default:"" }}</td>
+                                        <td class="govuk-table__cell">{{ good.ncsc|yesno:"Yes,No" }}</td>
                                         <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
                                         <td class="govuk-table__cell">
                                             <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a>

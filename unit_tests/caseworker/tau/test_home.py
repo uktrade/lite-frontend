@@ -103,9 +103,9 @@ def test_home_content(
         "2.",
         "p2",
         "ML8a,ML9a",
-        "No",
         "w-1\n\nmtcr-1\n\nnsg-1\n\ncwc-1\n\nag-1",
         "",
+        "No",
         "test assesment note",
         "Edit",
     ]
