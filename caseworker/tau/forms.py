@@ -453,6 +453,10 @@ class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
                 raise ValidationError("A new assessment was made which supersedes your chosen previous assessment.")
 
 
+class CachedSelectMultiple(forms.SelectMultiple):
+    template_name = "widgets/select_multiple_cached.html"
+
+
 class TAUMultipleEditForm(forms.Form):
     id = forms.UUIDField(
         widget=forms.HiddenInput(),
@@ -475,7 +479,7 @@ class TAUMultipleEditForm(forms.Form):
         choices=(),  # set in __init__
         required=False,
         # setting class for javascript to use
-        widget=forms.SelectMultiple(attrs={"class": "control-list-entries"}),
+        widget=CachedSelectMultiple(attrs={"class": "control-list-entries"}),
     )
     report_summary_prefix = forms.CharField(
         label="",
@@ -494,7 +498,7 @@ class TAUMultipleEditForm(forms.Form):
         choices=(),  # set in __init__
         required=False,
         # setting class for javascript to use
-        widget=forms.SelectMultiple(attrs={"class": "regime-entries"}),
+        widget=CachedSelectMultiple(attrs={"class": "regime-entries"}),
     )
 
     def __init__(self, *args, control_list_entries_choices, regime_choices, good_on_application, **kwargs):

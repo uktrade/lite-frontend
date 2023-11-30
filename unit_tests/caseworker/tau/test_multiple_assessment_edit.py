@@ -1,6 +1,5 @@
 import pytest
 import re
-
 from bs4 import BeautifulSoup
 import rules
 
@@ -35,6 +34,18 @@ def edit_multiple_assessments_url(data_standard_case):
     )
 
 
+def assert_cle_select(soup, id_prefix, expected_choices):
+    cle_select = soup.find("select", id=f"{id_prefix}control_list_entries")
+    assert cle_select
+    options = cle_select.select("option")
+    options_choices = {"values": [], "selected": []}
+    for option in options:
+        options_choices["values"].append(option["value"])
+        if option.has_attr("selected"):
+            options_choices["selected"].append(option["value"])
+    assert options_choices == expected_choices
+
+
 def test_edit_multiple_assessments_GET(
     authorized_client,
     edit_multiple_assessments_url,
@@ -43,6 +54,11 @@ def test_edit_multiple_assessments_GET(
     mock_control_list_entries,
     mock_gov_user,
 ):
+    good_on_application_1 = data_standard_case["case"]["data"]["goods"][0]
+    good_on_application_1["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
+    good_on_application_2 = data_standard_case["case"]["data"]["goods"][1]
+    good_on_application_2["control_list_entries"] = [{"rating": "ML1"}]
+
     response = authorized_client.get(edit_multiple_assessments_url)
     assert response.status_code == 200
 
@@ -56,17 +72,31 @@ def test_edit_multiple_assessments_GET(
     assert len(table_rows) == 2
 
     def get_td_text(table_row):
-        return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "readonly-field"})]
+        return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "govuk-table__cell"})]
 
     assert get_td_text(table_rows[0]) == [
         "1.",
         "p1 44",
-        "ML1 ML1a",
+        "ML1 ML1a",  # The text value of a multiselect is all of it's options - not selected options
         "",
         "wassenaar-1 mtcr-1 nsg-1",
         "",
+        "",
         "test comment",
     ]
+    assert get_td_text(table_rows[1]) == [
+        "2.",
+        "p2 44",
+        "ML1 ML1a",  # The text value of a multiselect is all of it's options - not selected options
+        "",
+        "wassenaar-1 mtcr-1 nsg-1",
+        "",
+        "",
+        "test assesment note",
+    ]
+
+    assert_cle_select(soup, "id_form-0-", {"values": ["ML1", "ML1a"], "selected": ["ML1", "ML1a"]})
+    assert_cle_select(soup, "id_form-1-", {"values": ["ML1", "ML1a"], "selected": ["ML1"]})
 
 
 def test_edit_multiple_assessments_POST_success(
