@@ -71,7 +71,8 @@ def test_form(
     # Check response and API payload
     assert response.status_code == 302
     assert (
-        response.url == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/"
+        response.url
+        == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/previous-assessments/"
     )
     assert requests_mock.last_request.json() == {
         "control_list_entries": [],
@@ -81,3 +82,21 @@ def test_form(
         "objects": ["6daad1c3-cf97-4aad-b711-d5c9a9f4586e"],
         "regime_entries": [],
     }
+
+
+def test_no_precedent_redirect_to_tau(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_cle_post,
+    mock_control_list_entries,
+    mock_precedents_api,
+):
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    response = authorized_client.post(url)
+
+    assert response.status_code == 302
+    assert "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/"
