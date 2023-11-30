@@ -602,7 +602,7 @@ class TAUMultipleEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView
             initial_form_data["good_on_application"] = good_on_application
             initial_form_data["id"] = good_on_application["id"]
             raw_is_good_controlled = good_on_application["is_good_controlled"]["key"]
-            initial_form_data["licence"] = raw_is_good_controlled == "True"
+            initial_form_data["licence_required"] = raw_is_good_controlled == "True"
             initial_form_data["refer_to_ncsc"] = good_on_application["is_ncsc_military_information_security"]
             initial_form_data["comment"] = good_on_application["comment"]
             initial_form_data["control_list_entries"] = [
@@ -661,7 +661,7 @@ class TAUMultipleEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView
             assessment_edits.append(
                 {
                     "id": str(form.cleaned_data["id"]),
-                    "is_good_controlled": form.cleaned_data["licence"],
+                    "is_good_controlled": form.cleaned_data["licence_required"],
                     "control_list_entries": form.cleaned_data["control_list_entries"],
                     "regime_entries": form.cleaned_data["regimes"],
                     "report_summary_prefix": form.cleaned_data["report_summary_prefix"],
