@@ -12,8 +12,10 @@ class ProductSearchSuggestor {
     this.pageInputElement = document.getElementById("id_page");
     this.searchButtonElement = document.getElementById("submit-id-submit");
     this.resultsElement = document.getElementById("results-table");
+    this.suggestionsInfo = document.getElementById("suggestions-info");
     this.currentSearch = this.inputElement.value || "";
     this.lastSearch = this.inputElement.value || "";
+    this.searchPrefix = ""; // string for which we retrieve suggestions
 
     this.productSuggestUrl = "/search/products/suggest/?format=json&q="
 
@@ -22,10 +24,8 @@ class ProductSearchSuggestor {
   }
 
   init() {
-
     this.prepareSearchInput(this.inputElement);
     this.setupAutoComplete(this);
-
   }
 
   prepareSearchInput(inputElement) {
@@ -40,71 +40,129 @@ class ProductSearchSuggestor {
     );
   }
 
-  getProductSuggestionsUrl(query_string, search_prefix) {
-    var url = this.productSuggestUrl + escape(query_string) + '&suggest=' + escape(search_prefix.trim());
+  getProductSuggestionsUrl(search_prefix) {
+    const url = this.productSuggestUrl + escape(search_prefix.trim());
 
     console.log(url);
-
     return url;
   }
 
-  getDifference(lastSearch, currentSearchString) {
+  replaceCharAt(str, index, c) {
+    if (index > str.length) {
+      return str;
+    }
+
+    return str.substring(0, index) + c + str.substring(index + 1);
+  }
+
+  stripMatchingCharsAtStart(referenceString, targetString) {
     /*
-     * Returns the difference of these two strings which is used to get suggestions
-     * User can either continuously select suggestions or add more search terms so
-     * to correctly determine which term we need to use for suggestions determine
-     * the difference of previous search with the current input data
-     * 
-     * lastSearch is usually a subset of currentSearchString but user may have edited it
+     * Replaces all matching characters at the beginning with spaces
+     * using the referenceString as reference
      */
-
-    // name:"sensor" rif
-    //
     var i = 0;
-    var diffStr = "";
+    var j = 0;
+    var stripped = targetString;
 
+    if (referenceString.length === 0) {
+      return targetString;
+    }
+
+    const maxLength = referenceString.length > targetString.length
+      ? targetString.length : referenceString.length;
+
+    while (i < maxLength) {
+      if (referenceString[i] == targetString[i]) {
+        stripped = this.replaceCharAt(stripped, i, " ");
+        i++;
+        continue;
+      }
+      break;
+    }
+
+    return stripped.trim();
+  }
+
+  stripMatchingCharsAtEnd(referenceString, targetString) {
+    var i = referenceString.length - 1;
+    var j = targetString.length - 1
+    var stripped = targetString;
+
+    if (referenceString.length === 0) {
+      return targetString;
+    }
+
+    while (i > 0) {
+      if (referenceString[i] == targetString[j]) {
+        stripped = this.replaceCharAt(stripped, j, " ");
+        i--;
+        j--;
+        continue;
+      }
+      break;
+    }
+
+    return stripped.trim();
+  }
+
+  getSearchPrefix(lastSearch, currentSearchString) {
+    /*
+     * Using the current search string entered in the input field and comparing
+     * with the last submitted search string it determines what additional characters
+     * user is currently typing and retrieves suggestions for that.
+     */
     lastSearch = lastSearch.trim();
     currentSearchString = currentSearchString.trim();
 
-    console.log(`getDifference(), lastSearch: ${this.lastSearch} (${lastSearch.length}), currentSearchString: ${currentSearchString} (${currentSearchString.length})`);
-
-    if (lastSearch.length == 0) {
+    if (lastSearch.length === 0) {
       return currentSearchString;
     }
 
-    // unlikely but can happen if all input is deleted
-    // then reset lastSearch as well
-    if (currentSearchString.length == (this.threshold + 1)) {
-      console.log("Resetting lastSearch");
-      this.lastSearch = "";
-      return diffStr;
+    console.log(`lastSearch: ${lastSearch}`);
+    console.log(`currentSearchString: ${currentSearchString}`);
+
+    const tokens = lastSearch.split(" ");
+    let start = tokens[0];
+    let end = tokens[tokens.length - 1];
+
+    const matchesAtStart = currentSearchString.startsWith(start);
+    const matchesAtEnd = currentSearchString.endsWith(end);
+
+    var stripped = `${currentSearchString}`;  // copy
+
+    if (matchesAtStart && matchesAtEnd) {
+      // User entered new chars in between
+      stripped = this.stripMatchingCharsAtStart(lastSearch, currentSearchString);
+      stripped = this.stripMatchingCharsAtEnd(lastSearch, stripped);
+    } else if (matchesAtStart) {
+      // User editing at the end
+      stripped = this.stripMatchingCharsAtStart(lastSearch, currentSearchString);
+    } else if (matchesAtEnd) {
+      // User editing at the start
+      stripped = this.stripMatchingCharsAtEnd(lastSearch, currentSearchString);
     }
 
-    // if user starts deleting existing input instead of entering new characters
-    if (lastSearch.length < currentSearchString.length) {
-      while (i < lastSearch.length) {
-        if (lastSearch[i] == currentSearchString[i]) {
-          i++;
-          continue;
-        } else {
-          break;
-        }
-      }
+    var searchPrefix = stripped.trim();
 
-      diffStr += currentSearchString.slice(i, currentSearchString.length);
-    }
+    /*
+     * If user entered multiple words then use last word.
+     * If we are seeing multiple words then it means user has not selected
+     * suggestions offered for the first word. If we consider both words then
+     * it is unlikely to receive any suggestions for that phrase.
+     * It is also possible that the first word could be an operator (AND, OR, NOT etc)
+     */
+    const prefixTokens = searchPrefix.split(" ");
+    searchPrefix = prefixTokens[prefixTokens.length - 1];
+    
+    console.log(`=> searchPrefix: ${searchPrefix}`);
 
-    diffStr = diffStr.trim()
-    console.log(`Difference: ${diffStr}`);
-
-    return diffStr;
+    return searchPrefix;
   }
 
   triggerSearch() {
     var inputElement = document.getElementById("id_search_string");
     var lastSearch = inputElement.value || "";
     var query = (lastSearch = inputElement.value);
-    // var pageNumber = pageInputElement.value;
     var pageNumber = 1;
 
     setTimeout(function () {
@@ -135,10 +193,10 @@ class ProductSearchSuggestor {
       },
       data: {
         src: function () {
-          var query = suggestor.inputElement.value.replace(suggestor.lastSearch, "").trim();
-          var search_prefix = suggestor.getDifference(suggestor.lastSearch, suggestor.inputElement.value);
+          const searchPrefix = suggestor.getSearchPrefix(suggestor.lastSearch, suggestor.inputElement.value);
+          suggestor.searchPrefix = searchPrefix;
 
-          var suggestUrl = suggestor.getProductSuggestionsUrl(query, search_prefix);
+          var suggestUrl = suggestor.getProductSuggestionsUrl(searchPrefix);
 
           return fetch(suggestUrl)
             .then(function (response) {
@@ -176,13 +234,8 @@ class ProductSearchSuggestor {
       resultItem: {
         content: function (data, source) {
           var value = data.value.value.replace(/\s/g, " ");
-          var prefix = "";
-          if (data.value.field != "wildcard") {
-            prefix +=
-              '<td class="autoCompleteResultFieldName">' +
-              data.value.field.replace(/_/g, " ") +
-              "</td>";
-          }
+          var prefix = '<td class="autoCompleteResultFieldName">' +
+            data.value.field.replace(/_/g, " ") + "</td>";
           source.innerHTML = prefix + "<td>" + value + "</td>";
         },
         element: "tr",
@@ -193,15 +246,14 @@ class ProductSearchSuggestor {
       maxResults: suggestor.maxSuggestions,
       onSelection: function (option) {
         var appendValue = `${option.selection.value.field}:"${option.selection.value.value}"`
-        // suggestor.inputElement.value = suggestor.inputElement.value.replace(currentPrefix, appendValue);
-        suggestor.inputElement.value = suggestor.lastSearch + appendValue + " ";
+        suggestor.inputElement.value = suggestor.inputElement.value.replace(suggestor.searchPrefix, appendValue);
         suggestor.lastSearch = suggestor.inputElement.value;
+        suggestor.inputElement.value = suggestor.inputElement.value + " ";
         console.log(`inputElement: ${suggestor.inputElement.value}`);
         console.log(`lastSearch: ${suggestor.lastSearch}`);
-        // pageInputElement.value = 1;
+        console.log(`diff: ${suggestor.searchPrefix}`);
 
-        // only for testing
-        // suggestor.triggerSearch();
+        suggestor.triggerSearch();
       },
     });
   }
