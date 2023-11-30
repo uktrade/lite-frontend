@@ -33,12 +33,12 @@
                 <th scope="col" class="govuk-table__header">
                     <span class="govuk-visually-hidden">Line number</span>
                 </th>
-                <th scope="col" class="govuk-table__header">Product name</th>
+                <th scope="col" class="govuk-table__header">Name and part number</th>
                 <th scope="col" class="govuk-table__header">Control entry</th>
-                <th scope="col" class="govuk-table__header">Licence</th>
+                <th scope="col" class="govuk-table__header">Licence required</th>
                 <th scope="col" class="govuk-table__header">Regimes</th>
                 <th scope="col" class="govuk-table__header">Report summary</th>
-                <th scope="col" class="govuk-table__header">Refer to NCSC</th>
+                <th scope="col" class="govuk-table__header">Military list for NCSC</th>
                 <th scope="col" class="govuk-table__header">Assessment note</th>
             </tr>
         </thead>
@@ -69,7 +69,7 @@
                     </td>
                     <td class="govuk-table__cell readonly-field">{{ form.control_list_entries|as_crispy_field }}</td>
                     <td class="govuk-table__cell readonly-field">
-                        {{form.licence|as_crispy_field}}
+                        {{form.licence_required|as_crispy_field}}
                     </td>
                     <td class="govuk-table__cell readonly-field">
                         {{form.regimes|as_crispy_field}}
