@@ -454,6 +454,15 @@ class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
 
 
 class CachedSelectMultiple(forms.SelectMultiple):
+    """
+    A SelectMultiple widget that takes advantage of django template fragment
+    caching to avoid re-rendering the same options blocks over and over.
+
+    The fragment cache within the template is keyed by widget class name AND
+    selected values; such that the rendering of options choices for a particular
+    multiselect with a particular choice of values is not rendered more than once.
+    """
+
     template_name = "widgets/select_multiple_cached.html"
 
 
