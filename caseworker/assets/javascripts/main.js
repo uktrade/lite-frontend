@@ -22,6 +22,7 @@ import { initExpanders } from "./list-expander";
 import { initCustomisers } from "./customiser";
 import { initRadioTextArea } from "./radio-populate-textarea.js";
 import initSelectAllTables from "./select-all-tables.js";
+import { initTableExpanders } from "./table-expander.js";
 
 // vendor styles
 import "tippy.js/dist/tippy.css";
@@ -45,6 +46,7 @@ initExpanders();
 initCustomisers();
 initRadioTextArea();
 initSelectAllTables();
+initTableExpanders();
 
 // Push GA user_id
 gaPushUserID();
