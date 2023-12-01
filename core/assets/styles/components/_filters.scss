@@ -120,7 +120,7 @@
 
 	.govuk-form-group {
 		margin-bottom: 0;
-    }
+	}
 
 	.govuk-details {
 		margin-bottom: govuk-spacing(2);
@@ -204,6 +204,18 @@
 	padding-right: calc(((100vw - 100%) / 2));
 	padding-top: calc(((100vw - 100%) / 2));
 	margin-top: calc(((100vw - 100%) / 2) * -1);
+}
+
+.product-search {
+	#div_id_search_string {
+		position: relative;
+	}
+
+	.autoComplete_list {
+		border: 2px solid;
+		border-top: 0;
+		position: absolute;
+	}
 }
 
 .product-search * {
