@@ -606,6 +606,9 @@ class TAUMultipleEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView
 
     @cached_property
     def products_to_edit(self):
+        # We use line_number as the identifier for our product selection instead of good on application ID.
+        # If we used ID instead, it's quite possible that we would run in to URL character limit
+        # problems when a user selects a large number of products to edit.
         if not self.request.GET.get("line_numbers"):
             return self.assessed_goods
         products_to_edit = []
