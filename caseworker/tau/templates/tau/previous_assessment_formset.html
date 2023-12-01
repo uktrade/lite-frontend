@@ -120,7 +120,7 @@
     {% if can_user_assess_products %}
         <div class="assessment-formset__actions govuk-body">
             <button class="govuk-button assessment-formset__action">Approve and continue</button>
-            <a href="{% url 'cases:tau:home' queue_pk=queue_id pk=case.id %}" class="govuk-link govuk-link--no-visited-state assessment-formset__action">Skip to all products</a>
+            <a href="{% url 'cases:tau:home' queue_pk=queue_id pk=case.id %}" class="govuk-link govuk-link--no-visited-state assessment-formset__action">Skip</a>
         </div>
     {% endif %}
 
