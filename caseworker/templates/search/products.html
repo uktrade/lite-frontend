@@ -41,7 +41,7 @@ Search - Products
                 <div class="search-result__part-number">{{ good.part_number }}</div>
                 {% endif %}
             </header>
-            <table class="govuk-table">
+            <table class="govuk-table{% if good.remaining_hits|length %} table-expander{% endif %}">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th scope="col" class="govuk-table__header">
@@ -65,30 +65,26 @@ Search - Products
                         <th scope="col" class="govuk-table__header" data-customiser-key="assessment_notes">
                             Assessment notes
                         </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="tau_assessor">
+                            TAU assessor
+                        </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="quantity">
+                            Quantity
+                        </th>
+                        <th scope="col" class="govuk-table__header" data-customiser-key="value">
+                            Value
+                        </th>
                     </tr>
                 </thead>
-                <tbody class="govuk-table__body">
+                <tbody class="govuk-table__body table-expander__distinct-hits">
                     {% include 'search/includes/product-search-results.html' with hits=good.distinct_combination_hits %}
                 </tbody>
+                {% if good.remaining_hits|length %}
+                <tbody class="govuk-table__body table-expander__remaining-hits">
+                    {% include 'search/includes/product-search-results.html' with hits=good.remaining_hits %}
+                </tbody>
+                {% endif %}
             </table>
-            {% if good.remaining_hits|length %}
-            <div class="product-search-cle-remaining-hits">
-                <details class="govuk-details" data-module="govuk-details">
-                    <summary class="govuk-details__summary">
-                        <span class="govuk-details__summary-text">
-                            Show more cases for this product
-                        </span>
-                    </summary>
-                    <div class="govuk-details__text">
-                        <table class="govuk-table">
-                            <tbody class="govuk-table__body">
-                                {% include 'search/includes/product-search-results.html' with hits=good.remaining_hits %}
-                            </tbody>
-                        </table>
-                    </div>
-                </details>
-            </div>
-            {% endif %}
         </article>
         {% endfor %}
 
