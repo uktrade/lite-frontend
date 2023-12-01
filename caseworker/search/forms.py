@@ -100,6 +100,7 @@ class ProductSearchForm(forms.Form):
     page_size = 25
 
     search_string = forms.CharField(
+        widget=forms.TextInput(attrs={"autocomplete": "off"}),
         label="",
         required=False,
     )
