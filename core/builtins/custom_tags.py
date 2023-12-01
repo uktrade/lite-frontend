@@ -671,6 +671,7 @@ def units_pluralise(unit: str, quantity: str):
     return unit
 
 
+@register.filter()
 def format_quantity_units(quantity):
     unit_suffix = "item"
     quantity = int(quantity) if quantity is not None else 0

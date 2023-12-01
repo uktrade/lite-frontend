@@ -1788,6 +1788,8 @@ def data_search():
                             "assessment_note": "no concerns",
                             "assessed_by": ["Firstname", "Lastname", "firstname.lastname@example.com"],
                             "assessed_by_full_name": "Firstname Lastname",
+                            "quantity": 1.0,
+                            "value": 1000.0,
                         },
                         {
                             "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",
@@ -1812,6 +1814,8 @@ def data_search():
                             "assessment_note": "no concerns",
                             "assessed_by": ["Firstname", "Lastname", "firstname.lastname@example.com"],
                             "assessed_by_full_name": "Firstname Lastname",
+                            "quantity": 1.0,
+                            "value": 1000.0,
                         },
                     ],
                 },
