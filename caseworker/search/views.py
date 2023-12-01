@@ -61,6 +61,8 @@ class ProductSearchView(LoginRequiredMixin, FormView):
                     {"label": "Report summary", "key": "report_summary", "default_visible": True},
                     {"label": "Assessment notes", "key": "assessment_notes", "default_visible": True},
                     {"label": "TAU assessor", "key": "tau_assessor", "default_visible": False},
+                    {"label": "Quantity", "key": "quantity", "default_visible": False},
+                    {"label": "Value", "key": "value", "default_visible": False},
                 ],
             }
         )

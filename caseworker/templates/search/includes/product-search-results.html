@@ -15,5 +15,7 @@
     <td class="govuk-table__cell" data-customiser-key="report_summary">{{ good_on_application.report_summary|default:"" }}</td>
     <td class="govuk-table__cell" data-customiser-key="assessment_notes">{{ good_on_application.assessment_note|linebreaks|default:"" }}</td>
     <td class="govuk-table__cell" data-customiser-key="tau_assessor">{% if good_on_application.assessed_by_full_name %}{{ good_on_application.assessed_by_full_name }}{% endif %}</td>
+    <td class="govuk-table__cell" data-customiser-key="quantity">{{ good_on_application.quantity }}</td>
+    <td class="govuk-table__cell" data-customiser-key="value">{{ good_on_application.value }}</td>
 </tr>
 {% endfor %}
