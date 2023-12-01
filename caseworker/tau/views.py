@@ -571,7 +571,10 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
         post_review_good(self.request, case_id=pk, data=payload)
 
-        latest_precedent_exists = any("latest_precedent" in good for good in self.unassessed_goods)
+        latest_precedent_exists = any(
+            "latest_precedent" in good and good["latest_precedent"] for good in self.unassessed_goods
+        )
+
         if latest_precedent_exists:
             return redirect(
                 reverse("cases:tau:previous_assessments", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
