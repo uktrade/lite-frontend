@@ -59,12 +59,31 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
         "Regime",
         "Report summary",
         "Assessment notes",
+        "TAU assessor",
     ]
     data = [col.text.strip() for col in distinct_combination_hits_table.find_all("td")]
-    assert data == ["GBSIEL/2020/0000001/P", "12 September 2023", "France", "ML1a", "", "guns", "no concerns"]
+    assert data == [
+        "GBSIEL/2020/0000001/P",
+        "12 September 2023",
+        "France",
+        "ML1a",
+        "",
+        "guns",
+        "no concerns",
+        "Firstname Lastname",  # /PS-IGNORE
+    ]
     remaining_hits_table = soup.find_all("table")[1]
     data = [col.text.strip() for col in remaining_hits_table.find_all("td")]
-    assert data == ["GBSIEL/2020/0000001/P", "12 October 2023", "Germany", "ML1a", "", "guns", "no concerns"]
+    assert data == [
+        "GBSIEL/2020/0000001/P",
+        "12 October 2023",
+        "Germany",
+        "ML1a",
+        "",
+        "guns",
+        "no concerns",
+        "Firstname Lastname",  # /PS-IGNORE
+    ]
 
     expected_fields = {
         "id",
@@ -119,7 +138,15 @@ def test_product_search_run_query(authorized_client, product_search_url, request
 @pytest.mark.parametrize(
     ("expected_data_customiser_keys"),
     [
-        ["assessment_date", "destination", "control_entry", "regime", "report_summary", "assessment_notes"],
+        [
+            "assessment_date",
+            "destination",
+            "control_entry",
+            "regime",
+            "report_summary",
+            "assessment_notes",
+            "tau_assessor",
+        ],
     ],
 )
 def test_product_search_columns_are_toggleable(product_search_url, authorized_client, expected_data_customiser_keys):
@@ -157,6 +184,7 @@ def test_product_search_columns_are_toggleable(product_search_url, authorized_cl
                 {"label": "Regime", "key": "regime", "default_visible": True},
                 {"label": "Report summary", "key": "report_summary", "default_visible": True},
                 {"label": "Assessment notes", "key": "assessment_notes", "default_visible": True},
+                {"label": "TAU assessor", "key": "tau_assessor", "default_visible": False},
             ],
         }
     ],
