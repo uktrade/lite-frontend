@@ -99,6 +99,42 @@ def test_edit_multiple_assessments_GET(
     assert_cle_select(soup, "id_form-1-", {"values": ["ML1", "ML1a"], "selected": ["ML1"]})
 
 
+@pytest.mark.parametrize(
+    "querystring, expected_line_numbers",
+    (
+        ("?line_numbers=1&line_numbers=2", [1, 2]),
+        ("?line_numbers=1", [1]),
+        ("?line_numbers=1&line_numbers=foo", [1]),
+        ("?line_numbers=1&line_numbers=8", [1]),
+        ("", [1, 2]),
+    ),
+)
+def test_edit_multiple_assessments_GET_selected_product(
+    authorized_client,
+    edit_multiple_assessments_url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    querystring,
+    expected_line_numbers,
+):
+    """
+    Test multiple edit page where products to edit are selected via GET parameter.
+    """
+    response = authorized_client.get(edit_multiple_assessments_url + querystring)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    table = soup.find("table", id="tau-form")
+    assert table
+
+    line_numbers = [
+        int(td.text.strip().strip().replace(".", "")) for td in table.findAll("td", {"class": "line-number"})
+    ]
+    assert line_numbers == expected_line_numbers
+
+
 def test_edit_multiple_assessments_POST_success(
     authorized_client,
     requests_mock,

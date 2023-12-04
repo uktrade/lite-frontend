@@ -597,17 +597,42 @@ class TAUMultipleEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView
 
     def get_formset_kwargs(self):
         kwargs = super().get_formset_kwargs()
-        kwargs["goods_on_applications"] = self.assessed_goods
+        kwargs["goods_on_applications"] = self.products_to_edit
         kwargs["form_kwargs"] = {
             "control_list_entries_choices": self.control_list_entries,
             "regime_choices": self.all_regime_entries,
         }
         return kwargs
 
+    @cached_property
+    def products_to_edit(self):
+        # We use line_number as the identifier for our product selection instead of good on application ID.
+        # If we used ID instead, it's quite possible that we would run in to URL character limit
+        # problems when a user selects a large number of products to edit.
+        if not self.request.GET.get("line_numbers"):
+            return self.assessed_goods
+        products_to_edit = []
+        products_by_line_number = {product["line_number"]: product for product in self.assessed_goods}
+
+        valid_line_numbers = []
+        for line_number in self.request.GET.getlist("line_numbers"):
+            try:
+                valid_line_numbers.append(int(line_number))
+            except ValueError:
+                # Skip invalid line number values rather than raising an exception further
+                continue
+        ascending_line_numbers = sorted(valid_line_numbers)
+
+        for line_number in ascending_line_numbers:
+            product = products_by_line_number.get(line_number)
+            if product:
+                products_to_edit.append(product)
+        return products_to_edit
+
     def get_initial(self):
         all_initial_data = []
 
-        for good_on_application in self.assessed_goods:
+        for good_on_application in self.products_to_edit:
             initial_form_data = {}
             initial_form_data["good_on_application"] = good_on_application
             initial_form_data["id"] = good_on_application["id"]
@@ -652,7 +677,6 @@ class TAUMultipleEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView
                 "case": self.case,
                 "queue_id": self.queue_id,
                 "formset_helper": formset_helper,
-                "assessed_goods": self.assessed_goods,
             }
         )
         return context
