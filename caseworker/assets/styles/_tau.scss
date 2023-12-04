@@ -44,7 +44,7 @@
   display: none;
 }
 
-.previous-assessment-formset {
+.assessment-formset {
   &__actions {
     align-items: center;
     display: flex;
@@ -55,9 +55,6 @@
     margin-bottom: 0;
   }
 
-  td {
-    vertical-align: middle;
-  }
 }
 
 .previous-assessment-checkbox-cell {
@@ -76,4 +73,39 @@
 
 .tau-not-yet-assessed-box {
   background-color: govuk-tint(govuk-colour("blue"), 95);
+}
+
+.assessment-edit-formset__table {
+
+    table-layout: fixed;
+
+    th.header-narrow {
+        width: 2rem;
+    }
+
+    th.header-medium {
+        width: 4rem;
+    }
+
+    thead {
+        position: sticky;
+        top: 127px;
+        z-index: 1000;
+        background: white;
+    }
+
+    .error-row {
+        color: govuk-colour("red");
+        font-weight: bold;
+
+        td {
+            border-bottom: 0;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+    }
+
 }

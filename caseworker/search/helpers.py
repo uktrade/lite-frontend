@@ -38,7 +38,7 @@ def keypath_lookup(level, keys):
 
 def group_results_by_combination(results):
     """
-    This function groups results by a distinct combination of control entry and report summary
+    This function groups results by a distinct combination of control list entry and report summary
     and regime, using frozenset objects as keys in the grouped results dictionary.
     """
     grouped_results = deepcopy(results)
