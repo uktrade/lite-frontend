@@ -56,7 +56,7 @@ class ProductSearchView(LoginRequiredMixin, FormView):
                 "toggleable_elements": [
                     {"label": "Assessment date", "key": "assessment_date", "default_visible": True},
                     {"label": "Destination", "key": "destination", "default_visible": True},
-                    {"label": "Control entry", "key": "control_entry", "default_visible": True},
+                    {"label": "Control list entry", "key": "control_list_entry", "default_visible": True},
                     {"label": "Regime", "key": "regime", "default_visible": True},
                     {"label": "Report summary", "key": "report_summary", "default_visible": True},
                     {"label": "Assessment notes", "key": "assessment_notes", "default_visible": True},
