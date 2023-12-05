@@ -75,6 +75,7 @@ def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_p
 
 def test_home_content(
     authorized_client,
+    settings,
     url,
     data_queue,
     data_standard_case,
@@ -85,6 +86,7 @@ def test_home_content(
 ):
     """GET /tau would return a case info panel"""
     assign_user_to_case(mock_gov_user, data_standard_case)
+    settings.FEATURE_TAU_MULTIPLE_EDIT = False
 
     # Remove assessment from a good
     good = data_standard_case["case"]["data"]["goods"][0]
@@ -162,6 +164,40 @@ def test_home_content_without_allocated_user_hides_clear_assessment_button(
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(id="clear-assessments-button") is None
+
+
+def test_assessed_products_form(
+    authorized_client,
+    settings,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+    assign_user_to_case,
+):
+    assign_user_to_case(mock_gov_user, data_standard_case)
+    settings.FEATURE_TAU_MULTIPLE_EDIT = True
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    # Test elements of case info panel
+    soup = BeautifulSoup(response.content, "html.parser")
+    assessed_products_form = soup.find("form", {"class": "assessment-formset"})
+    choose_multiple_edit_url = reverse(
+        "cases:tau:choose_multiple_edit",
+        kwargs={
+            "queue_pk": "1b926457-5c9e-4916-8497-51886e51863a",
+            "pk": data_standard_case["case"]["id"],
+        },
+    )
+    assert assessed_products_form.attrs["action"] == choose_multiple_edit_url
+    good = data_standard_case["case"]["data"]["goods"][0]
+    assert assessed_products_form.find("tbody").find_all("td")[2].text == good["good"]["name"]
+
+    assert soup.find(id="clear-assessments-button") is not None
 
 
 def test_tau_home_noauth(client, url):
@@ -372,7 +408,7 @@ def test_move_case_forward(
     assert response.context["unassessed_goods"] == []
 
     soup = BeautifulSoup(response.content, "html.parser")
-    forms = soup.find_all("form")
+    forms = soup.find_all("form", {"class": "move-case-forward-form"})
     if team_alias == views.TAU_ALIAS:
         assert len(forms) == 1
         assert forms[0].attrs["action"] == reverse(
@@ -493,7 +529,7 @@ def test_permission_move_case_forward_button(
     response = authorized_client.get(url)
 
     soup = BeautifulSoup(response.content, "html.parser")
-    forms = soup.find_all("form")
+    forms = soup.find_all("form", {"class": "move-case-forward-form"})
     if is_user_case_advisor:
         assert len(forms) == 1
         assert forms[0].attrs["action"] == reverse(
