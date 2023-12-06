@@ -1,5 +1,4 @@
-import os
-
+from django.conf import settings
 from django.urls import reverse_lazy
 
 
@@ -37,7 +36,7 @@ def current_queue_and_user(request):
 
 def export_vars(request):
     return {
-        "ENVIRONMENT_VARIABLES": dict(os.environ.items()),
+        "GTM_ID": settings.GTM_ID,
         "CURRENT_PATH": request.get_full_path(),
         "CURRENT_PATH_WITHOUT_PARAMS": request.get_full_path().split("?")[0].split("#")[0],
         "CURRENT_PATH_ONLY_PARAMS": "?" + request.get_full_path().split("?")[1]

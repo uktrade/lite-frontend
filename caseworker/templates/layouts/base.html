@@ -45,7 +45,7 @@
 	</script>
 
 	<a href="#main-content" class="govuk-skip-link">Skip to main content</a>
-	{% if ENVIRONMENT_VARIABLES.GTM_ID %}{% include "cookies/banner.html" %}{% endif %}
+	{% if GTM_ID %}{% include "cookies/banner.html" %}{% endif %}
 	<header class="app-header" role="banner" data-module="header">
 		<div class="app-header__container govuk-width-container">
 			<a class="app-header__link" href="{% url 'core:index' %}" data-tooltip="Go home">
@@ -143,7 +143,7 @@
 			<div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
 			  <h2 class="govuk-visually-hidden">Support links</h2>
 			  <ul class="govuk-footer__inline-list">
-				{% if ENVIRONMENT_VARIABLES.GTM_ID %}
+				{% if GTM_ID %}
 				<li class="govuk-footer__inline-list-item">
 				  <a class="govuk-footer__link" href="/cookies">
 					Cookies
