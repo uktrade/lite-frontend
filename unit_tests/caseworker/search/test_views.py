@@ -43,28 +43,57 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
     assertTemplateUsed(response, "search/products.html")
 
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find("h1").string == "Search products"
+    assert soup.find("h1").string == "Search for products"
     assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Search"
     assert soup.find("input", {"name": "search_string"})
 
     # Each search result is displayed as a table
     # check that expected fields are displayed with expected values
-    distinct_combination_hits_table = soup.find_all("table")[0]
-    headers = [header.text.strip() for header in distinct_combination_hits_table.find_all("th")]
+    product_search_result_table = soup.find_all("table")[0]
+
+    headers = [header.text.strip() for header in product_search_result_table.find_all("th")]
     assert headers == [
-        "Case reference",
+        "Case",
         "Assessment date",
         "Destination",
-        "Control entry",
+        "Control list entry",
         "Regime",
         "Report summary",
         "Assessment notes",
+        "TAU assessor",
+        "Quantity",
+        "Value",
     ]
-    data = [col.text.strip() for col in distinct_combination_hits_table.find_all("td")]
-    assert data == ["GBSIEL/2020/0000001/P", "12 September 2023", "France", "ML1a", "", "guns", "no concerns"]
-    remaining_hits_table = soup.find_all("table")[1]
-    data = [col.text.strip() for col in remaining_hits_table.find_all("td")]
-    assert data == ["GBSIEL/2020/0000001/P", "12 October 2023", "Germany", "ML1a", "", "guns", "no concerns"]
+
+    distinct_combination_hits_tbody = product_search_result_table.find_all("tbody")[0]
+    data = [col.text.strip() for col in distinct_combination_hits_tbody.find_all("td")]
+    assert data == [
+        "GBSIEL/2020/0000001/P",
+        "12 September 2023",
+        "France",
+        "ML1a",
+        "",
+        "guns",
+        "no concerns",
+        "Firstname Lastname",  # /PS-IGNORE
+        "1 item",
+        "£1,000.00",
+    ]
+
+    show_more_cases_tbody = product_search_result_table.find_all("tbody")[1]
+    data = [col.text.strip() for col in show_more_cases_tbody.find_all("td")]
+    assert data == [
+        "GBSIEL/2020/0000001/P",
+        "12 October 2023",
+        "Germany",
+        "ML1a",
+        "",
+        "guns",
+        "no concerns",
+        "Firstname Lastname",  # /PS-IGNORE
+        "1 item",
+        "£1,000.00",
+    ]
 
     expected_fields = {
         "id",
@@ -87,7 +116,7 @@ def test_product_search_view_get(authorized_client, product_search_url, mock_pro
     }
     # check for presence of expected fields in search results
     # We have a fixture with example search results and currently we group them
-    # based on distinct combination (control entry, report summary, regime) so extract the first one
+    # based on distinct combination (control list entry, report summary, regime) so extract the first one
     result = response.context["search_results"]["results"][0]["distinct_combination_hits"][0]
     actual_fields = set(result.keys())
 
@@ -119,7 +148,17 @@ def test_product_search_run_query(authorized_client, product_search_url, request
 @pytest.mark.parametrize(
     ("expected_data_customiser_keys"),
     [
-        ["assessment_date", "destination", "control_entry", "regime", "report_summary", "assessment_notes"],
+        [
+            "assessment_date",
+            "destination",
+            "control_list_entry",
+            "regime",
+            "report_summary",
+            "assessment_notes",
+            "tau_assessor",
+            "quantity",
+            "value",
+        ],
     ],
 )
 def test_product_search_columns_are_toggleable(product_search_url, authorized_client, expected_data_customiser_keys):
@@ -153,10 +192,13 @@ def test_product_search_columns_are_toggleable(product_search_url, authorized_cl
             "toggleable_elements": [
                 {"label": "Assessment date", "key": "assessment_date", "default_visible": True},
                 {"label": "Destination", "key": "destination", "default_visible": True},
-                {"label": "Control entry", "key": "control_entry", "default_visible": True},
+                {"label": "Control list entry", "key": "control_list_entry", "default_visible": True},
                 {"label": "Regime", "key": "regime", "default_visible": True},
                 {"label": "Report summary", "key": "report_summary", "default_visible": True},
                 {"label": "Assessment notes", "key": "assessment_notes", "default_visible": True},
+                {"label": "TAU assessor", "key": "tau_assessor", "default_visible": False},
+                {"label": "Quantity", "key": "quantity", "default_visible": False},
+                {"label": "Value", "key": "value", "default_visible": False},
             ],
         }
     ],
@@ -176,7 +218,7 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
 
 
 @pytest.mark.parametrize(
-    ("input_data", "results", "summary_visible_count"),
+    ("input_data", "results", "remaining_hits_visible_count"),
     [
         (
             {"search_string": "hybrid", "page": 1},
@@ -196,6 +238,8 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
                                         "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
                                         "reference_code": "GBSIEL/2020/0000001/P",
                                     },
+                                    "quantity": 1.0,
+                                    "value": 1.0,
                                 },
                                 {
                                     "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
@@ -207,6 +251,8 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
                                         "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
                                         "reference_code": "GBSIEL/2020/0000001/P",
                                     },
+                                    "quantity": 1.0,
+                                    "value": 1.0,
                                 },
                             ]
                         },
@@ -233,6 +279,8 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
                                         "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
                                         "reference_code": "GBSIEL/2020/0000001/P",
                                     },
+                                    "quantity": 1.0,
+                                    "value": 1.0,
                                 },
                                 {
                                     "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
@@ -244,6 +292,8 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
                                         "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
                                         "reference_code": "GBSIEL/2020/0000001/P",
                                     },
+                                    "quantity": 1.0,
+                                    "value": 1.0,
                                 },
                             ]
                         },
@@ -270,6 +320,8 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
                                         "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
                                         "reference_code": "GBSIEL/2020/0000001/P",
                                     },
+                                    "quantity": 1.0,
+                                    "value": 1.0,
                                 },
                                 {
                                     "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
@@ -281,6 +333,8 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
                                         "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
                                         "reference_code": "GBSIEL/2020/0000001/P",
                                     },
+                                    "quantity": 1.0,
+                                    "value": 1.0,
                                 },
                             ]
                         },
@@ -307,6 +361,8 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
                                         "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
                                         "reference_code": "GBSIEL/2020/0000001/P",
                                     },
+                                    "quantity": 1.0,
+                                    "value": 1.0,
                                 },
                                 {
                                     "id": "12343baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
@@ -318,6 +374,8 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
                                         "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
                                         "reference_code": "GBSIEL/2020/0000001/P",
                                     },
+                                    "quantity": 1.0,
+                                    "value": 1.0,
                                 },
                             ]
                         },
@@ -329,14 +387,14 @@ def test_product_search_data_customiser_spec(authorized_client, product_search_u
     ],
 )
 def test_group_results_by_combination(
-    authorized_client, requests_mock, product_search_url, input_data, results, summary_visible_count
+    authorized_client, requests_mock, product_search_url, input_data, results, remaining_hits_visible_count
 ):
     """
     Test whether the results are grouped i.e. whether the summary (dropdown) component appears for certain kinds of search results.
-    (1) Two similar products with matching control entry, report summary
-    (2) Two similar products with matching control entry, but different report summary
-    (3) Two similar products with matching control entry, report summary, regime
-    (4) Two similar products with matching control entry and report summary but different regime
+    (1) Two similar products with matching control list entry, report summary
+    (2) Two similar products with matching control list entry, but different report summary
+    (3) Two similar products with matching control list entry, report summary, regime
+    (4) Two similar products with matching control list entry and report summary but different regime
     """
     url = client._build_absolute_uri("/search/product/search/")
     requests_mock.get(
@@ -349,6 +407,5 @@ def test_group_results_by_combination(
 
     soup = BeautifulSoup(response.content, "html.parser")
 
-    assert len(soup.find_all("summary", class_="govuk-details__summary")) == summary_visible_count
-    assert len(soup.find_all("span", class_="govuk-details__summary-text")) == summary_visible_count
-    assert len(soup.find_all(string=re.compile(r"\s*Show more cases for this product\s*"))) == summary_visible_count
+    remaining_hits_tbody_list = soup.find_all("tbody", class_="table-expander__remaining-hits")
+    assert len(remaining_hits_tbody_list) == remaining_hits_visible_count

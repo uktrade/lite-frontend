@@ -1,0 +1,13 @@
+.table-expander {
+  &__show-more-cases-table-body {
+    &__hidden {
+      display: none;
+    }
+  }
+
+  &__remaining-hits {
+    &__hidden {
+      display: none;
+    }
+  }
+}

@@ -34,19 +34,6 @@ def previous_assessments_url(data_standard_case):
 
 
 @pytest.fixture
-def tau_assessment_url(data_standard_case):
-    return reverse(
-        "cases:tau:home",
-        kwargs={"queue_pk": "1b926457-5c9e-4916-8497-51886e51863a", "pk": data_standard_case["case"]["id"]},
-    )
-
-
-@pytest.fixture
-def api_make_assessment_url(data_standard_case):
-    return client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}/")
-
-
-@pytest.fixture
 def data_good_precedent(data_standard_case, data_queue):
     case_id = data_standard_case["case"]["id"]
     return {
