@@ -10,7 +10,7 @@ from django.urls import reverse
 import re
 
 from core import client
-from caseworker.search.forms import ProductSearchForm
+from caseworker.search.forms import ProductSearchForm, ProductSearchSuggestForm
 
 
 @pytest.fixture
@@ -477,3 +477,28 @@ def test_destination_column_countries(requests_mock, authorized_client, product_
         "<li>Belgium</li><li>Luxembourg</li>",
         "</ul>",
     ]
+
+
+@pytest.fixture
+def product_search_suggest_url():
+    return reverse("search:api-search-suggest-product")
+
+
+@pytest.mark.parametrize(
+    ("query_string", "data_search_suggest"),
+    [("", {}), ("te", {"field": "report_summary", "value": "technology for shotguns", "index": "lite"})],
+)
+def test_product_search_suggest_view_get(
+    requests_mock,
+    authorized_client,
+    product_search_suggest_url,
+    query_string,
+    data_search_suggest,
+):
+    url = client._build_absolute_uri(f"/search/product/suggest/?q={query_string}")
+    requests_mock.get(url=url, json=data_search_suggest)
+
+    response = authorized_client.get(f"{product_search_suggest_url}?q={query_string}")
+
+    assert response.status_code == 200
+    assert response.data == data_search_suggest
