@@ -632,9 +632,7 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
         post_review_good(self.request, case_id=pk, data=payload)
 
-        latest_precedent_exists = any(
-            "latest_precedent" in good and good["latest_precedent"] for good in self.unassessed_goods
-        )
+        latest_precedent_exists = any("latest_precedent" in good and good["latest_precedent"] for good in self.goods)
 
         if latest_precedent_exists:
             return redirect(
