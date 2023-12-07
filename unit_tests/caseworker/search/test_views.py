@@ -409,3 +409,71 @@ def test_group_results_by_combination(
 
     remaining_hits_tbody_list = soup.find_all("tbody", class_="table-expander__remaining-hits")
     assert len(remaining_hits_tbody_list) == remaining_hits_visible_count
+
+
+@pytest.mark.parametrize(
+    ("input_data", "results"),
+    [
+        (
+            {"search_string": "shotgun", "page": 1},
+            {
+                "count": 1,
+                "results": [
+                    {
+                        "inner_hits": {
+                            "hits": [
+                                {
+                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                                    "name": "medium size shotgun",
+                                    "control_list_entries": [{"rating": "ML1a"}],
+                                    "destination": "France",
+                                    "report_summary": "sporting shotguns",
+                                    "regime_entries": [],
+                                    "application": {
+                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                        "reference_code": "GBSIEL/2020/0000001/P",
+                                    },
+                                    "end_user_country": "France",
+                                    "consignee_country": "Netherlands",
+                                    "ultimate_end_user_country": ["Belgium", "Luxembourg"],
+                                    "quantity": 1.0,
+                                    "value": 1.0,
+                                }
+                            ]
+                        },
+                    }
+                ],
+            },
+        )
+    ],
+)
+def test_destination_column_countries(requests_mock, authorized_client, product_search_url, input_data, results):
+    url = client._build_absolute_uri("/search/product/search/")
+    requests_mock.get(
+        url=url,
+        json=results,
+    )
+
+    response = authorized_client.get(product_search_url, input_data)
+    assert response.status_code == 200
+
+    end_user_country = results["results"][0]["inner_hits"]["hits"][0]["end_user_country"]
+    consignee_country = results["results"][0]["inner_hits"]["hits"][0]["consignee_country"]
+    ultimate_end_user_country_1 = results["results"][0]["inner_hits"]["hits"][0]["ultimate_end_user_country"][0]
+    ultimate_end_user_country_2 = results["results"][0]["inner_hits"]["hits"][0]["ultimate_end_user_country"][1]
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    search_results = soup.find_all("table")
+
+    destination_td_contents = str(
+        search_results[0].find("td", attrs={"data-customiser-key": "destination"}).contents[0]
+    ).split("\n")
+
+    assert destination_td_contents == [
+        '<ul class="govuk-list">',
+        "<li>France</li>",
+        "<li>Netherlands</li>",
+        "<li>Belgium</li><li>Luxembourg</li>",
+        "</ul>",
+    ]
