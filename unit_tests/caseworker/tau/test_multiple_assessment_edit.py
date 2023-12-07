@@ -234,12 +234,12 @@ def test_edit_multiple_assessments_POST_uncontrolled_with_cle(
     response = authorized_client.post(edit_multiple_assessments_url, data, follow=True)
     assert response.status_code == 200
     assert not mocked_assessment_endpoint.called
-    assert response.context["formset"][0].non_field_errors() == [
-        "Control list entries cannot be added for a non-controlled product."
-    ]
+    assert response.context["formset"].forms[0].errors == {
+        "control_list_entries": ["Remove control list entries or select 'Licence required'"]
+    }
 
 
-def test_edit_multiple_assessments_POST_controlled_missing_cle(
+def test_edit_multiple_assessments_POST_controlled_missing_required_values(
     authorized_client,
     requests_mock,
     edit_multiple_assessments_url,
@@ -262,7 +262,6 @@ def test_edit_multiple_assessments_POST_controlled_missing_cle(
         "form-0-id": good_on_application_1["id"],
         "form-0-control_list_entries": [],
         "form-0-licence_required": True,
-        "form-0-report_summary_subject": good_on_application_2["report_summary_subject"]["id"],
         "form-0-refer_to_ncsc": False,
         "form-0-comment": "some multiple edit comment",
     }
@@ -270,6 +269,7 @@ def test_edit_multiple_assessments_POST_controlled_missing_cle(
     response = authorized_client.post(edit_multiple_assessments_url, data, follow=True)
     assert response.status_code == 200
     assert not mocked_assessment_endpoint.called
-    assert response.context["formset"][0].non_field_errors() == [
-        "Control list entries and report summary subject MUST be selected for a controlled product."
-    ]
+    assert response.context["formset"][0].errors == {
+        "control_list_entries": ["Enter a control list entry or unselect 'Licence required'"],
+        "report_summary_subject": ["Enter a report summary or unselect 'Licence required'"],
+    }
