@@ -2,7 +2,12 @@ from collections import defaultdict
 import re
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit
+from crispy_forms_gds.layout import (
+    Div,
+    Field,
+    Layout,
+    Submit,
+)
 from django import forms
 
 from caseworker.spire.forms import StyledCharField
@@ -106,10 +111,14 @@ class ProductSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
+        self.helper.form_class = "product-search__form"
         self.helper.form_method = "GET"
         self.helper.layout = Layout(
-            "search_string",
-            Submit("submit", "Search"),
+            Field("search_string", css_class="product-search__search-field"),
+            Div(
+                Submit("submit", "Search"),
+                css_class="product-search__actions",
+            ),
         )
 
     def clean(self):
