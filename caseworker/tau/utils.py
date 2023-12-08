@@ -1,10 +1,5 @@
-from django.conf import settings
-
-
 def get_tau_tab_url_name():
-    if settings.FEATURE_TAU_PREVIOUS_ASSESSMENTS:
-        return "cases:tau:previous_assessments"
-    return "cases:tau:home"
+    return "cases:tau:previous_assessments"
 
 
 def get_cle_suggestions_json(goods):
