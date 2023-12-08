@@ -52,55 +52,35 @@ describe("ProductSearchSuggestor", () => {
     expect(response).toEqual([{ field: "a_field", value: "A value" }]);
   });
 
-  describe("Render resultItem", () => {
-    let itemContainer;
+  test.each([
+    [
+      "mapped field",
+      { value: { field: "a_field", value: "A value" } },
+      '<td class="product-search__suggest-results-key">A field label</td><td class="product-search__suggest-results-value">A value</td>',
+    ],
+    [
+      "wildcard field",
+      { value: { field: "wildcard", value: "A value" } },
+      '<td class="product-search__suggest-results-value" colspan="2">A value</td>',
+    ],
+  ])("Render resultItem with %s", (_, result, expected) => {
+    const table = document.createElement("table");
+    const itemContainer = document.createElement("tr");
+    itemContainer.innerHTML = "<td>Should be removed</td>";
+    table.appendChild(itemContainer);
 
-    beforeEach(() => {
-      const table = document.createElement("table");
-      itemContainer = document.createElement("tr");
-      itemContainer.innerHTML = "<td>Should be removed</td>";
-      table.appendChild(itemContainer);
-    });
+    const $el = createElement();
 
-    test("Field mapped to label", () => {
-      const $el = createElement();
+    const autoCompleteMock = jest.fn();
+    const suggestor = createComponent(autoCompleteMock, $el);
 
-      const autoCompleteMock = jest.fn();
-      const suggestor = createComponent(autoCompleteMock, $el);
+    suggestor.init();
 
-      suggestor.init();
+    const config = autoCompleteMock.mock.calls[0][0];
 
-      const config = autoCompleteMock.mock.calls[0][0];
+    config.resultItem.content(result, itemContainer);
 
-      config.resultItem.content(
-        { value: { field: "a_field", value: "A value" } },
-        itemContainer
-      );
-
-      expect(itemContainer.innerHTML).toEqual(
-        '<td class="product-search__suggest-results-key">A field label</td><td class="product-search__suggest-results-value">A value</td>'
-      );
-    });
-
-    test("Wildcard field", () => {
-      const $el = createElement();
-
-      const autoCompleteMock = jest.fn();
-      const suggestor = createComponent(autoCompleteMock, $el);
-
-      suggestor.init();
-
-      const config = autoCompleteMock.mock.calls[0][0];
-
-      config.resultItem.content(
-        { value: { field: "wildcard", value: "A value" } },
-        itemContainer
-      );
-
-      expect(itemContainer.innerHTML).toEqual(
-        '<td class="product-search__suggest-results-value" colspan="2">A value</td>'
-      );
-    });
+    expect(itemContainer.innerHTML).toEqual(expected);
   });
 
   test.each([
