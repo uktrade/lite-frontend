@@ -525,16 +525,12 @@ class TAUMultipleEditForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         if cleaned_data.get("licence_required"):
-            required_data_present = cleaned_data.get("control_list_entries") and cleaned_data.get(
-                "report_summary_subject"
-            )
-            if not required_data_present:
-                raise ValidationError(
-                    "Control list entries and report summary subject MUST be selected for a controlled product."
-                )
-        if not cleaned_data.get("licence_required"):
-            if cleaned_data.get("control_list_entries"):
-                raise ValidationError("Control list entries cannot be added for a non-controlled product.")
+            if not cleaned_data.get("control_list_entries"):
+                self.add_error("control_list_entries", "Enter a control list entry or unselect 'Licence required'")
+            if not cleaned_data.get("report_summary_subject"):
+                self.add_error("report_summary_subject", "Enter a report summary or unselect 'Licence required'")
+        if not cleaned_data.get("licence_required") and cleaned_data.get("control_list_entries"):
+            self.add_error("control_list_entries", "Remove control list entries or select 'Licence required'")
 
 
 class TAUMultipleEditFormSet(BaseFormSet):
