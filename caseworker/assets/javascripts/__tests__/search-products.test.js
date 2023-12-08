@@ -102,4 +102,25 @@ describe("ProductSearchSuggestor", () => {
       );
     });
   });
+
+  test.each([
+    ["", false],
+    [" ", false],
+    ["  ", false],
+    ["f", false],
+    ["     f     ", false],
+    ["fo", true],
+    ["foo", true],
+  ])("Trigger condition when input is '%s'", (query, expected) => {
+    const $el = createElement();
+
+    const autoCompleteMock = jest.fn();
+    const suggestor = createComponent(autoCompleteMock, $el);
+
+    suggestor.init();
+
+    const config = autoCompleteMock.mock.calls[0][0];
+
+    expect(config.trigger.condition(query)).toEqual(expected);
+  });
 });
