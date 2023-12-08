@@ -36,29 +36,40 @@ class ProductSearchSuggestor {
     return await this.getSuggestions(query);
   }
 
+  getFieldCell(field) {
+    if (field === "wildcard") {
+      return null;
+    }
+
+    const fieldCell = document.createElement("td");
+    fieldCell.classList.add("product-search__suggest-results-key");
+    const label = this.productFilterLabels[field];
+    fieldCell.textContent = label;
+
+    return fieldCell;
+  }
+
+  getValueCell(value, hasField) {
+    const valueCell = document.createElement("td");
+    valueCell.classList.add("product-search__suggest-results-value");
+    valueCell.textContent = value;
+    if (!hasField) {
+      valueCell.colSpan = 2;
+    }
+    return valueCell;
+  }
+
   renderItem(data, source) {
     source.innerHTML = "";
 
-    let hasKey = false;
-    if (data.value.field !== "wildcard") {
-      const keyCell = document.createElement("td");
-      keyCell.classList.add("product-search__suggest-results-key");
-      const label = this.productFilterLabels[data.value.field];
-      if (!label) {
-        console.warning("No label for value", data.value.field);
-      }
-      keyCell.textContent = label;
-      source.appendChild(keyCell);
-
-      hasKey = true;
+    let hasField = false;
+    const fieldCell = this.getFieldCell(data.value.field);
+    if (fieldCell) {
+      hasField = true;
+      source.appendChild(fieldCell);
     }
 
-    const valueCell = document.createElement("td");
-    valueCell.classList.add("product-search__suggest-results-value");
-    valueCell.textContent = data.value.value;
-    if (!hasKey) {
-      valueCell.colSpan = 2;
-    }
+    const valueCell = this.getValueCell(data.value.value, hasField);
     source.appendChild(valueCell);
   }
 
