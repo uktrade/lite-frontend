@@ -78,7 +78,11 @@ class ProductSearchSuggestor {
     const { field, value } = option.selection.value;
     const newValue = `${field}:"${value}"`;
     const currentValue = this.$searchInput.value;
-    this.$searchInput.value = `${currentValue} ${newValue}`;
+    if (!currentValue) {
+      this.$searchInput.value = newValue;
+    } else {
+      this.$searchInput.value = `${currentValue} ${newValue}`;
+    }
   }
 
   setupAutoComplete() {

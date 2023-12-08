@@ -103,4 +103,26 @@ describe("ProductSearchSuggestor", () => {
 
     expect(config.trigger.condition(query)).toEqual(expected);
   });
+
+  test.each([
+    ["", 'foo:"bar"'],
+    ["starting", 'starting foo:"bar"'],
+  ])("On selection with search input value '%s'", (inputValue, expected) => {
+    const $el = createElement();
+
+    const autoCompleteMock = jest.fn();
+    const suggestor = createComponent(autoCompleteMock, $el);
+
+    suggestor.init();
+
+    const config = autoCompleteMock.mock.calls[0][0];
+
+    const searchField = getSearchField($el);
+    searchField.value = inputValue;
+    config.onSelection({
+      selection: { value: { field: "foo", value: "bar" } },
+    });
+
+    expect(searchField).toHaveValue(expected);
+  });
 });
