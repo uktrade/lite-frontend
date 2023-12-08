@@ -73,10 +73,6 @@ class AutocompleteForm(forms.Form):
         return filters_regex_pattern.sub("", self.cleaned_data["q"])
 
 
-class CommentForm(forms.Form):
-    text = forms.CharField()
-
-
 class ProductSearchForm(forms.Form):
     page_size = 25
 
