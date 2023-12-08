@@ -87,6 +87,7 @@ class ProductSearchSuggestor {
         content: (data, source) => this.renderItem(data, source),
       },
       onSelection: (option) => this.handleSelection(option),
+      searchEngine: (query, record) => record,
     });
   }
 }
