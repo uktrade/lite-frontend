@@ -62,6 +62,13 @@ class ProductSearchSuggestor {
     source.appendChild(valueCell);
   }
 
+  handleSelection(option) {
+    const { field, value } = option.selection.value;
+    const newValue = `${field}:"${value}"`;
+    const currentValue = this.$searchInput.value;
+    this.$searchInput.value = `${currentValue} ${newValue}`;
+  }
+
   setupAutoComplete() {
     new autoComplete({
       selector: this.searchInputSelector,
@@ -79,6 +86,7 @@ class ProductSearchSuggestor {
         className: "product-search__suggest-results-row",
         content: (data, source) => this.renderItem(data, source),
       },
+      onSelection: (option) => this.handleSelection(option),
     });
   }
 }
