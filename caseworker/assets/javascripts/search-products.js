@@ -1,7 +1,8 @@
 import autoComplete from "@tarekraafat/autocomplete.js";
 
 class ProductSearchSuggestor {
-  constructor($el) {
+  constructor(autoComplete, $el) {
+    this.autoComplete = autoComplete;
     this.$el = $el;
     this.$form = $el.querySelector(".product-search__form");
     this.productFilterLabels = JSON.parse(
@@ -81,7 +82,7 @@ class ProductSearchSuggestor {
   }
 
   setupAutoComplete() {
-    new autoComplete({
+    new this.autoComplete({
       selector: this.searchInputSelector,
       data: {
         src: async () => this.dataSource(),
@@ -112,7 +113,7 @@ class ProductSearchSuggestor {
 const initProductSearchSuggestor = () => {
   document
     .querySelectorAll(".product-search")
-    .forEach(($el) => new ProductSearchSuggestor($el).init());
+    .forEach(($el) => new ProductSearchSuggestor(autoComplete, $el).init());
 };
 
 initProductSearchSuggestor();
