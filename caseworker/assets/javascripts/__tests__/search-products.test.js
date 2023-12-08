@@ -4,9 +4,14 @@ import fetchMock from "jest-fetch-mock";
 import { ProductSearchSuggestor } from "../search-products";
 
 const createElement = () => {
+  const labels = {
+    ["a_field"]: "A field label",
+  };
   document.body.innerHTML = `
     <div id="product-search">
-      <form class="product-search__form" data-product-filter-labels="{}" data-search-url="/search-url/">
+      <form class="product-search__form" data-product-filter-labels='${JSON.stringify(
+        labels
+      )}' data-search-url="/search-url/">
         <input class="product-search__search-field" type="text">
       </form>
     </div>
@@ -45,5 +50,56 @@ describe("ProductSearchSuggestor", () => {
       headers: { Accept: "application/json" },
     });
     expect(response).toEqual([{ field: "a_field", value: "A value" }]);
+  });
+
+  describe("Render resultItem", () => {
+    let itemContainer;
+
+    beforeEach(() => {
+      const table = document.createElement("table");
+      itemContainer = document.createElement("tr");
+      itemContainer.innerHTML = "<td>Should be removed</td>";
+      table.appendChild(itemContainer);
+    });
+
+    test("Field mapped to label", () => {
+      const $el = createElement();
+
+      const autoCompleteMock = jest.fn();
+      const suggestor = createComponent(autoCompleteMock, $el);
+
+      suggestor.init();
+
+      const config = autoCompleteMock.mock.calls[0][0];
+
+      config.resultItem.content(
+        { value: { field: "a_field", value: "A value" } },
+        itemContainer
+      );
+
+      expect(itemContainer.innerHTML).toEqual(
+        '<td class="product-search__suggest-results-key">A field label</td><td class="product-search__suggest-results-value">A value</td>'
+      );
+    });
+
+    test("Wildcard field", () => {
+      const $el = createElement();
+
+      const autoCompleteMock = jest.fn();
+      const suggestor = createComponent(autoCompleteMock, $el);
+
+      suggestor.init();
+
+      const config = autoCompleteMock.mock.calls[0][0];
+
+      config.resultItem.content(
+        { value: { field: "wildcard", value: "A value" } },
+        itemContainer
+      );
+
+      expect(itemContainer.innerHTML).toEqual(
+        '<td class="product-search__suggest-results-value" colspan="2">A value</td>'
+      );
+    });
   });
 });
