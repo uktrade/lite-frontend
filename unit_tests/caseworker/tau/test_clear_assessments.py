@@ -91,43 +91,8 @@ def test_no_precedent_redirect_to_tau(
     requests_mock,
     mock_cle_post,
     mock_control_list_entries,
-    mock_precedents_api,
+    mock_good_precedent_endpoint_empty,
 ):
-    data_standard_case["case"]["data"]["goods"] = [
-        {
-            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-            "good": {
-                "id": "6a7fc61f-698b-46b6-9876-6ac0fddfb1a2",
-                "name": "p2",
-                "description": "444",
-                "part_number": "44",
-                "control_list_entries": [],
-                "is_good_controlled": {"key": "False", "value": "No"},
-                "report_summary": "scale compelling technologies",
-                "flags": [],
-                "documents": [],
-                "status": {"key": "verified", "value": "Verified"},
-                "item_category": {"key": "group1_device", "value": "Device, equipment or object"},
-                "is_military_use": {"key": "no", "value": "No"},
-                "is_component": {"key": "no", "value": "No"},
-            },
-            "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
-            "quantity": 444.0,
-            "unit": {"key": "GRM", "value": "Gram(s)"},
-            "value": "444.00",
-            "is_good_incorporated": False,
-            "flags": [],
-            "item_type": None,
-            "other_item_type": None,
-            "end_use_control": ["MEND"],
-            "is_good_controlled": {"key": "False", "value": "No"},
-            "control_list_entries": [
-                {"rating": "ML8a", "text": '"Explosives" and mixtures of explosive substances'},
-                {"rating": "ML9a", "text": 'Naval "vessels" and components'},
-            ],
-        }
-    ]
-
     response = authorized_client.get(url)
     assert response.status_code == 200
 
