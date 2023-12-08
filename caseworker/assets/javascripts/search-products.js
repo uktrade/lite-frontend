@@ -18,7 +18,9 @@ class ProductSearchSuggestor {
   }
 
   getQuery() {
-    return this.$searchInput.value;
+    const query = this.$searchInput.value;
+    const last = query.split(" ").at(-1);
+    return last;
   }
 
   async getSuggestions(query) {
@@ -106,7 +108,7 @@ class ProductSearchSuggestor {
       searchEngine: (query, record) => record,
       trigger: {
         event: ["input"],
-        condition: (query) => query.trim().length > 1,
+        condition: () => this.getQuery().trim().length > 1,
       },
       maxResults: 10,
       debounce: 300,

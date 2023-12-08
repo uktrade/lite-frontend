@@ -28,7 +28,15 @@ const getSearchField = ($el) => {
 };
 
 describe("ProductSearchSuggestor", () => {
-  test("Calling data source", async () => {
+  beforeEach(() => {
+    fetchMock.resetMocks();
+  });
+
+  test.each([
+    ["foo", "foo"],
+    ["foo bar", "bar"],
+    ["foo bar baz", "baz"],
+  ])("Calling data source with input value '%s'", async (inputValue, query) => {
     const $el = createElement();
 
     const autoCompleteMock = jest.fn();
@@ -43,10 +51,10 @@ describe("ProductSearchSuggestor", () => {
     );
 
     let searchField = getSearchField($el);
-    searchField.value = "test";
+    searchField.value = inputValue;
 
     const response = await config.data.src();
-    expect(fetchMock).toBeCalledWith("/search-url/?q=test", {
+    expect(fetchMock).toBeCalledWith(`/search-url/?q=${query}`, {
       headers: { Accept: "application/json" },
     });
     expect(response).toEqual([{ field: "a_field", value: "A value" }]);
@@ -91,7 +99,11 @@ describe("ProductSearchSuggestor", () => {
     ["     f     ", false],
     ["fo", true],
     ["foo", true],
-  ])("Trigger condition when input is '%s'", (query, expected) => {
+    ["foo ", false],
+    ["foo b", false],
+    ["foo ba", true],
+    ["foo bar", true],
+  ])("Trigger condition when input is '%s'", (inputValue, expected) => {
     const $el = createElement();
 
     const autoCompleteMock = jest.fn();
@@ -101,7 +113,9 @@ describe("ProductSearchSuggestor", () => {
 
     const config = autoCompleteMock.mock.calls[0][0];
 
-    expect(config.trigger.condition(query)).toEqual(expected);
+    const searchField = getSearchField($el);
+    searchField.value = inputValue;
+    expect(config.trigger.condition()).toEqual(expected);
   });
 
   test.each([
