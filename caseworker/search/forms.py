@@ -10,6 +10,7 @@ from crispy_forms_gds.layout import (
     Submit,
 )
 from django import forms
+from django.urls import reverse
 
 from caseworker.spire.forms import StyledCharField
 
@@ -118,6 +119,7 @@ class ProductSearchForm(forms.Form):
         self.helper.form_method = "GET"
         self.helper.attrs = {
             "data-product-filter-labels": json.dumps(product_filters),
+            "data-search-url": reverse("search:api-search-suggest-product"),
         }
         self.helper.layout = Layout(
             Field("search_string", css_class="product-search__search-field"),

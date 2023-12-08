@@ -7,54 +7,58 @@ class ProductSearchSuggestor {
     this.productFilterLabels = JSON.parse(
       this.$form.dataset.productFilterLabels
     );
+    this.searchUrl = this.$form.dataset.searchUrl;
     this.searchInputSelector = ".product-search__search-field";
+    this.$searchInput = $el.querySelector(this.searchInputSelector);
   }
 
   init() {
     this.setupAutoComplete();
   }
 
-  dataSource() {
-    return Promise.resolve([
-      {
-        field: "consignee_country",
-        value: "Country",
+  getQuery() {
+    return this.$searchInput.value;
+  }
+
+  async getSuggestions(query) {
+    const url = `${this.searchUrl}?q=${query}`;
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/json",
       },
-      {
-        field: "assessment_note",
-        value:
-          "Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country Country ",
-      },
-      {
-        field: "consignee_country",
-        value: "Country",
-      },
-      {
-        field: "consignee_country",
-        value: "Country",
-      },
-      {
-        field: "name",
-        value: "Cathy",
-      },
-      {
-        field: "name",
-        value: "Billy",
-      },
-    ]);
+    });
+    const suggestions = await response.json();
+    return suggestions;
+  }
+
+  async dataSource() {
+    const query = this.getQuery();
+    return await this.getSuggestions(query);
   }
 
   renderItem(data, source) {
     source.innerHTML = "";
 
-    const keyCell = document.createElement("td");
-    keyCell.classList.add("product-search__suggest-results-key");
-    keyCell.textContent = this.productFilterLabels[data.value.field];
-    source.appendChild(keyCell);
+    let hasKey = false;
+    if (data.value.field !== "wildcard") {
+      const keyCell = document.createElement("td");
+      keyCell.classList.add("product-search__suggest-results-key");
+      const label = this.productFilterLabels[data.value.field];
+      if (!label) {
+        console.warning("No label for value", data.value.field);
+      }
+      keyCell.textContent = label;
+      source.appendChild(keyCell);
+
+      hasKey = true;
+    }
 
     const valueCell = document.createElement("td");
     valueCell.classList.add("product-search__suggest-results-value");
     valueCell.textContent = data.value.value;
+    if (!hasKey) {
+      valueCell.colSpan = 2;
+    }
     source.appendChild(valueCell);
   }
 
@@ -62,7 +66,7 @@ class ProductSearchSuggestor {
     new autoComplete({
       selector: this.searchInputSelector,
       data: {
-        src: () => this.dataSource(),
+        src: async () => this.dataSource(),
         key: ["value"],
         cache: false,
       },
