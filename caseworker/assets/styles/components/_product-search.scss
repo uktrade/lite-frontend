@@ -9,6 +9,7 @@
 
         > .govuk-form-group {
             margin-bottom: 0;
+            position: relative;
         }
     }
 
@@ -21,7 +22,46 @@
         }
     }
 
-    &__search-field {
+    #div_id_search_string, &__search-field {
         min-width: 40rem;
+    }
+
+    &__suggest-results {
+        @include govuk-text-colour;
+        @include govuk-font($size: 19);
+        background-color: govuk-colour("white");
+        border: 2px solid;
+        border-collapse: collapse;
+        border-top: 0;
+        position: absolute;
+        width: 100%;
+    }
+
+    &__suggest-results-key, &__suggest-results-value  {
+        padding: govuk-spacing(2);
+    }
+
+    &__suggest-results-key {
+        background-color: govuk-colour("light-grey");
+        box-sizing: border-box;
+        min-width: 11rem;
+        width: 11rem;
+    }
+
+    &__suggest-results-value {
+        box-sizing: border-box;
+        max-width: 28rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100%;
+    }
+
+    .autoComplete_selected {
+        background-color: govuk-colour("light-blue");
+
+        .product-search__suggest-results-key {
+            background-color: inherit;
+        }
     }
 }
