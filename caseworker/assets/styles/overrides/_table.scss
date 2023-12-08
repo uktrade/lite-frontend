@@ -31,6 +31,7 @@
 	animation-name: app-target-animation;
 	animation-duration: 0.3s;
 	animation-fill-mode: both;
+	scroll-margin-top: govuk-px-to-rem(310);
 }
 
 @keyframes app-target-animation {

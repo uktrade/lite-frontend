@@ -95,7 +95,7 @@
                                 </thead>
                                 <tbody class="govuk-table__body">
                                     {% for good in assessed_goods %}
-                                        <tr class="govuk-table__row">
+                                        <tr class="govuk-table__row" id="good-{{ good.id }}">
                                             <td class="govuk-table__cell">{{ good.line_number }}.</td>
                                             <td class="govuk-table__cell">{{ good.good.name }}</td>
                                             <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
