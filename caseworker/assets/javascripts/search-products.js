@@ -88,6 +88,12 @@ class ProductSearchSuggestor {
       },
       onSelection: (option) => this.handleSelection(option),
       searchEngine: (query, record) => record,
+      trigger: {
+        event: ["input"],
+        condition: (query) => query.trim().length > 1,
+      },
+      maxResults: 10,
+      debounce: 300,
     });
   }
 }
