@@ -28,7 +28,8 @@
     {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
     {% if can_user_assess_products %}
         <div class="govuk-body">
-            <button class="govuk-button assessment-formset__action">Edit assessments</button>
+            <button class="govuk-button assessment-formset__action govuk-button--secondary">Edit assessments</button>
+            <a id="clear-assessments-button" href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
         </div>
     {% endif %}
 
