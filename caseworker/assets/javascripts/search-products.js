@@ -3,6 +3,10 @@ import autoComplete from "@tarekraafat/autocomplete.js";
 class ProductSearchSuggestor {
   constructor($el) {
     this.$el = $el;
+    this.$form = $el.querySelector(".product-search__form");
+    this.productFilterLabels = JSON.parse(
+      this.$form.dataset.productFilterLabels
+    );
     this.searchInputSelector = ".product-search__search-field";
   }
 
@@ -45,7 +49,7 @@ class ProductSearchSuggestor {
 
     const keyCell = document.createElement("td");
     keyCell.classList.add("product-search__suggest-results-key");
-    keyCell.textContent = data.value.field;
+    keyCell.textContent = this.productFilterLabels[data.value.field];
     source.appendChild(keyCell);
 
     const valueCell = document.createElement("td");
