@@ -135,12 +135,23 @@ describe("ProductSearchSuggestor", () => {
   );
 
   test.each([
-    ["bar", 3, 'foo:"bar"'],
-    ["starting bar", 12, 'starting foo:"bar"'],
-    ["bar starting", 3, 'foo:"bar" starting'],
+    ["bar", 3, { value: { field: "foo", value: "bar" } }, 'foo:"bar"'],
+    [
+      "starting bar",
+      12,
+      { value: { field: "foo", value: "bar" } },
+      'starting foo:"bar"',
+    ],
+    [
+      "bar starting",
+      3,
+      { value: { field: "foo", value: "bar" } },
+      'foo:"bar" starting',
+    ],
+    ["bar", 3, { value: { field: "wildcard", value: "foobar" } }, "foobar"],
   ])(
     "On selection with search input value '%s'",
-    (inputValue, cursorIndex, expected) => {
+    (inputValue, cursorIndex, selectionValue, expected) => {
       const $el = createElement();
 
       const autoCompleteMock = jest.fn();
@@ -156,7 +167,7 @@ describe("ProductSearchSuggestor", () => {
       searchField.setSelectionRange(cursorIndex, cursorIndex);
 
       config.onSelection({
-        selection: { value: { field: "foo", value: "bar" } },
+        selection: selectionValue,
       });
 
       expect(searchField).toHaveValue(expected);

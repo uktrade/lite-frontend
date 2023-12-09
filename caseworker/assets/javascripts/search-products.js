@@ -17,6 +17,7 @@ class ProductSearchSuggestor {
     this.searchUrl = this.$form.dataset.searchUrl;
     this.searchInputSelector = ".product-search__search-field";
     this.$searchInput = $el.querySelector(this.searchInputSelector);
+    this.wildcardField = "wildcard";
   }
 
   init() {
@@ -50,7 +51,7 @@ class ProductSearchSuggestor {
   }
 
   getFieldCell(field) {
-    if (field === "wildcard") {
+    if (field === this.wildcardField) {
       return null;
     }
 
@@ -95,7 +96,12 @@ class ProductSearchSuggestor {
     );
 
     const { field, value } = option.selection.value;
-    const newValue = `${field}:"${value}"`;
+    let newValue;
+    if (field === this.wildcardField) {
+      newValue = value;
+    } else {
+      newValue = `${field}:"${value}"`;
+    }
 
     const [updatedValue, ,] = replaceAtPosition(
       currentValue,
