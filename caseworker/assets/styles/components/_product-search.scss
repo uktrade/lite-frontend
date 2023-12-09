@@ -58,8 +58,9 @@
         width: 100%;
     }
 
-    .autoComplete_selected {
+    .autoComplete_selected, &__suggest-results-row:hover {
         background-color: govuk-colour("light-blue");
+        cursor: pointer;
 
         .product-search__suggest-results-key {
             background-color: inherit;
