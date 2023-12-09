@@ -1,6 +1,10 @@
 import autoComplete from "@tarekraafat/autocomplete.js";
 
-import { getCurrentWord, replaceAtPosition } from "./string-utils";
+import {
+  getCurrentWord,
+  isIndexInPattern,
+  replaceAtPosition,
+} from "./string-utils";
 
 class ProductSearchSuggestor {
   constructor(autoComplete, $el) {
@@ -22,6 +26,9 @@ class ProductSearchSuggestor {
   getQuery() {
     const currentValue = this.$searchInput.value;
     const caretPosition = this.$searchInput.selectionStart;
+    if (isIndexInPattern(caretPosition, '[a-z_]+?:".*?"', currentValue)) {
+      return "";
+    }
     const [currentWord, ,] = getCurrentWord(currentValue, caretPosition);
     return currentWord;
   }

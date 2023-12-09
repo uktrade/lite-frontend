@@ -1,4 +1,8 @@
-import { getCurrentWord, replaceAtPosition } from "../string-utils";
+import {
+  getCurrentWord,
+  isIndexInPattern,
+  replaceAtPosition,
+} from "../string-utils";
 
 describe("getCurrentWord", () => {
   test.each([
@@ -33,4 +37,35 @@ describe("replaceAtPosition", () => {
       ).toEqual(expected);
     }
   );
+});
+
+describe("isIndexInPattern", () => {
+  test.each([
+    [0, "foo", "foo bar", true],
+    [1, "foo", "foo bar", true],
+    [2, "foo", "foo bar", true],
+    [3, "foo", "foo bar", true],
+    [4, "foo", "foo bar", false],
+    [5, "foo", "foo bar", false],
+    [6, "foo", "foo bar", false],
+    [7, "foo", "foo bar", false],
+    [0, "foo", "foo foo", true],
+    [1, "foo", "foo foo", true],
+    [2, "foo", "foo foo", true],
+    [3, "foo", "foo foo", true],
+    [4, "foo", "foo foo", true],
+    [5, "foo", "foo foo", true],
+    [6, "foo", "foo foo", true],
+    [7, "foo", "foo foo", true],
+    [0, "bar", "foo bar", false],
+    [1, "bar", "foo bar", false],
+    [2, "bar", "foo bar", false],
+    [3, "bar", "foo bar", false],
+    [4, "bar", "foo bar", true],
+    [5, "bar", "foo bar", true],
+    [6, "bar", "foo bar", true],
+    [7, "bar", "foo bar", true],
+  ])("Index in pattern", (index, pattern, string, expected) => {
+    expect(isIndexInPattern(index, pattern, string)).toEqual(expected);
+  });
 });

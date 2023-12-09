@@ -99,31 +99,40 @@ describe("ProductSearchSuggestor", () => {
   });
 
   test.each([
-    ["", false],
-    [" ", false],
-    ["  ", false],
-    ["f", false],
-    ["     f     ", false],
-    ["fo", true],
-    ["foo", true],
-    ["foo ", false],
-    ["foo b", false],
-    ["foo ba", true],
-    ["foo bar", true],
-  ])("Trigger condition when input is '%s'", (inputValue, expected) => {
-    const $el = createElement();
+    ["", 0, false],
+    [" ", 0, false],
+    ["  ", 0, false],
+    ["f", 1, false],
+    ["fo", 2, true],
+    ["foo", 3, true],
+    ["foo ", 4, false],
+    ["foo b", 5, false],
+    ["foo ba", 6, true],
+    ["foo bar", 7, true],
+    ['test_field:"this"', 17, false],
+    ['test_field:"this thing"', 23, false],
+    ['test_field:"this thing" foo', 27, true],
+    ['test:"this" foo test:"that"', 15, true],
+  ])(
+    "Trigger condition when input is '%s'",
+    (inputValue, cursorIndex, expected) => {
+      const $el = createElement();
 
-    const autoCompleteMock = jest.fn();
-    const suggestor = createComponent(autoCompleteMock, $el);
+      const autoCompleteMock = jest.fn();
+      const suggestor = createComponent(autoCompleteMock, $el);
 
-    suggestor.init();
+      suggestor.init();
 
-    const config = autoCompleteMock.mock.calls[0][0];
+      const config = autoCompleteMock.mock.calls[0][0];
 
-    const searchField = getSearchField($el);
-    searchField.value = inputValue;
-    expect(config.trigger.condition()).toEqual(expected);
-  });
+      const searchField = getSearchField($el);
+      searchField.value = inputValue;
+      searchField.focus();
+      searchField.setSelectionRange(cursorIndex, cursorIndex);
+
+      expect(config.trigger.condition()).toEqual(expected);
+    }
+  );
 
   test.each([
     ["bar", 3, 'foo:"bar"'],
