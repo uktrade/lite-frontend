@@ -35,7 +35,7 @@ class ProductSearchSuggestor {
   }
 
   async getSuggestions(query) {
-    const url = `${this.searchUrl}?q=${query}`;
+    const url = `${this.searchUrl}?q=${encodeURIComponent(query)}`;
     const response = await fetch(url, {
       headers: {
         Accept: "application/json",

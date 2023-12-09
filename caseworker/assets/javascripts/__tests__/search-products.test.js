@@ -38,6 +38,7 @@ describe("ProductSearchSuggestor", () => {
     ["foo bar baz", 11, "baz"],
     ["foo bar baz", 3, "foo"],
     ["foo bar baz", 7, "bar"],
+    ["&escape=me", 9, "%26escape%3Dme"],
   ])(
     "Calling data source with input value '%s'",
     async (inputValue, cursorIndex, query) => {
