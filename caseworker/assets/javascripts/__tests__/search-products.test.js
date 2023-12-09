@@ -119,24 +119,31 @@ describe("ProductSearchSuggestor", () => {
   });
 
   test.each([
-    ["", 'foo:"bar"'],
-    ["starting", 'starting foo:"bar"'],
-  ])("On selection with search input value '%s'", (inputValue, expected) => {
-    const $el = createElement();
+    ["bar", 3, 'foo:"bar"'],
+    ["starting bar", 12, 'starting foo:"bar"'],
+    ["bar starting", 3, 'foo:"bar" starting'],
+  ])(
+    "On selection with search input value '%s'",
+    (inputValue, cursorIndex, expected) => {
+      const $el = createElement();
 
-    const autoCompleteMock = jest.fn();
-    const suggestor = createComponent(autoCompleteMock, $el);
+      const autoCompleteMock = jest.fn();
+      const suggestor = createComponent(autoCompleteMock, $el);
 
-    suggestor.init();
+      suggestor.init();
 
-    const config = autoCompleteMock.mock.calls[0][0];
+      const config = autoCompleteMock.mock.calls[0][0];
 
-    const searchField = getSearchField($el);
-    searchField.value = inputValue;
-    config.onSelection({
-      selection: { value: { field: "foo", value: "bar" } },
-    });
+      const searchField = getSearchField($el);
+      searchField.value = inputValue;
+      searchField.focus();
+      searchField.setSelectionRange(cursorIndex, cursorIndex);
 
-    expect(searchField).toHaveValue(expected);
-  });
+      config.onSelection({
+        selection: { value: { field: "foo", value: "bar" } },
+      });
+
+      expect(searchField).toHaveValue(expected);
+    }
+  );
 });

@@ -1,5 +1,7 @@
 import autoComplete from "@tarekraafat/autocomplete.js";
 
+import { getCurrentWord, replaceAtPosition } from "./string-utils";
+
 class ProductSearchSuggestor {
   constructor(autoComplete, $el) {
     this.autoComplete = autoComplete;
@@ -77,14 +79,24 @@ class ProductSearchSuggestor {
   }
 
   handleSelection(option) {
+    const currentValue = this.$searchInput.value;
+    const caretPosition = this.$searchInput.selectionStart;
+    const [, startIndex, endIndex] = getCurrentWord(
+      currentValue,
+      caretPosition
+    );
+
     const { field, value } = option.selection.value;
     const newValue = `${field}:"${value}"`;
-    const currentValue = this.$searchInput.value;
-    if (!currentValue) {
-      this.$searchInput.value = newValue;
-    } else {
-      this.$searchInput.value = `${currentValue} ${newValue}`;
-    }
+
+    const [updatedValue, ,] = replaceAtPosition(
+      currentValue,
+      newValue,
+      startIndex,
+      endIndex
+    );
+
+    this.$searchInput.value = updatedValue;
   }
 
   setupAutoComplete() {
