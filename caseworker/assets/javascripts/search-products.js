@@ -20,9 +20,10 @@ class ProductSearchSuggestor {
   }
 
   getQuery() {
-    const query = this.$searchInput.value;
-    const last = query.split(" ").at(-1);
-    return last;
+    const currentValue = this.$searchInput.value;
+    const caretPosition = this.$searchInput.selectionStart;
+    const [currentWord, ,] = getCurrentWord(currentValue, caretPosition);
+    return currentWord;
   }
 
   async getSuggestions(query) {

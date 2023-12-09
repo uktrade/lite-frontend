@@ -33,32 +33,39 @@ describe("ProductSearchSuggestor", () => {
   });
 
   test.each([
-    ["foo", "foo"],
-    ["foo bar", "bar"],
-    ["foo bar baz", "baz"],
-  ])("Calling data source with input value '%s'", async (inputValue, query) => {
-    const $el = createElement();
+    ["foo", 3, "foo"],
+    ["foo bar", 7, "bar"],
+    ["foo bar baz", 11, "baz"],
+    ["foo bar baz", 3, "foo"],
+    ["foo bar baz", 7, "bar"],
+  ])(
+    "Calling data source with input value '%s'",
+    async (inputValue, cursorIndex, query) => {
+      const $el = createElement();
 
-    const autoCompleteMock = jest.fn();
-    const suggestor = createComponent(autoCompleteMock, $el);
+      const autoCompleteMock = jest.fn();
+      const suggestor = createComponent(autoCompleteMock, $el);
 
-    suggestor.init();
+      suggestor.init();
 
-    const config = autoCompleteMock.mock.calls[0][0];
+      const config = autoCompleteMock.mock.calls[0][0];
 
-    fetchMock.mockResponse(
-      JSON.stringify([{ field: "a_field", value: "A value" }])
-    );
+      fetchMock.mockResponse(
+        JSON.stringify([{ field: "a_field", value: "A value" }])
+      );
 
-    let searchField = getSearchField($el);
-    searchField.value = inputValue;
+      let searchField = getSearchField($el);
+      searchField.value = inputValue;
+      searchField.focus();
+      searchField.setSelectionRange(cursorIndex, cursorIndex);
 
-    const response = await config.data.src();
-    expect(fetchMock).toBeCalledWith(`/search-url/?q=${query}`, {
-      headers: { Accept: "application/json" },
-    });
-    expect(response).toEqual([{ field: "a_field", value: "A value" }]);
-  });
+      const response = await config.data.src();
+      expect(fetchMock).toBeCalledWith(`/search-url/?q=${query}`, {
+        headers: { Accept: "application/json" },
+      });
+      expect(response).toEqual([{ field: "a_field", value: "A value" }]);
+    }
+  );
 
   test.each([
     [
