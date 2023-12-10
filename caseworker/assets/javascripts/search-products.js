@@ -1,10 +1,6 @@
 import autoComplete from "@tarekraafat/autocomplete.js";
 
-import {
-  getCurrentWord,
-  isIndexInPattern,
-  replaceAtPosition,
-} from "./string-utils";
+import { getCurrentWord, isIndexInPattern } from "./string-utils";
 
 class ProductSearchSuggestor {
   constructor(autoComplete, $el) {
@@ -98,19 +94,13 @@ class ProductSearchSuggestor {
     const { field, value } = option.selection.value;
     let newValue;
     if (field === this.wildcardField) {
-      newValue = value;
+      newValue = `${value} `;
     } else {
-      newValue = `${field}:"${value}"`;
+      newValue = `${field}:"${value}" `;
     }
 
-    const [updatedValue, ,] = replaceAtPosition(
-      currentValue,
-      newValue,
-      startIndex,
-      endIndex
-    );
-
-    this.$searchInput.value = updatedValue;
+    this.$searchInput.focus();
+    this.$searchInput.setRangeText(newValue, startIndex, endIndex, "end");
   }
 
   setupAutoComplete() {

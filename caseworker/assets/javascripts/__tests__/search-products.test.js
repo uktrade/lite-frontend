@@ -136,23 +136,25 @@ describe("ProductSearchSuggestor", () => {
   );
 
   test.each([
-    ["bar", 3, { value: { field: "foo", value: "bar" } }, 'foo:"bar"'],
+    ["bar", 3, { value: { field: "foo", value: "bar" } }, 'foo:"bar" ', 10],
     [
       "starting bar",
       12,
       { value: { field: "foo", value: "bar" } },
-      'starting foo:"bar"',
+      'starting foo:"bar" ',
+      19,
     ],
     [
       "bar starting",
       3,
       { value: { field: "foo", value: "bar" } },
-      'foo:"bar" starting',
+      'foo:"bar"  starting',
+      10,
     ],
-    ["bar", 3, { value: { field: "wildcard", value: "foobar" } }, "foobar"],
+    ["bar", 3, { value: { field: "wildcard", value: "foobar" } }, "foobar ", 7],
   ])(
     "On selection with search input value '%s'",
-    (inputValue, cursorIndex, selectionValue, expected) => {
+    (inputValue, cursorIndex, selectionValue, expectedValue) => {
       const $el = createElement();
 
       const autoCompleteMock = jest.fn();
@@ -167,11 +169,26 @@ describe("ProductSearchSuggestor", () => {
       searchField.focus();
       searchField.setSelectionRange(cursorIndex, cursorIndex);
 
+      searchField.blur();
       config.onSelection({
         selection: selectionValue,
       });
 
-      expect(searchField).toHaveValue(expected);
+      expect(searchField).toHaveValue(expectedValue);
+      expect(searchField).toHaveFocus();
+
+      // expect(searchField.selectionStart).toEqual(expectedSelectionStart);
+      // expect(searchField.selectionStart).toEqual(searchField.selectionEnd);
+      // Ideally we want to check that setRangeText is being called with "end"
+      // and to do that we want to check that the selectionStart is ending up
+      // in the place that we would expect.
+      // However, we seem to be getting the wrong value back, there is a commit
+      // in jsdom that shows this used to be a bug that they've fixed but even
+      // an upgrade to jsdom doesn't seem to have fixed it.
+      // My theory is that jest-environment-jsdom is installing an earlier
+      // version of jsdom that has the bug that's being used in our test
+      // environments instead.
+      // https://github.com/jsdom/jsdom/releases/tag/21.1.2
     }
   );
 });

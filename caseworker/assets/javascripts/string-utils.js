@@ -62,23 +62,4 @@ const isIndexInPattern = (index, pattern, string) => {
   return false;
 };
 
-/**
- * @param {string} string The original string
- * @param {string} replacement The replacement string
- * @param {number} startIndex The start index of where to replace
- * @param {number} endIndex The end index of where to replace
- *
- * Replaces the characters given by the start and end index with the replacement
- * string.
- *
- * @returns {[string, number, number]} The string with the replaced value with the start and index of where the replacement took place
- */
-const replaceAtPosition = (string, replacement, startIndex, endIndex) => {
-  const beginning = string.substring(0, startIndex);
-  const ending = string.substring(endIndex, string.length);
-  const newValue = `${beginning}${replacement}${ending}`;
-
-  return [newValue, startIndex, startIndex + replacement.length];
-};
-
-export { getCurrentWord, isIndexInPattern, replaceAtPosition };
+export { getCurrentWord, isIndexInPattern };

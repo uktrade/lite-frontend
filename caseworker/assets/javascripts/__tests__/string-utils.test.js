@@ -1,8 +1,4 @@
-import {
-  getCurrentWord,
-  isIndexInPattern,
-  replaceAtPosition,
-} from "../string-utils";
+import { getCurrentWord, isIndexInPattern } from "../string-utils";
 
 describe("getCurrentWord", () => {
   test.each([
@@ -22,21 +18,6 @@ describe("getCurrentWord", () => {
   ])("Retrieving current word", (string, index, expected) => {
     expect(getCurrentWord(string, index)).toEqual(expected);
   });
-});
-
-describe("replaceAtPosition", () => {
-  test.each([
-    ["xxx", "bar", 0, 3, ["bar", 0, 3]],
-    ["xxx", "bar", 1, 1, ["xbarxx", 1, 4]],
-    ["xxx", "bar", 1, 2, ["xbarx", 1, 4]],
-  ])(
-    "Retrieving current word",
-    (string, replacement, startIndex, endIndex, expected) => {
-      expect(
-        replaceAtPosition(string, replacement, startIndex, endIndex)
-      ).toEqual(expected);
-    }
-  );
 });
 
 describe("isIndexInPattern", () => {
