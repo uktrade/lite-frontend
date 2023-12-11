@@ -7,6 +7,7 @@ from caseworker.tau.views import (
     TAUClearAssessments,
     TAUPreviousAssessments,
     TAUMultipleEdit,
+    TAUChooseAssessmentEdit,
 )
 
 app_name = "tau"
@@ -18,4 +19,5 @@ urlpatterns = [
     path("clear-assessments/", TAUClearAssessments.as_view(), name="clear_assessments"),
     path("previous-assessments/", TAUPreviousAssessments.as_view(), name="previous_assessments"),
     path("multiple-edit/", TAUMultipleEdit.as_view(), name="multiple_edit"),
+    path("multiple-edit-choice/", TAUChooseAssessmentEdit.as_view(), name="choose_multiple_edit"),
 ]
