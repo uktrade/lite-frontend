@@ -1,8 +1,11 @@
 import os
 
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 from django.contrib import messages
+from django.conf import settings
+from django.forms import formset_factory
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import FormView, View, TemplateView
@@ -31,6 +34,8 @@ from caseworker.tau.forms import (
     BaseTAUPreviousAssessmentFormSet,
     TAUAssessmentForm,
     TAUEditForm,
+    TAUEditAssessmentChoiceForm,
+    TAUEditAssessmentChoiceFormSet,
     TAUPreviousAssessmentForm,
     TAUMultipleEditForm,
     TAUMultipleEditFormSet,
@@ -247,8 +252,26 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
 
         return form_kwargs
 
+    def get_edit_choice_formset(self, goods_on_applications):
+        if not goods_on_applications:
+            return None
+        AssessmentEditChoiceFormSet = formset_factory(
+            TAUEditAssessmentChoiceForm,
+            extra=0,
+            formset=TAUEditAssessmentChoiceFormSet,
+        )
+        return AssessmentEditChoiceFormSet(  # pylint: disable=unexpected-keyword-arg
+            initial=[{"good_on_application_id": goa["id"]} for goa in goods_on_applications],
+            goods_on_applications=goods_on_applications,
+        )
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        if settings.FEATURE_TAU_MULTIPLE_EDIT:
+            formset_helper = FormHelper()
+            formset_helper.template = "tau/edit_assessed_products_formset.html"
+            context["formset"] = self.get_edit_choice_formset(self.assessed_goods)
+            context["formset_helper"] = formset_helper
         return {
             **context,
             "case": self.case,
@@ -298,6 +321,37 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
         del payload["ag_entries"]
         del payload["regimes"]
         return payload
+
+
+class TAUChooseAssessmentEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
+    """
+    View for posting assessment edit choices to from TAUHome.  Does not provide a
+    GET as this should just support POST and redirect to the multiple assessment edit
+    page.
+    """
+
+    form_class = TAUEditAssessmentChoiceForm
+    factory_kwargs = {"extra": 0, "formset": TAUEditAssessmentChoiceFormSet}
+    # Required as we inherit from a mixin which requires this
+    template_name = "tau/previous_assessments.html"
+
+    def get(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    def get_formset_kwargs(self):
+        kwargs = super().get_formset_kwargs()
+        kwargs["goods_on_applications"] = self.assessed_goods
+        return kwargs
+
+    def formset_valid(self, formset):
+        line_numbers = []
+        for form in formset:
+            if form.cleaned_data["selected"]:
+                line_numbers.append(form.good_on_application["line_number"])
+        params = urlencode({"line_numbers": line_numbers}, doseq=True)
+        return redirect(
+            reverse("cases:tau:multiple_edit", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}) + f"?{params}"
+        )
 
 
 class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
@@ -578,9 +632,7 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
         post_review_good(self.request, case_id=pk, data=payload)
 
-        latest_precedent_exists = any(
-            "latest_precedent" in good and good["latest_precedent"] for good in self.unassessed_goods
-        )
+        latest_precedent_exists = any("latest_precedent" in good and good["latest_precedent"] for good in self.goods)
 
         if latest_precedent_exists:
             return redirect(

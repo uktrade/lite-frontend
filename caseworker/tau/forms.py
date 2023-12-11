@@ -453,6 +453,31 @@ class BaseTAUPreviousAssessmentFormSet(BaseFormSet):
                 raise ValidationError("A new assessment was made which supersedes your chosen previous assessment.")
 
 
+class TAUEditAssessmentChoiceForm(forms.Form):
+    good_on_application_id = forms.UUIDField(
+        widget=forms.HiddenInput(),
+    )
+    selected = forms.BooleanField(
+        required=False,
+        initial=True,
+    )
+
+    def __init__(self, *args, good_on_application, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.good_on_application = good_on_application
+
+
+class TAUEditAssessmentChoiceFormSet(BaseFormSet):
+    def __init__(self, *args, goods_on_applications, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.goods_on_applications = goods_on_applications
+
+    def get_form_kwargs(self, index):
+        kwargs = super().get_form_kwargs(index)
+        kwargs["good_on_application"] = self.goods_on_applications[index]
+        return kwargs
+
+
 class CachedSelectMultiple(forms.SelectMultiple):
     """
     A SelectMultiple widget that takes advantage of django template fragment
@@ -525,16 +550,12 @@ class TAUMultipleEditForm(forms.Form):
     def clean(self):
         cleaned_data = super().clean()
         if cleaned_data.get("licence_required"):
-            required_data_present = cleaned_data.get("control_list_entries") and cleaned_data.get(
-                "report_summary_subject"
-            )
-            if not required_data_present:
-                raise ValidationError(
-                    "Control list entries and report summary subject MUST be selected for a controlled product."
-                )
-        if not cleaned_data.get("licence_required"):
-            if cleaned_data.get("control_list_entries"):
-                raise ValidationError("Control list entries cannot be added for a non-controlled product.")
+            if not cleaned_data.get("control_list_entries"):
+                self.add_error("control_list_entries", "Enter a control list entry or unselect 'Licence required'")
+            if not cleaned_data.get("report_summary_subject"):
+                self.add_error("report_summary_subject", "Enter a report summary or unselect 'Licence required'")
+        if not cleaned_data.get("licence_required") and cleaned_data.get("control_list_entries"):
+            self.add_error("control_list_entries", "Remove control list entries or select 'Licence required'")
 
 
 class TAUMultipleEditFormSet(BaseFormSet):

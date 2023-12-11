@@ -110,13 +110,7 @@ def mock_single_good_precedent_endpoint(requests_mock, data_standard_case, data_
     )
 
 
-@pytest.mark.parametrize(
-    "feature_flag_active, expected_product_assessment_tab_url",
-    ((True, "tau/previous-assessments/"), (False, "tau/")),
-)
 def test_previous_assessments_GET(
-    feature_flag_active,
-    expected_product_assessment_tab_url,
     settings,
     authorized_client,
     previous_assessments_url,
@@ -126,13 +120,12 @@ def test_previous_assessments_GET(
     mock_gov_user,
     mock_good_precedent_endpoint,
 ):
-    settings.FEATURE_TAU_PREVIOUS_ASSESSMENTS = feature_flag_active
     response = authorized_client.get(previous_assessments_url)
     assert response.status_code == 200
 
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find("a", id="tab-assessment")["href"].endswith(expected_product_assessment_tab_url)
+    assert soup.find("a", id="tab-assessment")["href"].endswith("tau/previous-assessments/")
     assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Product Assessment"
 
     table = soup.find("table", id="tau-form")
