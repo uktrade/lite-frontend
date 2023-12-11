@@ -2,6 +2,15 @@ import autoComplete from "@tarekraafat/autocomplete.js";
 
 import { getCurrentWord, isIndexInPattern } from "./string-utils";
 
+/**
+ * Retrieves product search suggestions and displays them as the user types
+ * in the search input.
+ *
+ * It will provide suggestions for the word that is being currently typed by
+ * the user.
+ *
+ * This is a wrapper around @tarekraafat/autocomplete.js.
+ */
 class ProductSearchSuggestor {
   constructor(autoComplete, $el) {
     this.autoComplete = autoComplete;
