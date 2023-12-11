@@ -91,15 +91,12 @@ def test_no_precedent_redirect_to_tau(
     requests_mock,
     mock_cle_post,
     mock_control_list_entries,
-    mock_precedents_api,
+    mock_good_precedent_endpoint_empty,
 ):
-    good = data_standard_case["case"]["data"]["goods"][0]
-    good["latest_precedent"] = None
     response = authorized_client.get(url)
     assert response.status_code == 200
 
     response = authorized_client.post(url)
-
     assert response.status_code == 302
     assert (
         response.url == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/"
