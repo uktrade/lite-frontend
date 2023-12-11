@@ -27,8 +27,8 @@ services:
       - 8300:8300
     volumes:
       - ./ui_tests/screenshots:/app/ui_tests/screenshots
-      - ./circleci:/app/circleci
       - ./test_results:/app/test_results
+      - /usr/local/bin/circleci:/usr/local/bin/circleci
     entrypoint: ["/bin/sh","-c"]
     command:
     - |

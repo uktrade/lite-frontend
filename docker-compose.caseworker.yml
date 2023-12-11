@@ -30,7 +30,7 @@ services:
     volumes:
       - ./ui_tests/screenshots:/app/ui_tests/screenshots
       - ./test_results:/app/test_results
-      - ./circleci:/app/circleci
+      - /usr/local/bin/circleci:/usr/local/bin/circleci
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
