@@ -39,8 +39,7 @@
     "global-jsdom": "^8.5.0",
     "jest": "^28.1.1",
     "jest-environment-jsdom": "^28.1.1",
-    "jest-fetch-mock": "^3.0.3",
-    "jsdom": "^23.0.1"
+    "jest-fetch-mock": "^3.0.3"
   },
   "dependencies": {
     "@babel/core": "^7.22.10",
