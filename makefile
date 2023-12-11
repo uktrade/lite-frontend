@@ -97,11 +97,11 @@ stop-exporter:
 
 caseworker-e2e-selenium-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseworker' ***"
-	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest --headless --chrome-binary-location=/usr/bin/chromium -vv --gherkin-terminal-reporter ./ui_tests/caseworker'
+	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest --headless --chrome-binary-location=/usr/bin/chromium -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker'
 
 exporter-e2e-selenium-test:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
-	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest --headless --chrome-binary-location=/usr/bin/chromium -vv --gherkin-terminal-reporter ./ui_tests/exporter'
+	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest --headless --chrome-binary-location=/usr/bin/chromium -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter'
 
 build-exporter:
 	$(docker-e2e-exporter) build
