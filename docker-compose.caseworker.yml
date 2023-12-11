@@ -31,6 +31,7 @@ services:
       - ./ui_tests/screenshots:/app/ui_tests/screenshots
       - ./test_results:/app/test_results
       - /usr/local/bin/circleci:/usr/local/bin/circleci
+      - /tmp:/tmp
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
