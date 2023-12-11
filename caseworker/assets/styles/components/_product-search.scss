@@ -59,11 +59,13 @@
     }
 
     .autoComplete_selected, &__suggest-results-row:hover {
-        background-color: govuk-colour("light-blue");
+        background-color: govuk-colour("blue");
+        color: govuk-colour("white");
         cursor: pointer;
 
         .product-search__suggest-results-key {
             background-color: inherit;
+            color: inherit;
         }
     }
 }
