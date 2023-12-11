@@ -16,6 +16,26 @@ Search - Products
 
 <div class="product-search">
     {% crispy form %}
+    <div class="product-search__help">
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">
+                Help with building queries
+              </span>
+            </summary>
+            <div class="govuk-details__text">
+                <h3>To build your query</h3>
+                <p>Enter a keyword to search for product names, exporters, part numbers, control list entries, regimes, report summaries, assessment notes and TAU assessors.</p>
+                <p>Use AND between keywords to search for results matching both keywords.</p>
+                <p>Use OR between keywords to find products matching either keyword.</p>
+                <p>Use NOT to exclude keywords from search results.</p>
+                <p>Use * to find wildcards, replacing zero or more characters.</p>
+                <p>Use " around keywords to find exact matches.</p>
+                <p>Use ? to replace a single character.</p>
+                <p>Use () to group together multiple terms or clauses, to form sub-queries.</p>
+            </div>
+          </details>
+    </div>
 </div>
 
 <div id="product-search-customiser" class="customiser" data-customiser-spec="{{ customiser_spec }}">
