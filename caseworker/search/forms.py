@@ -1,9 +1,16 @@
 from collections import defaultdict
+import json
 import re
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit
+from crispy_forms_gds.layout import (
+    Div,
+    Field,
+    Layout,
+    Submit,
+)
 from django import forms
+from django.urls import reverse
 
 from caseworker.spire.forms import StyledCharField
 
@@ -73,21 +80,23 @@ class AutocompleteForm(forms.Form):
         return filters_regex_pattern.sub("", self.cleaned_data["q"])
 
 
-product_filter_names = "|".join(
-    [
-        "name",
-        "part_number",
-        "consignee_country",
-        "end_user_country",
-        "ultimate_end_user_country",
-        "ratings",
-        "regimes",
-        "report_summary",
-        "organisation",
-        "assessed_by",
-        "assessment_note",
-    ]
-)
+product_filters = {
+    "name": "Name",
+    "part_number": "Part number",
+    "consignee_country": "Consignee country",
+    "end_user_country": "End-user country",
+    "ultimate_end_user_country": "Ultimate end-user country",
+    "ratings": "Control list entry",
+    "regimes": "Regime",
+    "report_summary": "Report summary",
+    "organisation": "Applicant",
+    "assessed_by": "Assessor",
+    "assessment_note": "Assessment note",
+    "destination": "Destination",
+}
+
+
+product_filter_names = "|".join(product_filters.keys())
 
 product_filters_regex_pattern = re.compile(f'({product_filter_names}?):"(.*?)"')
 
@@ -106,10 +115,18 @@ class ProductSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
+        self.helper.form_class = "product-search__form"
         self.helper.form_method = "GET"
+        self.helper.attrs = {
+            "data-product-filter-labels": json.dumps(product_filters),
+            "data-search-url": reverse("search:api-search-suggest-product"),
+        }
         self.helper.layout = Layout(
-            "search_string",
-            Submit("submit", "Search"),
+            Field("search_string", css_class="product-search__search-field"),
+            Div(
+                Submit("submit", "Search"),
+                css_class="product-search__actions",
+            ),
         )
 
     def clean(self):
