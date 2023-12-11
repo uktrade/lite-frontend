@@ -89,7 +89,7 @@ product_filters = {
     "ratings": "Control list entry",
     "regimes": "Regime",
     "report_summary": "Report summary",
-    "organisation": "Organisation",
+    "organisation": "Applicant",
     "assessed_by": "Assessor",
     "assessment_note": "Assessment note",
     "destination": "Destination",
