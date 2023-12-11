@@ -143,6 +143,8 @@ commands:
     steps:
       - store_artifacts:
           path: ui_tests/screenshots
+      - store_test_results:
+          path: test_results
 
   run_e2e_exporter:
     steps:
