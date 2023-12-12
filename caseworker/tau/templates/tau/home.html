@@ -14,7 +14,9 @@
 
 {% block full_width %}
     <div class="govuk-width-container">
-        <a href="{% url 'cases:tau:previous_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-back-link">Back</a>
+        {% if unassessed_goods_with_precedents %}
+            <a href="{% url 'cases:tau:previous_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-back-link">Back</a>
+        {% endif %}
         <main class="govuk-main-wrapper assessment-form tau-assessment-form">
             <div class="govuk-grid-row assessment-form__display--flex">
                 <!-- Heading -->
