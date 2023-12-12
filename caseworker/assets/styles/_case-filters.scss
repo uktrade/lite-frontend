@@ -1,18 +1,6 @@
 .case-filters {
     z-index: -1;
-
-    /**
-    This is a bit of a hack to break the case filters out from their constrained box that is not the full width of the
-    screen to be the full width of the screen but then add padding back in so the content fits within the constrained
-    box.
-
-    This exists just so that the background colour extends across the full viewport width.
-    */
-    margin-left: calc(((100vw - 100%) / 2) * -1);
-    margin-right: calc(((100vw - 100%) / 2) * -1);
-    padding-left: calc(((100vw - 100%) / 2));
-    padding-right: calc(((100vw - 100%) / 2));
-
+    @include full-bleed;
     @include govuk-media-query($from: tablet) {
         margin-top: govuk-spacing(3);
     }

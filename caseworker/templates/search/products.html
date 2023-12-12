@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags static %}
 
 {% block back_link %}{% endblock %}
 
@@ -14,12 +14,8 @@ Search - Products
     </div>
 </div>
 
-<div class="govuk-!-margin-top-4">
-    <div class="search-div">
-        <div class="product-search">
-            {% crispy form %}
-        </div>
-    </div>
+<div class="product-search">
+    {% crispy form %}
 </div>
 
 <div id="product-search-customiser" class="customiser" data-customiser-spec="{{ customiser_spec }}">
@@ -91,4 +87,8 @@ Search - Products
         {% pagination %}
     </section>
 </div>
+{% endblock %}
+
+{% block javascript %}
+    <script src="{% static 'search-products.js' %}"></script>
 {% endblock %}
