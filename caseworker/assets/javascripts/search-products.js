@@ -1,12 +1,12 @@
 import autoComplete from "@tarekraafat/autocomplete.js";
 
-import { getCurrentWord, isIndexInPattern } from "./string-utils";
+import { getCurrentPhrase } from "./string-utils";
 
 /**
  * Retrieves product search suggestions and displays them as the user types
  * in the search input.
  *
- * It will provide suggestions for the word that is being currently typed by
+ * It will provide suggestions for the phrase that is being currently typed by
  * the user.
  *
  * This is a wrapper around @tarekraafat/autocomplete.js.
@@ -23,20 +23,28 @@ class ProductSearchSuggestor {
     this.searchInputSelector = ".product-search__search-field";
     this.$searchInput = $el.querySelector(this.searchInputSelector);
     this.wildcardField = "wildcard";
+
+    this.facetPattern = '[a-z_]+?:".*?"';
+    this.operatorPattern = "( AND | OR )";
   }
 
   init() {
     this.setupAutoComplete();
   }
 
-  getQuery() {
+  getCurrentPhrase() {
     const currentValue = this.$searchInput.value;
     const caretPosition = this.$searchInput.selectionStart;
-    if (isIndexInPattern(caretPosition, '[a-z_]+?:".*?"', currentValue)) {
-      return "";
-    }
-    const [currentWord, ,] = getCurrentWord(currentValue, caretPosition);
-    return currentWord;
+
+    return getCurrentPhrase(currentValue, caretPosition, [
+      this.facetPattern,
+      this.operatorPattern,
+    ]);
+  }
+
+  getQuery() {
+    const [currentPhrase, ,] = this.getCurrentPhrase();
+    return currentPhrase;
   }
 
   async getSuggestions(query) {
@@ -93,12 +101,7 @@ class ProductSearchSuggestor {
   }
 
   handleSelection(option) {
-    const currentValue = this.$searchInput.value;
-    const caretPosition = this.$searchInput.selectionStart;
-    const [, startIndex, endIndex] = getCurrentWord(
-      currentValue,
-      caretPosition
-    );
+    const [, startIndex, endIndex] = this.getCurrentPhrase();
 
     const { field, value } = option.selection.value;
     let newValue;
