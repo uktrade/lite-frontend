@@ -28,10 +28,7 @@ class ProductSearchView(LoginRequiredMixin, FormView):
             "page": self.request.GET.get("page", 1),
         }
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        form = self.get_form()
-
+    def dispatch(self, request, *args, **kwargs):
         # when we first get to the page query_params are empty.
         # if we don't use empty string then search term becomes None
         # and we get some results even though the input field is empty
@@ -39,21 +36,25 @@ class ProductSearchView(LoginRequiredMixin, FormView):
             "search": self.request.GET.get("search_string", ""),
             "page": self.request.GET.get("page", 1),
         }
-        results, status = get_product_search_results(self.request, query_params)
-        if status == HTTPStatus.BAD_REQUEST:
+        self.results, self.status = get_product_search_results(self.request, query_params)
+        if self.status == HTTPStatus.BAD_REQUEST:
             pass
-        elif status != HTTPStatus.OK:
-            error_page(self.request, getattr(results, "error", "An error occurred"))
+        elif self.status != HTTPStatus.OK:
+            return error_page(self.request, getattr(self.results, "error", "An error occurred"))
 
-        results = group_results_by_combination(results)
-        context = super().get_context_data()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        self.results = group_results_by_combination(self.results)
+        form = self.get_form()
+        context = super().get_context_data(**kwargs)
         context = {
             **context,
             "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
             "customiser_spec": self.customiser_spec(),
-            "search_results": results,
+            "search_results": self.results,
             "data": {
-                "total_pages": results["count"] // form.page_size,
+                "total_pages": self.results["count"] // form.page_size,
             },
         }
         return context
