@@ -146,6 +146,64 @@ def test_product_search_run_query(authorized_client, product_search_url, request
 
 
 @pytest.mark.parametrize(
+    ("data"),
+    [
+        ({"search_string": "shotguns AND", "page": 1}),
+        ({"search_string": "shotguns OR", "page": 1}),
+        ({"search_string": "shotguns NOT", "page": 1}),
+        ({"search_string": 'shotguns "', "page": 1}),
+        ({"search_string": "shotguns (", "page": 1}),
+        ({"search_string": "shotguns )", "page": 1}),
+        ({"search_string": "shotguns ()", "page": 1}),
+        ({"search_string": "AND shotguns", "page": 1}),
+        ({"search_string": "OR shotguns", "page": 1}),
+        ({"search_string": "NOT shotguns", "page": 1}),
+        ({"search_string": '" shotguns', "page": 1}),
+        ({"search_string": "( shotguns", "page": 1}),
+        ({"search_string": ") shotguns", "page": 1}),
+        ({"search_string": "() shotguns", "page": 1}),
+    ],
+)
+def test_product_search_invalid_query(authorized_client, product_search_url, requests_mock, data):
+    url = client._build_absolute_uri("/search/product/search/")
+    requests_mock.get(
+        url=url,
+        json={
+            "error": "Invalid search string",
+            "results": [],
+            "count": 0,
+        },
+        status_code=400,
+    )
+    response = authorized_client.get(
+        product_search_url,
+        data=data,
+    )
+    assert response.context["search_results"]["error"] == "Invalid search string"
+
+
+@pytest.mark.parametrize(
+    ("data"),
+    [
+        ({"search_string": "shotguns AND", "page": 1}),
+    ],
+)
+def test_product_search_invalid_query_generic_error_page(authorized_client, product_search_url, requests_mock, data):
+    url = client._build_absolute_uri("/search/product/search/")
+    requests_mock.get(
+        url=url,
+        json={},
+        status_code=500,
+    )
+    response = authorized_client.get(
+        product_search_url,
+        data=data,
+    )
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1", class_="govuk-heading-xl").string.strip() == "An error occurred"
+
+
+@pytest.mark.parametrize(
     ("expected_data_customiser_keys"),
     [
         [
