@@ -1775,6 +1775,7 @@ def data_search():
                             "part_number": "",
                             "report_summary": "guns",
                             "destination": "France",
+                            "end_user_country": "France",
                             "date": "21 December 2022",
                             "application": {
                                 "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",
@@ -1800,6 +1801,7 @@ def data_search():
                             "description": "",
                             "part_number": "",
                             "destination": "Germany",
+                            "end_user_country": "Germany",
                             "date": "21 December 2022",
                             "application": {
                                 "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",

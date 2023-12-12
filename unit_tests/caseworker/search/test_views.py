@@ -7,10 +7,37 @@ from urllib import parse
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
-import re
-
 from core import client
-from caseworker.search.forms import ProductSearchForm, ProductSearchSuggestForm
+from caseworker.search.forms import ProductSearchForm
+
+
+def search_result_with_parties(parties_data):
+    return {
+        "count": 1,
+        "results": [
+            {
+                "inner_hits": {
+                    "hits": [
+                        {
+                            "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
+                            "name": "medium size shotgun",
+                            "control_list_entries": [{"rating": "ML1a"}],
+                            "destination": "France",
+                            "report_summary": "sporting shotguns",
+                            "regime_entries": [],
+                            "application": {
+                                "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
+                                "reference_code": "GBSIEL/2020/0000001/P",
+                            },
+                            "quantity": 1.0,
+                            "value": 1.0,
+                            **parties_data,
+                        }
+                    ]
+                },
+            }
+        ],
+    }
 
 
 @pytest.fixture
@@ -412,71 +439,70 @@ def test_group_results_by_combination(
 
 
 @pytest.mark.parametrize(
-    ("input_data", "results"),
+    ("parties_data", "expected_destinations"),
     [
         (
-            {"search_string": "shotgun", "page": 1},
             {
-                "count": 1,
-                "results": [
-                    {
-                        "inner_hits": {
-                            "hits": [
-                                {
-                                    "id": "e6ed3baa-4d37-4d2b-be40-bbbe99555fb6",  # /PS-IGNORE
-                                    "name": "medium size shotgun",
-                                    "control_list_entries": [{"rating": "ML1a"}],
-                                    "destination": "France",
-                                    "report_summary": "sporting shotguns",
-                                    "regime_entries": [],
-                                    "application": {
-                                        "id": "f5bc54bf-323d-4de1-ae98-ef9f1894c5f3",  # /PS-IGNORE
-                                        "reference_code": "GBSIEL/2020/0000001/P",
-                                    },
-                                    "end_user_country": "France",
-                                    "consignee_country": "Netherlands",
-                                    "ultimate_end_user_country": ["Belgium", "Luxembourg"],
-                                    "quantity": 1.0,
-                                    "value": 1.0,
-                                }
-                            ]
-                        },
-                    }
-                ],
+                "end_user_country": "France",
+                "consignee_country": "Netherlands",
+                "ultimate_end_user_country": ["Belgium", "Luxembourg"],
             },
-        )
+            ["France", "Netherlands", "Belgium", "Luxembourg"],
+        ),
+        (
+            {
+                "end_user_country": "France",
+                "consignee_country": "Belgium",
+                "ultimate_end_user_country": ["Belgium", "Luxembourg"],
+            },
+            ["France", "Belgium", "Luxembourg"],
+        ),
+        (
+            {
+                "end_user_country": "Japan",
+                "consignee_country": "Japan",
+                "ultimate_end_user_country": ["Australia"],
+            },
+            ["Japan", "Australia"],
+        ),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": "Japan",
+                "ultimate_end_user_country": ["Australia"],
+            },
+            ["Australia", "Japan"],
+        ),
+        (
+            {
+                "end_user_country": "Japan",
+                "consignee_country": "Japan",
+                "ultimate_end_user_country": ["Japan"],
+            },
+            ["Japan"],
+        ),
     ],
 )
-def test_destination_column_countries(requests_mock, authorized_client, product_search_url, input_data, results):
+def test_destination_column_countries(
+    requests_mock, authorized_client, product_search_url, parties_data, expected_destinations
+):
+    results = search_result_with_parties(parties_data)
     url = client._build_absolute_uri("/search/product/search/")
     requests_mock.get(
         url=url,
         json=results,
     )
 
-    response = authorized_client.get(product_search_url, input_data)
+    response = authorized_client.get(product_search_url, {"search_string": "shotgun", "page": 1})
     assert response.status_code == 200
-
-    end_user_country = results["results"][0]["inner_hits"]["hits"][0]["end_user_country"]
-    consignee_country = results["results"][0]["inner_hits"]["hits"][0]["consignee_country"]
-    ultimate_end_user_country_1 = results["results"][0]["inner_hits"]["hits"][0]["ultimate_end_user_country"][0]
-    ultimate_end_user_country_2 = results["results"][0]["inner_hits"]["hits"][0]["ultimate_end_user_country"][1]
 
     soup = BeautifulSoup(response.content, "html.parser")
 
-    search_results = soup.find_all("table")
+    table = soup.find_all("table")
+    destination_column = table[0].find("td", attrs={"data-customiser-key": "destination"})
+    destinations_list = [item.text for item in destination_column.find_all("li")]
 
-    destination_td_contents = str(
-        search_results[0].find("td", attrs={"data-customiser-key": "destination"}).contents[0]
-    ).split("\n")
-
-    assert destination_td_contents == [
-        '<ul class="govuk-list">',
-        "<li>France</li>",
-        "<li>Netherlands</li>",
-        "<li>Belgium</li><li>Luxembourg</li>",
-        "</ul>",
-    ]
+    assert destinations_list == expected_destinations
 
 
 @pytest.fixture
