@@ -1,10 +1,13 @@
 import json
+from http import HTTPStatus
 
 from rest_framework import views
 from rest_framework.response import Response
 
 from django.views.generic import FormView
 from django.urls import reverse_lazy
+
+from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
 
@@ -36,7 +39,12 @@ class ProductSearchView(LoginRequiredMixin, FormView):
             "search": self.request.GET.get("search_string", ""),
             "page": self.request.GET.get("page", 1),
         }
-        results = get_product_search_results(self.request, query_params)
+        results, status = get_product_search_results(self.request, query_params)
+        if status == HTTPStatus.BAD_REQUEST:
+            pass
+        elif status != HTTPStatus.OK:
+            error_page(self.request, getattr(results, "error", "An error occurred"))
+
         results = group_results_by_combination(results)
         context = super().get_context_data()
         context = {

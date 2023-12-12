@@ -22,9 +22,23 @@
         }
     }
 
-    &__help {
+    &__error {
+        background-color: govuk-colour("white");
         display: block;
         margin-top: 2rem;
+        width: 30rem;
+
+        .govuk-error-summary {
+            margin-bottom: 2rem;
+        }
+
+        &__error-text {
+            color: $govuk-error-colour;
+        }
+    }
+
+    &__help {
+        display: block;
 
         .govuk-details {
             margin-bottom: 0;
