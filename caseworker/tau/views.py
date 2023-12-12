@@ -749,6 +749,11 @@ class TAUMultipleEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView
 
         # Assess these good on applications with the values from the approved previous assessments
         self.put_assessment_edits(assessment_edits)
-        messages.success(self.request, f"Edited assessments for {len(assessment_edits)} products.")
+        success_message = (
+            f"You have edited {len(assessment_edits)} product assessments on Case {self.case['reference_code']}"
+        )
+        if len(assessment_edits) == 1:
+            success_message = f"You have edited 1 product assessment on Case {self.case['reference_code']}"
+        messages.success(self.request, success_message)
 
         return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)
