@@ -145,26 +145,9 @@ def test_product_search_run_query(authorized_client, product_search_url, request
     assert search_query.url == url
 
 
-@pytest.mark.parametrize(
-    ("data"),
-    [
-        ({"search_string": "shotguns AND", "page": 1}),
-        ({"search_string": "shotguns OR", "page": 1}),
-        ({"search_string": "shotguns NOT", "page": 1}),
-        ({"search_string": 'shotguns "', "page": 1}),
-        ({"search_string": "shotguns (", "page": 1}),
-        ({"search_string": "shotguns )", "page": 1}),
-        ({"search_string": "shotguns ()", "page": 1}),
-        ({"search_string": "AND shotguns", "page": 1}),
-        ({"search_string": "OR shotguns", "page": 1}),
-        ({"search_string": "NOT shotguns", "page": 1}),
-        ({"search_string": '" shotguns', "page": 1}),
-        ({"search_string": "( shotguns", "page": 1}),
-        ({"search_string": ") shotguns", "page": 1}),
-        ({"search_string": "() shotguns", "page": 1}),
-    ],
-)
-def test_product_search_invalid_query(authorized_client, product_search_url, requests_mock, data):
+def test_product_search_invalid_query_bad_request_puts_error_in_context(
+    authorized_client, product_search_url, requests_mock
+):
     url = client._build_absolute_uri("/search/product/search/")
     requests_mock.get(
         url=url,
@@ -177,18 +160,14 @@ def test_product_search_invalid_query(authorized_client, product_search_url, req
     )
     response = authorized_client.get(
         product_search_url,
-        data=data,
+        data={"search_string": "shotguns AND", "page": 1},
     )
     assert response.context["search_results"]["error"] == "Invalid search string"
 
 
-@pytest.mark.parametrize(
-    ("data"),
-    [
-        ({"search_string": "shotguns AND", "page": 1}),
-    ],
-)
-def test_product_search_invalid_query_generic_error_page(authorized_client, product_search_url, requests_mock, data):
+def test_product_search_invalid_query_server_error_shows_generic_error_page(
+    authorized_client, product_search_url, requests_mock
+):
     url = client._build_absolute_uri("/search/product/search/")
     requests_mock.get(
         url=url,
@@ -197,7 +176,7 @@ def test_product_search_invalid_query_generic_error_page(authorized_client, prod
     )
     response = authorized_client.get(
         product_search_url,
-        data=data,
+        data={"search_string": "shotguns AND", "page": 1},
     )
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find("h1", class_="govuk-heading-xl").string.strip() == "An error occurred"

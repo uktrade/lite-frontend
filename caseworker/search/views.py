@@ -36,10 +36,8 @@ class ProductSearchView(LoginRequiredMixin, FormView):
             "search": self.request.GET.get("search_string", ""),
             "page": self.request.GET.get("page", 1),
         }
-        self.results, self.status = get_product_search_results(self.request, query_params)
-        if self.status == HTTPStatus.BAD_REQUEST:
-            pass
-        elif self.status != HTTPStatus.OK:
+        self.results, status = get_product_search_results(self.request, query_params)
+        if status not in (HTTPStatus.OK, HTTPStatus.BAD_REQUEST):
             return error_page(self.request, getattr(self.results, "error", "An error occurred"))
 
         return super().dispatch(request, *args, **kwargs)
