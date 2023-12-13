@@ -284,7 +284,6 @@ def test_form_without_allocated_user_hides_submit_button(
     authorized_client,
     url,
     data_standard_case,
-    requests_mock,
     mock_control_list_entries,
     mock_precedents_api,
     report_summary_subject,
@@ -295,9 +294,6 @@ def test_form_without_allocated_user_hides_submit_button(
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
-    requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
     # unassessed products should have 1 entry
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
@@ -411,7 +407,6 @@ def test_form_regime_entries(
     authorized_client,
     url,
     data_standard_case,
-    requests_mock,
     mock_control_list_entries,
     mock_precedents_api,
     regimes_form_data,
@@ -423,9 +418,6 @@ def test_form_regime_entries(
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
-    requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
 
     data = {
         "report_summary_subject": report_summary_subject["id"],
