@@ -75,7 +75,7 @@
                     </td>
                     <td class="govuk-table__cell readonly-field">
                         {% if form.good_on_application.latest_precedent.application %}
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:home' queue_pk=queue_id pk=form.good_on_application.latest_precedent.application %}#good-{{ form.good_on_application.latest_precedent.id }}">{{ form.good_on_application.latest_precedent.reference }}</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:home' queue_pk=ALL_CASES_QUEUE_ID pk=form.good_on_application.latest_precedent.application %}#good-{{ form.good_on_application.latest_precedent.id }}">{{ form.good_on_application.latest_precedent.reference }}</a>
                         {% endif %}
                     </td>
                     <td class="govuk-table__cell readonly-field">{{ form.good_on_application.latest_precedent.control_list_entries|join:", " }}</td>
