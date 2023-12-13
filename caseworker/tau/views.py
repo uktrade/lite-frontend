@@ -1,3 +1,4 @@
+import copy
 import os
 
 from http import HTTPStatus
@@ -24,7 +25,6 @@ from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.core.services import get_control_list_entries
 from caseworker.core.helpers import get_organisation_documents
-from caseworker.cases.services import post_review_good
 from caseworker.regimes.enums import Regimes
 from caseworker.regimes.services import get_regime_entries, get_regime_entries_all
 from caseworker.users.services import get_gov_user
@@ -222,6 +222,29 @@ def get_regime_entries_payload_data(form_cleaned_data):
     return entries
 
 
+def get_assessment_payload(data, good_on_application_ids):
+    # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
+    # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
+    # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
+    is_good_controlled = not data.pop("does_not_have_control_list_entries")
+    assessment = {
+        "is_good_controlled": is_good_controlled,
+        "regime_entries": get_regime_entries_payload_data(data),
+        "control_list_entries": data["control_list_entries"],
+        "report_summary_prefix": data["report_summary_prefix"],
+        "report_summary_subject": data["report_summary_subject"],
+        "is_ncsc_military_information_security": data["is_ncsc_military_information_security"],
+        "comment": data["comment"],
+    }
+    payload = []
+    for good_on_application_id in good_on_application_ids:
+        assessment_item = copy.deepcopy(assessment)
+        assessment_item["id"] = good_on_application_id
+        payload.append(assessment_item)
+
+    return payload
+
+
 class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
     """This renders a placeholder home page for TAU 2.0."""
 
@@ -292,35 +315,11 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
     def form_valid(self, form):
         data = {**form.cleaned_data}
 
-        payload = self.get_goods_payload(data)
-        post_review_good(self.request, self.kwargs["pk"], payload)
+        good_on_application_ids = [good["id"] for good in self.get_goods(data.pop("goods"))]
+        payload = get_assessment_payload(data, good_on_application_ids)
+        put_bulk_assessment(self.request, self.kwargs["pk"], payload)
 
         return super().form_valid(form)
-
-    def get_goods_payload(self, data):
-        # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
-        # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
-        # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
-        is_good_controlled = not data.pop("does_not_have_control_list_entries")
-        # get_goods used to get a set of goods previously
-        good_ids = data.pop("goods")
-        goods = [good["id"] for good in self.get_goods(good_ids)]
-
-        payload = {
-            **data,
-            "objects": list(set(goods)),
-            "is_good_controlled": is_good_controlled,
-            "regime_entries": get_regime_entries_payload_data(data),
-        }
-        # These are used to determine the `regime_entries` and aren't needed
-        # when sending to the backend
-        del payload["mtcr_entries"]
-        del payload["wassenaar_entries"]
-        del payload["nsg_entries"]
-        del payload["cwc_entries"]
-        del payload["ag_entries"]
-        del payload["regimes"]
-        return payload
 
 
 class TAUChooseAssessmentEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView):
@@ -567,28 +566,10 @@ class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
 
     def form_valid(self, form):
         data = {**form.cleaned_data}
-        # API does not accept `does_not_have_control_list_entries` but it does require `is_good_controlled`.
-        # `is_good_controlled`.has an explicit checkbox called "Is a licence required?" in
-        # ExportControlCharacteristicsForm. Going forwards, we want to deduce this like so -
-        is_good_controlled = not data.pop("does_not_have_control_list_entries")
         good = self.get_good()
-
-        payload = {
-            **data,
-            "objects": [good["id"]],
-            "is_good_controlled": is_good_controlled,
-            "regime_entries": get_regime_entries_payload_data(data),
-        }
-
-        # These are used to determine the `regime_entries` and aren't needed
-        # when sending to the backend
-        del payload["mtcr_entries"]
-        del payload["wassenaar_entries"]
-        del payload["nsg_entries"]
-        del payload["cwc_entries"]
-        del payload["ag_entries"]
-        del payload["regimes"]
-        post_review_good(self.request, case_id=self.kwargs["pk"], data=payload)
+        good_on_application_ids = [good["id"]]
+        payload = get_assessment_payload(data, good_on_application_ids)
+        put_bulk_assessment(self.request, self.kwargs["pk"], payload)
 
         return super().form_valid(form)
 
@@ -620,17 +601,23 @@ class TAUClearAssessments(LoginRequiredMixin, TAUMixin, TemplateView):
         }
 
     def post(self, request, queue_pk, pk):
-        goods = [good["id"] for good in self.assessed_goods]
-        goods_unique = list(set(goods))
-        payload = {
-            "control_list_entries": [],
+        good_on_application_ids = [good_on_application["id"] for good_on_application in self.assessed_goods]
+        clear_assessment = {
             "is_good_controlled": None,
-            "report_summary": None,
-            "comment": None,
-            "objects": goods_unique,
             "regime_entries": [],
+            "control_list_entries": [],
+            "report_summary": None,
+            "report_summary_prefix": None,
+            "report_summary_subject": None,
+            "is_ncsc_military_information_security": None,
+            "comment": None,
         }
-        post_review_good(self.request, case_id=pk, data=payload)
+        payload = []
+        for good_on_application_id in good_on_application_ids:
+            assessment_item = copy.deepcopy(clear_assessment)
+            assessment_item["id"] = good_on_application_id
+            payload.append(assessment_item)
+        put_bulk_assessment(self.request, self.kwargs["pk"], payload)
 
         latest_precedent_exists = any("latest_precedent" in good and good["latest_precedent"] for good in self.goods)
 
