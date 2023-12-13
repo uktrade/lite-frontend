@@ -166,6 +166,27 @@ describe("ProductSearchSuggestor", () => {
       18,
     ],
     ["bar", 3, { value: { field: "wildcard", value: "foobar" } }, "foobar ", 7],
+    [
+      "foo AND bar",
+      11,
+      { value: { field: "baz", value: "bar" } },
+      'foo AND baz:"bar" ',
+      18,
+    ],
+    [
+      "foo OR bar",
+      10,
+      { value: { field: "baz", value: "bar" } },
+      'foo OR baz:"bar" ',
+      17,
+    ],
+    [
+      "foo NOT bar",
+      11,
+      { value: { field: "baz", value: "bar" } },
+      'foo NOT baz:"bar" ',
+      18,
+    ],
   ])(
     "On selection with search input value '%s'",
     (inputValue, cursorIndex, selectionValue, expectedValue) => {

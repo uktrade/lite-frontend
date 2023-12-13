@@ -25,7 +25,7 @@ class ProductSearchSuggestor {
     this.wildcardField = "wildcard";
 
     this.facetPattern = '[a-z_]+?:".*?"';
-    this.operatorPattern = "( AND | OR )";
+    this.operatorPattern = "( AND | OR | NOT )";
   }
 
   init() {
