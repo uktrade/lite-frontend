@@ -133,8 +133,3 @@ def done_button_on_page(driver):
 def case_removed_from_queue(driver, context):
     soup = BeautifulSoup(driver.page_source, "html.parser")
     assert not soup.find(id=f"case-{context.case_id}")
-
-
-@given(parsers.parse('I set the case status to "{status}"'))
-def set_case_status(driver, status, api_test_client, context):
-    api_test_client.cases.manage_case_status(api_test_client.context["case_id"], status=status.lower())

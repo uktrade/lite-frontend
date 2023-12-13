@@ -932,3 +932,8 @@ def i_remove_case_officer_from_case(driver):  # noqa
     # go to remove case officer page
     CasePage(driver).click_remove_case_officer()
     functions.click_submit(driver)
+
+
+@given(parsers.parse('I set the case status to "{status}"'))
+def set_case_status(driver, status, api_test_client, context):
+    api_test_client.cases.manage_case_status(api_test_client.context["case_id"], status=status.lower())

@@ -8,7 +8,7 @@ def create_standard_application(api_test_client, context, app_data, submit=True)
 
     good_default = {
         "good_id": "",
-        "quantity": 123,
+        "quantity": 1234,
         "unit": "MTR",
         "value": 10.24,
         "is_good_incorporated": True,

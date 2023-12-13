@@ -61,7 +61,7 @@ def select_row_good(driver, good):
     approve_button.click()
 
 
-@then(parsers.parse('Assert if "{good}" has been assessed'))  # noqa
+@then(parsers.parse('I assert if "{good}" has been assessed'))  # noqa
 def assert_if_good_is_assessed(driver, good):  # noqa
     unique_parent = driver.find_element(By.CSS_SELECTOR, ".assessment-formset")
     table = unique_parent.find_element(By.ID, "tau-form")
@@ -69,7 +69,7 @@ def assert_if_good_is_assessed(driver, good):  # noqa
 
     good_found = False
     for row in rows:
-        # Check if "Rifle" is in the row's text
+        # Check if good is in the row's text
         if good in row.text:
             good_found = True
             break

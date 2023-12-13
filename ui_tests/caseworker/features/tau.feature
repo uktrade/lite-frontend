@@ -54,7 +54,7 @@ Feature: I want to check application with precedents
     Then I check if URL contains "previous-assessments"
     And I deselect all checkboxes
     Then I select good called "Rifle" and approve and continue
-    Then Assert if "Rifle" has been assessed
+    Then I assert if "Rifle" has been assessed
 
     Examples:
       | name    | product        | part_number | clc_rating  | end_user_name | end_user_address| consignee_name    | consignee_address | country | end_use                  |
