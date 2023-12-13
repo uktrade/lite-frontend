@@ -16,7 +16,7 @@ Search - Products
 
 <div class="product-search">
     {% crispy form %}
-    {% if search_results.error %}
+    {% if search_results.error == "Invalid search string" %}
     <div class="product-search__error">
         <div class="govuk-error-summary" data-module="govuk-error-summary">
             <div role="alert">
