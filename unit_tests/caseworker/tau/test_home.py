@@ -655,3 +655,35 @@ def test_notification_banner_not_there_when_all_goods_assesed(
     soup = BeautifulSoup(response.content, "html.parser")
     banner = soup.find("div", class_="tau-notification-banner")
     assert banner is None
+
+
+def test_previous_assessments_links(
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+    settings,
+):
+    # Verify that assessment table has anchors for each good.
+
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    case_anchor_ids = {"good-" + good["id"] for good in data_standard_case["case"]["data"]["goods"]}
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    # Elements with anchors (ids) in the format good-{{ goodonapplication_id }}
+    anchor_ids = {
+        element.attrs["id"] for element in soup.findAll("tr", id=lambda value: (value or "").startswith("good-"))
+    }
+
+    assert anchor_ids.issubset(case_anchor_ids)

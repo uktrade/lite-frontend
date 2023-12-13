@@ -1,5 +1,6 @@
 import pytest
 import re
+from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 import rules
@@ -184,6 +185,16 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
     table_rows = table.select("tbody tr")
     assert len(table_rows) == 2
 
+    def get_case_links(table):
+        case_links = [
+            anchor.attrs["href"]
+            for anchor in table.findAll("a", href=lambda value: "good-" in urlparse(value).fragment)
+        ]
+        return case_links
+
+    def get_case_link_ids(case_links):
+        return [re.search(r"good-(.*)", case_link).group(1) for case_link in case_links]
+
     def get_td_text(table_row):
         return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "readonly-field"})]
 
@@ -202,6 +213,16 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
     assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom."
+
+    expected_case_links = [
+        previous_assessments_url.replace("previous-assessments/", "", 1)
+        + "#good-"
+        + data_standard_case["case"]["data"]["goods"][0]["id"],
+    ]
+
+    case_links = get_case_links(table)
+    assert len(case_links) == 1
+    assert case_links == expected_case_links
 
 
 def test_previous_assessments_GET_no_precedents(
