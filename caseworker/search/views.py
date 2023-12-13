@@ -1,10 +1,13 @@
 import json
+from http import HTTPStatus
 
 from rest_framework import views
 from rest_framework.response import Response
 
 from django.views.generic import FormView
 from django.urls import reverse_lazy
+
+from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
 
@@ -25,10 +28,7 @@ class ProductSearchView(LoginRequiredMixin, FormView):
             "page": self.request.GET.get("page", 1),
         }
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        form = self.get_form()
-
+    def dispatch(self, request, *args, **kwargs):
         # when we first get to the page query_params are empty.
         # if we don't use empty string then search term becomes None
         # and we get some results even though the input field is empty
@@ -36,16 +36,23 @@ class ProductSearchView(LoginRequiredMixin, FormView):
             "search": self.request.GET.get("search_string", ""),
             "page": self.request.GET.get("page", 1),
         }
-        results = get_product_search_results(self.request, query_params)
-        results = group_results_by_combination(results)
-        context = super().get_context_data()
+        self.results, status = get_product_search_results(self.request, query_params)
+        if status not in (HTTPStatus.OK, HTTPStatus.BAD_REQUEST):
+            return error_page(self.request, getattr(self.results, "error", "An error occurred"))
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        self.results = group_results_by_combination(self.results)
+        form = self.get_form()
+        context = super().get_context_data(**kwargs)
         context = {
             **context,
             "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
             "customiser_spec": self.customiser_spec(),
-            "search_results": results,
+            "search_results": self.results,
             "data": {
-                "total_pages": results["count"] // form.page_size,
+                "total_pages": self.results["count"] // form.page_size,
             },
         }
         return context
