@@ -21,6 +21,8 @@ $govuk-font-url-function: "get_govuk_font_asset_url";
 @import "core/assets/styles/all";
 @import "caseworker/assets/styles/lightpick";
 
+@import "mixins";
+
 @import "overrides/all";
 @import "components/all";
 

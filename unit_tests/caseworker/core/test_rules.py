@@ -158,7 +158,6 @@ def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expe
         "can_user_move_case_forward",
         "can_user_review_and_countersign",
         "can_user_review_and_combine",
-        "can_user_assess_products",
         "can_user_add_an_ejcu_query",
         "can_user_generate_document",
         "can_user_add_contact",
@@ -262,9 +261,63 @@ def test_can_use_change_sub_status(
     ),
 )
 def test_can_user_search_products(mock_gov_user, get_mock_request, mock_gov_user_team, expected):
-    user = mock_gov_user
+    user = mock_gov_user["user"]
     user["team"] = mock_gov_user_team
 
     request = get_mock_request(user)
 
     assert rules.test_rule("can_user_search_products", request) == expected
+
+
+@pytest.mark.parametrize(
+    ("mock_gov_user_team", "expected"),
+    (
+        ({"id": ADMIN_TEAM_ID, "name": "Admin", "alias": None}, True),
+        ({"id": TAU_TEAM_ID, "name": "TAU", "alias": "TAU"}, True),
+        ({"id": FCDO_TEAM_ID, "name": "FCDO", "alias": "FCO"}, False),
+        ({"id": LICENSING_UNIT_TEAM_ID, "name": "Licensing Unit", "alias": "LICENSING_UNIT"}, False),
+    ),
+)
+def test_can_assigned_user_assess_products(mock_gov_user, get_mock_request, mock_gov_user_team, expected):
+    user = mock_gov_user["user"]
+    case = {
+        "assigned_users": {
+            "fake queue": [
+                {"id": user["id"]},
+            ]
+        },
+        "case_officer": {"id": user["id"]},
+    }
+
+    user["team"] = mock_gov_user_team
+
+    request = get_mock_request(user)
+
+    assert rules.test_rule("can_user_assess_products", request, case) == expected
+
+
+@pytest.mark.parametrize(
+    ("mock_gov_user_team", "expected"),
+    (
+        ({"id": ADMIN_TEAM_ID, "name": "Admin", "alias": None}, False),
+        ({"id": TAU_TEAM_ID, "name": "TAU", "alias": "TAU"}, False),
+        ({"id": FCDO_TEAM_ID, "name": "FCDO", "alias": "FCO"}, False),
+        ({"id": LICENSING_UNIT_TEAM_ID, "name": "Licensing Unit", "alias": "LICENSING_UNIT"}, False),
+    ),
+)
+def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request, mock_gov_user_team, expected):
+    case = {
+        "assigned_users": {
+            "fake queue": [
+                {"id": "some-other-user-id"},
+            ]
+        },
+        "case_officer": {"id": "some-other-user-id"},
+    }
+
+    user = mock_gov_user["user"]
+    user["team"] = mock_gov_user_team
+
+    request = get_mock_request(user)
+
+    assert rules.test_rule("can_user_assess_products", request, case) == expected
