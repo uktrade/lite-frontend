@@ -111,8 +111,8 @@ class ProductSearchSuggestor {
       newValue = `${field}:"${value}" `;
     }
 
-    this.$searchInput.focus();
     this.$searchInput.setRangeText(newValue, startIndex, endIndex, "end");
+    this.$searchInput.focus();
   }
 
   setupAutoComplete() {
