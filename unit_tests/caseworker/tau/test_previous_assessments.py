@@ -168,6 +168,7 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
     authorized_client,
     previous_assessments_url,
     data_queue,
+    data_good_precedent,
     data_standard_case,
     mock_control_list_entries,
     mock_gov_user,
@@ -215,13 +216,10 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
     assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom."
 
     expected_case_links = [
-        previous_assessments_url.replace("previous-assessments/", "", 1)
-        + "#good-"
-        + data_standard_case["case"]["data"]["goods"][0]["id"],
+        previous_assessments_url.replace("previous-assessments/", "", 1) + "#good-" + data_good_precedent["id"]
     ]
 
     case_links = get_case_links(table)
-    assert len(case_links) == 1
     assert case_links == expected_case_links
 
 
