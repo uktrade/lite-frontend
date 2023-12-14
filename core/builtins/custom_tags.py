@@ -954,3 +954,29 @@ def list_to_choice_labels(items, choices):
 def get_display_values(display_value_dict, key):
     if display_value_dict:
         return ", ".join([item[key] for item in display_value_dict])
+
+
+@register.filter
+def get_unique_destinations(good_on_application_hit):
+    """
+    Returns unique destination values in a given product search result hit
+    """
+    unique_destinations = []
+    if (
+        "end_user_country" in good_on_application_hit
+        and good_on_application_hit["end_user_country"] not in unique_destinations
+    ):
+        unique_destinations.append(good_on_application_hit["end_user_country"])
+
+    if (
+        "consignee_country" in good_on_application_hit
+        and good_on_application_hit["consignee_country"] not in unique_destinations
+    ):
+        unique_destinations.append(good_on_application_hit["consignee_country"])
+
+    if "ultimate_end_user_country" in good_on_application_hit:
+        for destination in good_on_application_hit["ultimate_end_user_country"]:
+            if destination not in unique_destinations:
+                unique_destinations.append(destination)
+
+    return unique_destinations
