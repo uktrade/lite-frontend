@@ -3,6 +3,8 @@ from django.urls import reverse
 
 from core import client
 
+from core import client
+
 
 BASE_ENTRIES_URL = "/static/regimes/entries/{}/"
 
@@ -70,4 +72,11 @@ def tau_assessment_url(data_standard_case):
     return reverse(
         "cases:tau:home",
         kwargs={"queue_pk": "1b926457-5c9e-4916-8497-51886e51863a", "pk": data_standard_case["case"]["id"]},
+    )
+
+
+@pytest.fixture
+def mock_assessment_put(requests_mock, data_standard_case):
+    return requests_mock.put(
+        client._build_absolute_uri(f"/assessments/make-assessments/{data_standard_case['case']['id']}"), json={}
     )

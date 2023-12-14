@@ -172,6 +172,43 @@ def test_product_search_run_query(authorized_client, product_search_url, request
     assert search_query.url == url
 
 
+def test_product_search_invalid_query_bad_request_puts_error_in_context(
+    authorized_client, product_search_url, requests_mock
+):
+    url = client._build_absolute_uri("/search/product/search/")
+    requests_mock.get(
+        url=url,
+        json={
+            "error": "Invalid search string",
+            "results": [],
+            "count": 0,
+        },
+        status_code=400,
+    )
+    response = authorized_client.get(
+        product_search_url,
+        data={"search_string": "shotguns AND", "page": 1},
+    )
+    assert response.context["search_results"]["error"] == "Invalid search string"
+
+
+def test_product_search_invalid_query_server_error_shows_generic_error_page(
+    authorized_client, product_search_url, requests_mock
+):
+    url = client._build_absolute_uri("/search/product/search/")
+    requests_mock.get(
+        url=url,
+        json={},
+        status_code=500,
+    )
+    response = authorized_client.get(
+        product_search_url,
+        data={"search_string": "shotguns AND", "page": 1},
+    )
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1", class_="govuk-heading-xl").string.strip() == "An error occurred"
+
+
 @pytest.mark.parametrize(
     ("expected_data_customiser_keys"),
     [

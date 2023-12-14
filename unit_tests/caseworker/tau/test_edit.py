@@ -72,13 +72,6 @@ def url(data_queue, data_standard_case):
     )
 
 
-@pytest.fixture
-def mock_cle_post(requests_mock, data_standard_case):
-    yield requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
-
-
 def get_cells(soup, table_id):
     return [td.text for td in soup.find(id=table_id).find_all("td")]
 
@@ -100,7 +93,7 @@ def test_form_without_allocated_user_hides_submit_button(
     url,
     data_standard_case,
     requests_mock,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_precedents_api,
     report_summary_prefix,
@@ -124,7 +117,7 @@ def test_form(
     url,
     data_standard_case,
     requests_mock,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_precedents_api,
     report_summary_prefix,
@@ -237,16 +230,18 @@ def test_form(
 
     # Check response and API payload
     assert response.status_code == 302
-    assert requests_mock.last_request.json() == {
-        "control_list_entries": [],
-        "report_summary_subject": report_summary_subject["id"],
-        "report_summary_prefix": "",
-        "comment": "test",
-        "objects": ["6daad1c3-cf97-4aad-b711-d5c9a9f4586e"],
-        "is_good_controlled": False,
-        "regime_entries": [],
-        "is_ncsc_military_information_security": False,
-    }
+    assert mock_assessment_put.last_request.json() == [
+        {
+            "control_list_entries": [],
+            "report_summary_subject": report_summary_subject["id"],
+            "report_summary_prefix": "",
+            "comment": "test",
+            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "is_good_controlled": False,
+            "regime_entries": [],
+            "is_ncsc_military_information_security": False,
+        }
+    ]
 
 
 def test_form_no_regime_entries(
@@ -254,7 +249,7 @@ def test_form_no_regime_entries(
     url,
     data_standard_case,
     requests_mock,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_precedents_api,
     report_summary_subject,
@@ -312,16 +307,18 @@ def test_form_no_regime_entries(
 
     # Check response and API payload
     assert response.status_code == 302
-    assert requests_mock.last_request.json() == {
-        "control_list_entries": [],
-        "report_summary_subject": report_summary_subject["id"],
-        "report_summary_prefix": "",
-        "comment": "test",
-        "objects": ["6daad1c3-cf97-4aad-b711-d5c9a9f4586e"],
-        "is_good_controlled": False,
-        "regime_entries": [],
-        "is_ncsc_military_information_security": False,
-    }
+    assert mock_assessment_put.last_request.json() == [
+        {
+            "control_list_entries": [],
+            "report_summary_subject": report_summary_subject["id"],
+            "report_summary_prefix": "",
+            "comment": "test",
+            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "is_good_controlled": False,
+            "regime_entries": [],
+            "is_ncsc_military_information_security": False,
+        }
+    ]
 
 
 @pytest.mark.parametrize(
@@ -375,7 +372,7 @@ def test_form_regime_entries(
     url,
     data_standard_case,
     requests_mock,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_precedents_api,
     regimes_form_data,
@@ -401,16 +398,18 @@ def test_form_regime_entries(
 
     # Check response and API payload
     assert response.status_code == 302, response.context["form"].errors
-    assert requests_mock.last_request.json() == {
-        "control_list_entries": [],
-        "report_summary_subject": report_summary_subject["id"],
-        "report_summary_prefix": "",
-        "comment": "test",
-        "objects": ["6daad1c3-cf97-4aad-b711-d5c9a9f4586e"],
-        "is_good_controlled": False,
-        "regime_entries": regime_entries,
-        "is_ncsc_military_information_security": False,
-    }
+    assert mock_assessment_put.last_request.json() == [
+        {
+            "control_list_entries": [],
+            "report_summary_subject": report_summary_subject["id"],
+            "report_summary_prefix": "",
+            "comment": "test",
+            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "is_good_controlled": False,
+            "regime_entries": regime_entries,
+            "is_ncsc_military_information_security": False,
+        }
+    ]
 
 
 def test_control_list_suggestions_json(
@@ -448,7 +447,7 @@ def test_form_report_summary_conditions(
     authorized_client,
     url,
     data_standard_case,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_precedents_api,
     prefix,
@@ -493,7 +492,7 @@ def test_form_only_rendered_once(
     url,
     data_standard_case,
     requests_mock,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_precedents_api,
     report_summary_prefix,

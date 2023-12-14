@@ -21,13 +21,6 @@ def url(data_queue, data_standard_case):
     )
 
 
-@pytest.fixture
-def mock_cle_post(requests_mock, data_standard_case):
-    yield requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
-
-
 def get_cells(soup, table_id):
     return [td.text for td in soup.find(id=table_id).find_all("td")]
 
@@ -49,7 +42,7 @@ def test_form(
     url,
     data_standard_case,
     requests_mock,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_precedents_api,
 ):
@@ -74,14 +67,19 @@ def test_form(
         response.url
         == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/tau/previous-assessments/"
     )
-    assert requests_mock.last_request.json() == {
-        "control_list_entries": [],
-        "is_good_controlled": None,
-        "report_summary": None,
-        "comment": None,
-        "objects": ["6daad1c3-cf97-4aad-b711-d5c9a9f4586e"],
-        "regime_entries": [],
-    }
+    assert mock_assessment_put.last_request.json() == [
+        {
+            "control_list_entries": [],
+            "is_good_controlled": None,
+            "report_summary": None,
+            "report_summary_prefix": None,
+            "report_summary_subject": None,
+            "comment": None,
+            "regime_entries": [],
+            "is_ncsc_military_information_security": None,
+            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        }
+    ]
 
 
 def test_no_precedent_redirect_to_tau(
@@ -89,7 +87,7 @@ def test_no_precedent_redirect_to_tau(
     url,
     data_standard_case,
     requests_mock,
-    mock_cle_post,
+    mock_assessment_put,
     mock_control_list_entries,
     mock_good_precedent_endpoint_empty,
 ):
