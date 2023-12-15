@@ -271,6 +271,21 @@ def test_assessed_products_form(
         "test assesment note",
     ]
 
+    all_a_elems = assessed_products_form.find("tbody").find_all("a", href=True)
+    expected_good_urls = [
+        reverse(
+            "cases:good",
+            kwargs={
+                "queue_pk": "00000000-0000-0000-0000-000000000001",
+                "pk": data_standard_case["case"]["id"],
+                "good_pk": good["id"],
+            },
+        )
+        for good in data_standard_case["case"]["data"]["goods"]
+    ]
+    actual_good_urls = [a_elem.attrs["href"] for a_elem in all_a_elems]
+    assert expected_good_urls == actual_good_urls
+
     assert soup.find(id="clear-assessments-button") is not None
 
 
