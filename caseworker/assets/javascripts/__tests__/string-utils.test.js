@@ -1,4 +1,8 @@
-import { getCurrentWord, isIndexInPattern } from "../string-utils";
+import {
+  getCurrentPhrase,
+  getCurrentWord,
+  isIndexInPattern,
+} from "../string-utils";
 
 describe("getCurrentWord", () => {
   test.each([
@@ -48,5 +52,26 @@ describe("isIndexInPattern", () => {
     [7, "bar", "foo bar", true],
   ])("Index in pattern", (index, pattern, string, expected) => {
     expect(isIndexInPattern(index, pattern, string)).toEqual(expected);
+  });
+});
+
+describe("getCurrentPhrase", () => {
+  test.each([
+    ["foo", 3, [], ["foo", 0, 3]],
+    ["foo bar foo", 7, ["foo"], ["bar", 4, 7]],
+    ["foo bar bar foo", 11, ["foo"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 11, ["foo", "baz"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 4, ["foo", "baz"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 5, ["foo", "baz"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 6, ["foo", "baz"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 7, ["foo", "baz"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 8, ["foo", "baz"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 9, ["foo", "baz"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 10, ["foo", "baz"], ["bar bar", 4, 11]],
+    ["foo bar bar baz", 0, ["foo", "baz"], ["", 0, 0]],
+    ["foo bar bar baz", 15, ["foo", "baz"], ["", 15, 15]],
+    ["foo  bar bar  baz", 10, ["foo", "baz"], ["bar bar", 5, 12]],
+  ])("Retrieving current phrase", (string, index, patterns, expected) => {
+    expect(getCurrentPhrase(string, index, patterns)).toEqual(expected);
   });
 });

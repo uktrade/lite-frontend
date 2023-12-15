@@ -111,8 +111,13 @@ def get_user_permissions(request, with_team=False):
     return user["user"]["role"]["permissions"]
 
 
+CLC_ENTRIES_CACHE = []
+
+
 # Control List Entries
-def get_control_list_entries(request, convert_to_options=False, include_parent=False, clc_entries_cache=[]):  # noqa
+def get_control_list_entries(  # noqa
+    request, convert_to_options=False, include_parent=False, clc_entries_cache=CLC_ENTRIES_CACHE  # noqa
+):  # noqa
     """
     Preliminary caching mechanism, requires service restart to repopulate control list entries
     """

@@ -20,8 +20,7 @@ def get_application_autocomplete(request, q):
 def get_product_search_results(request, query_params):
     querystring = parse.urlencode(query_params, doseq=True)
     response = client.get(request, f"/search/product/search/?{querystring}")
-    response.raise_for_status()
-    return response.json()
+    return response.json(), response.status_code
 
 
 def get_product_autocomplete(request, q):
