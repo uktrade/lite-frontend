@@ -657,7 +657,7 @@ def test_notification_banner_not_there_when_all_goods_assesed(
     assert banner is None
 
 
-def test_previous_assessments_links(
+def test_previous_assessments_anchors(
     authorized_client,
     url,
     data_queue,
