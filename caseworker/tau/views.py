@@ -301,6 +301,9 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
             "queue_id": self.queue_id,
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
+            "unassessed_goods_with_precedents": any(
+                [bool(good_on_application.get("latest_precedent")) for good_on_application in self.unassessed_goods]
+            ),
             "cle_suggestions_json": get_cle_suggestions_json(self.unassessed_goods),
             "organisation_documents": self.organisation_documents,
             "is_tau": self.caseworker["team"]["alias"] == TAU_ALIAS,

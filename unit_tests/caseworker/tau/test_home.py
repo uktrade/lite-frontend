@@ -73,6 +73,52 @@ def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_p
     assert response.status_code == 200
 
 
+def test_home_unassessessed_goods_with_precedents(
+    authorized_client,
+    settings,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+    assign_user_to_case,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    assign_user_to_case(mock_gov_user, data_standard_case)
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["unassessed_goods_with_precedents"] == True
+
+
+def test_home_unassessessed_goods_without_precedents(
+    authorized_client,
+    settings,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_good_precedent_endpoint_empty,
+    mock_gov_user,
+    assign_user_to_case,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    assign_user_to_case(mock_gov_user, data_standard_case)
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["unassessed_goods_with_precedents"] == False
+
+
 def test_home_content(
     authorized_client,
     settings,
