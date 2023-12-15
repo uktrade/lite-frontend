@@ -198,7 +198,44 @@ def test_edit_multiple_assessments_POST_success(
         },
     ]
     messages = [str(msg) for msg in response.context["messages"]]
-    expected_message = "Edited assessments for 2 products."
+    expected_message = f"You have edited 2 product assessments on Case {data_standard_case['case']['reference_code']}"
+    assert messages == [expected_message]
+    assert response.redirect_chain[-1][0] == tau_assessment_url
+
+
+def test_edit_multiple_assessments_POST_single_product_success(
+    authorized_client,
+    requests_mock,
+    edit_multiple_assessments_url,
+    tau_assessment_url,
+    wassenaar_regime_entry,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_gov_user,
+    api_make_assessment_url,
+):
+    mocked_assessment_endpoint = requests_mock.put(api_make_assessment_url, json={})
+    good_on_application = data_standard_case["case"]["data"]["goods"][1]
+
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 1,
+        "form-MIN_NUM_FORMS": 0,
+        "form-MAX_NUM_FORMS": 1000,
+        "form-TOTAL_FORMS": 1,
+        "form-0-id": good_on_application["id"],
+        "form-0-control_list_entries": ["ML1", "ML1a"],
+        "form-0-licence_required": True,
+        "form-0-report_summary_subject": good_on_application["report_summary_subject"]["id"],
+        "form-0-refer_to_ncsc": False,
+        "form-0-comment": "some multiple edit comment",
+    }
+
+    response = authorized_client.post(edit_multiple_assessments_url, data, follow=True)
+    assert response.status_code == 200
+    messages = [str(msg) for msg in response.context["messages"]]
+    expected_message = f"You have edited 1 product assessment on Case {data_standard_case['case']['reference_code']}"
     assert messages == [expected_message]
     assert response.redirect_chain[-1][0] == tau_assessment_url
 
