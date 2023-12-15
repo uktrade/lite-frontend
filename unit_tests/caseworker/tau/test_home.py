@@ -665,7 +665,6 @@ def test_previous_assessments_links(
     mock_control_list_entries,
     mock_precedents_api,
     mock_gov_user,
-    settings,
 ):
     # Verify that assessment table has anchors for each good.
 

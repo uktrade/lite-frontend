@@ -5,7 +5,7 @@
   <table id="table-precedents-{{ forloop.counter }}" class="govuk-table">
     <tbody class="govuk-table__body">
       <tr class="govuk-table__row">
-        <td colspan="2" class="govuk-table__header"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' precedent.queue precedent.application %}#good-{{ precedent.pk }}" target="_blank" rel="noopener noreferrer">{{ precedent.control_list_entries | join:", " }} (opens in new tab)</a></td>
+        <td colspan="2" class="govuk-table__header"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:case' precedent.queue precedent.application %}#good-{{ precedent.id }}" target="_blank" rel="noopener noreferrer">{{ precedent.control_list_entries | join:", " }} (opens in new tab)</a></td>
       </tr>
       <tr class="govuk-table__row">
         <td class="govuk-table__header">Destinations</td>
