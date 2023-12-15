@@ -65,7 +65,7 @@
                         </td>
                     </tr>
                 {% endif %}
-                <tr class="govuk-table__row">
+                <tr class="govuk-table__row" id="good-{{ form.good_on_application.id }}">
                     {% for field in form %}
                         {% if field.is_hidden %}
                             {{ field }}
