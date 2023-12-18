@@ -491,38 +491,16 @@ $case-header-text-colour: govuk-colour('white');
     z-index: 1;
   }
 
-  .app-case__flags-wrapper {
-    display: inline-flex;
-    overflow-x: hidden;
-
-    &--fade {
-      -webkit-mask-image: linear-gradient(
-        to right,
-        black calc(100% - 65px),
-        transparent calc(100% - 15px)
-      );
-      mask-image: linear-gradient(
-        to right,
-        black calc(100% - 65px),
-        transparent calc(100% - 15px)
-      );
-    }
-  }
-
   .app-flags {
-    display: inline-flex;
+    flex-wrap: wrap;
     margin: 0;
-    overflow-x: hidden;
     margin-right: govuk-spacing(3);
+    row-gap: govuk-spacing(2);
 
     .app-flag {
       margin-bottom: 0;
       white-space: nowrap !important;
       flex-shrink: 0;
-
-      &:last-of-type {
-        margin-right: 0;
-      }
     }
 
     a {
