@@ -175,10 +175,6 @@ $case-header-text-colour: govuk-colour('white');
   @media (max-width: 1000px) {
     position: relative;
   }
-
-  .lite-tabs {
-    overflow-x: hidden;
-  }
 }
 
 .app-case-header {
@@ -433,11 +429,29 @@ $case-header-text-colour: govuk-colour('white');
   }
 
   .lite-tabs {
+    display: flex;
+    overflow: initial;
+    overscroll-behavior: initial;
+    white-space: initial;
+
+    @include govuk-media-query($until: tablet) {
+      flex-direction: column;
+      width: 100%;
+
+      &__tab {
+        padding: govuk-spacing(2) 0;
+      }
+    }
+
     &__container  {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       row-gap: govuk-spacing(3);
+
+      @include govuk-media-query($until: tablet) {
+        margin-bottom: govuk-spacing(3);
+      }
 
       &::after {
         display: none;
@@ -454,7 +468,6 @@ $case-header-text-colour: govuk-colour('white');
       justify-content: center;
 
       @include govuk-media-query($until: tablet) {
-        margin-bottom: govuk-spacing(3);
         width: 100%;
       }
 
