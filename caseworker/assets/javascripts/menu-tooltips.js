@@ -1,7 +1,7 @@
 import tippy from "tippy.js";
 
 export default function initMenuTooltips() {
-  $("#link-menu").removeAttr("href");
+  $("#link-menu").attr("href", "#");
 
   // deliberately written in vanilla JS not jquery
   const menu = document.getElementById("lite-menu");
