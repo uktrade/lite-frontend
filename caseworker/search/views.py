@@ -37,24 +37,33 @@ class ProductSearchView(LoginRequiredMixin, FormView):
             "page": self.request.GET.get("page", 1),
         }
         self.results, status = get_product_search_results(self.request, query_params)
+
         if status not in (HTTPStatus.OK, HTTPStatus.BAD_REQUEST):
             return error_page(self.request, getattr(self.results, "error", "An error occurred"))
 
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        self.results = group_results_by_combination(self.results)
-        form = self.get_form()
         context = super().get_context_data(**kwargs)
-        context = {
-            **context,
-            "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
-            "customiser_spec": self.customiser_spec(),
-            "search_results": self.results,
-            "data": {
-                "total_pages": self.results["count"] // form.page_size,
-            },
-        }
+        context.update(
+            {
+                "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
+                "customiser_spec": self.customiser_spec(),
+            }
+        )
+        if "errors" not in self.results.keys():
+            self.results = group_results_by_combination(self.results)
+            form = self.get_form()
+            context.update(
+                {
+                    "search_results": self.results,
+                    "data": {
+                        "total_pages": self.results["count"] // form.page_size,
+                    },
+                }
+            )
+        else:
+            context.update({"search_results": self.results, "data": {"total_pages": 1}})
         return context
 
     def customiser_spec(self) -> str:
