@@ -399,10 +399,6 @@ $case-header-text-colour: govuk-colour('white');
 
   @include govuk-media-query($until: tablet) {
     margin-bottom: 0;
-
-    .lite-tabs__controls {
-      margin-top: govuk-spacing(3);
-    }
   }
 
   &::before {
@@ -438,8 +434,13 @@ $case-header-text-colour: govuk-colour('white');
 
   .lite-tabs {
     &__container  {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      row-gap: govuk-spacing(3);
+
       &::after {
-        bottom: 2px;
+        display: none;
       }
     }
 
@@ -452,8 +453,17 @@ $case-header-text-colour: govuk-colour('white');
       align-items: center;
       justify-content: center;
 
+      @include govuk-media-query($until: tablet) {
+        margin-bottom: govuk-spacing(3);
+        width: 100%;
+      }
+
       &::after {
-        bottom: 2px;
+        display: none;
+      }
+
+      .lite-buttons-row {
+        margin: 0;
       }
     }
   }
