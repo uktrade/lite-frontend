@@ -434,6 +434,7 @@ $case-header-text-colour: govuk-colour('white');
 
   .lite-tabs {
     display: flex;
+    flex-wrap: wrap;
     overflow: initial;
     overscroll-behavior: initial;
     white-space: initial;
