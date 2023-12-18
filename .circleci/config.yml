@@ -60,12 +60,6 @@ commands:
           name: << parameters.label >>
           command: make << parameters.target >>
 
-  store_selenium_artifacts:
-    description: Store Selenium artifacts
-    steps:
-      - store_artifacts:
-          path: ui_tests/screenshots
-
   setup_code:
     steps:
       - checkout
@@ -97,24 +91,6 @@ commands:
             curl -Os https://uploader.codecov.io/latest/linux/codecov
             chmod +x codecov
             ./codecov
-
-  ui_tests:
-    steps:
-      - run: mkdir -p test-results
-      - run: |
-          pipenv run pytest \
-            -rP \
-            --reruns=1 \
-            --reruns-delay=60 \
-            --headless \
-            --disable-pytest-warnings \
-            --junitxml=test-results/junit.xml
-      - store_artifacts:
-          path: ui_tests/screenshots
-      - store_artifacts:
-          path: openvpn.log
-      - store_test_results:
-          path: test-results
 
   build_api_image:
     parameters:
@@ -167,6 +143,8 @@ commands:
     steps:
       - store_artifacts:
           path: ui_tests/screenshots
+      - store_test_results:
+          path: test_results
 
   run_e2e_exporter:
     steps:

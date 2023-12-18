@@ -62,4 +62,81 @@ const isIndexInPattern = (index, pattern, string) => {
   return false;
 };
 
-export { getCurrentWord, isIndexInPattern };
+/**
+ * @param {string} string The string to find the phrase in
+ * @param {number} index The index to extract the current phrase from
+ * @param {array[string]} patterns Patterns to use to create boundaries
+ *
+ * Given an index in a string will return the phrase that straddles that index.
+ *
+ * A phrase is defined by the boundaries given by the patterns
+ *
+ * Example:
+ *   "foo This is our string bar"
+ *   with patterns for "foo" and "bar"
+ *   If we ask for the index in the following place
+ *   "foo This is ou|r string bar" - this is essentially imagining where a text cursor would be
+ *   This would return the phrase "This is our string"
+ *
+ * @returns {[string, number, number]} The found word and the indexes where it was found
+ */
+const getCurrentPhrase = (string, index, patterns) => {
+  let startIndex = index;
+  let endIndex = index;
+
+  // If our index is in a pattern then we just return a basic return which is
+  // equivalent to not being found
+  for (const pattern of patterns) {
+    if (isIndexInPattern(index, pattern, string)) {
+      return ["", index, index];
+    }
+  }
+
+  // First we check our index moving backwards to work out the start of our
+  // phrase
+  // We do this by finding the first index match of a pattern.
+  let foundEnd = false;
+  while (endIndex < string.length && !foundEnd) {
+    endIndex += 1;
+    for (const pattern of patterns) {
+      if (isIndexInPattern(endIndex, pattern, string)) {
+        foundEnd = true;
+        break;
+      }
+    }
+  }
+
+  // Second we check our index moving forward to work out the end of our phrase
+  // We do this by finding the first index match of a pattern.
+  let foundStart = false;
+  while (startIndex > 0 && !foundStart) {
+    startIndex -= 1;
+    for (const pattern of patterns) {
+      if (isIndexInPattern(startIndex, pattern, string)) {
+        foundStart = true;
+        break;
+      }
+    }
+  }
+
+  // We now strip the phrase based on our found indexes
+  let phrase = string.substring(startIndex, endIndex);
+
+  // This then gives us a phrase with possible whitespace at the beginning and
+  // end.
+  // We then work out where the whitespace begins and ends and strip it out
+  // accordingly whilst updating our found and end indexes to account for the
+  // removed whitespace.
+  const startWhitespaceLength = phrase.match(/^ */)[0].length;
+  const endWhitespaceLength = phrase.match(/ *$/)[0].length;
+  phrase = phrase.substring(
+    startWhitespaceLength,
+    phrase.length - endWhitespaceLength
+  );
+  startIndex += startWhitespaceLength;
+  endIndex -= endWhitespaceLength;
+
+  return [phrase, startIndex, endIndex];
+};
+
+export { getCurrentPhrase, getCurrentWord, isIndexInPattern };
