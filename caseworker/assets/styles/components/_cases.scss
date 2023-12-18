@@ -424,8 +424,12 @@ $case-header-text-colour: govuk-colour('white');
     opacity: 0;
   }
 
-  &--float::after {
-    opacity: 1;
+  &--float {
+    padding-bottom: govuk-spacing(4);
+
+    &::after {
+      opacity: 1;
+    }
   }
 
   .lite-tabs {
