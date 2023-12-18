@@ -23,12 +23,15 @@
 			$("#" + $(this).attr("id") + "-content").addClass("app-case-tab-view--visible");
 			$(this).addClass("lite-tabs__tab--selected");
 			$(this).find(".lite-tabs__tab-notification").hide();
-            let tabURL = $(this).attr("href");
+
+            const tabURL = $(this).attr("href");
             window.history.pushState({}, null, tabURL);
-            let return_to_field = $("#id_return_to");
-            if (return_to_field){
-                return_to_field[0].value = tabURL;
+
+            const returnToField = $("#id_return_to");
+            if (returnToField.length){
+                returnToField[0].value = tabURL;
             }
+
             return !$("#" + $(this).attr("id") + "-content").length;
 		})
 	</script>
