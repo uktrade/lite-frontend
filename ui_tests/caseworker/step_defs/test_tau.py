@@ -16,14 +16,10 @@ def select_all_goods(driver):  # noqa
     select_all_button.click()
 
 
-@when("I create an application with reused goods")
-def create_application(
-    api_test_client,  # noqa
-    context,  # noqa
-):
+@when(parsers.parse('I create an application with re-used "{goods}" goods'))
+def create_application_with_reused_goods(api_test_client, context, goods):  # noqa
     app_data = {
-        "reuse": True,
-        "name": "Reuse",
+        "name": goods,
         "end_user_name": "Joe bloggs",
         "end_user_address": "123 Main street",
         "consignee_name": "Josephine Bloggs",
@@ -31,7 +27,7 @@ def create_application(
         "country": "BL",
         "end_use": "Research and development",
     }
-    applications.create_standard_application(api_test_client, context, app_data)
+    applications.create_standard_application_with_reused_goods(api_test_client, context, app_data)
 
 
 @then(parsers.parse('I check if URL contains "{word}"'))  # noqa
@@ -57,6 +53,10 @@ def select_row_good(driver, good):
             if not checkbox.is_selected():
                 checkbox.click()
             break
+    # good was not found in any row
+    else:
+        assert False, "No product found"
+
     approve_button = driver.find_element(By.CSS_SELECTOR, ".govuk-button.assessment-formset__action")
     approve_button.click()
 
@@ -75,3 +75,8 @@ def assert_if_good_is_assessed(driver, good):  # noqa
             break
 
     assert good_found
+
+
+@then("I click on Edit assessments button")
+def click_edit_assessments(driver):
+    pass

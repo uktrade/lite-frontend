@@ -2,53 +2,62 @@ from faker import Faker
 
 fake = Faker()
 
+good_default = {
+    "good_id": "",
+    "quantity": 1234,
+    "unit": "MTR",
+    "value": 10.24,
+    "is_good_incorporated": True,
+    "is_good_pv_graded": "no",
+    "item_category": "group1_components",
+    "is_military_use": "yes_designed",
+    "is_component": "yes_modified",
+    "component_details": "modified component details",
+    "uses_information_security": True,
+    "information_security_details": "details about security",
+}
+
 
 def create_standard_application(api_test_client, context, app_data, submit=True):
     api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
-
-    good_default = {
-        "good_id": "",
-        "quantity": 1234,
-        "unit": "MTR",
-        "value": 10.24,
-        "is_good_incorporated": True,
-        "is_good_pv_graded": "no",
-        "item_category": "group1_components",
-        "is_military_use": "yes_designed",
-        "is_component": "yes_modified",
-        "component_details": "modified component details",
-        "uses_information_security": True,
-        "information_security_details": "details about security",
-    }
-
     goods = []
 
-    if "reuse" in app_data and app_data["reuse"]:
-        data_context = api_test_client.api_client.context
-        matching_values = [value for key, value in data_context.items() if key.startswith("good_id")]
-        values_apart_from_first = matching_values[1:]
+    products = (p.strip() for p in app_data["product"].split(","))
+    for i, product in enumerate(products):
+        data = api_test_client.api_client.request_data["good"]
+        data["part_number"] = app_data.get("part_number", data["part_number"])
+        data["name"] = product.strip()
+        data["control_list_entries"] = [app_data["clc_rating"]]
+        new_good = api_test_client.goods.post_good(data)
+        api_test_client.api_client.add_to_context("good_id", new_good["id"])
+        # To support multiple goods
+        api_test_client.api_client.add_to_context(f"all_goods_{i}", {"id": new_good["id"], "name": data["name"]})
 
-        for good_id in values_apart_from_first:
-            current_good = good_default.copy()
-            current_good["good_id"] = good_id
+        current_good = good_default.copy()
+        current_good["good_id"] = new_good["id"]
+        goods.append(current_good)
+
+        standard_application_submit(api_test_client, context, app_data, goods, submit)
+
+
+def create_standard_application_with_reused_goods(api_test_client, context, app_data, submit=True):
+    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
+    goods = []
+
+    products = list(p.strip() for p in app_data["name"].split(","))
+    data_context = api_test_client.api_client.context
+    matching_values = [value for key, value in data_context.items() if key.startswith("all_goods_")]
+
+    for good in matching_values:
+        current_good = good_default.copy()
+        current_good["good_id"] = good["id"]
+        if good["name"] in products:
             goods.append(current_good)
 
-    else:
-        products = (p.strip() for p in app_data["product"].split(","))
-        for i, product in enumerate(products):
-            data = api_test_client.api_client.request_data["good"]
-            data["part_number"] = app_data.get("part_number", data["part_number"])
-            data["name"] = product.strip()
-            data["control_list_entries"] = [app_data["clc_rating"]]
-            new_good = api_test_client.goods.post_good(data)
-            api_test_client.api_client.add_to_context("good_id", new_good["id"])
-            # To support multiple goods
-            api_test_client.api_client.add_to_context(f"good_id{i}", new_good["id"])
+    standard_application_submit(api_test_client, context, app_data, goods, submit)
 
-            current_good = good_default.copy()
-            current_good["good_id"] = new_good["id"]
-            goods.append(current_good)
 
+def standard_application_submit(api_test_client, context, app_data, goods, submit):
     draft_id = api_test_client.applications.add_draft(
         draft={
             "name": app_data["name"],
