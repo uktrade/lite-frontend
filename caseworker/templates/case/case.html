@@ -29,23 +29,7 @@
             if (return_to_field){
                 return_to_field[0].value = tabURL;
             }
-
-			$(".lite-tabs__container--fade").removeClass("lite-tabs__container--fade");
-
-			if ($(this).parent().hasClass("lite-tabs__tab-group")) {
-				$(this).parent().prev().addClass("lite-tabs__tab-parent--selected");
-				$(this).parent().show().addClass("lite-tabs__tab-group--visible");
-				$(this).parent().parent().addClass("lite-tabs__container--fade");
-			}
-
             return !$("#" + $(this).attr("id") + "-content").length;
-		})
-
-		$(".app-case-tab-bar .lite-tabs__tab-parent").click(function() {
-			$(this).addClass("lite-tabs__tab-parent--selected");
-			$(this).next().addClass("lite-tabs__tab-group--visible");
-			$(this).next().find(".lite-tabs__tab:first-of-type").click();
-			return false;
 		})
 	</script>
 {% endblock %}
