@@ -1,11 +1,13 @@
 import pytest
 import re
+from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 import rules
 
 from django.urls import reverse
 
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from core import client
 from caseworker.tau import views
 from core.exceptions import ServiceError
@@ -31,6 +33,16 @@ def previous_assessments_url(data_standard_case):
         "cases:tau:previous_assessments",
         kwargs={"queue_pk": "1b926457-5c9e-4916-8497-51886e51863a", "pk": data_standard_case["case"]["id"]},
     )
+
+
+@pytest.fixture
+def good_precedent_url(data_good_precedent):
+    url = (
+        reverse("cases:tau:home", kwargs={"pk": data_good_precedent["application"], "queue_pk": ALL_CASES_QUEUE_ID})
+        + "#good-"
+        + data_good_precedent["id"]
+    )
+    return url
 
 
 @pytest.fixture
@@ -167,6 +179,7 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
     authorized_client,
     previous_assessments_url,
     data_queue,
+    good_precedent_url,
     data_standard_case,
     mock_control_list_entries,
     mock_gov_user,
@@ -183,6 +196,12 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
     assert table
     table_rows = table.select("tbody tr")
     assert len(table_rows) == 2
+
+    def get_case_links():
+        return [
+            anchor.attrs["href"]
+            for anchor in table.findAll("a", href=lambda value: "good-" in urlparse(value).fragment)
+        ]
 
     def get_td_text(table_row):
         return [td.text.strip().strip() for td in table_row.findAll("td", {"class": "readonly-field"})]
@@ -202,6 +221,11 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
 
     notification_banner = soup.find("p", class_="govuk-notification-banner__heading")
     assert notification_banner.get_text() == "2 products going from Great Britain to Abu Dhabi and United Kingdom."
+
+    expected_case_links = [good_precedent_url]
+    case_links = get_case_links()
+
+    assert case_links == expected_case_links
 
 
 def test_previous_assessments_GET_no_precedents(
