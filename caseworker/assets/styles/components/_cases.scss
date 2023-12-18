@@ -405,24 +405,6 @@ $case-header-text-colour: govuk-colour('white');
     }
   }
 
-  .lite-tabs__container::after {
-    bottom: 2px;
-  }
-
-  .lite-tabs__tab {
-    margin-bottom: 0;
-  }
-
-  .lite-tabs__controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &::after {
-      bottom: 2px;
-    }
-  }
-
   &::before {
     content: '';
     position: absolute;
@@ -452,6 +434,28 @@ $case-header-text-colour: govuk-colour('white');
 
   &--float::after {
     opacity: 1;
+  }
+
+  .lite-tabs {
+    &__container  {
+      &::after {
+        bottom: 2px;
+      }
+    }
+
+    &__tab {
+      margin-bottom: 0;
+    }
+
+    &__controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &::after {
+        bottom: 2px;
+      }
+    }
   }
 }
 
