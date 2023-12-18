@@ -32,6 +32,18 @@
                 returnToField[0].value = tabURL;
             }
 
+			const links = $("a[href]");
+			for (const link of links) {
+				const url = new URL(link.href);
+				const params = new URLSearchParams(url.search);
+				if (!params.has("return_to")) {
+					continue;
+				}
+				params.set("return_to", tabURL);
+				url.search = `${params}`;
+				link.href = `${url}`;
+			}
+
             return !$("#" + $(this).attr("id") + "-content").length;
 		})
 	</script>
