@@ -45,6 +45,11 @@
     display: grid;
     grid-template-columns: 25% minmax(0, 1fr) auto;
     grid-gap: govuk-spacing(6);
+
+    @include govuk-media-query($until: tablet) {
+      grid-template-columns: 100%;
+      grid-gap: 0;
+    }
   }
 
   &__key {
@@ -54,11 +59,20 @@
 
   &__actions {
     @include govuk-font($size: 19);
+
+    @include govuk-media-query($until: tablet) {
+      margin-left: 0;
+      margin-top: 0;
+    }
   }
 
   &__value {
     @include govuk-font($size: 19);
     color: $govuk-text-colour;
+
+    @include govuk-media-query($until: tablet) {
+      margin-left: 0;
+    }
 
     span {
       @include govuk-font($size: 19);
@@ -71,6 +85,10 @@
 
     &__actions {
       margin-top: govuk-spacing(3);
+      @include govuk-media-query($until: tablet) {
+        margin-left: 0;
+        margin-top: 0;
+      }
     }
 
     &__fullwidth {
@@ -78,12 +96,21 @@
 
       & > :first-child {
         margin-right: auto;
+        @include govuk-media-query($until: tablet) {
+          margin-right: govuk-spacing(2);
+        }
       }
     }
   }
+
+  @include govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr;
+  }
+
   @media screen and (min-width: 900px) {
     grid-template-columns: 1fr 1fr;
   }
+
   @media screen and (min-width: 1800px) {
     grid-template-columns: 1fr 1fr 1fr;
   }
