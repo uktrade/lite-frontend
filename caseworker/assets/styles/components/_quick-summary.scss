@@ -1,0 +1,32 @@
+.quick-summary {
+    display: flex;
+
+    &__content {
+        margin-bottom: auto;
+        margin-right: 2rem;
+        flex: 1 0;
+
+        table {
+            table-layout: fixed;
+
+            col.quick-summary__table-wide {
+                width: 15rem;
+            }
+
+            ol#quick-summary__product-names {
+                padding-left: 1rem;
+                margin: 0;
+            }
+
+            ul.app-flags {
+                white-space: nowrap;
+                flex-flow: wrap;
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    &__customiser-options {
+        flex: 0 1 20rem;
+    }
+}
