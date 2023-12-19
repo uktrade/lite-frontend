@@ -1,10 +1,18 @@
 .quick-summary {
     display: flex;
 
+    @include govuk-media-query($until: tablet) {
+        flex-direction: column-reverse;
+    }
+
     &__content {
         margin-bottom: auto;
         margin-right: 2rem;
         flex: 1 0;
+
+        @include govuk-media-query($until: tablet) {
+            margin-right: 0;
+        }
 
         table {
             table-layout: fixed;
@@ -28,5 +36,9 @@
 
     &__customiser-options {
         flex: 0 1 20rem;
+
+        @include govuk-media-query($until: tablet) {
+            flex: 1;
+        }
     }
 }
