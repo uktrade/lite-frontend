@@ -1,10 +1,19 @@
 .app-queue-view {
     display: flex;
 
+    @include govuk-media-query($until: tablet) {
+        flex-direction: column;
+    }
+
     &__filters {
         margin-top: 15px;
         flex: 0 0 7rem;
         margin-right: 5rem;
+
+        @include govuk-media-query($until: tablet) {
+            flex: 1;
+            margin: 0;
+        }
 
         .govuk-details[open] {
             .govuk-details__summary-text-closed {
@@ -21,6 +30,10 @@
         .govuk-details__text {
             width: 24rem;
             padding-top: 0;
+
+            @include govuk-media-query($until: tablet) {
+                width: auto;
+            }
 
             .govuk-accordion__controls {
                 padding-bottom: 1rem;
