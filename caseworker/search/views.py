@@ -45,26 +45,18 @@ class ProductSearchView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update(
-            {
-                "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
-                "customiser_spec": self.customiser_spec(),
-            }
-        )
+        total_pages = 1
+        form = self.get_form()
         if "errors" not in self.results.keys():
             self.results = group_results_by_combination(self.results)
-            form = self.get_form()
-            context.update(
-                {
-                    "search_results": self.results,
-                    "data": {
-                        "total_pages": self.results["count"] // form.page_size,
-                    },
-                }
-            )
-        else:
-            context.update({"search_results": self.results, "data": {"total_pages": 1}})
-        return context
+            total_pages = self.results["count"] // form.page_size
+        return {
+            **context,
+            "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
+            "customiser_spec": self.customiser_spec(),
+            "data": {"total_pages": total_pages},
+            "search_results": self.results,
+        }
 
     def customiser_spec(self) -> str:
         return json.dumps(
