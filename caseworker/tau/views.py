@@ -301,6 +301,9 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
             "queue_id": self.queue_id,
             "assessed_goods": self.assessed_goods,
             "unassessed_goods": self.unassessed_goods,
+            "unassessed_goods_with_precedents": any(
+                [bool(good_on_application.get("latest_precedent")) for good_on_application in self.unassessed_goods]
+            ),
             "cle_suggestions_json": get_cle_suggestions_json(self.unassessed_goods),
             "organisation_documents": self.organisation_documents,
             "is_tau": self.caseworker["team"]["alias"] == TAU_ALIAS,
@@ -389,6 +392,7 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
                 "queue_id": self.queue_id,
                 "formset_helper": formset_helper,
                 "unassessed_goods": self.unassessed_goods,
+                "ALL_CASES_QUEUE_ID": ALL_CASES_QUEUE_ID,
             }
         )
         return context
@@ -746,6 +750,11 @@ class TAUMultipleEdit(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormSetView
 
         # Assess these good on applications with the values from the approved previous assessments
         self.put_assessment_edits(assessment_edits)
-        messages.success(self.request, f"Edited assessments for {len(assessment_edits)} products.")
+        success_message = (
+            f"You have edited {len(assessment_edits)} product assessments on Case {self.case['reference_code']}"
+        )
+        if len(assessment_edits) == 1:
+            success_message = f"You have edited 1 product assessment on Case {self.case['reference_code']}"
+        messages.success(self.request, success_message)
 
         return redirect("cases:tau:home", queue_pk=self.queue_id, pk=self.case_id)

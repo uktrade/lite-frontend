@@ -33,11 +33,6 @@
                             History
                         </a>
                     </li>
-                    <li class="govuk-tabs__list-item">
-                        <a class="govuk-tabs__tab" href="#related-cases-tab">
-                            Cases
-                        </a>
-                    </li>
                 </ul>
 
                 <div class="govuk-tabs__panel" id="full-details-tab">
@@ -51,12 +46,6 @@
                 <div class="govuk-tabs__panel" id="history-tab" >
                     <h2 class="govuk-heading-l">History</h2>
                         {% include "includes/audit-trail.html" with activity=good_on_application.audit_trail %}
-                </div>
-
-                <div class="govuk-tabs__panel" id="related-cases-tab">
-                    <h2 class="govuk-heading-l">Cases</h2>
-                    <p class="govuk-body">Other cases this product's part number and control list entries appear in</p>
-                    {% include "search/results_cases.html" with results=other_cases %}
                 </div>
             </div>
         </div>

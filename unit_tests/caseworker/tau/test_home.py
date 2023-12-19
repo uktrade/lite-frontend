@@ -73,6 +73,52 @@ def test_tau_home_auth(authorized_client, url, mock_control_list_entries, mock_p
     assert response.status_code == 200
 
 
+def test_home_unassessessed_goods_with_precedents(
+    authorized_client,
+    settings,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+    assign_user_to_case,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    assign_user_to_case(mock_gov_user, data_standard_case)
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["unassessed_goods_with_precedents"] == True
+
+
+def test_home_unassessessed_goods_without_precedents(
+    authorized_client,
+    settings,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_good_precedent_endpoint_empty,
+    mock_gov_user,
+    assign_user_to_case,
+):
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    assign_user_to_case(mock_gov_user, data_standard_case)
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["unassessed_goods_with_precedents"] == False
+
+
 def test_home_content(
     authorized_client,
     settings,
@@ -225,6 +271,21 @@ def test_assessed_products_form(
         "test assesment note",
     ]
 
+    all_a_elems = assessed_products_form.find("tbody").find_all("a", href=True)
+    expected_good_urls = [
+        reverse(
+            "cases:good",
+            kwargs={
+                "queue_pk": "00000000-0000-0000-0000-000000000001",
+                "pk": data_standard_case["case"]["id"],
+                "good_pk": good["id"],
+            },
+        )
+        for good in data_standard_case["case"]["data"]["goods"]
+    ]
+    actual_good_urls = [a_elem.attrs["href"] for a_elem in all_a_elems]
+    assert expected_good_urls == actual_good_urls
+
     assert soup.find(id="clear-assessments-button") is not None
 
 
@@ -238,7 +299,6 @@ def test_form_without_allocated_user_hides_submit_button(
     authorized_client,
     url,
     data_standard_case,
-    requests_mock,
     mock_control_list_entries,
     mock_precedents_api,
     report_summary_subject,
@@ -249,9 +309,6 @@ def test_form_without_allocated_user_hides_submit_button(
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
-    requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
     # unassessed products should have 1 entry
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
@@ -365,7 +422,6 @@ def test_form_regime_entries(
     authorized_client,
     url,
     data_standard_case,
-    requests_mock,
     mock_control_list_entries,
     mock_precedents_api,
     regimes_form_data,
@@ -377,9 +433,6 @@ def test_form_regime_entries(
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
-    requests_mock.post(
-        client._build_absolute_uri(f"/goods/control-list-entries/{data_standard_case['case']['id']}"), json={}
-    )
 
     data = {
         "report_summary_subject": report_summary_subject["id"],
@@ -617,3 +670,34 @@ def test_notification_banner_not_there_when_all_goods_assesed(
     soup = BeautifulSoup(response.content, "html.parser")
     banner = soup.find("div", class_="tau-notification-banner")
     assert banner is None
+
+
+def test_previous_assessments_anchors(
+    authorized_client,
+    url,
+    data_queue,
+    data_standard_case,
+    mock_control_list_entries,
+    mock_precedents_api,
+    mock_gov_user,
+):
+    # Verify that assessment table has anchors for each good.
+
+    # Remove assessment from a good
+    good = data_standard_case["case"]["data"]["goods"][0]
+    good["is_good_controlled"] = None
+    good["control_list_entries"] = []
+    good["firearm_details"]["year_of_manufacture"] = "1930"
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    case_anchor_ids = {"good-" + good["id"] for good in data_standard_case["case"]["data"]["goods"]}
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    # Elements with anchors (ids) in the format good-{{ goodonapplication_id }}
+    anchor_ids = {
+        element.attrs["id"] for element in soup.findAll("tr", id=lambda value: (value or "").startswith("good-"))
+    }
+
+    assert anchor_ids.issubset(case_anchor_ids)
