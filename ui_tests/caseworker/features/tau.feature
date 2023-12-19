@@ -1,6 +1,6 @@
 @all @tau
 Feature: I want to check application with precedents
-  @wip
+
   Scenario: Using previous assessment to assess a good in application
     Given I sign in to SSO or am signed into SSO
     Given I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
@@ -60,7 +60,6 @@ Feature: I want to check application with precedents
       | name    | product        | part_number | clc_rating  | end_user_name | end_user_address| consignee_name    | consignee_address | country | end_use                  |
       | Test12  | Rifle, Shotgun | PN-ABC-123  | PL9002      | Joe bloggs    | 123 Main street | Josephine Bloggs  | 123 Main Street   | BL      | Research and development |
 
-  @wip1
   Scenario: Multiple edits for asssessed goods
     Given I sign in to SSO or am signed into SSO
     Given I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
@@ -87,8 +86,9 @@ Feature: I want to check application with precedents
     And I select "components for" / "microwave components" as report summary prefix / subject and regime to none and submit
     # Scenario starts
     Then I click on Product assessment
-    And I click on Edit assessments button
+    And I click on "Edit assessments" button
+    Then edit the fields
 
     Examples:
       | name    | product        | part_number | clc_rating  | end_user_name | end_user_address| consignee_name    | consignee_address | country | end_use                  |
-      | Test12  | Rifle, Shotgun | PN-ABC-123  | PL9002      | Joe bloggs    | 123 Main street | Josephine Bloggs  | 123 Main Street   | BL      | Research and development |
+      | Test34  | Rifle, Shotgun | PN-ABC-123  | PL9002      | Joe bloggs    | 123 Main street | Josephine Bloggs  | 123 Main Street   | BL      | Research and development |

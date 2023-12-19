@@ -1,6 +1,9 @@
 from faker import Faker
+import time
 from pytest_bdd import when, then, scenarios, parsers
 from selenium.webdriver.common.by import By
+from tests_common import functions
+from selenium.webdriver.common.keys import Keys
 
 from tests_common.helpers import applications
 
@@ -77,6 +80,44 @@ def assert_if_good_is_assessed(driver, good):  # noqa
     assert good_found
 
 
-@then("I click on Edit assessments button")
-def click_edit_assessments(driver):
-    pass
+@then(parsers.parse('I click on "{button_label}" button'))
+def click_edit_assessments(driver, button_label):
+    xpath = f"//button[contains(text(), '{button_label}')]"
+    driver.find_element(By.XPATH, xpath).click()
+
+
+@then("edit the fields")  # noqa
+def edit_assessment_fields(driver):
+    # Adds control entry ML1c
+    functions.send_tokens_to_token_bar(driver, "#div_id_form-0-control_list_entries .tokenfield-input", ["ML1c"])
+
+    # Clear and adds prefix
+    suggestion_input_autocomplete_prefix = driver.find_element(by=By.ID, value="_id_form-0-report_summary_prefix")
+    suggestion_input_autocomplete_prefix.click()
+    suggestion_input_autocomplete_prefix.send_keys(Keys.BACK_SPACE)
+    suggestion_input_autocomplete_prefix.send_keys("components for")
+    time.sleep(1)
+    driver.find_element(by=By.XPATH, value="//body").click()
+
+    # Clear and adds summary
+    suggestion_input_autocomplete_summary = driver.find_element(by=By.ID, value="_id_form-0-report_summary_subject")
+    suggestion_input_autocomplete_summary.click()
+    suggestion_input_autocomplete_summary.send_keys(Keys.BACK_SPACE)
+    suggestion_input_autocomplete_summary.send_keys("sniper rifles")
+    time.sleep(1)
+    driver.find_element(by=By.XPATH, value="//body").click()
+
+    # Click Submit button
+    xpath = f"//button[contains(text(), 'Submit')]"
+    driver.find_element(By.XPATH, xpath).click()
+
+    # Check the first row for edit changes
+    unique_parent = driver.find_element(By.CSS_SELECTOR, ".assessment-formset")
+    table = unique_parent.find_element(By.ID, "tau-form")
+    rows = table.find_elements(By.CSS_SELECTOR, "tbody .govuk-table__row")
+    first_row_text = rows[0].text
+
+    assert (
+        "components for sniper rifles" in first_row_text
+    ), "String components for sniper rifles not found in the first row"
+    assert "ML1c" in first_row_text, "String ML1c not found in the first row"
