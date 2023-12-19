@@ -19,10 +19,10 @@ def select_all_goods(driver):  # noqa
     select_all_button.click()
 
 
-@when(parsers.parse('I create an application with re-used "{goods}" goods'))
-def create_application_with_reused_goods(api_test_client, context, goods):  # noqa
+@when(parsers.parse('I create an application with re-used "{goods_name}" goods'))
+def create_application_with_reused_goods(api_test_client, context, goods_name):  # noqa
     app_data = {
-        "name": goods,
+        "name": goods_name,
         "end_user_name": "Joe bloggs",
         "end_user_address": "123 Main street",
         "consignee_name": "Josephine Bloggs",
@@ -33,7 +33,7 @@ def create_application_with_reused_goods(api_test_client, context, goods):  # no
     applications.create_standard_application_with_reused_goods(api_test_client, context, app_data)
 
 
-@then(parsers.parse('I check if URL contains "{word}"'))  # noqa
+@then(parsers.parse('I check if the URL contains "{word}"'))  # noqa
 def check_url_for_template(driver, word):
     current_url = driver.current_url
     assert word in current_url
@@ -86,7 +86,7 @@ def click_edit_assessments(driver, button_label):
     driver.find_element(By.XPATH, xpath).click()
 
 
-@then("edit the fields")  # noqa
+@then("I edit the fields and checks if they were updated")  # noqa
 def edit_assessment_fields(driver):
     # Adds control entry ML1c
     functions.send_tokens_to_token_bar(driver, "#div_id_form-0-control_list_entries .tokenfield-input", ["ML1c"])

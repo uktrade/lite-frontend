@@ -1,7 +1,7 @@
 @all @tau
 Feature: I want to check application with precedents
 
-  Scenario: Using previous assessment to assess a good in application
+  Scenario: Using previous assessment to assess a good on application
     Given I sign in to SSO or am signed into SSO
     Given I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I set the case status to "Submitted"
@@ -51,7 +51,7 @@ Feature: I want to check application with precedents
     And I assign myself to the case
     # Scenario starts
     Then I click on Product assessment
-    Then I check if URL contains "previous-assessments"
+    Then I check if the URL contains "previous-assessments"
     And I deselect all checkboxes
     Then I select good called "Rifle" and approve and continue
     Then I assert if "Rifle" has been assessed
@@ -87,7 +87,7 @@ Feature: I want to check application with precedents
     # Scenario starts
     Then I click on Product assessment
     And I click on "Edit assessments" button
-    Then edit the fields
+    Then I edit the fields and checks if they were updated
 
     Examples:
       | name    | product        | part_number | clc_rating  | end_user_name | end_user_address| consignee_name    | consignee_address | country | end_use                  |
