@@ -25,11 +25,19 @@ export default function initMenuTooltips() {
     },
     allowHTML: true,
     animation: "scale-subtle",
+    onCreate: (instance) => {
+      const element = instance.reference;
+      element.setAttribute("tabindex", 0);
+    },
   });
 
   tippy(".app-flag--label", {
     content(reference) {
       return reference.getAttribute("data-label");
+    },
+    onCreate: (instance) => {
+      const element = instance.reference;
+      element.setAttribute("tabindex", 0);
     },
   });
 }
