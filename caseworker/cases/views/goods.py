@@ -6,8 +6,8 @@ from caseworker.cases.services import (
     get_good_on_application,
     get_good_on_application_documents,
 )
+from caseworker.cases.forms.goods import GoodDetailsForm
 from caseworker.search.services import get_application_search_results
-from caseworker.search.forms import SearchForm
 from core.auth.views import LoginRequiredMixin
 
 from django.views.generic import FormView
@@ -15,7 +15,7 @@ from django.utils.functional import cached_property
 
 
 class GoodDetails(LoginRequiredMixin, FormView):
-    form_class = SearchForm
+    form_class = GoodDetailsForm
     template_name = "case/product-on-case.html"
 
     @cached_property
