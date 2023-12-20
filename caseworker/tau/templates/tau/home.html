@@ -14,7 +14,9 @@
 
 {% block full_width %}
     <div class="govuk-width-container">
-        <a href="{% url 'cases:tau:previous_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-back-link">Back</a>
+        {% if unassessed_goods_with_precedents %}
+            <a href="{% url 'cases:tau:previous_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-back-link">Back</a>
+        {% endif %}
         <main class="govuk-main-wrapper assessment-form tau-assessment-form">
             <div class="govuk-grid-row assessment-form__display--flex">
                 <!-- Heading -->
@@ -93,7 +95,7 @@
                                 </thead>
                                 <tbody class="govuk-table__body">
                                     {% for good in assessed_goods %}
-                                        <tr class="govuk-table__row">
+                                        <tr class="govuk-table__row" id="good-{{ good.id }}">
                                             <td class="govuk-table__cell">{{ good.line_number }}.</td>
                                             <td class="govuk-table__cell">{{ good.good.name }}</td>
                                             <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>

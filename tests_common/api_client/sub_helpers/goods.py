@@ -89,16 +89,16 @@ class Goods:
 
     def update_good_clc(self, *, good_id, good_on_application_id, case_id, **kwargs):
         self.api_client.make_request(
-            method="POST",
-            url=f"/goods/control-list-entries/{case_id}/",
+            method="PUT",
+            url=f"/assessments/make-assessments/{case_id}/",
             headers=self.api_client.gov_headers,
-            body={
-                "control_list_entries": kwargs.get("control_list_entries", []),
-                "is_precedent": kwargs.get("is_precedent", False),
-                "is_good_controlled": kwargs.get("is_good_controlled", True),
-                "end_use_control": kwargs.get("end_use_control", []),
-                "report_summary": kwargs.get("report_summary", ""),
-                "comment": kwargs.get("comment", ""),
-                "objects": [good_id],
-            },
+            body=[
+                {
+                    "control_list_entries": kwargs.get("control_list_entries", []),
+                    "is_good_controlled": kwargs.get("is_good_controlled", True),
+                    "report_summary": kwargs.get("report_summary", ""),
+                    "comment": kwargs.get("comment", ""),
+                    "id": good_on_application_id,
+                }
+            ],
         )
