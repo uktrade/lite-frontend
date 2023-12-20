@@ -1,4 +1,5 @@
 import tippy from "tippy.js";
+import { hideOnEsc } from "./tippy-plugins";
 
 export default function initMenuTooltips() {
   $("#link-menu").attr("href", "#");
@@ -30,6 +31,7 @@ export default function initMenuTooltips() {
       element.setAttribute("tabindex", 0);
     },
     interactive: true,
+    plugins: [hideOnEsc],
   });
 
   tippy(".app-flag--label", {
@@ -41,5 +43,6 @@ export default function initMenuTooltips() {
       element.setAttribute("tabindex", 0);
     },
     interactive: true,
+    plugins: [hideOnEsc],
   });
 }
