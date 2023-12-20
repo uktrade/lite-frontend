@@ -19,4 +19,17 @@ const hideOnEsc = {
   },
 };
 
-export { hideOnEsc };
+const makeFocusable = {
+  name: "makeFocusable",
+  defaultValue: true,
+  fn() {
+    return {
+      onCreate: (instance) => {
+        const element = instance.reference;
+        element.setAttribute("tabindex", 0);
+      },
+    };
+  },
+};
+
+export { hideOnEsc, makeFocusable };
