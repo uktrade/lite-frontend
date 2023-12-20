@@ -1,3 +1,5 @@
+import json
+
 from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
@@ -932,3 +934,94 @@ def i_remove_case_officer_from_case(driver):  # noqa
     # go to remove case officer page
     CasePage(driver).click_remove_case_officer()
     functions.click_submit(driver)
+
+
+@given(parsers.parse('I create a standard draft application with "{reference}" as reference'))
+def create_standard_draft_with_reference(api_test_client, context, reference):
+    draft = {
+        "name": reference,
+        "application_type": "siel",
+        "export_type": "permanent",
+        "have_you_been_informed": "yes",
+        "reference_number_on_information_form": "1234",
+    }
+    draft_id = api_test_client.applications.create_draft(draft)
+
+    end_use_details = {
+        "intended_end_use": "Research and development",
+        "is_military_end_use_controls": False,
+        "is_informed_wmd": False,
+        "is_suspected_wmd": False,
+        "is_eu_military": False,
+    }
+    route_of_goods = {"is_shipped_waybill_or_lading": True}
+    additional_information = {"is_mod_security_approved": False}
+
+    api_test_client.applications.add_end_use_details(draft_id=draft_id, details=end_use_details)
+    api_test_client.applications.add_route_of_goods(draft_id=draft_id, route_of_goods=route_of_goods)
+    api_test_client.applications.add_additional_information(draft_id=draft_id, json=additional_information)
+
+    context.application_id = draft_id
+
+
+@given(parsers.parse('I add End-user with details "{name}", "{address}", "{country}"'))
+def add_end_user_to_application(api_test_client, context, name, address, country):
+    party_type = "end_user"
+    end_user = {
+        "type": party_type,
+        "name": name,
+        "address": address,
+        "country": country,
+        "sub_type": "government",
+        "website": fake.uri(),
+        "signatory_name_euu": name,
+        "end_user_document_available": False,
+        "end_user_document_missing_reason": "document not available",
+    }
+    api_test_client.applications.parties.add_party(context.application_id, party_type, end_user)
+
+
+@given(parsers.parse('I add Consignee with details "{name}", "{address}", "{country}"'))
+def add_consignee_to_application(api_test_client, context, name, address, country):
+    party_type = "consignee"
+    consignee = {
+        "type": party_type,
+        "name": name,
+        "address": address,
+        "country": country,
+        "sub_type": "government",
+        "website": fake.uri(),
+    }
+    api_test_client.applications.parties.add_party(context.application_id, party_type, consignee)
+
+
+@given(parsers.parse("I add a set of products to the application as json:\n{products_data}"))
+def add_products_to_application(api_test_client, context, products_data):
+    good_on_application_ids = []
+    products = json.loads(products_data.replace("\n", ""))
+    for product in products:
+        data = {
+            **product,
+            "is_good_controlled": True,
+            "is_pv_graded": "no",
+            "item_category": "group2_firearms",
+        }
+        good = api_test_client.applications.goods.post_good(data)
+
+        data = {
+            "good_id": good["id"],
+            "quantity": 64,
+            "unit": "NAR",
+            "value": 256.32,
+            "is_good_incorporated": False,
+        }
+        good_on_application = api_test_client.applications.goods.add_good_to_draft(context.application_id, data)
+        good_on_application_ids.append(good_on_application["id"])
+
+    context.good_on_application_ids = good_on_application_ids
+
+
+@given("the application is submitted")
+def application_submitted(api_test_client, context):
+    assert context.application_id
+    api_test_client.applications.submit_application(context.application_id)
