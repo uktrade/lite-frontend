@@ -29,6 +29,7 @@ export default function initMenuTooltips() {
       const element = instance.reference;
       element.setAttribute("tabindex", 0);
     },
+    interactive: true,
   });
 
   tippy(".app-flag--label", {
@@ -39,5 +40,6 @@ export default function initMenuTooltips() {
       const element = instance.reference;
       element.setAttribute("tabindex", 0);
     },
+    interactive: true,
   });
 }

@@ -6,6 +6,7 @@ tippy(".app-radios--flag-colours .govuk-radios__input", {
     const element = instance.reference;
     element.setAttribute("tabindex", 0);
   },
+  interactive: true,
 });
 
 $("#pane_label").addClass("govuk-inset-text");
