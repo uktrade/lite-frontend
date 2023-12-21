@@ -2,9 +2,8 @@ import Tokenfield from "tokenfield";
 
 class LiteTokenField extends Tokenfield {
   constructor(options) {
-    super(options); // Call the constructor of the parent class (Tokenfield)
+    super(options);
 
-    // After the parent class has been initialized, set the attribute
     const tokenfieldInput = document.querySelector(".tokenfield-input");
     if (tokenfieldInput) {
       tokenfieldInput.setAttribute("id", "screen_reader_for_cle");
@@ -26,7 +25,7 @@ class LiteTokenField extends Tokenfield {
 
     itemHtml.key = item[this.key];
     remove.key = item[this.key];
-    console.log(tokenfieldInput);
+
     input.setAttribute("name", item.isNew ? o.newItemName : o.itemName);
 
     input.value = item[item.isNew ? o.newItemValue : o.itemValue] || null;

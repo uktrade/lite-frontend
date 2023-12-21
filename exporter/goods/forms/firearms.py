@@ -88,7 +88,7 @@ class FirearmCalibreForm(BaseForm):
         TITLE = "What is the calibre of the product?"
 
     calibre = forms.CharField(
-        label="",
+        label="What is the calibre of the product?",
         error_messages={
             "required": "Enter the calibre",
         },
@@ -666,7 +666,9 @@ class FirearmSerialNumbersForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.p("Enter one serial number for every row"),
+            HTML(
+                '<label for="id_SERIAL_NUMBERS-serial_numbers_0" class="govuk-label">Enter one serial number for every row</label>'
+            ),
             HTML.p(f"{self.number_of_items} item" + "s" if self.number_of_items > 1 else ""),
             "serial_numbers",
         )
