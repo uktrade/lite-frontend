@@ -119,9 +119,13 @@
 		{% test_rule 'can_user_change_case' request case as can_user_change_case %}
 		{% if not can_user_change_case %}
 			<div id="allocation-warning" class="app-case-warning-banner">
-				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
-				<span class="app-case-warning-banner__text">
-					You need to allocate yourself or someone else to this case to work on it
+				<div class="app-case-warning-banner__warning">
+					<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
+					<span class="app-case-warning-banner__text">
+						You need to allocate yourself or someone else to this case to work on it
+					</span>
+				</div>
+				<div class="app-case-warning-banner__actions">
                     <a id="allocate-case-link" class="app-case-warning-banner__action"
                        href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}&return_to={{ CURRENT_PATH }}"
                     >Allocate case</a>
@@ -136,7 +140,7 @@
                         >Allocate to me</button>
                         </form>
                     {% endif %}
-				</span>
+				</div>
 			</div>
 		{% endif %}
 		{% block header_tabs %}

@@ -586,20 +586,44 @@ $case-header-text-colour: govuk-colour('white');
 
 .app-case-warning-banner {
   @extend .app-case__finalised-case-banner;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: govuk-spacing(4);
+  row-gap: govuk-spacing(4);
+
+  &__warning {
+    align-items: center;
+    display: flex;
+  }
 
   &__icon {
     @extend .govuk-warning-text__icon;
     background-color: govuk-colour('white');
     border-color: govuk-colour('white');
     color: govuk-colour('blue');
+    height: 35px;
+    margin-right: govuk-spacing(3);
+    max-height: 35px;
+    position: relative;
   }
 
   &__text {
-    margin-left: govuk-spacing(8);
+    margin-top: -3px;
   }
 
   &__action-form {
     display: inline-block;
+  }
+
+  &__actions {
+    display: flex;
+    gap: govuk-spacing(4);
+
+    @include govuk-media-query($until: tablet) {
+      flex-direction: column;
+      width: 100%;
+    }
   }
 
   &__action {
@@ -607,11 +631,17 @@ $case-header-text-colour: govuk-colour('white');
     background-color: govuk-colour('white');
     color: $govuk-text-colour;
     font-weight: 500;
-    margin-left: govuk-spacing(4);
     padding: govuk-spacing(2) govuk-spacing(4);
     text-decoration: none;
     border: 0;
     display: inline-block;
+
+    @include govuk-media-query($until: tablet) {
+      box-sizing: border-box;
+      display: inline-flex;
+      justify-content: center;
+      width: 100%;
+    }
 
     &:hover {
       background-color: govuk-colour("light-grey");
