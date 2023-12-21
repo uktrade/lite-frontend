@@ -119,9 +119,13 @@
 		{% test_rule 'can_user_change_case' request case as can_user_change_case %}
 		{% if not can_user_change_case %}
 			<div id="allocation-warning" class="app-case-warning-banner">
-				<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
-				<span class="app-case-warning-banner__text">
-					You need to allocate yourself or someone else to this case to work on it
+				<div class="app-case-warning-banner__warning">
+					<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
+					<span class="app-case-warning-banner__text">
+						You need to allocate yourself or someone else to this case to work on it
+					</span>
+				</div>
+				<div class="app-case-warning-banner__actions">
                     <a id="allocate-case-link" class="app-case-warning-banner__action"
                        href="{% url 'queues:case_assignment_select_role' queue.id %}?&cases={{ case.id }}&return_to={{ CURRENT_PATH }}"
                     >Allocate case</a>
@@ -136,16 +140,14 @@
                         >Allocate to me</button>
                         </form>
                     {% endif %}
-				</span>
+				</div>
 			</div>
 		{% endif %}
 		{% block header_tabs %}
 		{% if tabs %}
 			<div id="tab-bar" class="app-case-tab-bar">
 				<div class="govuk-width-container lite-tabs__container">
-					<div class="lite-tabs {% for tab in tabs %}{% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__container--fade{% endif %}{% endfor %}{% endfor %}">
-						{% include "includes/case-tabs.html" %}
-					</div>
+					{% include "includes/case-tabs.html" %}
 					<div class="lite-tabs__controls">
 						<div class="lite-buttons-row">
 							{% make_list queue.id case.id as button_params %}

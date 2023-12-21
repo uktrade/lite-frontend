@@ -1,24 +1,11 @@
-<div class="lite-tabs {% for tab in tabs %}{% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__container--fade{% endif %}{% endfor %}{% endfor %}">
+<div class="lite-tabs">
     {% for tab in tabs %}
-        {% if tab.url %}
-            <a id="{{ tab.id }}" href="{% if tab.has_template %}{% url 'cases:case' queue.id case.id tab.url %}{% else %}{% url tab.url queue.id case.id %}{% endif %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
-                {{ tab.name }}
-                {% if tab.count %}
-                    <span class="lite-tabs__tab-notification" aria-hidden="true">{{ tab.count }}</span>
-                    <strong class="govuk-visually-hidden lite-tabs__tab-notification">(Requires attention {{ tab.count }} items)</strong>
-                {% endif %}
-            </a>
-        {% else %}
-            <a id="{{ tab.id }}" class="lite-tabs__tab-parent {% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__tab-parent--selected{% endif %}{% endfor %}">
-                {{ tab.name }}
-            </a>
-            <div class="lite-tabs__tab-group {% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__tab-group--visible{% endif %}{% endfor %}" id="{{ tab.id }}-children">
-                {% for tab in tab.children %}
-                    <a id="{{ tab.id }}" href="{% url 'cases:case' queue.id case.id tab.url %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
-                        {{ tab.name }}
-                    </a>
-                {% endfor %}
-            </div>
-        {% endif %}
+        <a id="{{ tab.id }}" href="{% if tab.has_template %}{% url 'cases:case' queue.id case.id tab.url %}{% else %}{% url tab.url queue.id case.id %}{% endif %}{{ CURRENT_PATH_ONLY_PARAMS }}" class="lite-tabs__tab {% if tab.url == current_tab %}lite-tabs__tab--selected{% endif %}">
+            {{ tab.name }}
+            {% if tab.count %}
+                <span class="lite-tabs__tab-notification" aria-hidden="true">{{ tab.count }}</span>
+                <strong class="govuk-visually-hidden lite-tabs__tab-notification">(Requires attention {{ tab.count }} items)</strong>
+            {% endif %}
+        </a>
     {% endfor %}
 </div>
