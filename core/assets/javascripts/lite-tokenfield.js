@@ -15,7 +15,7 @@ class LiteTokenField extends Tokenfield {
    * @param item the selected item from the list
    * @param k index of selected item, not used here but kept for compatibility with superclass
    */
-  _renderItem = function (item, k) {
+  _renderItem = function (item) {
     let o = this._options;
 
     let itemHtml = this.renderSetItemHtml(item);
