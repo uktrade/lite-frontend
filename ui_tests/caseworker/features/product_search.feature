@@ -19,19 +19,62 @@ Feature: I want to efficiently search for products created and used by Exporters
         {"name": "sporting rifle", "part_number": "SR985", "control_list_entries": ["ML22a"]}
       ]
     And the application is submitted
-    And I add my assessment as TAU case advisor as json:
-      [
-        {"control_list_entries": ["ML21a"], "regime_entries": ["586c5ce7-30f0-4873-ad1b-652eaf40ebff"], "report_summary_prefix": "", "report_summary_subject": "e97ffe1a-d198-415d-98b6-93d2b191760b", "comment": "sporting shotguns"},
-        {"control_list_entries": ["PL9011"], "regime_entries": [], "report_summary_prefix": "ca6a7b52-84cf-4c32-a608-bed74f43f085", "report_summary_subject": "b8fb9c5d-21b6-4de7-b24b-7357ce00269f", "comment": "technology for chemical mixtures"},
-        {"control_list_entries": ["ML4a"], "regime_entries": [], "report_summary_prefix": "", "report_summary_subject": "289f548f-bf07-448d-8042-36a5b10fd5f5", "comment": ""},
-        {"control_list_entries": ["6A006"], "regime_entries": [], "report_summary_prefix": "", "report_summary_subject": "289f548f-bf07-448d-8042-36a5b10fd5f5", "comment": ""},
-        {"control_list_entries": ["ML10e2"], "regime_entries": [], "report_summary_prefix": "42e813cb-a75c-4f60-a121-dbe949222dd8", "report_summary_subject": "289f548f-bf07-448d-8042-36a5b10fd5f5", "comment": "components for accelerometers"}
-      ]
+    When I go to application previously created
+    And I assign myself to the case
+    And I assign the case to "Technical Assessment Unit SIELs to Review" queue
     When I go to my profile page
     And I change my team to "Technical Assessment Unit" and default queue to "Technical Assessment Unit SIELs to Review"
+    And I go to my case list
+    Then I see previously created application
+    When I click on the application previously created
+    And I assign myself to the case
+    Then I click on Product assessment
+
+    # Assess products
+    When I select product "sporting shotgun" to assess
+    And I assess rating as "ML21a"
+    And I assess report summary subject as "sporting shotguns"
+    And I assess regime as "Wassenaar Arrangement" with regime entry as "Wassenaar Arrangement"
+    And I add assessment note as "sporting shotguns"
+    And I submit my assessment for this product
+    Then I see "sporting shotgun" in the list of assessed products
+
+    When I select product "Sodium chloride" to assess
+    And I assess rating as "PL9011"
+    And I assess report summary prefix as "technology for"
+    And I assess report summary subject as "chemical mixtures"
+    And I do not add any regimes
+    And I add assessment note as "technology for chemical mixtures"
+    And I submit my assessment for this product
+    Then I see "Sodium chloride" in the list of assessed products
+
+    When I select product "Cleaning kit" to assess
+    And I assess rating as "ML4a"
+    And I assess report summary subject as "accelerometers"
+    And I do not add any regimes
+    And I add assessment note as "accelerometers"
+    And I submit my assessment for this product
+    Then I see "Cleaning kit" in the list of assessed products
+
+    When I select product "Magnetic sensor" to assess
+    And I assess rating as "6A006"
+    And I assess report summary subject as "accelerometers"
+    And I do not add any regimes
+    And I add assessment note as "magnetic sensors"
+    And I submit my assessment for this product
+    Then I see "Magnetic sensor" in the list of assessed products
+
+    When I select product "sporting rifle" to assess
+    And I assess rating as "ML10e2"
+    And I assess report summary prefix as "components for"
+    And I assess report summary subject as "accelerometers"
+    And I do not add any regimes
+    And I add assessment note as "components for accelerometers"
+    And I submit my assessment for this product
+    Then I see "sporting rifle" in the list of assessed products
 
     # search scenarios
-    And I go to product search page
+    When I go to product search page
 
     ## suggestions
     # word prefix

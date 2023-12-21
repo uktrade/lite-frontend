@@ -2,7 +2,7 @@ import json
 
 from datetime import datetime
 
-from pytest_bdd import scenarios, given, then, when, parsers
+from pytest_bdd import scenarios, then, when, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
@@ -12,30 +12,6 @@ from ui_tests.caseworker.pages.product_search import ProductSearchPage
 
 
 scenarios("../features/product_search.feature", strict_gherkin=False)
-
-
-@given(parsers.parse("I add my assessment as TAU case advisor as json:\n{assessment_data}"))
-def add_products_assessments(api_test_client, context, assessment_data):
-    assessments = json.loads(assessment_data.replace("\n", ""))
-    assert len(context.good_on_application_ids) == len(assessments)
-
-    payload = []
-    for index, assessment in enumerate(assessments):
-        assessment_item = {
-            **assessment,
-            "id": context.good_on_application_ids[index],
-            "is_good_controlled": True,
-            "is_ncsc_military_information_security": False,
-        }
-        payload.append(assessment_item)
-
-    response = api_test_client.api_client.make_request(
-        method="PUT",
-        url=f"/assessments/make-assessments/{context.application_id}/",
-        headers=api_test_client.api_client.gov_headers,
-        body=payload,
-    )
-    assert response.status_code == 200
 
 
 @when("I go to product search page")
