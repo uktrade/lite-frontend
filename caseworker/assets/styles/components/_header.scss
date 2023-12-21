@@ -95,7 +95,7 @@ $header-link-active-colour: $govuk-focus-colour;
 		}
 	}
 
-	&:first-of-type {
+	&--title {
 		@include govuk-font($size: 19, $weight: bold);
 
 		svg {
@@ -108,12 +108,6 @@ $header-link-active-colour: $govuk-focus-colour;
 			svg {
 				margin-right: 0;
 			}
-		}
-	}
-
-	&:last-of-type {
-		svg {
-			margin-left: govuk-spacing(3);
 		}
 	}
 }

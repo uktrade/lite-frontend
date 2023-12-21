@@ -48,7 +48,7 @@
 	{% if GTM_ID %}{% include "cookies/banner.html" %}{% endif %}
 	<header class="app-header" role="banner" data-module="header">
 		<div class="app-header__container govuk-width-container">
-			<a class="app-header__link" href="{% url 'core:index' %}" data-tooltip="Go home">
+			<a class="app-header__link app-header__link--title" href="{% url 'core:index' %}" data-tooltip="Go home">
 				{% svg 'crest' %}
 				<span class="lite-mobile-hide">
 					Licensing for International Trade and Enterprise
@@ -75,10 +75,12 @@
 				Sign out
 			</a>
 			<span class="app-header__separator"></span>
-			<a id="link-menu" tabindex="0" class="app-header__link" href="{% url 'core:menu' %}" data-tooltip="Show menu">
-				{% svg 'menu' %}
-				{% if MENU_NOTIFICATIONS %}<span class="app-header__link-bubble"></span>{% endif %}
-			</a>
+			<span class="app-header__link-wrapper">
+				<a id="link-menu" tabindex="0" class="app-header__link" href="{% url 'core:menu' %}" data-tooltip="Show menu">
+					{% svg 'menu' %}
+					{% if MENU_NOTIFICATIONS %}<span class="app-header__link-bubble"></span>{% endif %}
+				</a>
+			</span>
 			<span class="app-header__separator"></span>
 			<a id="link-profile" class="app-header__link" href="{% url 'users:profile' %}" data-tooltip="View profile">
 				{{ request.session.first_name }}
