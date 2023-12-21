@@ -143,9 +143,7 @@
 		{% if tabs %}
 			<div id="tab-bar" class="app-case-tab-bar">
 				<div class="govuk-width-container lite-tabs__container">
-					<div class="lite-tabs {% for tab in tabs %}{% for tab in tab.children %}{% if tab.url == current_tab %}lite-tabs__container--fade{% endif %}{% endfor %}{% endfor %}">
-						{% include "includes/case-tabs.html" %}
-					</div>
+					{% include "includes/case-tabs.html" %}
 					<div class="lite-tabs__controls">
 						<div class="lite-buttons-row">
 							{% make_list queue.id case.id as button_params %}

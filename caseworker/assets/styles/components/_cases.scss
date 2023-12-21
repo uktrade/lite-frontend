@@ -175,10 +175,6 @@ $case-header-text-colour: govuk-colour('white');
   @media (max-width: 1000px) {
     position: relative;
   }
-
-  .lite-tabs {
-    overflow-x: hidden;
-  }
 }
 
 .app-case-header {
@@ -399,28 +395,6 @@ $case-header-text-colour: govuk-colour('white');
 
   @include govuk-media-query($until: tablet) {
     margin-bottom: 0;
-
-    .lite-tabs__controls {
-      margin-top: govuk-spacing(3);
-    }
-  }
-
-  .lite-tabs__container::after {
-    bottom: 2px;
-  }
-
-  .lite-tabs__tab {
-    margin-bottom: 0;
-  }
-
-  .lite-tabs__controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &::after {
-      bottom: 2px;
-    }
   }
 
   &::before {
@@ -450,8 +424,66 @@ $case-header-text-colour: govuk-colour('white');
     opacity: 0;
   }
 
-  &--float::after {
-    opacity: 1;
+  &--float {
+    padding-bottom: govuk-spacing(4);
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  .lite-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    overflow: initial;
+    overscroll-behavior: initial;
+    white-space: initial;
+
+    @include govuk-media-query($until: tablet) {
+      flex-direction: column;
+      width: 100%;
+
+      &__tab {
+        padding: govuk-spacing(2) 0;
+      }
+    }
+
+    &__container  {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      row-gap: govuk-spacing(3);
+
+      @include govuk-media-query($until: tablet) {
+        margin-bottom: govuk-spacing(3);
+      }
+
+      &::after {
+        display: none;
+      }
+    }
+
+    &__tab {
+      margin-bottom: 0;
+    }
+
+    &__controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @include govuk-media-query($until: tablet) {
+        width: 100%;
+      }
+
+      &::after {
+        display: none;
+      }
+
+      .lite-buttons-row {
+        margin: 0;
+      }
+    }
   }
 }
 
