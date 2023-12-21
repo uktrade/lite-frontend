@@ -53,14 +53,6 @@ tippy(".app-case-header__candy", {
   interactiveBorder: 15,
 });
 
-let width = 0;
-$(".app-case__flags-wrapper .app-flag").each(function () {
-  width += $(this).outerWidth(true);
-});
-if (width > $(".app-case__flags-wrapper .app-flags").outerWidth(true)) {
-  $(".app-case__flags-wrapper").addClass("app-case__flags-wrapper--fade");
-}
-
 window.addEventListener("scroll", function () {
   if (window.innerWidth > 600) {
     let scrollPosition = window.scrollY;
