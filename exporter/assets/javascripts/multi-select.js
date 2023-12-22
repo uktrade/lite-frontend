@@ -11,32 +11,39 @@ const getOptions = ($el) => {
   return [map, values];
 };
 
-const handleOnConfirm = (map, query) => {
+const handleOnConfirm = (accessibleAutocompleteElement, map, query) => {
   const option = map[query];
   if (!option) {
     return;
   }
   option.selected = true;
+  setTimeout(() => (accessibleAutocompleteElement.value = ""), 0);
 };
 
 const initMultiSelect = ($el) => {
+  const id = $el.id;
+  let accessibleAutocompleteElement;
+
   const [map, values] = getOptions($el);
   const configurationOptions = {
-    id: $el.id,
+    id: id,
     autoselect: true,
     source: values,
-    onConfirm: (query) => handleOnConfirm(map, query),
+    onConfirm: (query) =>
+      handleOnConfirm(accessibleAutocompleteElement, map, query),
   };
 
   const element = document.createElement("div");
   $el.parentNode.insertBefore(element, $el);
 
-  $el.id = `${$el.id}-select`;
+  $el.id = `${id}-select`;
 
   accessibleAutocomplete({
     ...configurationOptions,
     element: element,
   });
+
+  accessibleAutocompleteElement = document.querySelector(`#${id}`);
 };
 
 const initMultiSelects = () => {
