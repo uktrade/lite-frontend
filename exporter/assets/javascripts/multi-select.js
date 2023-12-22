@@ -13,6 +13,9 @@ const getOptions = ($el) => {
 
 const handleOnConfirm = (map, query) => {
   const option = map[query];
+  if (!option) {
+    return;
+  }
   option.selected = true;
 };
 
