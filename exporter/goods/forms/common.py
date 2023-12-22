@@ -86,7 +86,10 @@ class ProductControlListEntryForm(BaseForm):
                 "is_good_controlled",
                 ConditionalRadiosQuestion(
                     "Yes",
-                    "control_list_entries",
+                    Field(
+                        "control_list_entries",
+                        data_module="multi-select",
+                    ),
                 ),
                 ConditionalRadiosQuestion(
                     "No",
