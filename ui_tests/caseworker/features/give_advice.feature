@@ -358,7 +358,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click the application previously created
     Then for the first good I see "N/A" for "Control entry"
     And for the first good I see "No" for "Licence required"
-    And for the first good I see "ARS" for "Report summary"
+    And for the first good I see "Not added" for "Report summary"
     When I click the recommendations and decision tab
     And I click "Review and combine"
     And I enter "reason for approving" as the reasons for approving
