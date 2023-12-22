@@ -12,7 +12,7 @@ Feature: I want to efficiently search for products created and used by Exporters
     And I add End-user with details "End user", "1234 Industrial Estate", "AU"
     And I add a set of products to the application as json:
       [
-        {"name": "sporting shotgun", "part_number": "SP123", "control_list_entries": ["ML22a"]},
+        {"name": "sporting shotgun", "part_number": "SP123", "control_list_entries": ["6A005b5b1"]},
         {"name": "Sodium chloride", "part_number": "NACL", "control_list_entries": ["PL9010"]},
         {"name": "Cleaning kit", "part_number": "PN156", "control_list_entries": ["ML1a"]},
         {"name": "Magnetic sensor", "part_number": "MAG690", "control_list_entries": ["6A006"]},
@@ -84,7 +84,7 @@ Feature: I want to efficiently search for products created and used by Exporters
 
     # select a suggestion
     When I select suggestion for "name" with value "sporting rifle" and submit
-    Then I see below search results as json:
+    Then I should see below hit in search results as json:
       {
         "num_results": 1,
         "hits": [
@@ -108,7 +108,7 @@ Feature: I want to efficiently search for products created and used by Exporters
 
     # search string without selecting suggestions
     When I enter search string as "chemical AND mixtures" and submit
-    Then I see below search results as json:
+    Then I should see below hit in search results as json:
       {
         "num_results": 1,
         "hits": [
@@ -127,8 +127,8 @@ Feature: I want to efficiently search for products created and used by Exporters
       }
 
     # Searching using Exporter suggested CLE should not give any results
-    When I enter search string as "ML22a" and submit
-    Then I see below search results as json:
+    When I enter search string as "6A005b5b1" and submit
+    Then I should see below hit in search results as json:
       {
         "num_results": 0,
         "hits": []

@@ -36,11 +36,15 @@ def enter_search_text(driver, search_text):
 def enter_search_text(driver, num_suggestions, field, field_values):
     suggestions = ProductSearchPage(driver).get_current_suggestions()
 
+    # As other tests can create products in the db there can be more than the
+    # expected number of suggestions hence collect all results and check for
+    # the presence of expected suggestions in those results
     suggestions_for_field = [s for s in suggestions if s["key"] == field]
-    assert len(suggestions_for_field) == int(num_suggestions)
-    actual_values = sorted([s["value"] for s in suggestions if s["key"] == field])
-    expected = sorted(field_values.split(","))
-    assert actual_values == expected
+    assert len(suggestions_for_field) >= int(num_suggestions)
+
+    actual_values = {s["value"] for s in suggestions if s["key"] == field}
+    expected = set(field_values.split(","))
+    assert expected.intersection(actual_values) == expected
 
 
 @when(parsers.parse('I select suggestion for "{field}" with value "{value}" and submit'))
@@ -49,7 +53,7 @@ def select_suggestion_with_value(driver, field, value):
     functions.click_submit(driver)
 
 
-@then(parsers.parse("I see below search results as json:\n{results_data}"))
+@then(parsers.parse("I should see below hit in search results as json:\n{results_data}"))
 def verify_search_results(driver, results_data):
     results = json.loads(results_data.replace("\n", ""))
 
@@ -60,12 +64,19 @@ def verify_search_results(driver, results_data):
     if results_section.text != "":
         result_elements = driver.find_elements(by=By.CLASS_NAME, value="search-result")
 
-    assert len(result_elements) == results["num_results"]
+    # As other tests can create products in the db there can be more than the
+    # expected number of results hence collect all results and check for
+    # the presence of expected hit in those results
+    assert len(result_elements) >= results["num_results"]
 
-    for index, element in enumerate(result_elements):
-        actual = ProductSearchPage(driver).get_result_row_data(element)
-        expected = results["hits"][index]
-        expected["Assessment date"] = datetime.today().strftime("%d %B %Y")
+    actual_results = [ProductSearchPage(driver).get_result_row_data(element) for element in result_elements]
 
-        for key in expected.keys():
-            assert expected[key] == actual[key]
+    for expected_hit in results["hits"]:
+        expected_hit["Assessment date"] = datetime.today().strftime("%d %B %Y")
+
+        matching_results = [item for item in actual_results if item["name"] == expected_hit["name"]]
+        assert len(matching_results) == 1
+
+        actual_result = matching_results[0]
+        for key in expected_hit.keys():
+            assert expected_hit[key] == actual_result[key]
