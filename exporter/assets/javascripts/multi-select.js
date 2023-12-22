@@ -1,5 +1,38 @@
 import accessibleAutocomplete from "accessible-autocomplete";
 
+class SelectedOptions {
+  constructor($el, $multiSelect) {
+    this.$el = $el;
+    this.$multiSelect = $multiSelect;
+  }
+
+  init() {
+    this.$ul = document.createElement("ul");
+    this.$el.appendChild(this.$ul);
+
+    this.render();
+    this.setupListeners();
+  }
+
+  handleChange() {
+    this.render();
+  }
+
+  setupListeners() {
+    this.$multiSelect.addEventListener("change", () => this.handleChange());
+  }
+
+  render() {
+    this.$ul.innerHTML = "";
+
+    for (const option of this.$multiSelect.selectedOptions) {
+      const li = document.createElement("li");
+      li.textContent = option.textContent;
+      this.$ul.appendChild(li);
+    }
+  }
+}
+
 const getOptions = ($el) => {
   const map = {};
   const values = [];
@@ -17,6 +50,7 @@ const handleOnConfirm = (accessibleAutocompleteElement, map, query) => {
     return;
   }
   option.selected = true;
+  option.dispatchEvent(new Event("change", { bubbles: true }));
   setTimeout(() => (accessibleAutocompleteElement.value = ""), 0);
 };
 
@@ -33,17 +67,21 @@ const initMultiSelect = ($el) => {
       handleOnConfirm(accessibleAutocompleteElement, map, query),
   };
 
-  const element = document.createElement("div");
-  $el.parentNode.insertBefore(element, $el);
+  const autocompleteWrapper = document.createElement("div");
 
+  $el.parentNode.insertBefore(autocompleteWrapper, $el);
   $el.id = `${id}-select`;
-
   accessibleAutocomplete({
     ...configurationOptions,
-    element: element,
+    element: autocompleteWrapper,
   });
 
   accessibleAutocompleteElement = document.querySelector(`#${id}`);
+
+  const selectedOptionsWrapper = document.createElement("div");
+  $el.parentNode.insertBefore(selectedOptionsWrapper, $el);
+  const selectedOptions = new SelectedOptions(selectedOptionsWrapper, $el);
+  selectedOptions.init();
 };
 
 const initMultiSelects = () => {
