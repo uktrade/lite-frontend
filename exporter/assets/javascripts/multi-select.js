@@ -27,7 +27,19 @@ class SelectedOptions {
 
     for (const option of this.$multiSelect.selectedOptions) {
       const li = document.createElement("li");
-      li.textContent = option.textContent;
+
+      const span = document.createElement("span");
+      span.textContent = option.textContent;
+      li.appendChild(span);
+
+      const button = document.createElement("button");
+      button.textContent = "Remove";
+      li.appendChild(button);
+      button.addEventListener("click", () => {
+        option.selected = false;
+        option.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+
       this.$ul.appendChild(li);
     }
   }
