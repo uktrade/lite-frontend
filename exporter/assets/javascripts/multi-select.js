@@ -94,6 +94,8 @@ const initMultiSelect = ($el) => {
   $el.parentNode.insertBefore(selectedOptionsWrapper, $el);
   const selectedOptions = new SelectedOptions(selectedOptionsWrapper, $el);
   selectedOptions.init();
+
+  $el.style.display = "none";
 };
 
 const initMultiSelects = () => {
