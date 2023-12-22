@@ -1,4 +1,5 @@
 import tippy from "tippy.js";
+import { hideOnEsc, makeFocusable } from "./tippy-plugins";
 
 export default function initMenuTooltips() {
   $("#link-menu").attr("href", "#");
@@ -25,11 +26,15 @@ export default function initMenuTooltips() {
     },
     allowHTML: true,
     animation: "scale-subtle",
+    interactive: true,
+    plugins: [hideOnEsc, makeFocusable],
   });
 
   tippy(".app-flag--label", {
     content(reference) {
       return reference.getAttribute("data-label");
     },
+    interactive: true,
+    plugins: [hideOnEsc, makeFocusable],
   });
 }

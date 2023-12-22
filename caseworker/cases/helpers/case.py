@@ -22,7 +22,7 @@ from caseworker.cases.services import (
 )
 from caseworker.core.constants import GENERATED_DOCUMENT
 from caseworker.core.helpers import generate_activity_filters
-from caseworker.core.objects import Tab, TabCollection
+from caseworker.core.objects import Tab
 from caseworker.core.services import get_user_permissions, get_status_properties, get_permissible_statuses
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import CasePage, ApplicationPage
@@ -44,16 +44,6 @@ class Tabs:
     ADDITIONAL_CONTACTS = Tab("additional-contacts", CasePage.Tabs.ADDITIONAL_CONTACTS, "additional-contacts")
     ECJU_QUERIES = Tab("ecju-queries", CasePage.Tabs.ECJU_QUERIES, "ecju-queries")
     ACTIVITY = Tab("activity", CasePage.Tabs.CASE_NOTES_AND_TIMELINE, "activity")
-    ADVICE = TabCollection(
-        "advice",
-        "Recommendations and decision",
-        children=[
-            Tab("user-advice", CasePage.Tabs.USER_ADVICE, "user-advice"),
-            Tab("team-advice", CasePage.Tabs.TEAM_ADVICE, "team-advice"),
-            Tab("final-advice", CasePage.Tabs.FINAL_ADVICE, "final-advice"),
-        ],
-    )
-    COMPLIANCE_LICENCES = Tab("compliance-licences", CasePage.Tabs.LICENCES, "compliance-licences")
 
 
 class Slices:
