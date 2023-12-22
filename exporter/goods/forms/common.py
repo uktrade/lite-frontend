@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 
-from crispy_forms_gds.layout import Field, HTML, Layout
+from crispy_forms_gds.layout import Field, HTML
 
 from django import forms
 from django.db import models
@@ -70,7 +70,7 @@ class ProductControlListEntryForm(BaseForm):
 
     control_list_entries = forms.MultipleChoiceField(
         choices=(),  # set in __init__
-        label="",
+        label="Enter the control list entry (type to get suggestions)",
         required=False,
         # setting id for javascript to use
         widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
@@ -88,11 +88,6 @@ class ProductControlListEntryForm(BaseForm):
                 "is_good_controlled",
                 ConditionalRadiosQuestion(
                     "Yes",
-                    Layout(
-                        HTML(
-                            '<label class="govuk-label" for="screen_reader_for_cle">Enter the control list entry (type to get suggestions)</label>'
-                        ),
-                    ),
                     "control_list_entries",
                 ),
                 ConditionalRadiosQuestion(
