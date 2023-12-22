@@ -1059,11 +1059,6 @@ def assess_product_report_summary_subject(driver, subject):
     ProductAssessmentPage(driver).assess_report_summary_subject(subject)
 
 
-@when(parsers.parse('I assess regime as "{regime}" with regime entry as "{regime_entry}"'))  # noqa
-def assess_product_regime(driver, regime, regime_entry):
-    ProductAssessmentPage(driver).assess_regime(regime, regime_entry)
-
-
 @when(parsers.parse("I do not add any regimes"))  # noqa
 def mark_regimes_as_none(driver):
     ProductAssessmentPage(driver).mark_regime_none()

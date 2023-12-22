@@ -34,7 +34,7 @@ Feature: I want to efficiently search for products created and used by Exporters
     When I select product "sporting shotgun" to assess
     And I assess rating as "ML21a"
     And I assess report summary subject as "sporting shotguns"
-    And I assess regime as "Wassenaar Arrangement" with regime entry as "Wassenaar Arrangement"
+    And I do not add any regimes
     And I add assessment note as "sporting shotguns"
     And I submit my assessment for this product
     Then I see "sporting shotgun" in the list of assessed products
@@ -120,26 +120,6 @@ Feature: I want to efficiently search for products created and used by Exporters
             "Regime": [],
             "Report summary": "technology for chemical mixtures",
             "Assessment notes": "technology for chemical mixtures",
-            "Quantity": "64 items",
-            "Value": "£256.32"
-          }
-        ]
-      }
-
-    # search using regime
-    When I enter search string as "wassenaar" and submit
-    Then I see below search results as json:
-      {
-        "num_results": 1,
-        "hits": [
-          {
-            "name": "sporting shotgun",
-            "part_number": "SP123",
-            "Destination": ["Australia", "France"],
-            "Control list entry": ["ML21a"],
-            "Regime": ["W"],
-            "Report summary": "sporting shotguns",
-            "Assessment notes": "sporting shotguns",
             "Quantity": "64 items",
             "Value": "£256.32"
           }

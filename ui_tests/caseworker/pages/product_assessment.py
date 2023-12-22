@@ -52,32 +52,6 @@ class ProductAssessmentPage(BasePage):
                 ars_subject_input.send_keys(Keys.RETURN)
                 break
 
-    def assess_regime(self, regime, regime_entry):
-        parent_div = self.driver.find_element(by=By.CLASS_NAME, value="govuk-checkboxes--conditional")
-        check_box_divs = parent_div.find_elements(by=By.CLASS_NAME, value="govuk-checkboxes__item")
-
-        # find checkbox related to given regime
-        for item in check_box_divs:
-            if item.text == regime:
-                input_element = item.find_element(by=By.CLASS_NAME, value="govuk-checkboxes__input")
-                input_element.click()
-                break
-        else:
-            raise ValueError(f"Regime {regime} not found")
-
-        if regime == "None":
-            return
-
-        # Now select regime entry
-        if regime in ["Wassenaar Arrangement", "Chemical Weapons Convention", "Australia Group"]:
-            radio_buttons = parent_div.find_elements(by=By.CLASS_NAME, value="govuk-radios__item")
-            for r in radio_buttons:
-                if r.text == regime_entry:
-                    r.click()
-                    break
-            else:
-                raise ValueError(f"Regime entry {regime_entry} not found")
-
     def mark_regime_none(self):
         parent_div = self.driver.find_element(by=By.CLASS_NAME, value="govuk-checkboxes--conditional")
         check_box_divs = parent_div.find_elements(by=By.CLASS_NAME, value="govuk-checkboxes__item")
