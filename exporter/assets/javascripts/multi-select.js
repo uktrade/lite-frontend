@@ -37,9 +37,9 @@ const initMultiSelect = ($el) => {
   };
 
   const autocompleteWrapper = document.createElement("div");
-
   $el.parentNode.insertBefore(autocompleteWrapper, $el);
   $el.id = `${id}-select`;
+
   accessibleAutocomplete({
     ...configurationOptions,
     element: autocompleteWrapper,
@@ -48,17 +48,15 @@ const initMultiSelect = ($el) => {
   accessibleAutocompleteElement = document.querySelector(`#${id}`);
 
   const selectedOptionsWrapper = document.createElement("div");
-  const selectedHeader = document.createElement("p");
-  selectedHeader.classList.add("govuk-visually-hidden");
-  selectedHeader.textContent = `Selected ${$el.dataset.multiSelectObjectsAsPlural}`;
-  selectedOptionsWrapper.appendChild(selectedHeader);
-  $el.parentNode.insertBefore(selectedOptionsWrapper, $el);
-  const selectedOptions = new SelectedOptions(selectedOptionsWrapper, $el);
+  const selectedOptions = new SelectedOptions(
+    selectedOptionsWrapper,
+    $el,
+    $el.dataset.multiSelectObjectsAsPlural
+  );
   selectedOptions.init();
 
+  $el.parentNode.insertBefore(selectedOptionsWrapper, $el);
   $el.style.display = "none";
-
-  selectedOptionsWrapper.ariaLive = "polite";
 };
 
 const initMultiSelects = () => {
