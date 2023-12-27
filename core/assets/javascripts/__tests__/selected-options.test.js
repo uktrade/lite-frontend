@@ -31,13 +31,25 @@ describe("Selected options", () => {
   test("Renders list on init", () => {
     const [$container, $multiSelect] = createElements();
 
-    const selectedOptions = new SelectedOptions($container, $multiSelect);
+    const selectedOptions = new SelectedOptions(
+      $container,
+      $multiSelect,
+      "objects"
+    );
 
     expect($container).toBeEmptyDOMElement();
-
     selectedOptions.init();
-    const $ul = $container.querySelector("ul");
-    expect($container).toContainElement($ul);
+
+    const $wrapper = $container.querySelector("div");
+    expect($container).toContainElement($wrapper);
+    expect($wrapper.ariaLive).toBe("polite");
+
+    const $p = $wrapper.querySelector("p");
+    console.log($wrapper.innerHTML);
+    expect($p).toHaveTextContent("Selected objects");
+    expect($p).toHaveClass("govuk-visually-hidden");
+
+    const $ul = $wrapper.querySelector("ul");
     expect($ul).toBeEmptyDOMElement();
   });
 
@@ -68,20 +80,21 @@ describe("Selected options", () => {
     const selectedOptions = new SelectedOptions($container, $multiSelect);
     selectedOptions.init();
 
-    const $ul = $container.querySelector("ul");
-
     await user.selectOptions($multiSelect, ["1"]);
+    let $ul = $container.querySelector("ul");
     let $lis = $ul.querySelectorAll("li");
     expect($lis).toHaveLength(1);
     expect($lis[0]).toHaveTextContent("One");
 
     await user.selectOptions($multiSelect, ["3"]);
+    $ul = $container.querySelector("ul");
     $lis = $ul.querySelectorAll("li");
     expect($lis).toHaveLength(2);
     expect($lis[0]).toHaveTextContent("One");
     expect($lis[1]).toHaveTextContent("Three");
 
     await user.deselectOptions($multiSelect, ["1", "3"]);
+    $ul = $container.querySelector("ul");
     $lis = $ul.querySelectorAll("li");
     expect($lis).toHaveLength(0);
   });
@@ -99,19 +112,21 @@ describe("Selected options", () => {
 
     selectedOptions.init();
 
-    const $ul = $container.querySelector("ul");
+    let $ul = $container.querySelector("ul");
     let $lis = $ul.querySelectorAll("li");
     expect($lis).toHaveLength(2);
 
     const $removeButtons = getAllByText($ul, "Remove");
 
     await user.click($removeButtons[0]);
+    $ul = $container.querySelector("ul");
     $lis = $ul.querySelectorAll("li");
     expect($multiSelect.options[0].selected).toBeFalsy();
     expect($lis).toHaveLength(1);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.click($removeButtons[1]);
+    $ul = $container.querySelector("ul");
     $lis = $ul.querySelectorAll("li");
     expect($multiSelect.options[2].selected).toBeFalsy();
     expect($lis).toHaveLength(0);

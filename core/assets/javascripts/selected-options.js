@@ -1,12 +1,15 @@
 class SelectedOptions {
-  constructor($el, $multiSelect) {
+  constructor($el, $multiSelect, multiSelectObjectsAsPlural) {
     this.$el = $el;
     this.$multiSelect = $multiSelect;
+    this.multiSelectObjectsAsPlural = multiSelectObjectsAsPlural;
   }
 
   init() {
-    this.$ul = document.createElement("ul");
-    this.$el.appendChild(this.$ul);
+    this.$container = document.createElement("div");
+    this.$container.ariaLive = "polite";
+
+    this.$el.appendChild(this.$container);
 
     this.render();
     this.setupListeners();
@@ -21,7 +24,15 @@ class SelectedOptions {
   }
 
   render() {
-    this.$ul.innerHTML = "";
+    this.$container.innerHTML = "";
+
+    const $p = document.createElement("p");
+    $p.textContent = `Selected ${this.multiSelectObjectsAsPlural}`;
+    $p.classList.add("govuk-visually-hidden");
+    this.$container.appendChild($p);
+
+    const $ul = document.createElement("ul");
+    this.$container.appendChild($ul);
 
     for (const option of this.$multiSelect.selectedOptions) {
       const li = document.createElement("li");
@@ -38,7 +49,7 @@ class SelectedOptions {
         option.dispatchEvent(new Event("change", { bubbles: true }));
       });
 
-      this.$ul.appendChild(li);
+      $ul.appendChild(li);
     }
   }
 }
