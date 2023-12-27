@@ -93,7 +93,7 @@ const initMultiSelect = ($el) => {
   const selectedOptionsWrapper = document.createElement("div");
   const selectedHeader = document.createElement("p");
   selectedHeader.classList.add("govuk-visually-hidden");
-  selectedHeader.textContent = "Selected control list entries";
+  selectedHeader.textContent = `Selected ${$el.dataset.multiSelectObjectsAsPlural}`;
   selectedOptionsWrapper.appendChild(selectedHeader);
   $el.parentNode.insertBefore(selectedOptionsWrapper, $el);
   const selectedOptions = new SelectedOptions(selectedOptionsWrapper, $el);
