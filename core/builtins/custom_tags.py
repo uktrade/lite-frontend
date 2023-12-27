@@ -1,6 +1,7 @@
 from __future__ import division
 
 import datetime
+import dateparser
 import json
 import os
 import re
@@ -980,3 +981,15 @@ def get_unique_destinations(good_on_application_hit):
                 unique_destinations.append(destination)
 
     return unique_destinations
+
+
+@register.filter
+def parse_date(date_string):
+    if date_string:
+        return dateparser.parse(date_string)
+    return None
+
+
+@register.filter
+def pprint_dict(value):
+    return json.dumps(value, indent=4)

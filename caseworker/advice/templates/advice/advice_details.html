@@ -1,5 +1,5 @@
 {% load advice_tags %}
-{% load parse_date from spire_tags %}
+{% load static custom_tags %}
 {% with user=advice.0.user decision=advice.0.type.key %}
 <table id="table-licenceable-products" class="govuk-table advice-table">
     {% if decision == 'approve' or decision == 'proviso' %}

@@ -14,7 +14,6 @@ MOCK_SSO_USER_LAST_NAME = env.str("MOCK_SSO_USER_LAST_NAME", "")
 INSTALLED_APPS += [
     "rest_framework",
     "caseworker.core",
-    "caseworker.spire",
     "caseworker.letter_templates",
     "caseworker.external_data",
     "caseworker.advice",
