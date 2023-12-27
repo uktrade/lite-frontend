@@ -660,15 +660,12 @@ class FirearmSerialNumbersForm(BaseForm):
 
         self.fields["serial_numbers"] = SerialNumbersField(
             number_of_items,
-            label="",
+            label="Enter one serial number for every row",
             required=False,
         )
 
     def get_layout_fields(self):
         return (
-            HTML(
-                '<label for="id_SERIAL_NUMBERS-serial_numbers_0" class="govuk-label">Enter one serial number for every row</label>'
-            ),
             HTML.p(f"{self.number_of_items} item" + "s" if self.number_of_items > 1 else ""),
             "serial_numbers",
         )
