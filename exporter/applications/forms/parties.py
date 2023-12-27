@@ -212,7 +212,7 @@ class PartySubTypeSelectForm(forms.Form):
 class PartyNameForm(forms.Form):
     title = "End user name"
     name = forms.CharField(
-        label="",
+        label="End user name",
         error_messages={"required": "Enter a name"},
         validators=[
             MaxLengthValidator(
@@ -235,7 +235,7 @@ class PartyNameForm(forms.Form):
 
 class PartyWebsiteForm(forms.Form):
     title = "End user website address (optional)"
-    website = forms.CharField(required=False, label="")
+    website = forms.CharField(required=False, label="End user website address (optional)")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -279,7 +279,7 @@ class PartyAddressForm(forms.Form):
 class PartySignatoryNameForm(forms.Form):
     title = "Signatory name"
     signatory_name_euu = forms.CharField(
-        label="",
+        label="Signatory name",
         help_text="This is the name of the person who signed the end user undertaking or stockist undertaking",
         error_messages={"required": "Enter a name"},
     )
