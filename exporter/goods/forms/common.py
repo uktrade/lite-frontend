@@ -89,6 +89,7 @@ class ProductControlListEntryForm(BaseForm):
                     Field(
                         "control_list_entries",
                         data_module="multi-select",
+                        data_multi_select_objects_as_plural="control list entries",
                     ),
                 ),
                 ConditionalRadiosQuestion(
