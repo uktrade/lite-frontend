@@ -41,6 +41,7 @@ describe("MultiSelector", () => {
     expect(config.id).toEqual("select-multiple");
     expect(config.autoselect).toEqual(true);
     expect(config.source).toEqual(["One", "Two", "Three"]);
+    expect(config.displayMenu).toEqual("overlay");
     expect(config.element).toEqual($wrapper);
   });
 

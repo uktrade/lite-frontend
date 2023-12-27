@@ -34,6 +34,7 @@ class MultiSelector {
       id: this.originalId,
       autoselect: true,
       source: this.values,
+      displayMenu: "overlay",
       onConfirm: (query) => this.handleOnConfirm(query),
     };
 
