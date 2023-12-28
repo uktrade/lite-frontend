@@ -1,3 +1,5 @@
+import EventEmitter from "events";
+
 class UniqueSuggestionsCollector {
   constructor() {
     this.suggestions = [];
@@ -35,10 +37,10 @@ class UniqueSuggestionsCollector {
   }
 }
 
-class CLESuggestions {
-  constructor($suggestionsContainer, onSelectSuggestions) {
+class CLESuggestions extends EventEmitter {
+  constructor($suggestionsContainer) {
+    super();
     this.$suggestionsContainer = $suggestionsContainer;
-    this.onSelectSuggestions = onSelectSuggestions;
   }
 
   getSuggestionButton(suggestionText) {
@@ -106,7 +108,7 @@ class CLESuggestions {
 
   handleSuggestionButtonClick(evt, suggestion) {
     evt.preventDefault();
-    this.onSelectSuggestions(suggestion);
+    this.emit("change", suggestion);
   }
 }
 

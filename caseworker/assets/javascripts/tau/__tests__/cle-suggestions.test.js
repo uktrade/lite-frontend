@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 
 import CLESuggestions from "../cle-suggestions";
 
-let buttonContainer, component, callbackSpy;
+let buttonContainer, component;
 
 const createElements = () => {
   document.body.innerHTML = `
@@ -15,9 +15,8 @@ const createElements = () => {
 };
 
 const createComponent = () => {
-  callbackSpy = jest.fn();
   buttonContainer = createElements();
-  component = new CLESuggestions(buttonContainer, callbackSpy);
+  component = new CLESuggestions(buttonContainer);
   return component;
 };
 
@@ -135,6 +134,8 @@ describe("CLE suggestions", () => {
   });
 
   test("Callback called on button click", async () => {
+    const callbackSpy = jest.fn();
+    component.on("change", (suggestion) => callbackSpy(suggestion));
     component.setProducts([
       {
         controlListEntries: {
