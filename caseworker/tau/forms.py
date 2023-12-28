@@ -38,11 +38,8 @@ class TAUEditForm(forms.Form):
 
     control_list_entries = forms.MultipleChoiceField(
         label="Add a control list entry or end-use control",
-        help_text="Or type for suggestions",
         choices=(),  # set in __init__
         required=False,
-        # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
     )
 
     does_not_have_control_list_entries = forms.BooleanField(
