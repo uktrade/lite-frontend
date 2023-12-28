@@ -1,3 +1,5 @@
+import json
+
 from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
@@ -55,6 +57,7 @@ from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from tests_common.helpers import applications
 from ui_tests.exporter.pages.add_goods_page import AddGoodPage
+from ui_tests.caseworker.pages.product_assessment import ProductAssessmentPage
 
 
 @when("I go to the internal homepage")  # noqa
@@ -937,3 +940,140 @@ def i_remove_case_officer_from_case(driver):  # noqa
 @given(parsers.parse('I set the case status to "{status}"'))
 def set_case_status(driver, status, api_test_client, context):
     api_test_client.cases.manage_case_status(api_test_client.context["case_id"], status=status.lower())
+
+
+@given(parsers.parse('I create a standard draft application with "{reference}" as reference'))
+def create_standard_draft_with_reference(api_test_client, context, reference):
+    draft = {
+        "name": reference,
+        "application_type": "siel",
+        "export_type": "permanent",
+        "have_you_been_informed": "yes",
+        "reference_number_on_information_form": "1234",
+    }
+    draft_id = api_test_client.applications.create_draft(draft)
+
+    end_use_details = {
+        "intended_end_use": "Research and development",
+        "is_military_end_use_controls": False,
+        "is_informed_wmd": False,
+        "is_suspected_wmd": False,
+        "is_eu_military": False,
+    }
+    route_of_goods = {"is_shipped_waybill_or_lading": True}
+    additional_information = {"is_mod_security_approved": False}
+
+    api_test_client.applications.add_end_use_details(draft_id=draft_id, details=end_use_details)
+    api_test_client.applications.add_route_of_goods(draft_id=draft_id, route_of_goods=route_of_goods)
+    api_test_client.applications.add_additional_information(draft_id=draft_id, json=additional_information)
+
+    context.case_id = draft_id
+
+
+@given(parsers.parse('I add End-user with details "{name}", "{address}", "{country}"'))
+def add_end_user_to_application(api_test_client, context, name, address, country):
+    party_type = "end_user"
+    end_user = {
+        "type": party_type,
+        "name": name,
+        "address": address,
+        "country": country,
+        "sub_type": "government",
+        "website": fake.uri(),
+        "signatory_name_euu": name,
+        "end_user_document_available": False,
+        "end_user_document_missing_reason": "document not available",
+    }
+    api_test_client.applications.parties.add_party(context.case_id, party_type, end_user)
+
+
+@given(parsers.parse('I add Consignee with details "{name}", "{address}", "{country}"'))
+def add_consignee_to_application(api_test_client, context, name, address, country):
+    party_type = "consignee"
+    consignee = {
+        "type": party_type,
+        "name": name,
+        "address": address,
+        "country": country,
+        "sub_type": "government",
+        "website": fake.uri(),
+    }
+    api_test_client.applications.parties.add_party(context.case_id, party_type, consignee)
+
+
+@given(parsers.parse("I add a set of products to the application as json:\n{products_data}"))
+def add_products_to_application(api_test_client, context, products_data):
+    good_on_application_ids = []
+    products = json.loads(products_data.replace("\n", ""))
+    for product in products:
+        data = {
+            **product,
+            "is_good_controlled": True,
+            "is_pv_graded": "no",
+            "item_category": "group2_firearms",
+        }
+        good = api_test_client.applications.goods.post_good(data)
+
+        data = {
+            "good_id": good["id"],
+            "quantity": 64,
+            "unit": "NAR",
+            "value": 256.32,
+            "is_good_incorporated": False,
+        }
+        good_on_application = api_test_client.applications.goods.add_good_to_draft(context.case_id, data)
+        good_on_application_ids.append(good_on_application["id"])
+
+    context.good_on_application_ids = good_on_application_ids
+
+
+@given("the application is submitted")
+def application_submitted(api_test_client, context):
+    assert context.case_id
+    api_test_client.applications.submit_application(context.case_id)
+    context.reference_code = api_test_client.context["reference_code"]
+
+
+@when(parsers.parse('I select product "{name}" to assess'))  # noqa
+def select_product_name_to_assess(driver, name):
+    unassessed_products = driver.find_elements(by=By.ID, value="unassessed-products")
+    matching_product = [element for element in unassessed_products if name == element.text[3:]]
+    assert len(matching_product) == 1
+
+    check_box = matching_product[0].find_element(by=By.CLASS_NAME, value="govuk-checkboxes__input")
+    check_box.click()
+
+
+@when(parsers.parse('I assess rating as "{rating}"'))  # noqa
+def assess_product_rating(driver, rating):
+    ProductAssessmentPage(driver).assess_rating(rating)
+
+
+@when(parsers.parse('I assess report summary prefix as "{prefix}"'))  # noqa
+def assess_product_report_summary_prefix(driver, prefix):
+    ProductAssessmentPage(driver).assess_report_summary_prefix(prefix)
+
+
+@when(parsers.parse('I assess report summary subject as "{subject}"'))  # noqa
+def assess_product_report_summary_subject(driver, subject):
+    ProductAssessmentPage(driver).assess_report_summary_subject(subject)
+
+
+@when(parsers.parse("I do not add any regimes"))  # noqa
+def mark_regimes_as_none(driver):
+    ProductAssessmentPage(driver).mark_regime_none()
+
+
+@when(parsers.parse('I add assessment note as "{comment}"'))  # noqa
+def assess_product_assessment_note(driver, comment):
+    ProductAssessmentPage(driver).add_assessment_note(comment)
+
+
+@when(parsers.parse("I submit my assessment for this product"))  # noqa
+def submit_product_assessment(driver):
+    functions.click_submit(driver)
+
+
+@then(parsers.parse('I see "{name}" in the list of assessed products'))  # noqa
+def check_product_in_assesse_products(driver, name):
+    ProductAssessmentPage(driver).check_product_assessment_status(name)
