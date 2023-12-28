@@ -88,6 +88,14 @@ class MultiSelector extends EventEmitter {
     this.$el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
+  setFakeOption(text, onRemove) {
+    this.selectedOptions.setFakeOption(text, onRemove);
+  }
+
+  resetFakeOption() {
+    this.selectedOptions.resetFakeOption();
+  }
+
   init() {
     const autocompleteWrapper = this.createAutocompleteWrapper();
     this.$el.id = `${this.originalId}-select`;
@@ -109,6 +117,8 @@ class MultiSelector extends EventEmitter {
       this.$el.dataset.multiSelectObjectsAsPlural
     );
     selectedOptions.init();
+    this.selectedOptions = selectedOptions;
+
     this.$el.parentNode.insertBefore(selectedOptionsWrapper, this.$el);
 
     this.$el.addEventListener("change", () =>

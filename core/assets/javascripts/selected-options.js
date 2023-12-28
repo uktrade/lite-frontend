@@ -3,6 +3,8 @@ class SelectedOptions {
     this.$el = $el;
     this.$multiSelect = $multiSelect;
     this.multiSelectObjectsAsPlural = multiSelectObjectsAsPlural;
+
+    this.fakeOption = null;
   }
 
   createContainer() {
@@ -22,6 +24,7 @@ class SelectedOptions {
   }
 
   handleChange() {
+    this.fakeOption = null;
     this.render();
   }
 
@@ -29,28 +32,25 @@ class SelectedOptions {
     this.$multiSelect.addEventListener("change", () => this.handleChange());
   }
 
-  createRemoveButton($option) {
+  createRemoveButton(onRemove) {
     const $button = document.createElement("button");
     $button.textContent = "Remove";
     $button.classList.add("selected-options__option-remove");
-    $button.addEventListener("click", () => {
-      $option.selected = false;
-      $option.dispatchEvent(new Event("change", { bubbles: true }));
-    });
+    $button.addEventListener("click", () => onRemove());
 
     return $button;
   }
 
-  createListItem($option) {
+  createListItem(text, onRemove) {
     const $li = document.createElement("li");
     $li.classList.add("selected-options__option");
 
     const $span = document.createElement("span");
-    $span.textContent = $option.textContent;
+    $span.textContent = text;
     $span.classList.add("selected-options__option-text");
     $li.appendChild($span);
 
-    const $button = this.createRemoveButton($option);
+    const $button = this.createRemoveButton(onRemove);
     $li.appendChild($button);
 
     return $li;
@@ -67,8 +67,22 @@ class SelectedOptions {
   createList() {
     const $ul = document.createElement("ul");
     $ul.classList.add("selected-options__options");
-    for (const option of this.$multiSelect.selectedOptions) {
-      const $li = this.createListItem(option);
+
+    for (const $option of this.$multiSelect.selectedOptions) {
+      const $li = this.createListItem($option.textContent, () => {
+        $option.selected = false;
+        $option.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      $ul.appendChild($li);
+    }
+
+    if (this.fakeOption) {
+      const [text, onRemove] = this.fakeOption;
+      const $li = this.createListItem(text, () => {
+        onRemove();
+        this.fakeOption = null;
+        this.render();
+      });
       $ul.appendChild($li);
     }
 
@@ -76,7 +90,17 @@ class SelectedOptions {
   }
 
   hasSelectedItems() {
-    return this.$multiSelect.selectedOptions.length > 0;
+    return this.$multiSelect.selectedOptions.length > 0 || this.fakeOption;
+  }
+
+  setFakeOption(text, onRemove) {
+    this.fakeOption = [text, onRemove];
+    this.render();
+  }
+
+  resetFakeOption() {
+    this.fakeOption = null;
+    this.render();
   }
 
   render() {

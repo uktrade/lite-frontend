@@ -10,6 +10,7 @@ class NoSuggestionsTokenField extends EventEmitter {
     this.$noControlListCheckbox.addEventListener("input", (evt) =>
       this.handleNoControlListCheckboxInput(evt)
     );
+    this.handleNoControlListCheckboxInput();
   }
 
   handleNoControlListCheckboxInput() {

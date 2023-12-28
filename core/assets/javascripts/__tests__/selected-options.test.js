@@ -146,4 +146,43 @@ describe("Selected options", () => {
     expect($lis).toHaveLength(0);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
   });
+
+  test("setFakeOption", async () => {
+    const [$container, $multiSelect] = createElements();
+
+    const selectedOptions = new SelectedOptions($container, $multiSelect);
+    selectedOptions.init();
+
+    const onRemoveSpy = jest.fn();
+    selectedOptions.setFakeOption("Fake option", () => onRemoveSpy());
+
+    let $ul = $container.querySelector("ul");
+    let $lis = $ul.querySelectorAll("li");
+    expect($lis).toHaveLength(1);
+    expect($lis[0]).toHaveTextContent("Fake option");
+    expect(onRemoveSpy).toBeCalledTimes(0);
+
+    const $remove = $lis[0].querySelector("button");
+    await user.click($remove);
+    $ul = $container.querySelector("ul");
+    expect($ul).toBeEmptyDOMElement();
+    const $wrapper = $container.querySelector("div");
+    expect($wrapper).toHaveClass("selected-options--empty");
+    expect(onRemoveSpy).toBeCalledTimes(1);
+  });
+
+  test("resetFakeOption", () => {
+    const [$container, $multiSelect] = createElements();
+
+    const selectedOptions = new SelectedOptions($container, $multiSelect);
+    selectedOptions.init();
+
+    selectedOptions.setFakeOption("Fake option", () => {});
+    selectedOptions.resetFakeOption();
+
+    const $ul = $container.querySelector("ul");
+    expect($ul).toBeEmptyDOMElement();
+    const $wrapper = $container.querySelector("div");
+    expect($wrapper).toHaveClass("selected-options--empty");
+  });
 });
