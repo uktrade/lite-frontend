@@ -2509,7 +2509,7 @@ class WizardStepPost(WizardStepPoster):
         super().__init__(*args, **kwargs)
         url = urljoin(self.url, urlparse(self.url).path)
         match = resolve(url)
-        self.view_name = normalize_name(match.func.__name__)
+        self.view_name = normalize_name(match.func.view_class.__name__)
 
     def __call__(self, step_name, data, **kwargs):
         return self.post(
