@@ -3,85 +3,56 @@ import userEvent from "@testing-library/user-event";
 
 import NoSuggestionsTokenField from "../no-suggestions-token-field";
 
-let tokenFieldContainer,
-  noCleCheckbox,
-  mockTokenfield,
-  tokenFieldInput,
-  tokenFieldSet,
-  tokenFieldSetList,
-  component;
+let component, noCleCheckbox;
 
 const createElements = () => {
-  document.body.innerHTML = `
-    <div>
-      <div id="token-field-container">
-        <input type="text" class="tokenfield-input" />
-        <div class="tokenfield-set">
-          <ul></ul>
-        </div>
-      </div>
-      <input type="checkbox" name="no-cle" />
-    </div>
-  `;
+  document.body.innerHTML = '<input type="checkbox" name="no-cle" />';
 
-  mockTokenfield = {
-    emptyItems: jest.fn(),
-  };
-
-  tokenFieldContainer = document.querySelector("#token-field-container");
-  tokenFieldContainer.tokenfield = mockTokenfield;
   noCleCheckbox = document.querySelector("[name=no-cle]");
-  tokenFieldInput = document.querySelector(".tokenfield-input");
-  tokenFieldSet = document.querySelector(".tokenfield-set");
-  tokenFieldSetList = document.querySelector(".tokenfield-set ul");
 
-  return [tokenFieldContainer, noCleCheckbox];
+  return [noCleCheckbox];
 };
 
 const createComponent = () => {
   createElements();
-  component = new NoSuggestionsTokenField(
-    "#token-field-container",
-    noCleCheckbox
-  );
+  component = new NoSuggestionsTokenField(noCleCheckbox);
   component.init();
   return component;
 };
 
 describe("No suggestions token field", () => {
+  let user;
+
   beforeEach(() => {
     createComponent();
+    user = userEvent.setup();
   });
 
-  test("Checking no cle checkbox shows 'None' CLE entry", async () => {
-    await userEvent.click(noCleCheckbox);
+  test("reset", () => {
+    const onInputSpy = jest.fn();
+    noCleCheckbox.addEventListener("input", () => onInputSpy());
 
-    expect(mockTokenfield.emptyItems).toHaveBeenCalled();
-    expect(tokenFieldInput).toHaveStyle("display: none");
-    expect(tokenFieldSetList).toContainHTML(
-      `<li class="tokenfield-set-item tau-none-item"><span class="item-label">None</span><a class="item-remove" tabindex="-1">×</a></li>`
-    );
-  });
+    const onChangeSpy = jest.fn();
+    component.on("change", (checked) => onChangeSpy(checked));
 
-  test("Unchecking no cle checkbox removes 'None' CLE entry", async () => {
-    await userEvent.click(noCleCheckbox);
-    await userEvent.click(noCleCheckbox);
-    expect(tokenFieldInput).not.toHaveStyle("display: none");
-    expect(tokenFieldSetList).toBeEmptyDOMElement();
-  });
-
-  test("Click 'None' CLE entry removes 'None' CLE entry", async () => {
-    await userEvent.click(noCleCheckbox);
-    const noneEntry = document.querySelector(".item-remove");
-    await userEvent.click(noneEntry);
-    expect(tokenFieldInput).not.toHaveStyle("display: none");
-    expect(tokenFieldSetList).toBeEmptyDOMElement();
-  });
-
-  test("Calling reset removes 'None' CLE entry", async () => {
-    await userEvent.click(noCleCheckbox);
+    noCleCheckbox.checked = true;
     component.reset();
-    expect(tokenFieldInput).not.toHaveStyle("display: none");
-    expect(tokenFieldSetList).toBeEmptyDOMElement();
+    expect(noCleCheckbox.checked).toBeFalsy();
+    expect(onInputSpy).toBeCalledTimes(1);
+    expect(onChangeSpy).toBeCalledTimes(1);
+    expect(onChangeSpy).toBeCalledWith(false);
+  });
+
+  test("onChange", async () => {
+    const onChangeSpy = jest.fn();
+    component.on("change", (checked) => onChangeSpy(checked));
+
+    await user.click(noCleCheckbox);
+    expect(onChangeSpy).toBeCalledTimes(1);
+    expect(onChangeSpy).toBeCalledWith(true);
+
+    await user.click(noCleCheckbox);
+    expect(onChangeSpy).toBeCalledTimes(2);
+    expect(onChangeSpy).toBeCalledWith(false);
   });
 });

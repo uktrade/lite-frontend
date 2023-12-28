@@ -6,6 +6,7 @@ import DisablingButton from "core/disabling-button";
 import Headline from "./assessment-form/headline";
 import SelectProducts from "./assessment-form/select-products";
 import CLESuggestions from "./tau/cle-suggestions";
+import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 import MultiSelector from "core/multi-selector";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
@@ -92,6 +93,26 @@ const initAssessmentForm = () => {
   const headlineEl = document.querySelector(".assessment-form__headline");
   const headline = new Headline(headlineEl);
 
+  const noControlListCheckboxEl = document.querySelector(
+    "[name=does_not_have_control_list_entries]"
+  );
+  const noSuggestionsTokenField = new NoSuggestionsTokenField(
+    noControlListCheckboxEl
+  );
+  noSuggestionsTokenField.init();
+  noSuggestionsTokenField.on("change", (checked) => {
+    if (!checked) {
+      return;
+    }
+    multiSelector.setOptions([]);
+  });
+  multiSelector.on("change", (selected) => {
+    if (selected.length === 0) {
+      return;
+    }
+    noSuggestionsTokenField.reset();
+  });
+
   const suggestionsEl = document.createElement("div");
   suggestionsEl.classList.add("tau-assessment-form__cle-suggestions");
   const controlListEntriesLabel = document.querySelector(
@@ -105,6 +126,7 @@ const initAssessmentForm = () => {
     suggestionsEl,
     (selectedSuggestions) => {
       multiSelector.addOptions(selectedSuggestions);
+      noSuggestionsTokenField.reset();
     }
   );
 
