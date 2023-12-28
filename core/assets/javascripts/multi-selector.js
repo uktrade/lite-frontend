@@ -6,27 +6,28 @@ class MultiSelector {
     this.$el = $el;
     this.originalId = $el.id;
     this.accessibleAutocompleteElement = null;
-    [this.map, this.values] = this.getOptions();
+    [this.labelMap, this.valueMap, this.values] = this.getOptions();
   }
 
   getOptions() {
-    const map = {};
+    const labelMap = {};
+    const valueMap = {};
     const values = [];
     for (const option of this.$el.options) {
-      const optionText = option.textContent;
-      map[optionText] = option;
-      values.push(optionText);
+      labelMap[option.textContent] = option;
+      valueMap[option.value] = option;
+      values.push(option.textContent);
     }
-    return [map, values];
+    return [labelMap, valueMap, values];
   }
 
   handleOnConfirm(query) {
-    const option = this.map[query];
+    const option = this.labelMap[query];
     if (!option) {
       return;
     }
     option.selected = true;
-    option.dispatchEvent(new Event("change", { bubbles: true }));
+    this.$el.dispatchEvent(new Event("change", { bubbles: true }));
 
     // We have to set the value like this due to the fact that the accessible
     // autocomplete will re-render and retain its value (because it's a React
@@ -60,6 +61,28 @@ class MultiSelector {
 
     this.$el.parentNode.insertBefore(autocompleteWrapper, this.$el);
     return autocompleteWrapper;
+  }
+
+  setOptions(values) {
+    for (const $option of [...this.$el.selectedOptions]) {
+      $option.selected = false;
+    }
+
+    for (const value of values) {
+      const $option = this.valueMap[value];
+      $option.selected = true;
+    }
+
+    this.$el.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  addOptions(values) {
+    for (const value of values) {
+      const $option = this.valueMap[value];
+      $option.selected = true;
+    }
+
+    this.$el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   init() {

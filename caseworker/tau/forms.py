@@ -38,6 +38,7 @@ class TAUEditForm(forms.Form):
 
     control_list_entries = forms.MultipleChoiceField(
         label="Add a control list entry or end-use control",
+        help_text="Or type for suggestions",
         choices=(),  # set in __init__
         required=False,
     )
