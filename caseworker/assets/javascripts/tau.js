@@ -5,6 +5,7 @@ import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
 import Headline from "./assessment-form/headline";
 import SelectProducts from "./assessment-form/select-products";
+import CLESuggestions from "./tau/cle-suggestions";
 import MultiSelector from "core/multi-selector";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
@@ -91,6 +92,22 @@ const initAssessmentForm = () => {
   const headlineEl = document.querySelector(".assessment-form__headline");
   const headline = new Headline(headlineEl);
 
+  const suggestionsEl = document.createElement("div");
+  suggestionsEl.classList.add("tau-assessment-form__cle-suggestions");
+  const controlListEntriesLabel = document.querySelector(
+    "[for=id_control_list_entries]"
+  );
+  controlListEntriesLabel.parentNode.insertBefore(
+    suggestionsEl,
+    controlListEntriesLabel.nextSibling
+  );
+  const cleSuggestions = new CLESuggestions(
+    suggestionsEl,
+    (selectedSuggestions) => {
+      multiSelector.addOptions(selectedSuggestions);
+    }
+  );
+
   const goods = document.querySelector("#div_id_goods");
   const checkboxes = goods.querySelectorAll("[name=goods]");
   const products = JSON.parse(
@@ -99,6 +116,7 @@ const initAssessmentForm = () => {
 
   new SelectProducts(checkboxes, products, (selectedProducts) => {
     headline.setProducts(selectedProducts);
+    cleSuggestions.setProducts(selectedProducts);
   }).init();
 };
 

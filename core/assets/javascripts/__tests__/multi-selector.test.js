@@ -141,4 +141,48 @@ describe("MultiSelector", () => {
 
     expect($el).not.toBeVisible();
   });
+
+  test("setOptions", () => {
+    const [, $el] = createElements();
+
+    const onChangeSpy = jest.fn();
+    $el.addEventListener("change", () => onChangeSpy());
+
+    const multiSelector = new MultiSelector($el);
+    multiSelector.init();
+
+    expect($el.selectedOptions).toHaveLength(0);
+
+    multiSelector.setOptions(["1", "3"]);
+    expect([...$el.selectedOptions].map((o) => o.value)).toEqual(["1", "3"]);
+    expect(onChangeSpy).toBeCalledTimes(1);
+
+    multiSelector.setOptions(["2"]);
+    expect([...$el.selectedOptions].map((o) => o.value)).toEqual(["2"]);
+    expect(onChangeSpy).toBeCalledTimes(2);
+  });
+
+  test("addOptions", () => {
+    const [, $el] = createElements();
+
+    const onChangeSpy = jest.fn();
+    $el.addEventListener("change", () => onChangeSpy());
+
+    const multiSelector = new MultiSelector($el);
+    multiSelector.init();
+
+    expect($el.selectedOptions).toHaveLength(0);
+
+    multiSelector.addOptions(["1", "3"]);
+    expect([...$el.selectedOptions].map((o) => o.value)).toEqual(["1", "3"]);
+    expect(onChangeSpy).toBeCalledTimes(1);
+
+    multiSelector.addOptions(["2"]);
+    expect([...$el.selectedOptions].map((o) => o.value)).toEqual([
+      "1",
+      "2",
+      "3",
+    ]);
+    expect(onChangeSpy).toBeCalledTimes(2);
+  });
 });
