@@ -27,6 +27,17 @@ class MultiSelector {
     }
     option.selected = true;
     option.dispatchEvent(new Event("change", { bubbles: true }));
+
+    // We have to set the value like this due to the fact that the accessible
+    // autocomplete will re-render and retain its value (because it's a React
+    // component) and so we want to let the component re-render first and then
+    // set it's value.
+    // This works by relying on the fact that the re-render will be happening on
+    // the current stack so we'll purposefully push this onto the bottom of the
+    // stack to make it run after the re-render.
+    // This certainly won't be perfect and may sometimes not work as expected
+    // but this is the best we've got without changing the accessible
+    // autocomplete itself.
     setTimeout(() => (this.accessibleAutocompleteElement.value = ""), 0);
   }
 
