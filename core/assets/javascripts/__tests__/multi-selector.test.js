@@ -185,4 +185,22 @@ describe("MultiSelector", () => {
     ]);
     expect(onChangeSpy).toBeCalledTimes(2);
   });
+
+  test("onChange", () => {
+    const [, $el] = createElements();
+
+    const multiSelector = new MultiSelector($el);
+    multiSelector.init();
+
+    const onChangeSpy = jest.fn();
+    multiSelector.on("change", (selected) => onChangeSpy(selected));
+
+    multiSelector.setOptions(["1", "3"]);
+    expect(onChangeSpy).toBeCalledTimes(1);
+    expect(onChangeSpy).toBeCalledWith(["1", "3"]);
+
+    multiSelector.addOptions(["2"]);
+    expect(onChangeSpy).toBeCalledTimes(2);
+    expect(onChangeSpy).toBeCalledWith(["1", "2", "3"]);
+  });
 });

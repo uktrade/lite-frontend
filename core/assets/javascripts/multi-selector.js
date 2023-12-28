@@ -1,8 +1,11 @@
+import EventEmitter from "events";
 import accessibleAutocomplete from "accessible-autocomplete";
 import SelectedOptions from "./selected-options";
 
-class MultiSelector {
+class MultiSelector extends EventEmitter {
   constructor($el) {
+    super();
+
     this.$el = $el;
     this.originalId = $el.id;
     this.accessibleAutocompleteElement = null;
@@ -107,6 +110,13 @@ class MultiSelector {
     );
     selectedOptions.init();
     this.$el.parentNode.insertBefore(selectedOptionsWrapper, this.$el);
+
+    this.$el.addEventListener("change", () =>
+      this.emit(
+        "change",
+        [...this.$el.selectedOptions].map((o) => o.value)
+      )
+    );
 
     this.$el.style.display = "none";
   }
