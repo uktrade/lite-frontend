@@ -35,6 +35,7 @@ class MultiSelector {
       autoselect: true,
       source: this.values,
       displayMenu: "overlay",
+      cssNamespace: "lite-autocomplete",
       onConfirm: (query) => this.handleOnConfirm(query),
     };
 

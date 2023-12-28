@@ -42,6 +42,7 @@ describe("MultiSelector", () => {
     expect(config.autoselect).toEqual(true);
     expect(config.source).toEqual(["One", "Two", "Three"]);
     expect(config.displayMenu).toEqual("overlay");
+    expect(config.cssNamespace).toEqual("lite-autocomplete");
     expect(config.element).toEqual($wrapper);
   });
 
