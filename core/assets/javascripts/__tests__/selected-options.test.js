@@ -42,15 +42,17 @@ describe("Selected options", () => {
 
     const $wrapper = $container.querySelector("div");
     expect($container).toContainElement($wrapper);
-    expect($wrapper.ariaLive).toBe("polite");
+    expect($wrapper.ariaLive).toEqual("polite");
+    expect($wrapper).toHaveClass("selected-options");
+    expect($wrapper).toHaveClass("selected-options--empty");
 
     const $p = $wrapper.querySelector("p");
-    console.log($wrapper.innerHTML);
     expect($p).toHaveTextContent("Selected objects");
     expect($p).toHaveClass("govuk-visually-hidden");
 
     const $ul = $wrapper.querySelector("ul");
     expect($ul).toBeEmptyDOMElement();
+    expect($ul).toHaveClass("selected-options__options");
   });
 
   test("Renders list with selected items on init", () => {
@@ -64,6 +66,8 @@ describe("Selected options", () => {
     expect($container).toBeEmptyDOMElement();
 
     selectedOptions.init();
+    const $wrapper = $container.querySelector("div");
+    expect($wrapper).not.toHaveClass("selected-options--empty");
     const $ul = $container.querySelector("ul");
     expect($container).toContainElement($ul);
     expect($ul).not.toBeEmptyDOMElement();
@@ -72,6 +76,9 @@ describe("Selected options", () => {
     expect($lis).toHaveLength(2);
     expect($lis[0]).toHaveTextContent("One");
     expect($lis[1]).toHaveTextContent("Three");
+    for (const $li of $lis) {
+      expect($li).toHaveClass("selected-options__option");
+    }
   });
 
   test("Changing select options updates", async () => {
@@ -79,12 +86,14 @@ describe("Selected options", () => {
 
     const selectedOptions = new SelectedOptions($container, $multiSelect);
     selectedOptions.init();
+    const $wrapper = $container.querySelector("div");
 
     await user.selectOptions($multiSelect, ["1"]);
     let $ul = $container.querySelector("ul");
     let $lis = $ul.querySelectorAll("li");
     expect($lis).toHaveLength(1);
     expect($lis[0]).toHaveTextContent("One");
+    expect($wrapper).not.toHaveClass("selected-options--empty");
 
     await user.selectOptions($multiSelect, ["3"]);
     $ul = $container.querySelector("ul");
@@ -92,11 +101,13 @@ describe("Selected options", () => {
     expect($lis).toHaveLength(2);
     expect($lis[0]).toHaveTextContent("One");
     expect($lis[1]).toHaveTextContent("Three");
+    expect($wrapper).not.toHaveClass("selected-options--empty");
 
     await user.deselectOptions($multiSelect, ["1", "3"]);
     $ul = $container.querySelector("ul");
     $lis = $ul.querySelectorAll("li");
     expect($lis).toHaveLength(0);
+    expect($wrapper).toHaveClass("selected-options--empty");
   });
 
   test("Removing options updates", async () => {
@@ -117,6 +128,9 @@ describe("Selected options", () => {
     expect($lis).toHaveLength(2);
 
     const $removeButtons = getAllByText($ul, "Remove");
+    for (const $removeButton of $removeButtons) {
+      expect($removeButton).toHaveClass("selected-options__option-remove");
+    }
 
     await user.click($removeButtons[0]);
     $ul = $container.querySelector("ul");
