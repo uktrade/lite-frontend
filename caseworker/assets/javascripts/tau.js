@@ -3,6 +3,8 @@ import SelectAllButton from "core/select-all-button";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
+import Headline from "./assessment-form/headline";
+import SelectProducts from "./assessment-form/select-products";
 import MultiSelector from "core/multi-selector";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
@@ -85,6 +87,19 @@ const initAssessmentForm = () => {
   const cleMultiSelect = document.querySelector("[name=control_list_entries]");
   const multiSelector = new MultiSelector(cleMultiSelect);
   multiSelector.init();
+
+  const headlineEl = document.querySelector(".assessment-form__headline");
+  const headline = new Headline(headlineEl);
+
+  const goods = document.querySelector("#div_id_goods");
+  const checkboxes = goods.querySelectorAll("[name=goods]");
+  const products = JSON.parse(
+    document.querySelector("#cle-suggestions-json").textContent
+  );
+
+  new SelectProducts(checkboxes, products, (selectedProducts) => {
+    headline.setProducts(selectedProducts);
+  }).init();
 };
 
 const initSaveAndContinueButton = () => {
