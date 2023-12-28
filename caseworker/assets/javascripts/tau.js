@@ -99,13 +99,13 @@ const initAssessmentForm = () => {
   const noSuggestionsTokenField = new NoSuggestionsTokenField(
     noControlListCheckboxEl
   );
-  noSuggestionsTokenField.init();
   noSuggestionsTokenField.on("change", (checked) => {
     if (!checked) {
       return;
     }
     multiSelector.setOptions([]);
   });
+  noSuggestionsTokenField.init();
   multiSelector.on("change", (selected) => {
     if (selected.length === 0) {
       return;
@@ -122,13 +122,11 @@ const initAssessmentForm = () => {
     suggestionsEl,
     controlListEntriesLabel.nextSibling
   );
-  const cleSuggestions = new CLESuggestions(
-    suggestionsEl,
-    (selectedSuggestions) => {
-      multiSelector.addOptions(selectedSuggestions);
-      noSuggestionsTokenField.reset();
-    }
-  );
+  const cleSuggestions = new CLESuggestions(suggestionsEl);
+  cleSuggestions.on("change", (selectedSuggestions) => {
+    multiSelector.addOptions(selectedSuggestions);
+    noSuggestionsTokenField.reset();
+  });
 
   const goods = document.querySelector("#div_id_goods");
   const checkboxes = goods.querySelectorAll("[name=goods]");
@@ -136,10 +134,12 @@ const initAssessmentForm = () => {
     document.querySelector("#cle-suggestions-json").textContent
   );
 
-  new SelectProducts(checkboxes, products, (selectedProducts) => {
+  const selectProducts = new SelectProducts(checkboxes, products);
+  selectProducts.on("change", (selectedProducts) => {
     headline.setProducts(selectedProducts);
     cleSuggestions.setProducts(selectedProducts);
-  }).init();
+  });
+  selectProducts.init();
 };
 
 const initSaveAndContinueButton = () => {
