@@ -61,6 +61,14 @@ def send_tokens_to_token_bar(driver: WebDriver, element_selector: str, tokens: L
     time.sleep(1)
 
 
+def select_multi_select_options(driver: WebDriver, element_selector: str, control_list_entries: List[str]):
+    element = driver.find_element(by=By.CSS_SELECTOR, value=element_selector)
+
+    for control_list_entry in control_list_entries:
+        element.send_keys(control_list_entry)
+        element.send_keys(Keys.ENTER)
+
+
 def click_apply_filters(driver: WebDriver):
     driver.find_element(by=By.ID, value="button-apply-filters").click()
 
