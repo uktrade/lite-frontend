@@ -1,7 +1,8 @@
+import accessibleAutocomplete from "accessible-autocomplete";
+import SelectedOptions from "./selected-options";
+
 class MultiSelector {
-  constructor(accessibleAutocomplete, SelectedOptions, $el) {
-    this.accessibleAutocomplete = accessibleAutocomplete;
-    this.SelectedOptions = SelectedOptions;
+  constructor($el) {
     this.$el = $el;
     this.originalId = $el.id;
     this.accessibleAutocompleteElement = null;
@@ -53,7 +54,7 @@ class MultiSelector {
   init() {
     const autocompleteWrapper = this.createAutocompleteWrapper();
     this.$el.id = `${this.originalId}-select`;
-    this.accessibleAutocomplete({
+    accessibleAutocomplete({
       ...this.getConfigurationOptions(),
       element: autocompleteWrapper,
     });
@@ -65,7 +66,7 @@ class MultiSelector {
     selectedOptionsWrapper.classList.add(
       "multi-select__selected-options-wrapper"
     );
-    const selectedOptions = new this.SelectedOptions(
+    const selectedOptions = new SelectedOptions(
       selectedOptionsWrapper,
       this.$el,
       this.$el.dataset.multiSelectObjectsAsPlural

@@ -1,6 +1,11 @@
 import "@testing-library/jest-dom";
 
 import MultiSelector from "../multi-selector";
+import SelectedOptions from "../selected-options";
+import accessibleAutocomplete from "accessible-autocomplete";
+
+jest.mock("../selected-options");
+jest.mock("accessible-autocomplete");
 
 const createElements = () => {
   document.body.innerHTML = `
@@ -20,23 +25,17 @@ const createElements = () => {
 };
 
 describe("MultiSelector", () => {
-  test("Configuring accessible autocomplete", () => {
-    const mockAccessibleAutocomplete = jest.fn();
-    const mockSelectedOptions = jest.fn().mockImplementation(() => {
-      return { init: jest.fn() };
-    });
+  beforeEach(() => {
+    SelectedOptions.mockClear();
+    accessibleAutocomplete.mockClear();
+  });
 
+  test("Configuring accessible autocomplete", () => {
     const [, $el] = createElements();
 
-    new MultiSelector(
-      mockAccessibleAutocomplete,
-      mockSelectedOptions,
-      $el
-    ).init();
-
+    new MultiSelector($el).init();
     const $wrapper = document.querySelector(".autocomplete__wrapper");
-
-    const config = mockAccessibleAutocomplete.mock.calls[0][0];
+    const config = accessibleAutocomplete.mock.calls[0][0];
 
     expect(config.id).toEqual("select-multiple");
     expect(config.autoselect).toEqual(true);
@@ -47,61 +46,34 @@ describe("MultiSelector", () => {
   });
 
   test("Renders autocomplete wrapper", () => {
-    const mockAccessibleAutocomplete = jest.fn();
-    const mockSelectedOptions = jest.fn().mockImplementation(() => {
-      return { init: jest.fn() };
-    });
-
     const [$container, $el] = createElements();
 
-    new MultiSelector(
-      mockAccessibleAutocomplete,
-      mockSelectedOptions,
-      $el
-    ).init();
+    new MultiSelector($el).init();
 
     const $wrapper = document.querySelector(".autocomplete__wrapper");
     expect($container).toContainElement($wrapper);
   });
 
   test("Sets new id for select", () => {
-    const mockAccessibleAutocomplete = jest.fn();
-    const mockSelectedOptions = jest.fn().mockImplementation(() => {
-      return { init: jest.fn() };
-    });
-
     const [, $el] = createElements();
 
-    new MultiSelector(
-      mockAccessibleAutocomplete,
-      mockSelectedOptions,
-      $el
-    ).init();
+    new MultiSelector($el).init();
 
     expect($el).toHaveAttribute("id", "select-multiple-select");
   });
 
   test("onConfirm selects options", () => {
-    const mockAccessibleAutocomplete = jest.fn();
-    const mockSelectedOptions = jest.fn().mockImplementation(() => {
-      return { init: jest.fn() };
-    });
-
     const [, $el] = createElements();
 
     const onChangeSpy = jest.fn();
     $el.addEventListener("change", () => onChangeSpy());
 
-    new MultiSelector(
-      mockAccessibleAutocomplete,
-      mockSelectedOptions,
-      $el
-    ).init();
+    new MultiSelector($el).init();
 
     expect(onChangeSpy).toBeCalledTimes(0);
     expect($el.selectedOptions).toHaveLength(0);
 
-    const config = mockAccessibleAutocomplete.mock.calls[0][0];
+    const config = accessibleAutocomplete.mock.calls[0][0];
 
     config.onConfirm("One");
     expect($el.options[0].selected).toBeTruthy();
@@ -118,26 +90,19 @@ describe("MultiSelector", () => {
     const [$container, $el] = createElements();
 
     let $input;
-    const mockAccessibleAutocomplete = jest.fn(() => {
+    accessibleAutocomplete.mockImplementation(() => {
       $input = document.createElement("input");
       $input.type = "text";
       $input.id = "select-multiple";
       $container.appendChild($input);
     });
-    const mockSelectedOptions = jest.fn().mockImplementation(() => {
-      return { init: jest.fn() };
-    });
 
     const onChangeSpy = jest.fn();
     $el.addEventListener("change", () => onChangeSpy());
 
-    new MultiSelector(
-      mockAccessibleAutocomplete,
-      mockSelectedOptions,
-      $el
-    ).init();
+    new MultiSelector($el).init();
 
-    const config = mockAccessibleAutocomplete.mock.calls[0][0];
+    const config = accessibleAutocomplete.mock.calls[0][0];
 
     $input.value = "One";
     config.onConfirm("One");
@@ -155,21 +120,12 @@ describe("MultiSelector", () => {
   });
 
   test("Configuring select options", () => {
-    const mockAccessibleAutocomplete = jest.fn();
-    const mockSelectedOptions = jest.fn().mockImplementation(() => {
-      return { init: jest.fn() };
-    });
-
     const [$container, $el] = createElements();
 
-    new MultiSelector(
-      mockAccessibleAutocomplete,
-      mockSelectedOptions,
-      $el
-    ).init();
+    new MultiSelector($el).init();
 
     const [optionsWrapperParam, elParam, pluralParam] =
-      mockSelectedOptions.mock.calls[0];
+      SelectedOptions.mock.calls[0];
 
     expect(optionsWrapperParam).toEqual(
       $container.querySelector(".multi-select__selected-options-wrapper")
@@ -179,18 +135,9 @@ describe("MultiSelector", () => {
   });
 
   test("Sets multi select display to none", () => {
-    const mockAccessibleAutocomplete = jest.fn();
-    const mockSelectedOptions = jest.fn().mockImplementation(() => {
-      return { init: jest.fn() };
-    });
-
     const [, $el] = createElements();
 
-    new MultiSelector(
-      mockAccessibleAutocomplete,
-      mockSelectedOptions,
-      $el
-    ).init();
+    new MultiSelector($el).init();
 
     expect($el).not.toBeVisible();
   });
