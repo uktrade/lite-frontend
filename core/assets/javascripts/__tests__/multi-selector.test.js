@@ -203,4 +203,29 @@ describe("MultiSelector", () => {
     expect(onChangeSpy).toBeCalledTimes(2);
     expect(onChangeSpy).toBeCalledWith(["1", "2", "3"]);
   });
+
+  test("setFakeOption", () => {
+    const [, $el] = createElements();
+
+    const multiSelector = new MultiSelector($el);
+    multiSelector.init();
+
+    const func = jest.fn();
+    multiSelector.setFakeOption("test", func);
+    const mockSelectedOptions = SelectedOptions.mock.instances[0];
+
+    expect(mockSelectedOptions.setFakeOption).toBeCalledWith("test", func);
+  });
+
+  test("resetFakeOption", () => {
+    const [, $el] = createElements();
+
+    const multiSelector = new MultiSelector($el);
+    multiSelector.init();
+
+    multiSelector.resetFakeOption();
+    const mockSelectedOptions = SelectedOptions.mock.instances[0];
+
+    expect(mockSelectedOptions.resetFakeOption).toBeCalledWith();
+  });
 });

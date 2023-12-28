@@ -100,10 +100,14 @@ const initAssessmentForm = () => {
     noControlListCheckboxEl
   );
   noSuggestionsTokenField.on("change", (checked) => {
-    if (!checked) {
-      return;
+    if (checked) {
+      multiSelector.setOptions([]);
+      multiSelector.setFakeOption("Not on the control list", () => {
+        noSuggestionsTokenField.reset();
+      });
+    } else {
+      multiSelector.resetFakeOption();
     }
-    multiSelector.setOptions([]);
   });
   noSuggestionsTokenField.init();
   multiSelector.on("change", (selected) => {
