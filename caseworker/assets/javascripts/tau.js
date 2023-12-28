@@ -3,6 +3,7 @@ import SelectAllButton from "core/select-all-button";
 import ExpandAll, { SHOW_ALL_BUTTON_TEXT } from "core/expand-all";
 import CheckboxClassToggler from "core/checkbox-class-toggler";
 import DisablingButton from "core/disabling-button";
+import MultiSelector from "core/multi-selector";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
 
@@ -80,7 +81,11 @@ const initCheckboxClassToggler = () => {
   ).init();
 };
 
-const initAssessmentForm = () => {};
+const initAssessmentForm = () => {
+  const cleMultiSelect = document.querySelector("[name=control_list_entries]");
+  const multiSelector = new MultiSelector(cleMultiSelect);
+  multiSelector.init();
+};
 
 const initSaveAndContinueButton = () => {
   const button = document.querySelector("#submit-id-submit");
