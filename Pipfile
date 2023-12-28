@@ -59,7 +59,7 @@ markdown = "~=3.4.1"
 mohawk = ">=1.1.0"
 munch = "~=2.5.0"
 requests = {extras = ["security"], version = "~=2.21"}
-sentry-sdk = "~=1.17.0"
+sentry-sdk = "~=1.39.1"
 whitenoise = "~=5.3.0"
 django-formtools = "~=2.3.0"
 crispy-forms-gds = "~=0.2.4"
