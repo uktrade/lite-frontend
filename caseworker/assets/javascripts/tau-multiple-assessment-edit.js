@@ -1,7 +1,7 @@
 import "fetch-polyfill";
 import accessibleAutocomplete from "accessible-autocomplete";
 import debounce from "lodash.debounce";
-import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
+import MultiSelector from "core/multi-selector";
 
 const initAutocompleteField = (
   originalInput,
@@ -82,22 +82,18 @@ const initARS = () => {
 };
 
 const initCLEs = () => {
-  const controlListEntryFields = document.querySelectorAll(
-    ".control-list-entries"
-  );
-
-  for (const controlListEntriesField of controlListEntryFields) {
-    progressivelyEnhanceMultipleSelectField(controlListEntriesField);
+  const cleMultiSelects = document.querySelectorAll(".control-list-entries");
+  for (const cleMultiSelect of cleMultiSelects) {
+    const multiSelector = new MultiSelector(cleMultiSelect);
+    multiSelector.init();
   }
 };
 
 const initRegimes = () => {
   const regimeEntryFields = document.querySelectorAll(".regime-entries");
-
   for (const regimeEntryField of regimeEntryFields) {
-    progressivelyEnhanceMultipleSelectField(regimeEntryField, (option) => {
-      return { id: option.value, name: option.label, classes: [] };
-    });
+    const multiSelector = new MultiSelector(regimeEntryField);
+    multiSelector.init();
   }
 };
 

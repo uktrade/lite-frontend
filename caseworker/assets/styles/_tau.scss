@@ -92,4 +92,8 @@
         }
     }
 
+    .govuk-table__cell:not(.govuk-table__cell--checkbox) .govuk-form-group,
+    .govuk-textarea {
+        margin-bottom: 0;
+    }
 }
