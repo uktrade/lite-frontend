@@ -1,4 +1,5 @@
-import { progressivelyEnhanceMultipleSelectFieldStartsWith } from "core/multi-select";
+import MultiSelector, { startsWith } from "core/multi-selector";
+
 class CaseNote {
   TEXTAREA_FOCUSED_CLASS = "case-note__textarea--focused";
   constructor($el) {
@@ -80,18 +81,13 @@ const initCaseNotes = () => {
     .forEach(($el) => new CaseNote($el).init());
 };
 
-export default function initMentionUsers() {
+const initMentionUsers = () => {
   const mentionUserField = document.getElementById("id_mentions");
 
   if (!mentionUserField) return;
 
-  const mentionUserTokenField =
-    progressivelyEnhanceMultipleSelectFieldStartsWith(
-      mentionUserField,
-      (option) => {
-        return { id: option.value, name: option.text, classes: [] };
-      }
-    );
-}
+  const multiSelector = new MultiSelector(mentionUserField, startsWith);
+  multiSelector.init();
+};
 
 export { CaseNote, initCaseNotes, initMentionUsers };
