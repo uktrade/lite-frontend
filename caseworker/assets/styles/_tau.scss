@@ -3,40 +3,14 @@
     background-color: $base-grey;
   }
 
-  #div_id_does_not_have_control_list_entries {
-    .govuk-checkboxes__label {
-      padding: 0;
-      text-decoration: underline;
-      cursor: pointer;
-      color: $base-blue;
-
-      &::before,
-      &::after {
-        display: none;
-      }
-    }
-
-    .govuk-checkboxes__item {
-      padding-left: 0;
-    }
-  }
-
   &__cle-suggestions {
     display: flex;
     flex-direction: column;
     align-items: baseline;
   }
 
-  .tokenfield-copy-helper {
-    display: none;
-  }
-
   .control-list__edit {
     margin-bottom: 15px;
-  }
-
-  .tokenfield {
-    max-width: none;
   }
 }
 
