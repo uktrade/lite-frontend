@@ -14,8 +14,6 @@ import "./snackbar-hide.js";
 // caseworker
 import initMenuTooltips from "./menu-tooltips.js";
 import initQueuesMenu from "./queues-menu.js";
-import initCLEEntries from "./cle-entries.js";
-import initRegimeEntries from "./regime-entries.js";
 import initDestinationsList from "./show-hide-destinations.js";
 import { initCaseNotes, initMentionUsers } from "./case-notes";
 import { initExpanders } from "./list-expander";
@@ -36,8 +34,6 @@ initAll();
 // init our JS
 initMenuTooltips();
 initQueuesMenu();
-initCLEEntries();
-initRegimeEntries();
 initCookierBanner("app-cookie-banner", "js-accept-cookie");
 initDestinationsList();
 initCaseNotes();

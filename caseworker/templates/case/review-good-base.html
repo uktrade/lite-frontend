@@ -50,12 +50,3 @@
         </div>
     </div>
 {% endblock %}
-
-{% block body_common_javascript %}
-	{# TODO: these should be moved back into main.js to be built with parcel when this issue is fixed #}
-	{# https://bleepcoder.com/parcel/298014338/uncaught-typeerror-class-constructor-extended-class-cannot #}
-	<script type="text/javascript" nonce="{{ request.csp_nonce }}" src="{% static 'javascripts/autoComplete.min.js' %}"></script>
-	<script type="text/javascript" nonce="{{ request.csp_nonce }}" src="{% static 'javascripts/tokenfield.min.js' %}"></script>
-	<script type="text/javascript" nonce="{{ request.csp_nonce }}" src="{% static 'javascripts/lite-tokenfield-compatibility.js' %}"></script>
-	<script type="text/javascript" nonce="{{ request.csp_nonce }}" src="{% static 'javascripts/review-good-compatibility.js' %}"></script>
-{% endblock %}
