@@ -13,19 +13,19 @@ class MultiSelector extends EventEmitter {
   }
 
   getOptions() {
-    const labelMap = {};
-    const valueMap = {};
+    const labelMap = new Map();
+    const valueMap = new Map();
     const values = [];
     for (const option of this.$el.options) {
-      labelMap[option.textContent] = option;
-      valueMap[option.value] = option;
+      labelMap.set(option.textContent, option);
+      valueMap.set(option.value, option);
       values.push(option.textContent);
     }
     return [labelMap, valueMap, values];
   }
 
   handleOnConfirm(query) {
-    const option = this.labelMap[query];
+    const option = this.labelMap.get(query);
     if (!option) {
       return;
     }
@@ -63,7 +63,7 @@ class MultiSelector extends EventEmitter {
     }
 
     for (const value of values) {
-      const $option = this.valueMap[value];
+      const $option = this.valueMap.get(value);
       $option.selected = true;
     }
 
@@ -72,7 +72,7 @@ class MultiSelector extends EventEmitter {
 
   addOptions(values) {
     for (const value of values) {
-      const $option = this.valueMap[value];
+      const $option = this.valueMap.get(value);
       $option.selected = true;
     }
 
