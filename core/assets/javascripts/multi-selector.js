@@ -88,14 +88,6 @@ class MultiSelector extends EventEmitter {
     this.$el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
-  setFakeOption(text, onRemove) {
-    this.selectedOptions.setFakeOption(text, onRemove);
-  }
-
-  resetFakeOption() {
-    this.selectedOptions.resetFakeOption();
-  }
-
   init() {
     const autocompleteWrapper = this.createAutocompleteWrapper();
     this.$el.id = `${this.originalId}-select`;

@@ -3,8 +3,6 @@ class SelectedOptions {
     this.$el = $el;
     this.$multiSelect = $multiSelect;
     this.multiSelectObjectsAsPlural = multiSelectObjectsAsPlural;
-
-    this.fakeOption = null;
   }
 
   createContainer() {
@@ -24,7 +22,6 @@ class SelectedOptions {
   }
 
   handleChange() {
-    this.fakeOption = null;
     this.render();
   }
 
@@ -85,31 +82,11 @@ class SelectedOptions {
       $ul.appendChild($li);
     }
 
-    if (this.fakeOption) {
-      const [text, onRemove] = this.fakeOption;
-      const $li = this.createListItem(text, () => {
-        onRemove();
-        this.fakeOption = null;
-        this.render();
-      });
-      $ul.appendChild($li);
-    }
-
     return $ul;
   }
 
   hasSelectedItems() {
-    return this.$multiSelect.selectedOptions.length > 0 || this.fakeOption;
-  }
-
-  setFakeOption(text, onRemove) {
-    this.fakeOption = [text, onRemove];
-    this.render();
-  }
-
-  resetFakeOption() {
-    this.fakeOption = null;
-    this.render();
+    return this.$multiSelect.selectedOptions.length > 0;
   }
 
   render() {
