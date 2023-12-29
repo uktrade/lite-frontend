@@ -8,6 +8,7 @@ import SelectProducts from "./assessment-form/select-products";
 import CLESuggestions from "./tau/cle-suggestions";
 import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
 import MultiSelector from "core/multi-selector";
+import ShowHideNcscField from "./tau/show-hide-ncsc-field";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
 
@@ -86,8 +87,21 @@ const initCheckboxClassToggler = () => {
 };
 
 const initAssessmentForm = () => {
+  const ncscBox = document.querySelector(
+    "#div_id_is_ncsc_military_information_security"
+  );
+  let showHideNcscField;
+  if (ncscBox) {
+    showHideNcscField = new ShowHideNcscField(ncscBox);
+  }
+
   const cleMultiSelect = document.querySelector("[name=control_list_entries]");
   const multiSelector = new MultiSelector(cleMultiSelect);
+  multiSelector.on("change", (selected) => {
+    if (showHideNcscField) {
+      showHideNcscField.toggleField(selected);
+    }
+  });
   multiSelector.init();
 
   const headlineEl = document.querySelector(".assessment-form__headline");
