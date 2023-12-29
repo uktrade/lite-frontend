@@ -18,6 +18,16 @@
   display: none;
 }
 
+.control-list-entries-fieldset {
+  #div_id_control_list_entries, > .govuk-body, .govuk-hint {
+    margin-bottom: govuk-spacing(2);
+  }
+
+  .selected-options {
+    padding-bottom: 0;
+  }
+}
+
 .assessment-formset {
   &__actions {
     align-items: center;
