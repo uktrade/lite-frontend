@@ -84,39 +84,20 @@ describe("MultiSelector", () => {
     expect(onChangeSpy).toBeCalledTimes(2);
   });
 
-  test("onConfirm clears accessible input", () => {
-    jest.useFakeTimers();
-
-    const [$container, $el] = createElements();
-
-    let $input;
-    accessibleAutocomplete.mockImplementation(() => {
-      $input = document.createElement("input");
-      $input.type = "text";
-      $input.id = "select-multiple";
-      $container.appendChild($input);
-    });
-
-    const onChangeSpy = jest.fn();
-    $el.addEventListener("change", () => onChangeSpy());
-
+  test("inputValue", () => {
+    const [, $el] = createElements();
     new MultiSelector($el).init();
 
+    expect($el.selectedOptions).toHaveLength(0);
+
     const config = accessibleAutocomplete.mock.calls[0][0];
+    const { inputValue } = config.templates;
 
-    $input.value = "One";
-    config.onConfirm("One");
-    expect($input).toHaveValue("One");
-    jest.runAllTimers();
-    expect($input).toHaveValue("");
-
-    $input.value = "Three";
-    config.onConfirm("Three");
-    expect($input).toHaveValue("Three");
-    jest.runAllTimers();
-    expect($input).toHaveValue("");
-
-    jest.useRealTimers();
+    expect(inputValue()).toEqual("");
+    expect(inputValue("1")).toEqual("");
+    expect(inputValue("One")).toEqual("");
+    expect(inputValue("a value")).toEqual("");
+    expect(inputValue("another value")).toEqual("");
   });
 
   test("Configuring select options", () => {
