@@ -129,7 +129,6 @@ CACHES = {
 }
 
 FEATURE_FLAG_PRODUCT_SEARCH = env.bool("FEATURE_FLAG_PRODUCT_SEARCH", False)
-FEATURE_TAU_MULTIPLE_EDIT = env.bool("FEATURE_TAU_MULTIPLE_EDIT", True)
 
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):

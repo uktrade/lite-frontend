@@ -290,11 +290,11 @@ class TAUHome(LoginRequiredMixin, TAUMixin, CaseworkerMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if settings.FEATURE_TAU_MULTIPLE_EDIT:
-            formset_helper = FormHelper()
-            formset_helper.template = "tau/edit_assessed_products_formset.html"
-            context["formset"] = self.get_edit_choice_formset(self.assessed_goods)
-            context["formset_helper"] = formset_helper
+        formset_helper = FormHelper()
+        formset_helper.template = "tau/edit_assessed_products_formset.html"
+        context["formset"] = self.get_edit_choice_formset(self.assessed_goods)
+        context["formset_helper"] = formset_helper
+
         return {
             **context,
             "case": self.case,
@@ -455,127 +455,6 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
         messages.success(self.request, f"Assessed {len(previous_assessments)} products using previous assessments.")
 
         return redirect_response
-
-
-class TAUEdit(LoginRequiredMixin, TAUMixin, FormView):
-    """This renders a form for editing product assessment for TAU 2.0."""
-
-    template_name = "tau/edit.html"
-    form_class = TAUEditForm
-
-    def get_success_url(self):
-        return reverse("cases:tau:home", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
-
-    def get_regime_entries_form_data(self, good):
-        if not good.get("regime_entries"):
-            return {
-                "regimes": ["NONE"],
-                "mtcr_entries": [],
-                "wassenaar_entries": [],
-                "nsg_entries": [],
-                "cwc_entries": [],
-                "ag_entries": [],
-            }
-
-        regimes = set()
-        wassenaar_entry = None
-        cwc_entry = None
-        ag_entry = None
-        mtcr_entries = []
-        nsg_entries = []
-        for entry in good["regime_entries"]:
-            regime = entry["subsection"]["regime"]["name"]
-            regimes.add(regime)
-            if regime == Regimes.WASSENAAR:
-                wassenaar_entry = entry["pk"]
-            if regime == Regimes.CWC:
-                cwc_entry = entry["pk"]
-            if regime == Regimes.AG:
-                ag_entry = entry["pk"]
-            if regime == Regimes.MTCR:
-                mtcr_entries.append(entry["pk"])
-            if regime == Regimes.NSG:
-                nsg_entries.append(entry["pk"])
-
-        return {
-            "regimes": list(regimes),
-            "wassenaar_entries": wassenaar_entry,
-            "cwc_entries": cwc_entry,
-            "ag_entries": ag_entry,
-            "mtcr_entries": mtcr_entries,
-            "nsg_entries": nsg_entries,
-        }
-
-    def get_form_kwargs(self):
-        form_kwargs = super().get_form_kwargs()
-        form_kwargs["request"] = self.request
-        form_kwargs["control_list_entries_choices"] = self.control_list_entries
-        form_kwargs["wassenaar_entries"] = self.wassenaar_entries
-        form_kwargs["mtcr_entries"] = self.mtcr_entries
-        form_kwargs["nsg_entries"] = self.nsg_entries
-        form_kwargs["cwc_entries"] = self.cwc_entries
-        form_kwargs["ag_entries"] = self.ag_entries
-
-        good = self.get_good()
-
-        form_kwargs["data"] = self.request.POST or {
-            "control_list_entries": [cle["rating"] for cle in good["control_list_entries"]],
-            "does_not_have_control_list_entries": good["control_list_entries"] == [],
-            "report_summary": good["report_summary"],
-            "report_summary_prefix": good["report_summary_prefix"]["id"] if good["report_summary_prefix"] else "",
-            "report_summary_subject": good["report_summary_subject"]["id"] if good["report_summary_subject"] else "",
-            "comment": good["comment"],
-            "is_ncsc_military_information_security": good["is_ncsc_military_information_security"],
-            **self.get_regime_entries_form_data(good),
-        }
-        return form_kwargs
-
-    def get_good(self):
-        for good in self.goods:
-            if good["id"] == self.good_id:
-                return good
-        raise Http404
-
-    def get_good_on_application_summary(self, good):
-        organisation_documents = {
-            document["document_type"]: document for document in self.organisation_documents.values()
-        }
-        rfd_certificate = organisation_documents.get(OrganisationDocumentType.RFD_CERTIFICATE)
-        is_user_rfd = bool(rfd_certificate) and not rfd_certificate["is_expired"]
-
-        summary = get_good_on_application_tau_summary(
-            self.request,
-            good,
-            self.queue_id,
-            self.case["id"],
-            is_user_rfd,
-            organisation_documents,
-        )
-        return summary
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        good = self.get_good()
-        summary = self.get_good_on_application_summary(good)
-        return {
-            **context,
-            "case": self.case,
-            "queue_id": self.queue_id,
-            "good": good,
-            "summary": summary,
-            "organisation_documents": self.organisation_documents,
-            "cle_suggestions_json": get_cle_suggestions_json([good]),
-        }
-
-    def form_valid(self, form):
-        data = {**form.cleaned_data}
-        good = self.get_good()
-        good_on_application_ids = [good["id"]]
-        payload = get_assessment_payload(data, good_on_application_ids)
-        put_bulk_assessment(self.request, self.kwargs["pk"], payload)
-
-        return super().form_valid(form)
 
 
 class TAUMoveCaseForward(LoginRequiredMixin, TAUMixin, View):
