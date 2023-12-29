@@ -7,6 +7,10 @@
     display: flex;
     flex-direction: column;
     align-items: baseline;
+
+    button {
+      text-align: left;
+    }
   }
 
   .control-list__edit {
