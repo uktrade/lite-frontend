@@ -147,7 +147,7 @@ def test_form(
     edit_good_cle = [cle["rating"] for cle in edit_good["control_list_entries"]]
     form_cle = [
         cle.attrs["value"]
-        for cle in soup.find("select", {"id": "control_list_entries"}).find_all("option")
+        for cle in soup.find("select", {"name": "control_list_entries"}).find_all("option")
         if "selected" in cle.attrs
     ]
     assert edit_good_cle == form_cle
@@ -276,7 +276,7 @@ def test_form_no_regime_entries(
     edit_good_cle = [cle["rating"] for cle in edit_good["control_list_entries"]]
     form_cle = [
         cle.attrs["value"]
-        for cle in soup.find("select", {"id": "control_list_entries"}).find_all("option")
+        for cle in soup.find("select", {"name": "control_list_entries"}).find_all("option")
         if "selected" in cle.attrs
     ]
     assert edit_good_cle == form_cle
