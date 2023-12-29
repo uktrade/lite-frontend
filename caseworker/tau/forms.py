@@ -6,6 +6,7 @@ from requests.exceptions import HTTPError
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import (
+    Fieldset,
     HTML,
     Layout,
 )
@@ -193,9 +194,12 @@ class TAUEditForm(forms.Form):
         self.helper.form_tag = False
 
         fields = [
-            "control_list_entries",
-            HTML.p("Or"),
-            "does_not_have_control_list_entries",
+            Fieldset(
+                "control_list_entries",
+                HTML.p("Or"),
+                "does_not_have_control_list_entries",
+                css_class="control-list-entries-fieldset",
+            ),
             REPORT_SUMMARY_PREFIX_KEY,
             REPORT_SUMMARY_SUBJECT_KEY,
             ConditionalCheckboxes(
