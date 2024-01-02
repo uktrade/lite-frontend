@@ -627,7 +627,7 @@ class IsFirearmForm(BaseForm):
             (False, "No"),
         ),
         coerce=coerce_str_to_bool,
-        label="This includes components, accessories, software and technology relating to firearms.",
+        label="Select whether it is a firearm product. This includes components, accessories, software and technology relating to firearms.",
         widget=forms.RadioSelect,
         error_messages={
             "required": "Select yes to add a firearm product",

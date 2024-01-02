@@ -72,7 +72,7 @@ def verify_search_results(driver, results_data):
     actual_results = [ProductSearchPage(driver).get_result_row_data(element) for element in result_elements]
 
     for expected_hit in results["hits"]:
-        expected_hit["Assessment date"] = datetime.today().strftime("%d %B %Y")
+        expected_hit["Assessment date"] = datetime.today().strftime("%-d %B %Y")
 
         matching_results = [item for item in actual_results if item["name"] == expected_hit["name"]]
         assert len(matching_results) == 1
