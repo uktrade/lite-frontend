@@ -138,7 +138,7 @@ def test_previous_assessments_GET(
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find("a", id="tab-assessment")["href"].endswith("tau/previous-assessments/")
-    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Product Assessment"
+    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Product assessment"
 
     table = soup.find("table", id="tau-form")
     assert table
@@ -190,7 +190,7 @@ def test_previous_assessments_GET_single_precedent_and_single_new_product(
 
     # Test elements of case info panel
     soup = BeautifulSoup(response.content, "html.parser")
-    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Product Assessment"
+    assert soup.find("h1", {"class": "govuk-heading-l"}).text == "Product assessment"
 
     table = soup.find("table", id="tau-form")
     assert table

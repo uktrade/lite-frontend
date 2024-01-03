@@ -47,7 +47,7 @@
                     <span class="govuk-visually-hidden">Line number</span>
                 </th>
                 <th scope="col" class="govuk-table__header">Name and part number</th>
-                <th scope="col" class="govuk-table__header">Control entry</th>
+                <th scope="col" class="govuk-table__header">Control list entry</th>
                 <th scope="col" class="govuk-table__header header-medium">Licence required</th>
                 <th scope="col" class="govuk-table__header">Regimes</th>
                 <th scope="col" class="govuk-table__header">Report summary</th>
@@ -79,7 +79,7 @@
                         {{ form.good_on_application.line_number }}.
                     </td>
 
-                    <td class="govuk-table__cell"><a href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=form.good_on_application.id %}">{{ form.good_on_application.good.name }}</a></td>
+                    <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:good' queue_pk=queue.id pk=case.id good_pk=form.good_on_application.id %}">{{ form.good_on_application.good.name }}</a></td>
                     <td class="govuk-table__cell">{{ form.good_on_application | get_clc | join:',' }}</td>
                     <td class="govuk-table__cell">
                         {% if form.good_on_application.is_good_controlled.key == "True" %}

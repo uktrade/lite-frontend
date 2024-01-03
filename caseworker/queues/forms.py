@@ -101,7 +101,7 @@ class EnforcementXMLImportForm(forms.Form):
 class CaseAssignmentsCaseOfficerForm(BaseForm):
     class Layout:
         DOCUMENT_TITLE = "Allocate Licensing Unit case officer"
-        TITLE = "Who do you want to allocate as Licensing Unit case officer?"
+        TITLE = ""
         SUBTITLE = "Manages the case until the application outcome (the exporter will see this name until the case officer is changed) – typing into the text input will automatically filter results on the page"  # noqa
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
