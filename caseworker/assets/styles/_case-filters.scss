@@ -72,10 +72,18 @@
 .case-filter-actions {
     z-index: 0;
     @include govuk-font($size: 19);
+    @include govuk-media-query($until: tablet) {
+        display: flex;
+        flex-direction: column;
+        row-gap: govuk-spacing(2);
+    }
 
     .govuk-button {
         margin-top: govuk-spacing(3);
         margin-right: govuk-spacing(3);
+        @include govuk-media-query($until: tablet) {
+            margin: 0;
+        }
     }
 }
 
