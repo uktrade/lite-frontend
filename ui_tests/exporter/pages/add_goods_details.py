@@ -82,8 +82,6 @@ class AddGoodDetails(BasePage):
 
     AUTOCOMPLETE_CONTROL_LIST_ENTRIES_SELECTOR = "input.lite-autocomplete__input"
 
-    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "input.tokenfield-input"
-
     def true_or_false(self, status):
         return "True" if status == "Yes" else "False"
 
