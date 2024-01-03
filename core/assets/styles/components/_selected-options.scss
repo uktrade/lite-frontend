@@ -37,15 +37,6 @@
         padding: 0;
         width: 25px;
 
-        &:before {
-            content: "×";
-            display: block;
-            font-size: 18px;
-            margin-bottom: 50px;
-            position: relative;
-            top: 8px;
-        }
-
         &:focus {
             background-color: govuk-colour("yellow");
             box-shadow: 0 2px govuk-colour("black");
@@ -57,5 +48,12 @@
             box-shadow: 0 2px govuk-colour("black");
             outline: 3px solid rgba(0, 0, 0, 0);
         }
+    }
+
+    &__option-remove-icon {
+        font-size: 18px;
+        margin-bottom: 50px;
+        position: relative;
+        top: 8px;
     }
 }

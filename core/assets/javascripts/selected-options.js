@@ -30,8 +30,17 @@ class SelectedOptions {
   }
 
   createRemoveButton($option) {
+    const $iconDiv = document.createElement("div");
+    $iconDiv.classList = "selected-options__option-remove-icon";
+    $iconDiv.ariaHidden = true;
+    $iconDiv.textContent = "×";
+
+    const $textNode = document.createTextNode("Remove");
+
     const $button = document.createElement("button");
-    $button.textContent = "Remove";
+    $button.appendChild($iconDiv);
+    $button.appendChild($textNode);
+
     $button.classList.add("selected-options__option-remove");
     $button.addEventListener("click", () => {
       $option.selected = false;
@@ -81,6 +90,7 @@ class SelectedOptions {
 
   render() {
     this.$container.innerHTML = "";
+
     this.$container.classList.toggle(
       "selected-options--empty",
       !this.hasSelectedItems()
