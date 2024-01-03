@@ -11,7 +11,12 @@
 
     &__header {
         display: flex;
+        flex-wrap: wrap;
         justify-content: space-between;
+
+        @include govuk-media-query($until: tablet) {
+            flex-direction: column;
+        }
     }
 
     &__toggleable--hidden {
@@ -23,6 +28,10 @@
 // styling for queue view only
 .lite-tabs__container + .customiser__options {
     padding: 15px 0px;
+
+    @include govuk-media-query($until: tablet) {
+        margin-bottom: 0;
+    }
 }
 
 // styling for quick-summary tab only

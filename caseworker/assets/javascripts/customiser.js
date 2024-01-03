@@ -65,7 +65,7 @@ class Customiser {
     $header.insertAdjacentHTML(
       "beforeend",
       `
-          <details class="customiser__options govuk-details lite-mobile-hide">
+          <details class="customiser__options govuk-details">
             <summary class="govuk-details__summary">
               <span class="govuk-details__summary-text customiser__label"></span>
             </summary>

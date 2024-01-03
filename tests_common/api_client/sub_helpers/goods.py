@@ -42,6 +42,7 @@ class Goods:
         ).json()["good"]
         self.api_client.add_to_context("good_on_application_id", item["id"])
         self.api_client.add_to_context(f"good_on_application_id{count}", item["id"])
+        return item
 
     def add_good(self, good=None):
         data = good or self.request_data["good"]

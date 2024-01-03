@@ -1,10 +1,19 @@
 .app-queue-view {
     display: flex;
 
+    @include govuk-media-query($until: tablet) {
+        flex-direction: column;
+    }
+
     &__filters {
         margin-top: 15px;
         flex: 0 0 7rem;
         margin-right: 5rem;
+
+        @include govuk-media-query($until: tablet) {
+            flex: 1;
+            margin: 0;
+        }
 
         .govuk-details[open] {
             .govuk-details__summary-text-closed {
@@ -21,6 +30,10 @@
         .govuk-details__text {
             width: 24rem;
             padding-top: 0;
+
+            @include govuk-media-query($until: tablet) {
+                width: auto;
+            }
 
             .govuk-accordion__controls {
                 padding-bottom: 1rem;
@@ -45,6 +58,11 @@
     display: grid;
     grid-template-columns: 25% minmax(0, 1fr) auto;
     grid-gap: govuk-spacing(6);
+
+    @include govuk-media-query($until: tablet) {
+      grid-template-columns: 100%;
+      grid-gap: 0;
+    }
   }
 
   &__key {
@@ -54,11 +72,20 @@
 
   &__actions {
     @include govuk-font($size: 19);
+
+    @include govuk-media-query($until: tablet) {
+      margin-left: 0;
+      margin-top: 0;
+    }
   }
 
   &__value {
     @include govuk-font($size: 19);
     color: $govuk-text-colour;
+
+    @include govuk-media-query($until: tablet) {
+      margin-left: 0;
+    }
 
     span {
       @include govuk-font($size: 19);
@@ -71,6 +98,10 @@
 
     &__actions {
       margin-top: govuk-spacing(3);
+      @include govuk-media-query($until: tablet) {
+        margin-left: 0;
+        margin-top: 0;
+      }
     }
 
     &__fullwidth {
@@ -78,12 +109,21 @@
 
       & > :first-child {
         margin-right: auto;
+        @include govuk-media-query($until: tablet) {
+          margin-right: govuk-spacing(2);
+        }
       }
     }
   }
+
+  @include govuk-media-query($until: tablet) {
+    grid-template-columns: 1fr;
+  }
+
   @media screen and (min-width: 900px) {
     grid-template-columns: 1fr 1fr;
   }
+
   @media screen and (min-width: 1800px) {
     grid-template-columns: 1fr 1fr 1fr;
   }
@@ -704,40 +744,6 @@ $case-header-text-colour: govuk-colour('white');
 
 .case-table-container {
     overflow-x: scroll;
-}
-
-.quick-summary {
-    display: flex;
-
-    &__content {
-        margin-bottom: auto;
-        margin-right: 2rem;
-        flex: 1 0;
-
-        table {
-            table-layout: fixed;
-
-            col.quick-summary__table-wide {
-                width: 15rem;
-            }
-
-            ol#quick-summary__product-names {
-                padding-left: 1rem;
-                margin: 0;
-            }
-
-            ul.app-flags {
-                white-space: nowrap;
-                flex-flow: wrap;
-                margin-bottom: 0;
-            }
-        }
-    }
-
-    &__customiser-options {
-        flex: 0 1 20rem;
-    }
-
 }
 
 .case-filter-fields {
