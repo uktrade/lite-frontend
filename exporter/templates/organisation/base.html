@@ -23,9 +23,9 @@
 			{% for tab in tabs %}
 				{% if tab %}
 					{% with tab.url|equals:request.path as selected %}
-						<{%if selected %}p{% else %}a href="{{ tab.url }}"{% endif %} id="tab-{{ tab.id }}" class="lite-tabs__tab {% if tab.url == request.path %}lite-tabs__tab--selected{% endif %}" id="tab-members">
+						<a href="{{ tab.url }}" id="tab-{{ tab.id }}" class="lite-tabs__tab {% if tab.url == request.path %}lite-tabs__tab--selected{% endif %}">
 							{{ tab.name }}
-						</{%if selected %}p{% else %}a{% endif %}>
+						</a>
 					{% endwith %}
 				{% endif %}
 			{% endfor %}
