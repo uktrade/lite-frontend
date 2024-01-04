@@ -44,23 +44,15 @@ def mock_regimes_get(requests_mock):
         json=[
             {
                 "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
-                "name": "WASSENAAR",
+                "name": "wassenaar-1",
             },
             {
                 "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
-                "name": "MTCR",
-            },
-            {
-                "pk": "af07fed6-3e27-48b3-a4f1-381c005c63d3",
-                "name": "CWC",
+                "name": "mtcr-1",
             },
             {
                 "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
-                "name": "NSG",
-            },
-            {
-                "pk": "95274b74-f644-43a1-ad9b-3a69636c8597",
-                "name": "AG",
+                "name": "nsg-1",
             },
         ],
     )
@@ -175,13 +167,9 @@ def test_form(
     ]
     assert edit_good_cle == form_cle
 
-    # Check regimes
-    form_regimes = [
-        regime.get_text()
-        for regime in soup.find(id="id_form-0-regimes").find_all("option")
-        if "selected" in regime.attrs
-    ]
-    assert form_regimes == ["WASSENAAR", "MTCR", "CWC", "NSG", "AG"]
+    # Check regimes exists
+    form_regimes = [regime.get_text() for regime in soup.find(id="id_form-0-regimes").find_all("option")]
+    assert form_regimes == ["wassenaar-1", "mtcr-1", "nsg-1"]
 
     form_regimes_values = [regime.attrs["value"] for regime in soup.find(id="id_form-0-regimes").find_all("option")]
 
@@ -191,23 +179,11 @@ def test_form(
     edit_mtcr_good_regimes = [
         entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "MTCR"
     ]
-    edit_cwc_good_regimes = [
-        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "CWC"
-    ]
     edit_nsg_good_regimes = [
         entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "NSG"
     ]
-    edit_ag_good_regimes = [
-        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "AG"
-    ]
 
-    edit_regimes = (
-        edit_wassenaar_good_regimes
-        + edit_mtcr_good_regimes
-        + edit_cwc_good_regimes
-        + edit_nsg_good_regimes
-        + edit_ag_good_regimes
-    )
+    edit_regimes = edit_wassenaar_good_regimes + edit_mtcr_good_regimes + edit_nsg_good_regimes
 
     assert edit_regimes == form_regimes_values
 
@@ -372,28 +348,16 @@ def test_form_no_regime_entries(
             ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
         ),
         (
-            {"regimes": ["CWC"], "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"]},
-            ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
-        ),
-        (
-            {"regimes": ["AG"], "ag_entries": ["95274b74-f644-43a1-ad9b-3a69636c8597"]},
-            ["95274b74-f644-43a1-ad9b-3a69636c8597"],
-        ),
-        (
             {
                 "regimes": ["WASSENAAR", "MTCR", "NSG", "CWC", "AG"],
                 "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
                 "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
                 "nsg_entries": ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
-                "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
-                "ag_entries": ["95274b74-f644-43a1-ad9b-3a69636c8597"],
             },
             [
                 "c760976f-fd14-4356-9f23-f6eaf084475d",
                 "d73d0273-ef94-4951-9c51-c291eba949a0",
                 "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
-                "af07fed6-3e27-48b3-a4f1-381c005c63d3",
-                "95274b74-f644-43a1-ad9b-3a69636c8597",
             ],
         ),
     ),

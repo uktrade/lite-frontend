@@ -146,15 +146,18 @@ def test_home_content(
     soup = BeautifulSoup(response.content, "html.parser")
     element = soup.find("p", class_="govuk-notification-banner__heading")
     assert element.get_text() == "1 product going from Great Britain to Abu Dhabi and United Kingdom."
-    assert get_cells(soup, "assessed-products") == [
+
+    good_2_id = data_standard_case["case"]["data"]["goods"][1]["id"]
+    assert get_cells(soup, f"good-{good_2_id}") == [
+        "Selected",
         "2.",
         "p2",
         "ML8a,ML9a",
+        "No",
         "w-1\n\nmtcr-1\n\nnsg-1\n\ncwc-1\n\nag-1",
         "",
         "No",
         "test assesment note",
-        "Edit",
     ]
 
     # "current_user" passed in from caseworker context processor

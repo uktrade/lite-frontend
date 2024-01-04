@@ -5,9 +5,7 @@ from http import HTTPStatus
 from urllib.parse import urlencode
 
 from django.contrib import messages
-from django.conf import settings
 from django.forms import formset_factory
-from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic import FormView, View, TemplateView
 from django.utils.functional import cached_property
@@ -16,7 +14,6 @@ from django.urls import reverse
 from crispy_forms_gds.helper import FormHelper
 
 from core.auth.views import LoginRequiredMixin
-from core.constants import OrganisationDocumentType
 from core.decorators import expect_status
 
 from caseworker.advice.services import move_case_forward
@@ -33,7 +30,6 @@ from extra_views import FormSetView
 from caseworker.tau.forms import (
     BaseTAUPreviousAssessmentFormSet,
     TAUAssessmentForm,
-    TAUEditForm,
     TAUEditAssessmentChoiceForm,
     TAUEditAssessmentChoiceFormSet,
     TAUPreviousAssessmentForm,
@@ -47,7 +43,6 @@ from caseworker.tau.services import (
     group_gonas_by_good,
     put_bulk_assessment,
 )
-from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.utils import get_cle_suggestions_json, get_tau_tab_url_name
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
