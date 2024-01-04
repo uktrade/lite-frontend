@@ -979,4 +979,6 @@ def get_unique_destinations(good_on_application_hit):
             if destination not in unique_destinations:
                 unique_destinations.append(destination)
 
+    unique_destinations = [destination for destination in unique_destinations if destination]
+
     return unique_destinations
