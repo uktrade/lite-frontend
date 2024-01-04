@@ -125,3 +125,5 @@ MIDDLEWARE += [
     "exporter.core.middleware.ServiceErrorHandler",
     "exporter.core.middleware.OrganisationRedirectMiddleWare",
 ]
+
+SURVEY_URL = env.str("SURVEY_URL", "")
