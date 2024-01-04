@@ -19,11 +19,16 @@ class BaseForm(forms.Form):
                 self.helper.attrs = {"enctype": "multipart/form-data"}
                 break
 
+        title = self.Layout.TITLE
+        if hasattr(self.Layout, "TITLE_AS_LABEL_FOR"):
+            id_for_label = self[self.Layout.TITLE_AS_LABEL_FOR].id_for_label
+            title = f'<label for="{id_for_label}">{title}</label>'
+
         if not hasattr(self.Layout, "SUBTITLE"):
-            headings = (HTML.h1(self.Layout.TITLE),)
+            headings = (HTML.h1(title),)
         else:
             headings = (
-                HTML(f'<h1 class="govuk-heading-xl govuk-!-margin-bottom-0">{self.Layout.TITLE}</h1>'),
+                HTML(f'<h1 class="govuk-heading-xl govuk-!-margin-bottom-0">{title}</h1>'),
                 HTML(f'<p class="govuk-hint">{self.Layout.SUBTITLE}</p>'),
             )
 

@@ -732,6 +732,7 @@ class ProductMilitaryUseForm(BaseForm):
 class ProductDescriptionForm(BaseForm):
     class Layout:
         TITLE = "Describe the product and what it is designed to do"
+        TITLE_AS_LABEL_FOR = "product_description"
 
     product_description = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 5}),

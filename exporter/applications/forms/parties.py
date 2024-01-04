@@ -5,6 +5,7 @@ from django import forms
 from django.core.validators import MaxLengthValidator
 from django.urls import reverse_lazy
 
+from core.common.forms import BaseForm
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
 from exporter.core.constants import CaseTypes
@@ -209,8 +210,11 @@ class PartySubTypeSelectForm(forms.Form):
         return cleaned_data
 
 
-class PartyNameForm(forms.Form):
-    title = "End user name"
+class PartyNameForm(BaseForm):
+    class Layout:
+        TITLE = "End user name"
+        TITLE_AS_LABEL_FOR = "name"
+
     name = forms.CharField(
         label="",
         error_messages={"required": "Enter a name"},
@@ -222,34 +226,25 @@ class PartyNameForm(forms.Form):
         ],
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "name",
-            Submit("submit", "Continue"),
-        )
+    def get_layout_fields(self):
+        return ("name",)
 
 
-class PartyWebsiteForm(forms.Form):
-    title = "End user website address (optional)"
+class PartyWebsiteForm(BaseForm):
+    class Layout:
+        TITLE = "End user website address (optional)"
+        TITLE_AS_LABEL_FOR = "website"
+
     website = forms.CharField(required=False, label="")
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "website",
-            Submit("submit", "Continue"),
-        )
+    def get_layout_fields(self):
+        return ("website",)
 
 
-class PartyAddressForm(forms.Form):
-    title = "End user address"
+class PartyAddressForm(BaseForm):
+    class Layout:
+        TITLE = "End user address"
+
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}), error_messages={"required": "Enter an address"}
     )
@@ -267,32 +262,26 @@ class PartyAddressForm(forms.Form):
         country_choices = [(country["id"], country["name"]) for country in countries]
         self.fields["country"].choices += country_choices
 
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
+    def get_layout_fields(self):
+        return (
             "address",
             "country",
-            Submit("submit", "Save and continue"),
         )
 
 
-class PartySignatoryNameForm(forms.Form):
-    title = "Signatory name"
+class PartySignatoryNameForm(BaseForm):
+    class Layout:
+        TITLE = "Signatory name"
+        TITLE_AS_LABEL_FOR = "signatory_name_euu"
+
     signatory_name_euu = forms.CharField(
         label="",
         help_text="This is the name of the person who signed the end user undertaking or stockist undertaking",
         error_messages={"required": "Enter a name"},
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "signatory_name_euu",
-            Submit("submit", "Continue"),
-        )
+    def get_layout_fields(self):
+        return ("signatory_name_euu",)
 
 
 class PartyDocumentsForm(forms.Form):
