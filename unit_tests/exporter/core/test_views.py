@@ -51,8 +51,51 @@ def test_register_name_redirects_name_known(authorized_client):
     assert response.url == settings.LOGIN_URL
 
 
-def test_home_no_logged_in_go_uk_user_start_page_template_used(client):
-    url = reverse("core:home")
-    response = client.get(url)
+@pytest.fixture
+def home_url():
+    return reverse("core:home")
+
+
+def test_home_no_logged_in_go_uk_user_start_page_template_used(client, home_url):
+    response = client.get(home_url)
     assert response.status_code == 200
     assertTemplateUsed(response, "core/start-gov-uk.html")
+
+
+@pytest.fixture
+def mock_require_serial_numbers(requests_mock):
+    requests_mock.get(
+        "/applications/require-serial-numbers/?page=1",
+        json={
+            "results": [],
+        },
+    )
+
+
+def test_survey_alert_displayed(authorized_client, settings, home_url, mock_require_serial_numbers):
+    settings.SURVEY_URL = "http://example.com"
+
+    response = authorized_client.get(home_url)
+    assertTemplateUsed(response, "core/hub.html")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    banner = soup.select("#survey-notification-banner")
+    assert banner
+
+    links = soup.select("#survey-notification-banner .govuk-notification-banner__link")
+    assert len(links) == 1
+    link = links[0]
+    assert link.attrs["href"] == "http://example.com"
+
+
+def test_survey_alert_not_displayed(authorized_client, settings, home_url, mock_require_serial_numbers):
+    settings.SURVEY_URL = ""
+
+    response = authorized_client.get(home_url)
+    assertTemplateUsed(response, "core/hub.html")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    banner = soup.select("#survey-notification-banner")
+    assert not banner
