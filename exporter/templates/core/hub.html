@@ -9,6 +9,21 @@
 {% block back_link %}{% endblock %}
 
 {% block body %}
+	{% if SURVEY_URL %}
+		<div class="govuk-notification-banner" id="survey-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+			<div class="govuk-notification-banner__header">
+				<h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+					Survey
+				</h2>
+			</div>
+			<div class="govuk-notification-banner__content">
+				<p class="govuk-notification-banner__heading">
+					Help us develop this service through our
+					<a class="govuk-notification-banner__link" href="{{ SURVEY_URL }}">short survey</a>
+				</p>
+			</div>
+		</div>
+	{% endif %}
 	<span class="govuk-caption-l">
 		{% lcs 'hub.ACCOUNT_HOME' %}
 	</span>
