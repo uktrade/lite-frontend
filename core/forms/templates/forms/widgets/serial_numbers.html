@@ -2,7 +2,10 @@
 {% for subwidget in widget.subwidgets %}
     <div class="govuk-form-group">
         <div class="govuk-input__wrapper">
-            <div class="govuk-input__prefix" aria-hidden="true">{{ forloop.counter }}</div>
+            <label class="govuk-input__prefix" for="{{ subwidget.attrs.id }}">
+                <span class="govuk-visually-hidden">Serial number for product</span>
+                {{ forloop.counter }}
+            </label>
             {% include subwidget.template_name with widget=subwidget %}
         </div>
     </div>
