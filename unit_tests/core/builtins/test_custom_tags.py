@@ -305,6 +305,54 @@ def test_get_display_values():
 
 
 @pytest.mark.parametrize(
+    "search_results, expected_destinations",
+    [
+        ({}, []),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": None,
+            },
+            ["Australia"],
+        ),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": "Australia",
+            },
+            ["Australia"],
+        ),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": "Japan",
+            },
+            ["Australia", "Japan"],
+        ),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": "Japan",
+                "ultimate_end_user_country": ["Antartica"],
+            },
+            ["Australia", "Japan", "Antartica"],
+        ),
+        (
+            {
+                "end_user_country": "Japan",
+                "consignee_country": "Japan",
+                "ultimate_end_user_country": ["Japan"],
+            },
+            ["Japan"],
+        ),
+    ],
+)
+def test_get_unique_destinations(search_results, expected_destinations):
+    actual_destinations = custom_tags.get_unique_destinations(search_results)
+    assert actual_destinations == expected_destinations
+
+
+@pytest.mark.parametrize(
     "data, expected",
     [
         ([], "[]"),
