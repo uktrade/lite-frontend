@@ -157,6 +157,21 @@ def str_date(value):
 
 @register.filter
 @stringfilter
+def str_date_with_on(value):
+    try:
+        return_value = localtime(parse(value))
+        return (
+            return_value.strftime("%-I:%M")
+            + return_value.strftime("%p").lower()
+            + " on "
+            + return_value.strftime("%d %B " "%Y")
+        )
+    except ValueError:
+        return
+
+
+@register.filter
+@stringfilter
 def str_date_only(value):
     if value != "None":
         return localtime(parse(value)).strftime("%-d %B %Y")
