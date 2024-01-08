@@ -26,13 +26,8 @@ urlpatterns = [
     path("tau/", include("caseworker.tau.urls")),
     path("tau/report_summary/", include("caseworker.report_summary.urls")),
     path("search/", include("caseworker.search.urls")),
-    path("search/proof-of-concept/", include("caseworker.search.proof_of_concept.urls")),
     path("bookmarks/", include("caseworker.bookmarks.urls")),
 ]
-
-
-if settings.FEATURE_SPIRE_SEARCH_ON:
-    urlpatterns.append(path("spire/", include("caseworker.spire.urls")))
 
 
 if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:

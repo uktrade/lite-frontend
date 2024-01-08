@@ -88,11 +88,9 @@ def build_wizard_step_data(view_name, step_name, data):
 
 def test_good_on_application_detail(
     authorized_client,
-    mock_application_search,
     queue_pk,
     standard_case_pk,
     good_on_application_pk,
-    data_search,
     data_good_on_application,
     data_standard_case,
 ):
@@ -103,11 +101,6 @@ def test_good_on_application_detail(
     response = authorized_client.get(url)
 
     assert response.status_code == 200
-    # then the search endpoint is requested for cases with goods with the same part number and control list entries
-    assert mock_application_search.request_history[0].qs == {"part": ["44"], "clc_rating": ["ml1", "ml2"]}
-    assert response.context_data["other_cases"] == data_search
-    # and the form is pre-populated with the part number and control list entries
-    assert response.context_data["form"]["search_string"].initial == 'part:"44" clc_rating:"ML1" clc_rating:"ML2"'
 
     # and the view exposes the data that the template needs
     assert response.context_data["good_on_application"] == data_good_on_application
@@ -204,10 +197,6 @@ def test_good_on_application_detail_no_part_number(
     response = authorized_client.get(url)
 
     assert response.status_code == 200
-    # then the search endpoint is requested for cases with goods with the same control list entries
-    assert mock_application_search.request_history[0].qs == {"clc_rating": ["ml1", "ml2"]}
-    # and the form is pre-populated with the part number and control list entries
-    assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1" clc_rating:"ML2"'
 
 
 def test_good_on_application_detail_no_part_number_no_control_list_entries(
@@ -228,10 +217,6 @@ def test_good_on_application_detail_no_part_number_no_control_list_entries(
     response = authorized_client.get(url)
 
     assert response.status_code == 200
-    # then the search endpoint is not requested
-    assert len(mock_application_search.request_history) == 0
-    # and the form is left blank
-    assert response.context_data["form"]["search_string"].initial == ""
 
 
 def test_good_on_application_detail_not_rated_at_application_level(
@@ -252,10 +237,6 @@ def test_good_on_application_detail_not_rated_at_application_level(
     response = authorized_client.get(url)
 
     assert response.status_code == 200
-    # then the search endpoint is requested for cases with goods with the same control list entries as canonical good
-    assert mock_application_search.request_history[0].qs == {"clc_rating": ["ml1"]}
-    # and the form is pre-populated with the canonical good control list entries
-    assert response.context_data["form"]["search_string"].initial == 'clc_rating:"ML1"'
 
 
 def test_search_denials(authorized_client, data_standard_case, requests_mock, queue_pk, standard_case_pk):

@@ -6,43 +6,20 @@ from caseworker.cases.services import (
     get_good_on_application,
     get_good_on_application_documents,
 )
-from caseworker.search.services import get_application_search_results
-from caseworker.search.forms import SearchForm
 from core.auth.views import LoginRequiredMixin
 
-from django.views.generic import FormView
+from django.views.generic import TemplateView
 from django.utils.functional import cached_property
 
 
-class GoodDetails(LoginRequiredMixin, FormView):
-    form_class = SearchForm
+class GoodDetails(LoginRequiredMixin, TemplateView):
     template_name = "case/product-on-case.html"
 
     @cached_property
     def object(self):
         return get_good_on_application(self.request, pk=self.kwargs["good_pk"])
 
-    @cached_property
-    def other_cases(self):
-        form = self.get_form()
-        search_string = self.get_initial()["search_string"]
-        if search_string:
-            return get_application_search_results(self.request, query_params=form.extract_filters(search_string))
-        return []
-
-    def get_initial(self):
-        search_string = ""
-        part_number = self.object["good"]["part_number"]
-        if part_number:
-            search_string += f'part:"{part_number}"'
-        control_list_entries = self.object["control_list_entries"] or self.object["good"]["control_list_entries"]
-        for item in control_list_entries:
-            search_string += f' clc_rating:"{item["rating"]}"'
-        return {"search_string": search_string.strip()}
-
     def get_context_data(self, **kwargs):
-        form = self.get_form()
-
         case = get_case(self.request, self.kwargs["pk"])
 
         good_on_application_documents = get_good_on_application_documents(
@@ -77,9 +54,7 @@ class GoodDetails(LoginRequiredMixin, FormView):
             },
             product_summary=product_summary,
             case=case,
-            other_cases=self.other_cases,
             # for pagination
-            data={"total_pages": self.other_cases["count"] // form.page_size} if self.other_cases else {},
             organisation_documents={key.replace("-", "_"): value for key, value in organisation_documents.items()},
             is_user_rfd=is_user_rfd,
             **kwargs,
