@@ -172,18 +172,6 @@ def test_home_content(
 
     assert soup.find(id="clear-assessments-button") is not None
 
-    # The precedent for the unassessed product
-
-    assert get_cells(soup, "table-precedents-1") == [
-        "ML1a (opens in new tab)",
-        "Destinations",
-        "France from Northern Ireland",
-        "Regime",
-        "",
-        "Report summary",
-        "test-report-summary",
-    ]
-
     # "current_user" passed in from caseworker context processor
     # used to test rule "can_user_change_case"
     assert response.context["current_user"] == mock_gov_user["user"]
@@ -520,71 +508,6 @@ def test_control_list_suggestions_json(
 
     response = authorized_client.get(url)
     assert response.context["cle_suggestions_json"] == {"mock": "suggestion"}
-
-
-@pytest.mark.parametrize(
-    "starting_point, expected_destination",
-    (
-        ("GB", "France from Great Britain"),
-        ("NI", "France from Northern Ireland"),
-        ("", "France"),
-        (None, "France"),
-    ),
-)
-def test_precedents_starting_point(
-    starting_point,
-    expected_destination,
-    authorized_client,
-    url,
-    data_queue,
-    data_standard_case,
-    mock_control_list_entries,
-    requests_mock,
-):
-    # Remove assessment from a good
-    good = data_standard_case["case"]["data"]["goods"][0]
-    good["is_good_controlled"] = None
-    good["control_list_entries"] = []
-    good["firearm_details"]["year_of_manufacture"] = "1930"
-
-    case_id = data_standard_case["case"]["id"]
-    precedents_url = client._build_absolute_uri(f"/cases/{case_id}/good-precedents/")
-    requests_mock.get(
-        precedents_url,
-        json={
-            "results": [
-                {
-                    "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-                    "good": "8b730c06-ab4e-401c-aeb0-32b3c92e912c",
-                    "application": case_id,
-                    "queue": data_queue["id"],
-                    "reference": data_standard_case["case"]["reference_code"],
-                    "destinations": ["France"],
-                    "control_list_entries": ["ML1a"],
-                    "wassenaar": False,
-                    "quantity": 10.0,
-                    "value": "test-value",
-                    "report_summary": "test-report-summary",
-                    "submitted_at": "2021-06-21T11:27:36.145000Z",
-                    "goods_starting_point": starting_point,
-                },
-            ]
-        },
-    )
-
-    response = authorized_client.get(url)
-    assert response.status_code == 200
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    assert get_cells(soup, "table-precedents-1") == [
-        "ML1a (opens in new tab)",
-        "Destinations",
-        expected_destination,
-        "Regime",
-        "",
-        "Report summary",
-        "test-report-summary",
-    ]
 
 
 @pytest.mark.parametrize(

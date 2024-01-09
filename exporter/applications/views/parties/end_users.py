@@ -7,6 +7,8 @@ from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
 from http import HTTPStatus
 
+from core.common.forms import BaseForm
+
 from exporter.applications.forms.parties import (
     PartyReuseForm,
     PartySubTypeSelectForm,
@@ -138,7 +140,10 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
-        context["title"] = form.title
+        if isinstance(form, BaseForm):
+            context["title"] = form.Layout.TITLE
+        else:
+            context["title"] = form.title
         return context
 
     def get_form_kwargs(self, step=None):

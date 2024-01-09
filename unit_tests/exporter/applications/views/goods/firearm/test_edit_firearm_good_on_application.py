@@ -118,12 +118,13 @@ def test_edit_firearm_certificate_retaining_current_file(
     mock_good_on_application_put,
     summary_type,
 ):
+    expiry_date = datetime.datetime.today() + datetime.timedelta(days=4 * 365)
     response = authorized_client.post(
         edit_firearm_certificate_url,
         data={
             "section_certificate_number": "67890",
             "section_certificate_missing": False,
-            **decompose_date("section_certificate_date_of_expiry", datetime.date(2024, 1, 1)),
+            **decompose_date("section_certificate_date_of_expiry", expiry_date),
         },
     )
 
@@ -133,7 +134,7 @@ def test_edit_firearm_certificate_retaining_current_file(
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {
-            "section_certificate_date_of_expiry": "2024-01-01",
+            "section_certificate_date_of_expiry": expiry_date.date().isoformat(),
             "section_certificate_missing": False,
             "section_certificate_number": "67890",
         },
@@ -188,13 +189,14 @@ def test_edit_firearm_certificate_retaining_upload_new_file(
         json={},
     )
 
+    expiry_date = datetime.datetime.today() + datetime.timedelta(days=4 * 365)
     response = authorized_client.post(
         edit_firearm_certificate_url,
         data={
             "file": SimpleUploadedFile("firearm_certificate.pdf", b"This is the firearm certificate"),
             "section_certificate_number": "67890",
             "section_certificate_missing": False,
-            **decompose_date("section_certificate_date_of_expiry", datetime.date(2024, 1, 1)),
+            **decompose_date("section_certificate_date_of_expiry", expiry_date),
         },
     )
 
@@ -204,7 +206,7 @@ def test_edit_firearm_certificate_retaining_upload_new_file(
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {
-            "section_certificate_date_of_expiry": "2024-01-01",
+            "section_certificate_date_of_expiry": expiry_date.date().isoformat(),
             "section_certificate_missing": False,
             "section_certificate_number": "67890",
         },
@@ -316,12 +318,13 @@ def test_edit_shotgun_certificate_retaining_current_file(
     mock_good_on_application_put,
     summary_type,
 ):
+    expiry_date = datetime.datetime.today() + datetime.timedelta(days=4 * 365)
     response = authorized_client.post(
         edit_shotgun_certificate_url,
         data={
             "section_certificate_number": "67890",
             "section_certificate_missing": False,
-            **decompose_date("section_certificate_date_of_expiry", datetime.date(2024, 1, 1)),
+            **decompose_date("section_certificate_date_of_expiry", expiry_date),
         },
     )
 
@@ -331,7 +334,7 @@ def test_edit_shotgun_certificate_retaining_current_file(
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {
-            "section_certificate_date_of_expiry": "2024-01-01",
+            "section_certificate_date_of_expiry": expiry_date.date().isoformat(),
             "section_certificate_missing": False,
             "section_certificate_number": "67890",
         },
@@ -386,13 +389,14 @@ def test_edit_shotgun_certificate_retaining_upload_new_file(
         json={},
     )
 
+    expiry_date = datetime.datetime.today() + datetime.timedelta(days=4 * 365)
     response = authorized_client.post(
         edit_shotgun_certificate_url,
         data={
             "file": SimpleUploadedFile("shotgun_certificate.pdf", b"This is the shotgun certificate"),
             "section_certificate_number": "67890",
             "section_certificate_missing": False,
-            **decompose_date("section_certificate_date_of_expiry", datetime.date(2024, 1, 1)),
+            **decompose_date("section_certificate_date_of_expiry", expiry_date),
         },
     )
 
@@ -402,7 +406,7 @@ def test_edit_shotgun_certificate_retaining_upload_new_file(
     assert mock_good_on_application_put.called_once
     assert mock_good_on_application_put.last_request.json() == {
         "firearm_details": {
-            "section_certificate_date_of_expiry": "2024-01-01",
+            "section_certificate_date_of_expiry": expiry_date.date().isoformat(),
             "section_certificate_missing": False,
             "section_certificate_number": "67890",
         },

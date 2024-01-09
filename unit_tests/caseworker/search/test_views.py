@@ -179,9 +179,9 @@ def test_product_search_invalid_query_bad_request_puts_error_in_context(
     requests_mock.get(
         url=url,
         json={
-            "error": "Invalid search string",
-            "results": [],
-            "count": 0,
+            "errors": {
+                "search": "Invalid search string",
+            }
         },
         status_code=400,
     )
@@ -189,7 +189,7 @@ def test_product_search_invalid_query_bad_request_puts_error_in_context(
         product_search_url,
         data={"search_string": "shotguns AND", "page": 1},
     )
-    assert response.context["search_results"]["error"] == "Invalid search string"
+    assert response.context["search_results"]["errors"]["search"] == "Invalid search string"
 
 
 def test_product_search_invalid_query_server_error_shows_generic_error_page(

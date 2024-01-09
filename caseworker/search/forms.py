@@ -122,7 +122,7 @@ class ProductSearchForm(forms.Form):
             "data-search-url": reverse("search:api-search-suggest-product"),
         }
         self.helper.layout = Layout(
-            Field("search_string", css_class="product-search__search-field"),
+            Field("search_string", css_class="product-search__search-field input-force-default-width"),
             Div(
                 Submit("submit", "Search"),
                 css_class="product-search__actions",

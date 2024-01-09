@@ -5,9 +5,7 @@
 {% block header_tabs %}
     <div id="tab-bar" class="app-case-tab-bar">
         <div class="govuk-width-container lite-tabs__container">
-            <div class="lite-tabs ">
-                {% include "includes/case-tabs.html" %}
-            </div>
+            {% include "includes/case-tabs.html" %}
         </div>
     </div>
 {% endblock %}
@@ -17,7 +15,7 @@
         <main class="govuk-main-wrapper">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
-                    <h1 class="govuk-heading-l">Product Assessment</h1>
+                    <h1 class="govuk-heading-l">Product assessment</h1>
                     <h2 class="govuk-heading-m">Check product assessments from previous cases</h2>
 
                     {% if unassessed_goods %}

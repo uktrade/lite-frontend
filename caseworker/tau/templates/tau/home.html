@@ -5,9 +5,7 @@
 {% block header_tabs %}
     <div id="tab-bar" class="app-case-tab-bar">
         <div class="govuk-width-container lite-tabs__container">
-            <div class="lite-tabs ">
-                {% include "includes/case-tabs.html" %}
-            </div>
+            {% include "includes/case-tabs.html" %}
         </div>
     </div>
 {% endblock %}
@@ -82,11 +80,11 @@
                                         <th scope="col" class="govuk-table__header">
                                             <span class="govuk-visually-hidden">Line number</span>
                                         </th>
-                                        <th scope="col" class="govuk-table__header">Product Details</th>
+                                        <th scope="col" class="govuk-table__header">Name and part number</th>
                                         <th scope="col" class="govuk-table__header">Control list entry</th>
                                         <th scope="col" class="govuk-table__header">Regime</th>
                                         <th scope="col" class="govuk-table__header">Report summary</th>
-                                        <th scope="col" class="govuk-table__header">Refer to NCSC</th>
+                                        <th scope="col" class="govuk-table__header">Military list for NCSC</th>
                                         <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Assessment note</th>
                                         <th scope="col" class="govuk-table__header">
                                             <span class="govuk-visually-hidden">Actions</span>

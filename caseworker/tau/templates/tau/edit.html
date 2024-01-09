@@ -13,7 +13,6 @@
                     <h3 class="govuk-heading-m">{{ good.line_number }}. {{ good.good.name }}</h3>
                     <div>
                       {% include "goods/includes/good_table.html" with good=good summary=summary %}
-                      {% include "goods/includes/precedent_table.html" with precedents=good.precedents %}
                     </div>
                 </div>
             </div>
