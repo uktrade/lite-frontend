@@ -25,6 +25,12 @@ def mock_post_team_advice(requests_mock, standard_case_pk):
     yield requests_mock.post(url=url, json={})
 
 
+@pytest.fixture
+def mock_get_ecju_open_count(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries-open-count/")
+    yield requests_mock.get(url=url, json={"count": 0})
+
+
 @pytest.fixture(autouse=True)
 def setup(
     mock_queue,
@@ -35,6 +41,7 @@ def setup(
     mock_footnote_details,
     mock_post_team_advice,
     mock_finalise_advice_documents,
+    mock_get_ecju_open_count,
 ):
     yield
 
