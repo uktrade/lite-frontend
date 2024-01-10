@@ -11,6 +11,7 @@ from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.services import get_case, get_final_decision_documents
+from caseworker.cases.helpers.ecju_queries import has_open_queries
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
 from caseworker.core.services import get_denial_reasons, group_denial_reasons
@@ -792,7 +793,6 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         # Only show an inform letter on the decision documents
         decisions, _ = get_final_decision_documents(self.request, self.case.id)
         decision_documents = {key: value for key, value in decisions.get("documents", {}).items() if key == "inform"}
-
         return {
             **super().get_context(**kwargs),
             "consolidated_advice": consolidated_advice,
@@ -804,6 +804,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "decisions": decision_documents,
             "queue_id": self.queue_id,
             "refusal_note": refusal_note,
+            "has_open_queries": has_open_queries(self.request, self.case_id),
         }
 
     def form_valid(self, form):
