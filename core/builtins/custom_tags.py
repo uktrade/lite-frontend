@@ -172,6 +172,17 @@ def str_date_with_on(value):
 
 @register.filter
 @stringfilter
+def str_int_days_since_date(value):
+    if value:
+        past_datetime = localtime(parse(value))
+        current_datetime = localtime(datetime.datetime.now())
+        delta = current_datetime - past_datetime
+        return str(delta.days)
+    return "0"
+
+
+@register.filter
+@stringfilter
 def str_date_only(value):
     if value != "None":
         return localtime(parse(value)).strftime("%-d %B %Y")
