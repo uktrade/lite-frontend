@@ -11,7 +11,7 @@ from decimal import Decimal
 from importlib import import_module
 
 import bleach
-from dateutil.parser import isoparse, parse
+from dateutil.parser import isoparse, parse, ParserError
 from dateutil.relativedelta import relativedelta
 
 from django import template
@@ -173,12 +173,13 @@ def str_date_with_on(value):
 @register.filter
 @stringfilter
 def str_int_days_since_date(value):
-    if value:
+    try:
         past_datetime = localtime(parse(value))
         current_datetime = localtime(datetime.datetime.now())
         delta = current_datetime - past_datetime
         return str(delta.days)
-    return "0"
+    except ParserError:
+        return
 
 
 @register.filter

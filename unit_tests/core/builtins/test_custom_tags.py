@@ -1,5 +1,6 @@
 import datetime
 import pytest
+from unittest.mock import patch
 
 from decimal import Decimal
 
@@ -373,3 +374,14 @@ def test_pprint_dict(data, expected):
 )
 def test_str_date_with_on(input_string, expected_output):
     assert custom_tags.str_date_with_on(input_string) == expected_output
+
+
+@pytest.mark.parametrize(
+    ("past_datetime", "expected_output"),
+    [("2024-01-01T13:30:00.123456+01:00", "9"), ("not a datetime", None)],
+)
+def test_str_int_days_since_date(past_datetime, expected_output):
+    mock_now = datetime.datetime(2024, 1, 11, 11, 46, 22, 323093)
+    with patch("core.builtins.custom_tags.datetime.datetime") as mock_datetime:
+        mock_datetime.now.return_value = mock_now
+        assert custom_tags.str_int_days_since_date(past_datetime) == expected_output
