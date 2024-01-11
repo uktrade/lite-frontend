@@ -611,8 +611,6 @@ class EcjuQueries:
     CLOSED_DESCRIPTION = "Queries are automatically closed when the exporter responds to them."
     OPEN = "Open queries"
     CREATED_AT = "Created at"
-    SENT_AT = "Sent at"
-    CLOSED_AT = "Closed at"
 
     class Queries:
         ECJU_QUERY = "Standard query"
