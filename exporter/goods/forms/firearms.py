@@ -86,9 +86,10 @@ class FirearmCategoryForm(BaseForm):
 class FirearmCalibreForm(BaseForm):
     class Layout:
         TITLE = "What is the calibre of the product?"
+        TITLE_AS_LABEL_FOR = "calibre"
 
     calibre = forms.CharField(
-        label="What is the calibre of the product?",
+        label="",
         error_messages={
             "required": "Enter the calibre",
         },

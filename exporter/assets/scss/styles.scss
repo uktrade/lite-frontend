@@ -12,9 +12,8 @@ $govuk-page-width: 1200px !default;
 $govuk-image-url-function: 'get_govuk_image_asset_url';
 $govuk-font-url-function: 'get_govuk_font_asset_url';
 
-
-
 @import "node_modules/govuk-frontend/govuk/all"; // GOV.UK Design System
+@import "node_modules/accessible-autocomplete/src/autocomplete";
 @import "core/assets/styles/all"; // LITE Design System
 @import "components/all"; // Local assets
 @import "overrides/all";

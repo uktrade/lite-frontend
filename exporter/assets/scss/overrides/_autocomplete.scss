@@ -1,3 +1,10 @@
-.lite-autocomplete__hint {
-	margin-left: 0!important;
+.lite-autocomplete {
+  &__hint {
+    margin-left: 0!important;
+  }
+
+  &__menu {
+    max-width: initial;
+    width: calc(54ex - 3px);
+  }
 }

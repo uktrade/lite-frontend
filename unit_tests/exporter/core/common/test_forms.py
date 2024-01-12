@@ -58,6 +58,21 @@ def test_layout_title(rf):
     assert '<h1 class="govuk-heading-xl">title</h1>' in rendered
 
 
+def test_layout_title_as_legend(rf):
+    class TitleAsLegendForm(BaseForm):
+        class Layout:
+            TITLE = "title"
+            TITLE_AS_LABEL_FOR = "char_field"
+
+        char_field = forms.CharField()
+
+        def get_layout_fields(self):
+            return []
+
+    rendered = render_form(rf.get("/"), TitleAsLegendForm)
+    assert '<h1 class="govuk-heading-xl"><label for="id_char_field">title</label></h1>' in rendered
+
+
 def test_layout_title_and_subtitle(rf):
     class TitleAndSubtitleForm(BaseForm):
         class Layout:
@@ -69,6 +84,25 @@ def test_layout_title_and_subtitle(rf):
 
     rendered = render_form(rf.get("/"), TitleAndSubtitleForm)
     assert '<h1 class="govuk-heading-xl govuk-!-margin-bottom-0">title</h1>' in rendered
+    assert '<p class="govuk-hint">subtitle</p>' in rendered
+
+
+def test_layout_title_as_legend_and_subtitle(rf):
+    class TitleAsLegendAndSubtitleForm(BaseForm):
+        class Layout:
+            TITLE = "title"
+            SUBTITLE = "subtitle"
+            TITLE_AS_LABEL_FOR = "char_field"
+
+        char_field = forms.CharField()
+
+        def get_layout_fields(self):
+            return []
+
+    rendered = render_form(rf.get("/"), TitleAsLegendAndSubtitleForm)
+    assert (
+        '<h1 class="govuk-heading-xl govuk-!-margin-bottom-0"><label for="id_char_field">title</label></h1>' in rendered
+    )
     assert '<p class="govuk-hint">subtitle</p>' in rendered
 
 

@@ -302,3 +302,66 @@ def test_goods_value_correct_float_value():
 def test_get_display_values():
     display_val_dict = [{"id": "1", "display_value": "reason a"}, {"id": "1", "display_value": "reason b"}]
     assert custom_tags.get_display_values(display_val_dict, "display_value") == "reason a, reason b"
+
+
+@pytest.mark.parametrize(
+    "search_results, expected_destinations",
+    [
+        ({}, []),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": None,
+            },
+            ["Australia"],
+        ),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": "Australia",
+            },
+            ["Australia"],
+        ),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": "Japan",
+            },
+            ["Australia", "Japan"],
+        ),
+        (
+            {
+                "end_user_country": "Australia",
+                "consignee_country": "Japan",
+                "ultimate_end_user_country": ["Antartica"],
+            },
+            ["Australia", "Japan", "Antartica"],
+        ),
+        (
+            {
+                "end_user_country": "Japan",
+                "consignee_country": "Japan",
+                "ultimate_end_user_country": ["Japan"],
+            },
+            ["Japan"],
+        ),
+    ],
+)
+def test_get_unique_destinations(search_results, expected_destinations):
+    actual_destinations = custom_tags.get_unique_destinations(search_results)
+    assert actual_destinations == expected_destinations
+
+
+@pytest.mark.parametrize(
+    "data, expected",
+    [
+        ([], "[]"),
+        ({}, "{}"),
+        (
+            {"key1": "value2", "key2": {"key2.1": "value2.1"}},
+            '{\n    "key1": "value2",\n    "key2": {\n        "key2.1": "value2.1"\n    }\n}',
+        ),
+    ],
+)
+def test_pprint_dict(data, expected):
+    assert custom_tags.pprint_dict(data) == expected

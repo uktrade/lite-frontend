@@ -9,6 +9,7 @@ import "../../../core/assets/javascripts/back-link.js";
 import { gaPushUserID } from "../../../core/assets/javascripts/ga-events.js";
 import initCookierBanner from "../../../core/assets/javascripts/cookies/banner.js";
 import initAddGood from "./add-good";
+import initMultiSelects from "./multi-select";
 
 // our styles
 import "../scss/styles.scss";
@@ -16,6 +17,7 @@ import "../scss/styles.scss";
 $(document).ready(function () {
   initAll();
   initAddGood();
+  initMultiSelects();
   initCookierBanner("app-cookie-banner", "js-accept-cookie");
   gaPushUserID();
 });
