@@ -64,13 +64,13 @@ describe("CLE suggestions", () => {
       },
     ]);
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R1, R1a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R2, R2a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R2, R2a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R3, R3a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R3, R3a</button>`
     );
   });
 
@@ -195,13 +195,13 @@ describe("CLE suggestions", () => {
       },
     ]);
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R1, R1a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R2, R2a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R2, R2a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R3, R3a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R3, R3a</button>`
     );
   });
 
@@ -222,13 +222,13 @@ describe("CLE suggestions", () => {
       },
     ]);
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R1, R1a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R2, R2a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R2, R2a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R3, R3a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R3, R3a</button>`
     );
   });
 
@@ -246,10 +246,10 @@ describe("CLE suggestions", () => {
       },
     ]);
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R1, R1a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R1, R1a</button>`
     );
   });
 });
