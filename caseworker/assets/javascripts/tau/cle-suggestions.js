@@ -47,6 +47,7 @@ class CLESuggestions extends EventEmitter {
     const cleSuggestionButton = document.createElement("button");
     cleSuggestionButton.classList.add("lite-button--link");
     cleSuggestionButton.textContent = suggestionText;
+    cleSuggestionButton.type = "button";
     return cleSuggestionButton;
   }
 
