@@ -18,6 +18,7 @@ const initSelectAll = (goods) => {
 
   const button = document.createElement("button");
   button.classList.add("lite-button--link", "assessment-form__select-all");
+  button.type = "button";
   const selectAllButton = new SelectAllButton(button);
 
   selectAllCheckboxes.on("change", (isAllSelected) => {
@@ -38,6 +39,7 @@ const initExpandAll = (goods) => {
   const expandAllButton = document.createElement("button");
   expandAllButton.innerText = SHOW_ALL_BUTTON_TEXT;
   expandAllButton.classList.add("lite-button--link");
+  expandAllButton.type = "button";
 
   const details = goods.querySelectorAll(".govuk-details");
 

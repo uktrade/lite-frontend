@@ -38,6 +38,7 @@ class SelectedOptions {
     const $textNode = document.createTextNode("Remove");
 
     const $button = document.createElement("button");
+    $button.type = "button";
     $button.appendChild($iconDiv);
     $button.appendChild($textNode);
 
