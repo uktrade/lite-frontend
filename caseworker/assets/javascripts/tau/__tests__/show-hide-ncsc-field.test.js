@@ -48,6 +48,8 @@ describe("ShowHideNCSCField", () => {
     [["ML123"], "revert"],
     [["123", "ML"], "revert"],
     [["123", "ML123"], "revert"],
+    [["ML", "123"], "revert"],
+    [["ML123", "123"], "revert"],
   ])("toggleField with ratings '%s'", (ratings, display) => {
     component.toggleField(ratings);
 
