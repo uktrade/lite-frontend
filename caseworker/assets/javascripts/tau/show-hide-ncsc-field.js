@@ -1,14 +1,14 @@
 class ShowHideNcscField {
-  constructor($ncssFieldWrapper) {
-    this.$ncssFieldWrapper = $ncssFieldWrapper;
+  constructor($ncscFieldWrapper) {
+    this.$ncscFieldWrapper = $ncscFieldWrapper;
   }
 
   showField() {
-    this.$ncssFieldWrapper.style.display = "revert";
+    this.$ncscFieldWrapper.style.display = "revert";
   }
 
   hideField() {
-    this.$ncssFieldWrapper.style.display = "none";
+    this.$ncscFieldWrapper.style.display = "none";
   }
 
   toggleField(ratings) {
@@ -16,7 +16,7 @@ class ShowHideNcscField {
       this.showField();
     } else {
       this.hideField();
-      this.$ncssFieldWrapper.querySelector("input").checked = false;
+      this.$ncscFieldWrapper.querySelector("input").checked = false;
     }
   }
 }

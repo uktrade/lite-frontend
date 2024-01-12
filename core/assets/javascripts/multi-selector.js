@@ -79,7 +79,7 @@ class MultiSelector extends EventEmitter {
     this.$el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
-  emitChangEvent() {
+  emitChangeEvent() {
     this.emit(
       "change",
       [...this.$el.selectedOptions].map((o) => o.value)
@@ -111,8 +111,8 @@ class MultiSelector extends EventEmitter {
 
     this.$el.parentNode.insertBefore(selectedOptionsWrapper, this.$el);
 
-    this.$el.addEventListener("change", () => this.emitChangEvent());
-    this.emitChangEvent();
+    this.$el.addEventListener("change", () => this.emitChangeEvent());
+    this.emitChangeEvent();
 
     this.$el.style.display = "none";
   }
