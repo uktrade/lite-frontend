@@ -19,6 +19,7 @@ class AddGoodPage(BasePage):
     PART_NUMBER = "part_number"  # ID
     IS_CONTROLLED = "is_good_controlled"
     IS_PV_GRADED = "is_pv_graded"
+    AUTOCOMPLETE_CONTROL_LIST_ENTRIES_SELECTOR = "#div_id_control_list_entries .lite-autocomplete__input"
     TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#control_list_entries .tokenfield-input"
     DESCRIPTION = "description"  # ID
 
@@ -52,8 +53,10 @@ class AddGoodPage(BasePage):
         ).click()
 
     def enter_control_list_entries(self, control_list_entry: str):
-        functions.send_tokens_to_token_bar(
-            self.driver, self.TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR, [control_list_entry]
+        functions.select_multi_select_options(
+            self.driver,
+            self.AUTOCOMPLETE_CONTROL_LIST_ENTRIES_SELECTOR,
+            [control_list_entry],
         )
 
     def enter_control_code_unsure(self, code):

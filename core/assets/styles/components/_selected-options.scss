@@ -16,6 +16,7 @@
     }
 
     &__option {
+        align-items: center;
         background-color: govuk-colour("light-grey");
         border-bottom: 2px solid govuk-colour("mid-grey");
         display: flex;

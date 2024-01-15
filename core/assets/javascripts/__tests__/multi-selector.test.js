@@ -84,39 +84,20 @@ describe("MultiSelector", () => {
     expect(onChangeSpy).toBeCalledTimes(2);
   });
 
-  test("onConfirm clears accessible input", () => {
-    jest.useFakeTimers();
-
-    const [$container, $el] = createElements();
-
-    let $input;
-    accessibleAutocomplete.mockImplementation(() => {
-      $input = document.createElement("input");
-      $input.type = "text";
-      $input.id = "select-multiple";
-      $container.appendChild($input);
-    });
-
-    const onChangeSpy = jest.fn();
-    $el.addEventListener("change", () => onChangeSpy());
-
+  test("inputValue", () => {
+    const [, $el] = createElements();
     new MultiSelector($el).init();
 
+    expect($el.selectedOptions).toHaveLength(0);
+
     const config = accessibleAutocomplete.mock.calls[0][0];
+    const { inputValue } = config.templates;
 
-    $input.value = "One";
-    config.onConfirm("One");
-    expect($input).toHaveValue("One");
-    jest.runAllTimers();
-    expect($input).toHaveValue("");
-
-    $input.value = "Three";
-    config.onConfirm("Three");
-    expect($input).toHaveValue("Three");
-    jest.runAllTimers();
-    expect($input).toHaveValue("");
-
-    jest.useRealTimers();
+    expect(inputValue()).toEqual("");
+    expect(inputValue("1")).toEqual("");
+    expect(inputValue("One")).toEqual("");
+    expect(inputValue("a value")).toEqual("");
+    expect(inputValue("another value")).toEqual("");
   });
 
   test("Configuring select options", () => {
@@ -140,5 +121,67 @@ describe("MultiSelector", () => {
     new MultiSelector($el).init();
 
     expect($el).not.toBeVisible();
+  });
+
+  test("setOptions", () => {
+    const [, $el] = createElements();
+
+    const onChangeSpy = jest.fn();
+    $el.addEventListener("change", () => onChangeSpy());
+
+    const multiSelector = new MultiSelector($el);
+    multiSelector.init();
+
+    expect($el.selectedOptions).toHaveLength(0);
+
+    multiSelector.setOptions(["1", "3"]);
+    expect([...$el.selectedOptions].map((o) => o.value)).toEqual(["1", "3"]);
+    expect(onChangeSpy).toBeCalledTimes(1);
+
+    multiSelector.setOptions(["2"]);
+    expect([...$el.selectedOptions].map((o) => o.value)).toEqual(["2"]);
+    expect(onChangeSpy).toBeCalledTimes(2);
+  });
+
+  test("addOptions", () => {
+    const [, $el] = createElements();
+
+    const onChangeSpy = jest.fn();
+    $el.addEventListener("change", () => onChangeSpy());
+
+    const multiSelector = new MultiSelector($el);
+    multiSelector.init();
+
+    expect($el.selectedOptions).toHaveLength(0);
+
+    multiSelector.addOptions(["1", "3"]);
+    expect([...$el.selectedOptions].map((o) => o.value)).toEqual(["1", "3"]);
+    expect(onChangeSpy).toBeCalledTimes(1);
+
+    multiSelector.addOptions(["2"]);
+    expect([...$el.selectedOptions].map((o) => o.value)).toEqual([
+      "1",
+      "2",
+      "3",
+    ]);
+    expect(onChangeSpy).toBeCalledTimes(2);
+  });
+
+  test("onChange", () => {
+    const [, $el] = createElements();
+
+    const multiSelector = new MultiSelector($el);
+    multiSelector.init();
+
+    const onChangeSpy = jest.fn();
+    multiSelector.on("change", (selected) => onChangeSpy(selected));
+
+    multiSelector.setOptions(["1", "3"]);
+    expect(onChangeSpy).toBeCalledTimes(1);
+    expect(onChangeSpy).toBeCalledWith(["1", "3"]);
+
+    multiSelector.addOptions(["2"]);
+    expect(onChangeSpy).toBeCalledTimes(2);
+    expect(onChangeSpy).toBeCalledWith(["1", "2", "3"]);
   });
 });

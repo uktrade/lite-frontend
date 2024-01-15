@@ -1,44 +1,36 @@
+import EventEmitter from "events";
 import accessibleAutocomplete from "accessible-autocomplete";
 import SelectedOptions from "./selected-options";
 
-class MultiSelector {
+class MultiSelector extends EventEmitter {
   constructor($el) {
+    super();
+
     this.$el = $el;
     this.originalId = $el.id;
     this.accessibleAutocompleteElement = null;
-    [this.map, this.values] = this.getOptions();
+    [this.labelMap, this.valueMap, this.values] = this.getOptions();
   }
 
   getOptions() {
-    const map = {};
+    const labelMap = new Map();
+    const valueMap = new Map();
     const values = [];
     for (const option of this.$el.options) {
-      const optionText = option.textContent;
-      map[optionText] = option;
-      values.push(optionText);
+      labelMap.set(option.textContent, option);
+      valueMap.set(option.value, option);
+      values.push(option.textContent);
     }
-    return [map, values];
+    return [labelMap, valueMap, values];
   }
 
   handleOnConfirm(query) {
-    const option = this.map[query];
+    const option = this.labelMap.get(query);
     if (!option) {
       return;
     }
     option.selected = true;
-    option.dispatchEvent(new Event("change", { bubbles: true }));
-
-    // We have to set the value like this due to the fact that the accessible
-    // autocomplete will re-render and retain its value (because it's a React
-    // component) and so we want to let the component re-render first and then
-    // set it's value.
-    // This works by relying on the fact that the re-render will be happening on
-    // the current stack so we'll purposefully push this onto the bottom of the
-    // stack to make it run after the re-render.
-    // This certainly won't be perfect and may sometimes not work as expected
-    // but this is the best we've got without changing the accessible
-    // autocomplete itself.
-    setTimeout(() => (this.accessibleAutocompleteElement.value = ""), 0);
+    this.$el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   getConfigurationOptions() {
@@ -48,6 +40,9 @@ class MultiSelector {
       source: this.values,
       displayMenu: "overlay",
       cssNamespace: "lite-autocomplete",
+      templates: {
+        inputValue: () => "",
+      },
       onConfirm: (query) => this.handleOnConfirm(query),
     };
 
@@ -60,6 +55,35 @@ class MultiSelector {
 
     this.$el.parentNode.insertBefore(autocompleteWrapper, this.$el);
     return autocompleteWrapper;
+  }
+
+  setOptions(values) {
+    for (const $option of [...this.$el.selectedOptions]) {
+      $option.selected = false;
+    }
+
+    for (const value of values) {
+      const $option = this.valueMap.get(value);
+      $option.selected = true;
+    }
+
+    this.$el.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  addOptions(values) {
+    for (const value of values) {
+      const $option = this.valueMap.get(value);
+      $option.selected = true;
+    }
+
+    this.$el.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  emitChangeEvent() {
+    this.emit(
+      "change",
+      [...this.$el.selectedOptions].map((o) => o.value)
+    );
   }
 
   init() {
@@ -83,7 +107,12 @@ class MultiSelector {
       this.$el.dataset.multiSelectObjectsAsPlural
     );
     selectedOptions.init();
+    this.selectedOptions = selectedOptions;
+
     this.$el.parentNode.insertBefore(selectedOptionsWrapper, this.$el);
+
+    this.$el.addEventListener("change", () => this.emitChangeEvent());
+    this.emitChangeEvent();
 
     this.$el.style.display = "none";
   }

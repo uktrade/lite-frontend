@@ -6,11 +6,11 @@ import DisablingButton from "core/disabling-button";
 import Headline from "./assessment-form/headline";
 import SelectProducts from "./assessment-form/select-products";
 import CLESuggestions from "./tau/cle-suggestions";
-import SuggestionsTokenField from "./tau/suggestions-token-field";
 import NoSuggestionsTokenField from "./tau/no-suggestions-token-field";
+import MultiSelector from "core/multi-selector";
+import ShowHideNcscField from "./tau/show-hide-ncsc-field";
 import initARS from "./tau/ars";
 import initRegimes from "./tau/regimes";
-import ShowHideNcscField from "./tau/show-hide-ncsc-field";
 
 const initSelectAll = (goods) => {
   const checkboxes = goods.querySelectorAll("[name=goods]");
@@ -18,6 +18,7 @@ const initSelectAll = (goods) => {
 
   const button = document.createElement("button");
   button.classList.add("lite-button--link", "assessment-form__select-all");
+  button.type = "button";
   const selectAllButton = new SelectAllButton(button);
 
   selectAllCheckboxes.on("change", (isAllSelected) => {
@@ -38,6 +39,7 @@ const initExpandAll = (goods) => {
   const expandAllButton = document.createElement("button");
   expandAllButton.innerText = SHOW_ALL_BUTTON_TEXT;
   expandAllButton.classList.add("lite-button--link");
+  expandAllButton.type = "button";
 
   const details = goods.querySelectorAll(".govuk-details");
 
@@ -87,6 +89,23 @@ const initCheckboxClassToggler = () => {
 };
 
 const initAssessmentForm = () => {
+  const ncscBox = document.querySelector(
+    "#div_id_is_ncsc_military_information_security"
+  );
+  let showHideNcscField;
+  if (ncscBox) {
+    showHideNcscField = new ShowHideNcscField(ncscBox);
+  }
+
+  const cleMultiSelect = document.querySelector("[name=control_list_entries]");
+  const multiSelector = new MultiSelector(cleMultiSelect);
+  multiSelector.on("change", (selected) => {
+    if (showHideNcscField) {
+      showHideNcscField.toggleField(selected);
+    }
+  });
+  multiSelector.init();
+
   const headlineEl = document.querySelector(".assessment-form__headline");
   const headline = new Headline(headlineEl);
 
@@ -94,55 +113,49 @@ const initAssessmentForm = () => {
     "[name=does_not_have_control_list_entries]"
   );
   const noSuggestionsTokenField = new NoSuggestionsTokenField(
-    "#control_list_entries",
     noControlListCheckboxEl
   );
+  noSuggestionsTokenField.on("change", (checked) => {
+    if (!checked) {
+      return;
+    }
+    multiSelector.setOptions([]);
+  });
   noSuggestionsTokenField.init();
-
-  const suggestionsTokenField = new SuggestionsTokenField(
-    "#control_list_entries"
-  );
+  multiSelector.on("change", (selected) => {
+    if (selected.length === 0) {
+      return;
+    }
+    noSuggestionsTokenField.reset();
+  });
 
   const suggestionsEl = document.createElement("div");
   suggestionsEl.classList.add("tau-assessment-form__cle-suggestions");
   const controlListEntriesLabel = document.querySelector(
-    "[for=control_list_entries]"
+    "[for=id_control_list_entries]"
   );
   controlListEntriesLabel.parentNode.insertBefore(
     suggestionsEl,
     controlListEntriesLabel.nextSibling
   );
-
-  const cleSuggestions = new CLESuggestions(
-    suggestionsEl,
-    (selectedSuggestions) => {
-      suggestionsTokenField.setSuggestions(selectedSuggestions);
-      noSuggestionsTokenField.reset();
-    }
-  );
+  const cleSuggestions = new CLESuggestions(suggestionsEl);
+  cleSuggestions.on("change", (selectedSuggestions) => {
+    multiSelector.addOptions(selectedSuggestions);
+    noSuggestionsTokenField.reset();
+  });
 
   const goods = document.querySelector("#div_id_goods");
   const checkboxes = goods.querySelectorAll("[name=goods]");
   const products = JSON.parse(
     document.querySelector("#cle-suggestions-json").textContent
   );
-  const ncscBox = document.querySelector(
-    "#div_id_is_ncsc_military_information_security"
-  );
-  if (ncscBox) {
-    const ncscFormField = new ShowHideNcscField(
-      "#control_list_entries",
-      ncscBox
-    );
 
-    ncscFormField.toggleField();
-    ncscFormField.setOnChangeListener();
-  }
-
-  new SelectProducts(checkboxes, products, (selectedProducts) => {
+  const selectProducts = new SelectProducts(checkboxes, products);
+  selectProducts.on("change", (selectedProducts) => {
     headline.setProducts(selectedProducts);
     cleSuggestions.setProducts(selectedProducts);
-  }).init();
+  });
+  selectProducts.init();
 };
 
 const initSaveAndContinueButton = () => {
