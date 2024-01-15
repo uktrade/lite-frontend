@@ -36,6 +36,28 @@ def mock_report_summary(requests_mock, report_summary_subject, report_summary_pr
     )
 
 
+@pytest.fixture
+def mock_regimes_get(requests_mock):
+    url = client._build_absolute_uri(f"/static/regimes/entries/")
+    return requests_mock.get(
+        url=url,
+        json=[
+            {
+                "pk": "d73d0273-ef94-4951-9c51-c291eba949a0",
+                "name": "wassenaar-1",
+            },
+            {
+                "pk": "c760976f-fd14-4356-9f23-f6eaf084475d",
+                "name": "mtcr-1",
+            },
+            {
+                "pk": "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
+                "name": "nsg-1",
+            },
+        ],
+    )
+
+
 @pytest.fixture(autouse=True)
 def setup(
     mock_queue,
@@ -46,6 +68,7 @@ def setup(
     mock_cwc_entries_get,
     mock_ag_entries_get,
     mock_report_summary,
+    mock_regimes_get,
 ):
     yield
 
@@ -63,17 +86,9 @@ def mock_application_good_documents(data_standard_case, requests_mock):
 @pytest.fixture
 def url(data_queue, data_standard_case):
     return reverse(
-        "cases:tau:edit",
-        kwargs={
-            "queue_pk": data_queue["id"],
-            "pk": data_standard_case["case"]["id"],
-            "good_id": data_standard_case["case"]["data"]["goods"][1]["id"],
-        },
+        "cases:tau:multiple_edit",
+        kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
     )
-
-
-def get_cells(soup, table_id):
-    return [td.text for td in soup.find(id=table_id).find_all("td")]
 
 
 def test_tau_edit_auth(authorized_client, url, mock_control_list_entries, mock_precedents_api):
@@ -147,98 +162,73 @@ def test_form(
     edit_good_cle = [cle["rating"] for cle in edit_good["control_list_entries"]]
     form_cle = [
         cle.attrs["value"]
-        for cle in soup.find("select", {"name": "control_list_entries"}).find_all("option")
+        for cle in soup.find("select", {"id": "id_form-0-control_list_entries"}).find_all("option")
         if "selected" in cle.attrs
     ]
     assert edit_good_cle == form_cle
 
-    # Check regimes
-    form_regimes = [
-        regime.attrs["value"] for regime in soup.find_all("input", {"name": "regimes"}) if "checked" in regime.attrs
-    ]
-    assert form_regimes == ["WASSENAAR", "MTCR", "CWC", "NSG", "AG"]
+    # Check regimes exists
+    form_regimes = [regime.get_text() for regime in soup.find(id="id_form-0-regimes").find_all("option")]
+    assert form_regimes == ["wassenaar-1", "mtcr-1", "nsg-1"]
 
-    edit_mtcr_good_regimes = [
-        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "MTCR"
-    ]
-    form_mtcr_entries = [
-        regime_entry.attrs["value"]
-        for regime_entry in soup.find("select", {"id": "mtcr_entries"}).find_all("option")
-        if "selected" in regime_entry.attrs
-    ]
-    assert edit_mtcr_good_regimes == form_mtcr_entries
+    form_regimes_values = [regime.attrs["value"] for regime in soup.find(id="id_form-0-regimes").find_all("option")]
 
     edit_wassenaar_good_regimes = [
         entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "WASSENAAR"
     ]
-    form_wassenaar_entries = [
-        regime_entry.attrs["value"]
-        for regime_entry in soup.find_all("input", {"name": "wassenaar_entries"})
-        if "checked" in regime_entry.attrs
+    edit_mtcr_good_regimes = [
+        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "MTCR"
     ]
-    assert edit_wassenaar_good_regimes == form_wassenaar_entries
-
     edit_nsg_good_regimes = [
         entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "NSG"
     ]
-    form_nsg_entries = [
-        regime_entry.attrs["value"]
-        for regime_entry in soup.find("select", {"id": "nsg_entries"}).find_all("option")
-        if "selected" in regime_entry.attrs
-    ]
-    assert edit_nsg_good_regimes == form_nsg_entries
 
-    edit_cwc_good_regimes = [
-        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "CWC"
-    ]
-    form_cwc_entries = [
-        regime_entry.attrs["value"]
-        for regime_entry in soup.find_all("input", {"name": "cwc_entries"})
-        if "checked" in regime_entry.attrs
-    ]
-    assert edit_cwc_good_regimes == form_cwc_entries
+    edit_regimes = edit_wassenaar_good_regimes + edit_mtcr_good_regimes + edit_nsg_good_regimes
 
-    edit_ag_good_regimes = [
-        entry["pk"] for entry in edit_good["regime_entries"] if entry["subsection"]["regime"]["name"] == "AG"
-    ]
-    form_ag_entries = [
-        regime_entry.attrs["value"]
-        for regime_entry in soup.find_all("input", {"name": "ag_entries"})
-        if "checked" in regime_entry.attrs
-    ]
-    assert edit_ag_good_regimes == form_ag_entries
+    assert edit_regimes == form_regimes_values
 
-    assert edit_good["report_summary_prefix"]["id"] == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+    # Check report summary
     assert (
-        edit_good["report_summary_subject"]["id"] == soup.find("form").find(id="report_summary_subject").attrs["value"]
+        edit_good["report_summary_prefix"]["id"]
+        == soup.find(id="div_id_form-0-report_summary_prefix").find("input").attrs["value"]
+    )
+    assert (
+        edit_good["report_summary_subject"]["id"]
+        == soup.find(id="div_id_form-0-report_summary_subject").find("input").attrs["value"]
     )
 
     # Check comments
-    assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
+    assert edit_good["comment"] == soup.find(id="div_id_form-0-comment").find("textarea").text.strip()
 
-    assert soup.find(id="submit-id-submit") is not None
-
+    good_id = soup.find(id="id_form-0-id").attrs["value"]
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 1,
+        "form-MIN_NUM_FORMS": 0,
+        "form-MAX_NUM_FORMS": 1000,
+        "form-TOTAL_FORMS": 1,
+        "form-0-id": good_id,
+        "form-0-report_summary_subject": report_summary_subject["id"],
+        "form-0-control_list_entries": [],
+        "form-0-comment": "test",
+        "form-0-refer_to_ncsc": False,
+    }
     response = authorized_client.post(
         url,
-        data={
-            "report_summary_subject": report_summary_subject["id"],
-            "does_not_have_control_list_entries": True,
-            "comment": "test",
-            "regimes": ["NONE"],
-        },
+        data=data,
     )
 
     # Check response and API payload
     assert response.status_code == 302
     assert mock_assessment_put.last_request.json() == [
         {
-            "control_list_entries": [],
-            "report_summary_subject": report_summary_subject["id"],
-            "report_summary_prefix": "",
-            "comment": "test",
-            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "id": good_id,
             "is_good_controlled": False,
+            "control_list_entries": [],
             "regime_entries": [],
+            "report_summary_prefix": "",
+            "report_summary_subject": "b0849a92-4611-4e5b-b076-03562b138fb5",
+            "comment": "test",
             "is_ncsc_military_information_security": False,
         }
     ]
@@ -261,10 +251,11 @@ def test_form_no_regime_entries(
     good = data_standard_case["case"]["data"]["goods"][0]
     good["is_good_controlled"] = None
     good["control_list_entries"] = []
-    del good["regime_entries"]
+    good["regime_entries"] = []
     edit_good = data_standard_case["case"]["data"]["goods"][1]
     edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
-    del edit_good["regime_entries"]
+    edit_good["regime_entries"] = []
+
     # Get the edit form
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
@@ -276,46 +267,62 @@ def test_form_no_regime_entries(
     edit_good_cle = [cle["rating"] for cle in edit_good["control_list_entries"]]
     form_cle = [
         cle.attrs["value"]
-        for cle in soup.find("select", {"name": "control_list_entries"}).find_all("option")
+        for cle in soup.find("select", {"id": "id_form-0-control_list_entries"}).find_all("option")
         if "selected" in cle.attrs
     ]
     assert edit_good_cle == form_cle
 
     # Check regimes
-    form_mtcr_entries = [
-        cle.attrs["value"]
-        for cle in soup.find("select", {"id": "mtcr_entries"}).find_all("option")
-        if "selected" in cle.attrs
+    form_regimes = [
+        regime.get_text()
+        for regime in soup.find(id="id_form-0-regimes").find_all("option")
+        if "selected" in regime.attrs
     ]
-    assert [] == form_mtcr_entries
+    assert [] == form_regimes
 
     # Check report summary
-    # assert edit_good["report_summary"] == soup.find("form").find(id="report_summary").attrs["value"]
+    assert (
+        edit_good["report_summary_prefix"]["id"]
+        == soup.find(id="div_id_form-0-report_summary_prefix").find("input").attrs["value"]
+    )
+    assert (
+        edit_good["report_summary_subject"]["id"]
+        == soup.find(id="div_id_form-0-report_summary_subject").find("input").attrs["value"]
+    )
 
     # Check comments
-    assert edit_good["comment"] == soup.find("form").find(id="id_comment").text.strip()
+    assert edit_good["comment"] == soup.find(id="div_id_form-0-comment").find("textarea").text.strip()
+
+    good_id = soup.find(id="id_form-0-id").attrs["value"]
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 1,
+        "form-MIN_NUM_FORMS": 0,
+        "form-MAX_NUM_FORMS": 1000,
+        "form-TOTAL_FORMS": 1,
+        "form-0-id": good_id,
+        "form-0-report_summary_subject": report_summary_subject["id"],
+        "form-0-control_list_entries": [],
+        "form-0-comment": "test",
+        "form-0-refer_to_ncsc": False,
+    }
 
     response = authorized_client.post(
         url,
-        data={
-            "report_summary_subject": report_summary_subject["id"],
-            "does_not_have_control_list_entries": True,
-            "comment": "test",
-            "regimes": ["NONE"],
-        },
+        data=data,
     )
 
     # Check response and API payload
     assert response.status_code == 302
     assert mock_assessment_put.last_request.json() == [
         {
-            "control_list_entries": [],
-            "report_summary_subject": report_summary_subject["id"],
-            "report_summary_prefix": "",
-            "comment": "test",
             "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
             "is_good_controlled": False,
+            "control_list_entries": [],
             "regime_entries": [],
+            "report_summary_prefix": "",
+            "report_summary_subject": "b0849a92-4611-4e5b-b076-03562b138fb5",
+            "comment": "test",
             "is_ncsc_military_information_security": False,
         }
     ]
@@ -341,28 +348,16 @@ def test_form_no_regime_entries(
             ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
         ),
         (
-            {"regimes": ["CWC"], "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"]},
-            ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
-        ),
-        (
-            {"regimes": ["AG"], "ag_entries": ["95274b74-f644-43a1-ad9b-3a69636c8597"]},
-            ["95274b74-f644-43a1-ad9b-3a69636c8597"],
-        ),
-        (
             {
                 "regimes": ["WASSENAAR", "MTCR", "NSG", "CWC", "AG"],
                 "mtcr_entries": ["c760976f-fd14-4356-9f23-f6eaf084475d"],
                 "wassenaar_entries": ["d73d0273-ef94-4951-9c51-c291eba949a0"],
                 "nsg_entries": ["3d7c6324-a1e0-49fc-9d9e-89f3571144bc"],
-                "cwc_entries": ["af07fed6-3e27-48b3-a4f1-381c005c63d3"],
-                "ag_entries": ["95274b74-f644-43a1-ad9b-3a69636c8597"],
             },
             [
                 "c760976f-fd14-4356-9f23-f6eaf084475d",
                 "d73d0273-ef94-4951-9c51-c291eba949a0",
                 "3d7c6324-a1e0-49fc-9d9e-89f3571144bc",
-                "af07fed6-3e27-48b3-a4f1-381c005c63d3",
-                "95274b74-f644-43a1-ad9b-3a69636c8597",
             ],
         ),
     ),
@@ -386,51 +381,40 @@ def test_form_regime_entries(
     edit_good = data_standard_case["case"]["data"]["goods"][1]
     edit_good["control_list_entries"] = [{"rating": "ML1"}, {"rating": "ML1a"}]
 
+    data = {
+        "form-TOTAL_FORMS": 1,
+        "form-INITIAL_FORMS": 1,
+        "form-MIN_NUM_FORMS": 0,
+        "form-MAX_NUM_FORMS": 1000,
+        "form-TOTAL_FORMS": 1,
+        "form-0-id": good["id"],
+        "form-0-report_summary_subject": report_summary_subject["id"],
+        "form-0-control_list_entries": [],
+        "form-0-comment": "test",
+        "form-0-refer_to_ncsc": False,
+        "form-0-regimes": regime_entries,
+    }
+
     response = authorized_client.post(
         url,
-        data={
-            "report_summary_subject": report_summary_subject["id"],
-            "does_not_have_control_list_entries": True,
-            "comment": "test",
-            **regimes_form_data,
-        },
+        data=data,
     )
 
     # Check response and API payload
     assert response.status_code == 302, response.context["form"].errors
+
     assert mock_assessment_put.last_request.json() == [
         {
-            "control_list_entries": [],
-            "report_summary_subject": report_summary_subject["id"],
-            "report_summary_prefix": "",
-            "comment": "test",
-            "id": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+            "id": good["id"],
             "is_good_controlled": False,
+            "control_list_entries": [],
             "regime_entries": regime_entries,
+            "report_summary_prefix": "",
+            "report_summary_subject": "b0849a92-4611-4e5b-b076-03562b138fb5",
+            "comment": "test",
             "is_ncsc_military_information_security": False,
         }
     ]
-
-
-def test_control_list_suggestions_json(
-    authorized_client,
-    url,
-    requests_mock,
-    mock_control_list_entries,
-    mock_precedents_api,
-    mocker,
-    data_standard_case,
-):
-    good = data_standard_case["case"]["data"]["goods"][0]
-    good["is_good_controlled"] = None
-    good["control_list_entries"] = []
-    good["firearm_details"]["year_of_manufacture"] = "1930"
-
-    mock_get_cle_suggestions_json = mocker.patch("caseworker.tau.views.get_cle_suggestions_json")
-    mock_get_cle_suggestions_json.return_value = {"mock": "suggestion"}
-
-    response = authorized_client.get(url)
-    assert response.context["cle_suggestions_json"] == {"mock": "suggestion"}
 
 
 @pytest.mark.parametrize(
@@ -474,17 +458,17 @@ def test_form_report_summary_conditions(
     if subject:
         assert (
             edit_good["report_summary_subject"]["id"]
-            == soup.find("form").find(id="report_summary_subject").attrs["value"]
+            == soup.find(id="div_id_form-0-report_summary_subject").find("input").attrs["value"]
         )
     else:
-        assert soup.find("form").find(id="report_summary_subject").attrs.get("value") is None
+        assert soup.find(id="div_id_form-0-report_summary_subject").find("input").attrs.get("value") is None
     if prefix:
         assert (
             edit_good["report_summary_prefix"]["id"]
-            == soup.find("form").find(id="report_summary_prefix").attrs["value"]
+            == soup.find(id="div_id_form-0-report_summary_prefix").find("input").attrs["value"]
         )
     else:
-        assert soup.find("form").find(id="report_summary_prefix").attrs.get("value") is None
+        assert soup.find(id="div_id_form-0-report_summary_prefix").find("input").attrs.get("value") is None
 
 
 def test_form_only_rendered_once(
@@ -520,3 +504,67 @@ def test_form_only_rendered_once(
     tau_form = soup.find(id="tau-form")
     assert tau_form is not None
     assert not tau_form.select("form")
+
+
+def test_multiple_edit(
+    authorized_client,
+    url,
+    data_standard_case,
+    requests_mock,
+    mock_assessment_put,
+    mock_control_list_entries,
+    mock_precedents_api,
+    report_summary_subject,
+    assign_user_to_case,
+    mock_gov_user,
+):
+    assign_user_to_case(mock_gov_user, data_standard_case)
+
+    good_1 = data_standard_case["case"]["data"]["goods"][0]
+    good_2 = data_standard_case["case"]["data"]["goods"][1]
+
+    data = {
+        "form-TOTAL_FORMS": 2,
+        "form-INITIAL_FORMS": 2,
+        "form-MIN_NUM_FORMS": 0,
+        "form-MAX_NUM_FORMS": 1000,
+        "form-TOTAL_FORMS": 2,
+        "form-0-id": good_1["id"],
+        "form-0-report_summary_subject": report_summary_subject["id"],
+        "form-0-control_list_entries": [],
+        "form-0-comment": "test_1",
+        "form-0-refer_to_ncsc": False,
+        "form-1-id": good_2["id"],
+        "form-1-report_summary_subject": report_summary_subject["id"],
+        "form-1-control_list_entries": [],
+        "form-1-comment": "test_2",
+        "form-1-refer_to_ncsc": False,
+    }
+    response = authorized_client.post(
+        url,
+        data=data,
+    )
+    # Check response and API payload
+    assert response.status_code == 302
+    assert mock_assessment_put.last_request.json() == [
+        {
+            "id": good_1["id"],
+            "is_good_controlled": False,
+            "control_list_entries": [],
+            "regime_entries": [],
+            "report_summary_prefix": "",
+            "report_summary_subject": report_summary_subject["id"],
+            "comment": "test_1",
+            "is_ncsc_military_information_security": False,
+        },
+        {
+            "id": good_2["id"],
+            "is_good_controlled": False,
+            "control_list_entries": [],
+            "regime_entries": [],
+            "report_summary_prefix": "",
+            "report_summary_subject": report_summary_subject["id"],
+            "comment": "test_2",
+            "is_ncsc_military_information_security": False,
+        },
+    ]
