@@ -1,6 +1,5 @@
 import "url-search-params-polyfill";
 import "fetch-polyfill";
-import { progressivelyEnhanceMultipleSelectField } from "core/multi-select";
 
 export default function initAddGood() {
   let plural = [];
@@ -52,21 +51,5 @@ export default function initAddGood() {
 
   (function () {
     showHideCertificateMissingReason();
-  })();
-
-  (function () {
-    let controlListEntriesField = document.getElementById(
-      "control_list_entries"
-    );
-    if (!controlListEntriesField) {
-      return;
-    }
-
-    let controlListEntriesTokenFieldInfo = document.createElement("div");
-    controlListEntriesField.parentElement.appendChild(
-      controlListEntriesTokenFieldInfo
-    );
-
-    progressivelyEnhanceMultipleSelectField(controlListEntriesField);
   })();
 }

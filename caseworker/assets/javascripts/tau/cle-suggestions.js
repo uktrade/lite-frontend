@@ -1,3 +1,5 @@
+import EventEmitter from "events";
+
 class UniqueSuggestionsCollector {
   constructor() {
     this.suggestions = [];
@@ -35,16 +37,17 @@ class UniqueSuggestionsCollector {
   }
 }
 
-class CLESuggestions {
-  constructor($suggestionsContainer, onSelectSuggestions) {
+class CLESuggestions extends EventEmitter {
+  constructor($suggestionsContainer) {
+    super();
     this.$suggestionsContainer = $suggestionsContainer;
-    this.onSelectSuggestions = onSelectSuggestions;
   }
 
   getSuggestionButton(suggestionText) {
     const cleSuggestionButton = document.createElement("button");
     cleSuggestionButton.classList.add("lite-button--link");
     cleSuggestionButton.textContent = suggestionText;
+    cleSuggestionButton.type = "button";
     return cleSuggestionButton;
   }
 
@@ -106,7 +109,7 @@ class CLESuggestions {
 
   handleSuggestionButtonClick(evt, suggestion) {
     evt.preventDefault();
-    this.onSelectSuggestions(suggestion);
+    this.emit("change", suggestion);
   }
 }
 

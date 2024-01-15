@@ -3,22 +3,17 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
+from tests_common import functions
 from ui_tests.caseworker.pages.BasePage import BasePage
 
 
 class ProductAssessmentPage(BasePage):
     def assess_rating(self, rating):
-        cle_element = self.driver.find_element(by=By.ID, value="control_list_entries")
-        cle_input = cle_element.find_element(by=By.CLASS_NAME, value="tokenfield-input")
-        cle_input.send_keys(rating)
-
-        # select from the suggestions
-        for s in cle_element.find_elements(by=By.CLASS_NAME, value="tokenfield-suggest-item"):
-            if s.text == rating:
-                s.click()
-                break
-        else:
-            raise ValueError(f"CLE {rating} not found")
+        functions.select_multi_select_options(
+            self.driver,
+            "#div_id_control_list_entries .lite-autocomplete__input",
+            [rating],
+        )
 
     def assess_report_summary_prefix(self, ars_prefix):
         ars_prefix_element = self.driver.find_element(by=By.ID, value="report_summary_prefix_container")

@@ -3,45 +3,33 @@
     background-color: $base-grey;
   }
 
-  #div_id_does_not_have_control_list_entries {
-    .govuk-checkboxes__label {
-      padding: 0;
-      text-decoration: underline;
-      cursor: pointer;
-      color: $base-blue;
-
-      &::before,
-      &::after {
-        display: none;
-      }
-    }
-
-    .govuk-checkboxes__item {
-      padding-left: 0;
-    }
-  }
-
   &__cle-suggestions {
     display: flex;
     flex-direction: column;
     align-items: baseline;
-  }
 
-  .tokenfield-copy-helper {
-    display: none;
+    button {
+      text-align: left;
+    }
   }
 
   .control-list__edit {
     margin-bottom: 15px;
   }
-
-  .tokenfield {
-    max-width: none;
-  }
 }
 
 #div_id_is_ncsc_military_information_security {
   display: none;
+}
+
+.control-list-entries-fieldset {
+  #div_id_control_list_entries, > .govuk-body, .govuk-hint {
+    margin-bottom: govuk-spacing(2);
+  }
+
+  .selected-options {
+    padding-bottom: 0;
+  }
 }
 
 .assessment-formset {
@@ -108,4 +96,8 @@
         }
     }
 
+    .govuk-table__cell:not(.govuk-table__cell--checkbox) .govuk-form-group,
+    .govuk-textarea {
+        margin-bottom: 0;
+    }
 }

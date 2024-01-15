@@ -812,8 +812,6 @@ class AddGoodsQuestionsForm(forms.Form):
         help_text="Type to get suggestions. For example ML1a.",
         choices=(),  # set in __init__
         required=False,
-        # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
     )
 
     is_pv_graded = forms.ChoiceField(
@@ -862,7 +860,11 @@ class AddGoodsQuestionsForm(forms.Form):
                 "is_good_controlled",
                 ConditionalRadiosQuestion(
                     CreateGoodForm.IsControlled.YES,
-                    "control_list_entries",
+                    Field(
+                        "control_list_entries",
+                        data_module="multi-select",
+                        data_multi_select_objects_as_plural="control list entries",
+                    ),
                 ),
                 CreateGoodForm.IsControlled.NO,
             ),
