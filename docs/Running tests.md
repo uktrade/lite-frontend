@@ -48,6 +48,14 @@ export DIRECTORY_SSO_API_CLIENT_API_KEY=
 export AV_SERVICE_PASSWORD=
 export AV_SERVICE_URL=
 export AV_SERVICE_USERNAME=
+
+# To Run Tests using the Mock SS0 in caseworker.env set
+AUTHBROKER_URL=http://caseworker:8200
+MOCK_SSO_ACTIVATE_ENDPOINTS=True
+MOCK_SSO_USER_EMAIL=fake@fake.com (this user will need to be seeded as an internal user)
+MOCK_SSO_USER_FIRST_NAME=LITE
+MOCK_SSO_USER_LAST_NAME=Testing
+
 ```
 
 ### Caseworker Setup and run tests locally
@@ -55,6 +63,10 @@ export AV_SERVICE_USERNAME=
 - Open a terminal, source both api.env and caseworker.env. This will ensure all export statements are run and appropriate env vars are set and ready for docker-compose.
 - run `make start-caseworker`
 - Wait for it to start up. Open another terminal and run `make caseworker-e2e-selenium-test`
+
+### Setting up mock sso locally
+- add 127.0.0.1 caseworker to your hosts file
+- using API commands seedinternaluser  test-uat-user@digital.trade.gov.uk
 
 ### Exporter Setup and run tests locally
 

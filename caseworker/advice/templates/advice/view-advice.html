@@ -92,9 +92,19 @@
                     {% endif %}
 
                     {% if finalise_case %}
-                        <a id="finalise-case-button" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
-                            Finalise case
-                        </a>
+                        {% if has_open_queries %}
+                            <div id="case-has-open-queries" class="govuk-warning-text">
+                                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                <strong class="govuk-warning-text__text">
+                                <span class="govuk-warning-text__assistive">Warning</span>
+                                    This case cannot be finalised due to a query that needs to be closed.
+                                </strong>
+                            </div>
+                        {% else %}
+                            <a id="finalise-case-button" role="button" draggable="false" class="govuk-button govuk-!-margin-right-2" href="{% url 'cases:finalise' queue_pk case.id %}">
+                                Finalise case
+                            </a>
+                        {% endif %}
                     {% endif %}
 
                     {% if buttons.edit_recommendation %}

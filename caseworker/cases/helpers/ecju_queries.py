@@ -11,3 +11,8 @@ def get_ecju_queries(request, case_id):
         else:
             open_ecju_queries.append(query)
     return open_ecju_queries, closed_ecju_queries
+
+
+def has_open_queries(request, case_id):
+    num_open_queries = services.get_ecju_queries_open_count(request, case_id)
+    return num_open_queries["count"] > 0
