@@ -14,7 +14,6 @@ MOCK_SSO_USER_LAST_NAME = env.str("MOCK_SSO_USER_LAST_NAME", "")
 INSTALLED_APPS += [
     "rest_framework",
     "caseworker.core",
-    "caseworker.spire",
     "caseworker.letter_templates",
     "caseworker.external_data",
     "caseworker.advice",
@@ -76,14 +75,6 @@ AUTHENTICATION_BACKENDS = []
 # before a SuspiciousOperation (TooManyFields) is raised.
 # Increased due to potential of selecting all control list entries
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 3500
-
-# LITE SPIRE archive API client
-FEATURE_SPIRE_SEARCH_ON = env.bool("FEATURE_SPIRE_SEARCH_ON", False)
-LITE_SPIRE_ARCHIVE_CLIENT_BASE_URL = env.str("LITE_SPIRE_ARCHIVE_CLIENT_BASE_URL")
-LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SECRET = env.str("LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SECRET")
-LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SENDER_ID = env.str("LITE_SPIRE_ARCHIVE_CLIENT_HAWK_SENDER_ID", "lite-internal-frontend")
-LITE_SPIRE_ARCHIVE_CLIENT_DEFAULT_TIMEOUT = env.int("LITE_SPIRE_ARCHIVE_CLIENT_DEFAULT_TIMEOUT", 2000)
-LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID = env.int("LITE_SPIRE_ARCHIVE_EXAMPLE_ORGANISATION_ID")
 
 # static files
 SVG_DIRS = [

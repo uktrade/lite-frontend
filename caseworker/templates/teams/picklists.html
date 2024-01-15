@@ -20,7 +20,7 @@
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
 			<a href="{% url 'teams:team' %}" class="lite-tabs__tab">{% lcs 'teams.TeamPage.Tabs.MEMBERS' %}</a>
-			<p class="lite-tabs__tab lite-tabs__tab--selected">{% lcs 'teams.TeamPage.Tabs.PICKLISTS' %}</p>
+			<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab">{% lcs 'teams.TeamPage.Tabs.PICKLISTS' %}</a>
 		</div>
 		<div class="lite-tabs__controls">
 			{% govuk_link_button text='picklists.Picklists.ADD_BUTTON' url='picklists:add' query_params='?type='|add:type id='new-picklist-item' %}

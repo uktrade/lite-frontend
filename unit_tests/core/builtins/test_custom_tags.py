@@ -350,3 +350,18 @@ def test_get_display_values():
 def test_get_unique_destinations(search_results, expected_destinations):
     actual_destinations = custom_tags.get_unique_destinations(search_results)
     assert actual_destinations == expected_destinations
+
+
+@pytest.mark.parametrize(
+    "data, expected",
+    [
+        ([], "[]"),
+        ({}, "{}"),
+        (
+            {"key1": "value2", "key2": {"key2.1": "value2.1"}},
+            '{\n    "key1": "value2",\n    "key2": {\n        "key2.1": "value2.1"\n    }\n}',
+        ),
+    ],
+)
+def test_pprint_dict(data, expected):
+    assert custom_tags.pprint_dict(data) == expected

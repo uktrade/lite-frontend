@@ -70,10 +70,8 @@ class ProductControlListEntryForm(BaseForm):
 
     control_list_entries = forms.MultipleChoiceField(
         choices=(),  # set in __init__
-        label="Enter the control list entry (type to get suggestions)",
+        label="Enter the control list entry",
         required=False,
-        # setting id for javascript to use
-        widget=forms.SelectMultiple(attrs={"id": "control_list_entries"}),
     )
 
     def __init__(self, request, *args, **kwargs):
@@ -88,7 +86,11 @@ class ProductControlListEntryForm(BaseForm):
                 "is_good_controlled",
                 ConditionalRadiosQuestion(
                     "Yes",
-                    "control_list_entries",
+                    Field(
+                        "control_list_entries",
+                        data_module="multi-select",
+                        data_multi_select_objects_as_plural="control list entries",
+                    ),
                 ),
                 ConditionalRadiosQuestion(
                     "No",
