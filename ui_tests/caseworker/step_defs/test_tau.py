@@ -89,7 +89,11 @@ def click_edit_assessments(driver, button_label):
 @then("I edit the fields and checks if they were updated")  # noqa
 def edit_assessment_fields(driver):
     # Adds control entry ML1c
-    functions.send_tokens_to_token_bar(driver, "#div_id_form-0-control_list_entries .tokenfield-input", ["ML1c"])
+    functions.select_multi_select_options(
+        driver,
+        "#div_id_form-0-control_list_entries .lite-autocomplete__input",
+        ["ML1c"],
+    )
 
     # Clear and adds prefix
     suggestion_input_autocomplete_prefix = driver.find_element(by=By.ID, value="_id_form-0-report_summary_prefix")

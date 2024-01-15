@@ -29,7 +29,7 @@ class SelectedOptions {
     this.$multiSelect.addEventListener("change", () => this.handleChange());
   }
 
-  createRemoveButton($option) {
+  createRemoveButton(onRemove) {
     const $iconDiv = document.createElement("div");
     $iconDiv.classList = "selected-options__option-remove-icon";
     $iconDiv.ariaHidden = true;
@@ -38,28 +38,26 @@ class SelectedOptions {
     const $textNode = document.createTextNode("Remove");
 
     const $button = document.createElement("button");
+    $button.type = "button";
     $button.appendChild($iconDiv);
     $button.appendChild($textNode);
 
     $button.classList.add("selected-options__option-remove");
-    $button.addEventListener("click", () => {
-      $option.selected = false;
-      $option.dispatchEvent(new Event("change", { bubbles: true }));
-    });
+    $button.addEventListener("click", () => onRemove());
 
     return $button;
   }
 
-  createListItem($option) {
+  createListItem(text, onRemove) {
     const $li = document.createElement("li");
     $li.classList.add("selected-options__option");
 
     const $span = document.createElement("span");
-    $span.textContent = $option.textContent;
+    $span.textContent = text;
     $span.classList.add("selected-options__option-text");
     $li.appendChild($span);
 
-    const $button = this.createRemoveButton($option);
+    const $button = this.createRemoveButton(onRemove);
     $li.appendChild($button);
 
     return $li;
@@ -76,8 +74,12 @@ class SelectedOptions {
   createList() {
     const $ul = document.createElement("ul");
     $ul.classList.add("selected-options__options");
-    for (const option of this.$multiSelect.selectedOptions) {
-      const $li = this.createListItem(option);
+
+    for (const $option of this.$multiSelect.selectedOptions) {
+      const $li = this.createListItem($option.textContent, () => {
+        $option.selected = false;
+        $option.dispatchEvent(new Event("change", { bubbles: true }));
+      });
       $ul.appendChild($li);
     }
 

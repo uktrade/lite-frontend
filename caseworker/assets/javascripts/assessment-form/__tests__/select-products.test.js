@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 
 import SelectProducts from "../select-products";
 
-let checkboxes, spy;
+let checkboxes;
 
 const products = [
   {
@@ -37,12 +37,7 @@ const createElements = () => {
 
 const createComponent = () => {
   checkboxes = createElements();
-  spy = jest.fn();
-  const selectProducts = new SelectProducts(
-    checkboxes,
-    products,
-    (selectedProducts) => spy(selectedProducts)
-  );
+  const selectProducts = new SelectProducts(checkboxes, products);
   selectProducts.init();
   return selectProducts;
 };
@@ -53,9 +48,10 @@ test("Products set on init", async () => {
     await userEvent.click(checkbox);
   }
   const spy = jest.fn();
-  new SelectProducts(checkboxes, products, (selectedProducts) =>
-    spy(selectedProducts)
-  ).init();
+  const selectProducts = new SelectProducts(checkboxes, products);
+  selectProducts.on("change", (selectProducts) => spy(selectProducts));
+  selectProducts.init();
+
   expect(spy).toBeCalledWith([
     {
       id: "checkbox-1",
@@ -76,15 +72,16 @@ test("Products set on init", async () => {
 });
 
 describe("Select products", () => {
-  beforeEach(() => {
-    createComponent();
-  });
+  let selectProducts;
 
-  afterEach(() => {
-    spy.mockReset();
+  beforeEach(() => {
+    selectProducts = createComponent();
   });
 
   test("Clicking checkboxes", async () => {
+    const spy = jest.fn();
+    selectProducts.on("change", (selected) => spy(selected));
+
     await userEvent.click(checkboxes[0]);
     expect(spy).toBeCalledWith([
       {

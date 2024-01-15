@@ -130,6 +130,7 @@ describe("Selected options", () => {
     const $removeButtons = getAllByText($ul, "Remove");
     for (const $removeButton of $removeButtons) {
       expect($removeButton).toHaveClass("selected-options__option-remove");
+      expect($removeButton).toHaveAttribute("type", "button");
     }
 
     await user.click($removeButtons[0]);

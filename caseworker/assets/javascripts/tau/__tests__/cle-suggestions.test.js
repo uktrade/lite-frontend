@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 
 import CLESuggestions from "../cle-suggestions";
 
-let buttonContainer, component, callbackSpy;
+let buttonContainer, component;
 
 const createElements = () => {
   document.body.innerHTML = `
@@ -15,9 +15,8 @@ const createElements = () => {
 };
 
 const createComponent = () => {
-  callbackSpy = jest.fn();
   buttonContainer = createElements();
-  component = new CLESuggestions(buttonContainer, callbackSpy);
+  component = new CLESuggestions(buttonContainer);
   return component;
 };
 
@@ -65,13 +64,13 @@ describe("CLE suggestions", () => {
       },
     ]);
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R1, R1a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R2, R2a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R2, R2a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R3, R3a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R3, R3a</button>`
     );
   });
 
@@ -135,6 +134,8 @@ describe("CLE suggestions", () => {
   });
 
   test("Callback called on button click", async () => {
+    const callbackSpy = jest.fn();
+    component.on("change", (suggestion) => callbackSpy(suggestion));
     component.setProducts([
       {
         controlListEntries: {
@@ -194,13 +195,13 @@ describe("CLE suggestions", () => {
       },
     ]);
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R1, R1a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R2, R2a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R2, R2a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R3, R3a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R3, R3a</button>`
     );
   });
 
@@ -221,13 +222,13 @@ describe("CLE suggestions", () => {
       },
     ]);
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R1, R1a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R2, R2a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R2, R2a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R3, R3a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R3, R3a</button>`
     );
   });
 
@@ -245,10 +246,10 @@ describe("CLE suggestions", () => {
       },
     ]);
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Select exporter suggestion R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Select exporter suggestion R1, R1a</button>`
     );
     expect(buttonContainer).toContainHTML(
-      `<button class="lite-button--link">Copy previous assessment R1, R1a</button>`
+      `<button class="lite-button--link" type="button">Copy previous assessment R1, R1a</button>`
     );
   });
 });
