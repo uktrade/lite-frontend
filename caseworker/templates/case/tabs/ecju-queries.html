@@ -23,7 +23,7 @@
 						{{ ecju_query.question|linebreaks }}
 					</div>
 					<p class="app-ecju-query__date">
-						Sent at {{ ecju_query.created_at|str_time_on_date }}. This query has been open for {{ ecju_query.created_at|str_int_days_since_date }} days.
+						Sent at {{ ecju_query.created_at|str_time_on_date }}. This query has been open for {{ ecju_query.created_at|to_datetime|timesince }}.
 					</p>
 				</div>
 			</div>

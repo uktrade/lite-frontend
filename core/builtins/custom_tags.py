@@ -170,19 +170,6 @@ def str_time_on_date(value):
 
 @register.filter
 @stringfilter
-def str_int_days_since_date(value):
-    try:
-        parsed_value = parse(value)
-    except ParserError:
-        return
-    past_datetime = localtime(parsed_value)
-    current_datetime = localtime(datetime.datetime.now())
-    delta = current_datetime - past_datetime
-    return str(delta.days)
-
-
-@register.filter
-@stringfilter
 def str_date_only(value):
     if value != "None":
         return localtime(parse(value)).strftime("%-d %B %Y")
