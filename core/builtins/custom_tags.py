@@ -11,7 +11,7 @@ from decimal import Decimal
 from importlib import import_module
 
 import bleach
-from dateutil.parser import isoparse, parse, ParserError
+from dateutil.parser import isoparse, parse
 from dateutil.relativedelta import relativedelta
 
 from django import template
