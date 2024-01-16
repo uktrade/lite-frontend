@@ -218,6 +218,12 @@ def get_ecju_queries(request, pk):
     return data.json(), data.status_code
 
 
+def get_ecju_queries_open_count(request, pk):
+    response = client.get(request, f"/cases/{pk}/ecju-queries-open-count/")
+    response.raise_for_status()
+    return response.json()
+
+
 def post_ecju_query(request, pk, json):
     response = client.post(request, f"/cases/{pk}/ecju-queries/", json)
     return response.json(), response.status_code

@@ -2,9 +2,11 @@
 	position: relative;
 	display: grid;
 	grid-template-columns: 1fr auto;
+	margin-bottom: govuk-spacing(6);
 
 	@include govuk-media-query($until: tablet) {
 		grid-template-columns: 1fr!important;
+		margin-bottom: govuk-spacing(2);
 	}
 }
 

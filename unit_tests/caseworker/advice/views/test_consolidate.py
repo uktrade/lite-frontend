@@ -25,6 +25,12 @@ def mock_post_team_advice(requests_mock, standard_case_pk):
     yield requests_mock.post(url=url, json={})
 
 
+@pytest.fixture
+def mock_get_ecju_open_count(requests_mock, standard_case_pk):
+    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries-open-count/")
+    yield requests_mock.get(url=url, json={"count": 0})
+
+
 @pytest.fixture(autouse=True)
 def setup(
     mock_queue,
@@ -35,6 +41,7 @@ def setup(
     mock_footnote_details,
     mock_post_team_advice,
     mock_finalise_advice_documents,
+    mock_get_ecju_open_count,
 ):
     yield
 
@@ -1124,6 +1131,56 @@ def test_finalise_button_shown_correctly_for_lu_countersigning_scenarios(
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert bool(soup.find(id="finalise-case-button")) is expected_value_finalise_case
+
+
+@pytest.mark.parametrize(
+    "open_queries_count, expected_value_finalise_case, open_query_warning_displayed",
+    [
+        [0, True, False],
+        [1, False, True],
+    ],
+)
+def test_finalise_has_open_queries_warning_displayed_correctly(
+    requests_mock,
+    authorized_client,
+    data_standard_case,
+    standard_case_pk,
+    view_consolidate_outcome_url,
+    advice_for_lu_countersign,
+    LU_team_user,
+    open_queries_count,
+    expected_value_finalise_case,
+    open_query_warning_displayed,
+):
+    """
+    Test cases
+    1. finialise button is available because we don't have any open queries
+    1. finialise button isn't available warning is displayed because we have open queries
+    """
+
+    data_standard_case["case"]["advice"] = advice_for_lu_countersign
+    data_standard_case["case"]["countersign_advice"] = countersignatures_for_advice(
+        advice_for_lu_countersign, [{"order": services.FIRST_COUNTERSIGN, "outcome_accepted": True}]
+    )
+    data_standard_case["case"]["all_flags"] = [FLAG_MAP[LU_COUNTERSIGN_REQUIRED_ID]]
+
+    gov_user = {"user": LU_team_user}
+
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
+        json=gov_user,
+    )
+    requests_mock.get(
+        client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries-open-count/"),
+        json={"count": open_queries_count},
+    )
+
+    response = authorized_client.get(view_consolidate_outcome_url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert bool(soup.find(id="finalise-case-button")) is expected_value_finalise_case
+    assert bool(soup.find(id="case-has-open-queries")) is open_query_warning_displayed
 
 
 @pytest.mark.parametrize(

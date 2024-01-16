@@ -67,50 +67,7 @@
                 <div class="govuk-grid-row">
                     <div class="govuk-grid-column-full">
                         <h2 class="govuk-heading-m">Assessed products</h2>
-                        {% if formset %}
-                            {% crispy formset formset_helper %}
-                        {% else %}
-                            {% test_rule 'can_user_assess_products' request case as can_user_assess_products %}
-                            {% if can_user_assess_products %}
-                                <a id="clear-assessments-button" href="{% url 'cases:tau:clear_assessments' queue_pk=queue_id pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
-                            {% endif %}
-                            <table id="assessed-products" class="govuk-table">
-                                <thead class="govuk-table__head">
-                                    <tr class="govuk-table__row">
-                                        <th scope="col" class="govuk-table__header">
-                                            <span class="govuk-visually-hidden">Line number</span>
-                                        </th>
-                                        <th scope="col" class="govuk-table__header">Name and part number</th>
-                                        <th scope="col" class="govuk-table__header">Control list entry</th>
-                                        <th scope="col" class="govuk-table__header">Regime</th>
-                                        <th scope="col" class="govuk-table__header">Report summary</th>
-                                        <th scope="col" class="govuk-table__header">Military list for NCSC</th>
-                                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Assessment note</th>
-                                        <th scope="col" class="govuk-table__header">
-                                            <span class="govuk-visually-hidden">Actions</span>
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="govuk-table__body">
-                                    {% for good in assessed_goods %}
-                                        <tr class="govuk-table__row" id="good-{{ good.id }}">
-                                            <td class="govuk-table__cell">{{ good.line_number }}.</td>
-                                            <td class="govuk-table__cell">{{ good.good.name }}</td>
-                                            <td class="govuk-table__cell">{{ good | get_clc | join:',' }}</td>
-                                            <td class="govuk-table__cell">
-                                                {% include "tau/includes/regime_short_name.html" with regime_entries=good.regime_entries %}
-                                            </td>
-                                            <td class="govuk-table__cell">{{ good.report_summary|default:"" }}</td>
-                                            <td class="govuk-table__cell">{{ good.ncsc|yesno:"Yes,No" }}</td>
-                                            <td class="govuk-table__cell">{{ good.comment|linebreaksbr }}</td>
-                                            <td class="govuk-table__cell">
-                                                <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:tau:edit' queue_pk=queue_id pk=case.id good_id=good.id %}">Edit</a>
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        {% endif %}
+                        {% crispy formset formset_helper %}
                     </div>
                 </div>
             {% endif %}

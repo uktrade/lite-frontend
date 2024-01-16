@@ -98,9 +98,6 @@ class CasePage(BasePage):
         scroll_to_element_by_id(self.driver, self.TABLE_GOODS_ID)
         self.driver.find_element(by=By.CSS_SELECTOR, value=f"#{self.TABLE_GOODS_ID} {selectors.CHECKBOX}").click()
 
-    def get_goods_text(self):
-        return self.driver.find_element(by=By.ID, value=self.TABLE_GOODS_ID).text
-
     def get_goods_row_with_headers(self, row_num):
         scroll_to_element_by_id(self.driver, self.TABLE_GOODS_ID)
         headers = [
