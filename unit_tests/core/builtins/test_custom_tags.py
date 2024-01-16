@@ -372,8 +372,8 @@ def test_pprint_dict(data, expected):
     ("input_string", "expected_output"),
     [("2024-01-01T13:30:00.123456+01:00", "12:30pm on 01 January 2024"), ("not a datetime", None)],
 )
-def test_str_date_with_on(input_string, expected_output):
-    assert custom_tags.str_date_with_on(input_string) == expected_output
+def test_str_time_on_date(input_string, expected_output):
+    assert custom_tags.str_time_on_date(input_string) == expected_output
 
 
 @pytest.mark.parametrize(

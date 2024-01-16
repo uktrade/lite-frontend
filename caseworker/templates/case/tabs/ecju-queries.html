@@ -23,7 +23,7 @@
 						{{ ecju_query.question|linebreaks }}
 					</div>
 					<p class="app-ecju-query__date">
-						<span class="govuk-text">Sent at {{ ecju_query.created_at|str_date_with_on }}. This query has been open for {{ ecju_query.created_at|str_int_days_since_date }} days.</span>
+						Sent at {{ ecju_query.created_at|str_time_on_date }}. This query has been open for {{ ecju_query.created_at|str_int_days_since_date }} days.
 					</p>
 				</div>
 			</div>
@@ -45,7 +45,7 @@
 						{{ ecju_query.question|linebreaks }}
 					</div>
 					<p class="app-ecju-query__date">
-						<span class="govuk-text">Sent at {{ ecju_query.created_at|str_date_with_on }}.</span>
+						Sent at {{ ecju_query.created_at|str_time_on_date }}.
 					</p>
 				</div>
 				<div class="app-ecju-query__item app-ecju-query__item--right">
@@ -79,7 +79,7 @@
 					{% endif %}
 
 					<p class="app-ecju-query__date">
-						<span class="govuk-text">Closed at {{ ecju_query.responded_at|str_date_with_on }}.</span>
+						Closed at {{ ecju_query.responded_at|str_time_on_date }}.
 					</p>
 				</div>
 			</div>

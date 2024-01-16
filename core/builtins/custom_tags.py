@@ -157,29 +157,28 @@ def str_date(value):
 
 @register.filter
 @stringfilter
-def str_date_with_on(value):
+def str_time_on_date(value):
+    """
+    Include the word 'on' in the datetime string, e.g. "11:14am on 28 December 2023"
+    """
     try:
-        return_value = localtime(parse(value))
-        return (
-            return_value.strftime("%-I:%M")
-            + return_value.strftime("%p").lower()
-            + " on "
-            + return_value.strftime("%d %B " "%Y")
-        )
+        local_datetime = localtime(parse(value))
     except ValueError:
         return
+    return f"{local_datetime.strftime('%-I:%M%p').lower()} on {local_datetime.strftime('%d %B %Y')}"
 
 
 @register.filter
 @stringfilter
 def str_int_days_since_date(value):
     try:
-        past_datetime = localtime(parse(value))
-        current_datetime = localtime(datetime.datetime.now())
-        delta = current_datetime - past_datetime
-        return str(delta.days)
+        parsed_value = parse(value)
     except ParserError:
         return
+    past_datetime = localtime(parsed_value)
+    current_datetime = localtime(datetime.datetime.now())
+    delta = current_datetime - past_datetime
+    return str(delta.days)
 
 
 @register.filter
