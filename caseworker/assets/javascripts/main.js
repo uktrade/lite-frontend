@@ -17,7 +17,7 @@ import initQueuesMenu from "./queues-menu.js";
 import initCLEEntries from "./cle-entries.js";
 import initRegimeEntries from "./regime-entries.js";
 import initDestinationsList from "./show-hide-destinations.js";
-import initMentionUsers, { initCaseNotes } from "./case-notes";
+import { initCaseNotes, initMentionUsers } from "./case-notes";
 import { initExpanders } from "./list-expander";
 import { initCustomisers } from "./customiser";
 import { initRadioTextArea } from "./radio-populate-textarea.js";
