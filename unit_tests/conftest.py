@@ -2467,6 +2467,7 @@ def data_ecju_queries():
                 "response": "query is closed",
                 "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
                 "responded_by_user": {"id": "b97ee7b1-d158-4edb-acdb-56db93e80438"},
+                "responded_by_user": None,
                 "team": {
                     "id": "88164d59-8724-4596-811b-40b60b5cf892",
                     "name": "BEIS Nuclear controls",
