@@ -340,6 +340,7 @@ def data_cases_search(filter_data):
                             "raised_by_user": "foo bar",
                             "responded_by_user": None,
                             "query_type": "query",
+                            "is_query_closed": False,
                         },
                         {
                             "question": "some other question",
@@ -347,6 +348,7 @@ def data_cases_search(filter_data):
                             "raised_by_user": "some user",
                             "responded_by_user": "some responder",
                             "query_type": "query",
+                            "is_query_closed": True,
                         },
                     ],
                     "intended_end_use": "birthday present",
@@ -676,10 +678,10 @@ def mock_case_ecju_queries(requests_mock):
 
 
 @pytest.fixture
-def mock_standard_case_ecju_queries(requests_mock, standard_case_pk):
+def mock_standard_case_ecju_queries(requests_mock, standard_case_pk, data_ecju_queries):
     url = client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/")
     data = {"ecju_queries": []}
-    requests_mock.get(url=url, json=data)
+    requests_mock.get(url=url, json=data_ecju_queries)
     yield data
 
 
@@ -1445,12 +1447,6 @@ def standard_case_activity():
 def mock_standard_case_activity_system_user(requests_mock, standard_case_pk, standard_case_activity):
     url = client._build_absolute_uri(f"/cases/{standard_case_pk}/activity/")
     return requests_mock.get(url=url, json=standard_case_activity)
-
-
-@pytest.fixture
-def mock_standard_case_ecju_queries(requests_mock, standard_case_pk, standard_case_activity):
-    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/")
-    return requests_mock.get(url=url, json={"ecju_queries": []})
 
 
 @pytest.fixture

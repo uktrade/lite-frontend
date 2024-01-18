@@ -920,6 +920,7 @@ def test_context_ecju_queries(url, authorized_client):
             "raised_by_user": "foo bar",
             "responded_by_user": None,
             "response": None,
+            "is_query_closed": False,
         },
         {
             "query_type": "query",
@@ -927,6 +928,7 @@ def test_context_ecju_queries(url, authorized_client):
             "raised_by_user": "some user",
             "responded_by_user": "some responder",
             "response": "some response",
+            "is_query_closed": True,
         },
     ]
     assert response.context["data"]["results"]["cases"][0]["ecju_queries"] == expected_ecju_queries
