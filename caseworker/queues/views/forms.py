@@ -1,6 +1,15 @@
 from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Fieldset, HTML, Submit, Button, Accordion, AccordionSection
+from crispy_forms_gds.layout import (
+    Accordion,
+    AccordionSection,
+    Button,
+    Field,
+    Fieldset,
+    HTML,
+    Layout,
+    Submit,
+)
 
 from django import forms
 from django.urls import reverse
@@ -195,18 +204,20 @@ class CasesFiltersForm(forms.Form):
             "case_reference",
             "status",
             "sub_status",
-            "case_officer",
-            "assigned_user",
+            Field("case_officer", css_class="single-select-filter"),
+            Field("assigned_user", css_class="single-select-filter"),
             "export_type",
             "includes_refusal_recommendation_from_ogd",
             "submitted_from",
             "submitted_to",
-            "flags",
+            Field("flags", css_class="multi-select-filter"),
             "finalised_from",
             "finalised_to",
         ]
         if queue.get("is_system_queue"):
-            case_filters.append("assigned_queues")
+            case_filters.append(
+                Field("assigned_queues", css_class="multi-select-filter"),
+            )
 
         # When filters are cleared we need to reset all filter fields. Ideally we should do this
         # in clean() but we are posting anything in this form so we are just redirecting it to the
@@ -225,9 +236,9 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Product",
-                    "control_list_entry",
+                    Field("control_list_entry", css_class="multi-select-filter"),
                     "exclude_control_list_entry",
-                    "regime_entry",
+                    Field("regime_entry", css_class="multi-select-filter"),
                     "exclude_regime_entry",
                     "report_summary",
                     "product_name",
@@ -243,7 +254,7 @@ class CasesFiltersForm(forms.Form):
                 ),
                 AccordionSection(
                     "Parties",
-                    "countries",
+                    Field("countries", css_class="multi-select-filter"),
                     "party_name",
                     "exclude_denial_matches",
                     "exclude_sanction_matches",
