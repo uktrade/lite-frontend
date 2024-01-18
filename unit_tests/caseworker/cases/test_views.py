@@ -494,3 +494,65 @@ def test_case_worker_view_with_caseworker(
     assert response.context["data"] == {
         "gov_user_pk": case_officer_id,
     }
+
+
+@pytest.fixture
+def mock_get_queries(requests_mock, standard_case_pk, data_ecju_queries):
+    requests_mock.get(client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/"), json=data_ecju_queries)
+
+
+@pytest.fixture
+def data_closed_query(lu_team, LU_team_user):
+    return {
+        "id": "7750bad9-aefc-4b05-a597-596a99f6d574",
+        "question": "some question text",
+        "response": "closing this query because xyz",
+        "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+        "responded_by_user": LU_team_user["id"],
+        "team": lu_team,
+        "created_at": "2022-11-30T16:55:40.807470Z",
+        "responded_at": "2024-01-18T01:01:01.123456Z",
+    }
+
+
+def test_close_query_view_success(
+    authorized_client, requests_mock, queue_pk, standard_case_pk, data_ecju_queries, data_closed_query, mock_get_queries
+):
+    # see that the query is in the open queries section
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    open_queries = soup.find(id="open-queries")
+    assert data_ecju_queries["ecju_queries"][0]["question"] in str(open_queries)
+
+    # close the query
+    query_pk = data_ecju_queries["ecju_queries"][0]["id"]
+    requests_mock.put(client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/{query_pk}/"), json={})
+    cases_close_query_url = reverse(
+        "cases:close_query", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "query_pk": query_pk}
+    )
+    authorized_client.post(
+        cases_close_query_url, data={f"reason_for_closing_query_{query_pk}": "closing this query because xyz"}
+    )
+
+    # set up mock api response with closed query
+    data_ecju_queries["ecju_queries"][0] = data_closed_query
+    requests_mock.get(client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/"), json=data_ecju_queries)
+
+    # see that there is no open queries section
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert not soup.find("open-queries")
+
+    # set up mock api response with closed query
+    data_ecju_queries["ecju_queries"][0] = data_closed_query
+    requests_mock.get(client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/"), json=data_ecju_queries)
+
+    # see that the query is in the closed queries section
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    closed_queries = soup.find(id="closed-queries")
+    assert data_closed_query["question"] in str(closed_queries)
+    assert data_closed_query["response"] in str(closed_queries)
