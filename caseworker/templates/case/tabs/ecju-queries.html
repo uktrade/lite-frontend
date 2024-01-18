@@ -1,4 +1,5 @@
 {% load rules svg %}
+{% load crispy_forms_tags crispy_forms_gds %}
 
 <div class="lite-buttons-row">
 	{% make_list queue.id case.id as button_params %}
@@ -34,13 +35,7 @@
 						<div class="govuk-details__text">
 							<form method="post" action="{% url 'cases:close_query' queue_pk=queue.id pk=case.id query_pk=ecju_query.id %}">
 								{% csrf_token %}
-								<div class="govuk-form-group">
-									<div id="open-ecju-query-more-detail-hint-{{ ecju_query.id }}" class="govuk-hint">
-										Why are you closing the query? This will not be visible to the exporter.
-									</div>
-									<textarea class="govuk-textarea" name="reason_for_closing_query_{{ ecju_query.id }}" rows="5" aria-describedby="open-ecju-query-more-detail-hint-{{ ecju_query.id }}"></textarea>
-									<button type="submit" name="open_ecju_query_close_button_{{ ecju_query.id }}" class="govuk-button govuk-button--secondary">Submit</a>
-								  </div>
+								{% crispy close_query_form %}
 							</form>
 						</div>
 					</details>

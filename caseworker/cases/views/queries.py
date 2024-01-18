@@ -1,35 +1,37 @@
+from typing import Any
+from django.http.request import HttpRequest as HttpRequest
+from django.http.response import HttpResponse as HttpResponse
 from django.urls import reverse
 from django.shortcuts import redirect
 
 from django.views.generic import FormView
 
-from caseworker.cases.forms.queries import CloseQuery
+from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.services import put_ecju_query
 
 
 class CloseQueryView(FormView):
-    form_class = CloseQuery
-
-    def post(self, request, *args, **kwargs):
-        self.queue_pk = kwargs["queue_pk"]
-        self.pk = kwargs["pk"]
-        self.query_pk = kwargs["query_pk"]
+    def dispatch(self, request, *args, **kwargs):
         self.lite_user = request.lite_user if request.lite_user else None
+        return super().dispatch(request, *args, **kwargs)
 
-        # there are multiple forms on the page with different 'name' attributes
-        # so this is used to prepare the form data before checking if it is valid
-        form_data = {
-            key.replace(f"_{str(self.query_pk)}", ""): value
-            for key, value in request.POST.items()
-            if key.startswith("reason_for_closing_query")
+    def get_form_class(self):
+        return CloseQueryForm
+
+    def form_valid(self, form):
+        data = {
+            "response": form.cleaned_data["reason_for_closing_query"],
+            "responded_by_user": self.lite_user.get("id") if self.lite_user else None,
         }
-        form = CloseQuery(form_data)
+        put_ecju_query(request=self.request, pk=self.kwargs["pk"], query_pk=self.kwargs["query_pk"], json=data)
+        return super().form_valid(form)
 
-        if form.is_valid():
-            body = {
-                "response": form_data["reason_for_closing_query"],
-                "responded_by_user": self.lite_user.get("id") if self.lite_user else None,
-            }
-            put_ecju_query(request=request, pk=self.pk, query_pk=self.query_pk, json=body)
-
-        return redirect(reverse("cases:case", kwargs={"queue_pk": self.queue_pk, "pk": self.pk, "tab": "ecju-queries"}))
+    def get_success_url(self):
+        return reverse(
+            "cases:case",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.kwargs["pk"],
+                "tab": "ecju-queries",
+            },
+        )

@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 from caseworker.queues.forms import CaseAssignmentsAllocateToMeForm
 from core.constants import CaseStatusEnum, SecurityClassifiedApprovalsType
 
+from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.cases.objects import Slice, Case
 from caseworker.cases.services import (
@@ -222,6 +223,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "has_future_next_review_date": future_next_review_date,
             "user": self.caseworker,
+            "close_query_form": CloseQueryForm,
             **self.additional_context,
         }
 
