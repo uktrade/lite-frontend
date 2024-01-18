@@ -14,6 +14,7 @@ class CloseQueryView(FormView):
         self.queue_pk = kwargs["queue_pk"]
         self.pk = kwargs["pk"]
         self.query_pk = kwargs["query_pk"]
+        self.lite_user = request.lite_user if request.lite_user else None
 
         # there are multiple forms on the page with different 'name' attributes
         # so this is used to prepare the form data before checking if it is valid
@@ -23,8 +24,12 @@ class CloseQueryView(FormView):
             if key.startswith("reason_for_closing_query")
         }
         form = CloseQuery(form_data)
+
         if form.is_valid():
-            body = {"response": form_data["reason_for_closing_query"]}
+            body = {
+                "response": form_data["reason_for_closing_query"],
+                "responded_by_user": self.lite_user.get("id") if self.lite_user else None,
+            }
             put_ecju_query(request=request, pk=self.pk, query_pk=self.query_pk, json=body)
 
         return redirect(reverse("cases:case", kwargs={"queue_pk": self.queue_pk, "pk": self.pk, "tab": "ecju-queries"}))
