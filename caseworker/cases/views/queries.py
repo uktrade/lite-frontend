@@ -30,6 +30,7 @@ class CloseQueryView(FormView):
     form_class = CloseQuery
 
     def post(self, request, *args, **kwargs):
+        self.queue_pk = kwargs["queue_pk"]
         self.pk = kwargs["pk"]
         self.query_pk = kwargs["query_pk"]
 
@@ -45,6 +46,4 @@ class CloseQueryView(FormView):
             body = {"response": form_data["reason_for_closing_query"]}
             put_ecju_query(request=request, pk=self.pk, query_pk=self.query_pk, json=body)
 
-        return redirect(
-            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": kwargs["pk"], "tab": "ecju-queries"})
-        )
+        return redirect(reverse("cases:case", kwargs={"queue_pk": self.queue_pk, "pk": self.pk, "tab": "ecju-queries"}))

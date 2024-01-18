@@ -531,9 +531,10 @@ def test_close_query_view_success(
     cases_close_query_url = reverse(
         "cases:close_query", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "query_pk": query_pk}
     )
-    authorized_client.post(
+    response = authorized_client.post(
         cases_close_query_url, data={f"reason_for_closing_query_{query_pk}": "closing this query because xyz"}
     )
+    assert response.status_code == 302
 
     # set up mock api response with closed query
     data_ecju_queries["ecju_queries"][0] = data_closed_query
