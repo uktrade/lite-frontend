@@ -98,7 +98,7 @@
 					{% endif %}
 
 					<p class="app-ecju-query__date">
-						Closed at {{ ecju_query.responded_at|str_time_on_date }}.
+						Closed at {{ ecju_query.responded_at|str_time_on_date }} by {{ ecju_query.responded_by_user_name }}.
 					</p>
 				</div>
 			</div>
