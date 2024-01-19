@@ -80,7 +80,7 @@ class AddGoodDetails(BasePage):
     FIREARMS_NUMBER_OF_ITEMS = "number_of_items"
     FIREARMS_SERIAL_NUMBERS = "serial_numbers"
 
-    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "input.tokenfield-input"
+    AUTOCOMPLETE_CONTROL_LIST_ENTRIES_SELECTOR = "input.lite-autocomplete__input"
 
     def true_or_false(self, status):
         return "True" if status == "Yes" else "False"
@@ -111,9 +111,9 @@ class AddGoodDetails(BasePage):
         self.driver.find_element(by=By.XPATH, value=f"//input[@type='radio' and @value='{value}']").click()
 
     def enter_control_list_entry(self, control_list_entry):
-        functions.send_tokens_to_token_bar(
+        functions.select_multi_select_options(
             self.driver,
-            self.TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR,
+            self.AUTOCOMPLETE_CONTROL_LIST_ENTRIES_SELECTOR,
             [control_list_entry],
         )
 

@@ -264,11 +264,6 @@ def move_case_to_new_queue(driver, context):  # noqa
     Shared(driver).click_submit()
 
 
-@given("I create report summary picklist")  # noqa
-def add_report_summary_picklist(add_a_report_summary_picklist):  # noqa
-    pass
-
-
 @then("I see previously created application")  # noqa
 def should_see_previously_created_application(driver, context):  # noqa
     case_page = CaseListPage(driver)

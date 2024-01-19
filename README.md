@@ -155,6 +155,13 @@ make run_all_tests
 - DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter, available
   in Vault
 
+# To Run Mock SS0 in caseworker.env set
+AUTHBROKER_URL=http://caseworker:8200
+MOCK_SSO_ACTIVATE_ENDPOINTS=True
+MOCK_SSO_USER_EMAIL=fake@fake.com (this user will need to be seeded as an internal user)
+MOCK_SSO_USER_FIRST_NAME=LITE
+MOCK_SSO_USER_LAST_NAME=Testing
+
 Exporter UI Tests also requires the following :
 
 - GOVUK_BASIC_AUTH_USER_NAME - In vault used for GOV.UK basic authentication in test envs  
