@@ -526,7 +526,7 @@ def test_close_query_view_success(
         "cases:close_query", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "query_pk": query_pk}
     )
     response = authorized_client.post(
-        cases_close_query_url, data={f"reason_for_closing_query_{query_pk}": "closing this query because xyz"}
+        cases_close_query_url, data={f"{query_pk}-reason_for_closing_query": "closing this query because xyz"}
     )
     assert response.status_code == 302
 

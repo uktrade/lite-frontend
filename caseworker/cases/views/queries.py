@@ -14,6 +14,10 @@ class CloseQueryView(FormView):
     def get_form_class(self):
         return CloseQueryForm
 
+    def get_prefix(self):
+        self.prefix = str(self.kwargs["query_pk"])
+        return self.prefix
+
     def form_valid(self, form):
         data = {
             "response": form.cleaned_data["reason_for_closing_query"],

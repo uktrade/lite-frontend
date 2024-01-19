@@ -13,10 +13,10 @@
 	{% endif %}
 </div>
 
-{% if open_ecju_queries %}
+{% if open_ecju_queries_with_forms %}
 	<h3 class="govuk-heading-m">{% lcs 'cases.EcjuQueries.OPEN' %}</h3>
 	<div id="open-queries">
-		{% for ecju_query in open_ecju_queries %}
+		{% for ecju_query, close_query_form in open_ecju_queries_with_forms %}
 			<div class="app-ecju-query" id="open-ecju-query">
 				<div class="app-ecju-query__item">
 					<p class="app-ecju-query__heading">{{ ecju_query.query_type.value }} by {{ ecju_query.raised_by_user_name }}</p>
@@ -102,6 +102,6 @@
 	</div>
 {% endif %}
 
-{% if not open_ecju_queries and not closed_ecju_queries %}
+{% if not open_ecju_queries_with_forms and not closed_ecju_queries %}
 	{% include 'includes/notice.html' with text='cases.EcjuQueries.CASE_HAS_NO_QUERIES' %}
 {% endif %}

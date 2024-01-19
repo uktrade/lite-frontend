@@ -170,12 +170,19 @@ class CaseView(CaseworkerMixin, TemplateView):
             destination_countries.add(party["country"]["name"])
         return destination_countries
 
+    def get_open_ecju_queries_with_forms(self, open_ecju_queries):
+        open_ecju_queries_with_forms = []
+        for open_query in open_ecju_queries:
+            open_ecju_queries_with_forms.append((open_query, CloseQueryForm(prefix=str(open_query["id"]))))
+        return open_ecju_queries_with_forms
+
     def get_context(self):
         if not self.tabs:
             self.tabs = []
         if not self.slices:
             self.slices = []
         open_ecju_queries, closed_ecju_queries = get_ecju_queries(self.request, self.case_id)
+        open_ecju_queries_with_forms = self.get_open_ecju_queries_with_forms(open_ecju_queries)
         user_assigned_queues = get_user_case_queues(self.request, self.case_id)[0]
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
         can_set_done = (
@@ -206,7 +213,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             "destination_countries": self.get_destination_countries(),
             "user_assigned_queues": user_assigned_queues,
             "case_documents": get_case_documents(self.request, self.case_id)[0]["documents"],
-            "open_ecju_queries": open_ecju_queries,
+            "open_ecju_queries_with_forms": open_ecju_queries_with_forms,
             "closed_ecju_queries": closed_ecju_queries,
             "additional_contacts": get_case_additional_contacts(self.request, self.case_id),
             "permissions": self.permissions,
@@ -223,7 +230,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "has_future_next_review_date": future_next_review_date,
             "user": self.caseworker,
-            "close_query_form": CloseQueryForm,
             **self.additional_context,
         }
 
