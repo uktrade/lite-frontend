@@ -1,8 +1,4 @@
-from typing import Any
-from django.http.request import HttpRequest as HttpRequest
-from django.http.response import HttpResponse as HttpResponse
 from django.urls import reverse
-from django.shortcuts import redirect
 
 from django.views.generic import FormView
 
