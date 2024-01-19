@@ -107,8 +107,8 @@ class ValidateReturnToMiddleware:
         if return_to is not None:
             try:
                 url = urlparse(return_to)
-            except ValueError as e:
-                return HttpResponseForbidden(str(e))
+            except ValueError:
+                return HttpResponseForbidden("Unparseable return_to parameter")
             if url.netloc != "" or url.scheme != "" or return_to.startswith("//"):
                 return HttpResponseForbidden("Invalid return_to parameter")
         response = self.get_response(request)
