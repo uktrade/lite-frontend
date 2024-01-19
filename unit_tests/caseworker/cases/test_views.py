@@ -542,12 +542,6 @@ def test_close_query_view_success(
     soup = BeautifulSoup(response.content, "html.parser")
     assert not soup.find("open-queries")
 
-    # set up mock api response with closed query
-    data_ecju_queries_gov_serializer["ecju_queries"][0] = data_query_closed_by_caseworker
-    requests_mock.get(
-        client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/"), json=data_ecju_queries_gov_serializer
-    )
-
     # see that the query is in the closed queries section
     url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
     response = authorized_client.get(url)
