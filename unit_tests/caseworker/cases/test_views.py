@@ -503,7 +503,10 @@ def mock_get_queries(requests_mock, standard_case_pk, data_ecju_queries_gov_seri
     )
 
 
-def test_close_query_view_success(
+@pytest.mark.parametrize(
+    ("reason_for_closing_query", "expected_status"), [("closing this query because xyz", 302), ("", 302)]
+)
+def test_close_query_view_post_success(
     authorized_client,
     requests_mock,
     queue_pk,
@@ -511,6 +514,8 @@ def test_close_query_view_success(
     data_ecju_queries_gov_serializer,
     data_query_closed_by_caseworker,
     mock_get_queries,
+    reason_for_closing_query,
+    expected_status,
 ):
     # see that the query is in the open queries section
     url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
@@ -526,10 +531,20 @@ def test_close_query_view_success(
         "cases:close_query", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "query_pk": query_pk}
     )
     response = authorized_client.post(
-        cases_close_query_url, data={f"{query_pk}-reason_for_closing_query": "closing this query because xyz"}
+        cases_close_query_url, data={f"{query_pk}-reason_for_closing_query": reason_for_closing_query}
     )
-    assert response.status_code == 302
+    assert response.status_code == expected_status
 
+
+def test_close_query_view_show_closed_queries_on_page(
+    authorized_client,
+    requests_mock,
+    queue_pk,
+    standard_case_pk,
+    data_ecju_queries_gov_serializer,
+    data_query_closed_by_caseworker,
+    mock_get_queries,
+):
     # set up mock api response with closed query
     data_ecju_queries_gov_serializer["ecju_queries"][0] = data_query_closed_by_caseworker
     requests_mock.get(
