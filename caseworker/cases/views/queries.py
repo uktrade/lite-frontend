@@ -4,9 +4,10 @@ from django.views.generic import FormView
 
 from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.services import put_ecju_query
+from core.auth.views import LoginRequiredMixin
 
 
-class CloseQueryView(FormView):
+class CloseQueryView(LoginRequiredMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         self.lite_user = request.lite_user if request.lite_user else None
         return super().dispatch(request, *args, **kwargs)
