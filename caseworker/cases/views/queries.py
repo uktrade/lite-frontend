@@ -1,10 +1,13 @@
-from django.urls import reverse
+from http import HTTPStatus
 
+from django.urls import reverse
 from django.views.generic import FormView
 
 from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.services import put_ecju_query
 from core.auth.views import LoginRequiredMixin
+
+from lite_forms.generators import error_page
 
 
 class CloseQueryView(LoginRequiredMixin, FormView):
@@ -24,7 +27,13 @@ class CloseQueryView(LoginRequiredMixin, FormView):
             "response": form.cleaned_data["reason_for_closing_query"],
             "responded_by_user": self.lite_user.get("id") if self.lite_user else None,
         }
-        put_ecju_query(request=self.request, pk=self.kwargs["pk"], query_pk=self.kwargs["query_pk"], json=data)
+        response, _ = put_ecju_query(
+            request=self.request, pk=self.kwargs["pk"], query_pk=self.kwargs["query_pk"], json=data
+        )
+        if "errors" in response:
+            description = response["errors"]
+            return error_page(self.request, description=description)
+
         return super().form_valid(form)
 
     def get_success_url(self):
