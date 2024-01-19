@@ -1,5 +1,3 @@
-from http import HTTPStatus
-
 from django.urls import reverse
 from django.views.generic import FormView
 
