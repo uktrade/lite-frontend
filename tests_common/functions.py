@@ -61,12 +61,16 @@ def send_tokens_to_token_bar(driver: WebDriver, element_selector: str, tokens: L
     time.sleep(1)
 
 
-def select_multi_select_options(driver: WebDriver, element_selector: str, control_list_entries: List[str]):
-    element = driver.find_element(by=By.CSS_SELECTOR, value=element_selector)
-
-    for control_list_entry in control_list_entries:
-        element.send_keys(control_list_entry)
+def select_multi_select_options(driver: WebDriver, element_selector: str, options: List[str]):
+    for option in options:
+        element = driver.find_element(by=By.CSS_SELECTOR, value=element_selector)
+        element.send_keys(option)
         element.send_keys(Keys.ENTER)
+        WebDriverWait(driver, 30).until(
+            expected_conditions.presence_of_element_located(
+                (By.XPATH, f"//span[@class='selected-options__option-text' and contains(text(), '{option}')]")
+            ),
+        )
 
 
 def click_apply_filters(driver: WebDriver):

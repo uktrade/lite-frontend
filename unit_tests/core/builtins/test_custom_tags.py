@@ -365,3 +365,11 @@ def test_get_unique_destinations(search_results, expected_destinations):
 )
 def test_pprint_dict(data, expected):
     assert custom_tags.pprint_dict(data) == expected
+
+
+@pytest.mark.parametrize(
+    ("input_string", "expected_output"),
+    [("2024-01-01T13:30:00.123456+01:00", "12:30pm on 01 January 2024"), ("not a datetime", None)],
+)
+def test_str_time_on_date(input_string, expected_output):
+    assert custom_tags.str_time_on_date(input_string) == expected_output
