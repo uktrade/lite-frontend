@@ -26,7 +26,7 @@ def test_case_page_ecju_queries_context(authorized_client, data_standard_case, q
 
     assert response.status_code == 200
 
-    assert len(response.context["closed_ecju_queries"]) == 1
+    assert len(response.context["closed_ecju_queries"]) == 2
     assert len(response.context["open_ecju_queries"]) == 3
 
 
