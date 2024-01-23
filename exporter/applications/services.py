@@ -439,8 +439,8 @@ def post_case_notes(request, pk, json):
 def get_application_ecju_queries(request, pk):
     data = client.get(request, f"/cases/{pk}/ecju-queries/").json()["ecju_queries"]
 
-    open_queries = [x for x in data if not x["response"]]
-    closed_queries = [x for x in data if x["response"]]
+    open_queries = [x for x in data if not x["is_query_closed"]]
+    closed_queries = [x for x in data if x["is_query_closed"]]
 
     return open_queries, closed_queries
 
