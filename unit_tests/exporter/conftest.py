@@ -667,6 +667,7 @@ def data_ecju_queries():
                 },
                 "created_at": "2022-11-30T16:55:40.807470Z",
                 "responded_at": None,
+                "is_query_closed": False,
             },
             {
                 "id": "96fe0801-58ae-4a69-b2ba-f44dc79d3af4",
@@ -684,6 +685,7 @@ def data_ecju_queries():
                 },
                 "created_at": "2022-11-30T17:00:17.479098Z",
                 "responded_at": None,
+                "is_query_closed": False,
             },
             {
                 "id": "96fe0801-58ae-4a69-b2ba-f44dc79d3af4",
@@ -701,6 +703,7 @@ def data_ecju_queries():
                 },
                 "created_at": "2022-11-30T17:00:17.479098Z",
                 "responded_at": None,
+                "is_query_closed": False,
             },
         ]
     }
