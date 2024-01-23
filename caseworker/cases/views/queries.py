@@ -1,12 +1,9 @@
-from http import HTTPStatus
-
 from django.urls import reverse
 from django.views.generic import FormView
 
 from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.services import put_ecju_query
 from core.auth.views import LoginRequiredMixin
-from core.exceptions import ServiceError
 
 
 class CloseQueryView(LoginRequiredMixin, FormView):
