@@ -231,6 +231,7 @@ def post_ecju_query(request, pk, json):
 
 def put_ecju_query(request, pk, query_pk, json):
     data = client.put(request, f"/cases/{pk}/ecju-queries/{query_pk}/", json)
+    data.raise_for_status()
     return data.json(), data.status_code
 
 

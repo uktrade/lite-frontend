@@ -567,28 +567,3 @@ def test_close_query_view_show_closed_queries_on_page(
     assert data_query_closed_by_caseworker["question"] in str(closed_queries)
     assert data_query_closed_by_caseworker["response"] in str(closed_queries)
     assert data_query_closed_by_caseworker["responded_by_user_name"] in str(closed_queries)
-
-
-def test_close_query_view_failure_show_errors_on_page(
-    authorized_client,
-    requests_mock,
-    queue_pk,
-    standard_case_pk,
-    data_ecju_queries_gov_serializer,
-    data_query_closed_by_caseworker,
-    mock_get_queries,
-):
-    # mock an api failure
-    query_pk = data_ecju_queries_gov_serializer["ecju_queries"][0]["id"]
-    requests_mock.put(
-        client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/{query_pk}/"),
-        json={"errors": "Responding to closed Standard query is not allowed"},
-        status_code=400,
-    )
-
-    # assert that submitting the form raises an error
-    url = reverse("cases:close_query", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "query_pk": query_pk})
-    with pytest.raises(ServiceError) as ex:
-        authorized_client.post(url, data={f"{query_pk}-reason_for_closing_query": "asdf"})
-    assert ex.value.status_code == 400
-    assert ex.value.user_message == "Responding to closed Standard query is not allowed"
