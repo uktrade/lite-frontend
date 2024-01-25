@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 
-import MultiSelector from "../multi-selector";
+import MultiSelector, { startsWith } from "../multi-selector";
 import SelectedOptions from "../selected-options";
 import accessibleAutocomplete from "accessible-autocomplete";
 
@@ -183,5 +183,35 @@ describe("MultiSelector", () => {
     multiSelector.addOptions(["2"]);
     expect(onChangeSpy).toBeCalledTimes(2);
     expect(onChangeSpy).toBeCalledWith(["1", "2", "3"]);
+  });
+
+  test("Custom queryengine", () => {
+    const [, $el] = createElements();
+
+    const queryEngineSpy = jest.fn().mockReturnValue(["fake", "return"]);
+
+    const multiSelector = new MultiSelector($el, (query, values) =>
+      queryEngineSpy(query, values)
+    );
+    multiSelector.init();
+
+    const config = accessibleAutocomplete.mock.calls[0][0];
+    const populateResultsSpy = jest.fn();
+    config.source("query", populateResultsSpy);
+
+    expect(queryEngineSpy).toBeCalledWith("query", ["One", "Two", "Three"]);
+    expect(populateResultsSpy).toBeCalledWith(["fake", "return"]);
+  });
+});
+
+describe("startsWith", () => {
+  test.each([
+    ["a", ["adam", "damien", "Daniel", "Mathew (DDAT)"]],
+    ["da", ["damien", "Daniel", "adam", "Mathew (DDAT)"]],
+    ["am", ["adam", "damien"]],
+    ["ddat", ["Mathew (DDAT)"]],
+  ])("Filters by query '%s'", (query, expected) => {
+    const values = ["damien", "Daniel", "adam", "Mathew (DDAT)"];
+    expect(startsWith(query, values)).toEqual(expected);
   });
 });

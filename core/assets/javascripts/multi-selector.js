@@ -3,13 +3,14 @@ import accessibleAutocomplete from "accessible-autocomplete";
 import SelectedOptions from "./selected-options";
 
 class MultiSelector extends EventEmitter {
-  constructor($el) {
+  constructor($el, queryEngine) {
     super();
 
     this.$el = $el;
     this.originalId = $el.id;
     this.accessibleAutocompleteElement = null;
     [this.labelMap, this.valueMap, this.values] = this.getOptions();
+    this.queryEngine = queryEngine || null;
   }
 
   getOptions() {
@@ -34,10 +35,16 @@ class MultiSelector extends EventEmitter {
   }
 
   getConfigurationOptions() {
+    let source = this.values;
+    if (this.queryEngine) {
+      source = (query, populateResults) => {
+        populateResults(this.queryEngine(query, this.values));
+      };
+    }
     const configurationOptions = {
       id: this.originalId,
       autoselect: true,
-      source: this.values,
+      source: source,
       displayMenu: "overlay",
       cssNamespace: "lite-autocomplete",
       templates: {
@@ -118,4 +125,20 @@ class MultiSelector extends EventEmitter {
   }
 }
 
+const startsWith = (query, values) => {
+  const val = query.toLowerCase();
+  return values
+    .filter((v) => v.toLowerCase().includes(val))
+    .sort((a, b) => {
+      const aStarts = a.toLowerCase().startsWith(val);
+      const bStarts = b.toLowerCase().startsWith(val);
+      if (aStarts && bStarts) return a.localeCompare(b);
+      if (aStarts && !bStarts) return -1;
+      if (!aStarts && bStarts) return 1;
+      return a.localeCompare(b);
+    });
+};
+
 export default MultiSelector;
+
+export { startsWith };

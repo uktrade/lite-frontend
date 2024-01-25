@@ -46,19 +46,11 @@ def click_refuse_all(driver):  # noqa
 
 @when(parsers.parse('I select refusal criteria "{criteria}"'))
 def select_refusal_criteria(driver, criteria):  # noqa
-    main_div_element = driver.find_element(By.XPATH, "//div[@id='id_denial_reasons']")
-    tokenfield_input = main_div_element.find_element(By.XPATH, "//input[@class='tokenfield-input']")
-
-    for crit in criteria.split(","):
-        tokenfield_input.send_keys(crit)
-        WebDriverWait(driver, 30).until(
-            expected_conditions.visibility_of_element_located(
-                (By.XPATH, "//li[@class='tokenfield-suggest-item selected']"),
-            ),
-        )
-        suggestion_element = driver.find_element(By.XPATH, "//li[@class='tokenfield-suggest-item selected']")
-        actions = ActionChains(driver)
-        actions.move_to_element(suggestion_element).click().perform()
+    functions.select_multi_select_options(
+        driver,
+        "#div_id_denial_reasons .lite-autocomplete__input",
+        [c.strip() for c in criteria.split(",")],
+    )
 
 
 @when(parsers.parse('I select countries "{countries}"'))

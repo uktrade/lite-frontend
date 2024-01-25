@@ -1,16 +1,15 @@
 import LiteTokenfield from "./lite-tokenfield";
-import LiteTokenFieldStartsWith from "./lite-tokenfield-starts-with";
 
 const defaultGetItem = (option) => {
   return { id: option.value, name: option.value, classes: [] };
 };
 
 const getItems = (element, getItem) => {
-  var items = [];
-  var selected = [];
-  for (var i = 0; i < element.options.length; i++) {
-    var option = element.options.item(i);
-    var item = getItem(option);
+  const items = [];
+  const selected = [];
+  for (let i = 0; i < element.options.length; i++) {
+    const option = element.options.item(i);
+    const item = getItem(option);
     if (option.selected) {
       selected.push(item);
     }
@@ -22,8 +21,8 @@ const getItems = (element, getItem) => {
 const progressivelyEnhanceMultipleSelectFactory = (TokenFieldType) => {
   const enhancer = (element, getItem = defaultGetItem) => {
     element.parentElement.classList.add("tokenfield-container");
-    var { items, selected } = getItems(element, getItem);
-    var tokenField = new TokenFieldType({
+    const { items, selected } = getItems(element, getItem);
+    const tokenField = new TokenFieldType({
       el: element,
       items: items,
       newItems: false,
@@ -48,10 +47,4 @@ const progressivelyEnhanceMultipleSelectFactory = (TokenFieldType) => {
 const progressivelyEnhanceMultipleSelectField =
   progressivelyEnhanceMultipleSelectFactory(LiteTokenfield);
 
-const progressivelyEnhanceMultipleSelectFieldStartsWith =
-  progressivelyEnhanceMultipleSelectFactory(LiteTokenFieldStartsWith);
-
-export {
-  progressivelyEnhanceMultipleSelectField,
-  progressivelyEnhanceMultipleSelectFieldStartsWith,
-};
+export { progressivelyEnhanceMultipleSelectField };

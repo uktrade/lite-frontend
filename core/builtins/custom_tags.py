@@ -157,6 +157,19 @@ def str_date(value):
 
 @register.filter
 @stringfilter
+def str_time_on_date(value):
+    """
+    Include the word 'on' in the datetime string, e.g. "11:14am on 28 December 2023"
+    """
+    try:
+        local_datetime = localtime(parse(value))
+    except ValueError:
+        return
+    return f"{local_datetime.strftime('%-I:%M%p').lower()} on {local_datetime.strftime('%d %B %Y')}"
+
+
+@register.filter
+@stringfilter
 def str_date_only(value):
     if value != "None":
         return localtime(parse(value)).strftime("%-d %B %Y")
