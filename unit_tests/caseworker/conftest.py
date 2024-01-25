@@ -2633,3 +2633,56 @@ def mock_get_case_sub_statuses(data_standard_case, requests_mock):
             {"id": "status-2", "name": "Status 2"},
         ],
     )
+
+
+@pytest.fixture
+def lu_team_user_full_name(LU_team_user):
+    return LU_team_user["first_name"] + LU_team_user["last_name"]
+
+
+@pytest.fixture
+def data_ecju_queries_gov_serializer(lu_team_user_full_name):
+    """
+    EcjuQueryGovSerializer
+    """
+    return {
+        "ecju_queries": [
+            {
+                "id": "7750bad9-aefc-4b05-a597-596a99f6d574",
+                "question": "some question text",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user_name": None,
+                "raised_by_user_name": lu_team_user_full_name,
+                "created_at": "2022-11-30T16:55:40.807470Z",
+                "responded_at": None,
+                "is_query_closed": False,
+            },
+            {
+                "id": "bded5449-0b74-4720-9fb0-ac845466e982",
+                "question": "please can you add more information to section X of your application",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user_name": None,
+                "raised_by_user_name": lu_team_user_full_name,
+                "created_at": "2023-11-30T16:55:40.807470Z",
+                "responded_at": None,
+                "is_query_closed": False,
+            },
+        ]
+    }
+
+
+@pytest.fixture
+def data_query_closed_by_caseworker(lu_team_user_full_name):
+    return {
+        "id": "7750bad9-aefc-4b05-a597-596a99f6d574",
+        "question": "some question text",
+        "response": "closing this query because xyz",
+        "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+        "responded_by_user_name": lu_team_user_full_name,
+        "raised_by_user_name": lu_team_user_full_name,
+        "created_at": "2022-11-30T16:55:40.807470Z",
+        "responded_at": "2024-01-18T01:01:01.123456Z",
+        "is_query_closed": True,
+    }

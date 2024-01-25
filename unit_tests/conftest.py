@@ -2409,7 +2409,7 @@ def data_ecju_queries():
         "ecju_queries": [
             {
                 "id": "7750bad9-aefc-4b05-a597-596a99f6d574",
-                "question": "gggggg",
+                "question": "some question text",
                 "response": None,
                 "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
                 "responded_by_user": None,

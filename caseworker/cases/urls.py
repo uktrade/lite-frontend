@@ -9,6 +9,7 @@ from caseworker.cases.views import (
     compliance,
     external_data,
     case_assignments,
+    queries,
 )
 from caseworker.flags.views import AssignFlags
 from caseworker.cases.views.finalisation.letters import SelectInformTemplate, EditLetterText, EditInformLetterText
@@ -77,6 +78,7 @@ urlpatterns = [
         name="finalise_document_create",
     ),
     path("ecju-queries/new/", ecju.NewECJUQueryView.as_view(), name="new_ecju_query"),
+    path("ecju-queries/<uuid:query_pk>/close-query/", queries.CloseQueryView.as_view(), name="close_query"),
     path("generate-document/", generate_document.GenerateDocument.as_view(), name="generate_document"),
     path(
         "generate-document/<uuid:dpk>/",
