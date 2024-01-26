@@ -50,12 +50,12 @@
 				</p>
 				{% if ecju_query.is_manually_closed %}
 				<p class="app-ecju-query__date">
-					This query was closed by a case worker at {{ ecju_query.responded_at|str_time_on_date }}
+					This query was closed by the case worker at {{ ecju_query.responded_at|str_time_on_date }}.
 				</p>
 				{% endif %}
 			</div>
 			<div class="app-ecju-query__item--right">
-				<p class="app-ecju-query__item" id="closed-ecju-query-user">
+				<p class="app-ecju-query__item">
 					<a href="{% url "organisation:members:user" ecju_query.responded_by_user.id %}" class="govuk-link govuk-link--no-visited-state">
 						{{ ecju_query.responded_by_user.name }}
 					</a>

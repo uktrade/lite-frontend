@@ -61,10 +61,17 @@ def test_shortens_beis_nuclear_team_name(rendered_ecju_queries):
 def test_renders_is_manually_closed_query(rendered_ecju_closed_queries):
     rendered_item = rendered_ecju_closed_queries[0].find(class_="app-ecju-query__item")
     manually_closed_text = rendered_item.find_all("p")[3].text.replace("\n", "").replace("\t", "").strip()
-    assert "This query was closed by a case worker at" in manually_closed_text
+
+    assert "This query was closed by the case worker at 5:00pm on 30 November 2022." in manually_closed_text
 
 
 def test_renders_is_manually_closed_query_not_visible(rendered_ecju_closed_queries):
+
     rendered_item = rendered_ecju_closed_queries[1].find(class_="app-ecju-query__item--right")
     assert rendered_item.find_all("p")[1].get_text() == "query is closed non-manually"
-    assert rendered_ecju_closed_queries[1].find(text="This query was closed by a case worker at") is None
+    assert (
+        rendered_ecju_closed_queries[1].find(
+            text="This query was closed by the case worker at 5:00pm on 30 November 2022."
+        )
+        is None
+    )
