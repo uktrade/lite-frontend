@@ -19,6 +19,17 @@ def setup(
     yield
 
 
+def test_case_page_ecju_queries_context(authorized_client, data_standard_case, queue_pk):
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    assert len(response.context["closed_ecju_queries"]) == 1
+    assert len(response.context["open_ecju_queries_with_forms"]) == 3
+
+
 def test_case_page_renders_ecju_queries_template(authorized_client, data_standard_case, queue_pk):
     url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
 
