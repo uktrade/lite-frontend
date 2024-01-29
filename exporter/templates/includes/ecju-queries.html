@@ -48,9 +48,14 @@
 				<p class="app-ecju-query__date">
 					<span class="govuk-visually-hidden">Created at </span>{{ ecju_query.created_at|str_date }}
 				</p>
+				{% if ecju_query.is_manually_closed %}
+				<p class="app-ecju-query__date">
+					This query was closed by the case worker at {{ ecju_query.responded_at|str_time_on_date }}.
+				</p>
+				{% endif %}
 			</div>
-			<div class="app-ecju-query__item app-ecju-query__item--right">
-				<p class="app-ecju-query__heading">
+			<div class="app-ecju-query__item--right">
+				<p class="app-ecju-query__item">
 					<a href="{% url "organisation:members:user" ecju_query.responded_by_user.id %}" class="govuk-link govuk-link--no-visited-state">
 						{{ ecju_query.responded_by_user.name }}
 					</a>
