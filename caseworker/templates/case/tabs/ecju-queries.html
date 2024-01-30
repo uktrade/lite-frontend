@@ -1,4 +1,5 @@
 {% load rules svg %}
+{% load crispy_forms_tags crispy_forms_gds %}
 
 <div class="lite-buttons-row">
 	{% make_list queue.id case.id as button_params %}
@@ -12,10 +13,10 @@
 	{% endif %}
 </div>
 
-{% if open_ecju_queries %}
+{% if open_ecju_queries_with_forms %}
 	<h3 class="govuk-heading-m">{% lcs 'cases.EcjuQueries.OPEN' %}</h3>
 	<div id="open-queries">
-		{% for ecju_query in open_ecju_queries %}
+		{% for ecju_query, close_query_form in open_ecju_queries_with_forms %}
 			<div class="app-ecju-query" id="open-ecju-query">
 				<div class="app-ecju-query__item">
 					<p class="app-ecju-query__heading">{{ ecju_query.query_type.value }} by {{ ecju_query.raised_by_user_name }}</p>
@@ -25,6 +26,19 @@
 					<p class="app-ecju-query__date">
 						Sent at {{ ecju_query.created_at|str_time_on_date }}. This query has been open for {{ ecju_query.created_at|to_datetime|timesince }}.
 					</p>
+					<details class="govuk-details">
+						<summary class="govuk-details__summary">
+							<span class="govuk-details__summary-text">
+								Close query
+							</span>
+						</summary>
+						<div class="govuk-details__text">
+							<form method="post" action="{% url 'cases:close_query' queue_pk=queue.id pk=case.id query_pk=ecju_query.id %}">
+								{% csrf_token %}
+								{% crispy close_query_form %}
+							</form>
+						</div>
+					</details>
 				</div>
 			</div>
 			<hr class="lite-horizontal-separator">
@@ -79,7 +93,7 @@
 					{% endif %}
 
 					<p class="app-ecju-query__date">
-						Closed at {{ ecju_query.responded_at|str_time_on_date }}.
+						Closed at {{ ecju_query.responded_at|str_time_on_date }} by {{ ecju_query.responded_by_user_name }}.
 					</p>
 				</div>
 			</div>
@@ -88,6 +102,6 @@
 	</div>
 {% endif %}
 
-{% if not open_ecju_queries and not closed_ecju_queries %}
+{% if not open_ecju_queries_with_forms and not closed_ecju_queries %}
 	{% include 'includes/notice.html' with text='cases.EcjuQueries.CASE_HAS_NO_QUERIES' %}
 {% endif %}

@@ -15,6 +15,8 @@ from core import client
 
 from unit_tests.helpers import merge_summaries
 
+from core.exceptions import ServiceError
+
 
 approve = {"key": "approve", "value": "Approve"}
 proviso = {"key": "proviso", "value": "Proviso"}
@@ -494,3 +496,74 @@ def test_case_worker_view_with_caseworker(
     assert response.context["data"] == {
         "gov_user_pk": case_officer_id,
     }
+
+
+@pytest.fixture
+def mock_get_queries(requests_mock, standard_case_pk, data_ecju_queries_gov_serializer):
+    requests_mock.get(
+        client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/"), json=data_ecju_queries_gov_serializer
+    )
+
+
+@pytest.mark.parametrize(
+    ("reason_for_closing_query", "expected_status"), [("closing this query because xyz", 302), ("", 302)]
+)
+def test_close_query_view_post_success(
+    authorized_client,
+    requests_mock,
+    queue_pk,
+    standard_case_pk,
+    data_ecju_queries_gov_serializer,
+    data_query_closed_by_caseworker,
+    mock_get_queries,
+    reason_for_closing_query,
+    expected_status,
+):
+    # see that the query is in the open queries section
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    open_queries = soup.find(id="open-queries")
+    assert data_ecju_queries_gov_serializer["ecju_queries"][0]["question"] in str(open_queries)
+
+    # close the query
+    query_pk = data_ecju_queries_gov_serializer["ecju_queries"][0]["id"]
+    requests_mock.put(client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/{query_pk}/"), json={})
+    cases_close_query_url = reverse(
+        "cases:close_query", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "query_pk": query_pk}
+    )
+    response = authorized_client.post(
+        cases_close_query_url, data={f"{query_pk}-reason_for_closing_query": reason_for_closing_query}
+    )
+    assert response.status_code == expected_status
+
+
+def test_close_query_view_show_closed_queries_on_page(
+    authorized_client,
+    requests_mock,
+    queue_pk,
+    standard_case_pk,
+    data_ecju_queries_gov_serializer,
+    data_query_closed_by_caseworker,
+    mock_get_queries,
+):
+    # set up mock api response with closed query
+    data_ecju_queries_gov_serializer["ecju_queries"][0] = data_query_closed_by_caseworker
+    requests_mock.get(
+        client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/"), json=data_ecju_queries_gov_serializer
+    )
+
+    # see that there is no open queries section
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert not soup.find("open-queries")
+
+    # see that the query is in the closed queries section
+    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+    closed_queries = soup.find(id="closed-queries")
+    assert data_query_closed_by_caseworker["question"] in str(closed_queries)
+    assert data_query_closed_by_caseworker["response"] in str(closed_queries)
+    assert data_query_closed_by_caseworker["responded_by_user_name"] in str(closed_queries)

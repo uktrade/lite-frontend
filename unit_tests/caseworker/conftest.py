@@ -340,6 +340,7 @@ def data_cases_search(filter_data):
                             "raised_by_user": "foo bar",
                             "responded_by_user": None,
                             "query_type": "query",
+                            "is_query_closed": False,
                         },
                         {
                             "question": "some other question",
@@ -347,6 +348,7 @@ def data_cases_search(filter_data):
                             "raised_by_user": "some user",
                             "responded_by_user": "some responder",
                             "query_type": "query",
+                            "is_query_closed": True,
                         },
                     ],
                     "intended_end_use": "birthday present",
@@ -676,10 +678,10 @@ def mock_case_ecju_queries(requests_mock):
 
 
 @pytest.fixture
-def mock_standard_case_ecju_queries(requests_mock, standard_case_pk):
+def mock_standard_case_ecju_queries(requests_mock, standard_case_pk, data_ecju_queries):
     url = client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/")
     data = {"ecju_queries": []}
-    requests_mock.get(url=url, json=data)
+    requests_mock.get(url=url, json=data_ecju_queries)
     yield data
 
 
@@ -1445,12 +1447,6 @@ def standard_case_activity():
 def mock_standard_case_activity_system_user(requests_mock, standard_case_pk, standard_case_activity):
     url = client._build_absolute_uri(f"/cases/{standard_case_pk}/activity/")
     return requests_mock.get(url=url, json=standard_case_activity)
-
-
-@pytest.fixture
-def mock_standard_case_ecju_queries(requests_mock, standard_case_pk, standard_case_activity):
-    url = client._build_absolute_uri(f"/cases/{standard_case_pk}/ecju-queries/")
-    return requests_mock.get(url=url, json={"ecju_queries": []})
 
 
 @pytest.fixture
@@ -2637,3 +2633,56 @@ def mock_get_case_sub_statuses(data_standard_case, requests_mock):
             {"id": "status-2", "name": "Status 2"},
         ],
     )
+
+
+@pytest.fixture
+def lu_team_user_full_name(LU_team_user):
+    return LU_team_user["first_name"] + LU_team_user["last_name"]
+
+
+@pytest.fixture
+def data_ecju_queries_gov_serializer(lu_team_user_full_name):
+    """
+    EcjuQueryGovSerializer
+    """
+    return {
+        "ecju_queries": [
+            {
+                "id": "7750bad9-aefc-4b05-a597-596a99f6d574",
+                "question": "some question text",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user_name": None,
+                "raised_by_user_name": lu_team_user_full_name,
+                "created_at": "2022-11-30T16:55:40.807470Z",
+                "responded_at": None,
+                "is_query_closed": False,
+            },
+            {
+                "id": "bded5449-0b74-4720-9fb0-ac845466e982",
+                "question": "please can you add more information to section X of your application",
+                "response": None,
+                "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+                "responded_by_user_name": None,
+                "raised_by_user_name": lu_team_user_full_name,
+                "created_at": "2023-11-30T16:55:40.807470Z",
+                "responded_at": None,
+                "is_query_closed": False,
+            },
+        ]
+    }
+
+
+@pytest.fixture
+def data_query_closed_by_caseworker(lu_team_user_full_name):
+    return {
+        "id": "7750bad9-aefc-4b05-a597-596a99f6d574",
+        "question": "some question text",
+        "response": "closing this query because xyz",
+        "case": "e09a059c-1e85-47f9-b69b-edea1e91eb6d",
+        "responded_by_user_name": lu_team_user_full_name,
+        "raised_by_user_name": lu_team_user_full_name,
+        "created_at": "2022-11-30T16:55:40.807470Z",
+        "responded_at": "2024-01-18T01:01:01.123456Z",
+        "is_query_closed": True,
+    }
