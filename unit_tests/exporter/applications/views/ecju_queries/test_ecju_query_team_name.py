@@ -24,16 +24,6 @@ def application_url(requests_mock, data_standard_case):
     requests_mock.get(url=app_url, json=data_standard_case["case"]["data"])
 
 
-@pytest.fixture(autouse=True)
-def mock_ecju_queries(data_standard_case, data_ecju_queries, requests_mock):
-    requests_mock.get(
-        re.compile(
-            rf"/cases/{data_standard_case['case']['id']}/ecju-queries",
-        ),
-        json=data_ecju_queries,
-    )
-
-
 @pytest.fixture()
 def rendered_ecju_closed_queries(authorized_client, url):
     response = authorized_client.get(url)

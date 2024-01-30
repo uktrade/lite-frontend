@@ -1,9 +1,8 @@
 from functools import cached_property
 
-from django.http import HttpResponse
 from django.shortcuts import redirect
 from core.auth.views import LoginRequiredMixin
-from exporter.ecju_queries.new_forms.ecju_forms import ECJUQueryRespondForm, ECJUQueryRespondConfirmForm
+from exporter.ecju_queries.ecju_forms import ECJUQueryRespondForm, ECJUQueryRespondConfirmForm
 
 from django.views.generic import FormView
 from django.urls import reverse_lazy, reverse
@@ -71,17 +70,6 @@ class ECJURespondQueryView(LoginRequiredMixin, ECJURespondMixin, FormView):
             kwargs={"query_pk": self.ecju_query_id, "case_pk": self.case_id},
         )
 
-    def get_add_document_url(self):
-        return reverse_lazy(
-            "ecju_queries:add_supporting_document",
-            kwargs={
-                "query_pk": self.ecju_query["id"],
-                "object_type": self.OBJECT_TYPE,
-                "case_pk": self.case_id,
-                "extra_pk": self.case_id,
-            },
-        )
-
     def form_valid(self, form):
         data = form.cleaned_data
         post_keys = self.request.POST.keys()
@@ -132,7 +120,7 @@ class ECJURespondQueryConfirmView(LoginRequiredMixin, ECJURespondMixin, FormView
         return reverse_lazy("applications:application", kwargs={"pk": self.case_id, "type": "ecju-queries"})
 
     def form_valid(self, form):
-        post_data = {"response": self.session_ecju_response}
+        post_data = {"response": self.session_ecju_response} if self.session_ecju_response else {}
         self.delete_ecju_response_from_session()
 
         if "cancel" in self.request.POST.keys():

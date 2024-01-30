@@ -2,7 +2,8 @@ from core.common.forms import BaseForm
 from django import forms
 from django.template.loader import render_to_string
 
-from crispy_forms_gds.layout import Field, HTML, Div, Button
+from crispy_forms_gds.layout import HTML, Button
+from django.template.defaultfilters import linebreaksbr
 
 
 class ECJUQueryRespondForm(BaseForm):
@@ -46,7 +47,7 @@ class ECJUQueryRespondForm(BaseForm):
 
     def get_layout_fields(self):
         return [
-            HTML.p(f'<div class="app-ecju-query__text">{self.ecju_query["question"]}</div>'),
+            HTML.p(f'<div class="app-ecju-query__text"> {linebreaksbr(self.ecju_query["question"]) }</div>'),
             HTML.p("Your application will be paused until the caseworker receives a response. To reply: "),
             HTML.p("1. Edit and submit your application as required or send a written message below."),
             HTML.p("2. Then select 'Continue' to notify the case worker that the query has been answered."),
@@ -60,6 +61,7 @@ class ECJUQueryRespondForm(BaseForm):
                     {"documents": self.documents, "ecju_query": self.ecju_query, "case_id": self.case_id},
                 )
             ),
+            HTML.p(""),
         ]
 
     def get_layout_actions(self):

@@ -1,12 +1,12 @@
 from django.urls import path
 
 from exporter.ecju_queries import views
-from exporter.ecju_queries.new_views.ecju_views import ECJURespondQueryView, ECJURespondQueryConfirmView
+from exporter.ecju_queries.ecju_views import ECJURespondQueryView, ECJURespondQueryConfirmView
 
 app_name = "ecju_queries"
 
 urlpatterns = [
-    # This superceeds the view respond_to_query where object type is application for other object types we will need to revert to the old view
+    # This supersedes the view respond_to_query where object type is application for other object types we will need to revert to the old view
     path(
         "<uuid:query_pk>/application/<uuid:case_pk>/",
         ECJURespondQueryView.as_view(),
