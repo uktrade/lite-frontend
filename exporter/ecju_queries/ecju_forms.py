@@ -35,15 +35,10 @@ class ECJUQueryRespondForm(BaseForm):
             initial=self.ecju_response,
             label="Send a message to the exporter (optional)",
             required=False,
-            widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+            widget=forms.Textarea(attrs={"id": "response", "rows": 7, "class": "govuk-!-margin-top-4"}),
         )
 
         super().__init__(*args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        response = super().get(request, *args, **kwargs)
-
-        return response
 
     def get_layout_fields(self):
         return [

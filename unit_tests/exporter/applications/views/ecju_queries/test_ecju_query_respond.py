@@ -122,6 +122,23 @@ def test_ecju_respond_query_view_add_document(authorized_client, data_standard_c
     assert response_session_key in authorized_client.session.keys()
 
 
+def test_ecju_respond_query_view_post_sucess(
+    authorized_client, data_standard_case_pk, data_ecju_query_pk, confirm_url, url
+):
+    data = {"response": "session response"}
+    response_session_key = f"{data_ecju_query_pk}_response"
+
+    response = authorized_client.post(url, data)
+    assert authorized_client.session[response_session_key] == "session response"
+    assert response.status_code == 302
+    assert response.url == confirm_url
+
+    # Check form response is retained from session
+    response = authorized_client.get(url)
+    assert response.context["form"]["response"].initial == "session response"
+    assert response_session_key in authorized_client.session.keys()
+
+
 def test_ecju_respond_query_view_delete_document(
     authorized_client, data_standard_case_pk, data_ecju_query_pk, mock_ecju_query_get_document, url
 ):
