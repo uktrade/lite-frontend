@@ -70,7 +70,7 @@
 	</div>
 
 	{% if organisation.type.key != 'hmrc' %}
-		<section class="app-tiles">
+		<div class="app-tiles">
 			{# Apply tile #}
 			<div class="app-tile">
 				<h2 class="govuk-!-margin-top-0">
@@ -117,9 +117,9 @@
 					<p class="app-tile__body">View and manage your licences and clearances, including NLRs and unsuccessful applications.</p>
 				{% endif %}
 			</div>
-		</section>
+		</div>
 
-		<section class="app-tiles">
+		<div class="app-tiles">
 			{# Product list tile #}
 			<div class="app-tile" id="product-list-tile">
 				<h2 class="govuk-!-margin-top-0">
@@ -153,9 +153,9 @@
 
 
 			</div>
-		</section>
+		</div>
 	{% else %}
-		<section class="app-tiles">
+		<div class="app-tiles">
 			{# Make a customs enquiry tile #}
 			<div class="app-tile">
 				<a href="{% url 'hmrc:raise_a_query' %}" class="app-tile__heading" id="link-hmrc-query">
@@ -177,7 +177,7 @@
 					<p class="app-tile__body">{% lcs 'hub.Tiles.CheckProgress.VIEW_STATUS' %}</p>
 				</div>
 			{% endif %}
-		</section>
+		</div>
 	{% endif %}
 
 	{% if organisation.type.key != 'hmrc' %}
@@ -194,7 +194,7 @@
 			</div>
 		{% endif %}
 
-		<section class="app-tiles" {% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}aria-label="Content currently unavailable"{% endif %}>
+		<div class="app-tiles" {% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}aria-label="Content currently unavailable"{% endif %}>
 			{# Compliance licence tile #}
 			<div class="app-tile{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %} app-tile__disabled{% endif %}">
 				{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
@@ -258,6 +258,6 @@
 					{% endif %}
 				</ol>
 			</div>
-		</section>
+		</div>
 	{% endif %}
 {% endblock %}
