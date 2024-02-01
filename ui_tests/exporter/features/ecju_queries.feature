@@ -18,7 +18,7 @@ So that I can quickly identify where action is required by me and respond to any
     Then I see "Some unique query" as the query under open queries
     When I click to respond to the ECJU query
     And I enter "Some unique response" for the response and click submit
-    And I select "Confirm and send the response" and click submit
+    And I click "Continue"
     Then I see "Some unique response" as the response under closed queries
 
     Examples:

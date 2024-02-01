@@ -1,0 +1,44 @@
+{% load svg %}
+{% if documents %}
+<ol class="app-documents__list">
+    {% for document in documents %}
+    <li class="app-documents__item">
+        <div class="app-documents__item-preview">
+            {% svg 'document' %}
+            <span>
+                {{ document.name|file_type }}
+            </span>
+        </div>
+        <div class="app-documents__item-details">
+            <a {% if document.safe == True %}href="{% url 'ecju_queries:query-document' query_pk=ecju_query.id object_type='application' case_pk=case_id doc_pk=document.id %}"
+                {% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+            <p class="govuk-hint">Uploaded by {{ document.user.first_name }} {{ document.user.last_name }}
+                at
+                {{ document.created_at|str_date }}</p>
+            {% if document.description %}
+            <p class="govuk-body">
+                {{ document.description }}
+            </p>
+            {% endif %}
+            {% if document.safe == False %}
+            <p class="govuk-label">Virus infected</p>
+            {% elif not document.safe %}
+            <p class="govuk-label">Uploading</p>
+            {% endif %}
+            {% if not ecju_query.response %}
+                <button class="lite-button--link" name="delete_document" type="delete" value="{{ document.id }}">Delete</button>
+            {% endif %}
+        </div>
+    </li>
+    {% endfor %}
+</ol>
+{% else %}
+<div class="lite-information-text">
+	<span class="lite-information-text__icon" aria-hidden="true">!</span>
+	<p class="lite-information-text__text">
+		<span class="govuk-visually-hidden">Information</span>
+		There are no documents.
+	</p>
+</div>
+
+{% endif %}
