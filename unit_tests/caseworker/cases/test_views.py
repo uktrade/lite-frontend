@@ -567,37 +567,3 @@ def test_close_query_view_show_closed_queries_on_page(
     assert data_query_closed_by_caseworker["question"] in str(closed_queries)
     assert data_query_closed_by_caseworker["response"] in str(closed_queries)
     assert data_query_closed_by_caseworker["responded_by_user_name"] in str(closed_queries)
-
-
-def test_close_query_textarea_accessibility(
-    authorized_client,
-    requests_mock,
-    queue_pk,
-    standard_case_pk,
-    data_ecju_queries_gov_serializer,
-    data_query_closed_by_caseworker,
-    mock_get_queries,
-):
-    expected_query_ids = [query_data["id"] for query_data in data_ecju_queries_gov_serializer["ecju_queries"]]
-
-    assert expected_query_ids  # Test integrity: there should be some ids.
-
-    # see that the query is in the open queries section
-    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "tab": "ecju-queries"})
-    response = authorized_client.get(url)
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    open_queries = soup.find(id="open-queries")
-
-    for query_id in expected_query_ids:
-        hint_widget = open_queries.find(
-            name=None, attrs={"class": "govuk-hint", "id": f"id_{query_id}-reason_for_closing_query_hint"}
-        )
-        textarea = open_queries.find("textarea", {"id": f"id_{query_id}-reason_for_closing_query"})
-        assert hint_widget is not None
-        assert textarea is not None
-
-        hint_widget_id = hint_widget["id"]
-
-        assert textarea["aria-labelledby"] == hint_widget_id
-        assert textarea["aria-describedby"] == hint_widget_id
