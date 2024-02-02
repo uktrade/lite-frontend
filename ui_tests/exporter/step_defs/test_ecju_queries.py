@@ -75,4 +75,4 @@ def should_see_response_in_closed_queries(driver, response):
 def respond_to_query(driver, response):  # noqa
     response_page = RespondToEcjuQueryPage(driver)
     response_page.enter_form_response(response)
-    driver.find_element(by=By.CSS_SELECTOR, value="button[value='submit']").click()
+    driver.find_element(by=By.CSS_SELECTOR, value='.govuk-button[type*="submit"]').click()

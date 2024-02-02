@@ -11,7 +11,7 @@ class Navigation:
 
 class Tiles:
     APPLY_FOR_LICENCE = "Apply <!--for a licence or clearance, or register for an OGL-->"
-    APPLICATIONS = "Applications <!--of your applications-->"
+    APPLICATIONS = "Applications <!--View or manage your draft and submitted applications-->"
     VIEW_AND_MANAGE_LICENCES = "<!--View your--> Licences and clearances"
     GOODS = "<!--View your--> Product list"
     END_USER_ADVISORIES = "<!--View your--> End user advisories"
