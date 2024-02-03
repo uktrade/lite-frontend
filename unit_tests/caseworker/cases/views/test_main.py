@@ -1,4 +1,3 @@
-from functools import reduce
 import uuid
 
 from django.http import StreamingHttpResponse
@@ -44,4 +43,4 @@ def test_document_download(
     assert isinstance(response, StreamingHttpResponse)
     assert response.headers["Content-Type"] == "application/doc"
     assert response.headers["Content-Disposition"] == 'attachment; filename="fakefile.doc"'
-    assert reduce(lambda x, y: x + y, response.streaming_content) == b"test"
+    assert b"".join(s for s in response.streaming_content) == b"test"
