@@ -47,22 +47,6 @@ def s3_settings():
     }
 
 
-@pytest.fixture(scope="session")
-def s3_settings():
-    # This is slightly awkward due to the fact that we want both `auto_mock_s3`
-    # and `set_aws_s3_settings` to set the same values but due to the fact that
-    # `auto_mock_s3` is session scoped it can't access `settings` and manipulate
-    # it directly so we have been forced to split those two fixtures out even
-    # though we want them to share the same variables
-    return {
-        "AWS_REGION": "eu-west-2",
-        "AWS_ACCESS_KEY_ID": "fake-key-id",
-        "AWS_SECRET_ACCESS_KEY": "fake-access-key",
-        "AWS_STORAGE_BUCKET_NAME": "test-uploads",
-        "AWS_S3_ENDPOINT_URL": None,
-    }
-
-
 @pytest.fixture(autouse=True, scope="session")
 def auto_mock_s3(s3_settings):
     # This is scoped to session otherwise this slows down each test due to it
@@ -2576,14 +2560,6 @@ def post_to_step_factory(authorized_client):
 
 @pytest.fixture()
 def mock_s3_files(settings):
-    s3 = boto3.client(
-        "s3",
-        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        region_name=settings.AWS_REGION,
-    )
-
-    def _create_files(*files):
     s3 = boto3.client(
         "s3",
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
