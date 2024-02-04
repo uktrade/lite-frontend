@@ -50,7 +50,7 @@ def test_download_appeal_document(
     assert isinstance(response, StreamingHttpResponse)
     assert response.headers["Content-Type"] == "application/doc"
     assert response.headers["Content-Disposition"] == 'attachment; filename="fakefile.doc"'
-    assert b"".join(c for c in response.streaming_content) == b"test"
+    assert b"".join(response.streaming_content) == b"test"
 
 
 def test_download_appeal_document_failure(
@@ -161,4 +161,4 @@ def test_download_generated_document(
     assert isinstance(response, StreamingHttpResponse)
     assert response.headers["Content-Type"] == "application/doc"
     assert response.headers["Content-Disposition"] == 'attachment; filename="fakefile.doc"'
-    assert b"".join(s for s in response.streaming_content) == b"test"
+    assert b"".join(response.streaming_content) == b"test"

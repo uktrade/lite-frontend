@@ -68,7 +68,7 @@ def test_download_document_on_organisation(
     assert isinstance(response, StreamingHttpResponse)
     assert response.headers["Content-Type"] == "application/doc"
     assert response.headers["Content-Disposition"] == 'attachment; filename="fakefile.doc"'
-    assert b"".join(s for s in response.streaming_content) == b"test"
+    assert b"".join(response.streaming_content) == b"test"
 
 
 def test_new_site_form_view(authorized_client, mock_exporter_user_me):
