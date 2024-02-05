@@ -57,8 +57,8 @@
 				</p>
 				{% endif %}
 			</div>
+			{% if not ecju_query.is_manually_closed %}
 			<div class="app-ecju-query__item app-ecju-query__item--right">
-				{% if ecju_query.response and not ecju_query.is_manually_closed %}
 					<p class="app-ecju-query__heading">
 						<a href="{% url "organisation:members:user" ecju_query.responded_by_user.id %}" class="govuk-link govuk-link--no-visited-state">
 							{{ ecju_query.responded_by_user.name }}
@@ -67,7 +67,6 @@
 					<div class="app-ecju-query__text">
 						{{ ecju_query.response|linebreaks }}
 					</div>
-				{% endif %}
 				{% if ecju_query.documents %}
 					{% for document in ecju_query.documents %}
 						<br>
@@ -88,12 +87,11 @@
 						</li>
 					{% endfor %}
 				{% endif %}
-				{% if ecju_query.response and not ecju_query.is_manually_closed %}
 					<p class="app-ecju-query__date">
 						Closed at {{ ecju_query.responded_at|str_time_on_date }}
 					</p>
-				{% endif %}
 			</div>
+			{% endif %}
 		</div>
 		<hr class="lite-horizontal-separator">
 	{% endfor %}
