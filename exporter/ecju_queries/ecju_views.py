@@ -109,6 +109,7 @@ class ECJURespondQueryView(LoginRequiredMixin, ECJURespondMixin, FormView):
         context = super().get_context_data(**kwargs)
         context["back_link_url"] = self.get_back_url()
         context["back_link_text"] = "back to ecju queries"
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
 
 
@@ -136,4 +137,5 @@ class ECJURespondQueryConfirmView(LoginRequiredMixin, ECJURespondMixin, FormView
             kwargs={"query_pk": self.ecju_query_id, "case_pk": self.case_id},
         )
         context["back_link_text"] = "back to edit response"
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
