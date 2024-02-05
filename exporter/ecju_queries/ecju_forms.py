@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 
 from crispy_forms_gds.layout import HTML, Button
 from django.template.defaultfilters import linebreaksbr
+from django.urls import reverse
 
 
 class ECJUQueryRespondForm(BaseForm):
@@ -33,7 +34,7 @@ class ECJUQueryRespondForm(BaseForm):
 
         self.declared_fields["response"] = forms.CharField(
             initial=self.ecju_response,
-            label="Send a message to the exporter (optional)",
+            label="Send a message to the case worker (optional)",
             required=False,
             widget=forms.Textarea(attrs={"id": "response", "rows": 7, "class": "govuk-!-margin-top-4"}),
         )
@@ -41,13 +42,17 @@ class ECJUQueryRespondForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def get_layout_fields(self):
+        edit_type_url = reverse("applications:edit_type", kwargs={"pk": self.case_id})
         return [
             HTML.p(f'<div class="app-ecju-query__text"> {linebreaksbr(self.ecju_query["question"]) }</div>'),
-            HTML.p("Your application will be paused until the caseworker receives a response. To reply: "),
-            HTML.p("1. Edit and submit your application as required or send a written message below."),
+            HTML.p("Your application will be paused until the case worker receives a response. To reply: "),
+            HTML.p(
+                f'1. <a class="govuk-link govuk-link--no-visited-state" href="{edit_type_url}">'
+                + "Edit and submit your application</a> as required, or send a written message below."
+            ),
             HTML.p("2. Then select 'Continue' to notify the case worker that the query has been answered."),
             "response",
-            HTML.p("<div class=" "govuk-hint" ">You can enter upto 2200 characters</div>"),
+            HTML.p("<div class=" "govuk-hint" ">You can enter up to 2200 characters</div>"),
             HTML.h2("Documents"),
             Button.secondary("add_document", "Attach a document"),
             HTML(
@@ -71,7 +76,8 @@ class ECJUQueryRespondForm(BaseForm):
 
 class ECJUQueryRespondConfirmForm(BaseForm):
     class Layout:
-        TITLE = "Confirm you have responsed to this query"
+        TITLE = "Confirm that you have responded to this query"
+        SUBMIT_BUTTON_TEXT = "Submit"
 
     def get_layout_fields(self):
         return []
