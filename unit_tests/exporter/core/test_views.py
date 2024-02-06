@@ -99,3 +99,14 @@ def test_survey_alert_not_displayed(authorized_client, settings, home_url, mock_
 
     banner = soup.select("#survey-notification-banner")
     assert not banner
+
+
+def test_privacy_notice_view(authorized_client):
+    response = authorized_client.get(reverse("core:privacy_notice"))
+
+    assert response.status_code == 200
+    assertTemplateUsed(response, "core/privacy_notice.html")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1").string.strip() == "Privacy notice"
+    assert soup.title.string.strip() == "Data Privacy Notices - LITE - GOV.UK"

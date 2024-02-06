@@ -50,5 +50,6 @@ urlpatterns = (
         path("signature-help/", views.SignatureHelp.as_view(), name="signature_help"),
         path("certificate/", views.CertificateDownload.as_view(), name="certificate"),
         path("register-name/", views.RegisterName.as_view(), name="register_name"),
+        path("privacy-notice/", views.PrivacyNotice.as_view(), name="privacy_notice"),
     ]
 )
