@@ -8,10 +8,12 @@ class CloseQueryForm(forms.Form):
     reason_for_closing_query = forms.CharField(
         label="Why are you closing the query? This will not be visible to the exporter.",
         widget=forms.Textarea,
-        required=False,
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
-        self.helper.layout = Layout("reason_for_closing_query", Button("submit", "Submit"))
+        self.helper.layout = Layout(
+            "reason_for_closing_query",
+            Button("submit", "Submit"),
+        )
