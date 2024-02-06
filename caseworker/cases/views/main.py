@@ -13,14 +13,16 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, TemplateView, View
 
 from requests.exceptions import HTTPError
 
 from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
 from core.decorators import expect_status
-from core.file_handler import s3_client
+from core.exceptions import APIError
+from core.helpers import get_document_data
+from core.file_handler import download_document_from_s3
 
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import (
@@ -523,10 +525,8 @@ class AttachDocuments(TemplateView):
         file = files[0]
         data.append(
             {
-                "name": file.original_name,
-                "s3_key": file.name,
-                "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
                 "description": request.POST["description"],
+                **get_document_data(file),
             }
         )
 
@@ -534,6 +534,8 @@ class AttachDocuments(TemplateView):
         case_documents, _ = post_case_documents(request, case_id, data)
 
         if "errors" in case_documents:
+            if settings.DEBUG:
+                raise APIError(case_documents["errors"])
             return error_page(None, "We had an issue uploading your files. Try again later.")
 
         return redirect(
@@ -541,19 +543,15 @@ class AttachDocuments(TemplateView):
         )
 
 
-class Document(TemplateView):
+class Document(View):
     def get(self, request, **kwargs):
         document, _ = get_document(request, pk=kwargs["file_pk"])
-        client = s3_client()
-        signed_url = client.generate_presigned_url(
-            "get_object",
-            Params={
-                "Bucket": settings.AWS_STORAGE_BUCKET_NAME,
-                "Key": document["document"]["s3_key"],
-            },
-            ExpiresIn=15,
+        document = document["document"]
+
+        return download_document_from_s3(
+            document["s3_key"],
+            document["name"],
         )
-        return redirect(signed_url)
 
 
 class CaseOfficer(SingleFormView):

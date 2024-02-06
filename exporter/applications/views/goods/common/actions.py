@@ -1,9 +1,9 @@
 from http import HTTPStatus
 
 from core.decorators import expect_status
+from core.helpers import get_document_data
 
 from exporter.applications.views.goods.common.constants import PRODUCT_DOCUMENT_UPLOAD
-from exporter.core.helpers import get_document_data
 from exporter.goods.services import post_good_documents
 
 

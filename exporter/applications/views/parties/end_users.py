@@ -8,6 +8,8 @@ from django.views.generic import TemplateView, FormView
 from http import HTTPStatus
 
 from core.common.forms import BaseForm
+from core.file_handler import download_document_from_s3
+from core.helpers import get_document_data
 
 from exporter.applications.forms.parties import (
     PartyReuseForm,
@@ -31,7 +33,6 @@ from exporter.applications.services import (
     get_party,
     update_party,
     delete_party_document_by_id,
-    download_document_from_s3,
 )
 from exporter.applications.views.parties.base import CopyParties
 from exporter.applications.helpers.parties import party_requires_ec3_document
@@ -94,9 +95,7 @@ class AddEndUserView(LoginRequiredMixin, FormView):
 def _post_party_document(request, application_id, party_id, document_type, document):
     data = {
         "type": document_type,
-        "name": getattr(document, "original_name", document.name),
-        "s3_key": document.name,
-        "size": int(document.size // 1024) if document.size else 0,  # in kilobytes
+        **get_document_data(document),
     }
 
     response, status_code = post_party_document(request, application_id, party_id, data)
