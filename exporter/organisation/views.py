@@ -1,3 +1,6 @@
+from http import HTTPStatus
+
+from django.http import StreamingHttpResponse
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, TemplateView, RedirectView, View
@@ -7,15 +10,19 @@ from lite_forms.helpers import conditional
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
+from core.decorators import expect_status
 from core.helpers import get_document_data
-from core.file_handler import download_document_from_s3
 
 from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
 from exporter.core.services import get_organisation
 from exporter.organisation.roles.services import get_user_permissions
 from exporter.organisation import forms
-from exporter.organisation.services import post_document_on_organisation, get_document_on_organisation
+from exporter.organisation.services import (
+    get_document_on_organisation,
+    post_document_on_organisation,
+    stream_document_on_organisation,
+)
 
 
 class OrganisationView(TemplateView):
@@ -61,16 +68,31 @@ class Details(LoginRequiredMixin, OrganisationView):
 
 
 class DocumentOnOrganisation(LoginRequiredMixin, View):
+    @expect_status(
+        HTTPStatus.OK,
+        "Error downloading document",
+        "Unexpected error downloading document",
+    )
+    def stream_document_on_organisation(self, request, organisation_id, pk):
+        return stream_document_on_organisation(request, organisation_id, pk)
+
     def get(self, request, pk):
         organisation_id = str(self.request.session["organisation"])
         response = get_document_on_organisation(request=self.request, organisation_id=organisation_id, document_id=pk)
         document_on_organisation = response.json()
-        document = document_on_organisation["document"]
 
-        return download_document_from_s3(
-            document["s3_key"],
-            document["name"],
+        api_response, _ = self.stream_document_on_organisation(
+            request,
+            organisation_id,
+            document_on_organisation["id"],
         )
+        response = StreamingHttpResponse(api_response.iter_content())
+        for header_to_copy in [
+            "Content-Type",
+            "Content-Disposition",
+        ]:
+            response.headers[header_to_copy] = api_response.headers[header_to_copy]
+        return response
 
 
 class AbstractOrganisationUpload(LoginRequiredMixin, FormView):
