@@ -677,16 +677,6 @@ class DeleteDocument:
     DOCUMENT_DELETE_GENERIC_ERROR = "We had an issue deleting your file. Try again later."
 
 
-class ApplicationSuccessPage:
-    TITLE = "Application submitted"
-    SECONDARY_TITLE = "ECJU reference: "
-    DESCRIPTION = ""
-    WHAT_HAPPENS_NEXT = ["You'll receive an email from ECJU when the check is finished."]
-    VIEW_APPLICATIONS = "View your list of applications"
-    APPLY_AGAIN = "Apply for another licence or clearance"
-    RETURN_TO_DASHBOARD = "Return to your export control account dashboard"
-
-
 class ApplicationsList:
     TITLE = "Applications"
     RAISE_A_QUERY_BUTTON = "Raise a query"

@@ -16,7 +16,6 @@ from exporter.applications.forms.application_actions import (
 )
 from exporter.applications.forms.common import (
     edit_type_form,
-    application_success_page,
     application_copy_form,
     exhibition_details_form,
     declaration_form,
@@ -40,6 +39,7 @@ from exporter.applications.services import (
     get_case_generated_documents,
     get_application_ecju_queries,
     post_case_notes,
+    post_survey_feedback,
     submit_application,
     get_application,
     set_application_status,
@@ -59,7 +59,7 @@ from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import confirm_form
 from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView, MultiFormView
-
+from exporter.applications.forms.hcsat import HCSATminiform
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.helpers import convert_dict_to_query_params, get_document_data
@@ -322,22 +322,60 @@ class Submit(LoginRequiredMixin, TemplateView):
         return render(request, "applications/submit.html", context)
 
 
-class ApplicationSubmitSuccessPage(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        """
-        Display application submit success page
-        This page is accessed one of two ways:
-        1. Successful submission of an application
-        2. From a bookmark or link - this is intentional as some users will want to
-           save the page as evidence
-        """
-        application_id = kwargs["pk"]
-        application = get_application(request, application_id)
+class ApplicationSubmitSuccessPage(LoginRequiredMixin, FormView):
+
+    template_name = "applications/application-submit-success.html"
+    form_class = HCSATminiform
+
+    def get_application_url(self):
+        return reverse(
+            "applications:application",
+            kwargs={"pk": self.kwargs["pk"]},
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["form_title"] = "Application submitted"
+        context["back_link_url"] = self.get_application_url()
+        application_id = self.kwargs["pk"]
+        application = get_application(self.request, application_id)
 
         if application.status in ["draft", "applicant_editing"]:
             raise Http404
+        context["reference_code"] = application["reference_code"]
 
-        return application_success_page(request, application["reference_code"])
+        context["links"] = {
+            "View your list of applications": reverse_lazy("applications:applications"),
+            "Apply for another licence or clearance": reverse_lazy("apply_for_a_licence:start"),
+            "Return to your export control account dashboard": reverse_lazy("core:home"),
+        }
+
+        return context
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error sending feedback",
+        "Unexpected error sending feedback",
+    )
+    def post_survey_feedback(self, request, data):
+        return post_survey_feedback(request, data)
+
+    def form_valid(self, form):
+        data = form.cleaned_data.copy()
+        data["user_journey"] = "APPLICATION_SUBMISSION"
+        survey, _ = self.post_survey_feedback(self.request, data)
+        self.survey_id = survey["id"]
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(
+            "applications:application-hcsat",
+            kwargs={
+                "pk": self.kwargs["pk"],
+                "sid": self.survey_id,
+            },
+        )
 
 
 class ApplicationCopy(LoginRequiredMixin, MultiFormView):

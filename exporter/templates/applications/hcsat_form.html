@@ -1,0 +1,14 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block back_link %}
+<a href="{{ back_link_url }}" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
+{% endblock %}
+
+{% block body %}
+    <h1 class="govuk-panel__title">
+        Give feedback on this service
+    </h1>
+    {% crispy form %}
+
+{% endblock %}
