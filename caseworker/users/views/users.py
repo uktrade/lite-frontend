@@ -7,7 +7,11 @@ from django.utils.functional import cached_property
 from caseworker.cases.services import update_mentions
 
 from core.auth.views import LoginRequiredMixin
-from caseworker.core.constants import SUPER_USER_ROLE_ID, UserStatuses
+from caseworker.core.constants import (
+    ADMIN_TEAM_ID,
+    SUPER_USER_ROLE_ID,
+    UserStatuses,
+)
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.components import FiltersBar, Select, Option, TextInput
@@ -19,6 +23,7 @@ from caseworker.users.services import (
     put_gov_user,
     get_gov_user,
     is_super_user,
+    is_user_in_team,
     get_user_case_note_mentions,
 )
 
@@ -77,6 +82,7 @@ class ViewUser(TemplateView):
         super_user = is_super_user(request_user)
         can_deactivate = not is_super_user(data)
         can_edit_role = data["user"]["id"] != request.session["lite_api_user_id"]
+        can_edit_team = super_user or is_user_in_team(request_user, ADMIN_TEAM_ID)
 
         context = {
             "data": data,
@@ -84,6 +90,7 @@ class ViewUser(TemplateView):
             "super_user_role_id": SUPER_USER_ROLE_ID,
             "can_deactivate": can_deactivate,
             "can_edit_role": can_edit_role,
+            "can_edit_team": can_edit_team,
         }
         return render(request, "users/profile.html", context)
 
