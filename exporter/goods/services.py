@@ -244,6 +244,11 @@ def get_good_document(request, pk, doc_pk):
     return data.json().get("document") if data.status_code == HTTPStatus.OK else None
 
 
+def stream_good_document(request, pk, doc_pk):
+    response = client.get(request, f"/goods/{pk}/documents/{doc_pk}/stream/", stream=True)
+    return response, response.status_code
+
+
 def get_good_documents(request, pk):
     data = client.get(request, f"/goods/{pk}/documents/")
     return data.json().get("documents") if data.status_code == HTTPStatus.OK else None
