@@ -99,3 +99,14 @@ def test_survey_alert_not_displayed(authorized_client, settings, home_url, mock_
 
     banner = soup.select("#survey-notification-banner")
     assert not banner
+
+
+def test_exporter_accessibility_statement_view(authorized_client):
+    response = authorized_client.get(reverse("exporter-accessibility-statement"))
+
+    assert response.status_code == 200
+    assertTemplateUsed(response, "accessibility/accessibility.html")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1").string.strip() == "Accessibility statement"
+    assert soup.title.string.strip() == "Accessibility statement - LITE - GOV.UK"
