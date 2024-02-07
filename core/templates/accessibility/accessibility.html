@@ -1,5 +1,9 @@
 {% extends 'layouts/base.html' %}
 
+{% block back_link %}
+<a href="{{ back_url }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
 {% block title %}Accessibility statement{% endblock %}
 
 {% block body %}

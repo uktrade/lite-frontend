@@ -110,3 +110,6 @@ def test_exporter_accessibility_statement_view(authorized_client):
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find("h1").string.strip() == "Accessibility statement"
     assert soup.title.string.strip() == "Accessibility statement - LITE - GOV.UK"
+
+    expected_back_url = reverse("core:home")
+    assert response.context["back_url"] == expected_back_url
