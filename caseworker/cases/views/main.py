@@ -7,10 +7,7 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import (
-    Http404,
-    StreamingHttpResponse,
-)
+from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -27,7 +24,10 @@ from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
 from core.decorators import expect_status
 from core.exceptions import APIError
-from core.helpers import get_document_data
+from core.helpers import (
+    get_document_data,
+    stream_document_response,
+)
 from core.services import stream_document
 
 from lite_content.lite_internal_frontend import cases
@@ -572,13 +572,7 @@ class Document(LoginRequiredMixin, View):
 
     def get(self, request, **kwargs):
         api_response, _ = self.stream_document(request, pk=kwargs["file_pk"])
-        response = StreamingHttpResponse(api_response.iter_content())
-        for header_to_copy in [
-            "Content-Type",
-            "Content-Disposition",
-        ]:
-            response.headers[header_to_copy] = api_response.headers[header_to_copy]
-        return response
+        return stream_document_response(api_response)
 
 
 class RerunRoutingRules(SingleFormView):

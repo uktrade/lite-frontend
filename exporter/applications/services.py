@@ -552,6 +552,11 @@ def get_appeal_document(request, appeal_pk, document_pk):
     return data.json(), data.status_code
 
 
+def stream_appeal_document(request, appeal_pk, document_pk):
+    response = client.get(request, f"/appeals/{appeal_pk}/documents/{document_pk}/stream/", stream=True)
+    return response, response.status_code
+
+
 def post_survey_feedback(request, json):
     data = client.post(request, f"/survey/", json)
     return data.json(), data.status_code

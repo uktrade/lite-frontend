@@ -11,7 +11,10 @@ from lite_forms.helpers import conditional
 from core.auth.views import LoginRequiredMixin
 from core.constants import OrganisationDocumentType
 from core.decorators import expect_status
-from core.helpers import get_document_data
+from core.helpers import (
+    get_document_data,
+    stream_document_response,
+)
 
 from exporter.core.constants import Permissions
 from exporter.core.objects import Tab
@@ -86,13 +89,8 @@ class DocumentOnOrganisation(LoginRequiredMixin, View):
             organisation_id,
             document_on_organisation["id"],
         )
-        response = StreamingHttpResponse(api_response.iter_content())
-        for header_to_copy in [
-            "Content-Type",
-            "Content-Disposition",
-        ]:
-            response.headers[header_to_copy] = api_response.headers[header_to_copy]
-        return response
+
+        return stream_document_response(api_response)
 
 
 class AbstractOrganisationUpload(LoginRequiredMixin, FormView):
