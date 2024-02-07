@@ -642,3 +642,12 @@ def mock_case_activity_system_user(requests_mock, data_standard_case):
     data = {"activity": []}
     requests_mock.get(url=url, json=data)
     yield data
+
+
+@pytest.fixture(autouse=True)
+def mock_ecju_queries(data_standard_case, data_ecju_queries, requests_mock):
+    requests_mock.get(
+        url=rf"/cases/{data_standard_case['case']['id']}/ecju-queries/",
+        json=data_ecju_queries,
+    )
+    yield data_ecju_queries

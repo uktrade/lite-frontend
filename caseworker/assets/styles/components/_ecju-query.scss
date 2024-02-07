@@ -42,7 +42,7 @@ $text-margin: govuk-spacing(3);
     }
 
     &__date {
-        @include govuk-font($size: 16);
+        @include govuk-font($size: 19);
 
         margin-top: $text-margin;
         color: govuk-colour("dark-grey");
