@@ -17,19 +17,23 @@ from core.constants import (
     OrganisationDocumentType,
     ProductCategories,
 )
-from core.helpers import convert_dict_to_query_params
+from core.file_handler import download_document_from_s3
+from core.helpers import (
+    convert_dict_to_query_params,
+    get_document_data,
+)
 from core.summaries.summaries import (
     get_summary_type_for_good_on_application,
     NoSummaryForType,
     SummaryTypes,
 )
+
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
     add_document_data,
     delete_application_document_data,
     delete_application_preexisting_good,
-    download_document_from_s3,
     get_application,
     get_application_document,
     get_application_documents,
@@ -219,14 +223,12 @@ class RegisteredFirearmDealersMixin:
         if not file:
             return
         self.request.session[self.SESSION_KEY_RFD_CERTIFICATE] = {
-            "name": getattr(file, "original_name", file.name),
-            "s3_key": file.name,
-            "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
             "document_on_organisation": {
                 "expiry_date": format_date(self.request.POST, "expiry_date_"),
                 "reference_code": self.request.POST["reference_code"],
                 "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
             },
+            **get_document_data(file),
         }
 
     def post_success_step(self):
@@ -445,14 +447,12 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
 
         if cert_file:
             rfd_cert = {
-                "name": getattr(cert_file, "original_name", cert_file.name),
-                "s3_key": cert_file.name,
-                "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
                 "document_on_organisation": {
                     "expiry_date": format_date(all_data, "expiry_date_"),
                     "reference_code": all_data["reference_code"],
                     "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 },
+                **get_document_data(cert_file),
             }
 
             _, status_code = post_additional_document(
@@ -947,14 +947,12 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
 
         if cert_file:
             rfd_cert = {
-                "name": getattr(cert_file, "original_name", cert_file.name),
-                "s3_key": cert_file.name,
-                "size": int(cert_file.size // 1024) if cert_file.size else 0,  # in kilobytes
                 "document_on_organisation": {
                     "expiry_date": format_date(all_data, "expiry_date_"),
                     "reference_code": all_data["reference_code"],
                     "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
                 },
+                **get_document_data(cert_file),
             }
 
             _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=rfd_cert)

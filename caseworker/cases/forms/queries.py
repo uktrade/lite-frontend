@@ -6,9 +6,8 @@ from crispy_forms_gds.layout import Layout, Button
 
 class CloseQueryForm(forms.Form):
     reason_for_closing_query = forms.CharField(
-        label="",
+        label="Why are you closing the query? This will not be visible to the exporter.",
         widget=forms.Textarea,
-        help_text="Why are you closing the query? This will not be visible to the exporter.",
         required=False,
     )
 

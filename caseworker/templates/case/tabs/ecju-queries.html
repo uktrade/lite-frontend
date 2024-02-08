@@ -24,7 +24,7 @@
 						{{ ecju_query.question|linebreaks }}
 					</div>
 					<p class="app-ecju-query__date">
-						Sent at {{ ecju_query.created_at|str_time_on_date }}. This query has been open for {{ ecju_query.open_working_days }} working days.
+						Sent at {{ ecju_query.created_at|str_time_on_date }}. This query has been open for {{ ecju_query.open_working_days }} working day{{ ecju_query.open_working_days|pluralize }}.
 					</p>
 					<details class="govuk-details">
 						<summary class="govuk-details__summary">

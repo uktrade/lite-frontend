@@ -1,10 +1,8 @@
 from http import HTTPStatus
 
-from django.http import StreamingHttpResponse
-from django.conf import settings
-
 from core import client
-from core.file_handler import s3_client
+from core.helpers import get_document_data
+
 from exporter.applications.helpers.date_fields import (
     format_date_fields,
     format_date,
@@ -468,35 +466,11 @@ def add_document_data(request):
     if len(files) != 1:
         return None, "Multiple files attached"
     file = files[0]
-    try:
-        original_name = file.original_name
-    except Exception:  # noqa
-        original_name = file.name
-
-    data = {
-        "name": original_name,
-        "s3_key": file.name,
-        "size": int(file.size // 1024) if file.size else 0,  # in kilobytes
-    }
+    data = get_document_data(file)
     if "description" in request.POST:
         data["description"] = request.POST.get("description")
 
     return data, None
-
-
-def generate_file(result):
-    for chunk in iter(lambda: result["Body"].read(settings.STREAMING_CHUNK_SIZE), b""):
-        yield chunk
-
-
-def download_document_from_s3(s3_key, original_file_name):
-    s3_response = s3_client().get_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=s3_key)
-    _kwargs = {}
-    if s3_response.get("ContentType"):
-        _kwargs["content_type"] = s3_response["ContentType"]
-    response = StreamingHttpResponse(generate_file(s3_response), **_kwargs)
-    response["Content-Disposition"] = f'attachment; filename="{original_file_name}"'
-    return response
 
 
 def get_goods_type(request, app_pk, good_pk):
