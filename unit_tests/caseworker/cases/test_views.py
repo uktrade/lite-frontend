@@ -571,6 +571,19 @@ def test_close_query_without_response_gives_error(
     assert response.context["form"].errors["reason_for_closing_query"] == [error_message]
 
 
+def test_close_invalid_query_raises_error(
+    authorized_client,
+    queue_pk,
+    standard_case_pk,
+    mock_get_queries,
+):
+    # try to close query with invalid id
+    query_pk = str(uuid.uuid4())
+    url = reverse("cases:close_query", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk, "query_pk": query_pk})
+    response = authorized_client.post(url, data={f"{query_pk}-reason_for_closing_query": ""})
+    assert response.status_code == 404
+
+
 def test_close_query_view_show_closed_queries_on_page(
     authorized_client,
     requests_mock,
