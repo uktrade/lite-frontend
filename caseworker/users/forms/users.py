@@ -37,16 +37,19 @@ def add_user_form(request):
     )
 
 
-def edit_user_form(request, user, can_edit_role: bool):
+def edit_user_form(request, user, can_edit_role: bool, can_edit_team: bool):
     return Form(
         title=EditUserForm.TITLE.format(user["first_name"], user["last_name"]),
         questions=[
             TextInput(title=EditUserForm.Email.TITLE, description=EditUserForm.Email.DESCRIPTION, name="email"),
-            Select(
-                title=EditUserForm.Team.TITLE,
-                description=EditUserForm.Team.DESCRIPTION,
-                name="team",
-                options=get_teams(request, True),
+            conditional(
+                can_edit_team,
+                Select(
+                    title=EditUserForm.Team.TITLE,
+                    description=EditUserForm.Team.DESCRIPTION,
+                    name="team",
+                    options=get_teams(request, True),
+                ),
             ),
             conditional(
                 can_edit_role,
