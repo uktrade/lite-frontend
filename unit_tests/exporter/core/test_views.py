@@ -109,4 +109,4 @@ def test_privacy_notice_view(authorized_client):
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find("h1").string.strip() == "Privacy notice"
-    assert soup.title.string.strip() == "Data Privacy Notices - LITE - GOV.UK"
+    assert soup.title.string.strip() == "Privacy notice - LITE - GOV.UK"
