@@ -4,7 +4,9 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from exporter.applications.services import add_document_data, download_document_from_s3
+from core.file_handler import download_document_from_s3
+
+from exporter.applications.services import add_document_data
 from exporter.ecju_queries.forms import (
     respond_to_query_form,
     ecju_query_respond_confirmation_form,
