@@ -131,6 +131,10 @@ def is_super_user(user):
     return user["user"]["role"]["id"] == SUPER_USER_ROLE_ID
 
 
+def is_user_in_team(user, team_id):
+    return user["user"]["team"]["id"] == team_id
+
+
 def get_user_case_note_mentions(request, params):
 
     query_params = urlencode(params)
