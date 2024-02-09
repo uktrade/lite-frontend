@@ -53,6 +53,7 @@ class CloseQueryView(LoginRequiredMixin, FormView):
         if not query:
             raise Http404
 
+        context["title"] = "Close query"
         context["query"] = query
 
         return context
