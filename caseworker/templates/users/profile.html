@@ -81,10 +81,12 @@
 				<a href="{% url 'teams:team' data.user.team.id %}" id="user-team-name" class="govuk-link govuk-link--no-visited-state">{{ data.user.team.name }}</a>
 			</dd>
 			<dd class="govuk-summary-list__actions">
-				<a id="link-edit-team" href="{% url 'users:edit' data.user.id %}#team" class="govuk-link govuk-link--no-visited-state">
-					{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
-					<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.TEAM' %}</span>
-				</a>
+				{% if can_edit_team %}
+					<a id="link-edit-team" href="{% url 'users:edit' data.user.id %}#team" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
+						<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.TEAM' %}</span>
+					</a>
+				{% endif %}
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
