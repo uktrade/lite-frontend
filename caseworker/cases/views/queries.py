@@ -1,13 +1,16 @@
+from django.http import Http404
 from django.urls import reverse
 from django.views.generic import FormView
 
 from caseworker.cases.forms.queries import CloseQueryForm
+from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.cases.services import put_ecju_query
 from core.auth.views import LoginRequiredMixin
 
 
 class CloseQueryView(LoginRequiredMixin, FormView):
     form_class = CloseQueryForm
+    template_name = "case/close-query.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.lite_user = request.lite_user
@@ -35,3 +38,22 @@ class CloseQueryView(LoginRequiredMixin, FormView):
                 "tab": "ecju-queries",
             },
         )
+
+    def get_query(self, open_ecju_queries):
+        for query in open_ecju_queries:
+            if query["id"] == str(self.kwargs["query_pk"]):
+                return query
+        return None
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+
+        open_ecju_queries, _ = get_ecju_queries(self.request, self.kwargs["pk"])
+        query = self.get_query(open_ecju_queries)
+        if not query:
+            raise Http404
+
+        context["title"] = "Close query"
+        context["query"] = query
+
+        return context
