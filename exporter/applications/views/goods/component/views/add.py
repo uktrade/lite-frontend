@@ -7,10 +7,10 @@ from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
+from core.helpers import get_document_data
 
 from exporter.applications.views.goods.common.actions import ProductDocumentAction
 from core.wizard.views import BaseSessionWizardView
-from exporter.core.helpers import get_document_data
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
     ProductDocumentAvailabilityForm,

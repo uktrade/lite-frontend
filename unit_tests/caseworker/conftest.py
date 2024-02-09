@@ -15,6 +15,7 @@ from caseworker.advice import services
 from core import client
 from core.helpers import convert_value_to_query_param
 from caseworker.advice.services import LICENSING_UNIT_TEAM, FIRST_COUNTERSIGN, SECOND_COUNTERSIGN
+from caseworker.core.constants import SUPER_USER_ROLE_ID
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
 second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
@@ -2686,3 +2687,12 @@ def data_query_closed_by_caseworker(lu_team_user_full_name):
         "responded_at": "2024-01-18T01:01:01.123456Z",
         "is_query_closed": True,
     }
+
+
+@pytest.fixture
+def mock_roles(requests_mock):
+    url = client._build_absolute_uri("/gov-users/roles/")
+    return requests_mock.get(
+        url=url,
+        json={"roles": [{"id": SUPER_USER_ROLE_ID, "name": "Super User"}]},
+    )

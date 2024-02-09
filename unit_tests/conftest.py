@@ -1,11 +1,11 @@
-import re
-from datetime import timedelta
+import boto3
+import copy
 import datetime
 import pytest
 import os
-import copy
-import boto3
+import re
 
+from datetime import timedelta
 from urllib.parse import urljoin, urlparse
 
 from moto import mock_s3
