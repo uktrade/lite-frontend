@@ -14,6 +14,16 @@ class EcjuQueriesPages(BasePage):
     def enter_question_text(self, text):
         self.driver.find_element(by=By.ID, value=self.TEXTAREA_QUESTION_ID).send_keys(text)
 
+    def enter_response_and_submit(self, response_text):
+        open_queries = self.driver.find_element(by=By.ID, value="open-queries")
+        element = open_queries.find_element(by=By.CLASS_NAME, value="govuk-textarea")
+        element.clear()
+        element.send_keys(response_text)
+
+        # submit response
+        submit = open_queries.find_element(by=By.ID, value="id_submit")
+        submit.click()
+
     def click_new_query_button(self):
         self.driver.find_element(by=By.ID, value=self.BUTTON_NEW_QUERY_ID).click()
 
