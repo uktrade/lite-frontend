@@ -3,6 +3,8 @@ from django.urls import include, path
 
 import caseworker.core.views
 
+from core.accessibility.views import CaseworkerAccessibilityStatementView
+
 
 urlpatterns = [
     path("healthcheck/", include("health_check.urls")),
@@ -27,6 +29,11 @@ urlpatterns = [
     path("tau/report_summary/", include("caseworker.report_summary.urls")),
     path("search/", include("caseworker.search.urls")),
     path("bookmarks/", include("caseworker.bookmarks.urls")),
+    path(
+        "accessibility-statement/",
+        CaseworkerAccessibilityStatementView.as_view(),
+        name="caseworker-accessibility-statement",
+    ),
 ]
 
 

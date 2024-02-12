@@ -239,7 +239,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             for queue_detail in self.case.queue_details:
                 queue_detail["days_on_queue_elapsed"] = (timezone.now() - parse(queue_detail["joined_queue_at"])).days
 
-    def get(self, request, **kwargs):
+    def get(self, request, *args, **kwargs):
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]

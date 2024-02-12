@@ -1,0 +1,35 @@
+{% extends 'layouts/two-pane.html' %}
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% block title %}{{title}}{% endblock %}
+{% block back_link %}
+	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
+{% endblock %}
+
+{% block two_thirds %}
+
+{% if errors %}
+    {% include "forms-errors.html" %}
+{% endif %}
+
+<form action="{{ form_action_url }}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% error_summary form %}
+
+    <div class="govuk-body">
+        <h1 class="govuk-label-wrapper">
+            <label class="govuk-label--l">
+                Close query
+            </label>
+        </h1>
+        <div class=" govuk-!-padding-top-3 govuk-!-padding-bottom-3">
+            <div class="app-ecju-query__text">
+                {{ query.question }}
+            </div>
+        </div>
+        {% crispy form %}
+    </div>
+</form>
+
+{% endblock %}

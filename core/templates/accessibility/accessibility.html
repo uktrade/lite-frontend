@@ -1,0 +1,111 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+<a href="{{ back_url }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block title %}Accessibility statement{% endblock %}
+
+{% block body %}
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper govuk-!-padding-top-0">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">
+                    Accessibility statement
+                </h1>
+
+                <p class="govuk-body">
+                    This statement applies to {{ host }}
+                </p>
+                <p class="govuk-body">
+                    This service is run by the Department for Business and Trade (DBT). It is currently in private beta
+                    but is designed to be used by as many people as possible when it goes into public beta for
+                    standard individual export licences (SIELs).
+                </p>
+                <p class="govuk-body">
+                    <a class="govuk-link govuk-link--no-visited-state"
+                        href="https://mcmw.abilitynet.org.uk/">AbilityNet</a> has advice on making your device easier to
+                    use if you have a disability.
+                </p>
+
+                <h2 class="govuk-heading-m">How accessible this website is</h2>
+                <p class="govuk-body">
+                    The service meets the Content Accessibility Guidelines (WCAG) version 2.1 AA standard.
+                </p>
+                <p class="govuk-body">
+                    The below areas do not meet 2.1 AAA requirements, which were not in scope for the purposes of
+                    this audit:
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>there was an ambiguous link identified on two pages that may be difficult to understand for
+                        screen reader users browsing out of context</li>
+                    <li>links that opened in a new window without informing users were identified</li>
+                </ul>
+                </p>
+
+                <h2 class="govuk-heading-m">Feedback and contact information</h2>
+                <p class="govuk-body">
+                    If you find any problems not listed on this page or think we do not meet accessibility requirements,
+                    contact <a class="govuk-link govuk-link--no-visited-state"
+                        href=mailto:LITE.support@businessandtrade.gov.uk>LITE.support@businessandtrade.gov.uk</a>.
+                </p>
+                <p class="govuk-body">
+                    We’ll consider your request and get back to you within 15 days.
+                </p>
+
+                <h2 class="govuk-heading-m">Enforcement procedure</h2>
+                <p class="govuk-body">
+                    The Equality and Human Rights Commission (EHRC) is responsible for enforcing the Public
+                    Sector Bodies (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018 (the
+                    'accessibility regulations'). If you're not happy with how we respond to your complaint, <a
+                        class="govuk-link govuk-link--no-visited-state"
+                        href="https://www.gov.uk/equality-advisory-support-service/">contact the
+                        Equality Advisory and Support Service (EASS)</a>.
+                </p>
+
+                <h2 class="govuk-heading-m">Technical information about this website's accessibility</h2>
+                <p class="govuk-body">
+                    We are committed to making this website accessible, in accordance with the Public Sector Bodies
+                    (Websites and Mobile Applications) (No. 2) Accessibility Regulations 2018.
+                </p>
+
+                <h3 class="govuk-heading-s">Compliance status</h3>
+                <p class="govuk-body">
+                    This website is fully compliant with the <a class="govuk-link govuk-link--no-visited-state"
+                        href="https://www.w3.org/TR/WCAG21/">Web Content
+                        Accessibility Guidelines version 2.1 AA standard</a>.
+                </p>
+
+                <h3 class="govuk-heading-s">Content that’s not within the scope of the accessibility regulations</h3>
+                <p class="govuk-body">
+                    Our PDF documents are essential to providing our services. For example, we have PDFs with
+                    information on the application outcome and a copy of the application is generated as a PDF.
+                </p>
+
+                <h2 class="govuk-heading-m">What we're doing to improve accessibility</h2>
+                <p class="govuk-body">
+                    We will schedule another accessibility audit in late 2024 to identify any issues that do not meet
+                    the WCAG 2.2. success criteria.
+                </p>
+                <p class="govuk-body">
+                    In late 2024, we will consider what we can do to improve the accessibility of our PDF documents
+                    and licences.
+                </p>
+
+                <h2 class="govuk-heading-m">Preparation of this accessibility statement</h2>
+                <p class="govuk-body">
+                    This statement was prepared on Friday 2 February 2024. It was last reviewed on Friday 2
+                    February 2024.
+                </p>
+                <p class="govuk-body">
+                    This website was last tested on 30 May 2023 and was checked for compliance with the WCAG 2.1
+                    AA standard. The test was carried out by the <a class="govuk-link govuk-link--no-visited-state"
+                        href="https://digitalaccessibilitycentre.org/">Digital Accessibility Centre (DAC)</a>.
+                </p>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+{% endblock %}
