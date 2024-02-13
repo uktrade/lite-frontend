@@ -64,9 +64,11 @@
 							{{ ecju_query.responded_by_user.name }}
 						</a>
 					</p>
+					{% if ecju_query.response %}
 					<div class="app-ecju-query__text">
 						{{ ecju_query.response|linebreaks }}
 					</div>
+					{% endif %}
 				{% if ecju_query.documents %}
 					{% for document in ecju_query.documents %}
 						<br>
