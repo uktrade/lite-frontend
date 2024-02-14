@@ -15,6 +15,5 @@ class CloseQueryForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            "reason_for_closing_query",
-            Button("submit", "Submit"),
+            "reason_for_closing_query", Button("submit", "Submit", css_class="govuk-!-margin-bottom-0")
         )
