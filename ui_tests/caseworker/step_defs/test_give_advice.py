@@ -2,9 +2,6 @@ import time
 
 from pytest_bdd import when, then, parsers, scenarios
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.support import expected_conditions
-from selenium.webdriver.support.wait import WebDriverWait
 
 from tests_common import functions
 from ui_tests.caseworker.pages.assign_flags_to_case import CaseFlagsPages
@@ -309,3 +306,13 @@ def edit_template(driver, text):
 def should_see_content_on_inform_letter(driver, content):
     text = GeneratedDocument(driver).get_document_preview_text()
     assert content in text
+
+
+@then("I see warning that case cannot be finalised due to a query that needs to be closed")
+def i_see_warning_about_open_query(driver):
+    warning_element = driver.find_element(by=By.ID, value="case-has-open-queries")
+    assert "Warning" in warning_element.text
+    assert "This case cannot be finalised due to a query that needs to be closed." in warning_element.text
+
+    action_items = [item.text for item in driver.find_elements(by=By.CLASS_NAME, value="govuk-button")]
+    assert "Finalise case" not in action_items

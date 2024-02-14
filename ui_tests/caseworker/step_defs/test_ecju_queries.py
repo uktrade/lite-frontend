@@ -19,11 +19,6 @@ def i_create_an_ecju_query_picklist(context, add_an_ecju_query_picklist):
     context.ecju_query_picklist_question_text = add_an_ecju_query_picklist["text"]
 
 
-@when("I click the queries tab")
-def i_click_the_queries_tab(driver):
-    CasePage(driver).change_tab(CaseTabs.ECJU_QUERIES)
-
-
 @when("I click new query")
 def i_click_add_an_ecju_query(driver):
     EcjuQueriesPages(driver).click_new_query_button()
@@ -37,21 +32,9 @@ def i_enter_text_in_the_question_text_area(driver, context):
     functions.click_submit(driver)
 
 
-@when(parsers.parse('I enter "{query}" as the query'))
-def i_enter_a_query(driver, query, context):
-    ecju_queries_pages = EcjuQueriesPages(driver)
-    ecju_queries_pages.enter_question_text(query)
-    context.ecju_question = query
-
-
 @then("the new ECJU Query is visible in the list")
 def the_new_ecju_query_is_visible_in_the_list(driver, context):
     assert context.ecju_question in EcjuQueriesPages(driver).get_open_queries_text()
-
-
-@then(parsers.parse('I see "{query}" as the query under open queries'))
-def query_in_open_list(driver, query, context):
-    assert query in EcjuQueriesPages(driver).get_open_queries_text()
 
 
 @then("the ECJU Query creation is visible in the case timeline")
