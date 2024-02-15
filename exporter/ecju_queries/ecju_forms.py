@@ -46,11 +46,11 @@ class ECJUQueryRespondForm(BaseForm):
         return [
             HTML.p(f'<div class="app-ecju-query__text"> {linebreaksbr(self.ecju_query["question"]) }</div>'),
             HTML.p("Your application will be paused until the case worker receives a response. To reply: "),
-            HTML.p(
-                f'1. <a class="govuk-link govuk-link--no-visited-state" href="{edit_type_url}">'
-                + "Edit and submit your application</a> as required, or send a written message below."
+            HTML(
+                f'<ol><li><a class="govuk-link govuk-link--no-visited-state" href="{edit_type_url}">'
+                + "Edit and submit your application</a> as required, or send a written message below.</li>"
+                + "<li>Then select 'Continue' to notify the case worker that the query has been answered.</li></ol>"
             ),
-            HTML.p("2. Then select 'Continue' to notify the case worker that the query has been answered."),
             "response",
             HTML.p("<div class=" "govuk-hint" ">You can enter up to 2200 characters</div>"),
             HTML.h2("Documents"),
