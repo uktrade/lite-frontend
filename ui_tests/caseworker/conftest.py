@@ -57,6 +57,7 @@ from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from tests_common.helpers import applications
 from ui_tests.exporter.pages.add_goods_page import AddGoodPage
+from ui_tests.caseworker.pages.ecju_queries_pages import EcjuQueriesPages
 from ui_tests.caseworker.pages.product_assessment import ProductAssessmentPage
 
 
@@ -352,6 +353,21 @@ def i_click_application_previously_created(driver, context):  # noqa
     case_list_page.click_on_case(context.case_id)
 
 
+@when("I click the application previously created under open queries tab")
+def i_click_application_previously_created_under_open_queries(driver, context):
+    case_list_page = CaseListPage(driver)
+    functions.open_case_filters(driver)
+    case_list_page.click_clear_filters_button()
+    functions.open_case_filters(driver)
+    case_list_page.filter_by_case_reference(context.reference_code)
+    functions.click_apply_filters(driver)
+
+    # Clearing and Applying filter resets to default tab
+    driver.find_element(by=By.ID, value=CaseListPage.OPEN_QUERIES_TAB).click()
+
+    case_list_page.click_on_case(context.case_id)
+
+
 @when(parsers.parse('I switch to queue "{queue}"'))  # noqa
 def switch_queue_dropdown(driver, queue):  # noqa
     driver.find_element(by=By.ID, value="link-queue").click()
@@ -472,6 +488,23 @@ def selected_created_template(driver, context):  # noqa
 @when(parsers.parse('I select the template "{template_name}"'))  # noqa
 def select_template_by_name(driver, template_name):  # noqa
     GeneratedDocument(driver).select_document_template_by_name(template_name)
+
+
+@when("I click the queries tab")
+def i_click_the_queries_tab(driver):
+    CasePage(driver).change_tab(CaseTabs.ECJU_QUERIES)
+
+
+@when(parsers.parse('I enter "{query}" as the query'))
+def i_enter_a_query(driver, query, context):
+    ecju_queries_pages = EcjuQueriesPages(driver)
+    ecju_queries_pages.enter_question_text(query)
+    context.ecju_question = query
+
+
+@then(parsers.parse('I see "{query}" as the query under open queries'))
+def query_in_open_list(driver, query):
+    assert query in EcjuQueriesPages(driver).get_open_queries_text()
 
 
 @when("I go to the documents tab")  # noqa
