@@ -3,6 +3,8 @@ from django.urls import include, path
 
 import exporter.core.views
 
+from core.accessibility.views import ExporterAccessibilityStatementView
+
 
 urlpatterns = [
     path("healthcheck/", include("health_check.urls")),
@@ -26,6 +28,11 @@ urlpatterns += [
     path("", include("exporter.hmrc.urls")),
     path("feedback/", include("core.feedback.urls")),
     path("cookies/", include("core.cookies.urls")),
+    path(
+        "accessibility-statement/",
+        ExporterAccessibilityStatementView.as_view(),
+        name="exporter-accessibility-statement",
+    ),
 ]
 
 if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:

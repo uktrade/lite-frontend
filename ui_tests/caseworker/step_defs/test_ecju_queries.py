@@ -1,6 +1,7 @@
 from uuid import uuid4
 
 from pytest_bdd import when, then, scenarios, given, parsers
+from selenium.webdriver.common.by import By
 
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.application_page import ApplicationPage
@@ -83,3 +84,15 @@ def response_in_closed_list(driver, response, context):
     closed_text = EcjuQueriesPages(driver).get_closed_queries_text()
     assert context.ecju_question in closed_text
     assert response in closed_text
+
+
+@when("I click close query to manually close the query")
+def click_to_manually_close_query(driver):
+    open_queries = driver.find_element(by=By.ID, value="open-queries")
+    open_queries.find_element(by=By.CSS_SELECTOR, value=".govuk-details__summary").click()
+
+
+@when(parsers.parse('I enter "{response}" as the query response and submit'))
+def i_enter_query_response(driver, response):
+    ecju_queries_pages = EcjuQueriesPages(driver)
+    ecju_queries_pages.enter_response_and_submit(response)

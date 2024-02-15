@@ -99,3 +99,28 @@ def test_survey_alert_not_displayed(authorized_client, settings, home_url, mock_
 
     banner = soup.select("#survey-notification-banner")
     assert not banner
+
+
+def test_privacy_notice_view(authorized_client):
+    response = authorized_client.get(reverse("core:privacy_notice"))
+
+    assert response.status_code == 200
+    assertTemplateUsed(response, "core/privacy_notice.html")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1").string.strip() == "Privacy notice"
+    assert soup.title.string.strip() == "Privacy notice - LITE - GOV.UK"
+
+
+def test_exporter_accessibility_statement_view(authorized_client):
+    response = authorized_client.get(reverse("exporter-accessibility-statement"))
+
+    assert response.status_code == 200
+    assertTemplateUsed(response, "accessibility/accessibility.html")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1").string.strip() == "Accessibility statement"
+    assert soup.title.string.strip() == "Accessibility statement - LITE - GOV.UK"
+
+    expected_back_url = reverse("core:home")
+    assert response.context["back_url"] == expected_back_url
