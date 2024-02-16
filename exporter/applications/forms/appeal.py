@@ -44,7 +44,7 @@ class AppealForm(BaseForm):
 
         layout_actions.append(
             HTML(
-                f'<a class="govuk-button govuk-button--secondary govuk-!-margin-left-2" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
+                f'<a class="govuk-button govuk-button--secondary" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
             ),
         )
 
