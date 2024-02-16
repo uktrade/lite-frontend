@@ -79,7 +79,7 @@ setuptools = "~=65.5.1"
 rules="~=3.3.0"
 django-extra-views = "~=0.14.0"
 djangorestframework = "~=3.14.0"
-django = "~=4.2.8"
+django = "~=4.2.10"
 
 [requires]
 python_version = "3.9"
