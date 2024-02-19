@@ -56,8 +56,8 @@ from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, S
 from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
-from lite_forms.generators import confirm_form
-from lite_forms.generators import form_page
+from core.views import confirm_form
+from core.views import form_page
 from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin

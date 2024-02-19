@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from django.views.generic import FormView
 from django.urls import reverse_lazy
 
-from lite_forms.generators import error_page
+from core.views import error_page
 
 from core.auth.views import LoginRequiredMixin
 

@@ -18,7 +18,7 @@ from django.http import HttpResponseForbidden
 
 from core.file_handler import UploadFailed
 from lite_content.lite_internal_frontend.strings import cases
-from lite_forms.generators import error_page
+from core.views import error_page
 from json import JSONDecodeError
 
 SESSION_TIMEOUT_KEY = "_session_timeout_seconds_"

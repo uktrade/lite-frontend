@@ -42,7 +42,7 @@ from caseworker.flags.services import get_flags, post_flags, get_flag, update_fl
 from lite_content.lite_internal_frontend import strings, flags
 from lite_content.lite_internal_frontend.flags import UpdateFlag, SetFlagsForm
 from lite_forms.components import Option, FiltersBar, Select, Checkboxes, TextInput, BackLink
-from lite_forms.generators import form_page
+from core.views import form_page
 from lite_forms.views import MultiFormView, SingleFormView
 from caseworker.organisations.services import get_organisation
 from caseworker.teams.services import get_teams

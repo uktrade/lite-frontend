@@ -6,7 +6,7 @@ from django.views.generic.base import View
 
 from core.auth import views as auth_views
 from exporter.auth.services import authenticate_exporter_user
-from lite_forms.generators import error_page
+from core.views import error_page
 from exporter.organisation.members.services import get_user
 from authlib.oauth2.rfc7523 import PrivateKeyJWT
 from core.ip_filter import get_client_ip

@@ -25,7 +25,7 @@ from lite_forms.components import (
     TokenBar,
     Heading,
 )
-from lite_forms.generators import confirm_form
+from core.views import confirm_form
 from lite_forms.styles import HeadingStyle
 
 level_options = [

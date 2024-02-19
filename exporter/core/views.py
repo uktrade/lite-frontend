@@ -31,11 +31,10 @@ from exporter.core.validators import validate_register_organisation_triage
 from core.auth.utils import get_profile
 from lite_content.lite_exporter_frontend import generic
 from lite_forms.components import BackLink
-from lite_forms.generators import success_page
+from core.views import success_page, error_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SummaryListFormView, MultiFormView
 from exporter.organisation.members.services import get_user
-from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
 

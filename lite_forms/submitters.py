@@ -3,7 +3,7 @@ from typing import Callable
 from django.http import QueryDict
 
 from lite_forms.components import HiddenField, Form, FormGroup
-from lite_forms.generators import form_page
+from core.views import form_page
 from lite_forms.helpers import (
     remove_unused_errors,
     nest_data,

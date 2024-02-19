@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from .constants import OrganisationStatus
 from core.exceptions import ServiceError
-from lite_forms.generators import error_page
+from core.views import error_page
 from exporter.organisation.members.services import get_user
 
 logger = logging.getLogger(__name__)

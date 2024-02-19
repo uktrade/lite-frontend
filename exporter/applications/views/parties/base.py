@@ -10,7 +10,7 @@ from exporter.core.constants import F680
 from exporter.core.services import get_pv_gradings
 from lite_content.lite_exporter_frontend.applications import AddPartyForm, CopyExistingPartyPage
 from lite_forms.components import FiltersBar, TextInput
-from lite_forms.generators import form_page, error_page
+from core.views import form_page, error_page
 from lite_forms.views import MultiFormView
 
 

@@ -17,7 +17,7 @@ from exporter.end_users.forms import (
 )
 from exporter.end_users.services import get_end_user_advisories, post_end_user_advisories, get_end_user_advisory
 from lite_forms.components import HiddenField, FiltersBar, TextInput
-from lite_forms.generators import form_page
+from core.views import form_page
 from lite_forms.submitters import submit_paged_form
 
 from core.auth.views import LoginRequiredMixin

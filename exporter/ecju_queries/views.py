@@ -23,7 +23,7 @@ from exporter.ecju_queries.services import (
 from exporter.goods.services import get_good
 from lite_content.lite_exporter_frontend import strings, ecju_queries
 from lite_forms.components import HiddenField, BackLink
-from lite_forms.generators import form_page, error_page
+from core.views import form_page, error_page
 
 from core.auth.views import LoginRequiredMixin
 

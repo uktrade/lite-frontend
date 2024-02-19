@@ -10,7 +10,7 @@ from exporter.core.constants import CaseTypes
 from core.helpers import convert_dict_to_query_params
 from exporter.core.permissions import validate_is_in_organisation_type
 from exporter.core.services import get_organisations, get_organisation
-from lite_forms.generators import form_page
+from core.views import form_page
 
 from core.auth.views import LoginRequiredMixin
 

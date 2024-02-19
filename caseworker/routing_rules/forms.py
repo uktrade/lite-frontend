@@ -24,7 +24,7 @@ from lite_forms.components import (
     Filter,
     Button,
 )
-from lite_forms.generators import confirm_form
+from core.views import confirm_form
 from lite_forms.helpers import conditional
 from lite_forms.styles import ButtonStyle
 from caseworker.teams.services import get_users_by_team, get_teams, get_team_queues

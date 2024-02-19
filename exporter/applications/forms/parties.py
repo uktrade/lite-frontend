@@ -22,7 +22,7 @@ from lite_forms.components import (
     TextInput,
     FormGroup,
 )
-from lite_forms.generators import confirm_form
+from core.views import confirm_form
 
 
 def party_create_new_or_copy_existing_form(application_id, back_url):

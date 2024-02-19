@@ -13,7 +13,7 @@ from exporter.applications.services import (
     get_application_countries,
     get_application,
 )
-from lite_forms.generators import error_page
+from core.views import error_page
 from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin

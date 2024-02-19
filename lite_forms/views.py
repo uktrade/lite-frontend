@@ -7,7 +7,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
 from lite_forms.components import FormGroup, Form
-from lite_forms.generators import form_page
+from core.views import form_page
 from lite_forms.helpers import (
     handle_lists,
     get_next_form,

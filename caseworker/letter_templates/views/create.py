@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
-from lite_forms.generators import form_page, error_page
+from core.views import form_page, error_page
 from lite_forms.submitters import submit_paged_form
 
 from caseworker.letter_templates.forms import add_letter_template

@@ -43,7 +43,7 @@ from caseworker.cases.services import (
 from core.builtins.custom_tags import filter_advice_by_level
 from caseworker.core.services import get_denial_reasons
 from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, GenerateGoodsDecisionForm
-from lite_forms.generators import form_page, error_page
+from core.views import form_page, error_page
 from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin

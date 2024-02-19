@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 
 from caseworker.cases.services import get_case_types, get_decisions
 from lite_forms.components import Option
-from lite_forms.generators import form_page
+from core.views import form_page
 from lite_forms.submitters import submit_single_form
 
 from caseworker.letter_templates.forms import edit_letter_template

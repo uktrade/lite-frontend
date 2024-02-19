@@ -26,7 +26,7 @@ from lite_forms.components import (
     Button,
     Checkboxes,
 )
-from lite_forms.generators import success_page
+from core.views import success_page
 from lite_forms.helpers import conditional
 from lite_forms.styles import HeadingStyle
 from exporter.organisation.sites.services import get_sites

@@ -4,7 +4,7 @@ from django.views.generic.base import View
 from caseworker.auth.services import authenticate_gov_user
 from django.conf import settings
 from lite_content.lite_internal_frontend import strings
-from lite_forms.generators import error_page
+from core.views import error_page
 from core.auth import views as auth_views
 
 

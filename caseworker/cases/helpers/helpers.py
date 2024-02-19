@@ -1,5 +1,5 @@
 from lite_content.lite_internal_frontend.cases import GenerateDocumentsPage
-from lite_forms.generators import error_page
+from core.views import error_page
 
 
 def generate_document_error_page():

@@ -18,7 +18,7 @@ from caseworker.cases.services import (
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.queues.services import get_queue
 from caseworker.activities.forms import NotesAndTimelineForm
-from lite_forms.generators import error_page
+from core.views import error_page
 
 
 class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormView):

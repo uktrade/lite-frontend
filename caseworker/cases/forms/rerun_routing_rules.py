@@ -1,4 +1,4 @@
-from lite_forms.generators import confirm_form
+from core.views import confirm_form
 from lite_content.lite_internal_frontend.cases import Manage
 
 

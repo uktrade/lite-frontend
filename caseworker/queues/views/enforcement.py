@@ -6,7 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import TemplateView
 
 from lite_content.lite_internal_frontend.cases import CasesListPage
-from lite_forms.generators import error_page
+from core.views import error_page
 
 from core.auth.views import LoginRequiredMixin
 

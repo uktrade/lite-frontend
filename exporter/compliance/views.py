@@ -20,7 +20,7 @@ from exporter.compliance.services import (
     get_case_visit_report,
 )
 from lite_content.lite_exporter_frontend.compliance import OpenReturnsForm
-from lite_forms.generators import success_page
+from core.views import success_page
 from lite_forms.views import MultiFormView
 
 from core.auth.views import LoginRequiredMixin

@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 
 from exporter.applications.helpers.summaries import application_summary
 from lite_content.lite_exporter_frontend import strings
-from lite_forms.generators import confirm_form
+from core.views import confirm_form
 
 
 def withdraw_application_confirmation(application, pk):

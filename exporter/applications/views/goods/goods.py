@@ -121,7 +121,7 @@ from exporter.goods.services import (
     post_goods,
 )
 from lite_forms.components import BackLink, FiltersBar, TextInput
-from lite_forms.generators import error_page, form_page
+from core.views import error_page, form_page
 from lite_forms.views import SingleFormView
 
 

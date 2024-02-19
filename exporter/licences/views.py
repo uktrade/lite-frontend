@@ -18,7 +18,7 @@ from exporter.licences.services import get_licences, get_licence, get_nlr_letter
 from exporter.organisation.members.services import get_user
 
 from lite_content.lite_exporter_frontend.licences import LicencesList, LicencePage
-from lite_forms.generators import error_page
+from core.views import error_page
 
 from core.auth.views import LoginRequiredMixin
 

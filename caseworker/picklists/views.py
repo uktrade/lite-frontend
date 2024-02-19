@@ -13,7 +13,7 @@ from lite_content.lite_internal_frontend.picklists import (
     EditPicklistItemForm,
 )
 from lite_forms.components import FiltersBar, TextInput, HiddenField
-from lite_forms.generators import confirm_form
+from core.views import confirm_form
 from lite_forms.views import SingleFormView
 from caseworker.picklists.enums import PicklistCategories
 from caseworker.picklists.forms import (

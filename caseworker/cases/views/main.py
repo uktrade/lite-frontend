@@ -32,7 +32,7 @@ from lite_content.lite_internal_frontend.cases import (
 )
 
 from lite_forms.components import FiltersBar, TextInput
-from lite_forms.generators import error_page, form_page
+from core.views import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
 

@@ -85,7 +85,7 @@ from exporter.goods.services import (
 from lite_content.lite_exporter_frontend import goods
 from lite_content.lite_exporter_frontend.goods import AttachDocumentForm, CreateGoodForm
 from lite_forms.components import BackLink, FiltersBar, TextInput
-from lite_forms.generators import error_page, form_page
+from core.views import error_page, form_page
 from lite_forms.views import SingleFormView
 
 log = logging.getLogger(__name__)

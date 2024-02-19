@@ -10,7 +10,7 @@ from caseworker.core.helpers import generate_activity_filters
 from caseworker.core.services import get_countries, get_control_list_entries
 from lite_content.lite_internal_frontend import open_general_licences as open_general_licences_strings, generic
 from lite_forms.components import FiltersBar, Select, TextInput, AutocompleteInput, BackLink, HiddenField
-from lite_forms.generators import confirm_form
+from core.views import confirm_form
 from lite_forms.views import SummaryListFormView, SingleFormView
 from caseworker.open_general_licences import constants
 from caseworker.open_general_licences.enums import OpenGeneralExportLicences

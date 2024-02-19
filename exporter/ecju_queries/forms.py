@@ -7,7 +7,7 @@ from lite_forms.components import (
     Button,
     FileUpload,
 )
-from lite_forms.generators import confirm_form
+from core.views import confirm_form
 from lite_content.lite_exporter_frontend import ecju_queries
 
 

@@ -27,7 +27,7 @@ from exporter.applications.services import (
     get_appeal_document,
 )
 from lite_content.lite_exporter_frontend import strings
-from lite_forms.generators import form_page, error_page
+from core.views import form_page, error_page
 
 from core.auth.views import LoginRequiredMixin
 

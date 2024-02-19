@@ -7,7 +7,7 @@ from urllib.parse import urlencode
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from lite_forms.generators import error_page
+from core.views import error_page
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import (

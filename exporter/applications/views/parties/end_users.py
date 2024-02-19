@@ -50,7 +50,7 @@ from exporter.core.helpers import (
     str_to_bool,
 )
 from core.wizard.views import BaseSessionWizardView
-from lite_forms.generators import error_page
+from core.views import error_page
 
 from core.auth.views import LoginRequiredMixin
 

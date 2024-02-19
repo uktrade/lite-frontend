@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from caseworker.letter_templates.helpers import get_template_content
 from caseworker.letter_templates.services import get_letter_paragraphs, get_letter_preview
 from lite_content.lite_internal_frontend.letter_templates import LetterTemplatesPage
-from lite_forms.generators import error_page
+from core.views import error_page
 from caseworker.picklists.services import get_picklists_for_input
 
 from core.auth.views import LoginRequiredMixin
