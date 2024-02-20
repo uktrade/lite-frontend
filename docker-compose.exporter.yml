@@ -25,9 +25,6 @@ services:
       - ./exporter.env
     ports:
       - 8300:8300
-    volumes:
-      - ./ui_tests/screenshots:/app/ui_tests/screenshots
-      - ./test_results:/app/test_results
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
