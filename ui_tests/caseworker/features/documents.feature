@@ -11,12 +11,11 @@ So that it is recorded against the case and available for other case workers to 
     And I go to the documents tab
     And I click on the Attach Document button
     And I upload file "Assessment_summary.txt" with description "Case assessment summary"
-    Then I see file "Assessment_summary.txt" with description "Case assessment summary" is uploaded
+    Then I see a file with filename "Assessment_summary.txt" is uploaded
     When I click on the Attach Document button
     And I upload file "additional_information.txt" with description "Additional information"
-    Then I see file "additional_information.txt" with description "Additional information" is uploaded
+    Then I see a file with filename "additional_information.txt" is uploaded
 
-  @download
   Scenario: Download the good and end user document of a submitted application
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created

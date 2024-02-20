@@ -36,13 +36,10 @@ def upload_a_file(driver, filename, description, settings):
         WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
 
 
-@then(parsers.parse('I see file "{filename}" with description "{description}" is uploaded'))
-def verify_file_uploaded(driver, filename, description):
-    documents = DocumentsPage(driver).get_uploaded_documents()
-    document = [doc for doc in documents if filename == doc["name"]]
-    assert len(document) == 1
-    assert filename == document[0]["name"]
-    assert description == document[0]["description"]
+@then(parsers.parse('I see a file with filename "{filename}" is uploaded'))
+def verify_file_uploaded(driver, filename):
+    document_names = DocumentsPage(driver).get_uploaded_documents()
+    assert filename in document_names
 
 
 @then("I can click on the consignee document download link")

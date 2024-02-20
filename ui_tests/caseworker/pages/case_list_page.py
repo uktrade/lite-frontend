@@ -162,7 +162,7 @@ class CaseListPage(BasePage):
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
         self.search_for_queue(queue_name)
-        element = self.driver.find_element(by=By.CLASS_NAME, value='app-menu__item--subtitle')
+        element = self.driver.find_element(by=By.CLASS_NAME, value="app-menu__item--subtitle")
         assert queue_name in element.text
         element.click()
 
