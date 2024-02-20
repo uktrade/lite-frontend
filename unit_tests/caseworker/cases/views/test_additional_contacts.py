@@ -37,21 +37,3 @@ def test_case_page_unallocated_user_does_not_see_add_contact_button(authorized_c
 
     add_a_contact_button = soup.find(id="button-add-a-contact")
     assert add_a_contact_button is None
-
-
-def test_case_page_allocated_user_can_see_add_contact_button(
-    authorized_client,
-    data_standard_case,
-    queue_pk,
-    mock_gov_user,
-    assign_user_to_case,
-):
-    assign_user_to_case(mock_gov_user, data_standard_case)
-
-    url = reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
-
-    response = authorized_client.get(url)
-    soup = BeautifulSoup(response.content, "html.parser")
-
-    add_a_contact_button = soup.find(id="button-add-a-contact")
-    assert add_a_contact_button is not None

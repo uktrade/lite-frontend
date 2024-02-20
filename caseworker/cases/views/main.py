@@ -105,7 +105,6 @@ class CaseTabsMixin:
             Tabs.QUICK_SUMMARY,
             Tabs.DETAILS,
             Tabs.LICENCES,
-            Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
         ]
