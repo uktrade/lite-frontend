@@ -1,6 +1,3 @@
-import os
-import tempfile
-
 from pytest_bdd import when, then, scenarios, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
@@ -20,20 +17,18 @@ def click_attach_documents(driver):
 
 
 @when(parsers.parse('I upload file "{filename}" with description "{description}"'))
-def upload_a_file(driver, filename, description, settings):
+def upload_a_file(driver, filename, description, tmp_path):
     attach_document_page = AttachDocumentPage(driver)
 
-    with tempfile.TemporaryDirectory() as temp_dir:
-        named_file = os.path.join(temp_dir, filename)
-        with open(named_file, "w") as f:
-            f.write("file contents")
+    named_file = tmp_path / filename
+    named_file.write_text("file contents")
 
-        attach_document_page.choose_file(named_file)
-        attach_document_page.enter_description(description)
+    attach_document_page.choose_file(str(named_file))
+    attach_document_page.enter_description(description)
 
-        old_page = driver.find_element(by=By.TAG_NAME, value="html")
-        attach_document_page.click_submit_btn()
-        WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
+    old_page = driver.find_element(by=By.TAG_NAME, value="html")
+    attach_document_page.click_submit_btn()
+    WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
 
 
 @then(parsers.parse('I see a file with filename "{filename}" is uploaded'))
