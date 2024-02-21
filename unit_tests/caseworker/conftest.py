@@ -71,8 +71,6 @@ def data_case_types():
         {"key": "eua", "value": "End User Advisory Query"},
         {"key": "ogtcl", "value": "Open General Trade Control Licence"},
         {"key": "ogtl", "value": "Open General Transhipment Licence"},
-        {"key": "comp_c", "value": "Compliance Site Case"},
-        {"key": "comp_v", "value": "Compliance Visit Case"},
     ]
 
 

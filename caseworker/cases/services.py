@@ -377,62 +377,6 @@ def get_blocking_flags(request, case_pk):
     return data.json()
 
 
-def get_compliance_licences(request, case_id, reference, page):
-    data = client.get(
-        request,
-        f"/compliance/{case_id}/licences/?reference={reference}&page={page}",
-    )
-    return data.json()
-
-
-def post_create_compliance_visit(request, case_id):
-    data = client.post(request, f"/compliance/site/{case_id}/visit/", data={})
-    return data
-
-
-def get_compliance_visit_case(request, case_id):
-    data = client.get(request, f"/compliance/visit/{case_id}")
-    return data.json()
-
-
-def patch_compliance_visit_case(request, case_id, json):
-    if "visit_date_day" in json:
-        json["visit_date"] = format_date(json, "visit_date_")
-    data = client.patch(request, f"/compliance/visit/{case_id}", data=json)
-    return data.json(), data.status_code
-
-
-def get_compliance_people_present(request, case_id):
-    data = client.get(request, f"/compliance/visit/{case_id}/people-present/?disable_pagination=True")
-    return data.json()
-
-
-def post_compliance_person_present(request, case_id, json):
-    data = client.post(request, f"/compliance/visit/{case_id}/people-present/", data=json)
-
-    # Translate errors to be more user friendly, from
-    #   {'errors': [{}, {'name': ['This field may not be blank.'], 'job_title': ['This field may not be blank.']}, ...]}
-    #   to
-    #   {'errors': {'name-2': ['This field may not be blank'], 'job-title-2': ['This field may not be blank'], ...}}
-    # This allows the errors to specify the specific textbox input for name/job-title inputs allowing the users
-    #   to see the exact field it didn't validate on.
-    if "errors" in data.json():
-        errors = data.json()["errors"]
-        translated_errors = {}
-
-        index = 1
-        for error in errors:
-            if error:
-                if "name" in error:
-                    translated_errors[f"name-{index}"] = [f"{index}. " + error.pop("name")[0]]
-                if "job_title" in error:
-                    translated_errors[f"job-title-{index}"] = [f"{index}. " + error.pop("job_title")[0]]
-            index += 1
-
-        return {**json, "errors": translated_errors}, data.status_code
-    return data.json(), data.status_code
-
-
 def get_case_sub_statuses(request, case_id):
     response = client.get(request, f"/applications/{case_id}/sub-statuses/")
     response.raise_for_status()
