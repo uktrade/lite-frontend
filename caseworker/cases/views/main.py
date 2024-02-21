@@ -39,7 +39,6 @@ from lite_forms.views import SingleFormView
 from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.additional_contacts import add_additional_contact_form
-from caseworker.cases.forms.assign_users import assign_case_officer_form
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import change_status_form
 from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
@@ -54,8 +53,6 @@ from caseworker.cases.services import (
     get_case,
     post_case_notes,
     put_case_queues,
-    put_case_officer,
-    delete_case_officer,
     put_unassign_queues,
     post_case_additional_contacts,
     put_rerun_case_routing_rules,
@@ -552,42 +549,6 @@ class Document(View):
             document["s3_key"],
             document["name"],
         )
-
-
-class CaseOfficer(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        case = get_case(request, self.object_pk)
-        self.data = {}
-        if case.case_officer:
-            self.data = {"gov_user_pk": case.case_officer["id"]}
-        self.form = assign_case_officer_form(
-            request,
-            case.case_officer,
-            self.kwargs["queue_pk"],
-            self.object_pk,
-            is_compliance=case.case_type["type"]["key"] == CaseType.COMPLIANCE.value,
-        )
-        self.context = {"case": case}
-        self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
-        self.get_action()
-
-    def get_action(self):
-        action = self.get_validated_data().get("_action")
-        case_type = self.context["case"]["case_type"]["type"]["key"]
-
-        if action == "delete":
-            self.success_message = (
-                "Inspector removed" if case_type == CaseType.COMPLIANCE.value else "Case officer removed"
-            )
-            return delete_case_officer
-        else:
-            self.success_message = (
-                "Inspector set successfully"
-                if case_type == CaseType.COMPLIANCE.value
-                else "Case officer set successfully"
-            )
-            return put_case_officer
 
 
 class RerunRoutingRules(SingleFormView):
