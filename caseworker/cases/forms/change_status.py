@@ -1,28 +1,23 @@
-from django.urls import reverse
+from django import forms
 
-from lite_content.lite_internal_frontend import cases
-from lite_forms.components import Form, Option, Select, BackLink, TextArea, DetailComponent
+from core.common.forms import BaseForm
 
 
-def change_status_form(queue, case, statuses):
-    return Form(
-        title=cases.ChangeStatusPage.TITLE,
-        description=cases.ChangeStatusPage.DESCRIPTION,
-        questions=[
-            Select(
-                name="status",
-                options=[Option(status["key"], status["value"]) for status in statuses],
-                include_default_select=False,
-            ),
-            DetailComponent(
-                title=cases.ChangeStatusPage.NOTE,
-                components=[
-                    TextArea(name="note", classes=["govuk-!-margin-0"]),
-                ],
-            ),
-        ],
-        back_link=BackLink(
-            url=reverse("cases:case", kwargs={"queue_pk": queue["id"], "pk": case["id"], "tab": "details"})
-        ),
-        container="case",
+class ChangeStatusForm(BaseForm):
+    class Layout:
+        DOCUMENT_TITLE = "Change status of the case"
+        TITLE = "Change case status"
+        SUBMIT_BUTTON_TEXT = "Save"
+
+    status = forms.ChoiceField(
+        choices=[],
+        label="",
+        error_messages={"required": "Select a status to save"},
     )
+
+    def get_layout_fields(self):
+        return ("status",)
+
+    def __init__(self, *args, statuses, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["status"].choices += statuses

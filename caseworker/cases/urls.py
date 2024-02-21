@@ -20,7 +20,7 @@ urlpatterns = [
     path("", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True, "tab": "default"}),
     path("case-notes/", main.CaseNotes.as_view(), name="case_notes"),
     path("im-done/", main.ImDoneView.as_view(), name="done"),
-    path("change-status/", main.ChangeStatus.as_view(), name="manage"),
+    path("change-status/", main.ChangeStatus.as_view(), name="change_status"),
     path("change-sub-status/", main.ChangeSubStatus.as_view(), name="change_sub_status"),
     path("move/", main.MoveCase.as_view(), name="move"),
     path("additional-contacts/add/", main.AddAnAdditionalContact.as_view(), name="add_additional_contact"),
