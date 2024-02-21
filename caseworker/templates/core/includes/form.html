@@ -12,7 +12,13 @@
     <div class="govuk-body">
         <h1 class="govuk-label-wrapper">
             <label class="govuk-label--l" for="filter-box">
-                Who do you want to allocate as Licensing Unit case officer ?
+                {% block title %}
+                    {% if form_title %}
+                        {{ form_title }}
+                    {% else %}
+                        Who do you want to allocate as Licensing Unit case officer ?
+                    {% endif %}
+                {% endblock %}
             </label>
         </h1>
         {% crispy form %}

@@ -38,7 +38,7 @@ from lite_forms.views import SingleFormView
 
 from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.constants import CaseType
-from caseworker.cases.forms.additional_contacts import add_additional_contact_form
+from caseworker.cases.forms.additional_contacts import AddAdditionalContactForm
 from caseworker.cases.forms.assign_users import assign_case_officer_form
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import change_status_form
@@ -72,7 +72,7 @@ from caseworker.cases.services import (
 from caseworker.compliance.services import get_compliance_licences
 from caseworker.cases.services import get_case_basic_details
 from caseworker.core.objects import Tab
-from caseworker.core.services import get_status_properties, get_permissible_statuses
+from caseworker.core.services import get_countries, get_status_properties, get_permissible_statuses
 from caseworker.core.constants import Permission
 from caseworker.external_data.services import search_denials
 from caseworker.queues.services import get_queue
@@ -491,17 +491,40 @@ class MoveCase(SingleFormView):
         )
 
 
-class AddAnAdditionalContact(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.form = add_additional_contact_form(request, self.kwargs["queue_pk"], self.object_pk)
-        self.action = post_case_additional_contacts
-        self.success_message = cases.CasePage.AdditionalContactsTab.SUCCESS_MESSAGE
-        self.context = {"case": get_case(request, self.object_pk)}
-        self.success_url = reverse(
+class AddAnAdditionalContact(LoginRequiredMixin, CaseContextBasicMixin, FormView):
+    template_name = "core/form.html"
+    form_class = AddAdditionalContactForm
+    success_url = reverse_lazy("cases:case")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        country, _ = get_countries(self.request)
+        if country:
+            kwargs["country"] = [("", "Select a country")] + [
+                (country["id"], country["name"]) for country in country["countries"]
+            ]
+
+        return kwargs
+
+    def form_valid(self, form):
+        post_case_additional_contacts(self.request, self.kwargs["pk"], form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = "Add an additional contact"
+        context["back_link_text"] = "Back to Contacts"
+        context["back_link_url"] = reverse_lazy(
             "cases:case",
-            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "additional-contacts"},
+            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "tab": "additional-contacts"},
         )
+        return context
+
+    def get_case_url(self, **kwargs):
+        return reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+
+    def get_success_url(self) -> str:
+        return self.get_case_url()
 
 
 class AttachDocuments(TemplateView):
