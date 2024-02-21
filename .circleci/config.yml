@@ -131,6 +131,11 @@ commands:
         default: auto
         type: string
     steps:
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+            name: "Install dependencies"
+            command: pip3 install pipenv
       - setup_code
       - build_api_image:
           api_branch: <<parameters.api_branch>>
@@ -276,11 +281,6 @@ jobs:
     environment:
       PIPENV_YES: 1
     steps:
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - run:
-            name: "Install dependencies"
-            command: pip3 install pipenv
       - prepare_e2e_tests:
           api_branch: auto
       - run_e2e_caseworker
@@ -295,11 +295,6 @@ jobs:
     environment:
       PIPENV_YES: 1
     steps:
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - run:
-            name: "Install dependencies"
-            command: pip3 install pipenv
       - prepare_e2e_tests:
           api_branch: auto
       - run_e2e_exporter
@@ -314,11 +309,6 @@ jobs:
     environment:
       PIPENV_YES: 1
     steps:
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - run:
-            name: "Install dependencies"
-            command: pip3 install pipenv
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
       - run_e2e_caseworker
@@ -333,11 +323,6 @@ jobs:
     environment:
       PIPENV_YES: 1
     steps:
-      - browser-tools/install-chrome
-      - browser-tools/install-chromedriver
-      - run:
-            name: "Install dependencies"
-            command: pip3 install pipenv
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
       - run_e2e_exporter
