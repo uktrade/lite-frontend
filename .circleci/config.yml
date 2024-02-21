@@ -270,6 +270,7 @@ jobs:
   caseworker_e2e_test:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: large
     parallelism: 10
     environment:
@@ -288,6 +289,7 @@ jobs:
   exporter_e2e_test:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: large
     parallelism: 2
     environment:
