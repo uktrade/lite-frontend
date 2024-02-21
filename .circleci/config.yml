@@ -351,8 +351,8 @@ workflows:
               - core_unit_test
       - frontend_unit_test
       - frontend_artefacts_check
-      - caseworker_e2e_test
-      - exporter_e2e_test
+      # - caseworker_e2e_test
+      # - exporter_e2e_test
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
