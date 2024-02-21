@@ -202,11 +202,12 @@ class ApplicationPage(BasePage):
     def get_text_of_inactive_entities_table(self):
         return self.driver.find_element(by=By.ID, value=self.TABLE_INACTIVE_ENTITIES_ID).text
 
-    def good_document_link_is_enabled(self):
-        return self.driver.find_element(by=By.ID, value=self.DOWNLOAD_GOOD_DOCUMENT).is_enabled()
+    def consignee_document_link_is_enabled(self):
+        # Link is only available if the document is uploaded
+        return self.driver.find_element(by=By.PARTIAL_LINK_TEXT, value="Consignee document").is_enabled()
 
     def end_user_document_link_is_enabled(self):
-        return self.driver.find_element(by=By.ID, value=self.DOWNLOAD_END_USER_DOCUMENT).is_enabled()
+        return self.driver.find_element(by=By.PARTIAL_LINK_TEXT, value="End-user document").is_enabled()
 
     def get_document_element(self):
         return self.driver.find_element(by=By.CSS_SELECTOR, value=self.DOCUMENTS_BTN)
