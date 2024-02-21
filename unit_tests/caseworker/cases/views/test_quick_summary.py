@@ -99,11 +99,10 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
         expected_product_name = good["good"]["name"]
         assert expected_product_name in table_text
 
-    val = Decimal()
     expected_total_value = Decimal(0)
     for good in data_standard_case["case"]["data"]["goods"]:
         expected_total_value += Decimal(good["value"])
-    assert f"£{expected_total_value}" in table_text
+    assert f"£,{expected_total_value}" in table_text
 
     for good in data_standard_case["case"]["data"]["goods"]:
         for cle in good["control_list_entries"]:

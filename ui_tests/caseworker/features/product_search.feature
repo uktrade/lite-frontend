@@ -97,7 +97,7 @@ Feature: I want to efficiently search for products created and used by Exporters
             "Report summary": "components for accelerometers",
             "Assessment notes": "components for accelerometers",
             "Quantity": "64 items",
-            "Value": "£256.32"
+            "Value": "£,256.32"
           }
         ]
       }
@@ -121,7 +121,7 @@ Feature: I want to efficiently search for products created and used by Exporters
             "Report summary": "technology for chemical mixtures",
             "Assessment notes": "technology for chemical mixtures",
             "Quantity": "64 items",
-            "Value": "£256.32"
+            "Value": "£,256.32"
           }
         ]
       }
