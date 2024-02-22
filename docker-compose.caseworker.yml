@@ -27,9 +27,6 @@ services:
       - ./caseworker.env
     ports:
       - 8200:8200
-    volumes:
-      - ./ui_tests/screenshots:/app/ui_tests/screenshots
-      - ./test_results:/app/test_results
     entrypoint: ["/bin/sh","-c"]
     command:
     - |

@@ -8,8 +8,8 @@ else
 	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
 endif
 
-wait-for-caseworker = dockerize -wait http://localhost:8200/healthcheck -timeout 5m -wait-retry-interval 5s
-wait-for-exporter = dockerize -wait http://localhost:8300/healthcheck -timeout 5m -wait-retry-interval 5s
+wait-for-caseworker = dockerize -wait http://caseworker:8200/healthcheck -timeout 5m -wait-retry-interval 5s
+wait-for-exporter = dockerize -wait http://exporter:8300/healthcheck -timeout 5m -wait-retry-interval 5s
 
 ifdef CI
 	start-command = up --build --force-recreate -d
@@ -97,11 +97,11 @@ stop-exporter:
 
 caseworker-e2e-selenium-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseworker' ***"
-	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker) && pipenv run pytest --headless --chrome-binary-location=/usr/bin/chromium -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker'
+	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker)' && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker
 
 exporter-e2e-selenium-test:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
-	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter) && pipenv run pytest --headless --chrome-binary-location=/usr/bin/chromium -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter'
+	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter)' && PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter
 
 build-exporter:
 	$(docker-e2e-exporter) build
