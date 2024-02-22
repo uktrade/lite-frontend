@@ -141,8 +141,11 @@ def i_attach_updated_file(driver, enforcement_check_import_xml_file_path):  # no
     file_input = driver.find_element(by=By.NAME, value="file")
     file_input.clear()
     file_input.send_keys(str(enforcement_check_import_xml_file_path))
+
+    old_page = driver.find_element(by=By.TAG_NAME, value="html")
     upload_btn = driver.find_element(by=By.XPATH, value="//button[@type='submit']")
     upload_btn.click()
+    WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
 
     banner = driver.find_element(by=By.CLASS_NAME, value="app-snackbar__content")
     assert "Enforcement XML imported successfully" in banner.text
