@@ -121,7 +121,6 @@ urlpatterns = [
     path("activities/", include("caseworker.activities.urls")),
     # tabs
     path("<str:tab>/", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True}),
-    path("<str:tab>/give-advice/", advice.GiveAdvice.as_view(), name="give_advice"),
     # Finalisation actions
     path(
         "letters/select-inform-template/",
