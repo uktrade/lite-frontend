@@ -16,7 +16,7 @@ from requests.models import PreparedRequest
 from .forms import LoginForm
 
 
-MOCK_SSO_ACCESS_TOKEN_KEY = "MOCK_SSO_ACCESS_TOKEN_KEY"  # nosec B105
+MOCK_SSO_ACCESS_TOKEN_CACHE_KEY = "MOCK_SSO_ACCESS_TOKEN_CACHE_KEY"  # nosec B105
 MOCK_SSO_EMAIL_CACHE_KEY = "MOCK_SSO_EMAIL_CACHE_KEY"
 MOCK_SSO_EMAIL_SESSION_KEY = "MOCK_SSO_EMAIL_SESSION_KEY"
 
@@ -26,7 +26,7 @@ def get_email_cache_key_from_code(code):
 
 
 def get_email_cache_key_from_access_token(access_token):
-    return f"{MOCK_SSO_EMAIL_CACHE_KEY}-access-token-{access_token}"
+    return f"{MOCK_SSO_ACCESS_TOKEN_CACHE_KEY}-access-token-{access_token}"
 
 
 class Authorize(FormView):
