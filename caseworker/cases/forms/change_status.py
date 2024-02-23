@@ -5,7 +5,6 @@ from core.common.forms import BaseForm
 
 class ChangeStatusForm(BaseForm):
     class Layout:
-        DOCUMENT_TITLE = "Change status of the case"
         TITLE = "Change case status"
         SUBMIT_BUTTON_TEXT = "Save"
 
