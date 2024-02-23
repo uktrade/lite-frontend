@@ -38,7 +38,6 @@ from lite_forms.views import SingleFormView
 
 from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.constants import CaseType
-from caseworker.cases.forms.additional_contacts import add_additional_contact_form
 from caseworker.cases.forms.assign_users import assign_case_officer_form
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import change_status_form
@@ -57,7 +56,6 @@ from caseworker.cases.services import (
     put_case_officer,
     delete_case_officer,
     put_unassign_queues,
-    post_case_additional_contacts,
     put_rerun_case_routing_rules,
     patch_case,
     put_application_status,
@@ -105,7 +103,6 @@ class CaseTabsMixin:
             Tabs.QUICK_SUMMARY,
             Tabs.DETAILS,
             Tabs.LICENCES,
-            Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
         ]
@@ -488,19 +485,6 @@ class MoveCase(SingleFormView):
         self.success_message = cases.Manage.MoveCase.SUCCESS_MESSAGE
         self.success_url = reverse_lazy(
             "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
-        )
-
-
-class AddAnAdditionalContact(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.form = add_additional_contact_form(request, self.kwargs["queue_pk"], self.object_pk)
-        self.action = post_case_additional_contacts
-        self.success_message = cases.CasePage.AdditionalContactsTab.SUCCESS_MESSAGE
-        self.context = {"case": get_case(request, self.object_pk)}
-        self.success_url = reverse(
-            "cases:case",
-            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "additional-contacts"},
         )
 
 

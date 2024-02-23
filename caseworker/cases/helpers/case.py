@@ -42,7 +42,6 @@ class Tabs:
     QUICK_SUMMARY = Tab("quick-summary", CasePage.Tabs.QUICK_SUMMARY, "quick-summary")
     DOCUMENTS = Tab("documents", CasePage.Tabs.DOCUMENTS, "documents")
     LICENCES = Tab("licences", CasePage.Tabs.LICENCES, "licences")
-    ADDITIONAL_CONTACTS = Tab("additional-contacts", CasePage.Tabs.ADDITIONAL_CONTACTS, "additional-contacts")
     ECJU_QUERIES = Tab("ecju-queries", CasePage.Tabs.ECJU_QUERIES, "ecju-queries")
     ACTIVITY = Tab("activity", CasePage.Tabs.CASE_NOTES_AND_TIMELINE, "activity")
 
