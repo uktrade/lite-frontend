@@ -357,11 +357,6 @@ def get_case_additional_contacts(request, pk):
     return response.json()
 
 
-def post_case_additional_contacts(request, pk, json):
-    response = client.post(request, f"/cases/{pk}/additional-contacts/", json)
-    return response.json(), response.status_code
-
-
 def put_rerun_case_routing_rules(request, pk, json):
     response = client.put(request, f"/cases/{pk}/rerun-routing-rules/", {})
     return response.json(), response.status_code
