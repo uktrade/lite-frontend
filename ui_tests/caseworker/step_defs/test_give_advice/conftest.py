@@ -1,6 +1,6 @@
 import time
 
-from pytest_bdd import when, then, parsers, scenarios
+from pytest_bdd import when, then, parsers
 from selenium.webdriver.common.by import By
 
 from tests_common import functions
@@ -12,8 +12,6 @@ from ui_tests.caseworker.pages.generate_decision_documents_page import Generated
 from ui_tests.caseworker.pages.generate_document_page import GeneratedDocument
 from ui_tests.caseworker.pages.give_advice_pages import GiveAdvicePages
 from ui_tests.caseworker.pages.application_page import ApplicationPage
-
-scenarios("../features/give_advice.feature", strict_gherkin=False)
 
 
 @when("I click the recommendations and decision tab")
