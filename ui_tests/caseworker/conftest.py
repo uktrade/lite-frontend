@@ -573,6 +573,18 @@ def click_edit_case_flags_link(driver):  # noqa
     CasePage(driver).click_change_case_flags()
 
 
+@when(parsers.parse('I remove "{flag_name}" flag and submit'))  # noqa
+def click_edit_case_flags_link(driver, flag_name):
+    for checkbox in driver.find_elements(by=By.CLASS_NAME, value="govuk-checkboxes__item"):
+        if checkbox.text == flag_name:
+            input_element = checkbox.find_element(by=By.TAG_NAME, value="input")
+            input_element.click()
+
+    old_page = driver.find_element(by=By.TAG_NAME, value="html")
+    functions.click_submit(driver)
+    WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
+
+
 @given(parsers.parse('the status is set to "{status}"'))  # noqa
 def set_status(api_test_client, context, status):  # noqa
     api_test_client.applications.set_status(context.app_id, status)
@@ -1049,6 +1061,14 @@ def add_products_to_application(api_test_client, context, products_data):
             "value": 256.32,
             "is_good_incorporated": False,
         }
+        if "firearm_details" in product:
+            details = {
+                **product["firearm_details"],
+                "number_of_items": 2,
+                "year_of_manufacture": 2000,
+                "serial_numbers_available": "AVAILABLE",
+            }
+            data["firearm_details"] = details
         good_on_application = api_test_client.applications.goods.add_good_to_draft(context.case_id, data)
         good_on_application_ids.append(good_on_application["id"])
 
@@ -1075,6 +1095,11 @@ def select_product_name_to_assess(driver, name):
 @when(parsers.parse('I assess rating as "{rating}"'))  # noqa
 def assess_product_rating(driver, rating):
     ProductAssessmentPage(driver).assess_rating(rating)
+
+
+@when("I select product is not on the control list")
+def select_product_not_on_control_list(driver):
+    ProductAssessmentPage(driver).check_product_not_on_control_list()
 
 
 @when(parsers.parse('I assess report summary prefix as "{prefix}"'))  # noqa

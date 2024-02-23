@@ -15,6 +15,10 @@ class ProductAssessmentPage(BasePage):
             [rating],
         )
 
+    def check_product_not_on_control_list(self):
+        element = self.driver.find_element(by=By.ID, value="id_does_not_have_control_list_entries")
+        element.click()
+
     def assess_report_summary_prefix(self, ars_prefix):
         ars_prefix_element = self.driver.find_element(by=By.ID, value="report_summary_prefix_container")
         ars_prefix_input = ars_prefix_element.find_element(by=By.ID, value="_report_summary_prefix")
