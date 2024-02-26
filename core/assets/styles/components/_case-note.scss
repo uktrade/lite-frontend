@@ -10,7 +10,7 @@
 			}
 
 			.lite-case-note__controls {
-				border: $govuk-border-width-form-element-error solid $govuk-error-colour;
+				border-color: $govuk-error-colour;
 				border-top-width: 0;
 				padding: govuk-spacing(3) - 2px;
 				padding-top: govuk-spacing(3);
