@@ -82,7 +82,7 @@ commands:
     steps:
       - save_cache:
           name: Save pipenv cache
-          key: pipenv-cache-repo-dir-{{ checksum "Pipfile.lock" }}
+          key: pipenv-cache-repo-dir-v0-{{ checksum "Pipfile.lock" }}
           paths:
             - .venv
 
@@ -90,7 +90,7 @@ commands:
     steps:
       - save_cache:
           name: Save pipenv cache
-          key: pipenv-cache-circleci-dir-{{ checksum "Pipfile.lock" }}
+          key: pipenv-cache-circleci-dir-v0-{{ checksum "Pipfile.lock" }}
           paths:
             - /home/circleci/.local/share/virtualenvs/
 
