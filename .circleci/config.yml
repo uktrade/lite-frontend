@@ -89,6 +89,7 @@ commands:
       alias:
         type: string
     steps:
+      - setup_code
       - run:
           name: Run unit tests
           command: |
@@ -100,6 +101,7 @@ commands:
           root: coverage-output
           paths:
             - .coverage.*
+      - cache_env
 
   build_api_image:
     parameters:
@@ -167,6 +169,7 @@ commands:
 
   finish_e2e_tests:
     steps:
+      - cache_env
       - store_artifacts:
           path: ui_tests/screenshots
       - store_test_results:
@@ -211,10 +214,8 @@ jobs:
       PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
-      - setup_code
       - backend_unit_tests:
           alias: caseworker
-      - cache_env
 
   exporter_unit_test:
     working_directory: ~/repo
@@ -227,7 +228,6 @@ jobs:
       PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
-      - setup_code
       - backend_unit_tests:
           alias: exporter
 
@@ -242,7 +242,6 @@ jobs:
       PYTEST_ADDOPTS: unit_tests/core --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
-      - setup_code
       - backend_unit_tests:
           alias: core
 
@@ -346,19 +345,19 @@ workflows:
   tests:
     when: << pipeline.parameters.run_unit_tests >>
     jobs:
-      # - lint
+      - lint
       - caseworker_unit_test
-      # - exporter_unit_test
-      # - core_unit_test
-      # - check_coverage:
-      #     requires:
-      #         - caseworker_unit_test
-      #         - exporter_unit_test
-      #         - core_unit_test
-      # - frontend_unit_test
-      # - frontend_artefacts_check
-      # - caseworker_e2e_test
-      # - exporter_e2e_test
+      - exporter_unit_test
+      - core_unit_test
+      - check_coverage:
+          requires:
+              - caseworker_unit_test
+              - exporter_unit_test
+              - core_unit_test
+      - frontend_unit_test
+      - frontend_artefacts_check
+      - caseworker_e2e_test
+      - exporter_e2e_test
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
