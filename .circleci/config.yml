@@ -72,16 +72,24 @@ commands:
       - restore_cache:
           keys:
             - pipenv-cache-{{ checksum "Pipfile.lock" }}
+            - pipenv-cache-{{}}
       - run: pipenv install --dev --deploy
       - run: git submodule update --init
 
-  cache_env:
+  cache_env_repo_dir:
     steps:
       - save_cache:
           name: Save pipenv cache
-          key: pipenv-cache-{{ checksum "Pipfile.lock" }}
+          key: pipenv-cache-repo-dir-{{ checksum "Pipfile.lock" }}
           paths:
             - .venv
+
+  cache_env_circleci_dir:
+    steps:
+      - save_cache:
+          name: Save pipenv cache
+          key: pipenv-cache-circleci-dir-{{ checksum "Pipfile.lock" }}
+          paths:
             - /home/circleci/.local/share/virtualenvs/
 
   backend_unit_tests:
@@ -101,7 +109,7 @@ commands:
           root: coverage-output
           paths:
             - .coverage.*
-      - cache_env
+      - cache_env_repo_dir
 
   build_api_image:
     parameters:
@@ -169,7 +177,7 @@ commands:
 
   finish_e2e_tests:
     steps:
-      - cache_env
+      - cache_env_circleci_dir
       - store_artifacts:
           path: ui_tests/screenshots
       - store_test_results:
