@@ -79,7 +79,7 @@ commands:
     steps:
       - save_cache:
           name: Save pipenv cache
-          key: pipenv-cache-{{ checksum "yarn.lock" }}
+          key: pipenv-cache-{{ checksum "Pipfile.lock" }}
           paths:
             - /home/circleci/.local/share/virtualenvs/
 
