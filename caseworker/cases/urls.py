@@ -6,7 +6,6 @@ from caseworker.cases.views import (
     generate_document,
     ecju,
     goods,
-    compliance,
     external_data,
     case_assignments,
     queries,
@@ -117,15 +116,6 @@ urlpatterns = [
         name="reissue_ogl",
     ),
     path("good/<uuid:good_pk>/", goods.GoodDetails.as_view(), name="good"),
-    # Compliance
-    path("create-visit-report/", compliance.CreateVisitReport.as_view(), name="create_visit_report"),
-    path("visit-report/", compliance.VisitReportDetails.as_view(), name="visit_report"),
-    path("people-present/", compliance.PeoplePresent.as_view(), name="people_present"),
-    path("overview/", compliance.Overview.as_view(), name="overview"),
-    path("inspection/", compliance.Inspection.as_view(), name="inspection"),
-    path("compliance-licence/", compliance.ComplianceWithLicences.as_view(), name="compliance_with_licences"),
-    path("knowledge-people/", compliance.KnowledgePeople.as_view(), name="knowledge_of_people"),
-    path("knowledge-products/", compliance.KnowledgeProduct.as_view(), name="knowledge_of_products"),
     path("denials/", main.Denials.as_view(), name="denials"),
     path("activities/", include("caseworker.activities.urls")),
     # tabs
