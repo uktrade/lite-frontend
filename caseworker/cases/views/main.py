@@ -6,7 +6,6 @@ from logging import getLogger
 from http import HTTPStatus
 
 from django.conf import settings
-from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import redirect
@@ -38,9 +37,8 @@ from lite_forms.views import SingleFormView
 
 from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.constants import CaseType
-from caseworker.cases.forms.additional_contacts import add_additional_contact_form
 from caseworker.cases.forms.attach_documents import attach_documents_form
-from caseworker.cases.forms.change_status import change_status_form
+from caseworker.cases.forms.change_status import ChangeStatusForm
 from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
 from caseworker.cases.forms.done_with_case import done_with_case_form
 from caseworker.cases.forms.move_case import move_case_form
@@ -54,9 +52,7 @@ from caseworker.cases.services import (
     post_case_notes,
     put_case_queues,
     put_unassign_queues,
-    post_case_additional_contacts,
     put_rerun_case_routing_rules,
-    patch_case,
     put_application_status,
     put_next_review_date,
     reissue_ogl,
@@ -102,7 +98,6 @@ class CaseTabsMixin:
             Tabs.QUICK_SUMMARY,
             Tabs.DETAILS,
             Tabs.LICENCES,
-            Tabs.ADDITIONAL_CONTACTS,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
         ]
@@ -376,31 +371,65 @@ class ImDoneView(SingleFormView):
         self.success_message = DoneWithCaseOnQueueForm.SUCCESS_MESSAGE.format(case.reference_code)
 
 
-class ChangeStatus(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = str(kwargs["pk"])
-        case = get_case(request, self.object_pk)
-        self.case_type = case.type
-        self.case_sub_type = case.sub_type
-        permissible_statuses = get_permissible_statuses(request, case)
-        self.data = case.data
-        self.form = change_status_form(get_queue(request, kwargs["queue_pk"]), case, permissible_statuses)
-        self.context = {"case": case}
+class ChangeStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    form_class = ChangeStatusForm
+    template_name = "case/form.html"
+    success_message = "Case status successfully changed"
 
-    def get_action(self):
-        if (
-            self.case_type == CaseType.APPLICATION.value
-            or self.case_sub_type == CaseType.HMRC.value
-            or self.case_sub_type == CaseType.EXHIBITION.value
-        ):
-            return put_application_status
-        else:
-            return patch_case
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.case = get_case(self.request, self.kwargs["pk"])
+        except HTTPError:
+            raise Http404()
+
+        if not rules.test_rule("can_user_change_case", self.request, self.case):
+            raise Http404()
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["case"] = self.case
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        statuses = get_permissible_statuses(self.request, self.case)
+        status_choices = [(status["key"], status["value"]) for status in statuses]
+        kwargs["statuses"] = status_choices
+
+        return kwargs
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        status = self.case["data"].get("status")
+        if status:
+            initial["status"] = status["key"]
+
+        return initial
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error changing case status",
+        "Unexpected error changing case status",
+    )
+    def put_case_status(self, request, case_id, data):
+        return put_application_status(request, case_id, data)
+
+    def form_valid(self, form):
+        self.put_case_status(self.request, self.case.id, form.cleaned_data)
+        return super().form_valid(form)
 
     def get_success_url(self):
-        messages.success(self.request, cases.ChangeStatusPage.SUCCESS_MESSAGE)
-        return reverse_lazy(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
+        return reverse(
+            "cases:case",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.case.id,
+                "tab": "details",
+            },
         )
 
 
@@ -485,19 +514,6 @@ class MoveCase(SingleFormView):
         self.success_message = cases.Manage.MoveCase.SUCCESS_MESSAGE
         self.success_url = reverse_lazy(
             "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "details"}
-        )
-
-
-class AddAnAdditionalContact(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.form = add_additional_contact_form(request, self.kwargs["queue_pk"], self.object_pk)
-        self.action = post_case_additional_contacts
-        self.success_message = cases.CasePage.AdditionalContactsTab.SUCCESS_MESSAGE
-        self.context = {"case": get_case(request, self.object_pk)}
-        self.success_url = reverse(
-            "cases:case",
-            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk, "tab": "additional-contacts"},
         )
 
 
