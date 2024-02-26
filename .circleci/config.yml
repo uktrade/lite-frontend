@@ -71,10 +71,10 @@ commands:
           at: ~/repo/tmp
       - restore_cache:
           keys:
-            - pipenv-cache-repo-dir-{{ checksum "Pipfile.lock" }}
+            - pipenv-cache-repo-dir-v0-{{ checksum "Pipfile.lock" }}
       - restore_cache:
           keys:
-            - pipenv-cache-circleci-dir-{{ checksum "Pipfile.lock" }}
+            - pipenv-cache-circleci-dir-v0-{{ checksum "Pipfile.lock" }}
       - run: pipenv install --dev --deploy
       - run: git submodule update --init
 
