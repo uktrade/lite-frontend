@@ -81,6 +81,7 @@ commands:
           name: Save pipenv cache
           key: pipenv-cache-{{ checksum "Pipfile.lock" }}
           paths:
+            - .venv
             - /home/circleci/.local/share/virtualenvs/
 
   backend_unit_tests:
