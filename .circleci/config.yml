@@ -69,8 +69,19 @@ commands:
       - checkout
       - attach_workspace:
           at: ~/repo/tmp
+      - restore_cache:
+          keys:
+            - pipenv-cache-{{ checksum "Pipfile.lock" }}
       - run: pipenv install --dev --deploy
       - run: git submodule update --init
+
+  cache_env:
+    steps:
+      - save_cache:
+          name: Save pipenv cache
+          key: pipenv-cache-{{ checksum "yarn.lock" }}
+          paths:
+            - /home/circleci/.local/share/virtualenvs/
 
   backend_unit_tests:
     parameters:
@@ -202,6 +213,7 @@ jobs:
       - setup_code
       - backend_unit_tests:
           alias: caseworker
+      - cache_env
 
   exporter_unit_test:
     working_directory: ~/repo
