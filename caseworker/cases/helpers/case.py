@@ -42,7 +42,6 @@ class Tabs:
     QUICK_SUMMARY = Tab("quick-summary", CasePage.Tabs.QUICK_SUMMARY, "quick-summary")
     DOCUMENTS = Tab("documents", CasePage.Tabs.DOCUMENTS, "documents")
     LICENCES = Tab("licences", CasePage.Tabs.LICENCES, "licences")
-    ADDITIONAL_CONTACTS = Tab("additional-contacts", CasePage.Tabs.ADDITIONAL_CONTACTS, "additional-contacts")
     ECJU_QUERIES = Tab("ecju-queries", CasePage.Tabs.ECJU_QUERIES, "ecju-queries")
     ACTIVITY = Tab("activity", CasePage.Tabs.CASE_NOTES_AND_TIMELINE, "activity")
 
@@ -69,8 +68,6 @@ class Slices:
     OPEN_GENERAL_LICENCE = Slice("case/slices/open-general-licence.html")
     COMPLIANCE_LICENCES = Slice("case/slices/compliance-licences.html")
     OPEN_LICENCE_RETURNS = Slice("case/slices/open-licence-returns.html", cases.OpenLicenceReturns.TITLE)
-    COMPLIANCE_VISITS = Slice("case/slices/compliance-visits.html", "Visit reports")
-    COMPLIANCE_VISIT_DETAILS = Slice("case/slices/compliance-visit-details.html")
     FREEDOM_OF_INFORMATION = Slice("case/slices/freedom-of-information.html", "Freedom of Information")
     APPEAL_DETAILS = Slice("case/slices/appeal-details.html", "Appeal")
 

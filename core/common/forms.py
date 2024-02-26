@@ -1,6 +1,11 @@
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.choices import Choice
-from crispy_forms_gds.layout import HTML, Layout, Submit
+from crispy_forms_gds.layout import (
+    Div,
+    HTML,
+    Layout,
+    Submit,
+)
 from django import forms
 
 
@@ -32,7 +37,14 @@ class BaseForm(forms.Form):
                 HTML(f'<p class="govuk-hint">{self.Layout.SUBTITLE}</p>'),
             )
 
-        self.helper.layout = Layout(*headings, *self.get_layout_fields(), *self.get_layout_actions())
+        self.helper.layout = Layout(
+            *headings,
+            *self.get_layout_fields(),
+            Div(
+                *self.get_layout_actions(),
+                css_class="govuk-button-group",
+            ),
+        )
 
     def get_layout_fields(self):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")

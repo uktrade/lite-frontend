@@ -6,7 +6,6 @@ from caseworker.cases.views import (
     generate_document,
     ecju,
     goods,
-    compliance,
     external_data,
     case_assignments,
     queries,
@@ -20,10 +19,9 @@ urlpatterns = [
     path("", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True, "tab": "default"}),
     path("case-notes/", main.CaseNotes.as_view(), name="case_notes"),
     path("im-done/", main.ImDoneView.as_view(), name="done"),
-    path("change-status/", main.ChangeStatus.as_view(), name="manage"),
+    path("change-status/", main.ChangeStatus.as_view(), name="change_status"),
     path("change-sub-status/", main.ChangeSubStatus.as_view(), name="change_sub_status"),
     path("move/", main.MoveCase.as_view(), name="move"),
-    path("additional-contacts/add/", main.AddAnAdditionalContact.as_view(), name="add_additional_contact"),
     path("attach/", main.AttachDocuments.as_view(), name="attach_documents"),
     # This needs to be before "case" path b/c the regex in that sinks everything
     path("advice/", include("caseworker.advice.urls")),
@@ -118,20 +116,10 @@ urlpatterns = [
         name="reissue_ogl",
     ),
     path("good/<uuid:good_pk>/", goods.GoodDetails.as_view(), name="good"),
-    # Compliance
-    path("create-visit-report/", compliance.CreateVisitReport.as_view(), name="create_visit_report"),
-    path("visit-report/", compliance.VisitReportDetails.as_view(), name="visit_report"),
-    path("people-present/", compliance.PeoplePresent.as_view(), name="people_present"),
-    path("overview/", compliance.Overview.as_view(), name="overview"),
-    path("inspection/", compliance.Inspection.as_view(), name="inspection"),
-    path("compliance-licence/", compliance.ComplianceWithLicences.as_view(), name="compliance_with_licences"),
-    path("knowledge-people/", compliance.KnowledgePeople.as_view(), name="knowledge_of_people"),
-    path("knowledge-products/", compliance.KnowledgeProduct.as_view(), name="knowledge_of_products"),
     path("denials/", main.Denials.as_view(), name="denials"),
     path("activities/", include("caseworker.activities.urls")),
     # tabs
     path("<str:tab>/", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True}),
-    path("<str:tab>/give-advice/", advice.GiveAdvice.as_view(), name="give_advice"),
     # Finalisation actions
     path(
         "letters/select-inform-template/",

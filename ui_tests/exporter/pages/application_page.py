@@ -1,4 +1,7 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 
 from ui_tests.exporter.pages.BasePage import BasePage
 from ui_tests.exporter.pages.shared import Shared
@@ -55,6 +58,17 @@ class ApplicationPage(BasePage):
             .find_element(by=By.CSS_SELECTOR, value=Shared.NOTIFICATION)
             .text.strip()
         )
+
+    def ecju_query_does_not_have_notifications(self):
+        try:
+            element_not_visible = WebDriverWait(self.driver, 10).until(
+                expected_conditions.invisibility_of_element_located(
+                    (By.CSS_SELECTOR, f"#{self.LINK_ECJU_QUERY_TAB_ID} {Shared.NOTIFICATION}")
+                )
+            )
+            return element_not_visible
+        except TimeoutException:
+            print(f"Element with class {Shared.NOTIFICATION} remained visible throughout the time frame")
 
     def click_generated_documents_tab(self):
         self.driver.find_element(by=By.ID, value=self.LINK_GENERATED_DOCUMENTS_TAB_ID).click()

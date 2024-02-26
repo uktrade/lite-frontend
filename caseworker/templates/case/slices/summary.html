@@ -96,7 +96,7 @@
 			{% if permissible_statuses %}
 				{% if not is_terminal or 'REOPEN_CLOSED_CASES' in permissions %}
 					{% if can_user_change_case %}
-					<a  id="link-change-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:manage' queue.id case.id %}">
+					<a  id="link-change-status" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:change_status' queue.id case.id %}">
 						{% lcs 'generic.CHANGE' %}
 					</a>
 					{% endif %}

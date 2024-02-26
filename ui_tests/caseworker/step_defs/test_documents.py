@@ -1,6 +1,7 @@
-import os
-
 from pytest_bdd import when, then, scenarios, parsers
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.attach_document_page import AttachDocumentPage
@@ -16,29 +17,29 @@ def click_attach_documents(driver):
 
 
 @when(parsers.parse('I upload file "{filename}" with description "{description}"'))
-def upload_a_file(driver, filename, description, settings):
+def upload_a_file(driver, filename, description, tmp_path):
     attach_document_page = AttachDocumentPage(driver)
 
-    # Path gymnastics to get the absolute path for $PWD/../resources/(file_to_upload_x) that works everywhere
-    file_to_upload_abs_path = os.path.join(settings.BASE_DIR, "ui_tests/resources", filename)
+    named_file = tmp_path / filename
+    named_file.write_text("file contents")
 
-    attach_document_page.choose_file(file_to_upload_abs_path)
+    attach_document_page.choose_file(str(named_file))
     attach_document_page.enter_description(description)
+
+    old_page = driver.find_element(by=By.TAG_NAME, value="html")
     attach_document_page.click_submit_btn()
+    WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
 
 
-@then(parsers.parse('file "{filename}" with description "{description}" is on position "{position}"'))
-def check_file2_is_uploaded(driver, filename, description, position):
-    documents_page = DocumentsPage(driver)
-    assert filename in documents_page.get_document_filename_at_position(int(position)), filename + " is not uploaded"
-    assert description in documents_page.get_document_description_at_position(int(position)), (
-        description + " is not uploaded"
-    )
+@then(parsers.parse('I see a file with filename "{filename}" is uploaded'))
+def verify_file_uploaded(driver, filename):
+    document_names = DocumentsPage(driver).get_uploaded_documents()
+    assert filename in document_names
 
 
-@then("I can click on the good document download link")
-def can_click_on_the_good_document_download_link(driver):
-    assert ApplicationPage(driver).good_document_link_is_enabled()
+@then("I can click on the consignee document download link")
+def can_click_on_the_consignee_document_download_link(driver):
+    assert ApplicationPage(driver).consignee_document_link_is_enabled()
 
 
 @then("I can click on the end user document download link")
