@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  browser-tools: circleci/browser-tools@1.4.7
+
 parameters:
   run_ui_tests:
     type: boolean
@@ -84,13 +88,6 @@ commands:
           root: coverage-output
           paths:
             - .coverage.*
-      - run:
-          name: Code coverage report
-          command: |
-            pipenv run coverage xml
-            curl -Os https://uploader.codecov.io/latest/linux/codecov
-            chmod +x codecov
-            ./codecov
 
   build_api_image:
     parameters:
@@ -134,10 +131,27 @@ commands:
         default: auto
         type: string
     steps:
-      - checkout
+      - browser-tools/install-chrome
+      - browser-tools/install-chromedriver
+      - run:
+            name: "Install dependencies"
+            command: pip3 install pipenv
+      - setup_code
       - build_api_image:
           api_branch: <<parameters.api_branch>>
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
+      - run:
+          name: "Add aliases to /etc/hosts"
+          command: |
+            sudo -- sh -c "echo 127.0.0.1 exporter >> /etc/hosts"
+            sudo -- sh -c "echo 127.0.0.1 caseworker >> /etc/hosts"
+            sudo -- sh -c "echo 127.0.0.1 api >> /etc/hosts"
+      - run:
+          name: "Copy env files"
+          command: |
+            cp ci.exporter.env exporter.env
+            cp ci.caseworker.env caseworker.env
+      - run: mkdir test_results
 
   finish_e2e_tests:
     steps:
@@ -261,7 +275,11 @@ jobs:
   caseworker_e2e_test:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: large
+    parallelism: 10
+    environment:
+      PIPENV_YES: 1
     steps:
       - prepare_e2e_tests:
           api_branch: auto
@@ -271,7 +289,11 @@ jobs:
   exporter_e2e_test:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: large
+    parallelism: 2
+    environment:
+      PIPENV_YES: 1
     steps:
       - prepare_e2e_tests:
           api_branch: auto
@@ -281,7 +303,11 @@ jobs:
   caseworker_e2e_test_jenkins:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: large
+    parallelism: 10
+    environment:
+      PIPENV_YES: 1
     steps:
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
@@ -291,7 +317,11 @@ jobs:
   exporter_e2e_test_jenkins:
     machine:
       image: ubuntu-2204:current
+      docker_layer_caching: true
     resource_class: large
+    parallelism: 2
+    environment:
+      PIPENV_YES: 1
     steps:
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>

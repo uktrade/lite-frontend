@@ -61,6 +61,11 @@ def should_see_notification_ecju_queries(driver):
     assert ApplicationPage(driver).ecju_query_notification_count() == "1"
 
 
+@then("I do not see a notification next to ECJU queries")
+def should_not_see_notification_ecju_queries(driver):
+    assert ApplicationPage(driver).ecju_query_does_not_have_notifications()
+
+
 @then(parsers.parse('I see "{query}" as the query under open queries'))
 def should_see_query_in_open_queries(driver, query):
     assert query in ApplicationPage(driver).get_open_queries_text()
