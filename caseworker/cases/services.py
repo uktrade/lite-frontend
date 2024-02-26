@@ -55,8 +55,9 @@ def delete_case_assignment(request, case_id, assignment_id):
 
 # Applications
 def put_application_status(request, pk, json):
-    data = client.put(request, f"/applications/{pk}/status/", json)
-    return data.json(), data.status_code
+    response = client.put(request, f"/applications/{pk}/status/", json)
+    response.raise_for_status()
+    return response.json(), response.status_code
 
 
 def get_finalise_application_goods(request, pk):
