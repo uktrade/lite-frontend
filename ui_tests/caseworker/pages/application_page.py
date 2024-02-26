@@ -35,7 +35,7 @@ class ApplicationPage(BasePage):
     BUTTON_EDIT_DESTINATION_FLAGS_ID = "button-edit-destinations-flags"
     CHECKBOX_INPUT = ".govuk-checkboxes__input"
     MOVE_CASE_BUTTON = "link-change-queues"  # ID
-    STATUS = "status"  # ID
+    STATUS = "id_status"  # ID
     AUDIT_TRAIL_ITEM = ".app-activity__item"  # CSS
     APPLICATION_SUMMARY_BOARD = ".app-case-board"  # CSS
     TABLE_ENTITIES = "table-destinations"  # ID
