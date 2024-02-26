@@ -36,7 +36,6 @@ from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
 
 from caseworker.advice.services import get_advice_tab_context
-from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import ChangeStatusForm
 from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
