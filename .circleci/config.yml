@@ -69,14 +69,46 @@ commands:
       - checkout
       - attach_workspace:
           at: ~/repo/tmp
+      - restore_cache:
+          keys:
+            - pipenv-cache-repo-dir-v1-{{ checksum "Pipfile.lock" }}
       - run: pipenv install --dev --deploy
       - run: git submodule update --init
+
+  setup_code_e2e:
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo/tmp
+      - restore_cache:
+          keys:
+            - pipenv-cache-circleci-dir-v1-{{ checksum "Pipfile.lock" }}
+      - run: pipenv install --dev --deploy
+      - run: git submodule update --init
+
+  cache_env_repo_dir:
+    steps:
+      - save_cache:
+          name: Save pipenv cache
+          key: pipenv-cache-repo-dir-v1-{{ checksum "Pipfile.lock" }}
+          paths:
+            - .venv
+
+  cache_env_circleci_dir:
+    steps:
+      - save_cache:
+          name: Save pipenv cache
+          key: pipenv-cache-circleci-dir-v1-{{ checksum "Pipfile.lock" }}
+          paths:
+            - /home/circleci/.local/share/virtualenvs/
+            - /opt/circleci/.pyenv/versions/
 
   backend_unit_tests:
     parameters:
       alias:
         type: string
     steps:
+      - setup_code
       - run:
           name: Run unit tests
           command: |
@@ -88,6 +120,7 @@ commands:
           root: coverage-output
           paths:
             - .coverage.*
+      - cache_env_repo_dir
 
   build_api_image:
     parameters:
@@ -136,7 +169,7 @@ commands:
       - run:
             name: "Install dependencies"
             command: pip3 install pipenv
-      - setup_code
+      - setup_code_e2e
       - build_api_image:
           api_branch: <<parameters.api_branch>>
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
@@ -155,6 +188,7 @@ commands:
 
   finish_e2e_tests:
     steps:
+      - cache_env_circleci_dir
       - store_artifacts:
           path: ui_tests/screenshots
       - store_test_results:
@@ -199,7 +233,6 @@ jobs:
       PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
-      - setup_code
       - backend_unit_tests:
           alias: caseworker
 
@@ -214,7 +247,6 @@ jobs:
       PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
-      - setup_code
       - backend_unit_tests:
           alias: exporter
 
@@ -229,7 +261,6 @@ jobs:
       PYTEST_ADDOPTS: unit_tests/core --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
-      - setup_code
       - backend_unit_tests:
           alias: core
 
