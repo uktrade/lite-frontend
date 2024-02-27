@@ -36,9 +36,6 @@ def pytest_configure(config):
     # Force mock_sso django application to be activated for test environments;
     # must be activated up front for mock_sso django app urls to be added
     settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
-    settings.MOCK_SSO_USER_EMAIL = "test@example.net"
-    settings.MOCK_SSO_USER_FIRST_NAME = "test"
-    settings.MOCK_SSO_USER_LAST_NAME = "user"
 
 
 @pytest.fixture
@@ -71,8 +68,6 @@ def data_case_types():
         {"key": "eua", "value": "End User Advisory Query"},
         {"key": "ogtcl", "value": "Open General Trade Control Licence"},
         {"key": "ogtl", "value": "Open General Transhipment Licence"},
-        {"key": "comp_c", "value": "Compliance Site Case"},
-        {"key": "comp_v", "value": "Compliance Visit Case"},
     ]
 
 
