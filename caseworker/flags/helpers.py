@@ -14,3 +14,11 @@ def get_matching_flags(items: Dict):
                     return
 
         return flags
+
+
+def has_flag(item, flag_id):
+    for flag in item.get("flags", []):
+        if flag["id"] == flag_id:
+            return True
+
+    return False
