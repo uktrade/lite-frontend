@@ -26,12 +26,10 @@ services:
     tty: true
 
   db:
-    image: eu.gcr.io/sre-docker-registry/lite-db:latest
+    image: "postgres:12"
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=lite-api
-    ports:
-      - 5432:5432
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3

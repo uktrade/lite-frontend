@@ -172,7 +172,6 @@ commands:
       - setup_code_e2e
       - build_api_image:
           api_branch: <<parameters.api_branch>>
-      - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://eu.gcr.io/sre-docker-registry
       - run:
           name: "Add aliases to /etc/hosts"
           command: |
