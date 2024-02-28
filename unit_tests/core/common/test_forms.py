@@ -138,6 +138,21 @@ def test_submit_button(form_class, submit_button_text, rf):
     )
 
 
+def test_actions_wrapped_in_button_group(rf):
+    class ButtonGroupForm(BaseForm):
+        class Layout:
+            TITLE = "Button group form"
+
+        def get_layout_fields(self):
+            return []
+
+    rendered = render_form(rf.get("/"), ButtonGroupForm)
+    assert (
+        f'<div class="govuk-button-group" > <input type="submit" name="submit" value="Continue" class="govuk-button" id="submit-id-submit" /></div>'
+        in rendered
+    )
+
+
 def test_no_get_layout_fields(rf):
     class NoGetLayoutFields(BaseForm):
         class Layout:

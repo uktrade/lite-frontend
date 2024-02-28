@@ -2,32 +2,21 @@ from collections import defaultdict
 from http import HTTPStatus
 
 from django.contrib import messages
-from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.advice import (
-    give_advice_form,
     finalise_goods_countries_form,
     generate_documents_form,
     reissue_finalise_form,
     finalise_form,
 )
 from caseworker.cases.forms.finalise_case import deny_licence_form
-from caseworker.cases.helpers.advice import (
-    get_param_destinations,
-    get_param_goods,
-    flatten_advice_data,
-    prepare_data_for_advice,
-)
 from caseworker.cases.services import (
-    post_user_case_advice,
     coalesce_user_advice,
     coalesce_team_advice,
-    post_team_case_advice,
-    post_final_case_advice,
     clear_team_advice,
     clear_final_advice,
     get_case,
@@ -41,67 +30,11 @@ from caseworker.cases.services import (
     get_open_licence_decision,
 )
 from core.builtins.custom_tags import filter_advice_by_level
-from caseworker.core.services import get_denial_reasons
 from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, GenerateGoodsDecisionForm
 from lite_forms.generators import form_page, error_page
 from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin
-
-
-class GiveAdvice(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.case = get_case(request, self.object_pk)
-        self.tab = kwargs["tab"]
-        self.data = flatten_advice_data(
-            request,
-            self.case,
-            [*get_param_goods(request, self.case), *get_param_destinations(request, self.case)],
-            self.tab,
-        )
-        self.form = give_advice_form(
-            request,
-            self.case,
-            self.tab,
-            kwargs["queue_pk"],
-            get_denial_reasons(request, True, True),
-        )
-        self.context = {
-            "case": self.case,
-            "goods": get_param_goods(request, self.case),
-            "destinations": get_param_destinations(request, self.case),
-        }
-        self.success_message = "Advice posted successfully"
-        self.success_url = (
-            reverse("cases:case", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk, "tab": self.tab})
-            + "?grouped-advice-view="
-            + request.GET.get("grouped-advice-view", "")
-        )
-
-        if self.tab not in ["user-advice", "team-advice", "final-advice"]:
-            raise Http404
-
-    def clean_data(self, data):
-        data["good"] = self.request.GET.getlist("goods")
-        data["goods_type"] = self.request.GET.getlist("goods_types")
-        data["country"] = self.request.GET.getlist("countries")
-        data["third_party"] = self.request.GET.getlist("third_party")
-        data["ultimate_end_user"] = self.request.GET.getlist("ultimate_end_user")
-        data["third_party"] = self.request.GET.getlist("third_party")
-        data["consignee"] = self.request.GET.get("consignee")
-        data["end_user"] = self.request.GET.get("end_user")
-        data["denial_reasons"] = self.request.POST.getlist("denial_reasons[]", [])
-
-        return prepare_data_for_advice(data)
-
-    def get_action(self):
-        if self.tab == "user-advice":
-            return post_user_case_advice
-        elif self.tab == "team-advice":
-            return post_team_case_advice
-        elif self.tab == "final-advice":
-            return post_final_case_advice
 
 
 class CoalesceUserAdvice(LoginRequiredMixin, TemplateView):

@@ -162,7 +162,9 @@ class CaseListPage(BasePage):
     def click_on_queue_name(self, queue_name):
         self.click_on_queue_title()
         self.search_for_queue(queue_name)
-        self.driver.find_elements_by_css_selector('#queues .app-menu__item:not([style="display: none;"])')[0].click()
+        element = self.driver.find_element(by=By.CLASS_NAME, value="app-menu__item--subtitle")
+        assert queue_name in element.text
+        element.click()
 
     def select_filter_status_from_dropdown(self, status):
         Select(self.driver.find_element(by=By.ID, value=self.STATUS_DROPDOWN)).select_by_visible_text(status)

@@ -2,10 +2,6 @@
 	// Add an error state to radio buttons
 	color: $govuk-error-colour;
 
-	&::before {
-		border-width: $govuk-border-width-form-element-error;
-	}
-
 	&::after {
 		color: govuk-colour("black");
 	}

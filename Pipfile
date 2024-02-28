@@ -32,13 +32,14 @@ python-dotenv = "*"
 ipdb = "==0.13.13"
 pytest-mock = "*"
 django-requests-debug-toolbar = "*"
-moto = {version = "*", extras = ["s3"]}
+moto = {version = "~=4.2", extras = ["s3"]}
 requirements-detector = "==1.2.2"
 pylint = "==2.17.7"
 pylint-celery = "==0.3"
 pylint-django = "==2.5.3"
 pylint-flask = "==0.6"
 pylint-plugin-utils = "==0.7"
+pytest-circleci-parallelized = "*"
 
 [packages]
 beautifulsoup4 = "~=4.8.2"
@@ -79,7 +80,7 @@ setuptools = "~=65.5.1"
 rules="~=3.3.0"
 django-extra-views = "~=0.14.0"
 djangorestframework = "~=3.14.0"
-django = "~=4.2.8"
+django = "~=4.2.10"
 
 [requires]
 python_version = "3.9"

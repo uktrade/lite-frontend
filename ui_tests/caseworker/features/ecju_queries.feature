@@ -23,7 +23,6 @@ Feature: I want to create ECJU queries
     And I click the queries tab
     Then I see "Some unique response" as the response under closed queries
 
-  @caseworker_close
   Scenario: Caseworker manually closing query with a response
     # Caseworker creates query
     Given I sign in to SSO or am signed into SSO
