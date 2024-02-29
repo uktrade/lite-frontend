@@ -76,7 +76,7 @@ class HCSATApplicationForm(HCSATminiform):
         ("ALREADY_HAD_ACCOUNT", "I already had an account"),
         ("VERY_DIFFICULT", "Very difficult"),
         ("DIFFICULT", "Difficult"),
-        ("NEUTRAL", "Neither easy nor difficult"),
+        ("NEITHER", "Neither easy nor difficult"),
         ("EASY", "Easy"),
         ("VERY_EASY", "Very easy"),
     ]
