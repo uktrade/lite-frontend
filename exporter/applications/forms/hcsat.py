@@ -38,7 +38,7 @@ class HCSATApplicationForm(HCSATminiform):
         ("NO_ISSUE", "I did not experience any issue"),
         ("NOT_FIND_LOOKING_FOR", "The process of submitting my application form was unclear"),
         ("DIFFICULT_TO_NAVIGATE", "I found it difficult to navigate the service"),
-        ("SYSTEM_LAKCS_FEATURE", "The service lacks a feature I need"),
+        ("SYSTEM_LACKS_FEATURE", "The service lacks a feature I need"),
         ("SYSTEM_SLOW", "The service was slow"),
         ("OTHER", "Other"),
     ]
