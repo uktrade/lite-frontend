@@ -15,7 +15,7 @@ from ui_tests.caseworker.pages.application_page import ApplicationPage
 
 
 @when("I click the recommendations and decision tab")
-def click_on_recommendations_and_decision_tab(driver, context):  # noqa
+def click_on_recommendations_and_decision_tab(driver):
     CasePage(driver).change_tab("advice")
 
 
@@ -149,11 +149,11 @@ def should_see_application_ref_on_refusal_letter(driver, context):  # noqa
     assert f"{context.reference_code}" in text
 
 
-@then("I see the licence number on the document preview")
 @then("I see the licence number on the SIEL licence preview")
-def should_see_licence_number_on_siel_licence_preview(driver, context):  # noqa
-    text = GeneratedDocument(driver).get_document_preview_text()
-    assert context.reference_code in text
+def should_see_licence_number_on_siel_licence_preview(driver, context):
+    element = driver.find_element(by=By.ID, value="licence-reference-column")
+    expected_reference = element.find_element(by=By.XPATH, value=".//span[contains(@class, 'cell__uppercase')]").text
+    assert context.reference_code == expected_reference
 
 
 @then(parsers.parse('I see that "{item_name}" is "{value}" on the SIEL licence preview'))  # noqa

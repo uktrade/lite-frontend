@@ -550,3 +550,18 @@ def get_appeal(request, application_pk, appeal_pk):
 def get_appeal_document(request, appeal_pk, document_pk):
     data = client.get(request, f"/appeals/{appeal_pk}/documents/{document_pk}/")
     return data.json(), data.status_code
+
+
+def post_survey_feedback(request, json):
+    data = client.post(request, f"/survey/", json)
+    return data.json(), data.status_code
+
+
+def get_survey(request, survey_id):
+    data = client.get(request, f"/survey/{survey_id}/")
+    return data.json(), data.status_code
+
+
+def update_survey_feedback(request, survey_id, json):
+    data = client.put(request, f"/survey/{survey_id}/", json)
+    return data.json(), data.status_code

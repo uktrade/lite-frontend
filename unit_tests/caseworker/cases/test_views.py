@@ -435,69 +435,6 @@ def test_good_on_application_good_on_application_without_document_type(
     assert response.context["good_on_application_documents"] == {}
 
 
-def test_case_worker_view_with_null_caseworker(
-    authorized_client,
-    requests_mock,
-    queue_pk,
-    standard_case_pk,
-    data_standard_case,
-):
-    data_standard_case["case"]["case_officer"] = None
-
-    gov_users_url = client._build_absolute_uri("/gov-users/")
-    requests_mock.get(
-        url=gov_users_url,
-        json={
-            "results": [],
-        },
-    )
-
-    url = reverse(
-        "cases:case_officer",
-        kwargs={
-            "queue_pk": queue_pk,
-            "pk": standard_case_pk,
-        },
-    )
-    response = authorized_client.get(url)
-    assert response.status_code == 200
-    assert response.context["data"] == {}
-
-
-def test_case_worker_view_with_caseworker(
-    authorized_client,
-    requests_mock,
-    queue_pk,
-    standard_case_pk,
-    data_standard_case,
-):
-    case_officer_id = str(uuid.uuid4())
-    data_standard_case["case"]["case_officer"] = {
-        "id": case_officer_id,
-    }
-
-    gov_users_url = client._build_absolute_uri("/gov-users/")
-    requests_mock.get(
-        url=gov_users_url,
-        json={
-            "results": [],
-        },
-    )
-
-    url = reverse(
-        "cases:case_officer",
-        kwargs={
-            "queue_pk": queue_pk,
-            "pk": standard_case_pk,
-        },
-    )
-    response = authorized_client.get(url)
-    assert response.status_code == 200
-    assert response.context["data"] == {
-        "gov_user_pk": case_officer_id,
-    }
-
-
 @pytest.fixture
 def mock_get_queries(requests_mock, standard_case_pk, data_ecju_queries_gov_serializer):
     requests_mock.get(

@@ -651,3 +651,42 @@ def mock_ecju_queries(data_standard_case, data_ecju_queries, requests_mock):
         json=data_ecju_queries,
     )
     yield data_ecju_queries
+
+
+@pytest.fixture
+def mock_update_survey(requests_mock, survey_id):
+    survey_url = client._build_absolute_uri(f"/survey/{survey_id}")
+    return requests_mock.put(
+        survey_url,
+        json={"id": survey_id},
+        status_code=200,
+    )
+
+
+@pytest.fixture
+def mock_post_survey(requests_mock, survey_id):
+    survey_url = client._build_absolute_uri(f"/survey/")
+    return requests_mock.post(
+        survey_url,
+        json={"id": survey_id},
+        status_code=201,
+    )
+
+
+@pytest.fixture
+def mock_get_survey(requests_mock, survey_id):
+    survey_url = client._build_absolute_uri(f"/survey/{survey_id}")
+    return requests_mock.get(
+        survey_url,
+        json={"id": survey_id},
+        status_code=200,
+    )
+
+
+@pytest.fixture
+def mock_get_application(requests_mock, application_pk, application_reference_number):
+    return requests_mock.get(
+        client._build_absolute_uri(f"/applications/{application_pk}"),
+        json={"id": application_pk, "reference_code": application_reference_number, "status": "submitted"},
+        status_code=200,
+    )
