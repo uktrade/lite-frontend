@@ -767,3 +767,30 @@ $case-header-text-colour: govuk-colour('white');
 
 
 }
+
+.app-queue-view__filters {
+
+  .govuk-details__text {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .govuk-accordion__section-button {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid transparent;
+    margin-top: 1px;
+  }
+
+  .govuk-accordion__section-heading-text {
+    margin-bottom: 0;
+  }
+
+  .govuk-accordion__section-toggle {
+    margin-bottom: 0;
+  }
+
+  .govuk-accordion__show-all {
+    margin-bottom: 0;
+  }
+}
