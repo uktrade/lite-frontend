@@ -8,7 +8,7 @@ from exporter.core.services import (
     get_open_general_licence,
 )
 from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions, ApplicationSuccessPage
+from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions
 from lite_content.lite_exporter_frontend.licences import OpenGeneralLicenceRegistration
 from lite_forms.components import (
     FormGroup,
@@ -192,7 +192,7 @@ def open_general_licence_submit_success_page(request, **kwargs):
         secondary_title=OpenGeneralLicenceRegistration.SECONDARY_TITLE.format(
             open_general_licence["case_type"]["reference"]["value"], open_general_licence["name"]
         ),
-        description=ApplicationSuccessPage.DESCRIPTION,
+        description="",
         what_happens_next=[],
         includes="includes/open-general-licence.html",
         additional_context={"licence": open_general_licence},

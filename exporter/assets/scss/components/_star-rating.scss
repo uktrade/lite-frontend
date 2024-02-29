@@ -1,0 +1,42 @@
+#star_rating{
+    svg {
+        width: 2em;
+        height: 2em;
+        fill: currentColor;
+        stroke: currentColor;
+    }
+    label, output{
+        display:block;
+        float:left;
+        font-size:2em;
+        color:govuk-colour("green");
+        cursor:pointer;
+        border-bottom:2px solid transparent;
+    }
+    output{
+        font-size:1.5em;
+        padding:0 1em;
+    }
+    input:checked ~ label{
+        color:#999;
+    }
+    input:checked + label{
+        color:govuk-colour("green");
+        border-bottom-color:govuk-colour("green");
+    }
+    input:focus + label{
+        border-bottom-style:dotted;
+    }
+    input:hover ~ label, input:focus ~ label, input[id="star0"] + label{
+        color:#999;
+    }
+    input:hover + label, input:focus + label{
+        color:govuk-colour("green");
+    }
+    input[id="star0"]:checked + label{
+        color:#ff2d21;
+    }
+    [type="submit"]{
+        float:none;
+    }
+}

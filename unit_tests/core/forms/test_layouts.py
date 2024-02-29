@@ -6,7 +6,7 @@ from django.template import RequestContext, Template
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout
 
-from core.forms.layouts import ConditionalCheckboxes, ConditionalRadios, RadioTextArea
+from core.forms.layouts import ConditionalCheckboxes, ConditionalRadios, RadioTextArea, StarRadioSelect
 
 
 def test_conditional_radios_error_handling(mocker):
@@ -182,3 +182,18 @@ def test_radio_textarea_json_choices_values_form_error_handling():
 
     with pytest.raises(TypeError):
         RadioTextAreaForm()
+
+
+def test_star_radio_select_error_handling():
+    class StarRadioSelectForm(forms.Form):
+        recommendation = forms.IntegerField()
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.helper = FormHelper()
+            self.helper.layout = Layout(
+                StarRadioSelect({}),
+            )
+
+    with pytest.raises(TypeError):
+        StarRadioSelectForm()

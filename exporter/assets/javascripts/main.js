@@ -10,7 +10,7 @@ import { gaPushUserID } from "../../../core/assets/javascripts/ga-events.js";
 import initCookierBanner from "../../../core/assets/javascripts/cookies/banner.js";
 import initAddGood from "./add-good";
 import initMultiSelects from "./multi-select";
-
+import initStarRating from "../../../core/assets/javascripts/star-rating.js";
 // our styles
 import "../scss/styles.scss";
 // init govuk
@@ -20,4 +20,5 @@ $(document).ready(function () {
   initMultiSelects();
   initCookierBanner("app-cookie-banner", "js-accept-cookie");
   gaPushUserID();
+  initStarRating();
 });
