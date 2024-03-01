@@ -3,7 +3,6 @@ from django.urls import reverse_lazy
 from exporter.applications.forms.edit import told_by_an_official_form, reference_name_form
 from exporter.core.constants import STANDARD
 from lite_content.lite_exporter_frontend import strings
-from lite_content.lite_exporter_frontend.applications import ApplicationSuccessPage
 from lite_forms.components import (
     HiddenField,
     Form,
@@ -17,7 +16,6 @@ from lite_forms.components import (
     Label,
     Checkboxes,
 )
-from lite_forms.generators import success_page
 from lite_forms.helpers import conditional
 
 
@@ -47,21 +45,6 @@ def edit_type_form(application_id):
             reverse_lazy("applications:application", kwargs={"pk": application_id}),
         ),
         default_button_name=strings.CONTINUE,
-    )
-
-
-def application_success_page(request, application_reference_code):
-    return success_page(
-        request=request,
-        title=ApplicationSuccessPage.TITLE,
-        secondary_title=ApplicationSuccessPage.SECONDARY_TITLE + application_reference_code,
-        description=ApplicationSuccessPage.DESCRIPTION,
-        what_happens_next=ApplicationSuccessPage.WHAT_HAPPENS_NEXT,
-        links={
-            ApplicationSuccessPage.VIEW_APPLICATIONS: reverse_lazy("applications:applications"),
-            ApplicationSuccessPage.APPLY_AGAIN: reverse_lazy("apply_for_a_licence:start"),
-            ApplicationSuccessPage.RETURN_TO_DASHBOARD: reverse_lazy("core:home"),
-        },
     )
 
 

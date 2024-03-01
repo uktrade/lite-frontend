@@ -185,3 +185,25 @@ class RadioTextArea(TemplateNameMixin):
         )
 
         return render_to_string(template, context.flatten())
+
+
+class StarRadioSelect(TemplateNameMixin):
+    template = "%s/layout/star_radio_select.html"
+
+    def __init__(self, field, **kwargs):
+        if not isinstance(field, str):
+            raise TypeError(f"{self.__class__.__name__} only accepts field as a string parameter")
+        self.field = field
+        super().__init__(**kwargs)
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        template = self.get_template_name(template_pack)
+
+        bound_field = form[self.field]
+        context.update(
+            {
+                "field": bound_field,
+            }
+        )
+
+        return render_to_string(template, context.flatten())
