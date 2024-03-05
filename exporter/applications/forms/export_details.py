@@ -124,7 +124,6 @@ def is_temp_direct_control_form():
                         ],
                     ),
                 ],
-                classes=["govuk-radios--inline"],
             )
         ],
         default_button_name=CONTINUE,
@@ -171,7 +170,6 @@ def route_of_goods_form():
                         ],
                     ),
                 ],
-                classes=["govuk-radios--inline"],
             ),
             HiddenField("section_certificate_step", True),
             HTMLBlock(

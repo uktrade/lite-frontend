@@ -26,7 +26,6 @@ def route_of_goods_form(back_link):
                         ],
                     ),
                 ],
-                classes=["govuk-radios--inline"],
             ),
             HiddenField("section_certificate_step", True),
             HTMLBlock(
