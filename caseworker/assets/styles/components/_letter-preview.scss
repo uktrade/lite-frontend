@@ -68,6 +68,11 @@
 	box-sizing: border-box;
 	font-family: Arial;
 	font-size: 15px;
+
+	.dbt-logo {
+		// this ensures the logo fits on the preview page
+		max-width: 50%;
+	}
 }
 
 #preview p {
