@@ -100,7 +100,6 @@ def is_informed_wmd_form(caption):
                     ),
                     Option(key=False, value="No"),
                 ],
-                classes=["govuk-radios--inline"],
             )
         ],
         default_button_name=generic.SAVE_AND_CONTINUE,
@@ -132,7 +131,6 @@ def is_suspected_wmd_form(caption):
                     ),
                     Option(key=False, value="No"),
                 ],
-                classes=["govuk-radios--inline"],
             )
         ],
         default_button_name=generic.SAVE_AND_CONTINUE,
@@ -178,7 +176,6 @@ def is_compliant_limitations_eu_form(caption):
                         ],
                     ),
                 ],
-                classes=["govuk-radios--inline"],
             )
         ],
         default_button_name=generic.SAVE_AND_CONTINUE,
