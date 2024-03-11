@@ -5,9 +5,6 @@ services:
     image: liteapi
     environment:
       # Below values can be found in vault
-      AV_SERVICE_PASSWORD: ${AV_SERVICE_PASSWORD}
-      AV_SERVICE_URL: ${AV_SERVICE_URL}
-      AV_SERVICE_USERNAME: ${AV_SERVICE_USERNAME}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_REGION: ${AWS_REGION}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
