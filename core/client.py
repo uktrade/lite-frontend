@@ -77,7 +77,7 @@ def verify_hawk_response(response, sender):
     )
 
 
-def perform_request(method, request, appended_address, data=None):
+def perform_request(method, request, appended_address, data=None, stream=False):
     data = data or {}
     session = request.requests_session  # provided by RequestsSessionMiddleware
     url = _build_absolute_uri(appended_address.replace(" ", "%20"))
@@ -90,7 +90,7 @@ def perform_request(method, request, appended_address, data=None):
 
     logger.debug("API request: %s %s %s %s", method, url, headers, data)
 
-    response = session.request(method=method, url=url, headers=headers, json=data)
+    response = session.request(method=method, url=url, headers=headers, json=data, stream=stream)
 
     if settings.HAWK_AUTHENTICATION_ENABLED:
         verify_hawk_response(response=response, sender=sender)

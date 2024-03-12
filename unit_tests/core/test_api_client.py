@@ -18,4 +18,5 @@ def test_zipkin_headers(settings):
         json={},
         method="GET",
         url=f"{settings.LITE_API_URL}/foo/",
+        stream=False,
     )
