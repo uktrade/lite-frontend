@@ -2434,7 +2434,7 @@ def data_ecju_queries():
                 "responded_by_user": None,
                 "team": {
                     "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
-                    "name": "BEIS Chemical",
+                    "name": "DESNZ Chemical",
                     "part_of_ecju": False,
                     "is_ogd": True,
                     "alias": "BEIS_CHEMICAL",
@@ -2453,7 +2453,7 @@ def data_ecju_queries():
                 "responded_by_user": None,
                 "team": {
                     "id": "88164d59-8724-4596-811b-40b60b5cf892",
-                    "name": "BEIS Nuclear controls",
+                    "name": "DESNZ Nuclear controls",
                     "part_of_ecju": False,
                     "is_ogd": True,
                     "alias": "BEIS_NUCLEAR",

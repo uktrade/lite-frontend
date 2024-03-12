@@ -855,7 +855,7 @@ class BEISAssessmentBase:
 
 
 class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase, FormView):
-    """This renders trigger list product assessment for BEIS Nuclear"""
+    """This renders trigger list product assessment for DESNZ Nuclear"""
 
     template_name = "advice/trigger_list_home.html"
     form_class = BEISTriggerListAssessmentForm
@@ -918,7 +918,7 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
 
 
 class BEISProductAssessmentEditView(AdviceView, BEISNuclearMixin, BEISAssessmentBase, FormView):
-    """This renders editing of trigger list product assessment for BEIS Nuclear"""
+    """This renders editing of trigger list product assessment for DESNZ Nuclear"""
 
     template_name = "advice/trigger_list_edit.html"
     form_class = BEISTriggerListAssessmentEditForm

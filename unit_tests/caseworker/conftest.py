@@ -89,7 +89,7 @@ def flags(fcdo_team, lu_team):
     }
     beis_chem_team = {
         "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
-        "name": "BEIS Chemical",
+        "name": "DESNZ Chemical",
         "alias": "BEIS_CHEMICAL",
         "part_of_ecju": False,
         "is_ogd": True,
