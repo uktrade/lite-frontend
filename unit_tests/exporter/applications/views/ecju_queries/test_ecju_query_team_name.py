@@ -37,11 +37,11 @@ def rendered_ecju_queries(authorized_client, url):
 
 
 def test_renders_team_name(rendered_ecju_queries):
-    assert rendered_ecju_queries[0].p.get_text() == "BEIS CWC"
+    assert rendered_ecju_queries[0].p.get_text() == "DESNZ Chemical"
 
 
 def test_shortens_beis_chemical_team_name(rendered_ecju_queries):
-    assert rendered_ecju_queries[1].p.get_text() == "BEIS"
+    assert rendered_ecju_queries[1].p.get_text() == "DESNZ Chemical"
 
 
 def test_shortens_beis_nuclear_team_name(rendered_ecju_queries):

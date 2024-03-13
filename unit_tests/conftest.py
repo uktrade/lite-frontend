@@ -262,7 +262,7 @@ def data_open_case():
                     "type": "internal",
                     "team": {
                         "id": "51358bb7-0743-481b-b60f-edf16f644d52",
-                        "name": "BEIS CWC",
+                        "name": "DESNZ Chemical",
                         "part_of_ecju": None,
                         "is_ogd": False,
                         "alias": None,
@@ -617,7 +617,7 @@ def data_standard_case(
                     "type": "internal",
                     "team": {
                         "id": "51358bb7-0743-481b-b60f-edf16f644d52",
-                        "name": "BEIS CWC",
+                        "name": "DESNZ Chemical",
                         "part_of_ecju": None,
                         "is_ogd": False,
                         "alias": None,
@@ -2415,7 +2415,7 @@ def data_ecju_queries():
                 "responded_by_user": None,
                 "team": {
                     "id": "51358bb7-0743-481b-b60f-edf16f644d52",
-                    "name": "BEIS CWC",
+                    "name": "DESNZ Chemical",
                     "part_of_ecju": None,
                     "is_ogd": False,
                     "alias": None,

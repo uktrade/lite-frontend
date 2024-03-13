@@ -146,7 +146,7 @@ def flags(fcdo_team, lu_team):
         },
         {
             "id": "dcb9ab9e-0dff-4b78-bc85-71b879c18a38",
-            "name": "BEIS CW",
+            "name": "DESNZ CW",
             **defaults,
             "alias": "BEIS_CW",
             "level": "Good",
