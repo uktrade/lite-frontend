@@ -4,9 +4,11 @@ from django.test import Client
 from django.urls import reverse
 from exporter.core.organisation.constants import RegistrationSteps
 from exporter.core.organisation.forms import (
+    RegisterDetailsIndividualUKForm,
     RegistrationUKBasedForm,
-    RegisterDetailsForm,
-    RegisterAddressDetailsForm,
+    RegisterDetailsCommercialUKForm,
+    RegisterAddressDetailsUKForm,
+    RegisterAddressDetailsOverseasForm,
 )
 from unit_tests.helpers import reload_urlconf
 
@@ -81,7 +83,7 @@ def test_registration_uk_based_step(goto_step, post_to_step):
     )
 
     assert response.status_code == 200
-    assert isinstance(response.context["form"], RegisterDetailsForm)
+    assert isinstance(response.context["form"], RegisterDetailsCommercialUKForm)
 
 
 def test_registration_individual_details_step(goto_step, post_to_step):
@@ -95,14 +97,15 @@ def test_registration_individual_details_step(goto_step, post_to_step):
         RegistrationSteps.UK_BASED,
         {"location": "united_kingdom"},
     )
+
     goto_step(RegistrationSteps.REGISTRATION_DETAILS)
+
     response = post_to_step(
         RegistrationSteps.REGISTRATION_DETAILS,
         {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"},
     )
-
     assert response.status_code == 200
-    assert isinstance(response.context["form"], RegisterAddressDetailsForm)
+    assert isinstance(response.context["form"], RegisterAddressDetailsUKForm)
 
 
 def test_registration_individual_end_to_end_uk_based(
@@ -111,7 +114,7 @@ def test_registration_individual_end_to_end_uk_based(
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     response = post_to_step(
         RegistrationSteps.REGISTRATION_TYPE,
-        {"type": "individual"},
+        {"type": "individual", "location": "united_kingdom"},
     )
 
     assert response.status_code == 200
@@ -121,12 +124,13 @@ def test_registration_individual_end_to_end_uk_based(
     goto_step(RegistrationSteps.UK_BASED)
     response = post_to_step(
         RegistrationSteps.UK_BASED,
-        {"location": "united_kingdom"},
+        {"type": "individual", "location": "united_kingdom"},
     )
 
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], RegisterDetailsForm)
+
+    assert isinstance(response.context["form"], RegisterDetailsIndividualUKForm)
 
     goto_step(RegistrationSteps.REGISTRATION_DETAILS)
     response = post_to_step(
@@ -136,7 +140,7 @@ def test_registration_individual_end_to_end_uk_based(
 
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], RegisterAddressDetailsForm)
+    assert isinstance(response.context["form"], RegisterAddressDetailsUKForm)
 
     goto_step(RegistrationSteps.ADDRESS_DETAILS)
     response = post_to_step(
@@ -252,7 +256,7 @@ def test_registration_commercial_end_to_end(
 
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], RegisterAddressDetailsForm)
+    assert isinstance(response.context["form"], RegisterAddressDetailsOverseasForm)
 
     goto_step(RegistrationSteps.ADDRESS_DETAILS)
     response = post_to_step(
