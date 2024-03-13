@@ -1,6 +1,9 @@
 from django import forms
+from django.db import models
 
-from core.common.forms import BaseForm
+from crispy_forms_gds.layout import HTML
+
+from core.common.forms import BaseForm, TextChoice
 from .validators import (
     validate_vat,
     validate_eori,
@@ -15,11 +18,21 @@ class RegistrationTypeForm(BaseForm):
     class Layout:
         TITLE = "Commercial organisation or private individual"
 
+    class RegistrationTypeChoices(models.TextChoices):
+        COMMERCIAL = ("commercial", "Commercial organisation")
+        INDIVIDUAL = ("individual", "Private individual")
+
     type = forms.ChoiceField(
-        choices=(
-            ("commercial", "Commercial organisation"),
-            ("individual", "Private individual"),
-        ),
+        choices=[
+            TextChoice(
+                RegistrationTypeChoices.COMMERCIAL,
+                hint="Select this if you want to register an organisation that will be exporting",
+            ),
+            TextChoice(
+                RegistrationTypeChoices.INDIVIDUAL,
+                hint="Select this if you're a private individual that will be exporting alone",
+            ),
+        ],
         label="",
         widget=forms.RadioSelect,
         error_messages={
@@ -52,24 +65,14 @@ class RegistrationUKBasedForm(BaseForm):
 
 
 class RegisterDetailsForm(BaseForm):
+
+    VAT_LABEL = "UK VAT number"
+    EORI_LABEL = "European Union registration and identification number (EORI)"
+    SIC_CODE_LABEL = "SIC Code"
+    REGISTRATION_LABEL = "Company registration number (CRN)"
+
     class Layout:
         TITLE = "Register a private individual"
-
-    def __init__(self, is_individual, *args, **kwargs):
-        self.is_individual = is_individual
-        if self.is_individual:
-            self.declared_fields["name"].label = "First and last name"
-            self.Layout.TITLE = "Register a private individual"
-            self.declared_fields["vat_number"].label = "UK VAT number (optional)"
-            self.declared_fields["vat_number"].required = False
-
-        else:
-            self.declared_fields["name"].label = "Name of organisation"
-            self.Layout.TITLE = "Register a commercial organisation"
-            self.declared_fields["vat_number"].label = "UK VAT number"
-            self.declared_fields["vat_number"].required = True
-
-        super().__init__(*args, **kwargs)
 
     name = forms.CharField(
         label="First and last name",
@@ -79,7 +82,11 @@ class RegisterDetailsForm(BaseForm):
     )
 
     eori_number = forms.CharField(
-        label="European Union registration and identification number (EORI)",
+        label=EORI_LABEL,
+        help_text=(
+            "<a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state'"
+            "target='_blank'>Get an EORI number </a> if you don't have one."
+        ),
         error_messages={
             "required": "Enter a EORI number",
         },
@@ -87,21 +94,66 @@ class RegisterDetailsForm(BaseForm):
     )
 
     sic_number = forms.CharField(
-        label="SIC Code",
+        label=SIC_CODE_LABEL,
+        help_text=(
+            "<a href='https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic'"
+            "class='govuk-link govuk-link--no-visited-state' target='_blank'>Find your SIC code.</a>"
+        ),
         error_messages={
             "required": "Enter a SIC code",
         },
         validators=[validate_sic_number],
     )
 
-    vat_number = forms.CharField(required=False, label="UK VAT number (optional)", validators=[validate_vat])
+    vat_number = forms.CharField(
+        label=VAT_LABEL,
+        help_text="9 digits long, with the first 2 letters indicating the country code of the registered business.",
+        validators=[validate_vat],
+    )
     registration_number = forms.CharField(
-        label="Company registration number (CRN)",
+        label=REGISTRATION_LABEL,
+        help_text="8 numbers, or 2 letters followed by 6 numbers.",
         error_messages={
             "required": "Enter a registration number",
         },
         validators=[validate_registration],
     )
+
+    def __init__(self, is_individual, is_uk_based, *args, **kwargs):
+
+        self.is_individual = is_individual
+        self.is_uk_based = is_uk_based
+
+        # This can only be called onces above variables have been set since get_layout_fields depends on these variables.
+        super().__init__(*args, **kwargs)
+
+        if self.is_individual:
+            self.fields["name"].label = "First and last name"
+            self.Layout.TITLE = "Register a private individual"
+
+            self.fields["vat_number"].label = self.REGISTRATION_LABEL + " (optional)"
+            self.fields["vat_number"].required = False
+
+            if not is_uk_based:
+                # individual non-uk
+                self.fields["eori_number"].label = self.EORI_LABEL + " (optional)"
+                self.fields["eori_number"].required = False
+
+        else:
+            # commercial
+            self.fields["name"].label = "Name of organisation"
+            self.Layout.TITLE = "Register a commercial organisation"
+
+            if not is_uk_based:
+                # commercial non-uk
+                self.fields["eori_number"].label = self.EORI_LABEL + " (optional)"
+                self.fields["eori_number"].required = False
+                self.fields["sic_number"].label = self.SIC_CODE_LABEL + " (optional)"
+                self.fields["sic_number"].required = False
+                self.fields["vat_number"].label = self.VAT_LABEL + " (optional)"
+                self.fields["vat_number"].required = False
+                self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
+                self.fields["registration_number"].required = False
 
     def clean(self):
         if self.is_individual:
@@ -121,9 +173,19 @@ class RegisterAddressDetailsForm(BaseForm):
     class Layout:
         TITLE = "Where in the United Kingdom are you based?"
 
-    def __init__(self, is_uk_based, *args, **kwargs):
+    def __init__(self, is_individual, is_uk_based, *args, **kwargs):
         self.is_uk_based = is_uk_based
-        self.Layout.TITLE = "Where in the United Kingdom are you based?" if self.is_uk_based else "Where are you based?"
+        self.is_individual = is_individual
+
+        if self.is_individual:
+            self.Layout.TITLE = (
+                "Where in the United Kingdom are you based?" if self.is_uk_based else "Where are you based?"
+            )
+        else:
+            # Commerical
+            self.Layout.TITLE = (
+                "What is your registered office address?" if self.is_uk_based else "Where is your organisation based?"
+            )
 
         super().__init__(*args, **kwargs)
 
@@ -173,7 +235,8 @@ class RegisterAddressDetailsForm(BaseForm):
     )
 
     phone_number = forms.CharField(
-        label="Telephone number",
+        label="Organisation telephone number",
+        help_text="For international numbers include the country code",
         error_messages={
             "required": "Enter a telephone number",
         },
@@ -188,6 +251,8 @@ class RegisterAddressDetailsForm(BaseForm):
             "required": "Enter a country",
         },
     )
+
+    registered_office_help_text = ""
 
     def clean(self):
         errors_to_remove = (
@@ -212,6 +277,11 @@ class RegisterAddressDetailsForm(BaseForm):
                 "postcode",
                 "phone_number",
                 "website",
+                HTML.details(
+                    "Help with your registered office address",
+                    "<p>This is usually the office address registered with Companies House. Or HM Revenue and Customs if you're not on Companies House.</p>"
+                    "<p>Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>",
+                ),
             )
         else:
             return ("name", "address", "phone_number", "website", "country")

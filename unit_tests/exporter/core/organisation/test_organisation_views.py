@@ -111,7 +111,7 @@ def test_registration_individual_end_to_end_uk_based(
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     response = post_to_step(
         RegistrationSteps.REGISTRATION_TYPE,
-        {"type": "individual"},
+        {"type": "individual", "location": "united_kingdom"},
     )
 
     assert response.status_code == 200
@@ -121,7 +121,7 @@ def test_registration_individual_end_to_end_uk_based(
     goto_step(RegistrationSteps.UK_BASED)
     response = post_to_step(
         RegistrationSteps.UK_BASED,
-        {"location": "united_kingdom"},
+        {"type": "individual", "location": "united_kingdom"},
     )
 
     assert response.status_code == 200

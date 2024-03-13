@@ -37,55 +37,53 @@ def test_registration_uk_based_form(data, valid):
 
 
 @pytest.mark.parametrize(
-    "data, valid, error",
+    "data, is_individual, is_uk_based, valid, error",
     (
-        ({}, False, {"name": ["Enter a name"], "eori_number": ["Enter a EORI number"]}),
-        ({"name": "joe", "eori_number": "123"}, False, {"eori_number": ["Invalid UK EORI number"]}),
+        ({}, True, False, False, {"name": ["Enter a name"]}),
+        ({"name": "joe", "eori_number": "123"}, True, False, False, {"eori_number": ["Invalid UK EORI number"]}),
         (
             {"name": "joe", "eori_number": "123456789101112131"},
+            True,
+            False,
             False,
             {"eori_number": ["EORI numbers are 17 characters or less"]},
         ),
-        ({"name": "joe", "eori_number": "GX205672212000"}, False, {"eori_number": ["Invalid UK EORI number"]}),
+        (
+            {"name": "joe", "eori_number": "GX205672212000"},
+            True,
+            False,
+            False,
+            {"eori_number": ["Invalid UK EORI number"]},
+        ),
         (
             {"name": "joe", "eori_number": "GB205672212000", "vat_number": "123"},
+            True,
+            False,
             False,
             {"vat_number": ["Standard UK VAT numbers are 9 digits long"]},
         ),
         (
             {"name": "joe", "eori_number": "GB205672212000", "vat_number": "123456789101112131"},
+            True,
+            False,
             False,
             {"vat_number": ["Standard UK VAT numbers are 9 digits long"]},
         ),
         (
             {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GX123456789"},
+            True,
+            False,
             False,
             {"vat_number": ["Invalid UK VAT number"]},
         ),
-        ({"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"}, True, None),
-    ),
-)
-def test_register_individual_details_form(data, valid, error):
-    form = forms.RegisterDetailsForm(data=data, is_individual=True)
-
-    assert form.is_valid() == valid
-
-    if not valid:
-        assert form.errors == error
-
-
-@pytest.mark.parametrize(
-    "data, valid, error",
-    (
+        ({"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"}, True, False, True, None),
         (
             {},
             False,
+            False,
+            False,
             {
                 "name": ["Enter a name"],
-                "eori_number": ["Enter a EORI number"],
-                "sic_number": ["Enter a SIC code"],
-                "vat_number": ["This field is required."],
-                "registration_number": ["Enter a registration number"],
             },
         ),
         (
@@ -96,6 +94,8 @@ def test_register_individual_details_form(data, valid, error):
                 "sic_number": "xyz",
                 "registration_number": "21313ewfwe",
             },
+            False,
+            False,
             False,
             {
                 "sic_number": ["Only enter numbers"],
@@ -111,6 +111,8 @@ def test_register_individual_details_form(data, valid, error):
                 "registration_number": "1234567x",
             },
             False,
+            False,
+            False,
             {
                 "sic_number": ["Enter a valid SIC code"],
                 "registration_number": ["Registration numbers are 8 numbers long"],
@@ -124,15 +126,18 @@ def test_register_individual_details_form(data, valid, error):
                 "sic_number": "12345",
                 "registration_number": "12345678",
             },
+            False,
+            False,
             True,
             None,
         ),
     ),
 )
-def test_register_commercial_details_form(data, valid, error):
-    form = forms.RegisterDetailsForm(data=data, is_individual=False)
+def test_register_details_form(data, is_individual, is_uk_based, valid, error):
+    form = forms.RegisterDetailsForm(data=data, is_individual=is_individual, is_uk_based=is_uk_based)
 
     assert form.is_valid() == valid
+
     if not valid:
         assert form.errors == error
 
@@ -197,14 +202,14 @@ def test_register_commercial_details_form(data, valid, error):
     ),
 )
 def test_register_uk_address_details_form(data, valid, error):
-    form = forms.RegisterAddressDetailsForm(is_uk_based=True, data=data)
+    form = forms.RegisterAddressDetailsForm(is_individual=True, is_uk_based=True, data=data)
     assert form.is_valid() == valid
     if not valid:
         assert form.errors == error
 
 
 def test_register_non_uk_address_details_form():
-    form = forms.RegisterAddressDetailsForm(is_uk_based=False, data={})
+    form = forms.RegisterAddressDetailsForm(is_individual=True, is_uk_based=False, data={})
     assert not form.is_valid()
     assert form.errors == {
         "name": ["Enter a name for your site"],

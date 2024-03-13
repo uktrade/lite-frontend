@@ -40,10 +40,9 @@ class Registration(
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        if step == RegistrationSteps.ADDRESS_DETAILS:
-            kwargs["is_uk_based"] = self.is_uk_based
-        if step == RegistrationSteps.REGISTRATION_DETAILS:
+        if step in (RegistrationSteps.ADDRESS_DETAILS, RegistrationSteps.REGISTRATION_DETAILS):
             kwargs["is_individual"] = self.is_individual
+            kwargs["is_uk_based"] = self.is_uk_based
         return kwargs
 
     @expect_status(

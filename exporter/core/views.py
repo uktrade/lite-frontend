@@ -211,6 +211,8 @@ class RegisterName(LoginRequiredMixin, FormView):
         # Hold in session
         self.request.session["first_name"] = form.cleaned_data["first_name"]
         self.request.session["last_name"] = form.cleaned_data["last_name"]
+        self.request.session["email"] = profile["email"]
+
         return super().form_valid(form)
 
 
