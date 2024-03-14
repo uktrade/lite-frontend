@@ -1,10 +1,12 @@
+import io
+import uuid
+
 from bs4 import BeautifulSoup
 from unittest import mock
 
 from django.http import StreamingHttpResponse
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
-import pytest
 
 from core import client
 from unit_tests.helpers import mocked_now
@@ -50,15 +52,23 @@ def test_download_document_on_organisation(
     authorized_client,
     requests_mock,
     organisation_pk,
-    mock_s3_files,
 ):
-    mock_s3_files(
-        ("123", b"test", {"ContentType": "application/doc"}),
-    )
-
     requests_mock.get(
         client._build_absolute_uri(f"/organisations/{organisation_pk}/document/00acebbf-2077-4b80-8b95-37ff7f46c6d0/"),
-        json={"document": {"s3_key": "123", "name": "fakefile.doc"}},
+        json={
+            "id": "00acebbf-2077-4b80-8b95-37ff7f46c6d0",
+            "document": {"id": str(uuid.uuid4()), "s3_key": "123", "name": "fakefile.doc"},
+        },
+    )
+    requests_mock.get(
+        client._build_absolute_uri(
+            f"/organisations/{organisation_pk}/document/00acebbf-2077-4b80-8b95-37ff7f46c6d0/stream/"
+        ),
+        body=io.BytesIO(b"test"),
+        headers={
+            "Content-Type": "application/doc",
+            "Content-Disposition": 'attachment; filename="fakefile.doc"',
+        },
     )
 
     url = reverse("organisation:document", kwargs={"pk": "00acebbf-2077-4b80-8b95-37ff7f46c6d0"})

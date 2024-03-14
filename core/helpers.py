@@ -1,5 +1,8 @@
 from urllib.parse import urlencode
-from django.http import Http404
+from django.http import (
+    Http404,
+    StreamingHttpResponse,
+)
 from django.utils.http import url_has_allowed_host_and_scheme
 
 
@@ -57,3 +60,13 @@ def check_url(request, url):
         return url
     else:
         raise Http404
+
+
+def stream_document_response(api_response):
+    response = StreamingHttpResponse(api_response.iter_content())
+    for header_to_copy in [
+        "Content-Type",
+        "Content-Disposition",
+    ]:
+        response.headers[header_to_copy] = api_response.headers[header_to_copy]
+    return response

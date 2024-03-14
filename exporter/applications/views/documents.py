@@ -7,6 +7,7 @@ from django.urls import reverse, NoReverseMatch
 from django.views.generic import TemplateView, View
 
 from core.file_handler import download_document_from_s3
+from core.helpers import stream_document_response
 
 from caseworker.cases.services import get_document
 from core.decorators import expect_status
@@ -25,6 +26,7 @@ from exporter.applications.services import (
     get_goods_type_document,
     delete_goods_type_document,
     get_appeal_document,
+    stream_appeal_document,
 )
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import form_page, error_page
@@ -201,12 +203,20 @@ class DownloadAppealDocument(LoginRequiredMixin, View):
     def get_appeal_document(self, request, appeal_pk, document_pk):
         return get_appeal_document(request, appeal_pk, document_pk)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error downloading appeal document",
+        "Unexpected error downloading appeal document",
+    )
+    def stream_appeal_document(self, request, appeal_pk, document_pk):
+        return stream_appeal_document(request, appeal_pk, document_pk)
+
     def get(self, request, case_pk, appeal_pk, document_pk):
         document, _ = self.get_appeal_document(request, appeal_pk, document_pk)
         if document["safe"]:
-            return download_document_from_s3(document["s3_key"], document["name"])
-        else:
-            return error_page(request, strings.applications.AttachDocumentPage.DOWNLOAD_GENERIC_ERROR)
+            api_response, _ = self.stream_appeal_document(request, appeal_pk, document_pk)
+            return stream_document_response(api_response)
+        return error_page(request, strings.applications.AttachDocumentPage.DOWNLOAD_GENERIC_ERROR)
 
 
 class DeleteDocument(LoginRequiredMixin, TemplateView):

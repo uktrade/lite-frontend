@@ -1,3 +1,4 @@
+import io
 import uuid
 
 from http import HTTPStatus
@@ -17,22 +18,26 @@ def test_download_appeal_document(
     authorized_client,
     data_standard_case,
     requests_mock,
-    mock_s3_files,
 ):
-    mock_s3_files(
-        ("123", b"test", {"ContentType": "application/doc"}),
-    )
-
     appeal_pk = uuid.uuid4()
-
     document_pk = uuid.uuid4()
-    document_api_url = client._build_absolute_uri(f"/appeals/{appeal_pk}/documents/{document_pk}")
+    document_api_url = client._build_absolute_uri(f"/appeals/{appeal_pk}/documents/{document_pk}/")
     requests_mock.get(
         document_api_url,
         json={
+            "id": str(document_pk),
             "s3_key": "123",
             "name": "fakefile.doc",
             "safe": True,
+        },
+    )
+    document_api_stream_url = client._build_absolute_uri(f"/appeals/{appeal_pk}/documents/{document_pk}/stream/")
+    requests_mock.get(
+        document_api_stream_url,
+        body=io.BytesIO(b"test"),
+        headers={
+            "Content-Type": "application/doc",
+            "Content-Disposition": 'attachment; filename="fakefile.doc"',
         },
     )
 
@@ -57,14 +62,8 @@ def test_download_appeal_document_failure(
     authorized_client,
     data_standard_case,
     requests_mock,
-    mock_s3_files,
 ):
-    mock_s3_files(
-        ("123", b"test", {"ContentType": "application/doc"}),
-    )
-
     appeal_pk = uuid.uuid4()
-
     document_pk = uuid.uuid4()
     document_api_url = client._build_absolute_uri(f"/appeals/{appeal_pk}/documents/{document_pk}")
     requests_mock.get(
@@ -92,12 +91,7 @@ def test_download_unsafe_appeal_document(
     authorized_client,
     data_standard_case,
     requests_mock,
-    mock_s3_files,
 ):
-    mock_s3_files(
-        ("123", b"test", {"ContentType": "application/doc"}),
-    )
-
     appeal_pk = uuid.uuid4()
 
     document_pk = uuid.uuid4()

@@ -12,7 +12,11 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.functional import cached_property
-from django.views.generic import FormView, TemplateView, View
+from django.views.generic import (
+    FormView,
+    TemplateView,
+    View,
+)
 
 from requests.exceptions import HTTPError
 
@@ -20,8 +24,11 @@ from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
 from core.decorators import expect_status
 from core.exceptions import APIError
-from core.helpers import get_document_data
-from core.file_handler import download_document_from_s3
+from core.helpers import (
+    get_document_data,
+    stream_document_response,
+)
+from core.services import stream_document
 
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import (
@@ -56,7 +63,6 @@ from caseworker.cases.services import (
     put_next_review_date,
     reissue_ogl,
     post_case_documents,
-    get_document,
     get_blocking_flags,
     get_case_sub_statuses,
     put_case_sub_status,
@@ -555,15 +561,18 @@ class AttachDocuments(TemplateView):
         )
 
 
-class Document(View):
-    def get(self, request, **kwargs):
-        document, _ = get_document(request, pk=kwargs["file_pk"])
-        document = document["document"]
+class Document(LoginRequiredMixin, View):
+    @expect_status(
+        HTTPStatus.OK,
+        "Error downloading document",
+        "Unexpected error downloading document",
+    )
+    def stream_document(self, request, pk):
+        return stream_document(request, pk=pk)
 
-        return download_document_from_s3(
-            document["s3_key"],
-            document["name"],
-        )
+    def get(self, request, **kwargs):
+        api_response, _ = self.stream_document(request, pk=kwargs["file_pk"])
+        return stream_document_response(api_response)
 
 
 class RerunRoutingRules(SingleFormView):
