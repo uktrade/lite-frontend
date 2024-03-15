@@ -17,7 +17,10 @@ from .constants import RegistrationSteps
 from .forms import (
     RegistrationTypeForm,
     RegistrationUKBasedForm,
-    RegisterDetailsForm,
+    RegisterDetailsIndividualUKForm,
+    RegisterDetailsIndividualOverseasForm,
+    RegisterDetailsCommercialUKForm,
+    RegisterDetailsCommercialOverseasForm,
     RegisterAddressDetailsForm,
     SelectOrganisationForm,
 )
@@ -40,10 +43,38 @@ class Registration(
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        if step in (RegistrationSteps.ADDRESS_DETAILS, RegistrationSteps.REGISTRATION_DETAILS):
+        if step in (RegistrationSteps.ADDRESS_DETAILS):
             kwargs["is_individual"] = self.is_individual
             kwargs["is_uk_based"] = self.is_uk_based
         return kwargs
+
+    def get_form(self, step=None, data=None, files=None):
+        form = super().get_form(step, data, files)
+
+        # determine the step if not given
+        if step is None:
+            step = self.steps.current
+
+        if step == RegistrationSteps.REGISTRATION_DETAILS:
+            form = self.get_registration_details_form(data)
+
+        return form
+
+    def get_registration_details_form(self, data):
+        location = self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"]
+        registration_type = self.get_cleaned_data_for_step(RegistrationSteps.REGISTRATION_TYPE)["type"]
+        registration_details_form_classes = {
+            "united_kingdom": {
+                "individual": RegisterDetailsIndividualUKForm,
+                "commercial": RegisterDetailsIndividualOverseasForm,
+            },
+            "abroad": {
+                "individual": RegisterDetailsCommercialUKForm,
+                "commercial": RegisterDetailsCommercialOverseasForm,
+            },
+        }
+        form_class = registration_details_form_classes[location][registration_type]
+        return form_class(data)
 
     @expect_status(
         HTTPStatus.CREATED,

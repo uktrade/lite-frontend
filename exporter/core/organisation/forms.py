@@ -64,7 +64,7 @@ class RegistrationUKBasedForm(BaseForm):
         return ("location",)
 
 
-class RegisterDetailsForm(BaseForm):
+class RegisterDetailsBaseForm(BaseForm):
 
     VAT_LABEL = "UK VAT number"
     EORI_LABEL = "European Union registration and identification number (EORI)"
@@ -119,54 +119,55 @@ class RegisterDetailsForm(BaseForm):
         validators=[validate_registration],
     )
 
-    def __init__(self, is_individual, is_uk_based, *args, **kwargs):
 
-        self.is_individual = is_individual
-        self.is_uk_based = is_uk_based
-
-        # This can only be called onces above variables have been set since get_layout_fields depends on these variables.
+class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        if self.is_individual:
-            self.fields["name"].label = "First and last name"
-            self.Layout.TITLE = "Register a private individual"
-
-            self.fields["vat_number"].label = self.REGISTRATION_LABEL + " (optional)"
-            self.fields["vat_number"].required = False
-
-            if not is_uk_based:
-                # individual non-uk
-                self.fields["eori_number"].label = self.EORI_LABEL + " (optional)"
-                self.fields["eori_number"].required = False
-
-        else:
-            # commercial
-            self.fields["name"].label = "Name of organisation"
-            self.Layout.TITLE = "Register a commercial organisation"
-
-            if not is_uk_based:
-                # commercial non-uk
-                self.fields["eori_number"].label = self.EORI_LABEL + " (optional)"
-                self.fields["eori_number"].required = False
-                self.fields["sic_number"].label = self.SIC_CODE_LABEL + " (optional)"
-                self.fields["sic_number"].required = False
-                self.fields["vat_number"].label = self.VAT_LABEL + " (optional)"
-                self.fields["vat_number"].required = False
-                self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
-                self.fields["registration_number"].required = False
+        self.fields["name"].label = "First and last name"
+        self.Layout.TITLE = "Register a private individual"
+        self.fields["vat_number"].label = self.REGISTRATION_LABEL + " (optional)"
+        self.fields["vat_number"].required = False
 
     def clean(self):
-        if self.is_individual:
-            for field in ["sic_number", "registration_number"]:
-                if self.errors.get(field):
-                    del self.errors[field]
+        for field in ["sic_number", "registration_number"]:
+            if self.errors.get(field):
+                del self.errors[field]
         return
 
     def get_layout_fields(self):
-        if self.is_individual:
-            return ("name", "eori_number", "vat_number")
-        else:
-            return ("name", "eori_number", "sic_number", "vat_number", "registration_number")
+        return ("name", "eori_number", "vat_number")
+
+
+class RegisterDetailsIndividualOverseasForm(RegisterDetailsIndividualUKForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # individual non-uk
+        self.fields["eori_number"].label = self.EORI_LABEL + " (optional)"
+        self.fields["eori_number"].required = False
+
+
+class RegisterDetailsCommercialUKForm(RegisterDetailsBaseForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["name"].label = "Name of organisation"
+        self.Layout.TITLE = "Register a commercial organisation"
+
+    def get_layout_fields(self):
+        return ("name", "eori_number", "sic_number", "vat_number", "registration_number")
+
+
+class RegisterDetailsCommercialOverseasForm(RegisterDetailsCommercialUKForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["eori_number"].label = self.EORI_LABEL + " (optional)"
+        self.fields["eori_number"].required = False
+        self.fields["sic_number"].label = self.SIC_CODE_LABEL + " (optional)"
+        self.fields["sic_number"].required = False
+        self.fields["vat_number"].label = self.VAT_LABEL + " (optional)"
+        self.fields["vat_number"].required = False
+        self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
+        self.fields["registration_number"].required = False
 
 
 class RegisterAddressDetailsForm(BaseForm):
