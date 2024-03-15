@@ -65,14 +65,19 @@ def _seen_nonce(access_key_id, nonce, timestamp):
     return seen_cache_key
 
 
-def verify_hawk_response(response, sender):
+def verify_hawk_response(response, sender, stream=False):
     if "server-authorization" not in response.headers:
         sentry_sdk.set_context("response", {"content": response.content})
         raise RuntimeError("Missing server_authorization header. Probable API HAWK auth failure")
 
+    if stream:
+        content = response.headers["Content-Disposition"]
+    else:
+        content = response.content
+
     sender.accept_response(
         response.headers["server-authorization"],
-        content=response.content,
+        content=content,
         content_type=response.headers["Content-Type"],
     )
 
@@ -93,7 +98,7 @@ def perform_request(method, request, appended_address, data=None, stream=False):
     response = session.request(method=method, url=url, headers=headers, json=data, stream=stream)
 
     if settings.HAWK_AUTHENTICATION_ENABLED:
-        verify_hawk_response(response=response, sender=sender)
+        verify_hawk_response(response=response, sender=sender, stream=stream)
 
     return response
 
