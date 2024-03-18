@@ -17,8 +17,12 @@ from .constants import RegistrationSteps
 from .forms import (
     RegistrationTypeForm,
     RegistrationUKBasedForm,
-    RegisterDetailsForm,
-    RegisterAddressDetailsForm,
+    RegisterDetailsIndividualUKForm,
+    RegisterDetailsIndividualOverseasForm,
+    RegisterDetailsCommercialUKForm,
+    RegisterDetailsCommercialOverseasForm,
+    RegisterAddressDetailsUKForm,
+    RegisterAddressDetailsOverseasForm,
     SelectOrganisationForm,
 )
 from .services import register_organisation
@@ -34,17 +38,64 @@ class Registration(
     form_list = [
         (RegistrationSteps.REGISTRATION_TYPE, RegistrationTypeForm),
         (RegistrationSteps.UK_BASED, RegistrationUKBasedForm),
-        (RegistrationSteps.REGISTRATION_DETAILS, RegisterDetailsForm),
-        (RegistrationSteps.ADDRESS_DETAILS, RegisterAddressDetailsForm),
+        (RegistrationSteps.REGISTRATION_DETAILS, RegisterDetailsIndividualUKForm),
+        (RegistrationSteps.ADDRESS_DETAILS, RegisterAddressDetailsUKForm),
     ]
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        if step == RegistrationSteps.ADDRESS_DETAILS:
-            kwargs["is_uk_based"] = self.is_uk_based
-        if step == RegistrationSteps.REGISTRATION_DETAILS:
+        if step in (RegistrationSteps.ADDRESS_DETAILS):
             kwargs["is_individual"] = self.is_individual
         return kwargs
+
+    def get_form(self, step=None, data=None, files=None):
+        # form = super().get_form(step, data, files)
+        # determine the step if not given
+        form = super().get_form(step, data, files)
+        if step is None:
+            step = self.steps.current
+
+        if step == RegistrationSteps.REGISTRATION_DETAILS:
+            form = self.get_registration_details_form(data)
+
+        if step == RegistrationSteps.ADDRESS_DETAILS:
+            form = self.get_registration_address_form(data)
+
+        return form
+
+    def get_registration_details_form(self, data):
+        location = self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"]
+        registration_type = self.get_cleaned_data_for_step(RegistrationSteps.REGISTRATION_TYPE)["type"]
+        registration_details_form_classes = {
+            "united_kingdom": {
+                "individual": RegisterDetailsIndividualUKForm,
+                "commercial": RegisterDetailsCommercialUKForm,
+            },
+            "abroad": {
+                "individual": RegisterDetailsIndividualOverseasForm,
+                "commercial": RegisterDetailsCommercialOverseasForm,
+            },
+        }
+        form_class = registration_details_form_classes[location][registration_type]
+        kwargs = {
+            "prefix": self.get_form_prefix(RegistrationSteps.REGISTRATION_DETAILS, form_class),
+            "data": data,
+        }
+        return form_class(**kwargs)
+
+    def get_registration_address_form(self, data):
+        location = self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"]
+        form_class = (
+            RegisterAddressDetailsUKForm if location == "united_kingdom" else RegisterAddressDetailsOverseasForm
+        )
+        kwargs = self.get_form_kwargs(RegistrationSteps.ADDRESS_DETAILS)
+        kwargs.update(
+            {
+                "prefix": self.get_form_prefix(RegistrationSteps.ADDRESS_DETAILS, form_class),
+                "data": data,
+            }
+        )
+        return form_class(**kwargs)
 
     @expect_status(
         HTTPStatus.CREATED,

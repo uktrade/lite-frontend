@@ -37,46 +37,17 @@ def test_registration_uk_based_form(data, valid):
 
 
 @pytest.mark.parametrize(
-    "data, valid, error",
+    "data, valid, error, form_class",
     (
-        ({}, False, {"name": ["Enter a name"], "eori_number": ["Enter a EORI number"]}),
-        ({"name": "joe", "eori_number": "123"}, False, {"eori_number": ["Invalid UK EORI number"]}),
         (
-            {"name": "joe", "eori_number": "123456789101112131"},
+            {},
             False,
-            {"eori_number": ["EORI numbers are 17 characters or less"]},
+            {"name": ["Enter a name"], "eori_number": ["Enter a EORI number"]},
+            forms.RegisterDetailsIndividualUKForm,
         ),
-        ({"name": "joe", "eori_number": "GX205672212000"}, False, {"eori_number": ["Invalid UK EORI number"]}),
-        (
-            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "123"},
-            False,
-            {"vat_number": ["Standard UK VAT numbers are 9 digits long"]},
-        ),
-        (
-            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "123456789101112131"},
-            False,
-            {"vat_number": ["Standard UK VAT numbers are 9 digits long"]},
-        ),
-        (
-            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GX123456789"},
-            False,
-            {"vat_number": ["Invalid UK VAT number"]},
-        ),
-        ({"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"}, True, None),
-    ),
-)
-def test_register_individual_details_form(data, valid, error):
-    form = forms.RegisterDetailsForm(data=data, is_individual=True)
-
-    assert form.is_valid() == valid
-
-    if not valid:
-        assert form.errors == error
-
-
-@pytest.mark.parametrize(
-    "data, valid, error",
-    (
+        ({"name": "joe", "eori_number": "GB205672212000"}, True, {}, forms.RegisterDetailsIndividualUKForm),
+        ({}, False, {"name": ["Enter a name"]}, forms.RegisterDetailsIndividualOverseasForm),
+        ({"name": "joe"}, True, {}, forms.RegisterDetailsIndividualOverseasForm),
         (
             {},
             False,
@@ -87,6 +58,69 @@ def test_register_individual_details_form(data, valid, error):
                 "vat_number": ["This field is required."],
                 "registration_number": ["Enter a registration number"],
             },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789",
+                "sic_number": "12345",
+                "registration_number": "12345678",
+            },
+            True,
+            {},
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+    ),
+)
+def test_register_details_form_required_fields(data, valid, error, form_class):
+
+    form = form_class(data=data)
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == error
+
+
+@pytest.mark.parametrize(
+    "data, valid, error, form_class",
+    (
+        (
+            {"name": "joe", "eori_number": "123"},
+            False,
+            {"eori_number": ["Invalid UK EORI number"]},
+            forms.RegisterDetailsIndividualUKForm,
+        ),
+        (
+            {"name": "joe", "eori_number": "123456789101112131"},
+            False,
+            {"eori_number": ["EORI numbers are 17 characters or less"]},
+            forms.RegisterDetailsIndividualUKForm,
+        ),
+        (
+            {"name": "joe", "eori_number": "GX205672212000"},
+            False,
+            {"eori_number": ["Invalid UK EORI number"]},
+            forms.RegisterDetailsIndividualUKForm,
+        ),
+        (
+            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "123"},
+            False,
+            {"vat_number": ["Standard UK VAT numbers are 9 digits long"]},
+            forms.RegisterDetailsIndividualUKForm,
+        ),
+        (
+            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "123456789101112131"},
+            False,
+            {"vat_number": ["Standard UK VAT numbers are 9 digits long"]},
+            forms.RegisterDetailsIndividualUKForm,
+        ),
+        (
+            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GX123456789"},
+            False,
+            {"vat_number": ["Invalid UK VAT number"]},
+            forms.RegisterDetailsIndividualUKForm,
         ),
         (
             {
@@ -94,13 +128,11 @@ def test_register_individual_details_form(data, valid, error):
                 "eori_number": "GB205672212000",
                 "vat_number": "GB123456789",
                 "sic_number": "xyz",
-                "registration_number": "21313ewfwe",
+                "registration_number": "1234567x",
             },
             False,
-            {
-                "sic_number": ["Only enter numbers"],
-                "registration_number": ["Registration numbers are 8 numbers long"],
-            },
+            {"sic_number": ["Only enter numbers"], "registration_number": ["Registration numbers are 8 numbers long"]},
+            forms.RegisterDetailsCommercialOverseasForm,
         ),
         (
             {
@@ -115,30 +147,21 @@ def test_register_individual_details_form(data, valid, error):
                 "sic_number": ["Enter a valid SIC code"],
                 "registration_number": ["Registration numbers are 8 numbers long"],
             },
-        ),
-        (
-            {
-                "name": "joe",
-                "eori_number": "GB205672212000",
-                "vat_number": "GB123456789",
-                "sic_number": "12345",
-                "registration_number": "12345678",
-            },
-            True,
-            None,
+            forms.RegisterDetailsCommercialOverseasForm,
         ),
     ),
 )
-def test_register_commercial_details_form(data, valid, error):
-    form = forms.RegisterDetailsForm(data=data, is_individual=False)
+def test_register_details_form_field_validation(data, valid, error, form_class):
 
+    form = form_class(data=data)
     assert form.is_valid() == valid
+
     if not valid:
         assert form.errors == error
 
 
 @pytest.mark.parametrize(
-    "data, valid, error",
+    "data, valid, error, form_class",
     (
         (
             {},
@@ -151,22 +174,7 @@ def test_register_commercial_details_form(data, valid, error):
                 "postcode": ["Enter a real postcode"],
                 "phone_number": ["Enter a telephone number"],
             },
-        ),
-        (
-            {
-                "name": "joe",
-                "address_line_1": "xyz",
-                "region": "r",
-                "city": "c1",
-                "postcode": "pc",
-                "phone_number": "12334",
-                "website": "notreal.com",
-            },
-            False,
-            {
-                "phone_number": ["Invalid telephone number"],
-                "website": ["Enter a valid URL"],
-            },
+            forms.RegisterAddressDetailsUKForm,
         ),
         (
             {
@@ -179,38 +187,56 @@ def test_register_commercial_details_form(data, valid, error):
                 "website": "http://www.notreal.com",
             },
             True,
-            None,
+            {},
+            forms.RegisterAddressDetailsUKForm,
+        ),
+        (
+            {},
+            False,
+            {
+                "name": ["Enter a name for your site"],
+                "phone_number": ["Enter a telephone number"],
+                "address": ["Enter an address"],
+                "country": ["Enter a country"],
+            },
+            forms.RegisterAddressDetailsOverseasForm,
         ),
         (
             {
                 "name": "joe",
-                "address_line_1": "xyz",
-                "region": "r",
-                "city": "c1",
-                "postcode": "pc",
-                "phone_number": "01234567890",
-                "website": "http://www.notreal.com",
+                "address": "23 Long road home, no where land",
+                "phone_number": "+441234567890",
+                "country": "USA",
             },
             True,
-            None,
+            {},
+            forms.RegisterAddressDetailsOverseasForm,
         ),
     ),
 )
-def test_register_uk_address_details_form(data, valid, error):
-    form = forms.RegisterAddressDetailsForm(is_uk_based=True, data=data)
+def test_register_address_details_validate_fields(data, valid, error, form_class):
+    form = form_class(is_individual=True, data=data)
     assert form.is_valid() == valid
     if not valid:
         assert form.errors == error
 
 
 def test_register_non_uk_address_details_form():
-    form = forms.RegisterAddressDetailsForm(is_uk_based=False, data={})
+    data = {
+        "name": "joe",
+        "address_line_1": "xyz",
+        "region": "r",
+        "city": "c1",
+        "postcode": "pc",
+        "phone_number": "12334",
+        "website": "notreal.com",
+    }
+
+    form = forms.RegisterAddressDetailsUKForm(is_individual=False, data=data)
     assert not form.is_valid()
     assert form.errors == {
-        "name": ["Enter a name for your site"],
-        "address": ["Enter an address"],
-        "phone_number": ["Enter a telephone number"],
-        "country": ["Enter a country"],
+        "phone_number": ["Invalid telephone number"],
+        "website": ["Enter a valid URL"],
     }
 
 
