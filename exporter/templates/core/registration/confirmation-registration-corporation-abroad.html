@@ -1,0 +1,13 @@
+{% extends 'core/registration/confirmation-registration-base.html' %}
+
+{% block registration_confirmation_details %}
+
+        {% include "core/registration/includes/registration-details-corporation.html" %}
+
+        <h1 class="govuk-heading-m">
+                Where is your registered office address?
+        </h1>
+
+        {% include "core/registration/includes/address-details-abroad.html" %}
+
+{% endblock %}

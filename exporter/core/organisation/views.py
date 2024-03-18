@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import logging
 from http import HTTPStatus
 
@@ -24,6 +25,7 @@ from .forms import (
     RegisterAddressDetailsUKForm,
     RegisterAddressDetailsOverseasForm,
     SelectOrganisationForm,
+    RegistrationConfirmation,
 )
 from .services import register_organisation
 from .payloads import RegistrationPayloadBuilder
@@ -40,7 +42,21 @@ class Registration(
         (RegistrationSteps.UK_BASED, RegistrationUKBasedForm),
         (RegistrationSteps.REGISTRATION_DETAILS, RegisterDetailsIndividualUKForm),
         (RegistrationSteps.ADDRESS_DETAILS, RegisterAddressDetailsUKForm),
+        (RegistrationSteps.REGISTRATION_CONFIRMATION, RegistrationConfirmation),
     ]
+
+    template_list = {
+        RegistrationSteps.REGISTRATION_CONFIRMATION: {
+            "united_kingdom": {
+                "individual": "core/registration/confirmation-registration-individual-uk.html",
+                "commercial": "core/registration/confirmation-registration-corporation-uk.html",
+            },
+            "abroad": {
+                "individual": "core/registration/confirmation-registration-individual-abroad.html",
+                "commercial": "core/registration/confirmation-registration-corporation-abroad.html",
+            },
+        }
+    }
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
@@ -49,9 +65,9 @@ class Registration(
         return kwargs
 
     def get_form(self, step=None, data=None, files=None):
-        # form = super().get_form(step, data, files)
-        # determine the step if not given
         form = super().get_form(step, data, files)
+
+        # determine the step if not given
         if step is None:
             step = self.steps.current
 
@@ -64,8 +80,7 @@ class Registration(
         return form
 
     def get_registration_details_form(self, data):
-        location = self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"]
-        registration_type = self.get_cleaned_data_for_step(RegistrationSteps.REGISTRATION_TYPE)["type"]
+        location, registration_type = self.location_registration_type
         registration_details_form_classes = {
             "united_kingdom": {
                 "individual": RegisterDetailsIndividualUKForm,
@@ -96,6 +111,28 @@ class Registration(
             }
         )
         return form_class(**kwargs)
+
+    def get_template_names(self):
+        template_name = super().get_template_names()
+        if self.steps.current == RegistrationSteps.REGISTRATION_CONFIRMATION:
+            location, registration_type = self.location_registration_type
+            template_name = [self.template_list[self.steps.current][location][registration_type]]
+        return template_name
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        if self.steps.current == RegistrationSteps.REGISTRATION_CONFIRMATION:
+            form_dict = OrderedDict()
+            for form_key in self.get_form_list():
+                form_obj = self.get_form(
+                    step=form_key,
+                    data=self.storage.get_step_data(form_key),
+                    files=self.storage.get_step_files(form_key),
+                )
+                form_obj.is_valid()
+                form_dict[form_key] = form_obj
+            context["registration_data"] = RegistrationPayloadBuilder().build(form_dict)
+        return context
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -146,6 +183,13 @@ class Registration(
     @property
     def is_individual(self):
         return self.get_cleaned_data_for_step(RegistrationSteps.REGISTRATION_TYPE)["type"] == "individual"
+
+    @property
+    def location_registration_type(self):
+        return (
+            self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"],
+            self.get_cleaned_data_for_step(RegistrationSteps.REGISTRATION_TYPE)["type"],
+        )
 
 
 class SelectOrganisation(LoginRequiredMixin, FormView):
