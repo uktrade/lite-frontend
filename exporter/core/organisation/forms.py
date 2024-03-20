@@ -272,6 +272,7 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
             "required": "Enter a country",
         },
     )
+    # country = AutocompleteInput(name="country", title="country", options=get_countries(request, True)),
 
     def get_layout_fields(self):
         return ("name", "address", "phone_number", "website", "country")
