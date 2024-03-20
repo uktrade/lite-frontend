@@ -52,16 +52,16 @@ class EndUserPage:
 
 
 class UltimateEndUserForm:
-    TITLE = "Select the type of ultimate recipient"
+    TITLE = "Select the type of ultimate end-user"
     BUTTON = "Continue"
-    NAME_FORM_TITLE = "Ultimate recipient name"
-    WEBSITE_FORM_TITLE = "Ultimate recipient website address (optional)"
-    ADDRESS_FORM_TITLE = "Ultimate recipient address"
+    NAME_FORM_TITLE = "Ultimate end-user name"
+    WEBSITE_FORM_TITLE = "Ultimate end-user website address (optional)"
+    ADDRESS_FORM_TITLE = "Ultimate end-user address"
     SUBMIT_BUTTON = "Save and continue"
 
 
 class UltimateEndUserPage:
-    DELETE_ERROR = "Unexpected error removing ultimate recipient"
+    DELETE_ERROR = "Unexpected error removing ultimate end-user"
 
 
 class ConsigneeForm:
@@ -130,7 +130,7 @@ class ApplicationSummaryPage:
     CREATED_AT = "Created"
     SUBMITTED_AT = "Submitted"
     END_USER = "End user"
-    ULTIMATE_END_USERS = "Ultimate recipient"
+    ULTIMATE_END_USERS = "Ultimate end-user"
     CONSIGNEE = "Consignee"
     THIRD_PARTIES = "Third parties"
     GOODS_LOCATIONS = "Locations"
@@ -496,7 +496,7 @@ class StandardApplicationTaskList:
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
-    ULTIMATE_END_USERS = "Ultimate recipients"
+    ULTIMATE_END_USERS = "Ultimate end-users"
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
@@ -517,7 +517,7 @@ class OpenApplicationTaskList:
     END_USE_DETAILS = "End use details"
     TEMPORARY_EXPORT_DETAILS = "Temporary export details"
     NOTES = "Notes"
-    ULTIMATE_END_USERS = "Ultimate recipients"
+    ULTIMATE_END_USERS = "Ultimate end-users"
     THIRD_PARTIES = "Third parties"
     END_USER = "End user"
 
@@ -527,7 +527,7 @@ class HMRCApplicationTaskList:
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
-    ULTIMATE_END_USERS = "Ultimate recipients"
+    ULTIMATE_END_USERS = "Ultimate end-users"
     THIRD_PARTIES = "Third parties"
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
@@ -543,7 +543,7 @@ class ExhibitionClearanceTaskList:
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
-    ULTIMATE_END_USERS = "Ultimate recipients"
+    ULTIMATE_END_USERS = "Ultimate end-users"
     CONSIGNEE = "Consignee"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     THIRD_PARTIES = "Third parties"
@@ -746,18 +746,18 @@ class ClearanceLevel:
 
 
 class UltimateEndUsersPage:
-    TITLE = "Ultimate recipients"
+    TITLE = "Ultimate end-users"
     ADD = "Add a third party"
     NO_RESULTS = "There are no third parties on this application"
     BACK = "Back to application overview"
-    HELP = "What is an ultimate recipient?"
+    HELP = "What is an ultimate end-user?"
     DESCRIPTION = (
-        "An ultimate recipient is a party that uses the product or the higher level system into which the product is"
-        " installed or incorporated. The end user and ultimate recipient may be different parties."
+        "An ultimate end-user is a party that uses the product or the higher level system into which the product is"
+        " installed or incorporated. The end user and ultimate end-user may be different parties."
     )
-    NOTICE = "There are no ultimate recipients on this application."
-    MISSING_DOCS_NOTICE = "You need to attach a document to some ultimate recipients"
-    ADD_BUTTON = "Add an ultimate recipient"
+    NOTICE = "There are no ultimate end-users on this application."
+    MISSING_DOCS_NOTICE = "You need to attach a document to some ultimate end-users"
+    ADD_BUTTON = "Add an ultimate end-user"
 
     class Document:
         DOWNLOAD = "Download"
