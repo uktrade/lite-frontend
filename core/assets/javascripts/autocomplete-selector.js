@@ -7,7 +7,7 @@ class AutoCompleteSelector {
 
   init() {
     accessibleAutocomplete.enhanceSelectElement({
-      defaultValue: false,
+      defaultValue: "",
       selectElement: this.$el,
       showAllValues: true,
     });
