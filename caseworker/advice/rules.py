@@ -21,7 +21,7 @@ def can_ncsc_make_recommendation(user, case, queue_alias):
     return queue_alias == services.NCSC_CASES_TO_REVIEW
 
 
-def can_beis_make_recommendation(user, case, queue_alias):
+def can_desnz_make_recommendation(user, case, queue_alias):
     if queue_alias not in (
         services.BEIS_CHEMICAL_CASES_TO_REVIEW,
         services.BEIS_NUCLEAR_CASES_TO_REVIEW,
@@ -54,7 +54,7 @@ def can_user_make_recommendation(request, case):
     if team in services.MOD_CONSOLIDATE_TEAMS:
         return can_mod_make_recommendation(user, case, queue_alias)
     if team in services.BEIS_TEAMS:
-        return can_beis_make_recommendation(user, case, queue_alias)
+        return can_desnz_make_recommendation(user, case, queue_alias)
     if team == services.NCSC_TEAM:
         return can_ncsc_make_recommendation(user, case, queue_alias)
 

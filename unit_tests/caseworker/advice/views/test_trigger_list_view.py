@@ -50,17 +50,17 @@ def edit_assessment_url(data_queue, data_standard_case_with_potential_trigger_li
     )
 
 
-def test_beis_assess_trigger_list_products_get(authorized_client, url):
+def test_desnz_assess_trigger_list_products_get(authorized_client, url):
     response = authorized_client.get(url)
     assert response.status_code == 200
 
 
-def test_beis_edit_trigger_list_assessment_before_assessing(authorized_client, edit_assessment_url):
+def test_desnz_edit_trigger_list_assessment_before_assessing(authorized_client, edit_assessment_url):
     response = authorized_client.get(edit_assessment_url)
     assert response.status_code == 404
 
 
-def test_beis_edit_trigger_list_assessment_get(
+def test_desnz_edit_trigger_list_assessment_get(
     authorized_client, edit_assessment_url, data_standard_case_with_potential_trigger_list_product
 ):
     good_on_application = data_standard_case_with_potential_trigger_list_product["case"]["data"]["goods"][0]
@@ -72,12 +72,12 @@ def test_beis_edit_trigger_list_assessment_get(
     assert response.status_code == 200
 
 
-def test_beis_assess_trigger_list_products_renders_template(authorized_client, url):
+def test_desnz_assess_trigger_list_products_renders_template(authorized_client, url):
     response = authorized_client.get(url)
     assertTemplateUsed(response, "advice/trigger_list_home.html")
 
 
-def test_beis_assess_trigger_list_products_json(
+def test_desnz_assess_trigger_list_products_json(
     authorized_client,
     url,
     data_standard_case_with_potential_trigger_list_product,
@@ -89,7 +89,7 @@ def test_beis_assess_trigger_list_products_json(
     ]
 
 
-def test_beis_assess_trigger_list_products_post_final_advice_and_returns_to_advice_view(
+def test_desnz_assess_trigger_list_products_post_final_advice_and_returns_to_advice_view(
     authorized_client,
     url,
     advice_url,
@@ -133,7 +133,7 @@ def test_beis_assess_trigger_list_products_post_final_advice_and_returns_to_advi
     ]
 
 
-def test_beis_assess_trigger_list_products_post_advice_and_remains_on_trigger_list_view(
+def test_desnz_assess_trigger_list_products_post_advice_and_remains_on_trigger_list_view(
     authorized_client, url, requests_mock, data_standard_case_with_potential_trigger_list_product
 ):
     application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
@@ -157,7 +157,7 @@ def test_beis_assess_trigger_list_products_post_advice_and_remains_on_trigger_li
     assert response.headers["Location"] == url
 
 
-def test_beis_assessed_trigger_list_products(
+def test_desnz_assessed_trigger_list_products(
     authorized_client,
     url,
     data_standard_case_with_potential_trigger_list_product,
@@ -244,7 +244,7 @@ def clear_assessments_url(data_queue, data_standard_case):
     )
 
 
-def test_beis_clear_assessments_trigger_list_products_post(
+def test_desnz_clear_assessments_trigger_list_products_post(
     authorized_client, clear_assessments_url, requests_mock, data_standard_case_with_potential_trigger_list_product
 ):
     application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]
@@ -268,7 +268,7 @@ def test_beis_clear_assessments_trigger_list_products_post(
     }
 
 
-def test_beis_assess_trigger_list_products_edit(
+def test_desnz_assess_trigger_list_products_edit(
     authorized_client, edit_assessment_url, requests_mock, data_standard_case_with_potential_trigger_list_product
 ):
     application_id = data_standard_case_with_potential_trigger_list_product["case"]["id"]

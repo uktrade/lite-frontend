@@ -87,7 +87,7 @@ def flags(fcdo_team, lu_team):
         "part_of_ecju": True,
         "is_ogd": True,
     }
-    beis_chem_team = {
+    desnz_chem_team = {
         "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
         "name": "DESNZ Chemical",
         "alias": "BEIS_CHEMICAL",
@@ -151,7 +151,7 @@ def flags(fcdo_team, lu_team):
             "alias": "BEIS_CW",
             "level": "Good",
             "label": None,
-            "team": beis_chem_team,
+            "team": desnz_chem_team,
         },
     ]
 
@@ -611,7 +611,7 @@ def mock_gov_fcdo_user(requests_mock, mock_notifications, mock_case_statuses, mo
 
 
 @pytest.fixture
-def mock_gov_beis_nuclear_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
+def mock_gov_desnz_nuclear_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
     mock_gov_user["user"]["team"] = {
         "id": "521154de-f39e-45bf-9922-baaaaaa",
         "name": "BEIS_NUCLEAR ",
