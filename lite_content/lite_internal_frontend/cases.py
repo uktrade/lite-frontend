@@ -589,7 +589,7 @@ class StandardApplication:
     LICENSEE = "Applicant"
     END_USER = "End user"
     CONSIGNEE = "Consignee"
-    ULTIMATE_END_USER = "Ultimate recipient"
+    ULTIMATE_END_USER = "Ultimate end-user"
     THIRD_PARTY = "Third party"
 
 

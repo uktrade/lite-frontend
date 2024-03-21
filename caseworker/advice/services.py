@@ -483,9 +483,9 @@ def update_countersign_decision_advice(request, case, caseworker, formset_data):
             {
                 "id": countersign_advice["id"],
                 "outcome_accepted": form_data["outcome_accepted"],
-                "reasons": form_data["approval_reasons"]
-                if form_data["outcome_accepted"]
-                else form_data["rejected_reasons"],
+                "reasons": (
+                    form_data["approval_reasons"] if form_data["outcome_accepted"] else form_data["rejected_reasons"]
+                ),
             }
             for countersign_advice in countersign_advice_data
         ]
@@ -559,7 +559,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["clear_recommendation"] = True
                 context["buttons"]["move_case_forward"] = True
 
-            # BEIS Nuclear need to assess products first before giving recommendation
+            # DESNZ Nuclear need to assess products first before giving recommendation
             if team_alias == BEIS_NUCLEAR and queue_alias == BEIS_NUCLEAR_CASES_TO_REVIEW and not existing_advice:
                 context["buttons"]["assess_trigger_list_products"] = len(unassessed_trigger_list_goods(case)) > 0
 
