@@ -90,7 +90,7 @@ def flags(fcdo_team, lu_team):
     desnz_chem_team = {
         "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
         "name": "DESNZ Chemical",
-        "alias": "BEIS_CHEMICAL",
+        "alias": "DESNZ_CHEMICAL",
         "part_of_ecju": False,
         "is_ogd": True,
     }
@@ -148,7 +148,7 @@ def flags(fcdo_team, lu_team):
             "id": "dcb9ab9e-0dff-4b78-bc85-71b879c18a38",
             "name": "DESNZ CW",
             **defaults,
-            "alias": "BEIS_CW",
+            "alias": "DESNZ_CW",
             "level": "Good",
             "label": None,
             "team": desnz_chem_team,
@@ -614,8 +614,8 @@ def mock_gov_fcdo_user(requests_mock, mock_notifications, mock_case_statuses, mo
 def mock_gov_desnz_nuclear_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
     mock_gov_user["user"]["team"] = {
         "id": "521154de-f39e-45bf-9922-baaaaaa",
-        "name": "BEIS_NUCLEAR ",
-        "alias": "BEIS_NUCLEAR",
+        "name": "DESNZ_NUCLEAR ",
+        "alias": "DESNZ_NUCLEAR",
     }
 
     url = client._build_absolute_uri("/gov-users/")

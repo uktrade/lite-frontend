@@ -23,12 +23,12 @@ def can_ncsc_make_recommendation(user, case, queue_alias):
 
 def can_desnz_make_recommendation(user, case, queue_alias):
     if queue_alias not in (
-        services.BEIS_CHEMICAL_CASES_TO_REVIEW,
-        services.BEIS_NUCLEAR_CASES_TO_REVIEW,
+        services.DESNZ_CHEMICAL_CASES_TO_REVIEW,
+        services.DESNZ_NUCLEAR_CASES_TO_REVIEW,
     ):
         return False
 
-    if queue_alias == services.BEIS_NUCLEAR_CASES_TO_REVIEW:
+    if queue_alias == services.DESNZ_NUCLEAR_CASES_TO_REVIEW:
         return len(services.unassessed_trigger_list_goods(case)) == 0
 
     return True
@@ -53,7 +53,7 @@ def can_user_make_recommendation(request, case):
         return can_fcdo_make_recommendation(user, case, queue_alias)
     if team in services.MOD_CONSOLIDATE_TEAMS:
         return can_mod_make_recommendation(user, case, queue_alias)
-    if team in services.BEIS_TEAMS:
+    if team in services.DESNZ_TEAMS:
         return can_desnz_make_recommendation(user, case, queue_alias)
     if team == services.NCSC_TEAM:
         return can_ncsc_make_recommendation(user, case, queue_alias)

@@ -5,9 +5,9 @@
 	{% for ecju_query in open_queries %}
 		<div class="app-ecju-query" id="open-ecju-query">
 			<div class="app-ecju-query__item">
-				{% if "BEIS_CHEMICAL" == ecju_query.team.alias %}
+				{% if "DESNZ_CHEMICAL" == ecju_query.team.alias %}
 					<p class="app-ecju-query__heading">DESNZ Chemical</p>
-				{% elif "BEIS_NUCLEAR" == ecju_query.team.alias %}
+				{% elif "DESNZ_NUCLEAR" == ecju_query.team.alias %}
 					<p class="app-ecju-query__heading">DESNZ Nuclear</p>
 				{% else %}
 					<p class="app-ecju-query__heading">{{ ecju_query.team.name }}</p>
