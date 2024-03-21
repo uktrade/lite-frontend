@@ -37,6 +37,7 @@ DESNZ_TEAMS = [
     DESNZ_CHEMICAL,
     DESNZ_NUCLEAR,
 ]
+BEIS_TEAMS = ["BEIS_CHEMICAL", "BEIS_NUCLEAR"]
 FCDO_TEAM = "FCO"
 LICENSING_UNIT_TEAM = "LICENSING_UNIT"
 MOD_ECJU_TEAM = "MOD_ECJU"
@@ -541,13 +542,15 @@ def get_advice_tab_context(case, caseworker, queue_id):
         },
     }
 
-    if team_alias in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS, *DESNZ_TEAMS, NCSC_TEAM):
+    if team_alias in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS, *DESNZ_TEAMS, *BEIS_TEAMS, NCSC_TEAM):
         if queue_alias in (
             FCDO_CASES_TO_REVIEW_QUEUE,
             FCDO_CPACC_CASES_TO_REVIEW_QUEUE,
             *MOD_CONSOLIDATE_QUEUES,
             DESNZ_CHEMICAL_CASES_TO_REVIEW,
             DESNZ_NUCLEAR_CASES_TO_REVIEW,
+            "BEIS_CHEMICAL_CASES_TO_REVIEW",
+            "BEIS_NUCLEAR_CASES_TO_REVIEW",
             NCSC_CASES_TO_REVIEW,
         ):
             existing_advice = get_my_advice(case.advice, caseworker["id"])
@@ -560,10 +563,16 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
             # DESNZ Nuclear need to assess products first before giving recommendation
-            if team_alias == DESNZ_NUCLEAR and queue_alias == DESNZ_NUCLEAR_CASES_TO_REVIEW and not existing_advice:
+            if (
+                (team_alias == DESNZ_NUCLEAR or team_alias == "BEIS_NUCLEAR")
+                and (queue_alias == DESNZ_NUCLEAR_CASES_TO_REVIEW or queue_alias == "BEIS_NUCLEAR_CASES_TO_REVIEW")
+                and not existing_advice
+            ):
                 context["buttons"]["assess_trigger_list_products"] = len(unassessed_trigger_list_goods(case)) > 0
 
-        elif queue_alias == FCDO_COUNTERSIGNING_QUEUE or queue_alias == DESNZ_NUCLEAR_COUNTERSIGNING:
+        elif queue_alias == FCDO_COUNTERSIGNING_QUEUE or (
+            queue_alias == DESNZ_NUCLEAR_COUNTERSIGNING or queue_alias == "BEIS_NUCLEAR_COUNTERSIGNING"
+        ):
             advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
             countersigned_by = get_countersigners(advice_to_countersign)
 
