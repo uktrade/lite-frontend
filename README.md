@@ -109,6 +109,12 @@ https://github.com/uktrade?q=spire
 [coverage-image]: https://api.codeclimate.com/v1/badges/7bb724ad7dc3c9be3733/test_coverage
 [coverage]: https://codeclimate.com/github/uktrade/lite-frontend/test_coverage
 
+## Mock SSO
+
+Currently we have Mock SSO enabled by default. You should be able to use Mock SSO in your own env files without changing any of the defaults provided in `example.caseworker.env` or `example.exporter.env`.
+
+Previously you had to set the Mock SSO email in an env variable `MOCK_SSO_USER_EMAIL` in `caseworker.env` for this to work. Now this is optional as there is an input box which allows you to type in an email you want to use for Mock SSO. This change was made because having the input box is useful for running tests using CI.
+
 ## UI tests
 
 We use pytest + Selenium for end-to-end tests.
@@ -154,13 +160,6 @@ make run_all_tests
   in Vault
 - DIRECTORY_SSO_API_CLIENT_API_KEY - Needed by the UI tests but not the caseworker or exporter, available
   in Vault
-
-# To Run Mock SS0 in caseworker.env set
-AUTHBROKER_URL=http://caseworker:8200
-MOCK_SSO_ACTIVATE_ENDPOINTS=True
-MOCK_SSO_USER_EMAIL=fake@fake.com (this user will need to be seeded as an internal user)
-MOCK_SSO_USER_FIRST_NAME=LITE
-MOCK_SSO_USER_LAST_NAME=Testing
 
 Exporter UI Tests also requires the following :
 
