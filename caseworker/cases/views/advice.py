@@ -10,7 +10,6 @@ from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.advice import (
     finalise_goods_countries_form,
     generate_documents_form,
-    reissue_finalise_form,
     finalise_form,
 )
 from caseworker.cases.forms.finalise_case import deny_licence_form
@@ -24,7 +23,6 @@ from caseworker.cases.services import (
     get_good_countries_decisions,
     grant_licence,
     get_final_decision_documents,
-    get_licence,
     get_finalise_application_goods,
     post_good_countries_decisions,
     get_open_licence_decision,
@@ -164,14 +162,9 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
         if approve:
             any_nlr = any([item == "no_licence_required" for item in items])
-            licence_data, _ = get_licence(request, str(kwargs["pk"]))
-            licence = licence_data.get("licence")
-            # If there are licenced goods, we want to use the reissue goods flow.
-            if licence:
-                form, form_data = reissue_finalise_form(request, licence, case, kwargs["queue_pk"])
-            else:
-                goods = self._get_goods(request, str(kwargs["pk"]), case_type)
-                form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
+            goods = self._get_goods(request, str(kwargs["pk"]), case_type)
+            form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
+
             return form_page(
                 request,
                 form,
@@ -199,19 +192,12 @@ class Finalise(LoginRequiredMixin, TemplateView):
         data = request.POST.copy()
 
         res = finalise_application(request, application_id, data)
-        licence_data, _ = get_licence(request, str(kwargs["pk"]))
-        licence = licence_data.get("licence")
-
         if res.status_code == HTTPStatus.FORBIDDEN:
             return error_page(request, "You do not have permission.")
 
         if res.status_code != HTTPStatus.OK:
-            # If there are licenced goods, we want to use the reissue goods flow.
-            if licence:
-                form, form_data = reissue_finalise_form(request, licence, case, kwargs["queue_pk"])
-            else:
-                goods = self._get_goods(request, str(kwargs["pk"]), case.data["case_type"]["sub_type"]["key"])
-                form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
+            goods = self._get_goods(request, str(kwargs["pk"]), case.data["case_type"]["sub_type"]["key"])
+            form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
 
             return form_page(request, form, data=form_data, errors=res.json()["errors"], extra_data={"case": case})
 
