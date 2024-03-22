@@ -22,6 +22,7 @@ def can_ncsc_make_recommendation(user, case, queue_alias):
 
 
 def can_desnz_make_recommendation(user, case, queue_alias):
+    # TODO: Remove BEIS queue aliases when DESNZ aliases in lite-api
     if queue_alias not in (
         services.DESNZ_CHEMICAL_CASES_TO_REVIEW,
         services.DESNZ_NUCLEAR_CASES_TO_REVIEW,
@@ -29,7 +30,7 @@ def can_desnz_make_recommendation(user, case, queue_alias):
         "BEIS_NUCLEAR_CASES_TO_REVIEW",
     ):
         return False
-
+    # TODO: Remove BEIS queue alias when DESNZ alias in lite-api
     if queue_alias == services.DESNZ_NUCLEAR_CASES_TO_REVIEW or queue_alias == "BEIS_NUCLEAR_CASES_TO_REVIEW":
         return len(services.unassessed_trigger_list_goods(case)) == 0
 
@@ -55,6 +56,7 @@ def can_user_make_recommendation(request, case):
         return can_fcdo_make_recommendation(user, case, queue_alias)
     if team in services.MOD_CONSOLIDATE_TEAMS:
         return can_mod_make_recommendation(user, case, queue_alias)
+    # TODO: Remove BEIS team aliases when DESNZ aliases in lite-api
     if team in services.DESNZ_TEAMS or team in services.BEIS_TEAMS:
         return can_desnz_make_recommendation(user, case, queue_alias)
     if team == services.NCSC_TEAM:
