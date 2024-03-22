@@ -115,6 +115,11 @@ Currently we have Mock SSO enabled by default. You should be able to use Mock SS
 
 Previously you had to set the Mock SSO email in an env variable `MOCK_SSO_USER_EMAIL` in `caseworker.env` for this to work. Now this is optional as there is an input box which allows you to type in an email you want to use for Mock SSO. This change was made because having the input box is useful for running tests using CI.
 
+If you need to disable Mock SSO find `MOCK_SSO_ACTIVATE_ENDPOINTS` in your `caseworker.env` or `exporter.env` file and set it to False:
+```
+MOCK_SSO_ACTIVATE_ENDPOINTS=False
+```
+
 ## UI tests
 
 We use pytest + Selenium for end-to-end tests.
