@@ -30,15 +30,15 @@ urlpatterns = [
     path("consolidate/review/", views.ReviewConsolidateView.as_view(), name="consolidate_review"),
     path("consolidate/edit/", views.ConsolidateEditView.as_view(), name="consolidate_edit"),
     path("consolidate/view-advice/", views.ViewConsolidatedAdviceView.as_view(), name="consolidate_view"),
-    path("assess-trigger-list-products/", views.BEISProductAssessmentView.as_view(), name="assess_trigger_list"),
+    path("assess-trigger-list-products/", views.DESNZProductAssessmentView.as_view(), name="assess_trigger_list"),
     path(
         "edit-trigger-list-products/<uuid:good_on_application_id>/",
-        views.BEISProductAssessmentEditView.as_view(),
+        views.DESNZProductAssessmentEditView.as_view(),
         name="edit_trigger_list",
     ),
     path(
         "clear-trigger-list-assessments/",
-        views.BEISProductClearAssessmentsView.as_view(),
+        views.DESNZProductClearAssessmentsView.as_view(),
         name="clear_trigger_list_assessments",
     ),
 ]
