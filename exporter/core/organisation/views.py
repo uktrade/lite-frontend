@@ -44,7 +44,6 @@ class Registration(
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        kwargs["request"] = self.request
         if step in (RegistrationSteps.ADDRESS_DETAILS):
             kwargs["is_individual"] = self.is_individual
         return kwargs
@@ -86,10 +85,11 @@ class Registration(
 
     def get_registration_address_form(self, data):
         location = self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"]
-        form_class = (
-            RegisterAddressDetailsUKForm if location == "united_kingdom" else RegisterAddressDetailsOverseasForm
-        )
+        form_class = RegisterAddressDetailsUKForm
         kwargs = self.get_form_kwargs(RegistrationSteps.ADDRESS_DETAILS)
+        if location != "united_kingdom":
+            form_class = RegisterAddressDetailsOverseasForm
+            kwargs["request"] = self.request
         kwargs.update(
             {
                 "prefix": self.get_form_prefix(RegistrationSteps.ADDRESS_DETAILS, form_class),

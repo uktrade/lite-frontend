@@ -180,7 +180,7 @@ def test_registration_individual_end_to_end_uk_based(
 
 
 def test_registration_individual_end_to_end_non_uk_based(
-    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post
+    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post, mock_get_countries
 ):
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     post_to_step(
@@ -203,7 +203,7 @@ def test_registration_individual_end_to_end_non_uk_based(
         {
             "name": "joe",
             "address": "xyz",
-            "country": "usa",
+            "country": "US",
             "phone_number": "+441234567890",
             "website": "http://www.notreal.com",
         },
@@ -230,7 +230,7 @@ def test_registration_individual_end_to_end_non_uk_based(
 
 
 def test_registration_commercial_end_to_end(
-    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post
+    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post, mock_get_countries
 ):
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     post_to_step(
@@ -264,7 +264,7 @@ def test_registration_commercial_end_to_end(
         {
             "name": "joe",
             "address": "xyz",
-            "country": "usa",
+            "country": "TH",
             "phone_number": "+441234567890",
             "website": "http://www.notreal.com",
         },
@@ -278,7 +278,7 @@ def test_registration_commercial_end_to_end(
         "sic_number": "12345",
         "registration_number": "12345678",
         "vat_number": "GB123456789",
-        "site": {"name": "joe", "address": {"address": "xyz", "country": "US"}},
+        "site": {"name": "joe", "address": {"address": "xyz", "country": "TH"}},
         "phone_number": "+441234567890",
         "website": "http://www.notreal.com",
         "user": {"email": "foo@example.com"},
