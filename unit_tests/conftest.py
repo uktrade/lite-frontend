@@ -5,6 +5,8 @@ import pytest
 import os
 import re
 
+import requests
+
 from datetime import timedelta
 from urllib.parse import urljoin, urlparse
 
@@ -2577,3 +2579,11 @@ def mock_s3_files(settings):
             )
 
     return _create_files
+
+
+@pytest.fixture
+def mock_request(rf, authorized_client):
+    request = rf.get("/")
+    request.session = authorized_client.session
+    request.requests_session = requests.Session()
+    yield request

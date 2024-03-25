@@ -259,13 +259,6 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
         },
     )
 
-    country = forms.CharField(
-        label="Country",
-        error_messages={
-            "required": "Enter a country",
-        },
-    )
-
     country = forms.ChoiceField(
         choices=[],
         widget=forms.widgets.Select(attrs={"data-module": "autocomplete-select"}),
@@ -277,7 +270,8 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
     class Layout:
         TITLE = "Where is your organisation based?"
 
-    def __init__(self, is_individual, *args, **kwargs):
+    def __init__(self, is_individual, request, *args, **kwargs):
+        self.request = request
         if is_individual:
             self.Layout.TITLE = "What is your registered office address?"
         super().__init__(*args, **kwargs)

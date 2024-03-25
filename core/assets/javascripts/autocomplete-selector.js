@@ -10,6 +10,7 @@ class AutoCompleteSelector {
       defaultValue: "",
       selectElement: this.$el,
       showAllValues: true,
+      cssNamespace: "lite-autocomplete",
     });
   }
 }

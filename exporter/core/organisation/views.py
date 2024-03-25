@@ -44,6 +44,7 @@ class Registration(
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
+        kwargs["request"] = self.request
         if step in (RegistrationSteps.ADDRESS_DETAILS):
             kwargs["is_individual"] = self.is_individual
         return kwargs
