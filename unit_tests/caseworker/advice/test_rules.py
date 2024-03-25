@@ -123,19 +123,19 @@ def test_can_user_make_recommendation_user_allocated_mod_queue_mismatch(
     assert not rules.test_rule("can_user_make_recommendation", request, data_assigned_case)
 
 
-def test_can_user_make_recommendation_user_allocated_beis_chemical_allow(
+def test_can_user_make_recommendation_user_allocated_desnz_chemical_allow(
     mock_gov_user, data_fake_queue, data_assigned_case
 ):
-    mock_gov_user["user"]["team"]["alias"] = services.BEIS_TEAMS[0]
-    data_fake_queue["alias"] = services.BEIS_CHEMICAL_CASES_TO_REVIEW
+    mock_gov_user["user"]["team"]["alias"] = services.DESNZ_TEAMS[0]
+    data_fake_queue["alias"] = services.DESNZ_CHEMICAL_CASES_TO_REVIEW
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
     assert rules.test_rule("can_user_make_recommendation", request, data_assigned_case)
 
 
-def test_can_user_make_recommendation_user_allocated_beis_queue_mismatch(
+def test_can_user_make_recommendation_user_allocated_desnz_queue_mismatch(
     mock_gov_user, data_fake_queue, data_assigned_case
 ):
-    mock_gov_user["user"]["team"]["alias"] = services.BEIS_TEAMS[0]
+    mock_gov_user["user"]["team"]["alias"] = services.DESNZ_TEAMS[0]
     data_fake_queue["alias"] = "some-mismatched-queue"
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
     assert not rules.test_rule("can_user_make_recommendation", request, data_assigned_case)
@@ -149,7 +149,7 @@ def test_can_user_make_recommendation_user_allocated_beis_queue_mismatch(
     ),
 )
 @mock.patch("caseworker.advice.rules.services.unassessed_trigger_list_goods")
-def test_can_user_make_recommendation_user_allocated_beis_nuclear_trigger_list_goods(
+def test_can_user_make_recommendation_user_allocated_desnz_nuclear_trigger_list_goods(
     mock_unassessed_trigger_list_goods,
     unassessed_trigger_list_goods_result,
     expected_permission_result,
@@ -158,8 +158,8 @@ def test_can_user_make_recommendation_user_allocated_beis_nuclear_trigger_list_g
     data_assigned_case,
 ):
     mock_unassessed_trigger_list_goods.return_value = unassessed_trigger_list_goods_result
-    mock_gov_user["user"]["team"]["alias"] = services.BEIS_TEAMS[0]
-    data_fake_queue["alias"] = services.BEIS_NUCLEAR_CASES_TO_REVIEW
+    mock_gov_user["user"]["team"]["alias"] = services.DESNZ_TEAMS[0]
+    data_fake_queue["alias"] = services.DESNZ_NUCLEAR_CASES_TO_REVIEW
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
     assert rules.test_rule("can_user_make_recommendation", request, data_assigned_case) == expected_permission_result
 

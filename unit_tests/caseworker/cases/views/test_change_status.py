@@ -95,7 +95,7 @@ def test_change_status_GET(
     [
         ("mock_gov_tau_user", False),
         ("mock_gov_fcdo_user", False),
-        ("mock_gov_beis_nuclear_user", False),
+        ("mock_gov_desnz_nuclear_user", False),
         ("mock_gov_lu_user", True),
     ],
 )

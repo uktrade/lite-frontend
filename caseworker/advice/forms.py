@@ -375,7 +375,7 @@ class MoveCaseForwardForm(forms.Form):
         self.helper.layout = Layout(Submit("submit", move_case_button_label, css_id="move-case-forward-button"))
 
 
-class BEISTriggerListFormBase(forms.Form):
+class DESNZTriggerListFormBase(forms.Form):
     TRIGGER_LIST_GUIDELINES_CHOICES = [(True, "Yes"), (False, "No")]
     NCA_CHOICES = [(True, "Yes"), (False, "No")]
 
@@ -417,7 +417,7 @@ class BEISTriggerListFormBase(forms.Form):
         )
 
 
-class BEISTriggerListAssessmentForm(BEISTriggerListFormBase):
+class DESNZTriggerListAssessmentForm(DESNZTriggerListFormBase):
     def __init__(
         self,
         request,
@@ -466,7 +466,7 @@ class BEISTriggerListAssessmentForm(BEISTriggerListFormBase):
         ]
 
 
-class BEISTriggerListAssessmentEditForm(BEISTriggerListFormBase):
+class DESNZTriggerListAssessmentEditForm(DESNZTriggerListFormBase):
     def __init__(
         self,
         request,
