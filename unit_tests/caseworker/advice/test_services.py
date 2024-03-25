@@ -4,15 +4,15 @@ import requests
 from unittest.mock import patch
 
 from caseworker.advice.services import (
-    BEIS_CHEMICAL_CASES_TO_REVIEW,
-    BEIS_NUCLEAR_CASES_TO_REVIEW,
-    BEIS_NUCLEAR_COUNTERSIGNING,
+    DESNZ_CHEMICAL_CASES_TO_REVIEW,
+    DESNZ_NUCLEAR_CASES_TO_REVIEW,
+    DESNZ_NUCLEAR_COUNTERSIGNING,
     FCDO_CASES_TO_REVIEW_QUEUE,
     FCDO_CPACC_CASES_TO_REVIEW_QUEUE,
     NCSC_CASES_TO_REVIEW,
     FCDO_COUNTERSIGNING_QUEUE,
-    BEIS_CHEMICAL,
-    BEIS_NUCLEAR,
+    DESNZ_CHEMICAL,
+    DESNZ_NUCLEAR,
     FCDO_TEAM,
     NCSC_TEAM,
     LICENSING_UNIT_TEAM,
@@ -109,8 +109,8 @@ def test_get_advice_for_countersign_with_post_circ_countersigning(current_user, 
 advice_tab_test_data = [
     # Fields: Has Advice, Advice Level, Countersigned, User Team, Current Queue, Expected Tab URL, Expected Buttons Enabled (dict)
     # An individual giving advice on a case for the first time
-    (False, "user", False, BEIS_CHEMICAL, BEIS_CHEMICAL_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": True},),
-    (False, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": False, "assess_trigger_list_products": True},),
+    (False, "user", False, DESNZ_CHEMICAL, DESNZ_CHEMICAL_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": True},),
+    (False, "user", False, DESNZ_NUCLEAR, DESNZ_NUCLEAR_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": False, "assess_trigger_list_products": True},),
     (False, "user", False, FCDO_TEAM, FCDO_CASES_TO_REVIEW_QUEUE, "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, FCDO_TEAM, FCDO_CPACC_CASES_TO_REVIEW_QUEUE, "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[0], MOD_CONSOLIDATE_QUEUES[0], "cases:advice_view", {"make_recommendation": True},),
@@ -120,8 +120,8 @@ advice_tab_test_data = [
     (False, "user", False, MOD_CONSOLIDATE_TEAMS[3], MOD_CONSOLIDATE_QUEUES[4], "cases:advice_view", {"make_recommendation": True},),
     (False, "user", False, NCSC_TEAM, NCSC_CASES_TO_REVIEW, "cases:advice_view", {"make_recommendation": True},),
     # An individual accessing the cases again after having given advice
-    (True, "user", False, BEIS_CHEMICAL, BEIS_CHEMICAL_CASES_TO_REVIEW, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
-    (True, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_CASES_TO_REVIEW, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
+    (True, "user", False, DESNZ_CHEMICAL, DESNZ_CHEMICAL_CASES_TO_REVIEW, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
+    (True, "user", False, DESNZ_NUCLEAR, DESNZ_NUCLEAR_CASES_TO_REVIEW, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
     (True, "user", False, FCDO_TEAM, FCDO_CASES_TO_REVIEW_QUEUE, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
     (True, "user", False, FCDO_TEAM, FCDO_CPACC_CASES_TO_REVIEW_QUEUE, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
     (True, "user", False, MOD_CONSOLIDATE_TEAMS[0], MOD_CONSOLIDATE_QUEUES[0], "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
@@ -132,12 +132,12 @@ advice_tab_test_data = [
     (True, "user", False, NCSC_TEAM, NCSC_CASES_TO_REVIEW, "cases:view_my_advice", {"edit_recommendation": True, "clear_recommendation": True, "move_case_forward": True},),
     # An individual countersigning advice on a case for the first time
     (True, "user", False, FCDO_TEAM, FCDO_COUNTERSIGNING_QUEUE, "cases:countersign_advice_view", {"review_and_countersign": True},),
-    (True, "user", False, BEIS_NUCLEAR, BEIS_NUCLEAR_COUNTERSIGNING, "cases:countersign_advice_view", {"review_and_countersign": True},),
+    (True, "user", False, DESNZ_NUCLEAR, DESNZ_NUCLEAR_COUNTERSIGNING, "cases:countersign_advice_view", {"review_and_countersign": True},),
     # An LU caseworker trying to countersign advice on a case for the first time
     (True, "final", False, LICENSING_UNIT_TEAM, LU_LICENSING_MANAGER_QUEUE, "cases:advice_view", {"review_and_countersign": False},),
     (True, "final", False, LICENSING_UNIT_TEAM, LU_SR_LICENSING_MANAGER_QUEUE, "cases:advice_view", {"review_and_countersign": False},),
     # An individual accessing the case after giving countersigned advice
-    (True, "user", True, BEIS_NUCLEAR, BEIS_NUCLEAR_COUNTERSIGNING, "cases:countersign_view", {"edit_recommendation": True, "move_case_forward": True},),
+    (True, "user", True, DESNZ_NUCLEAR, DESNZ_NUCLEAR_COUNTERSIGNING, "cases:countersign_view", {"edit_recommendation": True, "move_case_forward": True},),
     (True, "user", True, FCDO_TEAM, FCDO_COUNTERSIGNING_QUEUE, "cases:countersign_view", {"edit_recommendation": True, "move_case_forward": True},),
     # An individual consolidating advice on a case for the first time
     (True, "user", True, MOD_ECJU_TEAM, MOD_CASES_TO_REVIEW_QUEUES[0], "cases:consolidate_advice_view", {"review_and_combine": True},),
