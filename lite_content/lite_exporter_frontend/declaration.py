@@ -15,7 +15,7 @@ class Declaration:
         By completing and submitting this application, you agree that information provided on LITE
         by you, or any individual authorised to use LITE on behalf of your company or organisation,
         may be passed to international organisations or other Governments in accordance with
-        commitments entered into by Her Majesty's Government.
+        commitments entered into by His Majesty's Government.
         """
     PARAGRAPH_FOUR = """
         Furthermore, any information you provide in this application may be made public under the
