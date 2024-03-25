@@ -18,21 +18,26 @@ const createElements = () => {
 };
 
 describe("AutoCompleteSelector", () => {
-  test("Calling accessible autocomplete", () => {
+  test("Calling accessible autocomplete", async () => {
     const $el = createElements();
     new AutoCompleteSelector($el).init();
-    const $wrapper = document.querySelector(".autocomplete__wrapper");
+    await waitFor(() => {
+      const $wrapper = document.querySelector(".lite-autocomplete__wrapper");
 
-    expect($wrapper).not.toBe(null);
-    expect($el).not.toBeVisible();
+      expect($wrapper).not.toBe(null);
+      expect($el).not.toBeVisible();
+    });
   });
 
   test("Calling accessible example values", async () => {
     const $el = createElements();
     new AutoCompleteSelector($el).init();
+
     await waitFor(() => {
-      document.querySelector(".autocomplete__wrapper input").value = "e";
-      let suggestions = document.querySelectorAll(".autocomplete__wrapper li");
+      document.querySelector(".lite-autocomplete__wrapper input").value = "e";
+      let suggestions = document.querySelectorAll(
+        ".lite-autocomplete__wrapper li"
+      );
       expect(suggestions[0].textContent).toBe("One");
       expect(suggestions[1].textContent).toBe("Three");
     });
