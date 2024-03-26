@@ -40,11 +40,11 @@ def test_renders_team_name(rendered_ecju_queries):
     assert rendered_ecju_queries[0].p.get_text() == "DESNZ Chemical"
 
 
-def test_shortens_beis_chemical_team_name(rendered_ecju_queries):
+def test_shortens_desnz_chemical_team_name(rendered_ecju_queries):
     assert rendered_ecju_queries[1].p.get_text() == "DESNZ Chemical"
 
 
-def test_shortens_beis_nuclear_team_name(rendered_ecju_queries):
+def test_shortens_desnz_nuclear_team_name(rendered_ecju_queries):
     assert rendered_ecju_queries[2].p.get_text() == "DESNZ Nuclear"
 
 
