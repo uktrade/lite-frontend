@@ -107,6 +107,62 @@ def good_on_application(data_standard_case):
 
 
 @pytest.fixture
+def data_goa_onward_exported(data_standard_case):
+    return {
+        "id": uuid.uuid4(),
+        "created_at": "2024-03-25T10:54:01.465094Z",
+        "updated_at": "2024-03-25T10:54:01.465094Z",
+        "good": {
+            "id": uuid.uuid4(),
+            "name": "medium size widget",
+            "description": "",
+            "part_number": "asdf",
+            "no_part_number_comments": "",
+            "control_list_entries": [],
+            "is_good_controlled": {"key": "False", "value": "No"},
+            "flags": [],
+            "documents": [],
+            "is_pv_graded": "no",
+            "status": {"key": "draft", "value": "Draft"},
+            "item_category": {
+                "key": "group1_components",
+                "value": "Component, accessory or module",
+            },
+            "is_military_use": {"key": "no", "value": "No"},
+            "is_component": {
+                "key": "yes_general",
+                "value": "Yes, it's a general purpose component",
+            },
+            "uses_information_security": False,
+            "component_details": "asdf",
+            "information_security_details": "",
+            "is_document_available": False,
+            "no_document_comments": "asdf",
+            "is_precedent": False,
+            "product_description": "asdf",
+        },
+        "application": data_standard_case["case"]["id"],
+        "quantity": 1.0,
+        "unit": {"key": "NAR", "value": "Items"},
+        "value": "1.00",
+        "is_good_incorporated": False,
+        "flags": [],
+        "control_list_entries": [],
+        "end_use_control": [],
+        "audit_trail": [],
+        "is_precedent": False,
+        "is_onward_exported": True,
+        "is_onward_altered_processed": False,
+        "is_onward_altered_processed_comments": "",
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "asdf",
+        "regime_entries": [],
+        "nsg_list_type": "",
+        "nsg_assessment_note": "",
+    }
+
+
+@pytest.fixture
 def mock_good_on_application_post(requests_mock, data_standard_case, good_on_application):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/goods/')
