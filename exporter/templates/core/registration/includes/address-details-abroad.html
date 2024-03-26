@@ -1,0 +1,58 @@
+<dl class="govuk-summary-list govuk-!-margin-bottom-9" id="address-summary">
+   <div class="govuk-summary-list__row" id="org-name">
+        <dt class="govuk-summary-list__key">
+            Name of headquarters
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.site.name}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link">Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-address">
+        <dt class="govuk-summary-list__key">
+            Address
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.site.address.address}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+
+    <div class="govuk-summary-list__row" id="org-tel">
+        <dt class="govuk-summary-list__key">
+            Telephone number
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.phone_number}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link">Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-website">
+        <dt class="govuk-summary-list__key">
+            Website
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.website}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link">Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-country">
+        <dt class="govuk-summary-list__key">
+            Country
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.site.address.country }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link">Change</button>
+        </dd>
+    </div>
+</dl>
