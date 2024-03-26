@@ -15,6 +15,15 @@ from .validators import (
 )
 
 
+class RegistrationConfirmation(BaseForm):
+    # This is just a dummy form which isn't rendered in the FE
+    class Layout:
+        TITLE = ""
+
+    def get_layout_fields(self):
+        return ()
+
+
 class RegistrationTypeForm(BaseForm):
     class Layout:
         TITLE = "Commercial organisation or private individual"
