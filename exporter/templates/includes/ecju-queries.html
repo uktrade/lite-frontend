@@ -5,11 +5,9 @@
 	{% for ecju_query in open_queries %}
 		<div class="app-ecju-query" id="open-ecju-query">
 			<div class="app-ecju-query__item">
-				<!-- TODO: Remove BEIS team alias when DESNZ alias in lite-api -->
-				{% if ecju_query.team.alias == "BEIS_CHEMICAL" or ecju_query.team.alias == "DESNZ_CHEMICAL" %}
+				{% if ecju_query.team.alias == "DESNZ_CHEMICAL" %}
 					<p class="app-ecju-query__heading">DESNZ Chemical</p>
-				<!-- TODO: Remove BEIS team alias when DESNZ alias in lite-api -->
-				{% elif ecju_query.team.alias == "BEIS_NUCLEAR" or ecju_query.team.alias == "DESNZ_NUCLEAR" %}
+				{% elif ecju_query.team.alias == "DESNZ_NUCLEAR" %}
 					<p class="app-ecju-query__heading">DESNZ Nuclear</p>
 				{% else %}
 					<p class="app-ecju-query__heading">{{ ecju_query.team.name }}</p>
