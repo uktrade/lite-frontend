@@ -128,11 +128,11 @@ def filter_advice_by_user(all_advice, caseworker):
 
 
 def filter_advice_by_users_team(all_advice, caseworker):
-    return [advice for advice in all_advice if advice["user"]["team"]["id"] == caseworker["team"]["id"]]
+    return [advice for advice in all_advice if advice["team"]["id"] == caseworker["team"]["id"]]
 
 
 def filter_advice_by_team(all_advice, team_alias):
-    return [advice for advice in all_advice if advice["user"]["team"]["alias"] == team_alias]
+    return [advice for advice in all_advice if advice["team"]["alias"] == team_alias]
 
 
 def filter_advice_by_teams(all_advice, teams_list):
