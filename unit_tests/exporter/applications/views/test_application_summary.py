@@ -108,10 +108,29 @@ def test_application_summary_view(
     assert table_data_govuk_table_cell_text == expected_table_data
 
 
-def test_application_summary_view_shows_ultimate_end_user(
-    data_standard_case, data_goa_onward_exported, requests_mock, mock_get_case_notes, authorized_client, summary_url
+def test_application_summary_view_shows_ultimate_end_user_good_incorporated(
+    data_standard_case, data_goa_good_incorporated, requests_mock, mock_get_case_notes, authorized_client, summary_url
 ):
-    data_standard_case["case"]["data"]["goods"] = [data_goa_onward_exported]
+    data_standard_case["case"]["data"]["goods"] = [data_goa_good_incorporated]
+
+    applications_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    requests_mock.get(url=applications_url, json=data_standard_case["case"]["data"])
+
+    response = authorized_client.get(summary_url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    headings_govuk_heading_m = soup.find_all("h2", class_="govuk-heading-m")
+    headings_govuk_heading_m_text = [heading.text for heading in headings_govuk_heading_m]
+    assert "Ultimate end-user" in headings_govuk_heading_m_text
+    table_data_govuk_table_cell = soup.find_all("td", class_="govuk-table__cell")
+    table_data_govuk_table_cell_text = [data.text for data in table_data_govuk_table_cell]
+    assert "Ultimate End-user" in table_data_govuk_table_cell_text
+
+
+def test_application_summary_view_shows_ultimate_end_user_onward_incorporated(
+    data_standard_case, data_goa_onward_incorporated, requests_mock, mock_get_case_notes, authorized_client, summary_url
+):
+    data_standard_case["case"]["data"]["goods"] = [data_goa_onward_incorporated]
 
     applications_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     requests_mock.get(url=applications_url, json=data_standard_case["case"]["data"])
