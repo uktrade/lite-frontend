@@ -107,13 +107,102 @@ def good_on_application(data_standard_case):
 
 
 @pytest.fixture
-def data_goa_onward_exported(data_standard_case):
+def data_goa_good_incorporated(data_standard_case):
     return {
-        "id": uuid.uuid4(),
+        "id": str(uuid.uuid4()),
+        "created_at": "2024-03-26T15:22:35.714893Z",
+        "updated_at": "2024-03-26T15:22:35.714893Z",
+        "good": {
+            "id": str(uuid.uuid4()),
+            "name": "medium shotgun component",
+            "description": "",
+            "part_number": "",
+            "no_part_number_comments": "",
+            "control_list_entries": [
+                {
+                    "id": "0b9116c2-3aa0-49fb-a590-944b4738b208",  # /PS-IGNORE
+                    "rating": "ML1a",
+                    "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns",
+                }
+            ],
+            "is_good_controlled": {"key": "True", "value": "Yes"},
+            "flags": [],
+            "documents": [],
+            "is_pv_graded": "no",
+            "status": {"key": "draft", "value": "Draft"},
+            "item_category": {"key": "group2_firearms", "value": "Firearm"},
+            "is_document_available": False,
+            "no_document_comments": "asdf",
+            "firearm_details": {
+                "type": {
+                    "key": "components_for_firearms",
+                    "value": "Components for firearms",
+                },
+                "year_of_manufacture": 0,
+                "calibre": "1",
+                "replica_description": "",
+                "is_covered_by_firearm_act_section_one_two_or_five": "No",
+                "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
+                "firearms_act_section": "",
+                "section_certificate_missing_reason": "",
+                "serial_numbers_available": "LATER",
+                "no_proof_mark_details": "",
+                "deactivation_standard": "",
+                "deactivation_standard_other": "",
+                "number_of_items": 1,
+                "serial_numbers": [],
+                "not_deactivated_to_standard_comments": "",
+            },
+            "is_precedent": False,
+            "product_description": "",
+        },
+        "application": data_standard_case["case"]["id"],
+        "quantity": 1.0,
+        "unit": {"key": "NAR", "value": "Items"},
+        "value": "1.00",
+        "is_good_incorporated": True,
+        "flags": [],
+        "control_list_entries": [],
+        "end_use_control": [],
+        "audit_trail": [],
+        "firearm_details": {
+            "type": {
+                "key": "components_for_firearms",
+                "value": "Components for firearms",
+            },
+            "year_of_manufacture": 0,
+            "calibre": "1",
+            "replica_description": "",
+            "is_covered_by_firearm_act_section_one_two_or_five": "No",
+            "is_covered_by_firearm_act_section_one_two_or_five_explanation": "",
+            "firearms_act_section": "",
+            "section_certificate_missing_reason": "",
+            "serial_numbers_available": "LATER",
+            "no_proof_mark_details": "",
+            "is_deactivated": False,
+            "deactivation_standard": "",
+            "deactivation_standard_other": "",
+            "number_of_items": 1,
+            "serial_numbers": [],
+            "not_deactivated_to_standard_comments": "",
+        },
+        "is_precedent": False,
+        "is_onward_altered_processed_comments": "",
+        "is_onward_incorporated_comments": "",
+        "regime_entries": [],
+        "nsg_list_type": "",
+        "nsg_assessment_note": "",
+    }
+
+
+@pytest.fixture
+def data_goa_onward_incorporated(data_standard_case):
+    return {
+        "id": str(uuid.uuid4()),
         "created_at": "2024-03-25T10:54:01.465094Z",
         "updated_at": "2024-03-25T10:54:01.465094Z",
         "good": {
-            "id": uuid.uuid4(),
+            "id": str(uuid.uuid4()),
             "name": "medium size widget",
             "description": "",
             "part_number": "asdf",
