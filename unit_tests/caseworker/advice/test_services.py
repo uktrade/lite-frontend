@@ -23,11 +23,14 @@ from caseworker.advice.services import (
     MOD_CONSOLIDATE_QUEUES,
     MOD_CONSOLIDATE_TEAMS,
     MOD_ECJU_TEAM,
+    filter_advice_by_users_team,
+    filter_advice_by_team,
+    filter_advice_by_teams,
     get_advice_tab_context,
     get_advice_to_countersign,
     get_decision_advices_by_countersigner,
-    get_countersign_decision_advice_by_user,
     update_countersign_decision_advice,
+    group_advice_by_team,
     update_advice,
 )
 from caseworker.cases.objects import Case
@@ -75,6 +78,10 @@ def advice_for_countersign(advice):
     for item in advice:
         item["user"]["team"]["id"] = "2132131d-2432-423424"
         item["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
+        item["team"] = {
+            "id": "2132131d-2432-423424",
+            "alias": LICENSING_UNIT_TEAM,
+        }
         item["level"] = "final"
         for_countersign.append(item)
 
@@ -294,3 +301,117 @@ def test_update_advice_not_supported_advice_type_raises_error(
 
     with pytest.raises(NotImplementedError):
         update_advice(requests_mock, case, current_user, "no_licence_required", {}, "final-advice")
+
+
+@pytest.mark.parametrize(
+    "all_advice, caseworker, expected",
+    (
+        ([], {}, []),
+        (
+            [{"id": "advice_1", "team": {"id": "team_1"}}, {"id": "advice_2", "team": {"id": "team_2"}}],
+            {"team": {"id": "team_1"}},
+            [{"id": "advice_1", "team": {"id": "team_1"}}],
+        ),
+        (
+            [
+                {"id": "advice_1", "team": {"id": "team_1"}},
+                {"id": "advice_2", "team": {"id": "team_2"}},
+                {"id": "advice_3", "team": {"id": "team_2"}},
+            ],
+            {"team": {"id": "team_2"}},
+            [{"id": "advice_2", "team": {"id": "team_2"}}, {"id": "advice_3", "team": {"id": "team_2"}}],
+        ),
+    ),
+)
+def test_filter_advice_by_users_team(all_advice, caseworker, expected):
+    assert filter_advice_by_users_team(all_advice, caseworker) == expected
+
+
+@pytest.mark.parametrize(
+    "all_advice, team_alias, expected",
+    (
+        ([], "", []),
+        (
+            [{"id": "advice_1", "team": {"alias": "team_1"}}, {"id": "advice_2", "team": {"alias": "team_2"}}],
+            "team_1",
+            [{"id": "advice_1", "team": {"alias": "team_1"}}],
+        ),
+        (
+            [
+                {"id": "advice_1", "team": {"alias": "team_1"}},
+                {"id": "advice_2", "team": {"alias": "team_2"}},
+                {"id": "advice_3", "team": {"alias": "team_2"}},
+            ],
+            "team_2",
+            [{"id": "advice_2", "team": {"alias": "team_2"}}, {"id": "advice_3", "team": {"alias": "team_2"}}],
+        ),
+    ),
+)
+def test_filter_advice_by_team(all_advice, team_alias, expected):
+    assert filter_advice_by_team(all_advice, team_alias) == expected
+
+
+@pytest.mark.parametrize(
+    "all_advice, teams_list, expected",
+    (
+        ([], [""], []),
+        (
+            [{"id": "advice_1", "team": {"alias": "team_1"}}, {"id": "advice_2", "team": {"alias": "team_2"}}],
+            ["team_1"],
+            [{"id": "advice_1", "team": {"alias": "team_1"}}],
+        ),
+        (
+            [
+                {"id": "advice_1", "team": {"alias": "team_1"}},
+                {"id": "advice_2", "team": {"alias": "team_2"}},
+                {"id": "advice_3", "team": {"alias": "team_2"}},
+            ],
+            ["team_2"],
+            [{"id": "advice_2", "team": {"alias": "team_2"}}, {"id": "advice_3", "team": {"alias": "team_2"}}],
+        ),
+        (
+            [
+                {"id": "advice_1", "team": {"alias": "team_1"}},
+                {"id": "advice_2", "team": {"alias": "team_2"}},
+                {"id": "advice_3", "team": {"alias": "team_2"}},
+            ],
+            ["team_1", "team_2"],
+            [
+                {"id": "advice_1", "team": {"alias": "team_1"}},
+                {"id": "advice_2", "team": {"alias": "team_2"}},
+                {"id": "advice_3", "team": {"alias": "team_2"}},
+            ],
+        ),
+    ),
+)
+def test_filter_advice_by_teams(all_advice, teams_list, expected):
+    assert filter_advice_by_teams(all_advice, teams_list) == expected
+
+
+@pytest.mark.parametrize(
+    "advice, expected",
+    (
+        ([], {}),
+        ([{"id": "advice_1", "team": {"id": "team_1"}}], {"team_1": [{"id": "advice_1", "team": {"id": "team_1"}}]}),
+        (
+            [{"id": "advice_1", "team": {"id": "team_1"}}, {"id": "advice_2", "team": {"id": "team_2"}}],
+            {
+                "team_1": [{"id": "advice_1", "team": {"id": "team_1"}}],
+                "team_2": [{"id": "advice_2", "team": {"id": "team_2"}}],
+            },
+        ),
+        (
+            [
+                {"id": "advice_1", "team": {"id": "team_1"}},
+                {"id": "advice_2", "team": {"id": "team_2"}},
+                {"id": "advice_3", "team": {"id": "team_1"}},
+            ],
+            {
+                "team_1": [{"id": "advice_1", "team": {"id": "team_1"}}, {"id": "advice_3", "team": {"id": "team_1"}}],
+                "team_2": [{"id": "advice_2", "team": {"id": "team_2"}}],
+            },
+        ),
+    ),
+)
+def test_group_advice_by_team(advice, expected):
+    assert group_advice_by_team(advice) == expected

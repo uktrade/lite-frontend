@@ -384,7 +384,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESNZNucle
     @property
     def teams(self):
         return sorted(
-            {advice["user"]["team"]["id"]: advice["user"]["team"] for advice in self.case["advice"]}.values(),
+            {advice["team"]["id"]: advice["team"] for advice in self.case["advice"]}.values(),
             key=lambda a: a["name"],
         )
 
