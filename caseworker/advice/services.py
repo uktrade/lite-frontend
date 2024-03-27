@@ -7,9 +7,9 @@ from caseworker.advice import constants
 from caseworker.advice.constants import AdviceType
 
 # Queues
-BEIS_CHEMICAL_CASES_TO_REVIEW = "BEIS_CHEMICAL_CASES_TO_REVIEW"
-BEIS_NUCLEAR_CASES_TO_REVIEW = "BEIS_NUCLEAR_CASES_TO_REVIEW"
-BEIS_NUCLEAR_COUNTERSIGNING = "BEIS_NUCLEAR_COUNTERSIGNING"
+DESNZ_CHEMICAL_CASES_TO_REVIEW = "DESNZ_CHEMICAL_CASES_TO_REVIEW"
+DESNZ_NUCLEAR_CASES_TO_REVIEW = "DESNZ_NUCLEAR_CASES_TO_REVIEW"
+DESNZ_NUCLEAR_COUNTERSIGNING = "DESNZ_NUCLEAR_COUNTERSIGNING"
 FCDO_CASES_TO_REVIEW_QUEUE = "FCDO_CASES_TO_REVIEW"
 FCDO_CPACC_CASES_TO_REVIEW_QUEUE = "FCDO_CPACC_CASES_TO_REVIEW"
 FCDO_COUNTERSIGNING_QUEUE = "FCDO_COUNTER_SIGNING"
@@ -31,12 +31,14 @@ LU_LICENSING_MANAGER_QUEUE = "LU_LICENSING_MANAGER_QUEUE"
 LU_SR_LICENSING_MANAGER_QUEUE = "LU_SR_LICENSING_MANAGER_QUEUE"
 
 # Teams
-BEIS_CHEMICAL = "BEIS_CHEMICAL"
-BEIS_NUCLEAR = "BEIS_NUCLEAR"
-BEIS_TEAMS = [
-    BEIS_CHEMICAL,
-    BEIS_NUCLEAR,
+DESNZ_CHEMICAL = "DESNZ_CHEMICAL"
+DESNZ_NUCLEAR = "DESNZ_NUCLEAR"
+DESNZ_TEAMS = [
+    DESNZ_CHEMICAL,
+    DESNZ_NUCLEAR,
 ]
+# TODO: Remove BEIS team aliases when DESNZ team aliases in lite-api
+BEIS_TEAMS = ["BEIS_CHEMICAL", "BEIS_NUCLEAR"]
 FCDO_TEAM = "FCO"
 LICENSING_UNIT_TEAM = "LICENSING_UNIT"
 MOD_ECJU_TEAM = "MOD_ECJU"
@@ -540,14 +542,17 @@ def get_advice_tab_context(case, caseworker, queue_id):
             "assess_trigger_list_products": False,
         },
     }
-
-    if team_alias in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS, *BEIS_TEAMS, NCSC_TEAM):
+    # TODO: Remove BEIS team aliases when DESNZ aliases in lite-api
+    if team_alias in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS, *DESNZ_TEAMS, *BEIS_TEAMS, NCSC_TEAM):
+        # TODO: Remove BEIS queue aliases when DESNZ aliases in lite-api
         if queue_alias in (
             FCDO_CASES_TO_REVIEW_QUEUE,
             FCDO_CPACC_CASES_TO_REVIEW_QUEUE,
             *MOD_CONSOLIDATE_QUEUES,
-            BEIS_CHEMICAL_CASES_TO_REVIEW,
-            BEIS_NUCLEAR_CASES_TO_REVIEW,
+            DESNZ_CHEMICAL_CASES_TO_REVIEW,
+            DESNZ_NUCLEAR_CASES_TO_REVIEW,
+            "BEIS_CHEMICAL_CASES_TO_REVIEW",
+            "BEIS_NUCLEAR_CASES_TO_REVIEW",
             NCSC_CASES_TO_REVIEW,
         ):
             existing_advice = get_my_advice(case.advice, caseworker["id"])
@@ -560,10 +565,18 @@ def get_advice_tab_context(case, caseworker, queue_id):
                 context["buttons"]["move_case_forward"] = True
 
             # DESNZ Nuclear need to assess products first before giving recommendation
-            if team_alias == BEIS_NUCLEAR and queue_alias == BEIS_NUCLEAR_CASES_TO_REVIEW and not existing_advice:
+            # TODO: Remove BEIS team alias when DESNZ alias in lite-api
+            # TODO: Remove BEIS queue alias when DESNZ alias in lite-api
+            if (
+                (team_alias == DESNZ_NUCLEAR or team_alias == "BEIS_NUCLEAR")
+                and (queue_alias == DESNZ_NUCLEAR_CASES_TO_REVIEW or queue_alias == "BEIS_NUCLEAR_CASES_TO_REVIEW")
+                and not existing_advice
+            ):
                 context["buttons"]["assess_trigger_list_products"] = len(unassessed_trigger_list_goods(case)) > 0
-
-        elif queue_alias == FCDO_COUNTERSIGNING_QUEUE or queue_alias == BEIS_NUCLEAR_COUNTERSIGNING:
+        # TODO: Remove BEIS queue alias when DESNZ queue alias in lite-api
+        elif queue_alias == FCDO_COUNTERSIGNING_QUEUE or (
+            queue_alias == DESNZ_NUCLEAR_COUNTERSIGNING or queue_alias == "BEIS_NUCLEAR_COUNTERSIGNING"
+        ):
             advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
             countersigned_by = get_countersigners(advice_to_countersign)
 

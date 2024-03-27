@@ -1,4 +1,5 @@
 import pytest
+from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
 from django.test import Client
 from django.urls import reverse
@@ -9,6 +10,7 @@ from exporter.core.organisation.forms import (
     RegisterDetailsCommercialUKForm,
     RegisterAddressDetailsUKForm,
     RegisterAddressDetailsOverseasForm,
+    RegistrationConfirmation,
 )
 from unit_tests.helpers import reload_urlconf
 
@@ -155,8 +157,11 @@ def test_registration_individual_end_to_end_uk_based(
             "website": "http://www.notreal.com",
         },
     )
+    assert response.status_code == 200
 
-    assert mock_organisations_post.last_request.json() == {
+    assert isinstance(response.context["form"], RegistrationConfirmation)
+
+    expected_data = {
         "type": "individual",
         "location": "united_kingdom",
         "name": "joe",
@@ -168,8 +173,18 @@ def test_registration_individual_end_to_end_uk_based(
         },
         "phone_number": "+441234567890",
         "website": "http://www.notreal.com",
-        "user": {"email": "foo@example.com"},
     }
+
+    assert response.context["registration_data"] == expected_data
+
+    assertTemplateUsed(response, "core/registration/confirmation-registration-individual-uk.html")
+
+    expected_data["user"] = {"email": "foo@example.com"}
+
+    response = post_to_step(RegistrationSteps.REGISTRATION_CONFIRMATION, {})
+
+    assert mock_organisations_post.last_request.json() == expected_data
+
     assert mock_authenticate_user_post.last_request.json() == {
         "email": "foo@example.com",
         "user_profile": {"first_name": "Foo", "last_name": "Bar"},
@@ -180,7 +195,7 @@ def test_registration_individual_end_to_end_uk_based(
 
 
 def test_registration_individual_end_to_end_non_uk_based(
-    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post
+    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post, mock_get_countries
 ):
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     post_to_step(
@@ -203,13 +218,13 @@ def test_registration_individual_end_to_end_non_uk_based(
         {
             "name": "joe",
             "address": "xyz",
-            "country": "usa",
+            "country": "US",
             "phone_number": "+441234567890",
             "website": "http://www.notreal.com",
         },
     )
 
-    assert mock_organisations_post.last_request.json() == {
+    expected_data = {
         "type": "individual",
         "location": "abroad",
         "name": "joe",
@@ -218,8 +233,18 @@ def test_registration_individual_end_to_end_non_uk_based(
         "site": {"name": "joe", "address": {"address": "xyz", "country": "US"}},
         "phone_number": "+441234567890",
         "website": "http://www.notreal.com",
-        "user": {"email": "foo@example.com"},
     }
+
+    assert response.context["registration_data"] == expected_data
+
+    assertTemplateUsed(response, "core/registration/confirmation-registration-individual-abroad.html")
+
+    response = post_to_step(RegistrationSteps.REGISTRATION_CONFIRMATION, {})
+
+    expected_data["user"] = {"email": "foo@example.com"}
+
+    assert mock_organisations_post.last_request.json() == expected_data
+
     assert mock_authenticate_user_post.last_request.json() == {
         "email": "foo@example.com",
         "user_profile": {"first_name": "Foo", "last_name": "Bar"},
@@ -230,7 +255,7 @@ def test_registration_individual_end_to_end_non_uk_based(
 
 
 def test_registration_commercial_end_to_end(
-    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post
+    goto_step, post_to_step, mock_organisations_post, mock_authenticate_user_post, mock_get_countries
 ):
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     post_to_step(
@@ -264,13 +289,13 @@ def test_registration_commercial_end_to_end(
         {
             "name": "joe",
             "address": "xyz",
-            "country": "usa",
+            "country": "TH",
             "phone_number": "+441234567890",
             "website": "http://www.notreal.com",
         },
     )
 
-    assert mock_organisations_post.last_request.json() == {
+    expected_data = {
         "type": "commercial",
         "location": "abroad",
         "name": "joe",
@@ -278,11 +303,21 @@ def test_registration_commercial_end_to_end(
         "sic_number": "12345",
         "registration_number": "12345678",
         "vat_number": "GB123456789",
-        "site": {"name": "joe", "address": {"address": "xyz", "country": "US"}},
+        "site": {"name": "joe", "address": {"address": "xyz", "country": "TH"}},
         "phone_number": "+441234567890",
         "website": "http://www.notreal.com",
-        "user": {"email": "foo@example.com"},
     }
+
+    assert response.context["registration_data"] == expected_data
+
+    assertTemplateUsed(response, "core/registration/confirmation-registration-corporation-abroad.html")
+
+    response = post_to_step(RegistrationSteps.REGISTRATION_CONFIRMATION, {})
+
+    expected_data["user"] = {"email": "foo@example.com"}
+
+    assert mock_organisations_post.last_request.json() == expected_data
+
     assert mock_authenticate_user_post.last_request.json() == {
         "email": "foo@example.com",
         "user_profile": {"first_name": "Foo", "last_name": "Bar"},

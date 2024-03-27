@@ -17,10 +17,10 @@ def setup(
 
 
 @pytest.fixture
-def mock_beis_nuclear_queue(requests_mock):
+def mock_desnz_nuclear_queue(requests_mock):
     data = {
         "id": "00000000-0000-0000-0000-000000000001",
-        "alias": "BEIS_NUCLEAR_CASES_TO_REVIEW",
+        "alias": "DESNZ_NUCLEAR_CASES_TO_REVIEW",
         "name": "DESNZ Nuclear",
         "is_system_queue": True,
         "countersigning_queue": None,
@@ -70,9 +70,9 @@ def test_advice_view_shows_no_assessed_trigger_list_goods_if_some_are_not_assess
     authorized_client,
     url,
     data_standard_case_with_potential_trigger_list_product,
-    mock_gov_beis_nuclear_user,
+    mock_gov_desnz_nuclear_user,
     mock_application,
-    mock_beis_nuclear_queue,
+    mock_desnz_nuclear_queue,
     mock_gov_user,
     assign_user_to_case,
 ):
@@ -100,8 +100,8 @@ def test_advice_view_shows_assessed_trigger_list_goods_if_all_are_assessed(
     requests_mock,
     url,
     data_standard_case_with_all_trigger_list_products_assessed,
-    mock_gov_beis_nuclear_user,
-    mock_beis_nuclear_queue,
+    mock_gov_desnz_nuclear_user,
+    mock_desnz_nuclear_queue,
     mock_application,
     mock_gov_user,
     assign_user_to_case,
@@ -133,7 +133,7 @@ def test_unallocated_user_does_not_see_assessed_products_or_make_recommendation(
     requests_mock,
     url,
     data_standard_case_with_all_trigger_list_products_assessed,
-    mock_gov_beis_nuclear_user,
+    mock_gov_desnz_nuclear_user,
     mock_application,
 ):
     case = data_standard_case_with_all_trigger_list_products_assessed

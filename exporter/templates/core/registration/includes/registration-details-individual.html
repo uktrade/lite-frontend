@@ -1,0 +1,40 @@
+
+
+<h1 class="govuk-heading-m">
+    Register a private individual
+</h1>
+<dl class="govuk-summary-list govuk-!-margin-bottom-9" id="registration-summary">
+    <div class="govuk-summary-list__row" id="org-name">
+        <dt class="govuk-summary-list__key">
+            First and last name
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.name}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="REGISTRATION_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-eori">
+        <dt class="govuk-summary-list__key">
+            EORI number
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.eori_number}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="REGISTRATION_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-sic_number">
+        <dt class="govuk-summary-list__key">
+            UK VAT number
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.vat_number}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="REGISTRATION_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+</dl>

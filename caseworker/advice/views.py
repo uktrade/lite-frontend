@@ -8,7 +8,7 @@ from django.views.generic import FormView, TemplateView
 from requests.exceptions import HTTPError
 
 from caseworker.advice import forms, services, constants
-from caseworker.advice.forms import BEISTriggerListAssessmentForm, BEISTriggerListAssessmentEditForm
+from caseworker.advice.forms import DESNZTriggerListAssessmentForm, DESNZTriggerListAssessmentEditForm
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.services import get_case, get_final_decision_documents
 from caseworker.cases.helpers.ecju_queries import has_open_queries
@@ -106,7 +106,7 @@ class CaseContextMixin:
         return None
 
 
-class BEISNuclearMixin:
+class DESNZNuclearMixin:
     def is_trigger_list_assessed(self, product):
         """Returns True if a product has been assessed for trigger list criteria"""
         return product.get("is_trigger_list_guidelines_applicable") in [True, False]
@@ -238,7 +238,7 @@ class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
-class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclearMixin, FormView):
+class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESNZNuclearMixin, FormView):
     template_name = "advice/view_my_advice.html"
     form_class = forms.MoveCaseForwardForm
 
@@ -368,7 +368,7 @@ class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return context
 
 
-class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, BEISNuclearMixin, CaseworkerMixin, TemplateView):
+class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESNZNuclearMixin, CaseworkerMixin, TemplateView):
     template_name = "advice/view-advice.html"
 
     @property
@@ -821,7 +821,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class BEISAssessmentBase:
+class DESNZAssessmentBase:
     @cached_property
     def organisation_documents(self):
         """This property will collect the org documents that we need to access
@@ -854,11 +854,11 @@ class BEISAssessmentBase:
         return services.post_trigger_list_assessment(self.request, case_id=self.kwargs["pk"], data=data)
 
 
-class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase, FormView):
+class DESNZProductAssessmentView(AdviceView, DESNZNuclearMixin, DESNZAssessmentBase, FormView):
     """This renders trigger list product assessment for DESNZ Nuclear"""
 
     template_name = "advice/trigger_list_home.html"
-    form_class = BEISTriggerListAssessmentForm
+    form_class = DESNZTriggerListAssessmentForm
 
     def get_success_url(self):
         if self.case:
@@ -917,11 +917,11 @@ class BEISProductAssessmentView(AdviceView, BEISNuclearMixin, BEISAssessmentBase
         return super().form_valid(form)
 
 
-class BEISProductAssessmentEditView(AdviceView, BEISNuclearMixin, BEISAssessmentBase, FormView):
+class DESNZProductAssessmentEditView(AdviceView, DESNZNuclearMixin, DESNZAssessmentBase, FormView):
     """This renders editing of trigger list product assessment for DESNZ Nuclear"""
 
     template_name = "advice/trigger_list_edit.html"
-    form_class = BEISTriggerListAssessmentEditForm
+    form_class = DESNZTriggerListAssessmentEditForm
 
     def get_success_url(self):
         return reverse("cases:advice_view", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
@@ -996,7 +996,7 @@ class BEISProductAssessmentEditView(AdviceView, BEISNuclearMixin, BEISAssessment
         return super().form_valid(form)
 
 
-class BEISProductClearAssessmentsView(AdviceView, BEISNuclearMixin, BEISAssessmentBase):
+class DESNZProductClearAssessmentsView(AdviceView, DESNZNuclearMixin, DESNZAssessmentBase):
     """Clears the assessments for all the goods on the current case."""
 
     template_name = "advice/clear_trigger_list_assesment.html"
