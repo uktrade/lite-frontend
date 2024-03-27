@@ -161,7 +161,7 @@ def test_register_details_form_field_validation(data, valid, error, form_class):
 
 
 @pytest.mark.parametrize(
-    "data, valid, error, form_class",
+    "data, valid, error",
     (
         (
             {},
@@ -174,7 +174,6 @@ def test_register_details_form_field_validation(data, valid, error, form_class):
                 "postcode": ["Enter a real postcode"],
                 "phone_number": ["Enter a telephone number"],
             },
-            forms.RegisterAddressDetailsUKForm,
         ),
         (
             {
@@ -188,8 +187,19 @@ def test_register_details_form_field_validation(data, valid, error, form_class):
             },
             True,
             {},
-            forms.RegisterAddressDetailsUKForm,
         ),
+    ),
+)
+def test_register_address_details_validate_fields(data, valid, error):
+    form = forms.RegisterAddressDetailsUKForm(is_individual=True, data=data)
+    assert form.is_valid() == valid
+    if not valid:
+        assert form.errors == error
+
+
+@pytest.mark.parametrize(
+    "data, valid, error",
+    (
         (
             {},
             False,
@@ -199,45 +209,34 @@ def test_register_details_form_field_validation(data, valid, error, form_class):
                 "address": ["Enter an address"],
                 "country": ["Enter a country"],
             },
-            forms.RegisterAddressDetailsOverseasForm,
         ),
         (
             {
                 "name": "joe",
                 "address": "23 Long road home, no where land",
                 "phone_number": "+441234567890",
-                "country": "USA",
+                "country": "US",
             },
             True,
             {},
-            forms.RegisterAddressDetailsOverseasForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "address": "23 Long road home, no where land",
+                "phone_number": "+441234567895",
+                "country": "TH",
+            },
+            True,
+            {},
         ),
     ),
 )
-def test_register_address_details_validate_fields(data, valid, error, form_class):
-    form = form_class(is_individual=True, data=data)
+def test_register_non_uk_address_details_form(data, valid, error, mock_request, mock_get_countries):
+    form = forms.RegisterAddressDetailsOverseasForm(is_individual=False, data=data, request=mock_request)
     assert form.is_valid() == valid
     if not valid:
         assert form.errors == error
-
-
-def test_register_non_uk_address_details_form():
-    data = {
-        "name": "joe",
-        "address_line_1": "xyz",
-        "region": "r",
-        "city": "c1",
-        "postcode": "pc",
-        "phone_number": "12334",
-        "website": "notreal.com",
-    }
-
-    form = forms.RegisterAddressDetailsUKForm(is_individual=False, data=data)
-    assert not form.is_valid()
-    assert form.errors == {
-        "phone_number": ["Invalid telephone number"],
-        "website": ["Enter a valid URL"],
-    }
 
 
 def test_select_organisation_form_invalid(data_organisations):

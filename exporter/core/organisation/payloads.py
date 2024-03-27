@@ -17,7 +17,7 @@ def get_address_details_payload(form):
     else:
         address = {
             "address": form.cleaned_data["address"],
-            "country": "US",
+            "country": form.cleaned_data["country"],
         }
     return {
         "site": {"name": form.cleaned_data["name"], "address": address},
