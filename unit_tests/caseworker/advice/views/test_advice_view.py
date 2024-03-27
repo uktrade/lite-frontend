@@ -21,7 +21,7 @@ def mock_beis_nuclear_queue(requests_mock):
     data = {
         "id": "00000000-0000-0000-0000-000000000001",
         "alias": "BEIS_NUCLEAR_CASES_TO_REVIEW",
-        "name": "BEIS Nuclear",
+        "name": "DESNZ Nuclear",
         "is_system_queue": True,
         "countersigning_queue": None,
     }

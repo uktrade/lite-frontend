@@ -149,12 +149,12 @@ class UltimateEndUser:
         ATTACH_LATER = " to upload a document later."
         BUTTON = "Documents"
         DELETE_DOCUMENT = "Delete"
-        DESCRIPTION = "This is the document that has been uploaded for this ultimate recipient."
+        DESCRIPTION = "This is the document that has been uploaded for this ultimate end-user."
         DOWNLOAD_DOCUMENT = "Download"
         END_USER_HAS_NO_DOCUMENTS = "There are no documents attached"
         PROCESSING = "Uploading"
         SAVE_AND_RETURN_LATER = "save and return to the application overview"
-        TITLE = "Ultimate recipient document"
+        TITLE = "Ultimate end-user document"
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
@@ -165,7 +165,7 @@ class UltimateEndUser:
                 "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
-            BACK = "Back to ultimate recipients"
+            BACK = "Back to ultimate end-users"
             # Partial strings below
             SAVE_AND_RETURN_LATER = "save and return to the application overview"
             ATTACH_LATER = " to upload a document later."

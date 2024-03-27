@@ -2,6 +2,7 @@ from core import client
 
 
 def register_organisation(request, json):
+
     data = {
         "user": {"email": request.session["email"]},
     }

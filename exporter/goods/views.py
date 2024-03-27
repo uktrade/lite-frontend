@@ -7,7 +7,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, TemplateView, View
 
 from core.auth.views import LoginRequiredMixin
 from core.constants import (
@@ -15,7 +15,8 @@ from core.constants import (
     FirearmsActDocumentType,
     FirearmsActSections,
 )
-from core.file_handler import download_document_from_s3
+from core.decorators import expect_status
+from core.helpers import stream_document_response
 
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
@@ -81,6 +82,7 @@ from exporter.goods.services import (
     post_good_document_availability,
     post_good_document_sensitivity,
     post_good_documents,
+    stream_good_document,
 )
 from lite_content.lite_exporter_frontend import goods
 from lite_content.lite_exporter_frontend.goods import AttachDocumentForm, CreateGoodForm
@@ -1084,13 +1086,25 @@ class AttachDocuments(LoginRequiredMixin, TemplateView):
             return redirect(reverse("goods:good", kwargs={"pk": good_id}))
 
 
-class Document(LoginRequiredMixin, TemplateView):
+class Document(LoginRequiredMixin, View):
+    @expect_status(
+        HTTPStatus.OK,
+        "Error downloading document",
+        "Unexpected error downloading document",
+    )
+    def stream_good_document(self, request, good_id, file_pk):
+        return stream_good_document(request, good_id, file_pk)
+
     def get(self, request, **kwargs):
         good_id = str(kwargs["pk"])
         file_pk = str(kwargs["file_pk"])
 
         document = get_good_document(request, good_id, file_pk)
-        return download_document_from_s3(document["s3_key"], document["name"])
+        if not document:
+            raise Http404()
+
+        api_response, _ = self.stream_good_document(request, good_id, file_pk)
+        return stream_document_response(api_response)
 
 
 class DeleteDocument(LoginRequiredMixin, TemplateView):
