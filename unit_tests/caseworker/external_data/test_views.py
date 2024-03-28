@@ -41,25 +41,6 @@ def mock_denial_patch(requests_mock):
     yield requests_mock.patch(url=url, json={})
 
 
-def test_upload_denial_404(authorized_client, mock_denial_upload, settings):
-    # given the case has activity from system user
-    url = reverse("external_data:denials-upload")
-
-    file_path = os.path.join(settings.BASE_DIR, "caseworker/external_data/example.csv")
-    data = {"csv_file": open(file_path, "rb")}
-
-    # when the case is viewed
-    response = authorized_client.post(url, data, format="multipart")
-
-    # then it does not error
-    assert response.status_code == 404
-    # and the upstream endpoint was posted
-
-    response = authorized_client.get(url)
-    assert response.status_code == 404
-
-
-@pytest.mark.skip(reason="CSV denials upload has been disabled")
 def test_upload_denial_valid_file(authorized_client, mock_denial_upload, settings):
     # given the case has activity from system user
     url = reverse("external_data:denials-upload")
@@ -77,7 +58,6 @@ def test_upload_denial_valid_file(authorized_client, mock_denial_upload, setting
         assert mock_denial_upload.last_request.json() == {"csv_file": f.read()}
 
 
-@pytest.mark.skip(reason="CSV denials upload has been disabled")
 def test_upload_denial_invalid_file(authorized_client, mock_denial_upload_validation_error, settings):
     # given the case has activity from system user
     url = reverse("external_data:denials-upload")
