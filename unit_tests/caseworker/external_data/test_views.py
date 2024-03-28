@@ -41,6 +41,7 @@ def mock_denial_patch(requests_mock):
     yield requests_mock.patch(url=url, json={})
 
 
+<<<<<<< HEAD
 def test_upload_denial_404(authorized_client, mock_denial_upload, settings):
     # given the case has activity from system user
     url = reverse(
@@ -62,6 +63,8 @@ def test_upload_denial_404(authorized_client, mock_denial_upload, settings):
 
 
 @pytest.mark.skip(reason="CSV denials upload has been disabled")
+=======
+>>>>>>> 12ae42e4a (Enable denials csv upload)
 def test_upload_denial_valid_file(authorized_client, mock_denial_upload, settings):
     # given the case has activity from system user
     url = reverse(
@@ -81,7 +84,6 @@ def test_upload_denial_valid_file(authorized_client, mock_denial_upload, setting
         assert mock_denial_upload.last_request.json() == {"csv_file": f.read()}
 
 
-@pytest.mark.skip(reason="CSV denials upload has been disabled")
 def test_upload_denial_invalid_file(authorized_client, mock_denial_upload_validation_error, settings):
     # given the case has activity from system user
     url = reverse(
