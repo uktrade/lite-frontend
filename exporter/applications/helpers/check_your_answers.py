@@ -128,7 +128,7 @@ def _convert_standard_application(application, editable=False, is_summary=False)
         product_location = {"Product location and journey": _get_product_location_and_journey(application)}
         converted = {**product_location, **converted}
 
-    if has_incorporated_goods(application):
+    if has_ultimate_end_users(application) and has_incorporated_goods_on_application(application):
         ultimate_end_users = [convert_party(item, application, editable) for item in application["ultimate_end_users"]]
         converted[strings.ULTIMATE_END_USERS] = ultimate_end_users
 
@@ -706,9 +706,13 @@ def is_application_export_type_permanent(application):
     return False if not application.get("export_type") else (application.get("export_type").get("key") == PERMANENT)
 
 
-def has_incorporated_goods(application):
-    for good in application["goods"]:
-        if good["is_good_incorporated"]:
+def has_ultimate_end_users(application):
+    return bool(application["ultimate_end_users"])
+
+
+def has_incorporated_goods_on_application(application):
+    for goa in application["goods"]:
+        if goa.get("is_good_incorporated") or goa.get("is_onward_incorporated"):
             return True
 
     return False
