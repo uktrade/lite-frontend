@@ -5,7 +5,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView, CreateView
-from django.http import Http404
 
 from core.auth.views import LoginRequiredMixin
 
@@ -21,9 +20,6 @@ class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = forms.DenialUploadForm
     success_message = "Denials created successfully"
     extra_context = {"base_64_csv": base_64_csv}
-
-    def dispatch(self, request, *args, **kwargs):
-        raise Http404("CSV denials uploads have been disabled")
 
     def form_valid(self, form):
         response = services.upload_denials(request=self.request, data=form.cleaned_data)
