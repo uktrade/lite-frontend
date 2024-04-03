@@ -182,7 +182,7 @@ def group_advice_by_team(advice):
     result = defaultdict(list)
     for item in advice:
         if not item.get("good"):
-            result[item["user"]["team"]["id"]].append(item)
+            result[item["team"]["id"]].append(item)
     return result
 
 
