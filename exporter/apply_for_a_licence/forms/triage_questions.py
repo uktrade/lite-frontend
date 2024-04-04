@@ -162,8 +162,8 @@ def export_licence_questions(request, application_type, goodstype_category=None)
 def f680_licence_questions(request, application_type, goodstype_category=None):
     forms = []
     forms.append(reference_name_form())
-    forms.append(listcompany_or_site())
-    forms.append(clearance_to_use_open_licence())
+    # forms.append(listcompany_or_site())
+    # forms.append(clearance_to_use_open_licence())
     #     Product details
     # product name (text input)
     # upload tech spec (file upload)
@@ -190,7 +190,7 @@ def f680_licence_questions(request, application_type, goodstype_category=None):
     # Ultimate end-users (re-use current SIEL flow)
     # Supporting documents (file upload)
     # [NEW] EW data request form (file upload)
-    forms.append(goodstype_category_form())
+    # forms.append(goodstype_category_form())
     # if application_type == CaseTypes.SIEL:
     #     forms.append(told_by_an_official_form())
 
