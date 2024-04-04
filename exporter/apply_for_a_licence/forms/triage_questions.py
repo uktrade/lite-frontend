@@ -10,7 +10,7 @@ from lite_content.lite_exporter_frontend.applications import (
     MODQuestions,
     TranshipmentQuestions,
 )
-from lite_forms.components import Form, RadioButtons, Option, Breadcrumbs, BackLink, FormGroup, Label, TextArea
+from lite_forms.components import Form, RadioButtons, Option, Breadcrumbs, BackLink, FormGroup, Label
 from lite_forms.helpers import conditional
 
 from django.template.loader import render_to_string
