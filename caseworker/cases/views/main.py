@@ -285,7 +285,6 @@ class CaseDetail(CaseTabsMixin, CaseView):
     def get_f680_clearance_application(self):
         self.tabs = self.get_tabs()
         self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
