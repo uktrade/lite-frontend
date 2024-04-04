@@ -11,7 +11,7 @@ def f680_details_form(request, application_id):
         description="",
         questions=[
             Checkboxes(
-                name="types[]",
+                name="clearances[]",
                 options=[Option(key, value) for key, value in get_f680_clearance_types(request).items()],
             ),
         ],
