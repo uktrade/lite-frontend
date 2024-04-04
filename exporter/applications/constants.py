@@ -27,19 +27,17 @@ class F680:
         "prospect_value",
     ]
     REQUIRED_FIELDS = [
-        "expedited",
-        "foreign_technology",
-        "locally_manufactured",
-        "mtcr_type",
-        "electronic_warfare_requirement",
-        "uk_service_equipment",
-        "prospect_value",
+        "exceptional_circumstances",
+        "foreign_technology_information",
+        "is_local_assembly_manufacture",
+        "product_mtcr_rating_type",
+        "ew_data",
+        "armed_forces_usage",
     ]
 
     REQUIRED_SECONDARY_FIELDS = {
-        "foreign_technology": "foreign_technology_description",
-        "expedited": "expedited_date",
-        "locally_manufactured": "locally_manufactured_description",
+        "foreign_technology_information": "foreign_technology_information_details",
+        "is_local_assembly_manufacture": "is_local_assembly_manufacture_details",
     }
 
 
