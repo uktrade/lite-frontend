@@ -162,95 +162,7 @@ def export_licence_questions(request, application_type, goodstype_category=None)
 def f680_licence_questions(request, application_type, goodstype_category=None):
     forms = []
     forms.append(reference_name_form())
-    # forms.append(listcompany_or_site())
-    # forms.append(clearance_to_use_open_licence())
-    #     Product details
-    # product name (text input)
-    # upload tech spec (file upload)
-    # enter CLE (text input)
-    # manufacturers website (text input)
-    # Are any of the items designed or modified to use cryptographic techniques or crypto-analytic functions? (radios)
-    # [NEW] Is there a requirement to release UK MOD owned EW data or information in support of this export? (radios)
-    # End-use (text area)
-    # [NEW] Are the products MOD funded, part funded or private venture? (radios)
-    # [NEW] Are the products due to enter service into the armed forces?
-    # If yes, give details (text area)
-    # Does the product have a security grading? (radios)
-    # If yes, give details (we can re-use the existing SIELs page for this i think)
-    # [NEW] What clearance are you seeking? (radios)
-    # [NEW] Is local assembly / manufacture required? (radios)
-    # If yes give details (text area)
-    # [NEW] Is there any foreign technology or information involved in the release? (radios)
-    # If yes, give details (text area)
-    # Value (text input)
-    # Any further information (text area)
-    # Parties
-    # End-users (re-use current SIEL flow)
-    # Third parties (re-use current SIEL flow)
-    # Ultimate end-users (re-use current SIEL flow)
-    # Supporting documents (file upload)
-    # [NEW] EW data request form (file upload)
-    # forms.append(goodstype_category_form())
-    # if application_type == CaseTypes.SIEL:
-    #     forms.append(told_by_an_official_form())
-
-    # if goodstype_category in [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF]:
-    #     forms.append(firearms_form())
-
     return FormGroup(forms)
-
-
-def listcompany_or_site():
-    return Form(
-        title="Is this a List X company or site?",
-        questions=[
-            RadioButtons(
-                name="is_list_X_company",
-                options=[
-                    Option(key="Site", value=False),
-                    Option(
-                        key="List X Company",
-                        value=True,
-                        components=[
-                            TextArea(
-                                title="other information",
-                                description="",
-                                name="is_list_x_company_other_information",
-                                optional=True,
-                            ),
-                        ],
-                    ),
-                    Option(key="company", value="List X Company"),
-                ],
-            )
-        ],
-    )
-
-
-def clearance_to_use_open_licence():
-    return Form(
-        title="Do you require this clearance to use an open licence?",
-        questions=[
-            RadioButtons(
-                name="clearance_required",
-                options=[
-                    Option(key="no", value="No"),
-                    Option(
-                        key="yes",
-                        value="Yes",
-                        components=[
-                            TextArea(
-                                title="if yes, provide licence name and details",
-                                description="",
-                                name="licence_details",
-                                optional=True,
-                            ),
-                        ],
-                    ),
-                ],
-            )
-        ],
-    )
 
 
 def goodstype_category_form(application_id=None):
@@ -381,6 +293,3 @@ def MOD_questions(application_type=None):
             reference_name_form(),
         ]
     )
-
-
-# def
