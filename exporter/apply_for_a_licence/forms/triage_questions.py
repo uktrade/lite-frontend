@@ -15,15 +15,7 @@ from lite_content.lite_exporter_frontend.applications import (
     MODQuestions,
     TranshipmentQuestions,
 )
-from lite_forms.components import (
-    Form,
-    RadioButtons,
-    Option,
-    Breadcrumbs,
-    BackLink,
-    FormGroup,
-    Label,
-)
+from lite_forms.components import Form, RadioButtons, Option, Breadcrumbs, BackLink, FormGroup, Label
 from lite_forms.helpers import conditional
 
 from django.template.loader import render_to_string
@@ -66,6 +58,7 @@ def opening_question():
             ),
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
+        Option(key="f680", value="F680", description=("Select if f680"), disabled=False),
     ]
     if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
         description = render_to_string("applications/use-spire-triage.html")
@@ -163,6 +156,12 @@ def export_licence_questions(request, application_type, goodstype_category=None)
     if goodstype_category in [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF]:
         forms.append(firearms_form())
 
+    return FormGroup(forms)
+
+
+def f680_licence_questions(request, application_type, goodstype_category=None):
+    forms = []
+    forms.append(reference_name_form())
     return FormGroup(forms)
 
 
