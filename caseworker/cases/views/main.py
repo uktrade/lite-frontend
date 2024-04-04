@@ -116,6 +116,27 @@ class CaseTabsMixin:
 
         return tabs
 
+    def get_f680_application_tabs(self):
+        tabs = [
+            Tabs.QUICK_SUMMARY,
+            Tabs.DETAILS,
+            Tabs.ECJU_QUERIES,
+            Tabs.DOCUMENTS,
+        ]
+        tabs.append(self.get_notes_and_timelines_tab())
+        tabs.append(self.get_advice_tab())
+
+        return tabs
+
+    def get_tabs_by_case_type(self, case_type):
+        # TODO: this is pretty naff - the problem is that the place we choose tabs based on case type
+        #   is over in cases.helpers.case:CaseView.  We need to make this more DRY.
+        tabs_by_case_type = {
+            "f680_clearance": self.get_f680_application_tabs(),
+            "standard": self.get_standard_application_tabs(),
+        }
+        return tabs_by_case_type[case_type]
+
     def get_advice_tab(self):
         data, _ = get_gov_user(self.request, str(self.request.session["lite_api_user_id"]))
         return Tab(
@@ -283,8 +304,7 @@ class CaseDetail(CaseTabsMixin, CaseView):
         self.additional_context = self.get_advice_additional_context()
 
     def get_f680_clearance_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
+        self.tabs = self.get_f680_application_tabs()
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,

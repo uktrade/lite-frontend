@@ -319,7 +319,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESNZNucle
             "security_approvals_classified_display": self.security_approvals_classified_display,
             "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
-            "tabs": self.get_standard_application_tabs(),
+            "tabs": self.get_tabs_by_case_type(self.case.sub_type),
             "current_tab": "cases:advice_view",
             **services.get_advice_tab_context(
                 self.case,
