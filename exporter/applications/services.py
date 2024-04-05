@@ -96,7 +96,7 @@ def put_temporary_export_details(request, pk, json):
 
 def put_application_with_clearance_types(request, pk, json):
     # Inject the clearance types as an empty set into JSON if they are not present
-    json["types"] = json.get("types", [])
+    json["clearances"] = json.get("clearances", [])
     data = client.put(request, f"/applications/{pk}", json)
     return data.json(), data.status_code
 

@@ -3,34 +3,33 @@ from enum import Enum
 
 class F680:
     FIELDS = [
-        "expedited",
-        "expedited_date",
-        "expedited_description",
-        "foreign_technology",
-        "foreign_technology_description",
-        "locally_manufactured",
-        "locally_manufactured_description",
-        "mtcr_type",
-        "electronic_warfare_requirement",
-        "uk_service_equipment",
-        "uk_service_equipment_description",
-        "uk_service_equipment_type",
-        "prospect_value",
+        "exceptional_circumstances",
+        "foreign_technology_information",
+        "foreign_technology_information_details",
+        "is_local_assembly_manufacture",
+        "is_local_assembly_manufacture_details",
+        "product_mtcr_rating_type",
+        "product_mtcr_rating_type_details",
+        "ew_data",
+        "product_funding",
+        "armed_forces_usage",
+        "armed_forces_usage_details",
     ]
     REQUIRED_FIELDS = [
-        "expedited",
-        "foreign_technology",
-        "locally_manufactured",
-        "mtcr_type",
-        "electronic_warfare_requirement",
-        "uk_service_equipment",
-        "prospect_value",
+        "exceptional_circumstances",
+        "foreign_technology_information",
+        "is_local_assembly_manufacture",
+        "product_mtcr_rating_type",
+        "ew_data",
+        "armed_forces_usage",
+        "product_funding",
     ]
 
     REQUIRED_SECONDARY_FIELDS = {
-        "foreign_technology": "foreign_technology_description",
-        "expedited": "expedited_date",
-        "locally_manufactured": "locally_manufactured_description",
+        "foreign_technology_information": "foreign_technology_information_details",
+        "is_local_assembly_manufacture": "is_local_assembly_manufacture_details",
+        "product_mtcr_rating_type": "product_mtcr_rating_type_details",
+        "armed_forces_usage": "armed_forces_usage_details",
     }
 
 
