@@ -144,6 +144,7 @@ def test_cases_home_page_view_context(authorized_client):
     assert isinstance(response.context["form"], CasesFiltersForm)
     expected_fields = [
         "case_reference",
+        "case_type",
         "export_type",
         "exporter_application_reference",
         "organisation_name",
