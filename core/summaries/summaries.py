@@ -27,6 +27,10 @@ from core.summaries.formatters import (
     COMPONENT_ACCESSORY_VALUE_FORMATTERS,
     COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS,
     COMPONENT_ACCESSORY_ON_APPLICATION_LABELS,
+    F680_GOOD_DETAILS_FORMATTERS,
+    F680_GOOD_DETAILS_LABELS,
+    F680_GOOD_DETAILS_ON_APPLICATION_FORMATTERS,
+    F680_GOOD_DETAILS_ON_APPLICATION_LABELS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
@@ -39,6 +43,8 @@ from core.summaries.reducers import (
     material_on_application_reducer,
     component_accessory_on_application_reducer,
     component_accessory_reducer,
+    f680_good_details_reducer,
+    f680_good_details_on_application_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -508,3 +514,50 @@ def get_summary_type_for_good_on_application(good_on_application):
     item_category = item_category["key"]
 
     return get_summary_type_from_item_category(item_category)
+
+
+F680_GOOD_DETAILS_FIELDS = (
+    "name",
+    "is-good-controlled",
+    "control-list-entries",
+    "is-pv-graded",
+    "product-description",
+)
+
+
+F680_GOOD_DETAILS_ON_APPLICATION_FIELDS = (
+    "number-of-items",
+    "total-value",
+)
+
+def f680_goods_summary(good, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = f680_good_details_reducer(good)
+    formatters = {
+        **F680_GOOD_DETAILS_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, F680_GOOD_DETAILS_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, F680_GOOD_DETAILS_LABELS)
+
+    return summary
+
+
+def f680_good_details_on_application_summary(good_on_application, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = f680_good_details_on_application_reducer(good_on_application)
+    formatters = {
+        **F680_GOOD_DETAILS_ON_APPLICATION_FORMATTERS,
+        **additional_formatters,
+    }
+
+    summary = pick_fields(summary, F680_GOOD_DETAILS_ON_APPLICATION_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, F680_GOOD_DETAILS_ON_APPLICATION_LABELS)
+
+    return summary

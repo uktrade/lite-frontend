@@ -173,6 +173,10 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
         party_eng_translation_document = all_data.pop("party_eng_translation_document", None)
         party_letterhead_document = all_data.pop("party_letterhead_document", None)
 
+        # F680 - clearance level is mandatory
+        if self.application["case_type"]["sub_type"]["key"] == "f680_clearance":
+            all_data["clearance_level"] = self.application["clearance_level"]
+
         response, status_code = post_party(self.request, self.kwargs["pk"], dict(all_data))
         if status_code != HTTPStatus.CREATED:
             log.error(
