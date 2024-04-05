@@ -19,7 +19,13 @@ from exporter.applications.views.parties.end_users import party_requires_ec3_doc
 @pytest.fixture
 def mock_application(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/')
-    yield requests_mock.get(url=url, json={"id": data_standard_case["case"]["id"]})
+    yield requests_mock.get(
+        url=url,
+        json={
+            "id": data_standard_case["case"]["id"],
+            "case_type": data_standard_case["case"]["case_type"],
+        },
+    )
 
 
 @pytest.fixture
@@ -104,7 +110,6 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
         "size": 0,
     }
 
-    _ = requests_mock.request_history.pop().json()
     end_user_data = requests_mock.request_history.pop().json()
     assert end_user_data == {
         "sub_type": "government",

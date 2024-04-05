@@ -1,7 +1,15 @@
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Select the types of clearance you need</dt>
-        <dd class="govuk-summary-list__value">{{ case.data.clearances }}</dd>
+        <dd class="govuk-summary-list__value">
+            {% for item in case.data.clearances %}
+                {% if not forloop.last %}
+                    {{ item.value }},
+                {% else %}
+                    {{ item.value }}
+                {% endif %}
+            {% endfor %}
+        </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Do you need the F680 clearance in less than 30 days due to exceptional circumstances?</dt>

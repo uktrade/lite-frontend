@@ -78,7 +78,6 @@ class AddF680GoodDetails(
         "Unexpected error adding complete product",
     )
     def post_complete_item(self, form_dict):
-        breakpoint()
         payload = self.get_payload(form_dict)
 
         return post_complete_item(

@@ -586,6 +586,7 @@ F680_GOOD_DETAILS_ON_APPLICATION_LABELS = {
     "total-value": "Total value",
 }
 
+
 def add_edit_links(
     summary,
     edit_links,
