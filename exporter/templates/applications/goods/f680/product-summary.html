@@ -1,0 +1,38 @@
+{% extends 'layouts/base.html' %}
+
+{% load date firearm_details_summary %}
+
+{% block back_link %}
+{% endblock %}
+
+{% block body %}
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-xl">
+                {% block title %}'{{ good.name }}' has been saved{% endblock %}
+            </h1>
+            <p class="govuk-body">This item has been saved to your product list so that you can reuse it for future
+                applications.</p>
+        </div>
+    </div>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
+        {% for key, value, label in summary %}
+            <div class="govuk-summary-list__row" id="{{ key }}">
+                <dt class="govuk-summary-list__key">
+                    {{ label }}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ value }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    {% if edit_link %}
+                        <a class="govuk-link govuk-link--no-visited-state" href="{{ edit_link }}">Change</a>
+                    {% endif %}
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+
+    <a class="govuk-button" href="{% url 'applications:f680_good_details_to_application' application_id good.id %}">Continue</a>
+{% endblock %}
