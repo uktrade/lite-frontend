@@ -296,9 +296,15 @@ def get_advice_subjects(case, countries=None):
 
 
 def post_approval_advice(request, case, data, level="user-advice"):
+    advice_type = "approve"
+    if data["proviso"]:
+        advice_type = "proviso"
+    elif case.sub_type == "f680_clearance":
+        advice_type = "f680"
+
     json = [
         {
-            "type": "proviso" if data["proviso"] else "approve",
+            "type": advice_type,
             "text": data["approval_reasons"],
             "proviso": data["proviso"],
             "note": data["instructions_to_exporter"],
