@@ -1,79 +1,52 @@
-{% load humanize %}
-
-<table class="govuk-table">
-	<thead class="govuk-table__head">
-		<tr class="govuk-table__row">
-			<th class="govuk-table__header" scope="col">#</th>
-			<th class="govuk-table__header" scope="col">Question</th>
-			<th class="govuk-table__header" scope="col">Answer</th>
-		</tr>
-	</thead>
-	<tbody class="govuk-table__body">
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell govuk-table__cell--line-number">1.</td>
-			<th class="govuk-table__header" scope="row">Has electronic warfare requirement</th>
-			<td class="govuk-table__cell">{{ case.data.electronic_warfare_requirement|friendly_boolean }}</td>
-		</tr>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell govuk-table__cell--line-number">2.</td>
-			<th class="govuk-table__header" scope="row">Is expedited</th>
-			<td class="govuk-table__cell">
-				<p class="govuk-body govuk-!-margin-0">{{ case.data.expedited|friendly_boolean }}</p>
-				{% if case.data.expedited_date %}
-					<p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0">{{ case.data.expedited_date }}</p>
-				{% endif %}
-			</td>
-		</tr>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell govuk-table__cell--line-number">3.</td>
-			<th class="govuk-table__header" scope="row">Has foreign technology</th>
-			<td class="govuk-table__cell">
-				<p class="govuk-body govuk-!-margin-0">{{ case.data.foreign_technology|friendly_boolean }}</p>
-				{% if case.data.foreign_technology_description %}
-					<p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0">
-						{{ case.data.foreign_technology_description }}
-					</p>
-				{% endif %}
-			</td>
-		</tr>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell govuk-table__cell--line-number">4.</td>
-			<th class="govuk-table__header" scope="row">Is locally manufactured</th>
-			<td class="govuk-table__cell">
-				<p class="govuk-body govuk-!-margin-0">{{ case.data.locally_manufactured|friendly_boolean }}</p>
-				{% if case.data.locally_manufactured_description %}
-					<p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0" data-max-length="200">
-						{{ case.data.locally_manufactured_description }}
-					</p>
-				{% endif %}
-			</td>
-		</tr>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell govuk-table__cell--line-number">5.</td>
-			<th class="govuk-table__header" scope="row">MTCR type</th>
-			<td class="govuk-table__cell">{{ case.data.mtcr_type.value }}</td>
-		</tr>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell govuk-table__cell--line-number">6.</td>
-			<th class="govuk-table__header" scope="row">Has UK service equipment</th>
-			<td class="govuk-table__cell">{{ case.data.uk_service_equipment|friendly_boolean }}</td>
-		</tr>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell govuk-table__cell--line-number">7.</td>
-			<th class="govuk-table__header" scope="row">UK service equipment</th>
-			<td class="govuk-table__cell">
-				<p class="govuk-body govuk-!-margin-0">{{ case.data.uk_service_equipment_type.value }}</p>
-				{% if case.data.uk_service_equipment_description %}
-					<p class="govuk-hint govuk-!-margin-top-1 govuk-!-margin-bottom-0" data-max-length="200">
-						{{ case.data.uk_service_equipment_description }}
-					</p>
-				{% endif %}
-			</td>
-		</tr>
-		<tr class="govuk-table__row">
-			<td class="govuk-table__cell govuk-table__cell--line-number">8.</td>
-			<th class="govuk-table__header" scope="row">Prospect value</th>
-			<td class="govuk-table__cell">£{{ case.data.prospect_value|intcomma }}</td>
-		</tr>
-	</tbody>
-</table>
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Select the types of clearance you need</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.clearances }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Do you need the F680 clearance in less than 30 days due to exceptional circumstances?</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.exceptional_circumstances|friendly_boolean }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Is there any foreign technology or information involved in the release?</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.foreign_technology_information|friendly_boolean }}</dd>
+    </div>
+    {% if case.data.foreign_technology_information %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Foreign technology details</dt>
+            <dd class="govuk-summary-list__value">{{ case.data.foreign_technology_information_details }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Is local assembly or manufacture required?</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.is_local_assembly_manufacture|friendly_boolean }}</dd>
+    </div>
+    {% if case.data.is_local_assembly_manufacture %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Local assembly manufacture details</dt>
+            <dd class="govuk-summary-list__value">{{ case.data.is_local_assembly_manufacture_details }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Do you believe the products are rated under the Missile Technology Control Regime (MTCR)</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.product_mtcr_rating_type }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Is there is a requirement to release UK MOD owned EW data or information in support of this export</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.ew_data|friendly_boolean }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Is the equipment or a version of it due to enter service with the UK armed forces?</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.armed_forces_usage|friendly_boolean }}</dd>
+    </div>
+    {% if case.data.armed_forces_usage %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Armed forces usage details</dt>
+            <dd class="govuk-summary-list__value">{{ case.data.armed_forces_usage_details }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Select how the product is funded</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.product_funding }}</dd>
+    </div>
+</dl>

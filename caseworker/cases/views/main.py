@@ -308,9 +308,14 @@ class CaseDetail(CaseTabsMixin, CaseView):
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
+            conditional(self.case.data["denial_matches"], Slices.DENIAL_MATCHES),
+            conditional(self.case.data["sanction_matches"], Slices.SANCTION_MATCHES),
+            conditional(self.case.data["end_user"], Slices.END_USER_DOCUMENTS),
+            Slices.LOCATIONS,
             Slices.F680_DETAILS,
             Slices.END_USE_DETAILS,
             Slices.SUPPORTING_DOCUMENTS,
+            Slices.FREEDOM_OF_INFORMATION,
         ]
         self.additional_context = self.get_advice_additional_context()
 
