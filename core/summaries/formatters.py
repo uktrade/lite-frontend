@@ -715,6 +715,36 @@ COMPONENT_ACCESSORY_ON_APPLICATION_LABELS = {
 }
 
 
+F680_GOOD_DETAILS_FORMATTERS = {
+    "is-good-controlled": key_value_formatter,
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+}
+
+F680_GOOD_DETAILS_ON_APPLICATION_FORMATTERS = {
+    "number-of-items": integer,
+    "total-value": money_formatter,
+}
+
+F680_GOOD_DETAILS_LABELS = {
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "product-description": "Describe the product and what it is designed to do",
+}
+
+
+F680_GOOD_DETAILS_ON_APPLICATION_LABELS = {
+    "number-of-items": "Number of items",
+    "total-value": "Total value",
+}
+
 def add_edit_links(
     summary,
     edit_links,

@@ -1,0 +1,56 @@
+{% extends 'layouts/base.html' %}
+
+{% load date firearm_details firearm_details_summary %}
+
+{% block back_link %}
+{% endblock %}
+
+{% block body %}
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-xl">
+                {% block title %}
+                    '{{ good.name }}' has been added to the application
+                {% endblock %}
+            </h1>
+        </div>
+    </div>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
+        {% for key, value, label in product_on_application_summary %}
+            <div class="govuk-summary-list__row" id="{{ key }}">
+                <dt class="govuk-summary-list__key">
+                    {{ label }}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ value }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    {% if edit_link %}
+                        <a class="govuk-link govuk-link--no-visited-state" href="{{ edit_link }}">Change</a>
+                    {% endif %}
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+
+    <a class="govuk-button govuk-!-margin-bottom-9 govuk-!-margin-left-2" href="{% url 'applications:goods' application.id %}">
+        Continue
+    </a>
+
+    <h2 class="govuk-heading-m">Saved product details for '{{ good.name }}'</h2>
+    <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
+        {% for key, value, label in product_summary %}
+            <div class="govuk-summary-list__row" id="{{ key }}">
+                <dt class="govuk-summary-list__key">
+                    {{ label }}
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ value }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+        {% endfor %}
+    </dl>
+{% endblock %}

@@ -747,3 +747,24 @@ class ProductDescriptionForm(BaseForm):
 
     def get_layout_fields(self):
         return ("product_description",)
+
+
+class ProductProspectValueForm(BaseForm):
+    class Layout:
+        TITLE = "What is the estimated value of the Prospect?"
+
+    value = forms.DecimalField(
+        decimal_places=2,
+        error_messages={
+            "invalid": "Total value must be a number, like 16.32",
+            "required": "Enter the total value",
+            "max_decimal_places": "Total value must not be more than 2 decimals",
+            "min_value": "Total value must be 0.01 or more",
+        },
+        label="Total value",
+        min_value=Decimal("0.01"),
+        widget=forms.TextInput,
+    )
+
+    def get_layout_fields(self):
+        return (Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),)
