@@ -1,8 +1,5 @@
 from django.urls import reverse
 
-from core.summaries.formatters import (
-    add_edit_links,
-)
 from core.summaries.summaries import (
     f680_goods_summary,
     f680_good_details_on_application_summary as core_f680_good_details_on_application_summary,

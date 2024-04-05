@@ -835,6 +835,7 @@ F680_GOOD_DETAILS_ON_APPLICATION_FIELDS = (
     "total-value",
 )
 
+
 def f680_goods_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
