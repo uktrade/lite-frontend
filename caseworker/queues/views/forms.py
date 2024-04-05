@@ -24,6 +24,15 @@ class CasesFiltersForm(forms.Form):
         widget=forms.TextInput(attrs={"id": "case_reference"}),
         required=False,
     )
+    case_type = forms.ChoiceField(
+        label="Case type",
+        choices=(
+            ("", ""),
+            ("siel", "SIEL"),
+            ("f680", "F680"),
+        ),
+        required=False,
+    )
     export_type = forms.ChoiceField(
         label="Permanent or temporary",
         choices=(
@@ -202,6 +211,7 @@ class CasesFiltersForm(forms.Form):
 
         case_filters = [
             "case_reference",
+            "case_type",
             "status",
             "sub_status",
             Field("case_officer", css_class="single-select-filter"),
