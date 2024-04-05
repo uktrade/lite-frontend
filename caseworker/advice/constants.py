@@ -4,6 +4,7 @@ DECISION_TYPE_VERB_MAPPING = {
     "Refuse": "refused",
     "Conflicting": "given conflicting advice",
     "No Licence Required": "no licence required",
+    "F680": "F680 Approval",
 }
 
 
