@@ -40,6 +40,7 @@ DESNZ_TEAMS = [
 # TODO: Remove BEIS team aliases when DESNZ team aliases in lite-api
 BEIS_TEAMS = ["BEIS_CHEMICAL", "BEIS_NUCLEAR"]
 FCDO_TEAM = "FCO"
+
 LICENSING_UNIT_TEAM = "LICENSING_UNIT"
 MOD_ECJU_TEAM = "MOD_ECJU"
 MOD_CONSOLIDATE_TEAMS = [
@@ -48,6 +49,7 @@ MOD_CONSOLIDATE_TEAMS = [
     "MOD_DSTL",
     "MOD_CAPPROT",
 ]
+FCDO_CONSOLIDATE_TEAMS = [MOD_ECJU_TEAM]
 LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
 NCSC_TEAM = "NCSC"
 
@@ -549,6 +551,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
         },
     }
     # TODO: Remove BEIS team aliases when DESNZ aliases in lite-api
+
     if team_alias in (FCDO_TEAM, *MOD_CONSOLIDATE_TEAMS, *DESNZ_TEAMS, *BEIS_TEAMS, NCSC_TEAM):
         # TODO: Remove BEIS queue aliases when DESNZ aliases in lite-api
         if queue_alias in (
@@ -560,6 +563,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
             "BEIS_CHEMICAL_CASES_TO_REVIEW",
             "BEIS_NUCLEAR_CASES_TO_REVIEW",
             NCSC_CASES_TO_REVIEW,
+            "MOD_ECJU",
         ):
             existing_advice = get_my_advice(case.advice, caseworker["id"])
 
@@ -615,7 +619,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
                     context["buttons"]["edit_recommendation"] = True
                     context["buttons"]["move_case_forward"] = True
 
-        elif queue_alias in (LU_POST_CIRC_FINALISE_QUEUE, *MOD_CASES_TO_REVIEW_QUEUES):
+        elif queue_alias in (LU_POST_CIRC_FINALISE_QUEUE, *MOD_CASES_TO_REVIEW_QUEUES, "MOD_ECJU"):
             if not consolidated_advice:
                 # An individual consolidating advice on a case for the first time
                 context["url"] = "cases:consolidate_advice_view"
