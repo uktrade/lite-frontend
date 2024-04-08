@@ -106,7 +106,7 @@ def filter_current_user_advice(all_advice, user_id):
         advice
         for advice in all_advice
         if advice["level"] == constants.AdviceLevel.USER
-        and advice["type"]["key"] in ["approve", "proviso", "refuse"]
+        and advice["type"]["key"] in ["approve", "proviso", "refuse", "f680"]
         and (advice["user"]["id"] == user_id)
     ]
 
