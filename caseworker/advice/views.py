@@ -783,7 +783,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         lu_countersign_required = False
         finalise_case = False
 
-        if user_team_alias == services.LICENSING_UNIT_TEAM:
+        if user_team_alias in [services.LICENSING_UNIT_TEAM, "MOD_ECJU"]:
             rejected_lu_countersignature = self.rejected_countersign_advice()
             lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
             finalise_case = not (lu_countersign_required or rejected_lu_countersignature)

@@ -105,7 +105,7 @@ def filter_current_user_advice(all_advice, user_id):
         advice
         for advice in all_advice
         if advice["level"] == constants.AdviceLevel.USER
-        and advice["type"]["key"] in ["approve", "proviso", "refuse"]
+        and advice["type"]["key"] in ["approve", "proviso", "refuse", "f680"]
         and (advice["user"]["id"] == user_id)
     ]
 
@@ -560,6 +560,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
             "BEIS_CHEMICAL_CASES_TO_REVIEW",
             "BEIS_NUCLEAR_CASES_TO_REVIEW",
             NCSC_CASES_TO_REVIEW,
+            "MOD_ECJU",
         ):
             existing_advice = get_my_advice(case.advice, caseworker["id"])
 
@@ -615,7 +616,7 @@ def get_advice_tab_context(case, caseworker, queue_id):
                     context["buttons"]["edit_recommendation"] = True
                     context["buttons"]["move_case_forward"] = True
 
-        elif queue_alias in (LU_POST_CIRC_FINALISE_QUEUE, *MOD_CASES_TO_REVIEW_QUEUES):
+        elif queue_alias in (LU_POST_CIRC_FINALISE_QUEUE, *MOD_CASES_TO_REVIEW_QUEUES, "MOD_ECJU"):
             if not consolidated_advice:
                 # An individual consolidating advice on a case for the first time
                 context["url"] = "cases:consolidate_advice_view"
