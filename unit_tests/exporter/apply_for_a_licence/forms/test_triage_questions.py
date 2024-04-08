@@ -8,7 +8,7 @@ from exporter.core.constants import CaseTypes
     "value,expect_enabled,expect_disabled",
     (
         (True, ["export_licence", "f680"], ["transhipment", "trade_control_licence", "mod"]),
-        (False, ["export_licence", "transhipment", "trade_control_licence", "mod", "f680"], []),
+        (False, ["export_licence", "f680", "transhipment", "trade_control_licence", "mod"], []),
     ),
 )
 def test_opening_question_feature_flag(settings, value, expect_enabled, expect_disabled):

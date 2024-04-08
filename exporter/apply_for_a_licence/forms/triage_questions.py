@@ -32,6 +32,14 @@ def opening_question():
             ),
         ),
         Option(
+            key="f680",
+            value="MOD F680",
+            description=(
+                "Select if you need approval to release security classified products or information to foreign entities."
+            ),
+            disabled=False,
+        ),
+        Option(
             key="transhipment",
             value="Transhipment licence",
             description=(
@@ -58,7 +66,6 @@ def opening_question():
             ),
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
-        Option(key="f680", value="F680", description=("Select if f680"), disabled=False),
     ]
     if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
         description = render_to_string("applications/use-spire-triage.html")
