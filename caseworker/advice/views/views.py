@@ -687,6 +687,10 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         lu_countersign_required = False
         finalise_case = False
 
+        # Hack to ensure that F680 cases can be finalised by MOD-ECJU
+        if user_team_alias == services.MOD_ECJU_TEAM and self.case.case_type["reference"]["key"] == "f680":
+            finalise_case = True
+
         if user_team_alias == services.LICENSING_UNIT_TEAM:
             rejected_lu_countersignature = self.rejected_countersign_advice()
             lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
