@@ -116,6 +116,7 @@ Currently we have Mock SSO enabled by default. You should be able to use Mock SS
 Previously you had to set the Mock SSO email in an env variable `MOCK_SSO_USER_EMAIL` in `caseworker.env` for this to work. Now this is optional as there is an input box which allows you to type in an email you want to use for Mock SSO. This change was made because having the input box is useful for running tests using CI.
 
 If you need to disable Mock SSO find `MOCK_SSO_ACTIVATE_ENDPOINTS` in your `caseworker.env` or `exporter.env` file and set it to False:
+
 ```
 MOCK_SSO_ACTIVATE_ENDPOINTS=False
 ```
@@ -168,7 +169,7 @@ make run_all_tests
 
 Exporter UI Tests also requires the following :
 
-- GOVUK_BASIC_AUTH_USER_NAME - In vault used for GOV.UK basic authentication in test envs  
+- GOVUK_BASIC_AUTH_USER_NAME - In vault used for GOV.UK basic authentication in test envs
 - GOVUK_BASIC_AUTH_USER_PASSWORD - In vault used for GOV.UK basic authentication in test envs
 - EXPORTER_TEST_SSO_EMAIL - In vault this is a default account setup for testing
 - EXPORTER_TEST_SSO_PASSWORD - In vault this is a default account setup for testing
@@ -204,17 +205,21 @@ Finally, to run a UI test on the command line (will run an exporter and casework
 PIPENV_DOTENV_LOCATION=exporter.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/exporter
 PIPENV_DOTENV_LOCATION=caseworker.env ENVIRONMENT=local pipenv run pytest -m "run_this_test" ui_tests/caseworker/
 ```
+
 ## Ui Tests with Docker
+
 All env variables above apply
 
 Assuming you already have an instance of the api and frontend running using docker-compose you can either:
 
 Run the tests from the frontend directory:
+
 ```
 make run_docker_ui_tests
 ```
 
 to do this manually:
+
 ```
 docker-compose exec caseworker bash -c "pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker ${ADDITIONAL_PYTEST_UI_TEST_ARGS}"
 docker-compose exec exporter bash -c "pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter ${ADDITIONAL_PYTEST_UI_TEST_ARGS}"
@@ -222,11 +227,14 @@ docker-compose exec exporter bash -c "pytest -vv --gherkin-terminal-reporter ./u
 
 Connect to the box and run the tests:
 **caseworker**
+
 ```
 docker-compose exec caseworker bash
 pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker ${ADDITIONAL_PYTEST_UI_TEST_ARGS}
 ```
+
 **exporter**
+
 ```
 docker-compose exec exporter bash
 pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter ${ADDITIONAL_PYTEST_UI_TEST_ARGS}
@@ -238,10 +246,46 @@ ${ADDITIONAL_PYTEST_UI_TEST_ARGS} is always set to --headless in the docker-comp
 pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker
 pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter
 ```
+
 or
+
 ```
 docker-compose exec caseworker bash -c "pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker"
 docker-compose exec exporter bash -c "pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter"
+```
+
+#### Running e2e tests in Docker with visible Chrome locally
+
+Install Java and turn off selenium server which is running; the docker one
+
+```
+brew install java
+```
+
+Check version if its not showing then you need to symlink it
+
+```
+java -version
+```
+
+then check for path:
+
+```
+brew info openjdk
+
+sudo ln -sfn /usr/local/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+```
+
+Download Selenium Grid Server from the Website then run the server:
+
+```
+java -jar /Users/lngo_dit/Downloads/selenium-server-4.19.1.jar standalone --selenium-manager true
+```
+
+change in the code to you local server for example:
+
+```
+command_executor="http://192.168.1.41:4444"
 ```
 
 ## Javascript/SCSS

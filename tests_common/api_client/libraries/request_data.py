@@ -36,7 +36,7 @@ def build_organisation_with_user(exporter, type, name):
         "website": "http://somewebsite.com",
         "sic_number": "12345",
         "vat_number": "GB123456789",
-        "registration_number": "09876543",
+        "registration_number": "".join([str(random.randint(0, 9)) for _ in range(8)]),
         "user": exporter,
         "site": {
             "name": "Headquarters",
