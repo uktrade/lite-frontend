@@ -243,7 +243,7 @@ or
 docker-compose exec caseworker bash -c "pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker"
 docker-compose exec exporter bash -c "pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter"
 ```
-
+[comment]: <> (/PS-IGNORE)
 ## Javascript/SCSS
 
 The Javascript/SCSS is automatically watched via the node docker service.
