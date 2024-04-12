@@ -61,6 +61,9 @@ run_ui_tests:
 	PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker ${ADDITIONAL_PYTEST_UI_TEST_ARGS}
 	PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter ${ADDITIONAL_PYTEST_UI_TEST_ARGS}
 
+run_js_tests:
+	npm run test
+
 run_docker_ui_tests:
 	docker-compose exec caseworker bash -c "pytest -vv --gherkin-terminal-reporter ./ui_tests/caseworker ${ADDITIONAL_PYTEST_UI_TEST_ARGS}"
 	docker-compose exec exporter bash -c "pytest -vv --gherkin-terminal-reporter ./ui_tests/exporter ${ADDITIONAL_PYTEST_UI_TEST_ARGS}"

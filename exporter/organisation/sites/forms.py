@@ -19,7 +19,7 @@ from lite_forms.components import (
     Label,
 )
 from lite_forms.helpers import conditional
-from core.forms import widgets
+from django.forms import widgets
 from exporter.organisation.sites.services import get_sites, filter_sites_in_the_uk, validate_sites
 
 
@@ -137,7 +137,10 @@ class NewSiteInternationalAddressForm(SiteFormMixin, forms.Form):
     )
     website = forms.CharField(label="Website", required=False)
     country = forms.ChoiceField(
-        choices=[], widget=widgets.Autocomplete(attrs={"id": "country-autocomplete"}), required=False
+        choices=[],
+        widget=widgets.Select(attrs={"data-module": "autocomplete-select"}),
+        required=False,
+        help_text="Select a country",
     )  # populated in __init__
 
     @property
@@ -156,7 +159,7 @@ class NewSiteInternationalAddressForm(SiteFormMixin, forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         countries = get_countries(self.request, False, ["GB"])
-        country_choices = [("", "Select a country")] + [(country["id"], country["name"]) for country in countries]
+        country_choices = [("", "")] + [(country["id"], country["name"]) for country in countries]
         self.fields["country"].choices = country_choices
 
         self.helper = FormHelper()

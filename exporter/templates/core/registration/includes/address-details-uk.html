@@ -1,0 +1,81 @@
+<dl class="govuk-summary-list govuk-!-margin-bottom-9" id="address-summary">
+    <div class="govuk-summary-list__row" id="org-name">
+        <dt class="govuk-summary-list__key">
+            Name of headquarters
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.site.name}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-eori">
+        <dt class="govuk-summary-list__key">
+            Building and street
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.site.address.address_line_1}}
+            <br>
+            {{ registration_data.site.address.address_line_2}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-sic-number">
+        <dt class="govuk-summary-list__key">
+            Town or city
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.site.address.city}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-country">
+        <dt class="govuk-summary-list__key">
+            County or state
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.site.address.region}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-pc">
+        <dt class="govuk-summary-list__key">
+            Postcode
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.site.address.postcode}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-tel">
+        <dt class="govuk-summary-list__key">
+            Telephone number
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.phone_number}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+    <div class="govuk-summary-list__row" id="org-website">
+        <dt class="govuk-summary-list__key">
+            Website
+        </dt>
+        <dd class="govuk-summary-list__value">
+            {{ registration_data.website}}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+            <button name="wizard_goto_step" type="submit" value="ADDRESS_DETAILS" class="lite-button--link"> Change</button>
+        </dd>
+    </div>
+</dl>

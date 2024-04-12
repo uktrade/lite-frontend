@@ -5,6 +5,8 @@ import pytest
 import os
 import re
 
+import requests
+
 from datetime import timedelta
 from urllib.parse import urljoin, urlparse
 
@@ -1193,7 +1195,7 @@ def data_standard_case_with_all_trigger_list_products_assessed(data_standard_cas
         {
             "id": "566fd526-bd6d-40c1-94bd-60d10c967cf7",
             "name": "queue 20230119000000",
-            "alias": "BEIS_NUCLEAR_CASES_TO_REVIEW",
+            "alias": "DESNZ_NUCLEAR_CASES_TO_REVIEW",
             "joined_queue_at": joined_queue_at.isoformat(),
         },
     )
@@ -2437,7 +2439,7 @@ def data_ecju_queries():
                     "name": "DESNZ Chemical",
                     "part_of_ecju": False,
                     "is_ogd": True,
-                    "alias": "BEIS_CHEMICAL",
+                    "alias": "DESNZ_CHEMICAL",
                     "department": "f4369d60-5aff-4b7f-b5d4-75e3fa0f402e",
                 },
                 "created_at": "2022-11-30T17:00:17.479098Z",
@@ -2456,7 +2458,7 @@ def data_ecju_queries():
                     "name": "DESNZ Nuclear controls",
                     "part_of_ecju": False,
                     "is_ogd": True,
-                    "alias": "BEIS_NUCLEAR",
+                    "alias": "DESNZ_NUCLEAR",
                     "department": "f4369d60-5aff-4b7f-b5d4-75e3fa0f402e",
                 },
                 "created_at": "2022-11-30T17:00:17.479098Z",
@@ -2577,3 +2579,11 @@ def mock_s3_files(settings):
             )
 
     return _create_files
+
+
+@pytest.fixture
+def mock_request(rf, authorized_client):
+    request = rf.get("/")
+    request.session = authorized_client.session
+    request.requests_session = requests.Session()
+    yield request

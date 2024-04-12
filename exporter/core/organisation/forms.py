@@ -4,6 +4,7 @@ from django.db import models
 from crispy_forms_gds.layout import HTML
 
 from core.common.forms import BaseForm, TextChoice
+from exporter.core.services import get_countries
 from .validators import (
     validate_vat,
     validate_eori,
@@ -12,6 +13,15 @@ from .validators import (
     validate_registration,
     validate_sic_number,
 )
+
+
+class RegistrationConfirmation(BaseForm):
+    # This is just a dummy form which isn't rendered in the FE
+    class Layout:
+        TITLE = ""
+
+    def get_layout_fields(self):
+        return ()
 
 
 class RegistrationTypeForm(BaseForm):
@@ -250,14 +260,6 @@ class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
 
 
 class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
-    class Layout:
-        TITLE = "Where is your organisation based?"
-
-    def __init__(self, is_individual, *args, **kwargs):
-        if is_individual:
-            self.Layout.TITLE = "What is your registered office address?"
-        super().__init__(*args, **kwargs)
-
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),
         label="Address",
@@ -266,12 +268,25 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
         },
     )
 
-    country = forms.CharField(
-        label="Country",
+    country = forms.ChoiceField(
+        choices=[],
+        widget=forms.widgets.Select(attrs={"data-module": "autocomplete-select"}),
         error_messages={
             "required": "Enter a country",
         },
     )
+
+    class Layout:
+        TITLE = "Where is your organisation based?"
+
+    def __init__(self, is_individual, request, *args, **kwargs):
+        self.request = request
+        if is_individual:
+            self.Layout.TITLE = "What is your registered office address?"
+        super().__init__(*args, **kwargs)
+        countries = get_countries(self.request, False, ["GB"])
+        country_choices = [("", "")] + [(country["id"], country["name"]) for country in countries]
+        self.fields["country"].choices = country_choices
 
     def get_layout_fields(self):
         return ("name", "address", "phone_number", "website", "country")
