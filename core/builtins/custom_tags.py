@@ -838,6 +838,8 @@ def get_parties_status_optional_documents(parties):
         if not parties["documents"]:
             if parties["type"] == "end_user" and parties["end_user_document_available"] is False:
                 return DONE
+            if parties["type"] == "consignee" and parties["address"]:
+                return DONE
             return IN_PROGRESS
 
     return DONE
