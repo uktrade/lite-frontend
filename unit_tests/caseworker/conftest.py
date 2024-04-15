@@ -650,6 +650,22 @@ def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock
 
 
 @pytest.fixture
+def mock_gov_lu_super_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, gov_uk_user_id):
+    mock_gov_user["user"]["team"] = {
+        "id": "521154de-f39e-45bf-9922-baaaaaa",
+        "name": "Licencing Unit",
+        "alias": "LICENSING_UNIT",
+    }
+    mock_gov_user["user"]["role"]["statuses"].extend(
+        [{"id": "00000000-0000-0000-0000-000000000009", "key": "closed", "value": "Closed", "priority": 16}]
+    )
+
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
+
+
+@pytest.fixture
 def mock_notifications(requests_mock):
     url = client._build_absolute_uri("/gov-users/notifications/")
     data = {"notifications": {"organisations": 8}, "has_notifications": True}
@@ -1605,7 +1621,6 @@ def mock_case_statuses(requests_mock):
                 "priority": 14,
             },
             {"id": "00000000-0000-0000-0000-000000000008", "key": "withdrawn", "value": "Withdrawn", "priority": 15},
-            {"id": "00000000-0000-0000-0000-000000000009", "key": "closed", "value": "Closed", "priority": 16},
             {"id": "00000000-0000-0000-0000-000000000010", "key": "registered", "value": "Registered", "priority": 17},
             {
                 "id": "00000000-0000-0000-0000-000000000011",
