@@ -176,7 +176,7 @@ def route_of_goods_form():
                 "<br>"
                 + "<details class='govuk-details' data-module='govuk-details'>"
                 + "<summary class='govuk-details__summary'>"
-                + "<span class='govuk-details__summary-text'>Help with airway bill and bill of landing</span>"
+                + "<span class='govuk-details__summary-text'>Help with airway bill and bill of lading</span>"
                 + "</summary>"
                 + "<div class='govuk-details__text govuk'>"
                 + "<p>"
