@@ -8,3 +8,8 @@ def register_organisation(request, json):
     }
     response = client.post(request, "/organisations/", {**json, **data})
     return response.json(), response.status_code
+
+
+def validate_organisation(request, json):
+    json["validate_only"] = True
+    return register_organisation(request, json)

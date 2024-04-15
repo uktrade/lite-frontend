@@ -13,6 +13,7 @@ from .validators import (
     validate_registration,
     validate_sic_number,
 )
+from exporter.core.organisation.services import validate_organisation
 
 
 class RegistrationConfirmation(BaseForm):
@@ -129,6 +130,24 @@ class RegisterDetailsBaseForm(BaseForm):
         validators=[validate_registration],
     )
 
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("request"):
+            self.request = kwargs.pop("request")
+        if kwargs.get("type"):
+            self.registration_type = kwargs.pop("type")
+        super().__init__(*args, **kwargs)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # validate using api
+        cleaned_data["type"] = self.registration_type
+        response, status_code = validate_organisation(self.request, cleaned_data)
+        if status_code != 200:
+            # we're currently only checking registration_number for errors
+            if response["errors"].get("registration_number"):
+                self.add_error("registration_number", response["errors"]["registration_number"])
+        return cleaned_data
+
 
 class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
     def __init__(self, *args, **kwargs):
@@ -136,17 +155,18 @@ class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
 
         self.fields["name"].label = "First and last name"
         self.Layout.TITLE = "Register a private individual"
-        self.fields["vat_number"].label = self.REGISTRATION_LABEL + " (optional)"
-        self.fields["vat_number"].required = False
+        self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
+        self.fields["registration_number"].required = False
 
     def clean(self):
-        for field in ["sic_number", "registration_number"]:
+        for field in ["sic_number", "vat_number"]:
             if self.errors.get(field):
                 del self.errors[field]
+        super().clean()
         return
 
     def get_layout_fields(self):
-        return ("name", "eori_number", "vat_number")
+        return ("name", "eori_number", "registration_number")
 
 
 class RegisterDetailsIndividualOverseasForm(RegisterDetailsIndividualUKForm):
