@@ -18,7 +18,7 @@ with open(settings.BASE_DIR + "/caseworker/external_data/example.csv", "rb") as 
 class DenialUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "external_data/denial-upload.html"
     form_class = forms.DenialUploadForm
-    success_message = "Denials created successfully"
+    success_message = "Denials created or updated successfully"
     extra_context = {"base_64_csv": base_64_csv}
 
     def form_valid(self, form):
