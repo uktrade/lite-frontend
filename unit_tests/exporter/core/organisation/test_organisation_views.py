@@ -137,7 +137,7 @@ def test_registration_individual_end_to_end_uk_based(
     goto_step(RegistrationSteps.REGISTRATION_DETAILS)
     response = post_to_step(
         RegistrationSteps.REGISTRATION_DETAILS,
-        {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"},
+        {"name": "joe", "eori_number": "GB205672212000", "registration_number": "GB123456"},
     )
 
     assert response.status_code == 200
@@ -166,7 +166,7 @@ def test_registration_individual_end_to_end_uk_based(
         "location": "united_kingdom",
         "name": "joe",
         "eori_number": "GB205672212000",
-        "vat_number": "GB123456789",
+        "registration_number": "GB123456",
         "site": {
             "name": "joe",
             "address": {"address_line_1": "xyz", "address_line_2": "", "city": "c1", "region": "r", "postcode": "pc"},
@@ -210,7 +210,7 @@ def test_registration_individual_end_to_end_non_uk_based(
     goto_step(RegistrationSteps.REGISTRATION_DETAILS)
     post_to_step(
         RegistrationSteps.REGISTRATION_DETAILS,
-        {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"},
+        {"name": "joe", "eori_number": "GB205672212000", "registration_number": "GB123456"},
     )
     goto_step(RegistrationSteps.ADDRESS_DETAILS)
     response = post_to_step(
@@ -229,7 +229,7 @@ def test_registration_individual_end_to_end_non_uk_based(
         "location": "abroad",
         "name": "joe",
         "eori_number": "GB205672212000",
-        "vat_number": "GB123456789",
+        "registration_number": "GB123456",
         "site": {"name": "joe", "address": {"address": "xyz", "country": "US"}},
         "phone_number": "+441234567890",
         "website": "http://www.notreal.com",

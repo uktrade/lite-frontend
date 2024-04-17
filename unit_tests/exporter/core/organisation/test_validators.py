@@ -42,13 +42,13 @@ def test_validate_phone_number_invalid_numbers(phone_number):
     "registration_number",
     ("12345678", "RA123456", "ra123456", "01235233"),
 )
-def test_validate_registration_number_invalid_numbers(registration_number):
-    assert validate_registration(registration_number) is None
+def test_validate_registration_number_valid_numbers(registration_number):
+    assert validate_registration(registration_number) is registration_number
 
 
 @pytest.mark.parametrize(
     "registration_number",
-    ("9234567921", "TAF12345", "BJLALKWD", ""),
+    ("9234567921", "TAF12345", "BJLALKWD", " "),
 )
 def test_validate_registration_number_invalid_numbers(registration_number):
     with pytest.raises(ValidationError):

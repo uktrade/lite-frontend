@@ -140,7 +140,7 @@ class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
         self.fields["registration_number"].required = False
 
     def clean(self):
-        for field in ["sic_number", "var_number"]:
+        for field in ["sic_number", "vat_number"]:
             if self.errors.get(field):
                 del self.errors[field]
         return
