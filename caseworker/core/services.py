@@ -80,7 +80,6 @@ def get_permissible_statuses(request, case):
             if status["key"]
             not in [
                 CaseStatusEnum.APPLICANT_EDITING,
-                CaseStatusEnum.CLOSED,
                 CaseStatusEnum.FINALISED,
                 CaseStatusEnum.REGISTERED,
                 CaseStatusEnum.CLC,
