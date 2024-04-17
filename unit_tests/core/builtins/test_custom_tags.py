@@ -6,6 +6,12 @@ from decimal import Decimal
 from core.builtins import custom_tags
 from core.builtins.custom_tags import highlight_text
 
+from exporter.core.constants import (
+    NOT_STARTED,
+    DONE,
+    IN_PROGRESS,
+)
+
 from exporter.core import constants
 from exporter.core.objects import Application
 
@@ -373,3 +379,21 @@ def test_pprint_dict(data, expected):
 )
 def test_str_time_on_date(input_string, expected_output):
     assert custom_tags.str_time_on_date(input_string) == expected_output
+
+
+@pytest.mark.parametrize(
+    ("parties", "expected_status"),
+    [
+        ([], NOT_STARTED),
+        ([None], NOT_STARTED),
+        ({"documents": None, "type": "sometype"}, IN_PROGRESS),
+        ({"documents": None, "type": "end_user", "end_user_document_available": True}, IN_PROGRESS),
+        ({"documents": None, "type": "end_user", "end_user_document_available": False}, DONE),
+        ({"documents": None, "type": "consignee", "address": None}, IN_PROGRESS),
+        ({"documents": None, "type": "consignee", "address": "some address"}, DONE),
+        ({"documents": "something"}, DONE),
+        (["some party"], DONE),
+    ],
+)
+def test_get_parties_status_optional_documents(parties, expected_status):
+    assert custom_tags.get_parties_status_optional_documents(parties) == expected_status
