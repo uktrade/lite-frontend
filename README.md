@@ -13,6 +13,7 @@
 
 - [Python 3.9](https://www.python.org/downloads/release/python-39/)
 - [Pipenv](https://pipenv.pypa.io/en/latest/)
+- [Homebrew](https://brew.sh/)
 
 ### Installing
 
@@ -62,15 +63,21 @@ make run_exporter
 - Set up your local config file:
   - `make secrets`
   - populate the newly created `caseworker.env` and `exporter.env` with values from Vault.
+  - As it states in the env file add the following to your to your /etc/hosts file:
+    ```
+    127.0.0.1   caseworker
+    127.0.0.1   exporter
+    ```
+  - Further information at https://kinsta.com/knowledgebase/edit-mac-hosts-file/
 
 * Ensure docker is running
 
 * Build and start docker images:
   - If you haven't already done this for lite-api, set up a shared docker network:
-    - `docker network create lite` - shared network to allow API and frontend to communicate
+  - `docker network create lite` - shared network to allow API and frontend to communicate
   - `docker-compose build` - build the container image
 * Installation requirements
-  - install libmagic
+  - install libmagic with the `brew install libmagic` command.
 
 #### Starting the service
 
