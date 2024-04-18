@@ -45,7 +45,12 @@ def test_registration_uk_based_form(data, valid):
             {"name": ["Enter a name"], "eori_number": ["Enter a EORI number"]},
             forms.RegisterDetailsIndividualUKForm,
         ),
-        ({"name": "joe", "eori_number": "GB205672212000"}, True, {}, forms.RegisterDetailsIndividualUKForm),
+        (
+            {"name": "joe", "eori_number": "GB205672212000", "type": "individual"},
+            True,
+            {},
+            forms.RegisterDetailsIndividualUKForm,
+        ),
         ({}, False, {"name": ["Enter a name"]}, forms.RegisterDetailsIndividualOverseasForm),
         ({"name": "joe"}, True, {}, forms.RegisterDetailsIndividualOverseasForm),
         (
@@ -74,9 +79,10 @@ def test_registration_uk_based_form(data, valid):
         ),
     ),
 )
-def test_register_details_form_required_fields(data, valid, error, form_class):
-
-    form = form_class(data=data)
+def test_register_details_form_required_fields(
+    data, valid, error, form_class, mock_request, mock_validate_registration_number
+):
+    form = form_class(data=data, request=mock_request)
     assert form.is_valid() == valid
 
     if not valid:
@@ -151,9 +157,10 @@ def test_register_details_form_required_fields(data, valid, error, form_class):
         ),
     ),
 )
-def test_register_details_form_field_validation(data, valid, error, form_class):
-
-    form = form_class(data=data)
+def test_register_details_form_field_validation(
+    data, valid, error, form_class, mock_request, mock_validate_registration_number
+):
+    form = form_class(data=data, request=mock_request)
     assert form.is_valid() == valid
 
     if not valid:

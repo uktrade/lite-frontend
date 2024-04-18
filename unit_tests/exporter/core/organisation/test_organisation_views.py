@@ -16,7 +16,7 @@ from unit_tests.helpers import reload_urlconf
 
 
 @pytest.fixture(autouse=True)
-def setup(no_op_storage, settings):
+def setup(no_op_storage, mock_validate_registration_number, settings):
     settings.FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = True
     reload_urlconf(["exporter.core.urls", settings.ROOT_URLCONF])
 

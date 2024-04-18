@@ -13,7 +13,7 @@ from .validators import (
     validate_registration,
     validate_sic_number,
 )
-from exporter.core.organisation.services import validate_organisation
+from exporter.core.organisation.services import validate_registration_number
 
 
 class RegistrationConfirmation(BaseForm):
@@ -131,6 +131,7 @@ class RegisterDetailsBaseForm(BaseForm):
     )
 
     def __init__(self, *args, **kwargs):
+        self.registration_type = None
         if kwargs.get("request"):
             self.request = kwargs.pop("request")
         if kwargs.get("type"):
@@ -140,12 +141,11 @@ class RegisterDetailsBaseForm(BaseForm):
     def clean(self):
         cleaned_data = super().clean()
         # validate using api
-        cleaned_data["type"] = self.registration_type
-        response, status_code = validate_organisation(self.request, cleaned_data)
+        if self.registration_type:
+            cleaned_data["type"] = self.registration_type
+        response, status_code = validate_registration_number(self.request, cleaned_data)
         if status_code != 200:
-            # we're currently only checking registration_number for errors
-            if response["errors"].get("registration_number"):
-                self.add_error("registration_number", response["errors"]["registration_number"])
+            self.add_error("registration_number", response["errors"]["registration_number"])
         return cleaned_data
 
 
