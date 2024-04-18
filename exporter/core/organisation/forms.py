@@ -132,21 +132,21 @@ class RegisterDetailsBaseForm(BaseForm):
 
 class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
     def __init__(self, *args, **kwargs):
+        self.Layout.TITLE = "Register a private individual"
         super().__init__(*args, **kwargs)
 
         self.fields["name"].label = "First and last name"
-        self.Layout.TITLE = "Register a private individual"
-        self.fields["vat_number"].label = self.REGISTRATION_LABEL + " (optional)"
-        self.fields["vat_number"].required = False
+        self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
+        self.fields["registration_number"].required = False
 
     def clean(self):
-        for field in ["sic_number", "registration_number"]:
+        for field in ["sic_number", "vat_number"]:
             if self.errors.get(field):
                 del self.errors[field]
         return
 
     def get_layout_fields(self):
-        return ("name", "eori_number", "vat_number")
+        return ("name", "eori_number", "registration_number")
 
 
 class RegisterDetailsIndividualOverseasForm(RegisterDetailsIndividualUKForm):
@@ -159,9 +159,9 @@ class RegisterDetailsIndividualOverseasForm(RegisterDetailsIndividualUKForm):
 
 class RegisterDetailsCommercialUKForm(RegisterDetailsBaseForm):
     def __init__(self, *args, **kwargs):
+        self.Layout.Title = "Register a commercial organisation"
         super().__init__(*args, **kwargs)
         self.fields["name"].label = "Name of organisation"
-        self.Layout.TITLE = "Register a commercial organisation"
 
     def get_layout_fields(self):
         return ("name", "eori_number", "sic_number", "vat_number", "registration_number")
