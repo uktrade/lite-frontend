@@ -1,0 +1,10 @@
+{% load static custom_tags %}
+{% load humanize %}
+
+
+<tr class="govuk-table__row">
+    <td class="govuk-table__cell" data-customiser-key="name">{{ denial.name|default:"" }}</td>
+    <td class="govuk-table__cell" data-customiser-key="address">{{ denial.address|default:"" }}</td>
+    <td class="govuk-table__cell" data-customiser-key="address">{{ denial.country|default:"" }}</td>
+    <td class="govuk-table__cell" data-customiser-key="entity_type">{{ denial.entity_type|default:"" }}</td>
+</tr>

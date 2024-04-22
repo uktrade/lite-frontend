@@ -10,4 +10,6 @@ urlpatterns = [
     ),  # TODO: rename back to "denials/upload/" and "denials-upload" when we are ready to release this to users
     path("denials/<uuid:pk>/", views.DenialDetailView.as_view(), name="denial-detail"),
     path("denials/<uuid:pk>/revoke/", views.DenialRevokeView.as_view(), name="denial-revoke"),
+    path("denials/search", views.DenialSearchView.as_view(), name="denial-search"),
+    path("denials/search/suggest/", views.DenialSearchSuggestView.as_view(), name="api-search-suggest-denial"),
 ]
