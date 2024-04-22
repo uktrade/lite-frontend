@@ -95,7 +95,6 @@ class Registration(
             "prefix": self.get_form_prefix(RegistrationSteps.REGISTRATION_DETAILS, form_class),
             "data": data,
             "request": self.request,
-            "type": registration_type,
         }
         return form_class(**kwargs)
 

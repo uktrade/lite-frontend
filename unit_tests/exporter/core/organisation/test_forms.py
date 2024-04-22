@@ -46,7 +46,7 @@ def test_registration_uk_based_form(data, valid):
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
-            {"name": "joe", "eori_number": "GB205672212000", "type": "individual"},
+            {"name": "joe", "eori_number": "GB205672212000"},
             True,
             {},
             forms.RegisterDetailsIndividualUKForm,

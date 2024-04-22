@@ -131,18 +131,12 @@ class RegisterDetailsBaseForm(BaseForm):
     )
 
     def __init__(self, *args, **kwargs):
-        self.registration_type = None
         if kwargs.get("request"):
             self.request = kwargs.pop("request")
-        if kwargs.get("type"):
-            self.registration_type = kwargs.pop("type")
         super().__init__(*args, **kwargs)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        # validate using api
-        if self.registration_type:
-            cleaned_data["type"] = self.registration_type
+    def clean_registration_number(self):
+        cleaned_data = self.cleaned_data["registration_number"]
         response, status_code = validate_registration_number(self.request, cleaned_data)
         if status_code != 200:
             self.add_error("registration_number", response["errors"]["registration_number"])
