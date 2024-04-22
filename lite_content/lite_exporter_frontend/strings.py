@@ -158,7 +158,7 @@ class UltimateEndUser:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            TITLE = "Attach a document"
+            TITLE = "Attach a document (optional)"
             DESCRIPTION = (
                 "Upload a DOCX, DOC, PDF or PNG file."
                 "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
@@ -187,7 +187,7 @@ class Consignee:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            TITLE = "Attach a document"
+            TITLE = "Attach a document (optional)"
             DESCRIPTION = (
                 "Upload a DOCX, DOC, PDF or PNG file."
                 "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
@@ -219,7 +219,7 @@ class ThirdParties:
         VIRUS_INFECTED = "The selected file contains a virus"
 
         class AttachDocuments:
-            TITLE = "Attach a document"
+            TITLE = "Attach a document (optional)"
             DESCRIPTION = (
                 "Upload a DOCX, DOC, PDF or PNG file."
                 "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."

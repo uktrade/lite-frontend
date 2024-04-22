@@ -61,8 +61,8 @@ def validate_sic_number(value):
 
 def validate_registration(value):
     if value:
-        if not value.isdigit():
-            raise ValidationError(Validation.LENGTH_REGISTRATION_NUMBER)
         if len(value) != 8:
+            raise ValidationError(Validation.LENGTH_REGISTRATION_NUMBER)
+        if not value[2:].isdigit():
             raise ValidationError(Validation.LENGTH_REGISTRATION_NUMBER)
     return value

@@ -105,21 +105,21 @@ def test_register_details_form_required_fields(data, valid, error, form_class):
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
-            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "123"},
+            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "123"},
             False,
-            {"vat_number": ["Standard UK VAT numbers are 9 digits long"]},
+            {"registration_number": ["Registration numbers are 8 numbers long"]},
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
-            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "123456789101112131"},
+            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "123456789101112131"},
             False,
-            {"vat_number": ["Standard UK VAT numbers are 9 digits long"]},
+            {"registration_number": ["Registration numbers are 8 numbers long"]},
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
-            {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GX123456789"},
+            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "1234567FS"},
             False,
-            {"vat_number": ["Invalid UK VAT number"]},
+            {"registration_number": ["Registration numbers are 8 numbers long"]},
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
