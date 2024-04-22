@@ -11,5 +11,5 @@ def register_organisation(request, json):
 
 
 def validate_registration_number(request, json):
-    response = client.post(request, "/organisations/registration_number", {**json})
+    response = client.get(request, "/organisations/registration_number", {**json})
     return response.json(), response.status_code
