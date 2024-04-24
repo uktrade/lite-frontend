@@ -9,7 +9,18 @@ def setup(mock_queue, mock_denial_reasons, mock_approval_reason, mock_proviso, m
 
 
 @pytest.fixture
-def group_advice(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_user, LU_team_user):
+def group_advice(
+    MOD_team1_user,
+    MOD_team1,
+    MOD_team2_user,
+    MOD_team2,
+    MOD_ECJU_team_user,
+    MOD_ECJU_team,
+    FCDO_team_user,
+    fcdo_team,
+    LU_team_user,
+    lu_team,
+):
     return [
         {
             "consignee": None,
@@ -30,6 +41,7 @@ def group_advice(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_u
             "type": {"key": "proviso", "value": "Proviso"},
             "ultimate_end_user": None,
             "user": MOD_team1_user,
+            "team": MOD_team1,
         },
         {
             "consignee": None,
@@ -51,6 +63,7 @@ def group_advice(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_u
             "type": {"key": "proviso", "value": "Proviso"},
             "ultimate_end_user": None,
             "user": MOD_team2_user,
+            "team": MOD_team2,
         },
         {
             "consignee": None,
@@ -72,6 +85,7 @@ def group_advice(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_u
             "type": {"key": "proviso", "value": "Proviso"},
             "ultimate_end_user": None,
             "user": MOD_ECJU_team_user,
+            "team": MOD_ECJU_team,
         },
         {
             "consignee": None,
@@ -106,6 +120,7 @@ def group_advice(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_u
             "type": {"key": "refuse", "value": "Refuse"},
             "ultimate_end_user": None,
             "user": FCDO_team_user,
+            "team": fcdo_team,
         },
         {
             "consignee": None,
@@ -140,6 +155,7 @@ def group_advice(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_u
             "type": {"key": "refuse", "value": "Refuse"},
             "ultimate_end_user": None,
             "user": LU_team_user,
+            "team": lu_team,
         },
     ]
 

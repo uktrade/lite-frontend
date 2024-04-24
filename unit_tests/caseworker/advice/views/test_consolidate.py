@@ -61,7 +61,7 @@ def view_consolidate_outcome_url(data_queue, data_standard_case):
 
 
 @pytest.fixture
-def advice(current_user):
+def advice(current_user, admin_team):
     return [
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
@@ -80,6 +80,7 @@ def advice(current_user):
             "type": {"key": "approve", "value": "Approve"},
             "ultimate_end_user": None,
             "user": current_user,
+            "team": admin_team,
         }
         for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
     ]
@@ -157,7 +158,16 @@ FLAG_MAP = {
 
 
 @pytest.fixture
-def advice_to_consolidate(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FCDO_team_user):
+def advice_to_consolidate(
+    MOD_team1_user,
+    MOD_team1,
+    MOD_team2_user,
+    MOD_team2,
+    MOD_ECJU_team_user,
+    MOD_ECJU_team,
+    FCDO_team_user,
+    fcdo_team,
+):
     return [
         {
             "consignee": None,
@@ -178,6 +188,7 @@ def advice_to_consolidate(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FC
             "type": {"key": "proviso", "value": "Proviso"},
             "ultimate_end_user": None,
             "user": MOD_team1_user,
+            "team": MOD_team1,
         },
         {
             "consignee": None,
@@ -199,6 +210,7 @@ def advice_to_consolidate(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FC
             "type": {"key": "proviso", "value": "Proviso"},
             "ultimate_end_user": None,
             "user": MOD_team2_user,
+            "team": MOD_team2,
         },
         {
             "consignee": None,
@@ -220,6 +232,7 @@ def advice_to_consolidate(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FC
             "type": {"key": "proviso", "value": "Proviso"},
             "ultimate_end_user": None,
             "user": MOD_ECJU_team_user,
+            "team": MOD_ECJU_team,
         },
         {
             "consignee": None,
@@ -254,6 +267,7 @@ def advice_to_consolidate(MOD_team1_user, MOD_team2_user, MOD_ECJU_team_user, FC
             "type": {"key": "approve", "value": "Approve"},
             "ultimate_end_user": None,
             "user": FCDO_team_user,
+            "team": fcdo_team,
         },
     ]
 
