@@ -1,2 +1,2 @@
-reference,regime_reg_ref,notifying_government,item_list_codes,item_description,end_use,reason_for_refusal,name,address,country,consignee_name,spire_entity_id,end_user_flag,consignee_flag,other_role
-DN2000/0000,AB-CD-EF-000,Country Name,0A00100,Medium Size Widget,Used in industry,Risk of outcome,Organisation Name,"1000 Street Name, City Name",Country Name,Example Name,123,TRUE,FALSE,Other Role
+reference,regime_reg_ref,notifying_government,item_list_codes,item_description,end_use,reason_for_refusal,name,address,country,spire_entity_id,end_user_flag,consignee_flag,other_role
+DN2000/0000,AB-CD-EF-000,Country Name,0A00100,Medium Size Widget,Used in industry,Risk of outcome,Organisation Name,"1000 Street Name, City Name",Country Name,123,TRUE,FALSE,Other Role
