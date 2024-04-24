@@ -125,6 +125,42 @@ def test_change_status_GET_provides_finalise_status(
     assert (CaseStatusEnum.FINALISED in statuses) == expected
 
 
+@pytest.mark.parametrize(
+    "gov_user_type,expected",
+    [
+        ("mock_gov_tau_user", False),
+        ("mock_gov_fcdo_user", False),
+        ("mock_gov_desnz_nuclear_user", False),
+        ("mock_gov_lu_user", False),
+        ("mock_gov_lu_super_user", True),
+    ],
+)
+def test_closed_status_visible_to_specific_roles(
+    authorized_client,
+    change_status_url,
+    case_id,
+    gov_user_type,
+    expected,
+    request,
+):
+    _ = request.getfixturevalue(gov_user_type)
+
+    response = authorized_client.get(change_status_url)
+    assert response.status_code == 200
+
+    assertTemplateUsed(response, "layouts/case.html")
+    context = response.context
+    assert context["case"].id == case_id
+
+    html = BeautifulSoup(response.content, "html.parser")
+    all_h1s = [elem.get_text().strip() for elem in html.find_all("h1")]
+    assert "Change case status" in all_h1s
+
+    # Only LU users get an option set the status as 'Finalised'
+    statuses = [item["value"] for item in html.find_all("option")]
+    assert (CaseStatusEnum.CLOSED in statuses) == expected
+
+
 def test_change_status_success(
     authorized_client,
     case_url,
