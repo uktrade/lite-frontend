@@ -139,6 +139,7 @@ class RegisterDetailsBaseForm(BaseForm):
         response, status_code = validate_registration_number(self.request, self.cleaned_data)
         if status_code != 200:
             self.add_error("registration_number", response["errors"]["registration_number"])
+            return
         return self.cleaned_data["registration_number"]
 
 

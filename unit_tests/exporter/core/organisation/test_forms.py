@@ -1,5 +1,16 @@
 import pytest
 from exporter.core.organisation import forms
+from core import client
+
+
+@pytest.fixture
+def mock_registration_number_fail(requests_mock):
+    url = client._build_absolute_uri("/organisations/registration_number")
+    return requests_mock.post(
+        url=url,
+        json={"errors": {"registration_number": ["This registration number is already in use."]}},
+        status_code=400,
+    )
 
 
 @pytest.mark.parametrize(
@@ -168,20 +179,35 @@ def test_register_details_form_field_validation(
 
 
 @pytest.mark.parametrize(
-    "data, valid, error",
+    "data, valid, error, form_class",
     (
         (
-            {},
-            False,
             {
-                "name": ["Enter a name for your site"],
-                "address_line_1": ["Enter a real building and street name"],
-                "city": ["Enter a real city"],
-                "region": ["Enter a real region"],
-                "postcode": ["Enter a real postcode"],
-                "phone_number": ["Enter a telephone number"],
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789",
+                "sic_number": "12345",
+                "registration_number": "12345678",
             },
+            False,
+            {"registration_number": ["This registration number is already in use."]},
+            forms.RegisterDetailsCommercialUKForm,
         ),
+    ),
+)
+def test_registration_number_validation_error(
+    data, valid, error, form_class, mock_request, mock_registration_number_fail
+):
+    form = form_class(data=data, request=mock_request)
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == error
+
+
+@pytest.mark.parametrize(
+    "data, valid, error",
+    (
         (
             {
                 "name": "joe",
