@@ -125,7 +125,7 @@ def group_advice(context):
         case = context.get("case")
         advice_by_team = services.group_advice_by_team(case["advice"])
         teams = sorted(
-            {advice["user"]["team"]["id"]: advice["user"]["team"] for advice in case["advice"]}.values(),
+            {advice["team"]["id"]: advice["team"] for advice in case["advice"]}.values(),
             key=lambda a: a["name"],
         )
 
