@@ -78,7 +78,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     When I click the application previously created
     And I assign myself to the case
     And I click the recommendations and decision tab
-    And I expand the details for "MOD-ECJU has approved with licence conditions"
+    And I expand the details for "MOD-CapProt has approved with licence conditions"
     Then I see "reason for approving" as the reasons for approving
     And I see "licence condition" as the licence condition
     And I see "instruction for exporter" as the instructions for the exporter

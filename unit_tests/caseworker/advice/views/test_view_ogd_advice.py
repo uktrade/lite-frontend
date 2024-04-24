@@ -104,6 +104,7 @@ def test_fcdo_cannot_advice_when_all_destinations_covered(
                 "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
                 "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCDO", "alias": services.FCDO_TEAM},
             },
+            "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCDO", "alias": services.FCDO_TEAM},
             "type": {"value": "Approve"},
         },
     ]
