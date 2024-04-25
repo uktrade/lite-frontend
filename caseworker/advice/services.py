@@ -618,7 +618,7 @@ def unadvised_countries(caseworker, case):
     dest_types = constants.DESTINATION_TYPES
     advised_on = {
         # Map of destinations advised on -> team that gave the advice
-        advice.get(dest_type): advice["user"]["team"]["id"]
+        advice.get(dest_type): advice["team"]["id"]
         for dest_type in dest_types
         for advice in case.advice
         if advice.get(dest_type) is not None
