@@ -153,6 +153,22 @@
 
 
 			</div>
+			{# Help and support tile #}
+			<div class="app-tile">
+
+				<h2 class="govuk-!-margin-top-0">
+					<span class="govuk-heading-s" id="link-eua">
+						{% lcs 'hub.Tiles.HELP_AND_SUPPORT' %}
+					</span>
+				</h2>
+				<div class="app-tile__body">
+					{% comment %}/PS-IGNORE{% endcomment %}For support with this service, contact <a href="mailto:LITE.support@businessandtrade.gov.uk">LITE.support@businessandtrade.gov.uk</a>
+					or call +44(0)20 7215 4595 (select option 2).
+				</div>
+				<div class="app-tile__body">
+					View <a href="https://exporter.lite.service.uat.uktrade.digital/signature-help/" target="_blank">guidance on LITE document digital signatures.</a>
+				</div>
+			</div>
 		</div>
 	{% else %}
 		<div class="app-tiles">
