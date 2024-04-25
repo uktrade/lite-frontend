@@ -140,9 +140,10 @@ def filter_countersign_advice_by_order(countersign_advice, order):
     return [advice for advice in countersign_advice if advice["valid"] is True and advice["order"] == order]
 
 
-def get_my_advice(advice, caseworker):
+def get_my_advice(advice, caseworker, team_alias):
     user_level_advice = filter_advice_by_level(advice, ["user"])
     user_advice = filter_current_user_advice(user_level_advice, caseworker)
+    user_advice = filter_advice_by_team(user_advice, team_alias)
     grouped_user_advice = group_advice_by_user(user_advice)
     return grouped_user_advice
 
@@ -549,7 +550,11 @@ def get_advice_tab_context(case, caseworker, queue_id):
             DESNZ_NUCLEAR_CASES_TO_REVIEW,
             NCSC_CASES_TO_REVIEW,
         ):
-            existing_advice = get_my_advice(case.advice, caseworker["id"])
+            existing_advice = get_my_advice(
+                case.advice,
+                caseworker["id"],
+                caseworker["team"]["alias"],
+            )
 
             if existing_advice:
                 # An individual accessing a case again after having given advice

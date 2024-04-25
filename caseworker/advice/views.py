@@ -244,7 +244,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESN
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
+        my_advice = services.get_my_advice(self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"])
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = services.unadvised_countries(self.caseworker, self.case) == {}
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
