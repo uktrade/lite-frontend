@@ -39,7 +39,6 @@ def opening_question():
             ),
             disabled=False,
         ),
-        Option(key="oiel", value="OIEL", description=("TODO OIEL placeholder text"), disabled=False),
         Option(
             key="transhipment",
             value="Transhipment licence",
@@ -130,7 +129,7 @@ def export_type_form():
                 "Select to apply for a licence to export multiple shipments of specific products to specific "
                 "destinations. OIELs cover long term projects and repeat business."
             ),
-            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
+            disabled=False,
         ),
     ]
     if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
@@ -168,12 +167,6 @@ def export_licence_questions(request, application_type, goodstype_category=None)
 
 
 def f680_licence_questions(request, application_type, goodstype_category=None):
-    forms = []
-    forms.append(reference_name_form())
-    return FormGroup(forms)
-
-
-def oiel_licence_questions(request, application_type, goodstype_category=None):
     forms = []
     forms.append(reference_name_form())
     return FormGroup(forms)

@@ -7,7 +7,14 @@ from exporter.core.constants import CaseTypes
 @pytest.mark.parametrize(
     "value,expect_enabled,expect_disabled",
     (
-        (True, ["export_licence", "f680"], ["transhipment", "trade_control_licence", "mod"]),
+        (
+            True,
+            [
+                "export_licence",
+                "f680",
+            ],
+            ["transhipment", "trade_control_licence", "mod"],
+        ),
         (False, ["export_licence", "f680", "transhipment", "trade_control_licence", "mod"], []),
     ),
 )
@@ -26,7 +33,13 @@ def test_opening_question_feature_flag(settings, value, expect_enabled, expect_d
 @pytest.mark.parametrize(
     "value,expect_enabled,expect_disabled",
     (
-        (True, [CaseTypes.SIEL], [CaseTypes.OGEL, CaseTypes.OIEL]),
+        (
+            True,
+            [CaseTypes.SIEL, CaseTypes.OIEL],
+            [
+                CaseTypes.OGEL,
+            ],
+        ),
         (False, [CaseTypes.SIEL, CaseTypes.OGEL, CaseTypes.OIEL], []),
     ),
 )

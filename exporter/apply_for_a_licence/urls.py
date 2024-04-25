@@ -10,7 +10,6 @@ urlpatterns = [
     path("", views.LicenceType.as_view(), name="start"),
     path("export/", views.ExportLicenceQuestions.as_view(), name="export_licence_questions"),
     path("f680/", views.F680LicenceQuestions.as_view(), name="f680_questions"),
-    path("oiel/", views.OIELLicenceQuestions.as_view(), name="oiel_questions"),
 ]
 
 if not settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
