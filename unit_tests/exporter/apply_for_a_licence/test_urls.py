@@ -19,6 +19,7 @@ def test_url_respects_feature_flag_off(settings):
     reverse("apply_for_a_licence:start")
     reverse("apply_for_a_licence:export_licence_questions")
     reverse("apply_for_a_licence:f680_questions")
+    reverse("apply_for_a_licence:oiel_questions")
 
     # but non SIEL urls are not found
     with pytest.raises(NoReverseMatch):
@@ -42,6 +43,9 @@ def test_url_respects_feature_flag_on(settings):
 
     # f680 questions work
     reverse("apply_for_a_licence:f680_questions")
+
+    # oiel questions
+    reverse("apply_for_a_licence:oiel_questions")
 
     # and non SIEL urls are not found
     reverse("apply_for_a_licence:trade_control_licence_questions")

@@ -39,6 +39,7 @@ def opening_question():
             ),
             disabled=False,
         ),
+        Option(key="oiel", value="OIEL", description=("TODO OIEL placeholder text"), disabled=False),
         Option(
             key="transhipment",
             value="Transhipment licence",
@@ -167,6 +168,12 @@ def export_licence_questions(request, application_type, goodstype_category=None)
 
 
 def f680_licence_questions(request, application_type, goodstype_category=None):
+    forms = []
+    forms.append(reference_name_form())
+    return FormGroup(forms)
+
+
+def oiel_licence_questions(request, application_type, goodstype_category=None):
     forms = []
     forms.append(reference_name_form())
     return FormGroup(forms)
