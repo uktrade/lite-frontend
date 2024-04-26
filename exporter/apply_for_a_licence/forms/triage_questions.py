@@ -177,7 +177,7 @@ def goodstype_category_form(application_id=None):
         title=ExportLicenceQuestions.OpenLicenceCategoryQuestion.TITLE,
         questions=[
             RadioButtons(
-                name="goodstype_category",
+                name="goods_category",
                 options=[
                     Option(
                         key="military",
