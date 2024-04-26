@@ -40,7 +40,7 @@ def test_opening_question_feature_flag(settings, value, expect_enabled, expect_d
                 CaseTypes.OGEL,
             ],
         ),
-        (False, [CaseTypes.SIEL, CaseTypes.OGEL, CaseTypes.OIEL], []),
+        (False, [CaseTypes.SIEL, CaseTypes.OIEL, CaseTypes.OGEL], []),
     ),
 )
 def test_export_type_form_feature_flag(settings, value, expect_enabled, expect_disabled):

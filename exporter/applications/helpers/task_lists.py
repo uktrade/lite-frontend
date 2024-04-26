@@ -17,7 +17,6 @@ from exporter.applications.helpers.task_list_sections import (
 from exporter.applications.services import (
     get_application_goods,
     get_additional_documents,
-    get_application_countries_and_contract_types,
     get_case_notes,
 )
 from exporter.core.constants import (

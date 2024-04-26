@@ -30,7 +30,6 @@ from exporter.applications.helpers.validators import (
 )
 from exporter.applications.services import (
     get_application,
-    get_application_countries,
     post_application_countries,
     put_application_simple,
     put_contract_type_for_country,
