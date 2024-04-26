@@ -15,9 +15,9 @@ def done_with_case_form(request, queue_pk, case_pk, has_review_date):
         queue = get_queue(request, queue_pk)
 
     return Form(
-        title=DoneWithCaseOnQueueForm.TITLE
-        if not queue
-        else DoneWithCaseOnQueueForm.TITLE_SINGULAR.format(queue["name"]),
+        title=(
+            DoneWithCaseOnQueueForm.TITLE if not queue else DoneWithCaseOnQueueForm.TITLE_SINGULAR.format(queue["name"])
+        ),
         questions=[
             conditional(
                 queues,

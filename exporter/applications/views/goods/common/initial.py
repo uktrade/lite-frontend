@@ -32,9 +32,9 @@ def get_pv_grading_details_initial_data(good):
         "suffix": pv_grading_details.get("suffix"),
         "issuing_authority": pv_grading_details.get("issuing_authority"),
         "reference": pv_grading_details.get("reference"),
-        "date_of_issue": date.fromisoformat(pv_grading_details["date_of_issue"])
-        if pv_grading_details["date_of_issue"]
-        else None,
+        "date_of_issue": (
+            date.fromisoformat(pv_grading_details["date_of_issue"]) if pv_grading_details["date_of_issue"] else None
+        ),
     }
 
 
