@@ -438,17 +438,18 @@ class StaticDestinations(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application_id = str(kwargs["pk"])
         application = get_application(request, application_id)
-        goodstype_category = None
+        goods_category = None
 
-        if application.get("goodstype_category"):
-            goodstype_category = application.get("goodstype_category").get("key")
-            goodstype_category_label = application.get("goodstype_category").get("value")
+        if application.get("goods_category"):
+            goods_category = application.get("goods_category").get("key")
+            goods_category_label = application.get("goods_category").get("value")
 
         context = {
             "application_id": application_id,
-            "countries": get_application_countries(request, application_id),
-            "goodstype_category": goodstype_category,
-            "goodstype_category_label": goodstype_category_label,
+            # "countries": get_application_countries(request, application_id),
+            "countries": [],
+            "goods_category": goods_category,
+            "goods_category_label": goods_category_label,
         }
 
         return render(request, "applications/goods-locations/static-all-destinations.html", context)

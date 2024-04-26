@@ -14,16 +14,17 @@
 	</div>
 
 	<p class="govuk-body">
-		{% lcs 'goods.GoodsTypeAllDestinationsPage.DESTINATIONS_DESCRIPTION' %} {{ goodstype_category_label }} OIEL.
+		{% lcs 'goods.GoodsTypeAllDestinationsPage.DESTINATIONS_DESCRIPTION' %} {{ goods_category_label }} OIEL.
 	</p>
 
 	<ul class="govuk-list">
+		Countries
 		{% for country in countries %}
 			<li>{{ country.name }}</li>
 		{% endfor %}
 	</ul>
 
-	{% if goodstype_category == 'uk_continental_shelf' %}
+	{% if goods_category == 'uk_continental_shelf' %}
 		<p class="govuk-hint">{% lcs 'goods.GoodsTypeAllDestinationsPage.UK_CONTINENTAL_SHELF_DESCRIPTION' %}</p>
 
 		<div class="govuk-form-group">
