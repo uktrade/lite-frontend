@@ -703,6 +703,9 @@ def pluralise_quantity(good_on_application):
     quantity = good_on_application.get("quantity")
     unit = good_on_application.get("unit")
 
+    if not unit:
+        return quantity
+
     if unit["key"] == "NAR":
         quantity = int(quantity)
 

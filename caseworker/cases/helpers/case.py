@@ -153,15 +153,20 @@ class CaseView(CaseworkerMixin, TemplateView):
             elif good.get("report_summary"):
                 goods_summary["report_summaries"].add(good["report_summary"])
 
-            goods_summary["total_value"] += Decimal(good["value"])
+            goods_summary["total_value"] += Decimal(good["value"] if good["value"] else 0)
         return goods_summary
 
     def get_destination_countries(self):
         destination_countries = set()
-        all_parties = self.case.data["ultimate_end_users"] + self.case.data["third_parties"]
-        if self.case.data["end_user"]:
+        all_parties = []
+
+        if self.case.data.get("ultimate_end_users"):
+            all_parties = all_parties + self.case.data["ultimate_end_users"]
+        if self.case.data.get("third_parties"):
+            all_parties = all_parties + self.case.data["third_parties"]
+        if self.case.data.get("end_user"):
             all_parties.append(self.case.data["end_user"])
-        if self.case.data["consignee"]:
+        if self.case.data.get("consignee"):
             all_parties.append(self.case.data["consignee"])
         for party in all_parties:
             destination_countries.add(party["country"]["name"])

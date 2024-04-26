@@ -129,6 +129,18 @@ class CaseTabsMixin:
 
         return tabs
 
+    def get_open_application_tabs(self):
+        tabs = [
+            Tabs.QUICK_SUMMARY,
+            Tabs.DETAILS,
+            Tabs.ECJU_QUERIES,
+            Tabs.DOCUMENTS,
+        ]
+        tabs.append(self.get_notes_and_timelines_tab())
+        tabs.append(self.get_advice_tab())
+
+        return tabs
+
     def get_tabs_by_case_type(self, case_type):
         # TODO: this is pretty naff - the problem is that the place we choose tabs based on case type
         #   is over in cases.helpers.case:CaseView.  We need to make this more DRY.
@@ -236,25 +248,15 @@ class CaseDetail(CaseTabsMixin, CaseView):
         }
 
     def get_open_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
+        self.tabs = self.get_open_application_tabs()
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
-            Slices.OPEN_APP_PARTIES,
-            Slices.SANCTION_MATCHES,
-            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
             Slices.LOCATIONS,
-            *conditional(
-                self.case.data["goodstype_category"]["key"] != "cryptographic",
-                [Slices.END_USE_DETAILS, Slices.ROUTE_OF_GOODS],
-                [],
-            ),
+            Slices.F680_DETAILS,
             Slices.SUPPORTING_DOCUMENTS,
-            conditional(self.case.data["export_type"]["key"] == "temporary", Slices.TEMPORARY_EXPORT_DETAILS),
+            Slices.FREEDOM_OF_INFORMATION,
         ]
-
         self.additional_context = self.get_advice_additional_context()
 
     def get_standard_application(self):
