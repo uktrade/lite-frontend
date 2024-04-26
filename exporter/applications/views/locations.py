@@ -446,7 +446,6 @@ class StaticDestinations(LoginRequiredMixin, TemplateView):
 
         context = {
             "application_id": application_id,
-            # "countries": get_application_countries(request, application_id),
             "countries": [],
             "goods_category": goods_category,
             "goods_category_label": goods_category_label,
