@@ -369,9 +369,11 @@ class AddContractTypes(LoginRequiredMixin, SingleFormView):
         ]
         self.data = (
             {
-                "contract_types": data_for_current_country[0]["contract_types"].split(",")
-                if data_for_current_country[0]["contract_types"]
-                else None,
+                "contract_types": (
+                    data_for_current_country[0]["contract_types"].split(",")
+                    if data_for_current_country[0]["contract_types"]
+                    else None
+                ),
                 "other_contract_type_text": data_for_current_country[0]["other_contract_type_text"],
             }
             if data_for_current_country

@@ -412,15 +412,19 @@ class TAUPreviousAssessments(LoginRequiredMixin, TAUMixin, CaseworkerMixin, Form
                     "is_good_controlled": previous_assessment["is_good_controlled"],
                     "control_list_entries": previous_assessment["control_list_entries"],
                     "regime_entries": [entry["pk"] for entry in previous_assessment["regime_entries"]],
-                    "report_summary_prefix": previous_assessment["report_summary_prefix"]["id"]
-                    if previous_assessment["report_summary_prefix"]
-                    else None,
-                    "report_summary_subject": previous_assessment["report_summary_subject"]["id"]
-                    if previous_assessment["report_summary_subject"]
-                    else None,
-                    "report_summary": previous_assessment["report_summary"]
-                    if previous_assessment["report_summary"]
-                    else None,
+                    "report_summary_prefix": (
+                        previous_assessment["report_summary_prefix"]["id"]
+                        if previous_assessment["report_summary_prefix"]
+                        else None
+                    ),
+                    "report_summary_subject": (
+                        previous_assessment["report_summary_subject"]["id"]
+                        if previous_assessment["report_summary_subject"]
+                        else None
+                    ),
+                    "report_summary": (
+                        previous_assessment["report_summary"] if previous_assessment["report_summary"] else None
+                    ),
                     "comment": previous_assessment["comment"],
                     "is_ncsc_military_information_security": previous_assessment[
                         "is_ncsc_military_information_security"
