@@ -244,7 +244,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESN
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        my_advice = services.get_my_advice(self.case.advice, self.caseworker_id)
+        my_advice = services.get_my_advice(self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"])
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = services.unadvised_countries(self.caseworker, self.case) == {}
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
@@ -425,9 +425,9 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         context["advice_to_countersign"] = advice.values()
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
-        context[
-            "title"
-        ] = f"{self.form_class.DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}"
+        context["title"] = (
+            f"{self.form_class.DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}"
+        )
         return context
 
     def post(self, request, *args, **kwargs):

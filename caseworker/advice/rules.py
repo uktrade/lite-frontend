@@ -42,7 +42,7 @@ def can_user_make_recommendation(request, case):
         return False
     team = user["team"]["alias"]
     queue_alias = queue["alias"]
-    existing_advice = services.get_my_advice(case.advice, user["id"])
+    existing_advice = services.get_my_advice(case.advice, user["id"], team)
 
     # Existing advice, so this must be edited
     if existing_advice:

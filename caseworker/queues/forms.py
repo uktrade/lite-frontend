@@ -130,9 +130,11 @@ class CaseAssignmentsCaseOfficerForm(BaseForm):
                 TextChoice(
                     Choice(
                         user["id"],
-                        user.get("first_name") + " " + user.get("last_name")
-                        if user.get("first_name")
-                        else user["email"],
+                        (
+                            user.get("first_name") + " " + user.get("last_name")
+                            if user.get("first_name")
+                            else user["email"]
+                        ),
                     ),
                     hint=user["email"],
                 )
