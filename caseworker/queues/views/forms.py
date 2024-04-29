@@ -30,6 +30,7 @@ class CasesFiltersForm(forms.Form):
             ("", ""),
             ("siel", "SIEL"),
             ("f680", "F680"),
+            ("oiel", "OIEL"),
         ),
         required=False,
     )
