@@ -56,13 +56,15 @@ def test_fco_give_approval_advice_existing_get(mock_get_gov_user, authorized_cli
         {
             "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
             "user": {"team": {"id": "809eba0f-f197-4f0f-949b-9af309a844fb", "name": "MOD-DSTL"}},
+            "team": {"id": "809eba0f-f197-4f0f-949b-9af309a844fb", "name": "MOD-DSTL"},
         },
         # The AE-AZ destination has been advised on by FCO (should therefore not be rendered)
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
             "user": {
-                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}
+                "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM},
             },
+            "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM},
         },
     ]
     response = authorized_client.get(url)

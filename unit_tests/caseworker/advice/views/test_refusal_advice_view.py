@@ -67,6 +67,7 @@ def test_fco_give_refusal_advice_existing_get(mock_get_gov_user, authorized_clie
         {
             "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
             "user": {"team": {"id": "809eba0f-f197-4f0f-949b-9af309a844fb", "name": "MOD-DSTL", "alias": "MOD_DSTL"}},
+            "team": {"id": "809eba0f-f197-4f0f-949b-9af309a844fb", "name": "MOD-DSTL", "alias": "MOD_DSTL"},
         },
         # The AE-AZ destination has been advised on by FCO (should therefore not be rendered)
         {
@@ -74,6 +75,7 @@ def test_fco_give_refusal_advice_existing_get(mock_get_gov_user, authorized_clie
             "user": {
                 "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}
             },
+            "team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM},
         },
     ]
     response = authorized_client.get(url)
