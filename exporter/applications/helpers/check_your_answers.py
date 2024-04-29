@@ -275,9 +275,9 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
                 f'<a class="govuk-link" href="{update_serial_numbers_url}">Add serial numbers</a>'
             )
         elif requires_actions_column:
-            item[
-                mark_safe('<span class="govuk-visually-hidden">Actions</a>')  # nosec
-            ] = " "  # Not just an empty string or it will get converted into N/A
+            item[mark_safe('<span class="govuk-visually-hidden">Actions</a>')] = (  # nosec
+                " "  # Not just an empty string or it will get converted into N/A
+            )
         converted.append(item)
 
     return converted
@@ -304,9 +304,9 @@ def _get_product_location_and_journey(application):
     }
     if not is_permanent:
         locations_details["Explain why the products are being exported temporarily"] = application.temp_export_details
-        locations_details[
-            "Will the products remain under your direct control while overseas?"
-        ] = application.is_temp_direct_control
+        locations_details["Will the products remain under your direct control while overseas?"] = (
+            application.is_temp_direct_control
+        )
         locations_details[
             "Who will be in control of the products while overseas, and what is your relationship to them?"
         ] = application.temp_direct_control_details
@@ -314,9 +314,9 @@ def _get_product_location_and_journey(application):
             application.proposed_return_date
         )
 
-    locations_details[
-        "Are the products being shipped from the UK on an air waybill or bill of lading?"
-    ] = friendly_boolean(application.is_shipped_waybill_or_lading)
+    locations_details["Are the products being shipped from the UK on an air waybill or bill of lading?"] = (
+        friendly_boolean(application.is_shipped_waybill_or_lading)
+    )
 
     if not application.is_shipped_waybill_or_lading:
         locations_details["Route details"] = application.non_waybill_or_lading_route_details
@@ -363,9 +363,11 @@ def _convert_goods_types(goods_types):
 
 def _convert_countries(countries):
     return [
-        {"Name": country["country"]["name"], "Contract types": convert_country_contract_types(country)}
-        if country["contract_types"]
-        else {"Name": country["country"]["name"]}
+        (
+            {"Name": country["country"]["name"], "Contract types": convert_country_contract_types(country)}
+            if country["contract_types"]
+            else {"Name": country["country"]["name"]}
+        )
         for country in countries
     ]
 
@@ -374,9 +376,11 @@ def convert_country_contract_types(country):
     return default_na(
         "\n".join(
             [
-                ContractTypes.get_str_representation(ContractTypes(contract_type))
-                if contract_type != "other_contract_type"
-                else "Other contract type - " + country["other_contract_type_text"]
+                (
+                    ContractTypes.get_str_representation(ContractTypes(contract_type))
+                    if contract_type != "other_contract_type"
+                    else "Other contract type - " + country["other_contract_type_text"]
+                )
                 for contract_type in country["contract_types"]
             ]
         )
@@ -427,11 +431,11 @@ def _get_additional_information(application):
                     "Answer": (
                         friendly_boolean(value) + "\n" + application.get(f"{field}_description")
                         if isinstance(value, bool) and application.get(f"{field}_description") is not None
-                        else friendly_boolean(value)
-                        if isinstance(value, bool)
-                        else value["value"]
-                        if isinstance(value, dict)
-                        else value
+                        else (
+                            friendly_boolean(value)
+                            if isinstance(value, bool)
+                            else value["value"] if isinstance(value, dict) else value
+                        )
                     ),
                 }
             )

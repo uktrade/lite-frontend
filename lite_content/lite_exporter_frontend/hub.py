@@ -17,6 +17,7 @@ class Tiles:
     END_USER_ADVISORIES = "<!--View your--> End user advisories"
     OPEN_LICENCE_RETURNS = "<!--View your--> Open licence returns"
     COMPLIANCE_HEADING = "<!--View your--> Compliance and annual returns"
+    HELP_AND_SUPPORT = "<!--View--> Help and support"
 
     # Standard dashboard
     class Apply:
