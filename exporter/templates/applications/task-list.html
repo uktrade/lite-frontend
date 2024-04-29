@@ -69,7 +69,7 @@
 
 				{# Additional Information #}
 				{% if not is_editing or edit_type == 'major_edit' %}
-					{% if application_type|application_type_in_list:"HAS_F680_ADDITIONAL_INFORMATION" %}
+					{% if application.case_type.reference.key|application_type_in_list:"ADDITIONAL_INFORMATION" %}
 						{% url 'applications:questions' application.id as questions_url %}
 						{% include "includes/task-list-item.html" with id='additional_information' title=strings.ADDITIONAL_INFORMATION url=questions_url status=application|task_list_additional_information_status %}
 					{% endif %}
