@@ -147,6 +147,7 @@ class CaseTabsMixin:
         tabs_by_case_type = {
             "f680_clearance": self.get_f680_application_tabs(),
             "standard": self.get_standard_application_tabs(),
+            "open": self.get_open_application_tabs(),
         }
         return tabs_by_case_type[case_type]
 
