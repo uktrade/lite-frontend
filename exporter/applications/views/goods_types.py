@@ -29,9 +29,9 @@ class GoodsTypeList(LoginRequiredMixin, TemplateView):
             return redirect(reverse_lazy("applications:add_goods_type", kwargs={"pk": application_id}))
 
         # UK continental shelf and military OIELs can modify goods
-        if application.get("goodstype_category"):
-            goodstype_category = application.get("goodstype_category").get("key")
-            are_goods_noneditable = OielLicenceTypes.is_non_editable_good(goodstype_category)
+        if application.get("goods_category"):
+            goods_category = application.get("goods_category").get("key")
+            are_goods_noneditable = OielLicenceTypes.is_non_editable_good(goods_category)
 
         context = {
             "application": application,

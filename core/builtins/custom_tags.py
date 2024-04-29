@@ -776,6 +776,8 @@ def task_list_item_list_description(data, singular, plural):
     Returns a description for a task list item depending on how many
     items are in its contents
     """
+    if not data:
+        return None
     if len(data) == 0:
         return None
     elif len(data) == 1:

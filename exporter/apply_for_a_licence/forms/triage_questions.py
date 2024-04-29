@@ -113,21 +113,21 @@ def export_type_form():
             ),
         ),
         Option(
+            key=CaseTypes.OIEL,
+            value="Open Individual Export Licence (OIEL)",
+            description=(
+                "Select to apply for a licence to export multiple shipments of specific products to specific "
+                "destinations. OIELs cover long term projects and repeat business."
+            ),
+            disabled=False,
+        ),
+        Option(
             key=CaseTypes.OGEL,
             value="Open General Export Licence (OGEL)",
             description=(
                 "Select to register a pre-published licence with set terms "
                 "and conditions. Being an OGEL holder can benefit your business "
                 "by saving time and money."
-            ),
-            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
-        ),
-        Option(
-            key=CaseTypes.OIEL,
-            value="Open Individual Export Licence (OIEL)",
-            description=(
-                "Select to apply for a licence to export multiple shipments of specific products to specific "
-                "destinations. OIELs cover long term projects and repeat business."
             ),
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
@@ -177,7 +177,7 @@ def goodstype_category_form(application_id=None):
         title=ExportLicenceQuestions.OpenLicenceCategoryQuestion.TITLE,
         questions=[
             RadioButtons(
-                name="goodstype_category",
+                name="goods_category",
                 options=[
                     Option(
                         key="military",

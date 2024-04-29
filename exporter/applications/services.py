@@ -60,6 +60,10 @@ def post_applications(request, json):
     return data.json(), data.status_code
 
 
+def dummy_post_applications(request, json):
+    return {}, 200
+
+
 def put_application(request, pk, json):
     data = client.put(request, f"/applications/{pk}", json)
     return data.json(), data.status_code

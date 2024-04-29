@@ -1,7 +1,11 @@
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from exporter.applications.services import post_applications, post_open_general_licences_applications
+from exporter.applications.services import (
+    dummy_post_applications,
+    post_applications,
+    post_open_general_licences_applications,
+)
 from exporter.apply_for_a_licence.forms.open_general_licences import (
     open_general_licence_forms,
     open_general_licence_submit_success_page,
@@ -40,6 +44,13 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
     def get_action(self):
         if self.request.POST.get("application_type") == CaseTypes.OGEL:
             return post_open_general_licences_applications
+        elif self.request.POST.get("application_type") == CaseTypes.OIEL:
+            current_form_pk = int(self.request.POST.get("form_pk"))
+            if current_form_pk == (len(self.forms.get_forms()) - 1):
+                return post_applications
+            else:
+                return dummy_post_applications
+
         else:
             return post_applications
 

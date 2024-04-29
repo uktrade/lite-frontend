@@ -13,17 +13,13 @@
 		</div>
 	</div>
 
-	<p class="govuk-body">
-		{% lcs 'goods.GoodsTypeAllDestinationsPage.DESTINATIONS_DESCRIPTION' %} {{ goodstype_category_label }} OIEL.
-	</p>
+	{% if goods_category == 'cryptographic' %}
+		<p class="govuk-body">"<strong>Permitted destination</strong>" means a country <strong>other than</strong> the following,</p>
 
-	<ul class="govuk-list">
-		{% for country in countries %}
-			<li>{{ country.name }}</li>
-		{% endfor %}
-	</ul>
 
-	{% if goodstype_category == 'uk_continental_shelf' %}
+	{% endif %}
+
+	{% if goods_category == 'uk_continental_shelf' %}
 		<p class="govuk-hint">{% lcs 'goods.GoodsTypeAllDestinationsPage.UK_CONTINENTAL_SHELF_DESCRIPTION' %}</p>
 
 		<div class="govuk-form-group">
