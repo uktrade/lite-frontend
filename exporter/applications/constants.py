@@ -41,7 +41,7 @@ class OIEL:
         "destination_countries",
         "purely_commercial",
     ]
-    REQUIRED_FIELDS = ["nature_of_product", "number_of_siels_last_year", "purely_commercial"]
+    REQUIRED_FIELDS = ["nature_of_product", "siels_issued_last_year", "purely_commercial"]
     REQUIRED_SECONDARY_FIELDS = {}
 
 
