@@ -37,22 +37,17 @@ class Case(Munch):
 
     @property
     def destinations(self):
-        if "destinations" not in self.data:
-            destinations = []
-            if self.data.get("end_user"):
-                destinations = [self.data.get("end_user")]
-        else:
-            destinations = self.data["destinations"]["data"]
+        destinations = []
 
-        # Some apps return just the end user (as type dict) in destinations,
-        # so we need to add the other destinations
-        if isinstance(destinations, dict):
-            destinations = [destinations]
-            if self.data.get("consignee"):
-                destinations.append(self.data.get("consignee"))
-            if self.data.get("ultimate_end_users"):
-                destinations += self.data.get("ultimate_end_users")
-            if self.data.get("third_parties"):
-                destinations += self.data.get("third_parties")
+        if self.data.get("end_user"):
+            destinations = [self.data.get("end_user")]
+        if self.data.get("consignee"):
+            destinations.append(self.data.get("consignee"))
+        if self.data.get("ultimate_end_users"):
+            destinations += self.data.get("ultimate_end_users")
+        if self.data.get("third_parties"):
+            destinations += self.data.get("third_parties")
+        if self.data.get("open_destinations"):
+            destinations += self.data.get("open_destinations")
 
         return destinations

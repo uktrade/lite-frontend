@@ -258,7 +258,7 @@ def get_advice_to_consolidate(advice, user_team_alias):
 
 def order_by_party_type(all_advice):
     ordered_advice = []
-    party_types = ("consignee", "end_user", "ultimate_end_user", "third_party")
+    party_types = ("consignee", "end_user", "ultimate_end_user", "third_party", "open_destination")
     for party_type in party_types:
         for advice in all_advice:
             if advice.get(party_type) and advice not in ordered_advice:
