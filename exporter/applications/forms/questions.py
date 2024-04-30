@@ -30,11 +30,11 @@ def oiel_questions_forms():
 def nature_of_product_form():
     return Form(
         caption="OIEL Additional information",
-        title='Can you please provide a general description of the nature of the products you are intending to export, including how you have assessed them against the control entries specified in "Items authorised to be exported" on the application form.',
+        title="Describe the products, including the control list entries if you know them",
         questions=[
             TextArea(
                 title="",
-                name="nature_of_product",
+                name="nature_of_products",
                 description="",
                 extras={"max_length": 2200},
                 optional=False,
@@ -47,15 +47,39 @@ def nature_of_product_form():
 def number_of_siels_last_year():
     return Form(
         caption="OIEL Additional information",
-        title="Can you please provide the number of SIELs you have obtained in the last 12 months and to which destinations.",
+        title="Has a standard individual export licence been issued to you in the past year?",
         questions=[
-            TextArea(
-                title="",
-                name="number_of_siels_last_year",
-                description="",
-                extras={"max_length": 2200},
-                optional=False,
-            ),
+            RadioButtons(
+                name="siel_issued_last_year",
+                options=[
+                    Option(
+                        key=True,
+                        value="Yes",
+                        components=[
+                            TextArea(
+                                title="How many licences?",
+                                name="number_of_siels_last_year",
+                                description="",
+                                extras={"max_length": 2200},
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(
+                        key=False,
+                        value="No",
+                        components=[
+                            TextArea(
+                                title="List the destination countries",
+                                name="destination_countries",
+                                description="",
+                                extras={"max_length": 2200},
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                ],
+            )
         ],
         default_button_name=generic.SAVE_AND_CONTINUE,
     )
@@ -64,7 +88,7 @@ def number_of_siels_last_year():
 def purely_commercial():
     return Form(
         caption="OIEL Additional information",
-        title="Can you please confirm that your customers are purely commercial (ie: this Cryptographic OIEL cannot be used if your items are being exported for Government or military end use).",
+        title="Cryptographic OIELs cannot be used to export products to governments, or for military use. Will the products you are exporting be used for commercial purposes only?",
         questions=[
             RadioButtons(
                 name="purely_commercial",
