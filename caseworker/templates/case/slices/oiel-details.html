@@ -1,0 +1,25 @@
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Describe the products, including the control list entries if you know them</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.nature_of_products }}</dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Has a standard individual export licence been issued to you in the past year?</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.siels_issued_last_year|friendly_boolean }}</dd>
+    </div>
+    {% if case.data.siels_issued_last_year %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">How many licences? </dt>
+            <dd class="govuk-summary-list__value">{{ case.data.number_of_siels_last_year }}</dd>
+        </div>
+    {% else %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">List the destination countries</dt>
+            <dd class="govuk-summary-list__value">{{ case.data.destination_countries }}</dd>
+        </div>
+    {% endif %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">Cryptographic OIELs cannot be used to export products to governments, or for military use. Will the products you are exporting be used for commercial purposes only?</dt>
+        <dd class="govuk-summary-list__value">{{ case.data.purely_commercial|friendly_boolean }}</dd>
+    </div>
+</dl>

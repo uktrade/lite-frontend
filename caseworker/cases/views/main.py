@@ -254,7 +254,8 @@ class CaseDetail(CaseTabsMixin, CaseView):
             Slices.GOODS,
             Slices.DESTINATIONS,
             Slices.LOCATIONS,
-            Slices.F680_DETAILS,
+            conditional(self.case["case_type"]["reference"]["key"] == "f680", Slices.F680_DETAILS),
+            conditional(self.case["case_type"]["reference"]["key"] == "oiel", Slices.OIEL_DETAILS),
             Slices.SUPPORTING_DOCUMENTS,
             Slices.FREEDOM_OF_INFORMATION,
         ]

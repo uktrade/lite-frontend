@@ -57,6 +57,7 @@ class Slices:
     LOCATIONS = Slice("components/locations.html")
     SECURITY_APPROVALS = Slice("components/security-approvals.html")
     F680_DETAILS = Slice("case/slices/f680-details.html", "F680 details")
+    OIEL_DETAILS = Slice("case/slices/oiel-details.html", "OIEL details")
     EXHIBITION_DETAILS = Slice("case/slices/exhibition-details.html", "Exhibition details")
     END_USE_DETAILS = Slice("case/slices/end-use-details.html", "End use details")
     ROUTE_OF_GOODS = Slice("case/slices/route-of-goods.html", "Route of goods")

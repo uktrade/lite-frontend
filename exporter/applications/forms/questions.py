@@ -50,7 +50,7 @@ def number_of_siels_last_year():
         title="Has a standard individual export licence been issued to you in the past year?",
         questions=[
             RadioButtons(
-                name="siel_issued_last_year",
+                name="siels_issued_last_year",
                 options=[
                     Option(
                         key=True,

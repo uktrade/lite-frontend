@@ -34,8 +34,15 @@ class F680:
 
 
 class OIEL:
-    FIELDS = ["nature_of_product", "number_of_siels_last_year", "purely_commercial"]
+    FIELDS = [
+        "nature_of_product",
+        "number_of_siels_last_year",
+        "siels_issued_last_year",
+        "destination_countries",
+        "purely_commercial",
+    ]
     REQUIRED_FIELDS = ["nature_of_product", "number_of_siels_last_year", "purely_commercial"]
+    REQUIRED_SECONDARY_FIELDS = {}
 
 
 class OielLicenceTypes(Enum):
