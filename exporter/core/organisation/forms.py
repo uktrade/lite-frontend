@@ -159,7 +159,7 @@ class RegisterDetailsIndividualOverseasForm(RegisterDetailsIndividualUKForm):
 
 class RegisterDetailsCommercialUKForm(RegisterDetailsBaseForm):
     def __init__(self, *args, **kwargs):
-        self.Layout.Title = "Register a commercial organisation"
+        self.Layout.TITLE = "Register a commercial organisation"
         super().__init__(*args, **kwargs)
         self.fields["name"].label = "Name of organisation"
 
