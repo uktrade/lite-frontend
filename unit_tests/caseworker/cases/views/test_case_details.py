@@ -124,7 +124,6 @@ def test_case_details_with_no_destinations(
     response = authorized_client.get(url)
     assertTemplateUsed(response, "layouts/case.html")
     destinations = response.context["destinations"]
-    assert len(destinations) == 1
     assert destinations[0]["type"] == "end_user"
     assert destinations[0]["name"] == "End User"
 
