@@ -1212,16 +1212,18 @@ class FirearmsActConfirmationForm(forms.Form):
         self.helper.layout = Layout(
             HTML.h1(self.title),
             HTML.details(*details),
-            "is_covered_by_firearm_act_section_one_two_or_five"
-            if self.is_rfd
-            else ConditionalRadios(
-                "is_covered_by_firearm_act_section_one_two_or_five",
-                ConditionalRadiosQuestion(
-                    CreateGoodForm.FirearmGood.FirearmsActCertificate.YES,
-                    "firearms_act_section",
-                ),
-                CreateGoodForm.FirearmGood.FirearmsActCertificate.NO,
-                CreateGoodForm.FirearmGood.FirearmsActCertificate.DONT_KNOW,
+            (
+                "is_covered_by_firearm_act_section_one_two_or_five"
+                if self.is_rfd
+                else ConditionalRadios(
+                    "is_covered_by_firearm_act_section_one_two_or_five",
+                    ConditionalRadiosQuestion(
+                        CreateGoodForm.FirearmGood.FirearmsActCertificate.YES,
+                        "firearms_act_section",
+                    ),
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.NO,
+                    CreateGoodForm.FirearmGood.FirearmsActCertificate.DONT_KNOW,
+                )
             ),
             Submit("submit", "Save and continue"),
         )

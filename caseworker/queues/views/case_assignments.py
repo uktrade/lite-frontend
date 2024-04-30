@@ -161,9 +161,9 @@ class CaseAssignmentsCaseAssignee(
         context = super().get_context_data(form, **kwargs)
 
         context["back_link_url"] = self.get_back_link_url()
-        context[
-            "title"
-        ] = f"{form.Layout.DOCUMENT_TITLE} - {self.case['reference_code']} - {self.case['organisation']['name']}"
+        context["title"] = (
+            f"{form.Layout.DOCUMENT_TITLE} - {self.case['reference_code']} - {self.case['organisation']['name']}"
+        )
 
         return context
 

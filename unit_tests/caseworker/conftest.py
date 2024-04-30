@@ -813,7 +813,18 @@ def mock_regime_entries(requests_mock, data_regime_entries):
 
 
 @pytest.fixture
-def current_user():
+def admin_team():
+    return {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "alias": None,
+        "is_ogd": False,
+        "name": "Admin",
+        "part_of_ecju": None,
+    }
+
+
+@pytest.fixture
+def current_user(admin_team):
     return {
         "email": "test.user@example.com",
         "first_name": "Test",
@@ -821,18 +832,23 @@ def current_user():
         "last_name": "User",
         "role_name": "Super User",
         "status": "Active",
-        "team": {
-            "id": "00000000-0000-0000-0000-000000000001",
-            "alias": None,
-            "is_ogd": False,
-            "name": "Admin",
-            "part_of_ecju": None,
-        },
+        "team": admin_team,
     }
 
 
 @pytest.fixture
-def team1_user():
+def team1():
+    return {
+        "id": "12345678-42c8-499f-a58d-94f945411234",
+        "name": "Team1",
+        "alias": "TEAM1",
+        "part_of_ecju": True,
+        "is_ogd": False,
+    }
+
+
+@pytest.fixture
+def team1_user(team1):
     return {
         "email": "team1.user@example.com",
         "first_name": "Team1 Test",
@@ -840,18 +856,23 @@ def team1_user():
         "last_name": "User",
         "role_name": "Super User",
         "status": "Active",
-        "team": {
-            "id": "12345678-42c8-499f-a58d-94f945411234",
-            "name": "Team1",
-            "alias": "TEAM1",
-            "part_of_ecju": True,
-            "is_ogd": False,
-        },
+        "team": team1,
     }
 
 
 @pytest.fixture
-def MOD_team1_user():
+def MOD_team1():
+    return {
+        "id": "2e5fab3c-4599-432e-9540-74ccfafb18ee",
+        "name": "MoD Team1",
+        "alias": "MOD_DI",
+        "part_of_ecju": False,
+        "is_ogd": True,
+    }
+
+
+@pytest.fixture
+def MOD_team1_user(MOD_team1):
     return {
         "email": "mod.team1@example.com",
         "first_name": "MoD Team1",
@@ -859,18 +880,23 @@ def MOD_team1_user():
         "last_name": "User",
         "role_name": "Super User",
         "status": "Active",
-        "team": {
-            "id": "2e5fab3c-4599-432e-9540-74ccfafb18ee",
-            "name": "MoD Team1",
-            "alias": "MOD_DI",
-            "part_of_ecju": False,
-            "is_ogd": True,
-        },
+        "team": MOD_team1,
     }
 
 
 @pytest.fixture
-def MOD_team2_user():
+def MOD_team2():
+    return {
+        "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+        "name": "MoD Team2",
+        "alias": "MOD_DSTL",
+        "part_of_ecju": False,
+        "is_ogd": True,
+    }
+
+
+@pytest.fixture
+def MOD_team2_user(MOD_team2):
     return {
         "email": "mod.team2@example.com",
         "first_name": "MoD Team2",
@@ -878,18 +904,23 @@ def MOD_team2_user():
         "last_name": "User",
         "role_name": "Super User",
         "status": "Active",
-        "team": {
-            "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
-            "name": "MoD Team2",
-            "alias": "MOD_DSTL",
-            "part_of_ecju": False,
-            "is_ogd": True,
-        },
+        "team": MOD_team2,
     }
 
 
 @pytest.fixture
-def MOD_ECJU_team_user():
+def MOD_ECJU_team():
+    return {
+        "id": "b7640925-2577-4c24-8081-b85bd635b62a",
+        "name": "MoD ECJU",
+        "alias": "MOD_ECJU",
+        "part_of_ecju": False,
+        "is_ogd": True,
+    }
+
+
+@pytest.fixture
+def MOD_ECJU_team_user(MOD_ECJU_team):
     return {
         "email": "mod.ecju.team@example.com",
         "first_name": "MoD ECJU",
@@ -897,13 +928,7 @@ def MOD_ECJU_team_user():
         "last_name": "User",
         "role_name": "Super User",
         "status": "Active",
-        "team": {
-            "id": "b7640925-2577-4c24-8081-b85bd635b62a",
-            "name": "MoD ECJU",
-            "alias": "MOD_ECJU",
-            "part_of_ecju": False,
-            "is_ogd": True,
-        },
+        "team": MOD_ECJU_team,
     }
 
 
@@ -956,7 +981,7 @@ def LU_team_user(lu_team):
 
 
 @pytest.fixture
-def refusal_advice(current_user):
+def refusal_advice(current_user, admin_team):
     return [
         {
             "id": "5cf3c92d-e841-4b8a-8ce5-bd7f869a3e8d",
@@ -968,6 +993,7 @@ def refusal_advice(current_user):
             "denial_reasons": ["5a", "5b"],
             "footnote": None,
             "user": current_user,
+            "team": admin_team,
             "created_at": "2021-10-17T23:23:30.421294+01:00",
             "good": "73152304-6026-4cc0-a3d7-0a93048ecdce",
             "country": None,
@@ -980,9 +1006,9 @@ def refusal_advice(current_user):
 
 
 @pytest.fixture
-def fcdo_countersigned_advice(current_user):
+def fcdo_countersigned_advice(current_user, fcdo_team):
     user = copy.deepcopy(current_user)
-    user["team"]["alias"] = services.FCDO_TEAM
+    user["team"] = fcdo_team
     return [
         {
             "id": "22edfc3a-74c0-4d86-8998-5e40fcbd6527",
@@ -994,6 +1020,7 @@ def fcdo_countersigned_advice(current_user):
             "proviso": "no conditions",
             "footnote": None,
             "user": user,
+            "team": fcdo_team,
             "created_at": "2021-10-17T23:23:30.421294+01:00",
             "good": "73152304-6026-4cc0-a3d7-0a93048ecdce",
             "country": None,
@@ -1014,9 +1041,9 @@ def fcdo_countersigned_advice(current_user):
 
 
 @pytest.fixture
-def mod_countersigned_advice(current_user):
+def mod_countersigned_advice(current_user, MOD_ECJU_team):
     user = copy.deepcopy(current_user)
-    user["team"]["alias"] = services.MOD_ECJU_TEAM
+    user["team"] = MOD_ECJU_team
     return [
         {
             "id": "22edfc3a-74c0-4d86-8998-5e40fcbd6527",
@@ -1028,6 +1055,7 @@ def mod_countersigned_advice(current_user):
             "proviso": "no conditions",
             "footnote": None,
             "user": user,
+            "team": MOD_ECJU_team,
             "created_at": "2021-10-17T23:23:30.421294+01:00",
             "good": "73152304-6026-4cc0-a3d7-0a93048ecdce",
             "country": None,
@@ -1048,7 +1076,7 @@ def mod_countersigned_advice(current_user):
 
 
 @pytest.fixture
-def advice_for_countersign(current_user):
+def advice_for_countersign(current_user, admin_team):
     return [
         {
             "consignee": None,
@@ -1068,6 +1096,7 @@ def advice_for_countersign(current_user):
             "type": {"key": "approve", "value": "Approve"},
             "ultimate_end_user": None,
             "user": current_user,
+            "team": admin_team,
         },
         {
             "id": "b32d7dfa-a90d-4b37-adac-db231d4b83be",
@@ -1100,6 +1129,13 @@ def advice_for_countersign(current_user):
                     "part_of_ecju": True,
                 },
             },
+            "team": {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "is_ogd": False,
+                "name": "TeamB",
+                "alias": None,
+                "part_of_ecju": True,
+            },
         },
         {
             "id": "c9a96d84-6a6b-421d-bbbb-b12b9577d46e",
@@ -1131,6 +1167,13 @@ def advice_for_countersign(current_user):
                     "alias": None,
                     "part_of_ecju": True,
                 },
+            },
+            "team": {
+                "id": "00000000-0000-0000-0000-000000000001",
+                "is_ogd": False,
+                "name": "TeamB",
+                "alias": None,
+                "part_of_ecju": True,
             },
         },
     ]
@@ -1165,6 +1208,7 @@ def final_advice(current_user, lu_team):
             "status": "Active",
             "team": lu_team,
         },
+        "team": lu_team,
     }
 
 
@@ -1250,7 +1294,7 @@ def countersignature_two():
 
 
 @pytest.fixture
-def standard_case_with_advice(current_user):
+def standard_case_with_advice(current_user, admin_team):
     return {
         "id": "2c14d003-1234-4c11-a0fd-bbfd7572c5a4",
         "data": {
@@ -1326,6 +1370,7 @@ def standard_case_with_advice(current_user):
                 "type": {"key": "proviso", "value": "Proviso"},
                 "ultimate_end_user": None,
                 "user": current_user,
+                "team": admin_team,
             }
         ],
     }
@@ -2039,81 +2084,89 @@ def jane_doe(team2):
 
 
 @pytest.fixture
-def end_user_advice1(data_standard_case, john_smith):
+def end_user_advice1(data_standard_case, john_smith, team1):
     end_user_advice1 = {**advice_template}
     end_user_advice1["id"] = "6cecd825-0582-46e8-b253-4d52a8db3b24"
     end_user_advice1["type"] = approve
     end_user_advice1["user"] = john_smith
+    end_user_advice1["team"] = team1
     end_user_advice1["end_user"] = data_standard_case["case"]["data"]["end_user"]["id"]
     return end_user_advice1
 
 
 @pytest.fixture
-def end_user_advice2(data_standard_case, jane_doe):
+def end_user_advice2(data_standard_case, jane_doe, team2):
     end_user_advice2 = {**advice_template}
     end_user_advice2["id"] = "257c7265-acf8-4bb8-99e3-77142b1b479d"
     end_user_advice2["type"] = approve
     end_user_advice2["user"] = jane_doe
+    end_user_advice2["team"] = team2
     end_user_advice2["end_user"] = data_standard_case["case"]["data"]["end_user"]["id"]
     return end_user_advice2
 
 
 @pytest.fixture
-def consignee_advice1(data_standard_case, john_smith):
+def consignee_advice1(data_standard_case, john_smith, team1):
     consignee_advice1 = {**advice_template}
     consignee_advice1["id"] = "bce1444f-1d56-40e7-8316-ab1d16afd55d"
     consignee_advice1["type"] = approve
     consignee_advice1["user"] = john_smith
+    consignee_advice1["team"] = team1
     consignee_advice1["consignee"] = data_standard_case["case"]["data"]["consignee"]["id"]
     return consignee_advice1
 
 
 @pytest.fixture
-def consignee_advice2(data_standard_case, jane_doe):
+def consignee_advice2(data_standard_case, jane_doe, team2):
     consignee_advice2 = {**advice_template}
     consignee_advice2["id"] = "d0eeacbb-e33e-4889-bb3a-0e314647597f"
     consignee_advice2["type"] = approve
     consignee_advice2["user"] = jane_doe
+    consignee_advice2["team"] = team2
     consignee_advice2["consignee"] = data_standard_case["case"]["data"]["consignee"]["id"]
     return consignee_advice2
 
 
 @pytest.fixture
-def third_party_advice1(data_standard_case, john_smith):
+def third_party_advice1(data_standard_case, john_smith, team1):
     third_party_advice1 = {**advice_template}
     third_party_advice1["id"] = "34365628-d9cf-443f-a34c-362507141be1"
     third_party_advice1["type"] = refuse
     third_party_advice1["user"] = john_smith
+    third_party_advice1["team"] = team1
     third_party_advice1["third_party"] = data_standard_case["case"]["data"]["third_parties"][0]["id"]
     return third_party_advice1
 
 
 @pytest.fixture
-def third_party_advice2(data_standard_case, jane_doe):
+def third_party_advice2(data_standard_case, jane_doe, team2):
     third_party_advice2 = {**advice_template}
     third_party_advice2["id"] = "0ac9eb9a-f9ea-4abd-8c97-9e5113a7ca97"
     third_party_advice2["type"] = approve
     third_party_advice2["user"] = jane_doe
+    third_party_advice2["team"] = team2
     third_party_advice2["third_party"] = data_standard_case["case"]["data"]["third_parties"][0]["id"]
     return third_party_advice2
 
 
 @pytest.fixture
-def goods_advice1(data_standard_case, john_smith):
+def goods_advice1(data_standard_case, john_smith, team1):
     goods_advice1 = {**advice_template}
     goods_advice1["id"] = "34365628-d9cf-443f-a34c-362507141be1"
     goods_advice1["type"] = refuse
     goods_advice1["user"] = john_smith
+    goods_advice1["team"] = team1
     goods_advice1["good"] = data_standard_case["case"]["data"]["goods"][0]["id"]
     return goods_advice1
 
 
 @pytest.fixture
-def goods_advice2(data_standard_case, jane_doe):
+def goods_advice2(data_standard_case, jane_doe, team2):
     goods_advice2 = {**advice_template}
     goods_advice2["id"] = "0ac9eb9a-f9ea-4abd-8c97-9e5113a7ca97"
     goods_advice2["type"] = approve
     goods_advice2["user"] = jane_doe
+    goods_advice2["team"] = team2
     goods_advice2["good"] = data_standard_case["case"]["data"]["goods"][0]["id"]
     return goods_advice2
 
@@ -2393,7 +2446,7 @@ def all_cles():
 
 
 @pytest.fixture
-def refusal_notes(current_user, LU_team_user):
+def refusal_notes(current_user, admin_team, LU_team_user, lu_team):
     return [
         {
             "id": "5cf3c92d-e841-4b8a-8ce5-bd7f869a3e8d",
@@ -2405,6 +2458,7 @@ def refusal_notes(current_user, LU_team_user):
             "denial_reasons": ["5a", "5b"],
             "footnote": None,
             "user": current_user,
+            "team": admin_team,
             "created_at": "2021-10-17T23:23:30.421294+01:00",
             "good": "73152304-6026-4cc0-a3d7-0a93048ecdce",
             "country": None,
@@ -2423,6 +2477,7 @@ def refusal_notes(current_user, LU_team_user):
             "denial_reasons": ["2a"],
             "footnote": None,
             "user": LU_team_user,
+            "team": lu_team,
             "created_at": "2023-08-08T21:45:51.582996+01:00",
             "good": None,
             "goods_type": None,
@@ -2445,6 +2500,7 @@ def refusal_notes(current_user, LU_team_user):
             "denial_reasons": ["2a"],
             "footnote": None,
             "user": LU_team_user,
+            "team": lu_team,
             "created_at": "2023-08-08T21:45:51.604533+01:00",
             "good": None,
             "goods_type": None,
@@ -2467,6 +2523,7 @@ def refusal_notes(current_user, LU_team_user):
             "denial_reasons": ["2a"],
             "footnote": None,
             "user": LU_team_user,
+            "team": lu_team,
             "created_at": "2023-08-08T21:45:51.618365+01:00",
             "good": None,
             "goods_type": None,
@@ -2489,6 +2546,7 @@ def refusal_notes(current_user, LU_team_user):
             "denial_reasons": ["2a"],
             "footnote": None,
             "user": LU_team_user,
+            "team": lu_team,
             "created_at": "2023-08-08T21:45:51.631684+01:00",
             "good": None,
             "goods_type": None,
@@ -2505,7 +2563,7 @@ def refusal_notes(current_user, LU_team_user):
 
 
 @pytest.fixture
-def mod_ecju_refusal_reasons(MOD_ECJU_team_user):
+def mod_ecju_refusal_reasons(MOD_ECJU_team_user, MOD_ECJU_team):
     return [
         {
             "id": "0f9851e4-c1a1-43ab-a162-2d10ed4fa675",
@@ -2517,6 +2575,7 @@ def mod_ecju_refusal_reasons(MOD_ECJU_team_user):
             "denial_reasons": ["5b"],
             "footnote": None,
             "user": MOD_ECJU_team_user,
+            "team": MOD_ECJU_team,
             "created_at": "2023-08-10T22:26:04.884674+01:00",
             "good": None,
             "goods_type": None,
@@ -2539,6 +2598,7 @@ def mod_ecju_refusal_reasons(MOD_ECJU_team_user):
             "denial_reasons": ["5b"],
             "footnote": None,
             "user": MOD_ECJU_team_user,
+            "team": MOD_ECJU_team,
             "created_at": "2023-08-10T22:26:04.904252+01:00",
             "good": None,
             "goods_type": None,
@@ -2561,6 +2621,7 @@ def mod_ecju_refusal_reasons(MOD_ECJU_team_user):
             "denial_reasons": ["5b"],
             "footnote": None,
             "user": MOD_ECJU_team_user,
+            "team": MOD_ECJU_team,
             "created_at": "2023-08-10T22:26:04.922363+01:00",
             "good": None,
             "goods_type": None,
@@ -2583,6 +2644,7 @@ def mod_ecju_refusal_reasons(MOD_ECJU_team_user):
             "denial_reasons": ["5b"],
             "footnote": None,
             "user": MOD_ECJU_team_user,
+            "team": MOD_ECJU_team,
             "created_at": "2023-08-10T22:26:04.938891+01:00",
             "good": None,
             "goods_type": None,
@@ -2605,6 +2667,7 @@ def mod_ecju_refusal_reasons(MOD_ECJU_team_user):
             "denial_reasons": ["5b"],
             "footnote": None,
             "user": MOD_ECJU_team_user,
+            "team": MOD_ECJU_team,
             "created_at": "2023-08-10T22:26:04.955018+01:00",
             "good": "247e3d45-f596-4e2b-a720-6c0d827fa31d",
             "goods_type": None,

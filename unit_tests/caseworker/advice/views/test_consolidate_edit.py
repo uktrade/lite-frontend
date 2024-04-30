@@ -56,15 +56,15 @@ def get_advice_subjects(case):
 
 
 @pytest.fixture
-def consolidated_advice(data_standard_case, current_user):
-    current_user["team"]["id"] = "2132131d-2432-423424"
-    current_user["team"]["alias"] = services.LICENSING_UNIT_TEAM
+def consolidated_advice(data_standard_case, current_user, lu_team):
+    current_user["team"] = lu_team
     subjects = get_advice_subjects(data_standard_case)
 
     return [
         {
             "id": str(uuid4()),
             "user": current_user,
+            "team": lu_team,
             "type": {"key": "approve", "value": "Approve"},
             "text": "meets the requirements",
             "note": "",
@@ -423,15 +423,16 @@ def test_edit_advice_get_displays_correct_counteradvice(
     mod_countersigned_advice,
     advice_type,
     expected_title,
+    lu_team,
 ):
-    team = services.LICENSING_UNIT_TEAM
-    mock_get_gov_user.return_value = ({"user": {"team": {"id": TEAM_ID, "alias": team}}}, None)
+    mock_get_gov_user.return_value = ({"user": {"team": lu_team}}, None)
     case_data = data_standard_case
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     # Add final advice
     for advice in standard_case_with_advice["advice"]:
         advice["level"] = "final"
-        advice["user"]["team"]["alias"] = team
+        advice["user"]["team"] = lu_team
+        advice["team"] = lu_team
     more_advice = copy.deepcopy(standard_case_with_advice["advice"])
     more_advice[0]["id"] = "d8cbfd81-290d-4c98-958b-621c0876dffc"
     case_data["case"]["advice"] += more_advice

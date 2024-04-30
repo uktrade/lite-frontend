@@ -243,9 +243,11 @@ def edit_site_name_form(site):
 def site_records_location(request, in_uk=True, is_editing=False):
     return Form(
         caption="" if is_editing else "Step 3 of 4",
-        title=strings.sites.AddSiteForm.SiteRecords.SiteInUK.TITLE
-        if in_uk
-        else strings.sites.AddSiteForm.SiteRecords.SiteNotInUK.TITLE,
+        title=(
+            strings.sites.AddSiteForm.SiteRecords.SiteInUK.TITLE
+            if in_uk
+            else strings.sites.AddSiteForm.SiteRecords.SiteNotInUK.TITLE
+        ),
         description=strings.sites.AddSiteForm.SiteRecords.DESCRIPTION,
         questions=[
             *conditional(

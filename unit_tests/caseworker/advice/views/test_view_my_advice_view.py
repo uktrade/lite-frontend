@@ -24,7 +24,7 @@ def url(data_queue, data_standard_case):
 
 
 @pytest.fixture
-def advice(current_user):
+def advice(current_user, admin_team):
     return [
         {
             "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
@@ -43,6 +43,7 @@ def advice(current_user):
             "type": {"key": "proviso", "value": "Proviso"},
             "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
             "user": current_user,
+            "team": admin_team,
         }
         for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
     ]
