@@ -79,6 +79,18 @@
             </tr>
             {% endfor %}
             {% endif %}
+            {% if item.open_destination %}
+                {% for open_destination in case.data.open_destinations %}
+                    {% if open_destination.id == item.open_destination %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ open_destination.country.name }}</td>
+                            <td class="govuk-table__cell">{{ open_destination.type_display_value }}</td>
+                            <td class="govuk-table__cell">{{ open_destination.name }}</td>
+                            <td class="govuk-table__cell">All</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
