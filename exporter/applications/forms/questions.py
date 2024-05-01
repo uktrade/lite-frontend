@@ -88,7 +88,8 @@ def number_of_siels_last_year():
 def purely_commercial():
     return Form(
         caption="OIEL Additional information",
-        title="Cryptographic OIELs cannot be used to export products to governments, or for military use. Will the products you are exporting be used for commercial purposes only?",
+        title="""Cryptographic OIELs cannot be used to export products to governments, or for military use.
+        Will the products you are exporting be used for commercial purposes only?""",
         questions=[
             RadioButtons(
                 name="purely_commercial",
