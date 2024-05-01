@@ -281,8 +281,8 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     # assert headers
     header_order = [
         "\n",
-        "Reference",
         "Regime reference",
+        "Reference",
         "Name",
         "Address",
         "Country",
@@ -299,8 +299,8 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     table_body_values = [table_values.text.strip("\n") for table_values in table_body]
     # maintains order of the table values
     data_key_map = [
-        "reference",
         "regime_reg_ref",
+        "reference",
         "name",
         "address",
         "country",
