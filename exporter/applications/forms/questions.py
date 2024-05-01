@@ -20,14 +20,14 @@ def f680_questions_forms():
 def oiel_questions_forms():
     return FormGroup(
         [
-            nature_of_product_form(),
+            nature_of_products_form(),
             number_of_siels_last_year(),
             purely_commercial(),
         ],
     )
 
 
-def nature_of_product_form():
+def nature_of_products_form():
     return Form(
         caption="OIEL Additional information",
         title="Describe the products, including the control list entries if you know them",
