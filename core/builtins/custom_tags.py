@@ -31,7 +31,7 @@ from exporter.core.constants import (
     DONE,
     IN_PROGRESS,
 )
-from exporter.applications.constants import F680
+from exporter.applications.constants import F680, OIEL
 
 from caseworker.core.constants import SystemTeamsID, SLA_CIRCUMFERENCE, PARTY_TYPE_MAPPING
 
@@ -756,15 +756,18 @@ def task_list_additional_information_status(data):
     """
     Returns 'not started' if length of data given is none, else returns 'done'
     """
-    if all([data.get(field) in ["", None] for field in F680.REQUIRED_FIELDS]):
+    case_map = {"f680": F680, "oiel": OIEL}
+    case_type = data["case_type"]["reference"]["key"]
+    licence_type = case_map[case_type]
+    if all([data.get(field) in ["", None] for field in licence_type.REQUIRED_FIELDS]):
         return NOT_STARTED
 
-    for field in F680.REQUIRED_FIELDS:
+    for field in licence_type.REQUIRED_FIELDS:
         if field in data:
             if data[field] is None or data[field] == "":
                 return IN_PROGRESS
             if data[field] is True:
-                secondary_field = F680.REQUIRED_SECONDARY_FIELDS.get(field, False)
+                secondary_field = licence_type.REQUIRED_SECONDARY_FIELDS.get(field, False)
                 if secondary_field and not data.get(secondary_field):
                     return IN_PROGRESS
     return DONE

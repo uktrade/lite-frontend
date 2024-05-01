@@ -114,13 +114,14 @@ def get_application_task_list(request, application, errors=None):
                 ]
         context["route_of_goods"] = get_route_of_goods(application)
         context["is_oicl_appplication"] = application.type_reference == CaseTypes.OICL
+        countries_and_contract_types = []
+
         if application.get("goods_category"):
             goods_category = application.get("goods_category").get("key")
             context["is_uk_continental_shelf_application"] = goods_category == GoodsTypeCategory.UK_CONTINENTAL_SHELF
             # countries_and_contract_types = get_application_countries_and_contract_types(request, application["id"])[
             #     "countries"
             # ]
-            countries_and_contract_types = []
             if context["is_uk_continental_shelf_application"]:
                 context["countries_missing_contract_types"] = [
                     entry["country_id"] for entry in countries_and_contract_types if not entry["contract_types"]

@@ -3,7 +3,7 @@ from lite_content.lite_exporter_frontend.applications import F680Questions
 from lite_forms.components import FormGroup, Form, RadioButtons, Option, TextArea, CurrencyInput, Label
 
 
-def questions_forms():
+def f680_questions_forms():
     return FormGroup(
         [
             expedited_form(),
@@ -14,6 +14,95 @@ def questions_forms():
             uk_service_equipment_form(),
             uk_service_equipment_type_form(),
         ],
+    )
+
+
+def oiel_questions_forms():
+    return FormGroup(
+        [
+            nature_of_products_form(),
+            number_of_siels_last_year(),
+            purely_commercial(),
+        ],
+    )
+
+
+def nature_of_products_form():
+    return Form(
+        caption="OIEL Additional information",
+        title="Describe the products, including the control list entries if you know them",
+        questions=[
+            TextArea(
+                title="",
+                name="nature_of_products",
+                description="",
+                extras={"max_length": 2200},
+                optional=False,
+            ),
+        ],
+        default_button_name=generic.SAVE_AND_CONTINUE,
+    )
+
+
+def number_of_siels_last_year():
+    return Form(
+        caption="OIEL Additional information",
+        title="Has a standard individual export licence been issued to you in the past year?",
+        questions=[
+            RadioButtons(
+                name="siels_issued_last_year",
+                options=[
+                    Option(
+                        key=True,
+                        value="Yes",
+                        components=[
+                            TextArea(
+                                title="How many licences?",
+                                name="number_of_siels_last_year",
+                                description="",
+                                extras={"max_length": 2200},
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                    Option(
+                        key=False,
+                        value="No",
+                        components=[
+                            TextArea(
+                                title="List the destination countries",
+                                name="destination_countries",
+                                description="",
+                                extras={"max_length": 2200},
+                                optional=False,
+                            ),
+                        ],
+                    ),
+                ],
+            )
+        ],
+        default_button_name=generic.SAVE_AND_CONTINUE,
+    )
+
+
+def purely_commercial():
+    return Form(
+        caption="OIEL Additional information",
+        title="""Cryptographic OIELs cannot be used to export products to governments, or for military use.
+        Will the products you are exporting be used for commercial purposes only?""",
+        questions=[
+            RadioButtons(
+                name="purely_commercial",
+                options=[
+                    Option(
+                        key=True,
+                        value="Yes",
+                    ),
+                    Option(key=False, value="No"),
+                ],
+            )
+        ],
+        default_button_name=generic.SAVE_AND_CONTINUE,
     )
 
 

@@ -512,6 +512,7 @@ class OpenApplicationTaskList:
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     GOODS_DESTINATION = "Destinations"
+    ADDITIONAL_INFORMATION = "Additional information"
     COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
     SUPPORTING_DOCUMENTS = "Supporting documents"
     END_USE_DETAILS = "End use details"
