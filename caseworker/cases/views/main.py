@@ -133,6 +133,7 @@ class CaseTabsMixin:
         tabs = [
             Tabs.QUICK_SUMMARY,
             Tabs.DETAILS,
+            Tabs.LICENCES,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
         ]
