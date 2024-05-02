@@ -79,15 +79,11 @@
                                 <td class="govuk-table__cell">{{ denial.item_description }}</td>
                                 <td class="govuk-table__cell">{{ denial.end_use }}</td>
                                 <td class="govuk-table__cell">
-                                    {% if denial.entity_type == "consignee" %}
-                                        Consignee
-                                    {% elif denial.entity_type == "end_user" %}
-                                        End User
-                                    {% elif denial.entity_type == "third_party" %}
-                                        Third Party
-                                    {% else %}
-                                        {{ denial.entity_type }}
-                                    {% endif %}
+                                    {% for key, value in denial.entity_type.items %}
+                                        {% if forloop.counter == 2 %}
+                                            {{ value }}
+                                        {% endif %}
+                                    {% endfor %}
                                 </td>
                             </tr>
                         {% endfor %}
