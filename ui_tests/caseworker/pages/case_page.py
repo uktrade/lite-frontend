@@ -17,6 +17,7 @@ class CaseTabs:
     DOCUMENTS = "documents"
     ACTIVITY = "activity"
     COMPLIANCE_LICENCES = "compliance-licences"
+    RECOMMENDATIONS_AND_DECISIONS = "advice"
 
 
 class CasePage(BasePage):
