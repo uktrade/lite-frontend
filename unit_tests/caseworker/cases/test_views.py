@@ -75,7 +75,7 @@ denials_data = [
         "item_list_codes": "FR3a",
         "name": "Example Name",
         "notifying_government": "Lithuania",
-        "reference": "abc123/abc123",
+        "reference": "Abc123/abc123",
         "regime_reg_ref": "ABC-1234",
         "entity_type": "End-user",
     }
@@ -269,7 +269,7 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
         "item_list_codes": "FR3a",
         "name": "Example Name",
         "notifying_government": "Lithuania",
-        "reference": "abc123/abc123",
+        "reference": "Abc123/abc123",
         "regime_reg_ref": "ABC-1234",
         "entity_type": "End-user",
     }
