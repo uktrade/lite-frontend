@@ -5,6 +5,11 @@ import rules
 from django.http import HttpRequest
 
 from core import client
+from caseworker.advice.services import (
+    GOODS_NOT_LISTED_ID,
+    LICENSING_UNIT_TEAM,
+    OGD_TEAMS,
+)
 from caseworker.core import rules as caseworker_rules
 from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
 
@@ -157,7 +162,6 @@ def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expe
         "can_user_change_case",
         "can_user_move_case_forward",
         "can_user_review_and_countersign",
-        "can_user_review_and_combine",
         "can_user_add_an_ejcu_query",
         "can_user_generate_document",
         "can_user_add_contact",
@@ -321,3 +325,106 @@ def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request, mo
     request = get_mock_request(user)
 
     assert rules.test_rule("can_user_assess_products", request, case) == expected
+
+
+@pytest.mark.parametrize(
+    "case, expected_result",
+    (
+        (
+            {
+                "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",  # /PS-IGNORE
+                "assigned_users": {
+                    "fake queue": [
+                        {"id": mock_gov_user_id},
+                    ]
+                },
+                "case_officer": {"id": mock_gov_user_id},
+            },
+            True,
+        ),
+        (
+            {
+                "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",  # /PS-IGNORE
+                "assigned_users": {
+                    "fake queue": [
+                        {"id": mock_gov_user_id},
+                    ]
+                },
+                "case_officer": {"id": "fake_id"},
+            },
+            True,
+        ),
+        (
+            {
+                "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",  # /PS-IGNORE
+                "assigned_users": {
+                    "fake queue": [
+                        {"id": "fake_id"},
+                    ]
+                },
+                "case_officer": {"id": mock_gov_user_id},
+            },
+            True,
+        ),
+        (
+            {
+                "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",  # /PS-IGNORE
+                "assigned_users": {
+                    "fake queue": [
+                        {"id": "fake_id"},
+                    ]
+                },
+                "case_officer": {"id": "fake_id"},
+            },
+            False,
+        ),
+    ),
+)
+def test_can_user_review_and_combine_based_on_allocation(mock_gov_user, get_mock_request, case, expected_result):
+    case["advice"] = [
+        {
+            "user": {"team": {"alias": OGD_TEAMS[0]}},
+            "team": {"alias": OGD_TEAMS[0]},
+        },
+    ]
+
+    user = mock_gov_user["user"]
+    request = get_mock_request(user)
+
+    assert rules.test_rule("can_user_review_and_combine", request, case) == expected_result
+
+
+@pytest.mark.parametrize(
+    ("advice", "flags", "expected"),
+    (
+        (
+            [],
+            [],
+            False,
+        ),
+        (
+            [],
+            [{"id": GOODS_NOT_LISTED_ID}],
+            True,
+        ),
+        (
+            [
+                {"user": {"team": {"alias": LICENSING_UNIT_TEAM}}, "team": {"alias": LICENSING_UNIT_TEAM}},
+            ],
+            [],
+            False,
+        ),
+        *[([{"user": {"team": {"alias": alias}}, "team": {"alias": alias}}], [], True) for alias in OGD_TEAMS],
+    ),
+)
+def test_can_user_review_and_combine_based_on_advice(mock_gov_user, get_mock_request, advice, flags, expected):
+    case = {
+        "advice": advice,
+        "case_officer": {"id": mock_gov_user_id},
+        "flags": flags,
+    }
+
+    user = mock_gov_user["user"]
+    request = get_mock_request(user)
+
+    assert rules.test_rule("can_user_review_and_combine", request, case) == expected
