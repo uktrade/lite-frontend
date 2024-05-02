@@ -78,7 +78,17 @@
                                 <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
                                 <td class="govuk-table__cell">{{ denial.item_description }}</td>
                                 <td class="govuk-table__cell">{{ denial.end_use }}</td>
-                                <td class="govuk-table__cell">{{ denial.entity_type }}</td>
+                                <td class="govuk-table__cell">
+                                    {% if denial.entity_type == "consignee" %}
+                                        Consignee
+                                    {% elif denial.entity_type == "end_user" %}
+                                        End User
+                                    {% elif denial.entity_type == "third_party" %}
+                                        Third Party
+                                    {% else %}
+                                        {{ denial.entity_type }}
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
 
