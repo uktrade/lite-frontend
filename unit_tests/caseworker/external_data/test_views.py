@@ -75,6 +75,17 @@ def test_upload_denial_invalid_file(authorized_client, mock_denial_upload_valida
     }
 
 
+def test_upload_denial_missing_required_headers_error(authorized_client, settings):
+    url = reverse("external_data:denials-upload")
+    file_path = os.path.join(settings.BASE_DIR, "unit_tests/caseworker/external_data/denial_invalid.csv")
+    data = {"csv_file": open(file_path, "rb")}
+
+    response = authorized_client.post(url, data, format="multipart")
+
+    assert response.status_code == 200
+    assert response.context_data["form"].errors == {"csv_file": ["Missing required headers in CSV file"]}
+
+
 def test_denial_detail(authorized_client, mock_denial_retrieve):
     url = reverse("external_data:denial-detail", kwargs={"pk": denial_pk})
 
