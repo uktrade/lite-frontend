@@ -43,9 +43,7 @@ def mock_denial_patch(requests_mock):
 
 def test_upload_denial_valid_file(authorized_client, mock_denial_upload, settings):
     # given the case has activity from system user
-    url = reverse(
-        "external_data:denials-add-by-csv"
-    )  # TODO: rename back to ""denials-upload" when we are ready to release this to users
+    url = reverse("external_data:denials-upload")
 
     file_path = os.path.join(settings.BASE_DIR, "caseworker/external_data/example.csv")
     data = {"csv_file": open(file_path, "rb")}
@@ -62,9 +60,7 @@ def test_upload_denial_valid_file(authorized_client, mock_denial_upload, setting
 
 def test_upload_denial_invalid_file(authorized_client, mock_denial_upload_validation_error, settings):
     # given the case has activity from system user
-    url = reverse(
-        "external_data:denials-add-by-csv"
-    )  # TODO: rename back to ""denials-upload" when we are ready to release this to users
+    url = reverse("external_data:denials-upload")
 
     file_path = os.path.join(settings.BASE_DIR, "caseworker/external_data/example.csv")
     data = {"csv_file": open(file_path, "rb")}
