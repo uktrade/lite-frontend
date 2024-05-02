@@ -94,15 +94,15 @@ Feature: I want process an SIEL application submitted by Exporters and issue lic
     And I see the case is assigned to queues "MOD-DSR Cases to Review, MOD-CapProt cases to review, FCDO Cases to Review"
 
     # MOD-DSR
-    When I switch to "MOD-DSR" with queue "MOD-DSR Cases to Review" and I submit the case
+    When I switch to "MOD-DSR" with queue "MOD-DSR Cases to Review" and I approve the case
     Then I see the case status is now "OGD Advice"
     And I see the case is assigned to queues "MOD-CapProt cases to review, FCDO Cases to Review"
     # MOD-CapProt
-    When I switch to "MOD-CapProt" with queue "MOD-CapProt cases to review" and I submit the case
+    When I switch to "MOD-CapProt" with queue "MOD-CapProt cases to review" and I approve the case
     Then I see the case status is now "OGD Advice"
     And I see the case is assigned to queues "FCDO Cases to Review"
     # FCDO
-    When I switch to "FCDO" with queue "FCDO Cases to Review" and I submit the case
+    When I switch to "FCDO" with queue "FCDO Cases to Review" and I approve the case with countries "AU,FR"
     And I switch to "FCDO" with queue "FCDO Counter-signing" and I submit the case with decision "decision"
     Then I see the case status is now "OGD Advice"
     And I see the case is assigned to queues "Review and combine"
