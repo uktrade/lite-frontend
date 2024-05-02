@@ -6,6 +6,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, FormView
 from django.utils.functional import cached_property
 
+from exporter.applications.constants import CryptoOIELExcludedDestinations
 from exporter.applications.forms.countries import (
     countries_form,
     choose_contract_type_form,
@@ -445,7 +446,7 @@ class StaticDestinations(LoginRequiredMixin, TemplateView):
 
         context = {
             "application_id": application_id,
-            "countries": [],
+            "countries": CryptoOIELExcludedDestinations,
             "goods_category": goods_category,
             "goods_category_label": goods_category_label,
         }

@@ -16,7 +16,11 @@
 	{% if goods_category == 'cryptographic' %}
 		<p class="govuk-body">"<strong>Permitted destination</strong>" means a country <strong>other than</strong> the following,</p>
 
-
+        <p class="govuk-body">
+			{% for country in countries %}
+				{{ country.name }}{% if not forloop.last %},{% else %}.{% endif %}
+			{% endfor %}
+		</p>
 	{% endif %}
 
 	{% if goods_category == 'uk_continental_shelf' %}
