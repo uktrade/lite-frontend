@@ -77,7 +77,7 @@ denials_data = [
         "notifying_government": "Lithuania",
         "reference": "abc123/abc123",
         "regime_reg_ref": "ABC-1234",
-        "entity_type": "End-user",
+        "entity_type": "",
     }
 ]
 
@@ -271,7 +271,7 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
         "notifying_government": "Lithuania",
         "reference": "abc123/abc123",
         "regime_reg_ref": "ABC-1234",
-        "entity_type": "End-user",
+        "entity_type": "",
     }
 
     # first tr is headers second onward are data
