@@ -79,7 +79,7 @@
                                 <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
                                 <td class="govuk-table__cell">{{ denial.item_description }}</td>
                                 <td class="govuk-table__cell">{{ denial.end_use }}</td>
-                                <td class="govuk-table__cell">{{ denial.entity_type|entity_type_value }}
+                                <td class="govuk-table__cell">{{ denial.entity_type.value }}
                                 </td>
                             </tr>
                         {% endfor %}

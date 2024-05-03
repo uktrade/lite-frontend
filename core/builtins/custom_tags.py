@@ -526,15 +526,6 @@ def values(dictionary):
     return dictionary.values()
 
 
-@register.filter
-def entity_type_value(db_value):
-    if not dict:
-        return db_value
-    if isinstance(db_value, dict):
-        values = db_value.values()
-        return list(values)[1]
-
-
 @register.filter()
 def filter_advice_by_level(advice, level):
     return [advice for advice in advice if advice["level"] == level]
