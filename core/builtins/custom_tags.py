@@ -526,6 +526,12 @@ def values(dictionary):
     return dictionary.values()
 
 
+@register.filter
+def entity_type_value(dict):
+    values = dict.values()
+    return list(values)[1]
+
+
 @register.filter()
 def filter_advice_by_level(advice, level):
     return [advice for advice in advice if advice["level"] == level]
