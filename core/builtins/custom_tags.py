@@ -5,6 +5,7 @@ import dateparser
 import json
 import os
 import re
+import ast
 
 from collections import Counter, OrderedDict
 from decimal import Decimal
@@ -528,6 +529,8 @@ def values(dictionary):
 
 @register.filter
 def entity_type_value(dict):
+    if not dict:
+        return dict
     values = dict.values()
     return list(values)[1]
 
