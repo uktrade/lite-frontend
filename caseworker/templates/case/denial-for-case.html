@@ -47,8 +47,8 @@
                             {% if not hide_checkboxes %}
                                 <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
                                 </th>
-                                <th scope="col" class="govuk-table__header">Reference</th>
                                 <th scope="col" class="govuk-table__header">Regime reference</th>
+                                <th scope="col" class="govuk-table__header">Reference</th>
                                 <th scope="col" class="govuk-table__header">Name</th>
                                 <th scope="col" class="govuk-table__header">Address</th>
                                 <th scope="col" class="govuk-table__header">Country</th>
@@ -65,13 +65,14 @@
                                 <td class="govuk-table__cell govuk-table__cell--checkbox">
                                     <div>
                                         <input class="govuk-checkboxes__input" type="checkbox" name="objects" value="{{ denial.id }}" id="{{ denial.id }}">
-                                        <label class="govuk-label govuk-checkboxes__label" for="{{ denial.id }}">{{ denial.reference|sentence_case }}</label>
+                                        <label class="govuk-label govuk-checkboxes__label" for="{{ denial.id }}">{{ denial.regime_reg_ref }}</label>
                                     </div>
                                 </td>
                                 <td class="govuk-table__cell">
-                                    <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.reference }}</a>
+
+                                    <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.regime_reg_ref }}</a>
                                 </td>
-                                <td class="govuk-table__cell">{{ denial.regime_reg_ref }}</td>
+                                <td class="govuk-table__cell">{{ denial.reference|sentence_case }}</td>
                                 <td class="govuk-table__cell">{{ denial.name }}</td>
                                 <td class="govuk-table__cell">{{ denial.address }}</td>
                                 <td class="govuk-table__cell">{{ denial.country }}</td>

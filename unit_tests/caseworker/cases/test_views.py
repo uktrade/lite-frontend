@@ -75,7 +75,7 @@ denials_data = [
         "item_list_codes": "FR3a",
         "name": "Example Name",
         "notifying_government": "Lithuania",
-        "reference": "abc123/abc123",
+        "reference": "Abc123/abc123",
         "regime_reg_ref": "ABC-1234",
         "entity_type": "",
     }
@@ -269,7 +269,7 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
         "item_list_codes": "FR3a",
         "name": "Example Name",
         "notifying_government": "Lithuania",
-        "reference": "abc123/abc123",
+        "reference": "Abc123/abc123",
         "regime_reg_ref": "ABC-1234",
         "entity_type": "",
     }
@@ -281,8 +281,8 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     # assert headers
     header_order = [
         "\n",
-        "Reference",
         "Regime reference",
+        "Reference",
         "Name",
         "Address",
         "Country",
@@ -299,8 +299,8 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     table_body_values = [table_values.text.strip("\n") for table_values in table_body]
     # maintains order of the table values
     data_key_map = [
-        "reference",
         "regime_reg_ref",
+        "reference",
         "name",
         "address",
         "country",
