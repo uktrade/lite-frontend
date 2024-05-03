@@ -397,3 +397,15 @@ def test_str_time_on_date(input_string, expected_output):
 )
 def test_get_parties_status_optional_documents(parties, expected_status):
     assert custom_tags.get_parties_status_optional_documents(parties) == expected_status
+
+
+@pytest.mark.parametrize(
+    "dict, expected",
+    [
+        ({}, None),
+        ({"key1": "value1", "key2": "value2"}, "value2"),
+        ({"key1": "value1", "key2": "value2", "key3": "value3"}, "value2"),
+    ],
+)
+def test_entity_type_value(dict, expected):
+    assert custom_tags.entity_type_value(dict) == expected
