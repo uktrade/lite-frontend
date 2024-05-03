@@ -41,17 +41,7 @@
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Entity type</th>
-                <td class="govuk-table__cell">
-                    {% if denial.entity_type == "consignee" %}
-                        Consignee
-                    {% elif denial.entity_type == "end_user" %}
-                        End User
-                    {% elif denial.entity_type == "third_party" %}
-                        Third Party
-                    {% else %}
-                        {{ denial.entity_type }}
-                    {% endif %}
-                    </td>
+                <td class="govuk-table__cell">{{ denial.entity_type.value }}</td>
             </tr>
             <tr class="govuk-table__row app-table__row">
                 <th scope="row" class="govuk-table__header">Name</th>
