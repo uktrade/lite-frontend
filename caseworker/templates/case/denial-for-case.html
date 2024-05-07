@@ -11,6 +11,28 @@
         <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
             <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id tab="details" %}">Back</a>
         </div>
+        <div class="govuk-grid-column-two-thirds">
+            <table id="table-Party-details" class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Name</th>
+                            <th scope="col" class="govuk-table__header">Address</th>
+                            <th scope="col" class="govuk-table__header">Country</th>
+                            <th scope="col" class="govuk-table__header">Entity type</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for party in parties %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ party.name|safe }}</td>
+                            <td class="govuk-table__cell">{{ party.address|safe }}</td>
+                            <td class="govuk-table__cell">{{ party.country.name }}</td>
+                            <td class="govuk-table__cell">{{ party.type_display_value }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         <div class="govuk-grid-column-full">
             <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
                 Denial matches
@@ -73,8 +95,8 @@
                                     <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.regime_reg_ref }}</a>
                                 </td>
                                 <td class="govuk-table__cell">{{ denial.reference|sentence_case }}</td>
-                                <td class="govuk-table__cell">{{ denial.name }}</td>
-                                <td class="govuk-table__cell">{{ denial.address }}</td>
+                                <td class="govuk-table__cell">{{ denial.name|safe }}</td>
+                                <td class="govuk-table__cell">{{ denial.address|safe }}</td>
                                 <td class="govuk-table__cell">{{ denial.country }}</td>
                                 <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
                                 <td class="govuk-table__cell">{{ denial.item_description }}</td>

@@ -700,4 +700,6 @@ class Denials(LoginRequiredMixin, TemplateView):
             results = response["results"]
             total_pages = response["total_pages"]
 
-        return super().get_context_data(case=case, results=results, total_pages=total_pages, **kwargs)
+        return super().get_context_data(
+            case=case, results=results, total_pages=total_pages, parties=parties_to_search, **kwargs
+        )
