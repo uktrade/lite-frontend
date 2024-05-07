@@ -77,7 +77,10 @@ denials_data = [
         "notifying_government": "Lithuania",
         "reference": "Abc123/abc123",
         "regime_reg_ref": "ABC-1234",
-        "entity_type": "",
+        "entity_type": {
+            "key": "CONSIGNEE",
+            "value": "Consignee",
+        },
     }
 ]
 
@@ -260,19 +263,6 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
     soup = BeautifulSoup(response.content, "html.parser")
     table = soup.find(id="table-denials")
     assert table
-    v = {
-        "id": "00000000-0000-0000-0000-000000000001",
-        "address": "726 example road",
-        "country": "Germany",
-        "end_use": 'For the needs of "example company"',
-        "item_description": "example something",
-        "item_list_codes": "FR3a",
-        "name": "Example Name",
-        "notifying_government": "Lithuania",
-        "reference": "Abc123/abc123",
-        "regime_reg_ref": "ABC-1234",
-        "entity_type": "",
-    }
 
     # first tr is headers second onward are data
     row = table.find_all("tr")
@@ -296,7 +286,7 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
 
     # get each column, see that it has data present
     table_body = row[1].find_all("td")[1:]
-    table_body_values = [table_values.text.strip("\n") for table_values in table_body]
+    table_body_values = [table_values.text.replace("\n", "").strip() for table_values in table_body]
     # maintains order of the table values
     data_key_map = [
         "regime_reg_ref",
@@ -310,8 +300,22 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
         "entity_type",
     ]
 
+    expected_table_values = {
+        "id": "00000000-0000-0000-0000-000000000001",
+        "address": "726 example road",
+        "country": "Germany",
+        "end_use": 'For the needs of "example company"',
+        "item_description": "example something",
+        "item_list_codes": "FR3a",
+        "name": "Example Name",
+        "notifying_government": "Lithuania",
+        "reference": "Abc123/abc123",
+        "regime_reg_ref": "ABC-1234",
+        "entity_type": "Consignee",
+    }
+
     for i, value in enumerate(table_body_values):
-        assert value == denials_data[0][data_key_map[i]]
+        assert value == expected_table_values[data_key_map[i]]
 
     page_2 = soup.find(id="page-2")
     assert page_2.a["href"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
