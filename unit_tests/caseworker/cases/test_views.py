@@ -77,7 +77,7 @@ denials_data = [
         "notifying_government": "Lithuania",
         "reference": "Abc123/abc123",
         "regime_reg_ref": "ABC-1234",
-        "entity_type": "consignee",
+        "entity_type": "",
     }
 ]
 
@@ -271,7 +271,7 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
         "notifying_government": "Lithuania",
         "reference": "Abc123/abc123",
         "regime_reg_ref": "ABC-1234",
-        "entity_type": "consignee",
+        "entity_type": "",
     }
 
     # first tr is headers second onward are data
@@ -309,9 +309,6 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
         "end_use",
         "entity_type",
     ]
-
-    table_body_values = table_body_values[:-1]
-    table_body_values.append("consignee")
 
     for i, value in enumerate(table_body_values):
         assert value == denials_data[0][data_key_map[i]]
