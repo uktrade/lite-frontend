@@ -66,7 +66,6 @@ class Registration(
 
     def get_form(self, step=None, data=None, files=None):
         form = super().get_form(step, data, files)
-
         # determine the step if not given
         if step is None:
             step = self.steps.current
@@ -95,8 +94,14 @@ class Registration(
         kwargs = {
             "prefix": self.get_form_prefix(RegistrationSteps.REGISTRATION_DETAILS, form_class),
             "data": data,
+            "request": self.request,
         }
         return form_class(**kwargs)
+
+    def render_next_step(self, form, **kwargs):
+        if self.steps.current == RegistrationSteps.UK_BASED:
+            kwargs["request"] = self.request
+        return super().render_next_step(form, **kwargs)
 
     def get_registration_address_form(self, data):
         location = self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"]
@@ -105,12 +110,8 @@ class Registration(
         if location != "united_kingdom":
             form_class = RegisterAddressDetailsOverseasForm
             kwargs["request"] = self.request
-        kwargs.update(
-            {
-                "prefix": self.get_form_prefix(RegistrationSteps.ADDRESS_DETAILS, form_class),
-                "data": data,
-            }
-        )
+
+        kwargs.update({"prefix": self.get_form_prefix(RegistrationSteps.ADDRESS_DETAILS, form_class), "data": data})
         return form_class(**kwargs)
 
     def get_template_names(self):
