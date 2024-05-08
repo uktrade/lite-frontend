@@ -289,7 +289,7 @@ def test_search_denials(authorized_client, data_standard_case, requests_mock, qu
         "Item list codes",
         "Item description",
         "End use",
-        "Entity type",
+        "Party type",
     ]
     header_values = [header.text for header in headers]
     assert header_values == header_order
