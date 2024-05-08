@@ -108,7 +108,7 @@ class RegisterDetailsBaseForm(BaseForm):
         label=SIC_CODE_LABEL,
         help_text=(
             "<a href='https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic'"
-            "class='govuk-link govuk-link--no-visited-state' target='_blank'>Find your SIC code.</a>"
+            "class='govuk-link govuk-link--no-visited-state' target='_blank'>Find your SIC code</a>.  If you have more than one, enter the SIC code you use most frequently."
         ),
         error_messages={
             "required": "Enter a SIC code",
