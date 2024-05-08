@@ -66,6 +66,13 @@ class Permission(Enum):
     REMOVE_HEAD_OF_LICENSING_UNIT_FLAGS = "REMOVE_HEAD_OF_LICENSING_UNIT_FLAGS"
 
 
+class Role(Enum):
+    TAU_MANAGER = "TAU Manager"
+    TAU_OFFICER = "TAU Officer"
+    TAU_SENIOR_MANAGER = "TAU Senior Manager"
+    SUPER_USER = "Super User"
+
+
 class FlagLevels:
     CASES = "cases"
     GOODS = "goods"

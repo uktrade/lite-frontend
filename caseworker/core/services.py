@@ -110,6 +110,11 @@ def get_user_permissions(request, with_team=False):
     return user["user"]["role"]["permissions"]
 
 
+def get_user_role(request):
+    user, _ = get_gov_user(request)
+    return user["user"]["role"]
+
+
 CLC_ENTRIES_CACHE = []
 
 

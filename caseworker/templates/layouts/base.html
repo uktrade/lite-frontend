@@ -55,7 +55,7 @@
 				</span>
 			</a>
 			<span></span>
-			{% test_rule 'can_user_search_products_or_upload_denials' request as show_product_search %}
+			{% test_rule 'can_user_search_products' request as show_product_search %}
 			{% if show_product_search %}
 			<a id="link-product-search" class="app-header__link" href="{% url 'search:products' %}">Search for products</a>
 			{% else %}
@@ -128,28 +128,13 @@
 
 	<div id="lite-menu" class="app-menu app-hidden">
 		{% for item in LITE_MENU %}
-			{% if item.title == 'Denial records' %}
-			{% test_rule 'can_user_search_products_or_upload_denials' request as show_denial_upload %}
-				{% if show_denial_upload %}
-				<a class="app-menu__item app-menu__item--icon-subtitle {% if item.url == CURRENT_PATH %}app-menu__item--selected{% endif %}" href="{{ item.url }}">
-					<div class="app-menu__icon">
-						{% svg item.icon %}
-					</div>
-					{{ item.title }}
-					{% if item.notifications %}<span class="app-menu__item-notification">{{ item.notifications }}</span>{% endif %}
-				</a>
-				{% else %}
-				<span></span>
-				{% endif %}
-			{% else %}
-			<a class="app-menu__item app-menu__item--icon-subtitle app-menu__item--disabled" href="#">
+			<a class="app-menu__item app-menu__item--icon-subtitle {% if item.url == CURRENT_PATH %}app-menu__item--selected{% endif %}" href="{{ item.url }}">
 				<div class="app-menu__icon">
 					{% svg item.icon %}
 				</div>
 				{{ item.title }}
 				{% if item.notifications %}<span class="app-menu__item-notification">{{ item.notifications }}</span>{% endif %}
 			</a>
-			{% endif %}
 		{% endfor %}
 	</div>
 
