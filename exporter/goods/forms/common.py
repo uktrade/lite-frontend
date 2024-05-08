@@ -508,7 +508,9 @@ class ProductOnwardIncorporatedForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.p("For example, will it be integrated into a higher system, platform or software?"),
+            HTML.p(
+                "Incorporation means integrating your product into a higher system, platform, or software, and then exporting it in its new form."
+            ),
             ConditionalRadios(
                 "is_onward_incorporated",
                 ConditionalRadiosQuestion("Yes", "is_onward_incorporated_comments"),
