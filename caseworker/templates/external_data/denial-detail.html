@@ -75,6 +75,10 @@
                 <th scope="row" class="govuk-table__header">Revoked</th>
                 <td class="govuk-table__cell">{{ denial.is_revoked|yesno }}{% if denial.is_revoked %}, {{ denial.is_revoked_comment }}{% endif %}</td>
             </tr>
+            <tr class="govuk-table__row app-table__row">
+                <th scope="row" class="govuk-table__header">Reason for refusal</th>
+                <td class="govuk-table__cell">{{ denial.reason_for_refusal }}</td>
+            </tr>
         </tbody>
     </table>
 

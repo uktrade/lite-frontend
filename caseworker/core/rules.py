@@ -1,7 +1,13 @@
 import rules
 
+from caseworker.advice.services import (
+    filter_advice_by_teams,
+    GOODS_NOT_LISTED_ID,
+    OGD_TEAMS,
+)
 from caseworker.core.constants import ADMIN_TEAM_ID, TAU_TEAM_ID
 from caseworker.cases.services import get_case_sub_statuses
+from caseworker.flags.helpers import has_flag
 
 
 @rules.predicate
@@ -48,10 +54,26 @@ def is_user_in_tau_team(request):
     return user and user.get("team", {}).get("id") == TAU_TEAM_ID
 
 
+@rules.predicate
+def case_has_ogd_advice(request, case):
+    if not case["advice"]:
+        return False
+
+    if not filter_advice_by_teams(case["advice"], OGD_TEAMS):
+        return False
+
+    return True
+
+
+@rules.predicate
+def case_is_nlr(request, case):
+    return has_flag(case, GOODS_NOT_LISTED_ID)
+
+
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
 rules.add_rule("can_user_review_and_countersign", is_user_allocated)
-rules.add_rule("can_user_review_and_combine", is_user_allocated)
+rules.add_rule("can_user_review_and_combine", is_user_allocated & (case_has_ogd_advice | case_is_nlr))  # noqa
 rules.add_rule("can_user_assess_products", is_user_allocated & (is_user_in_tau_team | is_user_in_admin_team))  # noqa
 rules.add_rule("can_user_add_an_ejcu_query", is_user_allocated)
 rules.add_rule("can_user_attach_document", rules.always_allow)

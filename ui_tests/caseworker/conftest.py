@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from core.constants import CaseStatusEnum
-from ui_tests.caseworker.pages.advice import FinalAdvicePage, TeamAdvicePage
+from ui_tests.caseworker.pages.advice import FinalAdvicePage, RecommendationsAndDecisionPage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.teams_pages import TeamsPages
 from ui_tests.caseworker.pages.case_officer_page import CaseOfficerPage
@@ -166,6 +166,38 @@ def prepare_for_final_review(api_test_client):  # noqa
 
 
 def prepare_case(api_test_client, nlr):  # noqa
+    data = [
+        {
+            "type": "approve",
+            "text": "approved",
+            "note": "approved",
+            "end_user": api_test_client.context["end_user"]["id"],
+            "footnote_required": False,
+        },
+        {
+            "type": "approve",
+            "text": "approved",
+            "note": "approved",
+            "ultimate_end_user": api_test_client.context["ultimate_end_user"]["id"],
+            "footnote_required": False,
+        },
+        {
+            "type": "approve",
+            "text": "approved",
+            "note": "approved",
+            "consignee": api_test_client.context["consignee"]["id"],
+            "footnote_required": False,
+        },
+        {
+            "type": "approve",
+            "text": "approved",
+            "note": "approved",
+            "third_party": api_test_client.context["third_party"]["id"],
+            "footnote_required": False,
+        },
+    ]
+    api_test_client.gov_users.put_test_user_in_team("FCDO")
+    api_test_client.cases.create_user_advice(api_test_client.context["case_id"], data)
     api_test_client.gov_users.put_test_user_in_team("Admin")
     api_test_client.flags.assign_case_flags(api_test_client.context["case_id"], [])
     api_test_client.gov_users.put_test_user_in_team("Licensing Unit")
@@ -893,6 +925,48 @@ def submit_case_as_team_with_decision(driver, team, queue, decision, context, in
     submit_form(driver)
     click_on_created_application(driver, context, internal_url)
     case_page = CasePage(driver)
+    case_page.change_tab(CaseTabs.DETAILS)
+
+
+@when(parsers.parse('I switch to "{team}" with queue "{queue}" and I approve the case'))
+def approve_case_as_team(driver, team, queue, context, internal_url, internal_info):  # noqa
+    get_profile_page(driver)
+    go_to_team_edit_page(driver, team, queue)
+    get_my_case_list(driver)
+    i_click_application_previously_created(driver, context)
+    i_assign_myself_to_case(driver, internal_info)
+    case_page = CasePage(driver)
+    case_page.change_tab(CaseTabs.RECOMMENDATIONS_AND_DECISIONS)
+    recommendation_and_decisions_page = RecommendationsAndDecisionPage(driver)
+    recommendation_and_decisions_page.click_make_recommendation()
+    recommendation_and_decisions_page.click_approve_all()
+    Shared(driver).click_submit()
+    recommendation_and_decisions_page.enter_reasons_for_approving("approving")
+    functions.click_submit(driver)  # Submit recommmendation
+    functions.click_submit(driver)  # Move case forward
+    click_on_created_application(driver, context, internal_url)
+    case_page.change_tab(CaseTabs.DETAILS)
+
+
+@when(parsers.parse('I switch to "{team}" with queue "{queue}" and I approve the case with countries "{countries}"'))
+def approve_case_as_team(driver, team, queue, context, internal_url, internal_info, countries):  # noqa
+    get_profile_page(driver)
+    go_to_team_edit_page(driver, team, queue)
+    get_my_case_list(driver)
+    i_click_application_previously_created(driver, context)
+    i_assign_myself_to_case(driver, internal_info)
+    case_page = CasePage(driver)
+    case_page.change_tab(CaseTabs.RECOMMENDATIONS_AND_DECISIONS)
+    recommendation_and_decisions_page = RecommendationsAndDecisionPage(driver)
+    recommendation_and_decisions_page.click_make_recommendation()
+    recommendation_and_decisions_page.click_approve_all()
+    Shared(driver).click_submit()
+    recommendation_and_decisions_page.enter_reasons_for_approving("approving")
+    for country in [country.strip() for country in countries.split(",")]:
+        recommendation_and_decisions_page.select_country(country)
+    functions.click_submit(driver)  # Submit recommmendation
+    functions.click_submit(driver)  # Move case forward
+    click_on_created_application(driver, context, internal_url)
     case_page.change_tab(CaseTabs.DETAILS)
 
 
