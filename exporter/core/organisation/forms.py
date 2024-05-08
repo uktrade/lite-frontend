@@ -244,7 +244,7 @@ class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
     region = forms.CharField(
         label="County or state",
         error_messages={
-            "required": "Enter a real region",
+            "required": "Enter a county or state”",
         },
     )
 
