@@ -270,7 +270,7 @@ def test_can_user_search_products(mock_gov_user, get_mock_request, mock_gov_user
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_search_products", request) == expected
+    assert rules.test_rule("can_user_search_products_or_upload_denials", request) == expected
 
 
 @pytest.mark.parametrize(
