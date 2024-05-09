@@ -698,6 +698,9 @@ class Denials(LoginRequiredMixin, TemplateView):
         if search:
             response = search_denials(request=self.request, search=search, filter=filter).json()
             results = response["results"]
+            for result in results:
+                if result["country"]:
+                    result["country"] = f"<mark>{result['country']}</mark>"
             total_pages = response["total_pages"]
 
         return super().get_context_data(
