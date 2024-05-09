@@ -8,8 +8,8 @@ else
 	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
 endif
 
-wait-for-caseworker = dockerize -wait http://caseworker:8200/healthcheck -timeout 5m -wait-retry-interval 5s
-wait-for-exporter = dockerize -wait http://exporter:8300/healthcheck -timeout 5m -wait-retry-interval 5s
+wait-for-caseworker = dockerize -wait http://caseworker:8200/healthcheck -timeout 10m -wait-retry-interval 5s
+wait-for-exporter = dockerize -wait http://exporter:8300/healthcheck -timeout 10m -wait-retry-interval 5s
 
 ifdef CI
 	start-command = up --build --force-recreate -d
