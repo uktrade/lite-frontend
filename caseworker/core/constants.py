@@ -72,6 +72,8 @@ class Role(Enum):
     TAU_SENIOR_MANAGER = "TAU Senior Manager"
     SUPER_USER = "Super User"
 
+    tau_roles = ["TAU Manager", "TAU Officer", "TAU Senior Manager", "Super User"]
+
 
 class FlagLevels:
     CASES = "cases"
