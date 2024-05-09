@@ -55,12 +55,6 @@ def lite_menu(request):
     if "lite_api_user_id" in request.session:
         permissions = get_user_permissions(request)
         role_name = get_user_role_name(request)
-        tau_roles = [
-            Role.TAU_SENIOR_MANAGER.value,
-            Role.TAU_MANAGER.value,
-            Role.TAU_OFFICER.value,
-            Role.SUPER_USER.value,
-        ]
         notifications = get_menu_notifications(request)
         notification_data = notifications["notifications"]
         has_notifications = notifications["has_notifications"]
@@ -108,7 +102,7 @@ def lite_menu(request):
                 {"title": "Routing rules", "url": reverse_lazy("routing_rules:list"), "icon": "menu/routing-rules"},
             ),
             conditional(
-                role_name in tau_roles,
+                role_name in Role.tau_roles.value,
                 {"title": "Denial records", "url": reverse_lazy("external_data:denials-upload"), "icon": "menu/cases"},
             ),
         ]
