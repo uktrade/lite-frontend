@@ -172,6 +172,7 @@ def test_view_user_edit_team_permissions(
         "role": {
             "id": role_id,
             "permissions": {},
+            "name": "Test Role",
         },
         "team": {
             "id": team_id,
@@ -227,6 +228,7 @@ def test_edit_user_edit_team_permissions(
         "role": {
             "id": role_id,
             "permissions": {},
+            "name": "Test Role",
         },
         "team": {
             "id": team_id,
