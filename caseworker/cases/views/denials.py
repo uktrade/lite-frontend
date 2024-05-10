@@ -55,6 +55,7 @@ class Denials(LoginRequiredMixin, FormView):
         return (" ".join(search), filter)
 
     def get_initial(self):
+
         default_search, _ = self.get_search_filter()
 
         return {
@@ -62,26 +63,26 @@ class Denials(LoginRequiredMixin, FormView):
             "page": self.request.GET.get("page", 1),
             "end_user": self.request.GET.get("end_user"),
             "consignee": self.request.GET.get("consignee", ""),
-            "ultimate_end_user": self.request.GET.get("ultimate_end_user", ""),
-            "third_parties": self.request.GET.get("third_parties", ""),
-            "end_user": self.request.GET.get("end_user", ""),
+            "ultimate_end_user": self.request.GET.get("ultimate_end_user"),
+            "third_parties": self.request.GET.get("third_parties"),
         }
 
     def get_context_data(self, **kwargs):
         total_pages = 0
         count = 0
         results = []
+        search = []
 
         default_search, filter = self.get_search_filter()
         search_string = self.request.GET.get("search_string", default_search)
 
         search_string = self.reg_expression_search_query.findall(search_string)
-        search = [s.replace('"', "") if "address" in s else s for s in search_string]
-
-        response = search_denials(request=self.request, search=search, filter=filter).json()
-        results = response["results"]
-        total_pages = response["total_pages"]
-        count = response["count"]
+        search = [s.replace('"', "") for s in search_string]
+        if search:
+            response = search_denials(request=self.request, search=search, filter=filter).json()
+            results = response["results"]
+            total_pages = response["total_pages"]
+            count = response["count"]
 
         return super().get_context_data(
             search_string=search,

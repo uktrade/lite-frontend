@@ -325,6 +325,7 @@ def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, s
     requests_mock.get(
         client._build_absolute_uri(f"/external-data/denial-search/"),
     )
+
     url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
     response = authorized_client.get(f"{url}")
 
