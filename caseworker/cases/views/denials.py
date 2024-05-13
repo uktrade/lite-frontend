@@ -6,6 +6,7 @@ from core.auth.views import LoginRequiredMixin
 from caseworker.cases.forms.denial_forms import DenialSearchForm
 from caseworker.cases.services import get_case
 from caseworker.external_data.services import search_denials
+from caseworker.cases.constants import PartyType
 
 
 class Denials(LoginRequiredMixin, FormView):
@@ -21,10 +22,10 @@ class Denials(LoginRequiredMixin, FormView):
     def parties_to_search(self):
         parties_to_search = []
         for party_type in self.request.GET.keys():
-            if party_type in ["end_user", "consignee"]:
+            if party_type in [PartyType.END_USER, PartyType.CONSIGNEE]:
                 parties_to_search.append(self.case.data[party_type])
 
-            if party_type == "ultimate_end_user":
+            if party_type == PartyType.ULTIMATE_END_USER:
                 selected_ultimate_end_user_ids = self.request.GET.getlist(party_type)
                 parties_to_search.extend(
                     [
@@ -34,7 +35,7 @@ class Denials(LoginRequiredMixin, FormView):
                     ]
                 )
 
-            if party_type == "third_party":
+            if party_type == PartyType.THIRD_PARTY:
                 selected_third_party_ids = self.request.GET.getlist(party_type)
                 parties_to_search.extend(
                     [entity for entity in self.case.data["third_parties"] if entity["id"] in selected_third_party_ids]
@@ -43,29 +44,26 @@ class Denials(LoginRequiredMixin, FormView):
 
     def get_search_filter(self):
 
-        search = []
+        search_filter = []
         filter = {
             "country": set(),
         }
 
         for party in self.parties_to_search:
-            search.append(f'name:"{party["name"]}"')
-            search.append(f'address:"{party["address"]}"')
+            search_filter.append(f'name:"{party["name"]}"')
+            search_filter.append(f'address:"{party["address"]}"')
             filter["country"].add(party["country"]["name"])
-        return (" ".join(search), filter)
+        return (" ".join(search_filter), filter)
 
     def get_initial(self):
 
         default_search, _ = self.get_search_filter()
-
         return {
-            "search_string": self.request.GET.get("search_string", default_search),
-            "page": self.request.GET.get("page", 1),
-            "end_user": self.request.GET.get("end_user"),
-            "consignee": self.request.GET.get("consignee", ""),
-            "ultimate_end_user": self.request.GET.get("ultimate_end_user"),
-            "third_parties": self.request.GET.get("third_parties"),
+            "search_string": default_search,
         }
+
+    def form_valid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
         total_pages = 0
@@ -73,16 +71,19 @@ class Denials(LoginRequiredMixin, FormView):
         results = []
         search = []
 
-        default_search, filter = self.get_search_filter()
-        search_string = self.request.GET.get("search_string", default_search)
+        search_string, filter = self.get_search_filter()
+
+        if self.request.method == "POST":
+            search_string = kwargs["form"].cleaned_data["search_string"]
 
         search_string = self.reg_expression_search_query.findall(search_string)
         search = [s.replace('"', "") for s in search_string]
+
         if search:
-            response = search_denials(request=self.request, search=search, filter=filter).json()
-            results = response["results"]
-            total_pages = response["total_pages"]
-            count = response["count"]
+            search_results, _ = search_denials(request=self.request, search=search, filter=filter)
+            results = search_results["results"]
+            total_pages = search_results["total_pages"]
+            count = search_results["count"]
 
         return super().get_context_data(
             search_string=search,

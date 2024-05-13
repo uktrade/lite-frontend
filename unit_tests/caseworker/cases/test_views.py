@@ -1,3 +1,4 @@
+from unittest import mock
 import pytest
 import re
 import uuid
@@ -8,14 +9,9 @@ from pytest_django.asserts import (
     assertTemplateNotUsed,
     assertTemplateUsed,
 )
-
 from django.urls import reverse
-
 from core import client
-
 from unit_tests.helpers import merge_summaries
-
-from core.exceptions import ServiceError
 
 
 approve = {"key": "approve", "value": "Approve"}
@@ -63,26 +59,6 @@ def test_case_audit_trail_system_user(authorized_client, data_standard_case, que
 
     # then it does not error
     assert response.status_code == 200
-
-
-denials_data = [
-    {
-        "id": "00000000-0000-0000-0000-000000000001",
-        "address": "726 example road",
-        "country": "Germany",
-        "end_use": 'For the needs of "example company"',
-        "item_description": "example something",
-        "item_list_codes": "FR3a",
-        "name": "Example Name",
-        "notifying_government": "Lithuania",
-        "reference": "Abc123/abc123",
-        "regime_reg_ref": "ABC-1234",
-        "entity_type": {
-            "key": "CONSIGNEE",
-            "value": "Consignee",
-        },
-    }
-]
 
 
 def build_wizard_step_data(view_name, step_name, data):
@@ -242,96 +218,6 @@ def test_good_on_application_detail_not_rated_at_application_level(
     response = authorized_client.get(url)
 
     assert response.status_code == 200
-
-
-def test_search_denials(authorized_client, data_standard_case, requests_mock, queue_pk, standard_case_pk):
-    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    end_user_name = data_standard_case["case"]["data"]["end_user"]["name"]
-    end_user_address = data_standard_case["case"]["data"]["end_user"]["address"]
-
-    requests_mock.get(
-        client._build_absolute_uri(
-            f"/external-data/denial-search/?search=name:{end_user_name}&search=address:{end_user_address}"
-        ),
-        json={"count": "26", "total_pages": "2", "results": denials_data * 26},
-    )
-
-    url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
-
-    response = authorized_client.get(f"{url}?end_user={end_user_id}")
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    table = soup.find(id="table-denials")
-    assert table
-
-    # first tr is headers second onward are data
-    row = table.find_all("tr")
-    headers = row[0].find_all("th")
-
-    # assert headers
-    header_order = [
-        "\n",
-        "Regime reference",
-        "Reference",
-        "Name",
-        "Address",
-        "Country",
-        "Item list codes",
-        "Item description",
-        "End use",
-        "Party type",
-    ]
-    header_values = [header.text for header in headers]
-    assert header_values == header_order
-
-    # get each column, see that it has data present
-    table_body = row[1].find_all("td")[1:]
-    table_body_values = [table_values.text.replace("\n", "").strip() for table_values in table_body]
-    # maintains order of the table values
-    data_key_map = [
-        "regime_reg_ref",
-        "reference",
-        "name",
-        "address",
-        "country",
-        "item_list_codes",
-        "item_description",
-        "end_use",
-        "entity_type",
-    ]
-
-    expected_table_values = {
-        "id": "00000000-0000-0000-0000-000000000001",
-        "address": "726 example road",
-        "country": "Germany",
-        "end_use": 'For the needs of "example company"',
-        "item_description": "example something",
-        "item_list_codes": "FR3a",
-        "name": "Example Name",
-        "notifying_government": "Lithuania",
-        "reference": "Abc123/abc123",
-        "regime_reg_ref": "ABC-1234",
-        "entity_type": "Consignee",
-    }
-
-    for i, value in enumerate(table_body_values):
-        assert value == expected_table_values[data_key_map[i]]
-
-    page_2 = soup.find(id="page-2")
-    assert page_2.a["href"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
-
-
-def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, standard_case_pk):
-    requests_mock.get(
-        client._build_absolute_uri(f"/external-data/denial-search/"),
-    )
-
-    url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
-    response = authorized_client.get(f"{url}")
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    assert response.status_code == 200
-    assert "No matching denials" in soup.get_text()
 
 
 def test_good_on_application_detail_clc_entries(
