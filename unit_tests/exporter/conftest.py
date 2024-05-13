@@ -690,3 +690,9 @@ def mock_get_application(requests_mock, application_pk, application_reference_nu
         json={"id": application_pk, "reference_code": application_reference_number, "status": "submitted"},
         status_code=200,
     )
+
+
+@pytest.fixture
+def mock_validate_registration_number(requests_mock):
+    url = client._build_absolute_uri("/organisations/registration_number")
+    return requests_mock.post(url=url, json={}, status_code=200)
