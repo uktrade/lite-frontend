@@ -66,7 +66,9 @@ def build_organisation(name, type, address, eori_number, registration_number):
     }
 
 
-def build_organisation_with_primary_site(name, type, eori_number, uk_vat_number, primary_site, phone_number):
+def build_organisation_with_primary_site(
+    name, type, eori_number, uk_vat_number, primary_site, phone_number, registration_number
+):
     return {
         "name": name,
         "type": type,
@@ -74,7 +76,7 @@ def build_organisation_with_primary_site(name, type, eori_number, uk_vat_number,
         "sic_number": "12345",
         "vat_number": uk_vat_number,
         "phone_number": phone_number,
-        "registration_number": "12345678",
+        "registration_number": registration_number,
         "website": "http://www.example-org.com",
         "user": {"email": "name@example.com"},
         "site": {
