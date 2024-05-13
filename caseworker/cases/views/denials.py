@@ -60,6 +60,10 @@ class Denials(LoginRequiredMixin, FormView):
         return {
             "search_string": self.request.GET.get("search_string", default_search),
             "page": self.request.GET.get("page", 1),
+            "end_user": self.request.GET.get("end_user"),
+            "consignee": self.request.GET.get("consignee", ""),
+            "ultimate_end_user": self.request.GET.get("ultimate_end_user", ""),
+            "third_parties": self.request.GET.get("third_parties", ""),
             "end_user": self.request.GET.get("end_user", ""),
         }
 
