@@ -1,17 +1,13 @@
 from django.urls import reverse_lazy
 from caseworker.core.context_processors import lite_menu
+from caseworker.core.constants import Role
 
 import pytest
 
 
 @pytest.mark.parametrize(
     "valid_user_role",
-    [
-        ("TAU Manager"),
-        ("TAU Officer"),
-        ("TAU Senior Manager"),
-        ("Super User"),
-    ],
+    Role.tau_roles.value,
 )
 def test_lite_menu_denial_records_link_for_valid_roles(valid_user_role, authorized_client, mocker):
     mocker.patch("caseworker.core.context_processors.get_user_permissions")
