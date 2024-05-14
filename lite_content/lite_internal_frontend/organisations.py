@@ -110,7 +110,7 @@ class RegisterAnOrganisation:
         DESCRIPTION = ""
 
     class RegistrationNumber:
-        TITLE = "Company registration number (CRN)"
+        TITLE = "Companies House registration number (CRN)"
         DESCRIPTION = "8 numbers, or 2 letters followed by 6 numbers."
 
     class UkVatNumber:
@@ -145,7 +145,7 @@ class EditCommercialOrganisationPage(EditOrganisationPage):
         DESCRIPTION = ""
 
     class RegistrationNumber:
-        TITLE = "Company registration number (CRN)"
+        TITLE = "Companies House registration number (CRN)"
         DESCRIPTION = "8 numbers, or 2 letters followed by 6 numbers."
 
     class VATNumber:
