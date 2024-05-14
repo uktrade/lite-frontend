@@ -35,7 +35,7 @@ Feature: I want to add a company to LITE
   @check_company_details
   Scenario: Check company details
     Given I sign in to SSO or am signed into SSO
-    And an anonymous user creates and organisation for review with <eori_number>,<uk_vat_number>,<primary_site>,<phone_number>
+    And an anonymous user creates and organisation for review with <eori_number>,<uk_vat_number>,<primary_site>,<phone_number>,<registration_number>
     When I navigate to organisations
     And I click on In review tab
     Then I should see details of organisation previously created
@@ -49,5 +49,5 @@ Feature: I want to add a company to LITE
     Then I should see details of organisation previously created
 
     Examples:
-    |eori_number    | uk_vat_number | primary_site              | phone_number   |
-    |GB205672212000 | 123456789     | HQ London United Kingdom  | +441234567890  |
+    |eori_number    | uk_vat_number | primary_site             | phone_number  | registration_number |
+    |GB205672212000 | 123456789     | HQ London United Kingdom | +441234567890 | GB111111            |
