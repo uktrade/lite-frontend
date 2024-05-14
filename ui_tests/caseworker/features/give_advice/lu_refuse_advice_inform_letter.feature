@@ -9,6 +9,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     # Setup
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
+    And I prepare the application for final review
     # OGD refusal
     When I go to application previously created
     And I assign myself to the case

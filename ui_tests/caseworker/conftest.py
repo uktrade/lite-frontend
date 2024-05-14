@@ -197,7 +197,7 @@ def prepare_case(api_test_client, nlr):  # noqa
         },
     ]
     api_test_client.gov_users.put_test_user_in_team("FCDO")
-    api_test_client.cases.create_user_advice(api_test_client.context["case_id"], data)
+    # api_test_client.cases.create_user_advice(api_test_client.context["case_id"], data)
     api_test_client.gov_users.put_test_user_in_team("Admin")
     api_test_client.flags.assign_case_flags(api_test_client.context["case_id"], [])
     api_test_client.gov_users.put_test_user_in_team("Licensing Unit")
