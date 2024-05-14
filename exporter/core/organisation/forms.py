@@ -13,6 +13,7 @@ from .validators import (
     validate_registration,
     validate_sic_number,
 )
+from exporter.core.organisation.services import validate_registration_number
 
 
 class RegistrationConfirmation(BaseForm):
@@ -107,7 +108,8 @@ class RegisterDetailsBaseForm(BaseForm):
         label=SIC_CODE_LABEL,
         help_text=(
             "<a href='https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic'"
-            "class='govuk-link govuk-link--no-visited-state' target='_blank'>Find your SIC code.</a>"
+            "class='govuk-link govuk-link--no-visited-state' target='_blank'>Find your SIC code</a>.  If you have more than "
+            "one, enter the SIC code you use most frequently."
         ),
         error_messages={
             "required": "Enter a SIC code",
@@ -129,6 +131,18 @@ class RegisterDetailsBaseForm(BaseForm):
         validators=[validate_registration],
     )
 
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("request"):
+            self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
+
+    def clean_registration_number(self):
+        response, status_code = validate_registration_number(self.request, self.cleaned_data)
+        if status_code != 200:
+            self.add_error("registration_number", response["errors"]["registration_number"])
+            return
+        return self.cleaned_data["registration_number"]
+
 
 class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
     def __init__(self, *args, **kwargs):
@@ -143,6 +157,7 @@ class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
         for field in ["sic_number", "vat_number"]:
             if self.errors.get(field):
                 del self.errors[field]
+        super().clean()
         return
 
     def get_layout_fields(self):
@@ -230,7 +245,7 @@ class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
     region = forms.CharField(
         label="County or state",
         error_messages={
-            "required": "Enter a real region",
+            "required": "Enter a county or state”",
         },
     )
 

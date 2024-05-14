@@ -138,7 +138,10 @@ class ProductPVGradingForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.p("For example, UK Official or NATO Restricted."),
+            HTML.p(
+                "For example, UK Official or NATO Restricted. The government classifies "
+                "information assets into categories like UK-Official or NATO-Restricted."
+            ),
             "is_pv_graded",
             HTML.details(
                 "Help with security gradings",
@@ -508,7 +511,9 @@ class ProductOnwardIncorporatedForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.p("For example, will it be integrated into a higher system, platform or software?"),
+            HTML.p(
+                "Incorporation means integrating your product into a higher system, platform, or software, and then exporting it in its new form."
+            ),
             ConditionalRadios(
                 "is_onward_incorporated",
                 ConditionalRadiosQuestion("Yes", "is_onward_incorporated_comments"),
