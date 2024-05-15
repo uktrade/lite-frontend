@@ -10,6 +10,7 @@ def driver(request, api_client, environment, tmp_download_path):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--incognito")
 
     # This path is shared between different containers with different users and
     # permissions.

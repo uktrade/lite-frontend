@@ -61,7 +61,7 @@ def register_individual(driver, get_eori_number):
 @when("I sign in as a new user without an organisation registered")  # noqa
 def go_to_exporter_when(driver, exporter_url, context):  # noqa
     driver.get(exporter_url)
-    # StartPage(driver).try_click_sign_in_button()
+    StartPage(driver).try_click_sign_in_button()
 
     if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         MockSigninPage(driver).sign_in(fake.email())
