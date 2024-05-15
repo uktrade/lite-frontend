@@ -85,7 +85,7 @@ def test_registration_uk_based_form(data, valid):
             True,
             {},
             forms.RegisterDetailsCommercialUKForm,
-            False,
+            True,
         ),
         (
             {
@@ -108,12 +108,11 @@ def test_register_details_form_required_fields(
     form_class,
     validate_called,
     mock_request,
-    mock_validate_registration_number,
 ):
     mocked_validate_method.return_value = "", 200
     form = form_class(data=data, request=mock_request)
-    assert mocked_validate_method.called == validate_called
     assert form.is_valid() == valid
+    assert mocked_validate_method.called == validate_called
 
     if not valid:
         assert form.errors == error
