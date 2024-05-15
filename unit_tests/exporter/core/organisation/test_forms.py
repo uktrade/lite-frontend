@@ -1,6 +1,7 @@
 import pytest
 from exporter.core.organisation import forms
 from core import client
+from unittest import mock
 
 
 @pytest.fixture
@@ -48,22 +49,18 @@ def test_registration_uk_based_form(data, valid):
 
 
 @pytest.mark.parametrize(
-    "data, valid, error, form_class",
+    "data, valid, error, form_class, validate_called",
     (
         (
             {},
             False,
             {"name": ["Enter a name"], "eori_number": ["Enter a EORI number"]},
             forms.RegisterDetailsIndividualUKForm,
+            False,
         ),
-        (
-            {"name": "joe", "eori_number": "GB205672212000"},
-            True,
-            {},
-            forms.RegisterDetailsIndividualUKForm,
-        ),
-        ({}, False, {"name": ["Enter a name"]}, forms.RegisterDetailsIndividualOverseasForm),
-        ({"name": "joe"}, True, {}, forms.RegisterDetailsIndividualOverseasForm),
+        ({"name": "joe", "eori_number": "GB205672212000"}, True, {}, forms.RegisterDetailsIndividualUKForm, False),
+        ({}, False, {"name": ["Enter a name"]}, forms.RegisterDetailsIndividualOverseasForm, False),
+        ({"name": "joe"}, True, {}, forms.RegisterDetailsIndividualOverseasForm, False),
         (
             {},
             False,
@@ -75,6 +72,7 @@ def test_registration_uk_based_form(data, valid):
                 "registration_number": ["Enter a registration number"],
             },
             forms.RegisterDetailsCommercialUKForm,
+            False,
         ),
         (
             {
@@ -87,13 +85,34 @@ def test_registration_uk_based_form(data, valid):
             True,
             {},
             forms.RegisterDetailsCommercialUKForm,
+            False,
+        ),
+        (
+            {
+                "name": "joe",
+                "registration_number": "",
+            },
+            True,
+            {},
+            forms.RegisterDetailsCommercialOverseasForm,
+            False,
         ),
     ),
 )
+@mock.patch("exporter.core.organisation.forms.validate_registration_number")
 def test_register_details_form_required_fields(
-    data, valid, error, form_class, mock_request, mock_validate_registration_number
+    mocked_validate_method,
+    data,
+    valid,
+    error,
+    form_class,
+    validate_called,
+    mock_request,
+    mock_validate_registration_number,
 ):
+    mocked_validate_method.return_value = "", 200
     form = form_class(data=data, request=mock_request)
+    assert mocked_validate_method.called == validate_called
     assert form.is_valid() == valid
 
     if not valid:
