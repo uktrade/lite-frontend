@@ -18,7 +18,6 @@ fake = Faker("en_GB")
 fake.add_provider(UKPhoneNumberProvider)
 
 
-
 class RegisterOrganisation(BasePage):
     CREATE_ACCOUNT_ID = "button-Create an account"
     COMMERCIAL_INDIVIDUAL_PARTIAL_ID = "type-"
