@@ -137,7 +137,7 @@ class RegisterDetailsBaseForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def clean_registration_number(self):
-        if self.fields["registration_number"].required:
+        if self.cleaned_data["registration_number"]:
             response, status_code = validate_registration_number(self.request, self.cleaned_data)
             if status_code != 200:
                 self.add_error("registration_number", response["errors"]["registration_number"])
