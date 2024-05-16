@@ -56,14 +56,26 @@ class Denials(LoginRequiredMixin, FormView):
         return (" ".join(search_filter), filter)
 
     def get_initial(self):
+        session_search_string = self.get_search_string_from_session()
+        default_search_string, _ = self.get_search_filter()
 
-        default_search, _ = self.get_search_filter()
         return {
-            "search_string": default_search,
+            "search_string": session_search_string or default_search_string,
         }
 
     def form_valid(self, form):
+        search_id = self.request.GET.get("search_id", 1)
+        self.request.session["search_string"] = {search_id: form.cleaned_data["search_string"]}
         return self.render_to_response(self.get_context_data(form=form))
+
+    def get_search_string_from_session(self):
+        # This is required since the search_string shouldn't be sent in the query string due to sensative data
+        # so we require a search_string to be sent via post. Since the pagination currently works as a get only
+        # the query_string set by the user gets lost we should aim to move away from sessions once we have
+        # pagination that works with a post
+        search_id = self.request.GET.get("search_id", 1)
+        if self.request.session.get("search_string") and self.request.session.get("search_string").get(search_id):
+            return self.request.session["search_string"][search_id]
 
     def get_context_data(self, **kwargs):
         total_pages = 0
@@ -71,10 +83,10 @@ class Denials(LoginRequiredMixin, FormView):
         results = []
         search = []
 
-        search_string, filter = self.get_search_filter()
+        default_search_string, filter = self.get_search_filter()
+        session_search_string = self.get_search_string_from_session()
 
-        if self.request.method == "POST":
-            search_string = kwargs["form"].cleaned_data["search_string"]
+        search_string = session_search_string or default_search_string
 
         search_string = self.reg_expression_search_query.findall(search_string)
         search = [s.replace('"', "") for s in search_string]
