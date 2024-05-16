@@ -3,31 +3,34 @@ from caseworker.core.constants import Role
 
 import pytest
 
+# Add valid roles to list of tuples to define the role and whether the user can access the denial records
 
-@pytest.mark.parametrize(
-    "valid_role",
-    Role.tau_roles.value,
-)
-@pytest.mark.parametrize(
-    "invalid_role, status",
-    [
-        ("TAU User", False),
-        ("HMRC Manager", False),
-        ("HMRC User", False),
-    ],
-)
-def test_lite_menu_user_can_access_denial_records(mocker, invalid_role, status, valid_role, authorized_client):
+roles_and_status = []
+for role in Role.tau_roles.value:
+    role = (role, True)
+    roles_and_status.append(role)
+
+# Add invalid roles
+
+invalid_roles = [
+    ("TAU User", False),
+    ("HMRC User", False),
+    ("HMRC Manager", False),
+]
+
+roles_and_status.extend(invalid_roles)
+
+
+@pytest.mark.parametrize("role, status", roles_and_status)
+def test_lite_menu_user_can_access_denial_records(mocker, role, status, authorized_client):
     mocker.patch("caseworker.core.context_processors.get_user_permissions")
-    mocker.patch("caseworker.core.context_processors.get_user_role_name", side_effect=[valid_role, invalid_role])
+    mocker.patch("caseworker.core.context_processors.get_user_role_name", return_value=role)
     mocker.patch("caseworker.core.context_processors.get_queue")
 
     request = mocker.MagicMock()
     request.session = {"lite_api_user_id": "user_id", "default_queue": "00000000-0000-0000-0000-000000000001"}
 
-    valid_status_result = lite_menu(request)
-    valid_menu_options = [item["title"] for item in valid_status_result["LITE_MENU"]]
-    assert "Denial records" in valid_menu_options
+    result = lite_menu(request)
+    menu_options = [item["title"] for item in result["LITE_MENU"]]
 
-    invalid_status_result = lite_menu(request)
-    invalid_menu_options = [item["title"] for item in invalid_status_result["LITE_MENU"]]
-    assert ("Denial records" in invalid_menu_options) == status
+    assert ("Denial records" in menu_options) == status
