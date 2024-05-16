@@ -110,3 +110,7 @@ def organisation_registered_successfully(driver):
     message = soup.find(id="application-processing-message-value").text.replace("\n", "").replace("\t", "").strip()
     assert heading.startswith("You've successfully registered:") == True
     assert message == "We're currently processing your application."
+
+@when("I click the logout link")
+def click_the_logout_link(driver):
+    driver.find_element(by=By.LINK_TEXT, value="Sign out").click()
