@@ -6,7 +6,6 @@ Feature: I want to register an organisation
 
   @register_commercial_organisation
   Scenario: Register a commercial organisation that is based in UK
-    When I click the logout link
     When I sign in as a new user without an organisation registered
     Then I pick an organisation "Commercial organisation"
     And I choose the option "In the United Kingdom"
