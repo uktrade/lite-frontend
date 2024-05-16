@@ -115,6 +115,12 @@ def go_to_exporter_when(driver, exporter_url, context):  # noqa
     driver.delete_all_cookies()
     driver.execute_script("window.localStorage.clear();")
     driver.execute_script("window.sessionStorage.clear();")
+
+    print(settings.MOCK_SSO_USER_EMAIL)
+    settings.MOCK_SSO_USER_EMAIL = "test@mail.com"
+    print(settings.MOCK_SSO_USER_EMAIL)
+    print(settings.MOCK_SSO_ACTIVATE_ENDPOINTS)
+    
     StartPage(driver).try_click_sign_in_button()
 
 
