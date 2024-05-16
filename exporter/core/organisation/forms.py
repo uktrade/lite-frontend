@@ -80,7 +80,7 @@ class RegisterDetailsBaseForm(BaseForm):
     VAT_LABEL = "UK VAT number"
     EORI_LABEL = "European Union registration and identification number (EORI)"
     SIC_CODE_LABEL = "SIC Code"
-    REGISTRATION_LABEL = "Company registration number (CRN)"
+    REGISTRATION_LABEL = "Companies House registration number (CRN)"
 
     class Layout:
         TITLE = "Register a private individual"
@@ -246,7 +246,7 @@ class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
     region = forms.CharField(
         label="County or state",
         error_messages={
-            "required": "Enter a county or state”",
+            "required": "Enter a county or state",
         },
     )
 

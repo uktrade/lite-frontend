@@ -113,7 +113,7 @@ class RegisterAnOrganisation:
             "9 digits long, with the first 2 letters indicating the country code of the registered business."
         )
         VAT_NUMBER_SHORT_TITLE = "UK VAT number"
-        CRN_NUMBER = "Company registration number (CRN)"
+        CRN_NUMBER = "Companies House registration number (CRN)"
         CRN_NUMBER_DESCRIPTION = "8 numbers, or 2 letters followed by 6 numbers."
         CRN_NUMBER_SHORT_TITLE = "CRN number"
 
