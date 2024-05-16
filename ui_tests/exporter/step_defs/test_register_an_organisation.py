@@ -63,6 +63,7 @@ def go_to_exporter_when(driver, exporter_url, context):  # noqa
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
     driver.find_element(by=By.LINK_TEXT, value="Sign out").click()
+    StartPage(driver).try_click_sign_in_button()
 
     if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         MockSigninPage(driver).sign_in(fake.email())
