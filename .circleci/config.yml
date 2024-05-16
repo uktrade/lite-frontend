@@ -322,7 +322,6 @@ jobs:
       image: ubuntu-2204:current
       docker_layer_caching: true
     resource_class: large
-    parallelism: 1
     environment:
       PIPENV_YES: 1
     steps:
