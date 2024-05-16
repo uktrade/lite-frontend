@@ -91,6 +91,11 @@ class RecommendationsAndDecisionPage(BasePage):
         self.driver.find_element(by=By.XPATH, value="//a[contains(text(), 'Make recommendation')]").click()
 
     def click_refuse(self):
+        # Scroll to the bottom of the page.
+        #   This hack is necessary to ensure that the radio button can
+        #   be interacted with properly.  It seems like the GDS styling
+        #   we use does some weird things that get in the way of selenium's clicks
+        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
         self.driver.find_element(by=By.XPATH, value="//input[@type='radio' and @value='refuse']").click()
 
     def click_approve_all(self):
