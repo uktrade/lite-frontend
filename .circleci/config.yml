@@ -167,8 +167,8 @@ commands:
       - browser-tools/install-chrome
       - browser-tools/install-chromedriver
       - run:
-            name: "Install dependencies"
-            command: pip3 install pipenv
+          name: "Install dependencies"
+          command: pip3 install pipenv
       - setup_code_e2e
       - build_api_image:
           api_branch: <<parameters.api_branch>>
@@ -197,8 +197,8 @@ commands:
   run_e2e_exporter:
     steps:
       - run:
-            name: "decode secret ENV variable"
-            command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
+          name: "decode secret ENV variable"
+          command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
       - run_make:
           label: Run exporter e2e tests
           target: start-exporter exporter-e2e-selenium-test
@@ -322,7 +322,7 @@ jobs:
       image: ubuntu-2204:current
       docker_layer_caching: true
     resource_class: large
-    parallelism: 2
+    parallelism: 1
     environment:
       PIPENV_YES: 1
     steps:
@@ -370,9 +370,9 @@ workflows:
       - core_unit_test
       - check_coverage:
           requires:
-              - caseworker_unit_test
-              - exporter_unit_test
-              - core_unit_test
+            - caseworker_unit_test
+            - exporter_unit_test
+            - core_unit_test
       - frontend_unit_test
       - frontend_artefacts_check
       - caseworker_e2e_test
