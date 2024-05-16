@@ -118,7 +118,7 @@ def i_see_edit_button(driver):  # noqa
 
 
 @given("I signin and go to exporter homepage and choose Test Org")  # noqa
-def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, context, exporter_info):  # noqa
+def go_to_exporter(driver, register_organisation, exporter_url, context, exporter_info):  # noqa
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
 
