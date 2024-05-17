@@ -47,8 +47,8 @@ def pytest_configure(config):
         STEP_VERBOSE = config.option.step_verbose
 
     settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
-    settings.TEST_SSO_EMAIL=""
-    settings.EXPORTER_TEST_SSO_EMAIL=""
+    settings.TEST_SSO_EMAIL="test@example.net"
+    settings.EXPORTER_TEST_SSO_EMAIL="something@mail.com"
     settings.MOCK_SSO_USER_FIRST_NAME = "test"
     settings.MOCK_SSO_USER_LAST_NAME = "user"
 
