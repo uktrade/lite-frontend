@@ -31,6 +31,8 @@ def test_lite_menu_user_can_access_denial_records(mocker, role, status, authoriz
     request.session = {"lite_api_user_id": "user_id", "default_queue": "00000000-0000-0000-0000-000000000001"}
 
     result = lite_menu(request)
-    menu_options = [item["title"] for item in result["LITE_MENU"]]
+    menu_titles = [item["title"] for item in result["LITE_MENU"]]
+    menu_urls = [item["url"] for item in result["LITE_MENU"]]
 
-    assert ("Denial records" in menu_options) == status
+    assert ("Denial records" in menu_titles) == status
+    assert ("/denials/upload/" in menu_urls) == status
