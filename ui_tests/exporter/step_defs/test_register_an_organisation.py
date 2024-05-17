@@ -117,6 +117,8 @@ def go_to_exporter_when(driver, exporter_url, context):  # noqa
     driver.execute_script("window.sessionStorage.clear();")
 
     print(settings.MOCK_SSO_USER_EMAIL)
+    settings.MOCK_SSO_USER_EMAIL = "test@mail.com"
+    print(settings.MOCK_SSO_USER_EMAIL)
     print(settings.MOCK_SSO_ACTIVATE_ENDPOINTS)
     
     StartPage(driver).try_click_sign_in_button()
@@ -125,16 +127,14 @@ def go_to_exporter_when(driver, exporter_url, context):  # noqa
     if "signin" in driver.current_url and not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         GovukSigninPage(driver).sign_in(fake.email(), fake.password())
 
-    if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
-        print("HITTING THIS")
+    if settings.MOCK_SSO_ACTIVATE_ENDPOINTS and not getattr(settings, "MOCK_SSO_USER_EMAIL", None):
         MockSigninPage(driver).sign_in(fake.email())
 
         driver.find_element(by=By.ID, value="id_first_name").send_keys(fake.first_name())
         driver.find_element(by=By.ID, value="id_last_name").send_keys(fake.last_name())
         driver.find_element(by=By.CSS_SELECTOR, value="[type='submit']").click()
-    
-    else:
-        assert False
+        
+
 
 @then(parsers.parse('I pick an organisation "{organisation}"'))
 def pick_org(driver, organisation):
