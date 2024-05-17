@@ -125,7 +125,11 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
     if "signin" in driver.current_url and not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         GovukSigninPage(driver).sign_in(exporter_info["email"], exporter_info["password"])
 
-    if settings.MOCK_SSO_ACTIVATE_ENDPOINTS and not getattr(settings, "MOCK_SSO_USER_EMAIL", None):
+    if (
+        "authorize" in driver.current_url
+        and settings.MOCK_SSO_ACTIVATE_ENDPOINTS
+        and not getattr(settings, "MOCK_SSO_USER_EMAIL", None)
+    ):
         MockSigninPage(driver).sign_in(exporter_info["email"])
 
     if "select-organisation" in driver.current_url:
