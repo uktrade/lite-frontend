@@ -112,6 +112,7 @@ def register_individual(driver, get_eori_number):
 def go_to_exporter_when(driver, exporter_url, context):  # noqa
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
+    driver.get(exporter_url.rstrip("/") + "/register-an-organisation")
 
 
     if "signin" in driver.current_url and not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
