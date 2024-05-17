@@ -45,10 +45,9 @@ def pytest_configure(config):
     if config.option.step_verbose:
         global STEP_VERBOSE  # pylint: disable=global-statement
         STEP_VERBOSE = config.option.step_verbose
-
+        
     settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
-    settings.TEST_SSO_EMAIL="test@example.net"
-    settings.EXPORTER_TEST_SSO_EMAIL="something@mail.com"
+    settings.MOCK_SSO_USER_EMAIL = "test@example.net"
     settings.MOCK_SSO_USER_FIRST_NAME = "test"
     settings.MOCK_SSO_USER_LAST_NAME = "user"
 
