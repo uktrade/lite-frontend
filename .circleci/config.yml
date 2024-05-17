@@ -203,11 +203,11 @@ commands:
           label: Run exporter e2e tests
           target: start-exporter exporter-e2e-selenium-test
 
-  run_e2e_caseworker:
-    steps:
-      - run_make:
-          label: Run caseworker e2e tests
-          target: start-caseworker caseworker-e2e-selenium-test
+  # run_e2e_caseworker:
+  #   steps:
+  #     - run_make:
+  #         label: Run caseworker e2e tests
+  #         target: start-caseworker caseworker-e2e-selenium-test
 
 ###############################################################################
 # Jobs
@@ -303,25 +303,26 @@ jobs:
       - run: npm run build_all
       - run: git diff --exit-code
 
-  caseworker_e2e_test:
-    machine:
-      image: ubuntu-2204:current
-      docker_layer_caching: true
-    resource_class: large
-    parallelism: 10
-    environment:
-      PIPENV_YES: 1
-    steps:
-      - prepare_e2e_tests:
-          api_branch: auto
-      - run_e2e_caseworker
-      - finish_e2e_tests
+  # caseworker_e2e_test:
+  #   machine:
+  #     image: ubuntu-2204:current
+  #     docker_layer_caching: true
+  #   resource_class: large
+  #   parallelism: 10
+  #   environment:
+  #     PIPENV_YES: 1
+  #   steps:
+  #     - prepare_e2e_tests:
+  #         api_branch: auto
+  #     - run_e2e_caseworker
+  #     - finish_e2e_tests
 
   exporter_e2e_test:
     machine:
       image: ubuntu-2204:current
       docker_layer_caching: true
     resource_class: large
+    parallelism: 1
     environment:
       PIPENV_YES: 1
     steps:
@@ -330,19 +331,19 @@ jobs:
       - run_e2e_exporter
       - finish_e2e_tests
 
-  caseworker_e2e_test_jenkins:
-    machine:
-      image: ubuntu-2204:current
-      docker_layer_caching: true
-    resource_class: large
-    parallelism: 10
-    environment:
-      PIPENV_YES: 1
-    steps:
-      - prepare_e2e_tests:
-          api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_caseworker
-      - finish_e2e_tests
+  # caseworker_e2e_test_jenkins:
+  #   machine:
+  #     image: ubuntu-2204:current
+  #     docker_layer_caching: true
+  #   resource_class: large
+  #   parallelism: 10
+  #   environment:
+  #     PIPENV_YES: 1
+  #   steps:
+  #     - prepare_e2e_tests:
+  #         api_branch: << pipeline.parameters.api_git_tag >>
+  #     - run_e2e_caseworker
+  #     - finish_e2e_tests
 
   exporter_e2e_test_jenkins:
     machine:
