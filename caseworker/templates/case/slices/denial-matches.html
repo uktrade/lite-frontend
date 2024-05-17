@@ -26,7 +26,7 @@
                         <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
                         </th>
                         {% endif %}
-                        <th scope="col" class="govuk-table__header">Reference</th>
+                        <th scope="col" class="govuk-table__header">Regime Reference</th>
                         <th scope="col" class="govuk-table__header">Name</th>
                         <th scope="col" class="govuk-table__header">Address</th>
                     </tr>
@@ -40,7 +40,7 @@
                                     <input class="govuk-checkboxes__input" type="checkbox" name="objects"
                                         value="{{ match.id }}" id="{{ match.id }}">
                                     <label class="govuk-label govuk-checkboxes__label" for="{{ match.id }}">{{
-                                        match.denial.reference }}</label>
+                                        match.denial.regime_reg_ref }}</label>
                                 </div>
                             </td>
                             {% endif %}
