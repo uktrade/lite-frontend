@@ -109,7 +109,7 @@ def register_individual(driver, get_eori_number):
 
 
 @when("I sign in as a new user without an organisation registered")  # noqa
-def go_to_exporter_when(driver, exporter_url, context):  # noqa
+def go_to_exporter_when(driver, exporter_url):  # noqa
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
     driver.get(exporter_url.rstrip("/") + "/register-an-organisation")
@@ -124,8 +124,6 @@ def go_to_exporter_when(driver, exporter_url, context):  # noqa
         driver.find_element(by=By.ID, value="id_first_name").send_keys(fake.first_name())
         driver.find_element(by=By.ID, value="id_last_name").send_keys(fake.last_name())
         driver.find_element(by=By.CSS_SELECTOR, value="[type='submit']").click()
-        
-
 
 @then(parsers.parse('I pick an organisation "{organisation}"'))
 def pick_org(driver, organisation):

@@ -23,4 +23,3 @@ Feature: I want to register an organisation
     When I enter my information to register an individual organisation
     Then the organisation is registered successfully
     And I logout
-
