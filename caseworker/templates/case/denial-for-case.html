@@ -11,7 +11,15 @@
         <div class="govuk-grid-column-full govuk-!-margin-bottom-6">
             <a class="lite-back-link-button" id="back-link" href="{% url 'cases:case' queue_pk=queue.id pk=case.id tab="details" %}">Back</a>
         </div>
+        <div class="govuk-grid-column-full">
+            <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
+                Denial matches
+                <p class="govuk-!-margin-top-2 govuk-caption-l"> Results found {{ count }}</p>
+            </h2>
+        </div>
+
         <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-label">Review suggested matches for the following parties. </p>
             <table id="table-Party-details" class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
@@ -33,11 +41,9 @@
                 </tbody>
             </table>
         </div>
-        <div class="govuk-grid-column-full">
-            <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
-                Denial matches
-                <p class="govuk-!-margin-top-2 govuk-caption-l">{{ names|join:', ' }}</p>
-            </h2>
+
+        <div class="govuk-grid-column-two-thirds">
+            {% crispy form %}
         </div>
 
         <div class="govuk-grid-column-full">
@@ -98,7 +104,7 @@
                                 <td class="govuk-table__cell">{{ denial.name|safe }}</td>
                                 <td class="govuk-table__cell">{{ denial.address|safe }}</td>
                                 <td class="govuk-table__cell">{{ denial.country }}</td>
-                                <td class="govuk-table__cell">{{ denial.item_list_codes }}</td>
+                                <td class="govuk-table__cell">{{ denial.item_list_codes|safe }}</td>
                                 <td class="govuk-table__cell">{{ denial.item_description }}</td>
                                 <td class="govuk-table__cell">{{ denial.end_use }}</td>
                                 <td class="govuk-table__cell">{{ denial.entity_type.value }}</td>

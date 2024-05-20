@@ -1,6 +1,13 @@
 from enum import Enum
 
 
+class PartyType:
+    END_USER = "end_user"
+    CONSIGNEE = "consignee"
+    ULTIMATE_END_USER = "ultimate_end_user"
+    THIRD_PARTY = "third_party"
+
+
 class CaseType(Enum):
     APPLICATION = "application"
     QUERY = "query"
