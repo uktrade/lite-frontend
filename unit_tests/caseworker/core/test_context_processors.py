@@ -1,25 +1,38 @@
-from django.urls import reverse
+from caseworker.core.context_processors import lite_menu
+from caseworker.core.constants import Role
 
 import pytest
 
+# Add valid roles to list of tuples to define the role and whether the user can access the denial records
 
-@pytest.fixture(autouse=True)
-def setup(mock_queue, mock_case):
-    yield
+roles_and_status = []
+for role in Role.tau_roles.value:
+    role = (role, True)
+    roles_and_status.append(role)
+
+# Add invalid roles
+
+invalid_roles = [
+    ("TAU User", False),
+    ("HMRC User", False),
+    ("HMRC Manager", False),
+]
+
+roles_and_status.extend(invalid_roles)
 
 
-@pytest.mark.parametrize(
-    "queue, is_all_cases_queue",
-    (
-        ("00000000-0000-0000-0000-000000000001", True),
-        ("1b926457-5c9e-4916-8497-51886e51863a", False),
-        ("c270b79b-370c-4c5e-b8b6-4d5210a58956", False),
-    ),
-)
-def test_is_all_cases_queue(queue, is_all_cases_queue, authorized_client, data_standard_case):
-    url = reverse(
-        "cases:attach_documents",
-        kwargs={"queue_pk": queue, "pk": data_standard_case["case"]["id"]},
-    )
-    resp = authorized_client.get(url)
-    assert resp.context.get("is_all_cases_queue") == is_all_cases_queue
+@pytest.mark.parametrize("role, status", roles_and_status)
+def test_lite_menu_user_can_access_denial_records(mocker, role, status, authorized_client):
+    mocker.patch("caseworker.core.context_processors.get_user_permissions")
+    mocker.patch("caseworker.core.context_processors.get_user_role_name", return_value=role)
+    mocker.patch("caseworker.core.context_processors.get_queue")
+
+    request = mocker.MagicMock()
+    request.session = {"lite_api_user_id": "user_id", "default_queue": "00000000-0000-0000-0000-000000000001"}
+
+    result = lite_menu(request)
+    menu_titles = [item["title"] for item in result["LITE_MENU"]]
+    menu_urls = [item["url"] for item in result["LITE_MENU"]]
+
+    assert ("Denial records" in menu_titles) == status
+    assert ("/denials/upload/" in menu_urls) == status
