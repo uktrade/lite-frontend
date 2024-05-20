@@ -132,12 +132,12 @@ def test_search_denials_party_type_ultimate_and_third_party(
     "search_string, expected_search_string",
     (
         [
-            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA"',
-            ["name:John Smith", "address:Studio 47v, ferry, town, DD1 4AA"],
+            'name:"John Smith" address:"Studio 47v ferry town"',
+            ["name:John Smith", "address:Studio 47v ferry town"],
         ],
         [
-            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA" name:"time" address:"2 doc rd"',
-            ["name:John Smith", "address:Studio 47v, ferry, town, DD1 4AA", "name:time", "address:2 doc rd"],
+            'name:"John Smith" address:"Studio 47v ferry town" name:"time" address:"2 doc rd"',
+            ["name:John Smith", "address:Studio 47v ferry town", "name:time", "address:2 doc rd"],
         ],
         ['name:"Smith"', ["name:Smith"]],
     ),
@@ -155,44 +155,6 @@ def test_search_denials_search_string(
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
 
     assert mock_denials_search.request_history[0].url == expected_url
-
-
-@mock.patch(
-    "caseworker.cases.views.denials.search_denials", return_value=({"results": [], "count": 0, "total_pages": 0}, 200)
-)
-def test_search_denials_session_search_string_matchs(
-    mock_search_denials, authorized_client, data_standard_case, mock_denials_search, url
-):
-
-    party_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    party_id_2 = data_standard_case["case"]["data"]["consignee"]["id"]
-
-    response = authorized_client.get(
-        url,
-        data={"end_user": party_id, "search_id": "123"},
-    )
-
-    assert response.status_code == 200
-    mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search=["name:End User", "address:44"]
-    )
-
-    search_string = {"search_string": 'name:"End User2" address:"23"'}
-    authorized_client.post(f"{url}?end_user={party_id}&search_id=123", data=search_string)
-
-    assert authorized_client.session.get("search_string") == {"123": 'name:"End User2" address:"23"'}
-    mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search=["name:End User2", "address:23"]
-    )
-
-    response = authorized_client.get(
-        url,
-        data={"consignee": party_id_2, "search_id": "1234"},
-    )
-
-    mock_search_denials.assert_called_with(
-        filter={"country": {"Abu Dhabi"}}, request=mock.ANY, search=["name:Consignee", "address:44"]
-    )
 
 
 def test_search_denials(

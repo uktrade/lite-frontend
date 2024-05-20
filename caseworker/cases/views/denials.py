@@ -51,7 +51,7 @@ class Denials(LoginRequiredMixin, FormView):
 
         for party in self.parties_to_search:
             search_filter.append(f'name:"{party["name"]}"')
-            search_filter.append(f'address:"{party["address"].replace(",", "")}"')
+            search_filter.append(f'address:"{party["address"]}"')
             filter["country"].add(party["country"]["name"])
         return (" ".join(search_filter), filter)
 
@@ -60,7 +60,7 @@ class Denials(LoginRequiredMixin, FormView):
         default_search_string, _ = self.get_search_filter()
 
         return {
-            "search_string": session_search_string or default_search_string,
+            "search_string": session_search_string or default_search_string.replace(",", ""),
         }
 
     def form_valid(self, form):
@@ -75,7 +75,7 @@ class Denials(LoginRequiredMixin, FormView):
         # pagination that works with a post
         search_id = self.request.GET.get("search_id", 1)
         if self.request.session.get("search_string") and self.request.session.get("search_string").get(search_id):
-            return self.request.session["search_string"][search_id].replace(",", "")
+            return self.request.session["search_string"][search_id]
 
     def get_context_data(self, **kwargs):
         total_pages = 0
