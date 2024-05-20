@@ -138,10 +138,7 @@ class ProductPVGradingForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.p(
-                "For example, UK Official or NATO Restricted. The government classifies "
-                "information assets into categories like UK-Official or NATO-Restricted."
-            ),
+            HTML.p("The government classifies information assets into categories like UK-Official or NATO-Restricted."),
             "is_pv_graded",
             HTML.details(
                 "Help with security gradings",

@@ -80,7 +80,7 @@ class RegisterDetailsBaseForm(BaseForm):
     VAT_LABEL = "UK VAT number"
     EORI_LABEL = "European Union registration and identification number (EORI)"
     SIC_CODE_LABEL = "SIC Code"
-    REGISTRATION_LABEL = "Company registration number (CRN)"
+    REGISTRATION_LABEL = "Companies House registration number (CRN)"
 
     class Layout:
         TITLE = "Register a private individual"
@@ -137,10 +137,11 @@ class RegisterDetailsBaseForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def clean_registration_number(self):
-        response, status_code = validate_registration_number(self.request, self.cleaned_data)
-        if status_code != 200:
-            self.add_error("registration_number", response["errors"]["registration_number"])
-            return
+        if self.cleaned_data["registration_number"]:
+            response, status_code = validate_registration_number(self.request, self.cleaned_data)
+            if status_code != 200:
+                self.add_error("registration_number", response["errors"]["registration_number"])
+                return
         return self.cleaned_data["registration_number"]
 
 
@@ -245,7 +246,7 @@ class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
     region = forms.CharField(
         label="County or state",
         error_messages={
-            "required": "Enter a county or state”",
+            "required": "Enter a county or state",
         },
     )
 
