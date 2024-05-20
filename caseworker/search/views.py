@@ -32,6 +32,7 @@ class ProductSearchView(LoginRequiredMixin, FormView):
         # when we first get to the page query_params are empty.
         # if we don't use empty string then search term becomes None
         # and we get some results even though the input field is empty
+
         query_params = {
             "search": self.request.GET.get("search_string", ""),
             "page": self.request.GET.get("page", 1),
