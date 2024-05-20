@@ -52,10 +52,10 @@
                 {% csrf_token %}
                 <div class="lite-buttons-row">
                     <button id="button-exact-match" formaction="{% url 'cases:matching-denials' queue.id case.id 'exact' %}" class="govuk-button" data-module="govuk-button">
-                        Add as exact match
+                        Add as full match
                     </button>
                     <button id="button-exact-match" formaction="{% url 'cases:matching-denials' queue.id case.id 'partial' %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                        Add as partial match
+                        Add as possible match
                     </button>
                 </div>
             {% endif %}
