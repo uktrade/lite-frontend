@@ -300,33 +300,52 @@ def post_approval_advice(request, case, data, level="user-advice"):
     elif case.sub_type == "f680_clearance":
         advice_type = "f680"
 
-    json = [
-        {
-            "type": advice_type,
-            "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-            "note": data["instructions_to_exporter"],
-            "footnote_required": True if data["footnote_details"] else False,
-            "footnote": data["footnote_details"],
-            subject_name: subject_id,
-            "denial_reasons": [],
-        }
-        for subject_name, subject_id in get_advice_subjects(case, data.get("countries"))
-    ]
-    json_nlr_products = [
-        {
-            "type": "no_licence_required",
-            "text": "",
-            "proviso": "",
-            "note": "",
-            "footnote_required": False,
-            "footnote": "",
-            "good": good["id"],
-            "denial_reasons": [],
-        }
-        for good in filter_nlr_products(case["data"]["goods"])
-    ]
-    response = client.post(request, f"/cases/{case['id']}/{level}/", json + json_nlr_products)
+    body = []
+    if case.sub_type == "open":
+        body = [
+            {
+                "type": advice_type,
+                "text": data["approval_reasons"],
+                "proviso": data["proviso"],
+                "note": data["instructions_to_exporter"],
+                "footnote_required": True if data["footnote_details"] else False,
+                "footnote": data["footnote_details"],
+                "good_on_applications": [good["id"] for good in case.goods],
+                "countries": [destination["country"]["id"] for destination in case.destinations],
+                "denial_reasons": [],
+            }
+        ]
+    else:
+
+        json = [
+            {
+                "type": advice_type,
+                "text": data["approval_reasons"],
+                "proviso": data["proviso"],
+                "note": data["instructions_to_exporter"],
+                "footnote_required": True if data["footnote_details"] else False,
+                "footnote": data["footnote_details"],
+                subject_name: subject_id,
+                "denial_reasons": [],
+            }
+            for subject_name, subject_id in get_advice_subjects(case, data.get("countries"))
+        ]
+        json_nlr_products = [
+            {
+                "type": "no_licence_required",
+                "text": "",
+                "proviso": "",
+                "note": "",
+                "footnote_required": False,
+                "footnote": "",
+                "good": good["id"],
+                "denial_reasons": [],
+            }
+            for good in filter_nlr_products(case["data"]["goods"])
+        ]
+        body = json + json_nlr_products
+
+    response = client.post(request, f"/cases/{case['id']}/{level}/", body)
     response.raise_for_status()
     return response.json(), response.status_code
 
@@ -624,6 +643,9 @@ def unadvised_countries(caseworker, case):
         for advice in case.advice
         if advice.get(dest_type) is not None
     }
+    # Horrible hack while case.destinations has an inconsistent contract..
+    if case.destinations and not case.destinations[0].get("id"):
+        return {}
     return {
         dest["country"]["id"]: dest["country"]["name"]
         for dest in case.destinations

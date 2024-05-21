@@ -91,6 +91,18 @@
                     {% endif %}
                 {% endfor %}
             {% endif %}
+            {% if item.open_destinations %}
+                {% for open_destination in case.data.open_destinations %}
+                    {% if open_destination.country.id in item.open_destinations %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ open_destination.country.name }}</td>
+                            <td class="govuk-table__cell">Open destination - {{ open_destination.destination_permitted }}</td>
+                            <td class="govuk-table__cell">-</td>
+                            <td class="govuk-table__cell">{% for goa_id in item.good_on_applications %}{% for goa in case.goods %}{% if goa.id == goa_id %}{{goa.good.name}}{% endif %}{% endfor %}, {% endfor %}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>

@@ -113,6 +113,7 @@
 						{% endif %}
 					{% endfor %}
 				</tbody>
+            {# The following block is for displaying open destinations - the trigger from the if statement above for destination.website is not great; we should work out a better approach #}
 			{% else %}
 				<thead class="govuk-table__head">
 					<tr class="govuk-table__row">
@@ -121,10 +122,8 @@
 							</th>
 						{% endif %}
 						<th scope="col" class="govuk-table__header">#</th>
-						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.COUNTRY' %}</th>
-						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.COUNTRY_CODE' %}</th>
-						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.GOODS' %}</th>
-						<th scope="col" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</th>
+						<th scope="col" class="govuk-table__header">Country</th>
+						<th scope="col" class="govuk-table__header">Permitted export</th>
 					</tr>
 				</thead>
 				<tbody class="govuk-table__body">
@@ -144,23 +143,7 @@
 								{{ destination.country.name }}
 							</td>
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.COUNTRY_CODE' %}</span>
-								{{ destination.country.id }}
-							</td>
-							<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
-								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.GOODS' %}</span>
-								<span data-max-length="100">
-									{% for good in case.goods|get_goods_linked_to_destination_as_list:destination.country.id %}
-										{{ good }}
-									{% endfor %}
-								</span>
-							</td>
-							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
-								<span aria-hidden="false" class="govuk-table__header">{% lcs 'cases.CasePage.DetailsTab.Destinations.Table.FLAGS' %}</span>
-								{% if destination.country.flags or not destination.flags %}
-									{% include 'includes/flags.html' with flags=destination.country.flags list=True %} <br>
-								{% endif %}
-								{% include 'includes/flags.html' with flags=destination.flags list=True %}
+								{{ destination.destination_permitted|title }}
 							</td>
 						</tr>
 						{% if show_advice %}
