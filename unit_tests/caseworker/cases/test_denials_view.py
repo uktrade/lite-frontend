@@ -227,7 +227,7 @@ def test_search_denials(
         "Name",
         "Address",
         "Country",
-        "Item list codes",
+        "Control list entry",
         "Item description",
         "End use",
         "Party type",
