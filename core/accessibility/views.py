@@ -1,10 +1,8 @@
 from django.views.generic import TemplateView
 from django.urls import reverse
 
-from core.auth.views import LoginRequiredMixin
 
-
-class BaseAccessibilityStatementView(LoginRequiredMixin, TemplateView):
+class BaseAccessibilityStatementView(TemplateView):
     template_name = "accessibility/accessibility.html"
 
     def get_context_data(self, **kwargs):

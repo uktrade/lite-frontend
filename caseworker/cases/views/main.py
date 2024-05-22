@@ -72,7 +72,6 @@ from caseworker.cases.services import get_case_basic_details
 from caseworker.core.objects import Tab
 from caseworker.core.services import get_status_properties, get_permissible_statuses
 from caseworker.core.constants import Permission
-from caseworker.external_data.services import search_denials
 from caseworker.queues.services import get_queue
 from caseworker.tau.utils import get_tau_tab_url_name
 from caseworker.teams.services import get_teams
@@ -654,52 +653,3 @@ class NextReviewDate(SingleFormView):
                 date_split = data[field].split("-")
                 data[field + "year"], data[field + "month"], data[field + "day"] = date_split
         return data
-
-
-class Denials(LoginRequiredMixin, TemplateView):
-    template_name = "case/denial-for-case.html"
-
-    def get_context_data(self, **kwargs):
-        case = get_case(self.request, self.kwargs["pk"])
-
-        search = []
-        filter = {
-            "country": set(),
-        }
-        parties_to_search = []
-        for party_type in self.request.GET.keys():
-            if party_type in ["end_user", "consignee"]:
-                parties_to_search.append(case.data[party_type])
-
-            if party_type == "ultimate_end_user":
-                selected_ultimate_end_user_ids = self.request.GET.getlist(party_type)
-                parties_to_search.extend(
-                    [
-                        entity
-                        for entity in case.data["ultimate_end_users"]
-                        if entity["id"] in selected_ultimate_end_user_ids
-                    ]
-                )
-
-            if party_type == "third_party":
-                selected_third_party_ids = self.request.GET.getlist(party_type)
-                parties_to_search.extend(
-                    [entity for entity in case.data["third_parties"] if entity["id"] in selected_third_party_ids]
-                )
-
-        for party in parties_to_search:
-            search.append(f'name:{party["name"]}')
-            search.append(f'address:{party["address"]}')
-            filter["country"].add(party["country"]["name"])
-
-        total_pages = 0
-        results = []
-
-        if search:
-            response = search_denials(request=self.request, search=search, filter=filter).json()
-            results = response["results"]
-            total_pages = response["total_pages"]
-
-        return super().get_context_data(
-            case=case, results=results, total_pages=total_pages, parties=parties_to_search, **kwargs
-        )

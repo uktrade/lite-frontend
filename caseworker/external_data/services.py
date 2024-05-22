@@ -15,7 +15,9 @@ def search_denials(request, search, filter):
     page = request.GET.get("page", 1)
     data = {"search": search, "page": page, **filter}
     querystring = urlencode(data, doseq=True, safe=":")
-    return client.get(request=request, appended_address=f"/external-data/denial-search/?{querystring}")
+
+    response = client.get(request=request, appended_address=f"/external-data/denial-search/?{querystring}")
+    return response.json(), response.status_code
 
 
 def get_denial(request, pk):

@@ -9,6 +9,7 @@ from caseworker.cases.views import (
     external_data,
     case_assignments,
     queries,
+    denials,
 )
 from caseworker.flags.views import AssignFlags
 from caseworker.cases.views.finalisation.letters import SelectInformTemplate, EditLetterText, EditInformLetterText
@@ -115,7 +116,7 @@ urlpatterns = [
         name="reissue_ogl",
     ),
     path("good/<uuid:good_pk>/", goods.GoodDetails.as_view(), name="good"),
-    path("denials/", main.Denials.as_view(), name="denials"),
+    path("denials/", denials.Denials.as_view(), name="denials"),
     path("activities/", include("caseworker.activities.urls")),
     # tabs
     path("<str:tab>/", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True}),
