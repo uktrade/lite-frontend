@@ -98,9 +98,9 @@ class HCSATApplicationForm(HCSATminiform):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         legend_size = "m"
-        self.fields["satisfaction_rating"].help_text = (
-            "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?"
-        )
+        self.fields[
+            "satisfaction_rating"
+        ].help_text = "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?"
 
         self.helper = FormHelper()
         self.helper.layout = Layout(

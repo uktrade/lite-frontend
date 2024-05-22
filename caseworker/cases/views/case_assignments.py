@@ -45,9 +45,9 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
             adviser_identifier=self._get_adviser_identifier(case, self.request.GET.get("assignment_id")),
             **kwargs,
         )
-        context["title"] = (
-            f"{self.form_class.Layout.DOCUMENT_TITLE} - {case.reference_code} - {case.organisation['name']}"
-        )
+        context[
+            "title"
+        ] = f"{self.form_class.Layout.DOCUMENT_TITLE} - {case.reference_code} - {case.organisation['name']}"
 
         return context
 
@@ -104,9 +104,9 @@ class CaseOfficerRemove(LoginRequiredMixin, FormView):
             case_officer_name=self._get_case_officer_name(case),
             **kwargs,
         )
-        context["title"] = (
-            f"{self.form_class.Layout.DOCUMENT_TITLE} - {case.reference_code} - {case.organisation['name']}"
-        )
+        context[
+            "title"
+        ] = f"{self.form_class.Layout.DOCUMENT_TITLE} - {case.reference_code} - {case.organisation['name']}"
 
         return context
 
