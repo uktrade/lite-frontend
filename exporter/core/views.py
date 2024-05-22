@@ -230,5 +230,5 @@ def handler403(request, exception):
     return error_page(request, title="Forbidden", description=exception, show_back_link=True)
 
 
-class PrivacyNotice(LoginRequiredMixin, TemplateView):
+class PrivacyNotice(TemplateView):
     template_name = "core/privacy_notice.html"
