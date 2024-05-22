@@ -425,9 +425,9 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         context["advice_to_countersign"] = advice.values()
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
-        context["title"] = (
-            f"{self.form_class.DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}"
-        )
+        context[
+            "title"
+        ] = f"{self.form_class.DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}"
         return context
 
     def post(self, request, *args, **kwargs):

@@ -50,8 +50,8 @@ class Denials(LoginRequiredMixin, FormView):
         }
 
         for party in self.parties_to_search:
-            search_filter.append(f'name:"{party["name"]}"')
-            search_filter.append(f'address:"{party["address"]}"')
+            search_filter.append(f'name:{party["name"]}')
+            search_filter.append(f'address:{party["address"]}')
             filter["country"].add(party["country"]["name"])
         return (" ".join(search_filter), filter)
 
@@ -86,10 +86,7 @@ class Denials(LoginRequiredMixin, FormView):
         default_search_string, filter = self.get_search_filter()
         session_search_string = self.get_search_string_from_session()
 
-        search_string = session_search_string or default_search_string
-
-        search_string = self.reg_expression_search_query.findall(search_string)
-        search = [s.replace('"', "") for s in search_string]
+        search = session_search_string or default_search_string
 
         if search:
             search_results, _ = search_denials(request=self.request, search=search, filter=filter)
