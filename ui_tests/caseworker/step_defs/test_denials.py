@@ -22,10 +22,10 @@ def download_example_csv_file(driver):
 
 
 @when(
-    "I update the .csv file with <name>,<address>,<notifying_govmt>,<final_dest>,<item_list_codes>,<item_desc>,<consignee_name>,<end_use>"
+    "I update the .csv file with <name>,<address>,<notifying_govmt>,<final_dest>,<denial_cle>,<item_desc>,<consignee_name>,<end_use>"
 )
 def update_example_csv_file(
-    driver, name, address, notifying_govmt, final_dest, item_list_codes, item_desc, consignee_name, end_use
+    driver, name, address, notifying_govmt, final_dest, denial_cle, item_desc, consignee_name, end_use
 ):
 
     AddDenialRecordsPage(driver).update_example_csv_file(
@@ -34,7 +34,7 @@ def update_example_csv_file(
         address=address,
         notifying_government=notifying_govmt,
         final_destination=final_dest,
-        item_list_codes=item_list_codes,
+        denial_cle=denial_cle,
         item_description=item_desc,
         consignee_name=consignee_name,
         end_use=end_use,
