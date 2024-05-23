@@ -81,10 +81,11 @@ def test_search_denials_party_type(mock_denials_search, party_type, authorized_c
     assert response.status_code == 200
 
     expected_query_params = {
-        "search": [f"name:{party_type_name}", f"address:{party_type_address}"],
+        "search": [f"name:{party_type_name}", f"address:{party_type_address}", "item_list_codes:", "item_description:"],
         "page": 1,
         "country": {party_type_country},
     }
+
     search_url = client._build_absolute_uri("/external-data/denial-search/")
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
 
@@ -120,6 +121,8 @@ def test_search_denials_party_type_ultimate_and_third_party(
         f"address:{party_users[0]['address']}",
         f"name:{party_users[1]['name']}",
         f"address:{party_users[1]['address']}",
+        "item_list_codes:",
+        "item_description:",
     ]
     expected_query_params = {"search": search_params, "page": 1, "country": {"United Kingdom"}}
     search_url = client._build_absolute_uri("/external-data/denial-search/")
@@ -174,15 +177,21 @@ def test_search_denials_session_search_string_matchs(
 
     assert response.status_code == 200
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search=["name:End User", "address:44"]
+        filter={"country": {"United Kingdom"}},
+        request=mock.ANY,
+        search=["name:End User", "address:44", "item_list_codes:", "item_description:"],
     )
 
-    search_string = {"search_string": 'name:"End User2" address:"23"'}
+    search_string = {"search_string": 'name:"End User2" address:"23" item_list_codes:"" item_description:""'}
     authorized_client.post(f"{url}?end_user={party_id}&search_id=123", data=search_string)
 
-    assert authorized_client.session.get("search_string") == {"123": 'name:"End User2" address:"23"'}
+    assert authorized_client.session.get("search_string") == {
+        "123": 'name:"End User2" address:"23" item_list_codes:"" item_description:""'
+    }
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search=["name:End User2", "address:23"]
+        filter={"country": {"United Kingdom"}},
+        request=mock.ANY,
+        search=["name:End User2", "address:23", "item_list_codes:", "item_description:"],
     )
 
     response = authorized_client.get(
@@ -191,7 +200,9 @@ def test_search_denials_session_search_string_matchs(
     )
 
     mock_search_denials.assert_called_with(
-        filter={"country": {"Abu Dhabi"}}, request=mock.ANY, search=["name:Consignee", "address:44"]
+        filter={"country": {"Abu Dhabi"}},
+        request=mock.ANY,
+        search=["name:Consignee", "address:44", "item_list_codes:", "item_description:"],
     )
 
 
