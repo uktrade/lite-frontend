@@ -32,7 +32,7 @@ def denials_data():
             "country": "Germany",
             "end_use": 'For the needs of "example company"',
             "item_description": "example something",
-            "item_list_codes": "FR3a",
+            "denial_cle": "FR3a",
             "name": "Example Name",
             "notifying_government": "Lithuania",
             "reference": "Abc123/abc123",
@@ -81,7 +81,7 @@ def test_search_denials_party_type(mock_denials_search, party_type, authorized_c
     assert response.status_code == 200
 
     expected_query_params = {
-        "search": [f"name:{party_type_name}", f"address:{party_type_address}", "item_list_codes:", "item_description:"],
+        "search": [f"name:{party_type_name}", f"address:{party_type_address}", "denial_cle:", "item_description:"],
         "page": 1,
         "country": {party_type_country},
     }
@@ -121,7 +121,7 @@ def test_search_denials_party_type_ultimate_and_third_party(
         f"address:{party_users[0]['address']}",
         f"name:{party_users[1]['name']}",
         f"address:{party_users[1]['address']}",
-        "item_list_codes:",
+        "denial_cle:",
         "item_description:",
     ]
     expected_query_params = {"search": search_params, "page": 1, "country": {"United Kingdom"}}
@@ -179,19 +179,19 @@ def test_search_denials_session_search_string_matchs(
     mock_search_denials.assert_called_with(
         filter={"country": {"United Kingdom"}},
         request=mock.ANY,
-        search=["name:End User", "address:44", "item_list_codes:", "item_description:"],
+        search=["name:End User", "address:44", "denial_cle:", "item_description:"],
     )
 
-    search_string = {"search_string": 'name:"End User2" address:"23" item_list_codes:"" item_description:""'}
+    search_string = {"search_string": 'name:"End User2" address:"23" denial_cle:"" item_description:""'}
     authorized_client.post(f"{url}?end_user={party_id}&search_id=123", data=search_string)
 
     assert authorized_client.session.get("search_string") == {
-        "123": 'name:"End User2" address:"23" item_list_codes:"" item_description:""'
+        "123": 'name:"End User2" address:"23" denial_cle:"" item_description:""'
     }
     mock_search_denials.assert_called_with(
         filter={"country": {"United Kingdom"}},
         request=mock.ANY,
-        search=["name:End User2", "address:23", "item_list_codes:", "item_description:"],
+        search=["name:End User2", "address:23", "denial_cle:", "item_description:"],
     )
 
     response = authorized_client.get(
@@ -202,7 +202,7 @@ def test_search_denials_session_search_string_matchs(
     mock_search_denials.assert_called_with(
         filter={"country": {"Abu Dhabi"}},
         request=mock.ANY,
-        search=["name:Consignee", "address:44", "item_list_codes:", "item_description:"],
+        search=["name:Consignee", "address:44", "denial_cle:", "item_description:"],
     )
 
 
@@ -256,7 +256,7 @@ def test_search_denials(
         "name",
         "address",
         "country",
-        "item_list_codes",
+        "denial_cle",
         "item_description",
         "end_use",
         "entity_type",
@@ -268,7 +268,7 @@ def test_search_denials(
         "country": "Germany",
         "end_use": 'For the needs of "example company"',
         "item_description": "example something",
-        "item_list_codes": "FR3a",
+        "denial_cle": "FR3a",
         "name": "Example Name",
         "notifying_government": "Lithuania",
         "reference": "Abc123/abc123",

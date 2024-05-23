@@ -55,7 +55,7 @@ class Denials(LoginRequiredMixin, FormView):
             filter["country"].add(party["country"]["name"])
 
         if search_filter:
-            default_search_string = f'{" ".join(search_filter)} item_list_codes:"" item_description:""'
+            default_search_string = f'{" ".join(search_filter)} denial_cle:"" item_description:""'
         else:
             default_search_string = " ".join(search_filter)
 
