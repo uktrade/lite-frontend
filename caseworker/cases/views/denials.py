@@ -43,18 +43,17 @@ class Denials(LoginRequiredMixin, FormView):
         return parties_to_search
 
     def get_search_filter(self):
-
+        """
+        This is building the query_string that will be executed directly by the backend
+        The field query is contained within () without this ES gets confused and searches
+        across columns even when the column name is given.
+        """
         search_filter = []
         filter = {
             "country": set(),
         }
 
         for party in self.parties_to_search:
-            """
-            This is building the query_string that will be executed directly by the backend
-            The field query is contained within () without this ES gets confused and searches
-            across columns even when the column name is given.
-            """
             search_filter.append(f'name:({party["name"]})')
             search_filter.append(f'address:({party["address"]})')
             filter["country"].add(party["country"]["name"])
