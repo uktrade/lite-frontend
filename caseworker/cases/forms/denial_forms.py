@@ -23,14 +23,14 @@ class DenialSearchForm(forms.Form):
         return HTML(
             """
                     {% if search_results.errors.search == "Invalid search string" %}
-                    <div class="denial-search__error">
+                    <div class="query-search__error">
                         <div class="govuk-error-summary" data-module="govuk-error-summary">
                             <div role="alert">
                                 <h2 class="govuk-error-summary__title">
                                     There is a problem
                                 </h2>
                                 <div class="govuk-error-summary__body">
-                                    <span class="govuk-!-font-weight-bold denial-search__error__error-text">Enter a valid query string</span>
+                                    <span class="govuk-!-font-weight-bold query-search__error__error-text">Enter a valid query string</span>
                                 </div>
                             </div>
                         </div>
@@ -49,7 +49,7 @@ class DenialSearchForm(forms.Form):
             Div(
                 Button("submit", "Search"),
             ),
-            self.query_error(),
+            HTML(render_to_string("external_data/query-error.html")),
             HTML.details(
                 "Help with building queries",
                 render_to_string("external_data/help-build-query.html"),
