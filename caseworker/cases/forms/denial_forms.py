@@ -14,22 +14,44 @@ from django.template.loader import render_to_string
 class DenialSearchForm(forms.Form):
 
     search_string = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "2"}),
+        widget=forms.Textarea(attrs={"rows": "1"}),
         label="",
         required=False,
     )
 
+    def query_error(self):
+        return HTML(
+            """
+                    {% if search_results.errors.search == "Invalid search string" %}
+                    <div class="denial-search__error">
+                        <div class="govuk-error-summary" data-module="govuk-error-summary">
+                            <div role="alert">
+                                <h2 class="govuk-error-summary__title">
+                                    There is a problem
+                                </h2>
+                                <div class="govuk-error-summary__body">
+                                    <span class="govuk-!-font-weight-bold denial-search__error__error-text">Enter a valid query string</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    """
+        )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+
         self.helper.layout = Layout(
             HTML.p("Or manually edit the query."),
-            HTML.details(
-                "To build your query",
-                render_to_string("external_data/help-build-query.html"),
-            ),
             Field("search_string"),
             Div(
-                Button.secondary("submit", "Search"),
+                Button("submit", "Search"),
+            ),
+            self.query_error(),
+            HTML.details(
+                "Help with building queries",
+                render_to_string("external_data/help-build-query.html"),
             ),
         )

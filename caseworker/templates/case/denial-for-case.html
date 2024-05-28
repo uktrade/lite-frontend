@@ -14,7 +14,7 @@
         <div class="govuk-grid-column-full">
             <h2 class="govuk-heading-l govuk-!-margin-top-6 govuk-!-margin-bottom-3">
                 Denial matches
-                <p class="govuk-!-margin-top-2 govuk-caption-l"> Results found {{ count }}</p>
+                <p class="govuk-!-margin-top-2 govuk-caption-l"> Results found {{ search_results.count }}</p>
             </h2>
         </div>
 
@@ -46,6 +46,8 @@
             {% crispy form %}
         </div>
 
+
+
         <div class="govuk-grid-column-full">
             {% if not hide_controls %}
             <form method="post" data-enable-on-checkboxes="#table-denials">
@@ -60,7 +62,7 @@
                 </div>
             {% endif %}
 
-            {% if results %}
+            {% if search_results.results %}
                 <table
                     id="table-denials"
                     class="govuk-table"
@@ -88,7 +90,7 @@
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                        {% for denial in results %}
+                        {% for denial in search_results.results %}
                             <tr>
                                 <td class="govuk-table__cell govuk-table__cell--checkbox">
                                     <div>
