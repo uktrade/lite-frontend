@@ -1,8 +1,6 @@
 {% extends 'layouts/case.html' %}
 
-{% load static %}
-
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags static %}
 
 {% block title %}Add denial matches for this case - {{ case.reference_code }} - {{ case.organisation.name }}{% endblock %}
 
@@ -23,10 +21,10 @@
             <table id="table-Party-details" class="govuk-table">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Name</th>
-                            <th scope="col" class="govuk-table__header">Address</th>
-                            <th scope="col" class="govuk-table__header">Country</th>
-                            <th scope="col" class="govuk-table__header">Entity type</th>
+                        <th scope="col" class="govuk-table__header">Name</th>
+                        <th scope="col" class="govuk-table__header">Address</th>
+                        <th scope="col" class="govuk-table__header">Country</th>
+                        <th scope="col" class="govuk-table__header">Entity type</th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body">
@@ -47,7 +45,6 @@
         </div>
 
         <div class="govuk-grid-column-full">
-            {% if not hide_controls %}
             <form method="post" data-enable-on-checkboxes="#table-denials">
                 {% csrf_token %}
                 <div class="lite-buttons-row">
@@ -58,21 +55,16 @@
                         Add as possible match
                     </button>
                 </div>
-            {% endif %}
-
-            {% if results %}
-                <table
-                    id="table-denials"
-                    class="govuk-table"
-                    {% if not hide_checkboxes %}
+                {% if results %}
+                    <table
+                        id="table-denials"
+                        class="govuk-table"
                         data-module="select-all-table"
                         data-select-all-action-container-selector="thead .govuk-table__cell--checkbox"
                         data-select-all-checkbox-selector="input[type=checkbox]"
-                    {% endif %}
-                >
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            {% if not hide_checkboxes %}
+                    >
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
                                 <th scope="col" class="govuk-table__header govuk-table__cell--checkbox">
                                 </th>
                                 <th scope="col" class="govuk-table__header">Regime reference</th>
@@ -84,44 +76,37 @@
                                 <th scope="col" class="govuk-table__header">Item description</th>
                                 <th scope="col" class="govuk-table__header">End use</th>
                                 <th scope="col" class="govuk-table__header">Party type</th>
-                            {% endif %}
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        {% for denial in results %}
-                            <tr>
-                                <td class="govuk-table__cell govuk-table__cell--checkbox">
-                                    <div>
-                                        <input class="govuk-checkboxes__input" type="checkbox" name="objects" value="{{ denial.id }}" id="{{ denial.id }}">
-                                        <label class="govuk-label govuk-checkboxes__label" for="{{ denial.id }}">{{ denial.regime_reg_ref }}</label>
-                                    </div>
-                                </td>
-                                <td class="govuk-table__cell">
-
-                                    <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.regime_reg_ref }}</a>
-                                </td>
-                                <td class="govuk-table__cell">{{ denial.reference|sentence_case }}</td>
-                                <td class="govuk-table__cell">{{ denial.name|safe }}</td>
-                                <td class="govuk-table__cell">{{ denial.address|safe }}</td>
-                                <td class="govuk-table__cell">{{ denial.country }}</td>
-                                <td class="govuk-table__cell">{{ denial.denial_cle|safe }}</td>
-                                <td class="govuk-table__cell">{{ denial.item_description }}</td>
-                                <td class="govuk-table__cell">{{ denial.end_use }}</td>
-                                <td class="govuk-table__cell">{{ denial.entity_type.value }}</td>
                             </tr>
-                        {% endfor %}
-
-                    </tbody>
-
-                </table>
-            {% else %}
-                <div>No matching denials</div>
-            {% endif %}
-
-            {% if not hide_controls %}
+                        </thead>
+                        <tbody class="govuk-table__body">
+                            {% for denial in results %}
+                                <tr>
+                                    <td class="govuk-table__cell govuk-table__cell--checkbox">
+                                        <div>
+                                            <input class="govuk-checkboxes__input" type="checkbox" name="objects" value="{{ denial.id }}" id="{{ denial.id }}">
+                                            <label class="govuk-label govuk-checkboxes__label" for="{{ denial.id }}">{{ denial.regime_reg_ref }}</label>
+                                        </div>
+                                    </td>
+                                    <td class="govuk-table__cell">
+                                        <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.regime_reg_ref }}</a>
+                                    </td>
+                                    <td class="govuk-table__cell">{{ denial.reference|sentence_case }}</td>
+                                    <td class="govuk-table__cell">{{ denial.name|safe }}</td>
+                                    <td class="govuk-table__cell">{{ denial.address|safe }}</td>
+                                    <td class="govuk-table__cell">{{ denial.country }}</td>
+                                    <td class="govuk-table__cell">{{ denial.denial_cle|safe }}</td>
+                                    <td class="govuk-table__cell">{{ denial.item_description }}</td>
+                                    <td class="govuk-table__cell">{{ denial.end_use }}</td>
+                                    <td class="govuk-table__cell">{{ denial.entity_type.value }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <div>No matching denials</div>
+                {% endif %}
             </form>
-            {% pagination %}
-            {% endif %}
+            {% pagination link_type="form" form_id="denials-search-form" %}
         </div>
     </div>
 {% endblock %}

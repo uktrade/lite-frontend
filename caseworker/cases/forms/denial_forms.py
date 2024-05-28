@@ -12,16 +12,17 @@ from django.template.loader import render_to_string
 
 
 class DenialSearchForm(forms.Form):
-
     search_string = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "2"}),
         label="",
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, form_action, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
+        self.helper.form_id = "denials-search-form"
+        self.helper.form_action = form_action
         self.helper.layout = Layout(
             HTML.p("Or manually edit the query."),
             HTML.details(

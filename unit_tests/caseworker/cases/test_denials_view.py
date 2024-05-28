@@ -68,7 +68,6 @@ def mock_denials_search(requests_mock, denials_search_results):
     ),
 )
 def test_search_denials_party_type(mock_denials_search, party_type, authorized_client, data_standard_case, url):
-
     party_type_id = data_standard_case["case"]["data"][party_type]["id"]
     party_type_name = data_standard_case["case"]["data"][party_type]["name"]
     party_type_address = data_standard_case["case"]["data"][party_type]["address"]
@@ -101,7 +100,6 @@ def test_search_denials_party_type(mock_denials_search, party_type, authorized_c
 def test_search_denials_party_type_ultimate_and_third_party(
     mock_denials_search, party_type, party_type_data_key, authorized_client, data_standard_case, url
 ):
-
     data_standard_case["case"]["data"][party_type_data_key].append(
         {
             "id": str(uuid.uuid4()),
@@ -127,13 +125,12 @@ def test_search_denials_party_type_ultimate_and_third_party(
 @pytest.mark.parametrize(
     "search_string",
     (
-        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)",
-        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",
+        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)",  # /PS-IGNORE
+        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",  # /PS-IGNORE
         "name:(Smith)",
     ),
 )
 def test_search_denials_search_string(authorized_client, search_string, data_standard_case, mock_denials_search, url):
-
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
     authorized_client.post(f"{url}?end_user={end_user_id}", data={"search_string": search_string})
 
@@ -145,40 +142,40 @@ def test_search_denials_search_string(authorized_client, search_string, data_sta
 
 
 @mock.patch(
-    "caseworker.cases.views.denials.search_denials", return_value=({"results": [], "count": 0, "total_pages": 0}, 200)
+    "caseworker.cases.views.denials.search_denials",
+    return_value=({"results": [], "count": 0, "total_pages": 0}, 200),
 )
-def test_search_denials_session_search_string_matchs(
-    mock_search_denials, authorized_client, data_standard_case, mock_denials_search, url
+def test_search_denials_session_search_string_matches(
+    mock_search_denials,
+    authorized_client,
+    data_standard_case,
+    mock_denials_search,
+    url,
 ):
-
     party_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    party_id_2 = data_standard_case["case"]["data"]["consignee"]["id"]
 
     response = authorized_client.get(
         url,
-        data={"end_user": party_id, "search_id": "123"},
+        data={"end_user": party_id},
     )
 
     assert response.status_code == 200
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search="name:(End User) address:(44)"
+        filter={"country": {"United Kingdom"}},
+        request=response.wsgi_request,
+        search="name:(End User) address:(44)",
+        page=1,
     )
 
-    search_string = {"search_string": "name:(End User2) address:(23)"}
-    authorized_client.post(f"{url}?end_user={party_id}&search_id=123", data=search_string)
-
-    assert authorized_client.session.get("search_string") == {"123": "name:(End User2) address:(23)"}
+    response = authorized_client.post(
+        f"{url}?end_user={party_id}",
+        data={"search_string": "name:(End User2) address:(23)"},
+    )
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search="name:(End User2) address:(23)"
-    )
-
-    response = authorized_client.get(
-        url,
-        data={"consignee": party_id_2, "search_id": "1234"},
-    )
-
-    mock_search_denials.assert_called_with(
-        filter={"country": {"Abu Dhabi"}}, request=mock.ANY, search="name:(Consignee) address:(44)"
+        filter={"country": {"United Kingdom"}},
+        request=response.wsgi_request,
+        search="name:(End User2) address:(23)",
+        page=1,
     )
 
 
@@ -255,8 +252,15 @@ def test_search_denials(
     for i, value in enumerate(table_body_values):
         assert value == expected_table_values[data_key_map[i]]
 
+    form = soup.find(id="denials-search-form")
+    assert form["action"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?page=1&end_user={end_user_id}"
+
     page_2 = soup.find(id="page-2")
-    assert page_2.a["href"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
+    assert (
+        page_2.button["formaction"]
+        == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
+    )
+    assert page_2.button["form"] == "denials-search-form"
 
 
 def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, standard_case_pk):

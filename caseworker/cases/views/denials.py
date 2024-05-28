@@ -1,4 +1,5 @@
-import re
+from django.http import QueryDict
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 
@@ -12,7 +13,6 @@ from caseworker.cases.constants import PartyType
 class Denials(LoginRequiredMixin, FormView):
     template_name = "case/denial-for-case.html"
     form_class = DenialSearchForm
-    reg_expression_search_query = re.compile('[a-z_]+?:".*?"')
 
     @cached_property
     def case(self):
@@ -42,68 +42,95 @@ class Denials(LoginRequiredMixin, FormView):
                 )
         return parties_to_search
 
-    def get_search_filter(self):
+    def get_search_filter(self, form=None):
         """
         This is building the query_string that will be executed directly by the backend
         The field query is contained within () without this ES gets confused and searches
         across columns even when the column name is given.
         """
-        search_filter = []
         filter = {
             "country": set(),
         }
-
         for party in self.parties_to_search:
-            search_filter.append(f'name:({party["name"]})')
-            search_filter.append(f'address:({party["address"]})')
             filter["country"].add(party["country"]["name"])
-        return (" ".join(search_filter), filter)
+
+        if not form:
+            search_filter = []
+            for party in self.parties_to_search:
+                search_filter.append(f'name:({party["name"]})')
+                search_filter.append(f'address:({party["address"]})')
+            search_string = " ".join(search_filter)
+        else:
+            search_string = form.cleaned_data["search_string"]
+
+        return search_string, filter
 
     def get_initial(self):
-        session_search_string = self.get_search_string_from_session()
-        default_search_string, _ = self.get_search_filter()
-
+        search_string, _ = self.get_search_filter()
         return {
-            "search_string": session_search_string or default_search_string,
+            "search_string": search_string,
         }
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        form_action = reverse(
+            "cases:denials",
+            kwargs={
+                "queue_pk": str(self.kwargs["queue_pk"]),
+                "pk": str(self.kwargs["pk"]),
+            },
+        )
+
+        query = QueryDict("page=1", mutable=True)
+        for party_type in [
+            PartyType.END_USER,
+            PartyType.CONSIGNEE,
+            PartyType.ULTIMATE_END_USER,
+            PartyType.THIRD_PARTY,
+        ]:
+            items = self.request.GET.getlist(party_type)
+            if items:
+                query.setlist(
+                    party_type,
+                    items,
+                )
+
+        kwargs["form_action"] = f"{form_action}?{query.urlencode()}"
+
+        return kwargs
+
     def form_valid(self, form):
-        search_id = self.request.GET.get("search_id", 1)
-        self.request.session["search_string"] = {search_id: form.cleaned_data["search_string"]}
         return self.render_to_response(self.get_context_data(form=form))
 
-    def get_search_string_from_session(self):
-        # This is required since the search_string shouldn't be sent in the query string due to sensative data
-        # so we require a search_string to be sent via post. Since the pagination currently works as a get only
-        # the query_string set by the user gets lost we should aim to move away from sessions once we have
-        # pagination that works with a post
-        search_id = self.request.GET.get("search_id", 1)
-        if self.request.session.get("search_string") and self.request.session.get("search_string").get(search_id):
-            return self.request.session["search_string"][search_id]
+    def get_context_data(self, form=None, **kwargs):
+        ctx = super().get_context_data(**kwargs)
 
-    def get_context_data(self, **kwargs):
         total_pages = 0
         count = 0
         results = []
-        search = []
 
-        default_search_string, filter = self.get_search_filter()
-        session_search_string = self.get_search_string_from_session()
-
-        search = session_search_string or default_search_string
-
+        search, filter = self.get_search_filter(form)
         if search:
-            search_results, _ = search_denials(request=self.request, search=search, filter=filter)
-            results = search_results["results"]
+            page = self.request.GET.get("page", 1)
+            search_results, _ = search_denials(
+                request=self.request,
+                search=search,
+                filter=filter,
+                page=page,
+            )
             total_pages = search_results["total_pages"]
             count = search_results["count"]
+            results = search_results["results"]
 
-        return super().get_context_data(
-            search_string=search,
-            case=self.case,
-            results=results,
-            count=count,
-            total_pages=total_pages,
-            parties=self.parties_to_search,
-            **kwargs,
+        ctx.update(
+            {
+                "case": self.case,
+                "results": results,
+                "count": count,
+                "total_pages": total_pages,
+                "parties": self.parties_to_search,
+            }
         )
+
+        return ctx

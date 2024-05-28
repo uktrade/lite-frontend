@@ -1,17 +1,6 @@
 import pytest
 
-from lite_forms.templatetags import custom_tags
-
-
-@pytest.mark.parametrize(
-    "filename,expected",
-    [
-        ("test.pdf", "pdf"),
-        ("test", "file"),
-    ],
-)
-def test_file_type(filename, expected):
-    assert expected == custom_tags.file_type(filename)
+from core.builtins import custom_tags
 
 
 @pytest.mark.parametrize(
@@ -36,3 +25,8 @@ def test_file_type(filename, expected):
 )
 def test_pagination_params(url, page, expected):
     assert custom_tags.pagination_params(url, page) == expected
+
+
+def test_pagination():
+    with pytest.raises(ValueError):
+        custom_tags.pagination({}, link_type="madeup")
