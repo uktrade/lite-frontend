@@ -1,4 +1,4 @@
-.product-search {
+.query-search {
     @include full-bleed;
     background-color: govuk-colour("light-grey");
     padding-bottom: govuk-spacing(6);
@@ -109,7 +109,7 @@
         color: govuk-colour("white");
         cursor: pointer;
 
-        .product-search__suggest-results-key {
+        .query-search__suggest-results-key {
             background-color: inherit;
             color: inherit;
         }

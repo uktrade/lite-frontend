@@ -15,9 +15,9 @@ class ProductSearchPage(BasePage):
         suggestions = []
         reverse_product_filters = {v: k for k, v in product_filters.items()}
         table = self.driver.find_element(by=By.ID, value="autoComplete_list")
-        for row in table.find_elements(by=By.CLASS_NAME, value="product-search__suggest-results-row"):
-            key = row.find_element(by=By.CLASS_NAME, value="product-search__suggest-results-key").text
-            value = row.find_element(by=By.CLASS_NAME, value="product-search__suggest-results-value").text
+        for row in table.find_elements(by=By.CLASS_NAME, value="query-search__suggest-results-row"):
+            key = row.find_element(by=By.CLASS_NAME, value="query-search__suggest-results-key").text
+            value = row.find_element(by=By.CLASS_NAME, value="query-search__suggest-results-value").text
             suggestions.append({"key": reverse_product_filters[key], "value": value})
 
         return suggestions
@@ -29,7 +29,7 @@ class ProductSearchPage(BasePage):
                 break
 
         table = self.driver.find_element(by=By.ID, value="autoComplete_list")
-        suggestion_row = table.find_elements(by=By.CLASS_NAME, value="product-search__suggest-results-row")[index]
+        suggestion_row = table.find_elements(by=By.CLASS_NAME, value="query-search__suggest-results-row")[index]
         suggestion_row.click()
 
     def get_result_row_data(self, result_row):

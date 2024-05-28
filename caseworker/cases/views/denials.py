@@ -83,9 +83,7 @@ class Denials(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         total_pages = 0
-        count = 0
-        results = []
-        search = []
+        search_results = []
 
         default_search_string, filter = self.get_search_filter()
         session_search_string = self.get_search_string_from_session()
@@ -94,16 +92,13 @@ class Denials(LoginRequiredMixin, FormView):
 
         if search:
             search_results, _ = search_denials(request=self.request, search=search, filter=filter)
-            results = search_results["results"]
-            total_pages = search_results["total_pages"]
-            count = search_results["count"]
+            total_pages = search_results.get("total_pages", 0)
 
         return super().get_context_data(
             search_string=search,
             case=self.case,
-            results=results,
-            count=count,
             total_pages=total_pages,
+            search_results=search_results,
             parties=self.parties_to_search,
             **kwargs,
         )
