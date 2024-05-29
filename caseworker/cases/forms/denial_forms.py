@@ -15,8 +15,7 @@ class RenderTemplate:
     def __init__(self, template_name):
         self.template_name = template_name
 
-    def render(self, form, context, template_path=TEMPLATE_PACK, **kwargs):
-
+    def render(self, form, form_style, context, template_path=TEMPLATE_PACK, **kwargs):
         print(f"hello render {context}")
         return render_to_string(self.template_name, context)
 
