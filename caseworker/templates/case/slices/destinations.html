@@ -6,11 +6,14 @@
 
 			<form action="{% url 'cases:assign_flags' queue.id case.id %}" method="get" data-enable-on-checkboxes="#table-destinations">
 				<div class="lite-buttons-row">
-					<button class="govuk-button" formaction="{% url 'cases:denials' queue_pk=queue.id pk=case.id %}">View related denials</button>
+
+					<button class="govuk-button" formaction="{% url 'cases:denials' queue_pk=queue.id pk=case.id %}" >View related denials</button>
+					<input type="hidden" id="search_id" name="search_id" value="{% now "U" %}">
 					<!--<button id="button-edit-destinations-flags" class="govuk-button govuk-button--secondary" data-module="govuk-button">
 						{% lcs 'cases.ApplicationPage.EDIT_DESTINATION_FLAGS' %}
 					</button>-->
 				</div>
+				<hidden>
 		{% endif %}
 
 		<table
