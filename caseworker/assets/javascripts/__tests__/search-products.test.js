@@ -8,15 +8,15 @@ const createElement = () => {
     ["a_field"]: "A field label",
   };
   document.body.innerHTML = `
-    <div id="product-search">
-      <form class="product-search__form" data-product-filter-labels='${JSON.stringify(
+    <div id="query-search">
+      <form class="query-search__form" data-product-filter-labels='${JSON.stringify(
         labels
       )}' data-search-url="/search-url/">
-        <input class="product-search__search-field" type="text">
+        <input class="query-search__search-field" type="text">
       </form>
     </div>
   `;
-  return document.querySelector("#product-search");
+  return document.querySelector("#query-search");
 };
 
 const createComponent = (autoCompleter, $el) => {
@@ -24,7 +24,7 @@ const createComponent = (autoCompleter, $el) => {
 };
 
 const getSearchField = ($el) => {
-  return $el.querySelector(".product-search__search-field");
+  return $el.querySelector(".query-search__search-field");
 };
 
 describe("ProductSearchSuggestor", () => {
@@ -72,12 +72,12 @@ describe("ProductSearchSuggestor", () => {
     [
       "mapped field",
       { value: { field: "a_field", value: "A value" } },
-      '<td class="product-search__suggest-results-key">A field label</td><td class="product-search__suggest-results-value">A value</td>',
+      '<td class="query-search__suggest-results-key">A field label</td><td class="query-search__suggest-results-value">A value</td>',
     ],
     [
       "wildcard field",
       { value: { field: "wildcard", value: "A value" } },
-      '<td class="product-search__suggest-results-value" colspan="2">A value</td>',
+      '<td class="query-search__suggest-results-value" colspan="2">A value</td>',
     ],
   ])("Render resultItem with %s", (_, result, expected) => {
     const table = document.createElement("table");

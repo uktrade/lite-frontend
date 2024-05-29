@@ -47,17 +47,17 @@ class ProductSearchForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
-        self.helper.form_class = "product-search__form"
+        self.helper.form_class = "query-search__form"
         self.helper.form_method = "GET"
         self.helper.attrs = {
             "data-product-filter-labels": json.dumps(product_filters),
             "data-search-url": reverse("search:api-search-suggest-product"),
         }
         self.helper.layout = Layout(
-            Field("search_string", css_class="product-search__search-field input-force-default-width"),
+            Field("search_string", css_class="query-search__search-field input-force-default-width"),
             Div(
                 Submit("submit", "Search"),
-                css_class="product-search__actions",
+                css_class="query-search__actions",
             ),
         )
 
