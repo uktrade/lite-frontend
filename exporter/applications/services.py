@@ -518,6 +518,12 @@ def copy_application(request, pk, data):
     return data.json(), data.status_code
 
 
+def create_application_copy(request, pk, data):
+    response = client.post(request, f"/amendments/create-application-copy/{pk}/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def post_exhibition(request, pk, data):
     post_data = format_date_fields(data)
     data = client.post(request, f"/applications/{pk}/exhibition-details/", data=post_data)

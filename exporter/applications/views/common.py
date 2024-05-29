@@ -9,6 +9,7 @@ from django.views.generic import FormView, TemplateView
 
 from requests.exceptions import HTTPError
 
+from exporter.applications.forms.amendments import ApplicationCopyConfirmationForm
 from exporter.applications.forms.appeal import AppealForm
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -49,6 +50,7 @@ from exporter.applications.services import (
     post_appeal,
     post_appeal_document,
     get_appeal,
+    create_application_copy,
 )
 from exporter.organisation.members.services import get_user
 
@@ -123,11 +125,7 @@ class ApplicationEditType(LoginRequiredMixin, TemplateView):
         edit_type = request.POST.get("edit-type")
 
         if edit_type == "major":
-            data, status_code = set_application_status(request, str(kwargs["pk"]), APPLICANT_EDITING)
-
-            if status_code != HTTPStatus.OK:
-                return form_page(request, edit_type_form(str(kwargs["pk"])), errors=data)
-
+            return redirect(reverse_lazy("applications:confirm_copy", kwargs={"pk": str(kwargs["pk"])}))
         elif edit_type is None:
             return form_page(
                 request,
@@ -136,6 +134,26 @@ class ApplicationEditType(LoginRequiredMixin, TemplateView):
             )
 
         return redirect(reverse_lazy("applications:task_list", kwargs={"pk": str(kwargs["pk"])}))
+
+
+class ApplicationCopyConfirmationView(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = ApplicationCopyConfirmationForm
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+
+        if not data["confirm_copy"]:
+            return redirect(reverse_lazy("applications:edit_type", kwargs={"pk": str(self.kwargs["pk"])}))
+
+        try:
+            response, status_code = create_application_copy(self.request, str(self.kwargs["pk"]), data=data)
+        except Exception:
+            return super().form_invalid(form)
+
+        copy_application_id = response["id"]
+
+        return redirect(reverse_lazy("applications:task_list", kwargs={"pk": copy_application_id}))
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
