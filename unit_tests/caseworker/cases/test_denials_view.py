@@ -142,20 +142,9 @@ def test_search_denials_party_type_ultimate_and_third_party(
 @pytest.mark.parametrize(
     "search_string",
     (
-        [
-            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA"',  # /PS-IGNORE
-            ["name:John Smith", "address:Studio 47v, ferry, town, DD1 4AA"],  # /PS-IGNORE
-        ],
-        [
-            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA" name:"time" address:"2 doc rd"',  # /PS-IGNORE
-            [
-                "name:John Smith",
-                "address:Studio 47v, ferry, town, DD1 4AA",  # /PS-IGNORE
-                "name:time",
-                "address:2 doc rd",
-            ],  # /PS-IGNORE
-        ],
-        ['name:"Smith"', ["name:Smith"]],
+        'name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) denial_cle:"" item_description:""',  # /PS-IGNORE
+        'name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd) denial_cle:"" item_description:""',  # /PS-IGNORE
+        "name:(Smith)",
     ),
 )
 def test_search_denials_search_string(authorized_client, search_string, data_standard_case, mock_denials_search, url):
