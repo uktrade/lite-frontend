@@ -135,12 +135,17 @@ def test_search_denials_party_type_ultimate_and_third_party(
     "search_string, expected_search_string",
     (
         [
-            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA"',
-            ["name:John Smith", "address:Studio 47v, ferry, town, DD1 4AA"],
+            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA"',  # /PS-IGNORE
+            ["name:John Smith", "address:Studio 47v, ferry, town, DD1 4AA"],  # /PS-IGNORE
         ],
         [
-            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA" name:"time" address:"2 doc rd"',
-            ["name:John Smith", "address:Studio 47v, ferry, town, DD1 4AA", "name:time", "address:2 doc rd"],
+            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA" name:"time" address:"2 doc rd"',  # /PS-IGNORE
+            [
+                "name:John Smith",
+                "address:Studio 47v, ferry, town, DD1 4AA",  # /PS-IGNORE
+                "name:time",
+                "address:2 doc rd",
+            ],  # /PS-IGNORE
         ],
         ['name:"Smith"', ["name:Smith"]],
     ),
