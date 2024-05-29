@@ -115,17 +115,26 @@ def test_search_denials_party_type_ultimate_and_third_party(
     response = authorized_client.get(url + f"?{party_type}={party_users[0]['id']}&{party_type}={party_users[1]['id']}")
     assert response.status_code == 200
 
-    search_params = [
-        f"name:{party_users[0]['name']}",
-        f"address:{party_users[0]['address']}",
-        f"name:{party_users[1]['name']}",
-        f"address:{party_users[1]['address']}",
-        "denial_cle:",
-        "item_description:",
-    ]
+    #
+    search_params = f"name:({party_users[0]['name']}) address:({party_users[0]['address']}) name:({party_users[1]['name']}) address:({party_users[1]['address']}) denial_cle:\"\" item_description:\"\""
+
     expected_query_params = {"search": search_params, "page": 1, "country": {"United Kingdom"}}
     search_url = client._build_absolute_uri("/external-data/denial-search/")
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
+
+    #
+
+    # search_params = [
+    #     f"name:{party_users[0]['name']}",
+    #     f"address:{party_users[0]['address']}",
+    #     f"name:{party_users[1]['name']}",
+    #     f"address:{party_users[1]['address']}",
+    #     "denial_cle:\"\"",
+    #     "item_description:\"\"",
+    # ]
+    # expected_query_params = {"search": search_params, "page": 1, "country": {"United Kingdom"}}
+    # search_url = client._build_absolute_uri("/external-data/denial-search/")
+    # expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
 
     assert mock_denials_search.request_history[0].url == expected_url
 
