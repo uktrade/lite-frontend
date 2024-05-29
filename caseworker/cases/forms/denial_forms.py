@@ -6,9 +6,19 @@ from crispy_forms_gds.layout import (
     Button,
     HTML,
 )
-
 from django import forms
+from crispy_forms.utils import TEMPLATE_PACK
 from django.template.loader import render_to_string
+
+
+class RenderTemplate:
+    def __init__(self, template_name):
+        self.template_name = template_name
+
+    def render(self, form, context, template_path=TEMPLATE_PACK, **kwargs):
+
+        print(f"hello render {context}")
+        return render_to_string(self.template_name, context)
 
 
 class DenialSearchForm(forms.Form):
@@ -18,26 +28,6 @@ class DenialSearchForm(forms.Form):
         label="",
         required=False,
     )
-
-    def query_error(self):
-        return HTML(
-            """
-                    {% if search_results.errors.search == "Invalid search string" %}
-                    <div class="query-search__error">
-                        <div class="govuk-error-summary" data-module="govuk-error-summary">
-                            <div role="alert">
-                                <h2 class="govuk-error-summary__title">
-                                    There is a problem
-                                </h2>
-                                <div class="govuk-error-summary__body">
-                                    <span class="govuk-!-font-weight-bold query-search__error__error-text">Enter a valid query string</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    """
-        )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -49,7 +39,7 @@ class DenialSearchForm(forms.Form):
             Div(
                 Button("submit", "Search"),
             ),
-            HTML(render_to_string("external_data/query-error.html")),
+            RenderTemplate("external_data/query-error.html"),
             HTML.details(
                 "Help with building queries",
                 render_to_string("external_data/help-build-query.html"),
