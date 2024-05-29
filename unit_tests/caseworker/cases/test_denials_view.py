@@ -79,9 +79,8 @@ def test_search_denials_party_type(mock_denials_search, party_type, authorized_c
         data={party_type: party_type_id},
     )
     assert response.status_code == 200
-
     expected_query_params = {
-        "search": [f"name:{party_type_name}", f"address:{party_type_address}", "denial_cle:", "item_description:"],
+        "search": f'name:({party_type_name}) address:({party_type_address}) denial_cle:"" item_description:""',
         "page": 1,
         "country": {party_type_country},
     }
