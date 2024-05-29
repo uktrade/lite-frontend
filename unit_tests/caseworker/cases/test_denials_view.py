@@ -275,3 +275,17 @@ def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, s
     soup = BeautifulSoup(response.content, "html.parser")
     assert response.status_code == 200
     assert "No matching denials" in soup.get_text()
+
+
+def test_search_denials_query_string_error(authorized_client, requests_mock, queue_pk, data_standard_case, url):
+    requests_mock.get(
+        client._build_absolute_uri("/external-data/denial-search/?search=%5E%25%24&page=1"),
+        json={"errors": {"search": "Invalid search string"}},
+    )
+
+    response = authorized_client.post(url, data={"search_string": "^%$"})
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert response.status_code == 200
+    assert "Enter a valid query string" in soup.get_text()

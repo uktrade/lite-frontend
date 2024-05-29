@@ -15,12 +15,12 @@ class ProductSearchSuggestor {
   constructor(autoComplete, $el) {
     this.autoComplete = autoComplete;
     this.$el = $el;
-    this.$form = $el.querySelector(".product-search__form");
+    this.$form = $el.querySelector(".query-search__form");
     this.productFilterLabels = JSON.parse(
       this.$form.dataset.productFilterLabels
     );
     this.searchUrl = this.$form.dataset.searchUrl;
-    this.searchInputSelector = ".product-search__search-field";
+    this.searchInputSelector = ".query-search__search-field";
     this.$searchInput = $el.querySelector(this.searchInputSelector);
     this.wildcardField = "wildcard";
 
@@ -69,7 +69,7 @@ class ProductSearchSuggestor {
     }
 
     const fieldCell = document.createElement("td");
-    fieldCell.classList.add("product-search__suggest-results-key");
+    fieldCell.classList.add("query-search__suggest-results-key");
     const label = this.productFilterLabels[field];
     fieldCell.textContent = label;
 
@@ -78,7 +78,7 @@ class ProductSearchSuggestor {
 
   getValueCell(value, hasField) {
     const valueCell = document.createElement("td");
-    valueCell.classList.add("product-search__suggest-results-value");
+    valueCell.classList.add("query-search__suggest-results-value");
     valueCell.textContent = value;
     if (!hasField) {
       valueCell.colSpan = 2;
@@ -125,11 +125,11 @@ class ProductSearchSuggestor {
       },
       resultsList: {
         element: "table",
-        className: "product-search__suggest-results",
+        className: "query-search__suggest-results",
       },
       resultItem: {
         element: "tr",
-        className: "product-search__suggest-results-row",
+        className: "query-search__suggest-results-row",
         content: (data, source) => this.renderItem(data, source),
       },
       onSelection: (option) => this.handleSelection(option),
@@ -146,7 +146,7 @@ class ProductSearchSuggestor {
 
 const initProductSearchSuggestor = () => {
   document
-    .querySelectorAll(".product-search")
+    .querySelectorAll(".query-search")
     .forEach(($el) => new ProductSearchSuggestor(autoComplete, $el).init());
 };
 

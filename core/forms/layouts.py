@@ -207,3 +207,11 @@ class StarRadioSelect(TemplateNameMixin):
         )
 
         return render_to_string(template, context.flatten())
+
+
+class RenderTemplate:
+    def __init__(self, template_name):
+        self.template_name = template_name
+
+    def render(self, form, form_style, context, template_path=TEMPLATE_PACK, **kwargs):
+        return render_to_string(self.template_name, context.flatten())
