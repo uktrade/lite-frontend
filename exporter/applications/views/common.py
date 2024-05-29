@@ -49,6 +49,7 @@ from exporter.applications.services import (
     post_appeal,
     post_appeal_document,
     get_appeal,
+    create_application_amendment,
 )
 from exporter.organisation.members.services import get_user
 
@@ -123,9 +124,11 @@ class ApplicationEditType(LoginRequiredMixin, TemplateView):
         edit_type = request.POST.get("edit-type")
 
         if edit_type == "major":
-            data, status_code = set_application_status(request, str(kwargs["pk"]), APPLICANT_EDITING)
+            data, status_code = create_application_amendment(request, str(kwargs["pk"]), "some reason")
 
-            if status_code != HTTPStatus.OK:
+            if status_code == HTTPStatus.CREATED:
+                return redirect(reverse_lazy("applications:task_list", kwargs={"pk": data["id"]}))
+            else:
                 return form_page(request, edit_type_form(str(kwargs["pk"])), errors=data)
 
         elif edit_type is None:

@@ -459,6 +459,12 @@ def set_application_status(request, pk, status):
     return data.json(), data.status_code
 
 
+def create_application_amendment(request, pk, reason):
+    json = {"reason": reason}
+    data = client.post(request, f"/applications/{pk}/amendment/", json)
+    return data.json(), data.status_code
+
+
 def add_document_data(request):
     files = request.FILES.getlist("file")
     if not files:
