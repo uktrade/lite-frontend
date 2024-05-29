@@ -132,7 +132,7 @@ def test_search_denials_party_type_ultimate_and_third_party(
 
 
 @pytest.mark.parametrize(
-    "search_string, expected_search_string",
+    "search_string",
     (
         [
             'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA"',  # /PS-IGNORE
@@ -150,15 +150,12 @@ def test_search_denials_party_type_ultimate_and_third_party(
         ['name:"Smith"', ["name:Smith"]],
     ),
 )
-def test_search_denials_search_string(
-    authorized_client, search_string, expected_search_string, data_standard_case, mock_denials_search, url
-):
+def test_search_denials_search_string(authorized_client, search_string, data_standard_case, mock_denials_search, url):
 
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    search_string = {"search_string": search_string}
-    authorized_client.post(f"{url}?end_user={end_user_id}", data=search_string)
+    authorized_client.post(f"{url}?end_user={end_user_id}", data={"search_string": search_string})
 
-    expected_query_params = {"search": expected_search_string, "page": 1, "country": {"United Kingdom"}}
+    expected_query_params = {"search": search_string, "page": 1, "country": {"United Kingdom"}}
     search_url = client._build_absolute_uri("/external-data/denial-search/")
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
 
@@ -215,12 +212,12 @@ def test_search_denials(
     authorized_client, data_standard_case, requests_mock, standard_case_pk, queue_pk, denials_data, url
 ):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    end_user_name = data_standard_case["case"]["data"]["end_user"]["name"]
+    end_user_name = data_standard_case["case"]["data"]["end_user"]["name"].replace(" ", "+")
     end_user_address = data_standard_case["case"]["data"]["end_user"]["address"]
 
     requests_mock.get(
         client._build_absolute_uri(
-            f"/external-data/denial-search/?search=name:{end_user_name}&search=address:{end_user_address}"
+            f"/external-data/denial-search/?search=name:({end_user_name})+address:({end_user_address})&page=1&country=United+Kingdom"
         ),
         json={"count": "26", "total_pages": "2", "results": denials_data * 26},
     )
