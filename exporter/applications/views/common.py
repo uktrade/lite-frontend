@@ -9,7 +9,7 @@ from django.views.generic import FormView, TemplateView
 
 from requests.exceptions import HTTPError
 
-from exporter.applications.forms.amendments import ApplicationCopyConfirmationForm
+from exporter.applications.forms.amendments import ApplicationCopyConfirmationForm, ApplicationCopyEntitySelectionForm
 from exporter.applications.forms.appeal import AppealForm
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -145,6 +145,16 @@ class ApplicationCopyConfirmationView(LoginRequiredMixin, FormView):
 
         if not data["confirm_copy"]:
             return redirect(reverse_lazy("applications:edit_type", kwargs={"pk": str(self.kwargs["pk"])}))
+
+        return redirect(reverse_lazy("applications:select_entities", kwargs={"pk": str(self.kwargs["pk"])}))
+
+
+class ApplicationCopyEntitySelectionView(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = ApplicationCopyEntitySelectionForm
+
+    def form_valid(self, form):
+        data = form.cleaned_data
 
         try:
             response, status_code = create_application_copy(self.request, str(self.kwargs["pk"]), data=data)

@@ -65,6 +65,7 @@ urlpatterns = [
     path("<uuid:pk>/hcsat/<uuid:sid>/", HCSATApplicationPage.as_view(), name="application-hcsat"),
     path("<uuid:pk>/edit-type/", common.ApplicationEditType.as_view(), name="edit_type"),
     path("<uuid:pk>/confirm-copy/", common.ApplicationCopyConfirmationView.as_view(), name="confirm_copy"),
+    path("<uuid:pk>/select-entities/", common.ApplicationCopyEntitySelectionView.as_view(), name="select_entities"),
     path("<uuid:pk>/check-your-answers/", common.CheckYourAnswers.as_view(), name="check_your_answers"),
     path("<uuid:pk>/submit/", common.Submit.as_view(), name="submit"),
     path("<uuid:pk>/copy/", common.ApplicationCopy.as_view(), name="copy"),
