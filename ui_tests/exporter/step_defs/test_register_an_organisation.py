@@ -68,16 +68,12 @@ def new_log_in(context):
     context.newly_registered_password = response["password"]
 
 
-@given("I am not signed into LITE but signed into GREAT SSO")
+@given("I make sure that I am not logged in")
 def not_logged_into_LITE(exporter_url, driver, context):
     driver.get(exporter_url.rstrip("/") + "/auth/logout")
     if "accounts/logout" in driver.current_url:
         driver.find_element(by=By.CSS_SELECTOR, value="[action='/sso/accounts/logout/'] button").click()
         driver.get(exporter_url)
-
-    response = create_govuk_sso_user()
-    context.newly_registered_email = response["email"]
-    context.newly_registered_password = response["password"]
 
 
 @when("I enter my information to register a commercial organisation")
@@ -132,7 +128,7 @@ def pick_org(driver, organisation):
         Shared(driver).click_on_radio_buttons(no)
         functions.click_submit(driver)
     else:
-        assert False
+        assert False, "The current URL does not contain 'register-an-organisation'."
 
 
 @then(parsers.parse('I choose the option "{option}"'))
@@ -140,18 +136,6 @@ def pick_option(driver, option):
     no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), option)
     Shared(driver).click_on_radio_buttons(no)
     functions.click_submit(driver)
-
-
-@given("I am not signed into LITE but signed into GREAT SSO")
-def not_logged_into_LITE(exporter_url, driver, context):
-    driver.get(exporter_url.rstrip("/") + "/auth/logout")
-    if "accounts/logout" in driver.current_url:
-        driver.find_element(by=By.CSS_SELECTOR, value="[action='/sso/accounts/logout/'] button").click()
-        driver.get(exporter_url)
-
-    response = create_govuk_sso_user()
-    context.newly_registered_email = response["email"]
-    context.newly_registered_password = response["password"]
 
 
 @then("the organisation is registered successfully")

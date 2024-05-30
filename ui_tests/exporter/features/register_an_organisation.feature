@@ -6,7 +6,7 @@ Feature: I want to register an organisation
 
   @register_commercial_organisation
   Scenario: Register a commercial organisation that is based in UK
-    Given I am not signed into LITE but signed into GREAT SSO
+    Given I make sure that I am not logged in
     When I sign in as a new user without an organisation registered
     Then I pick an organisation "Commercial organisation"
     And I choose the option "In the United Kingdom"
@@ -16,7 +16,7 @@ Feature: I want to register an organisation
 
   @register_individual_organisation
   Scenario: Register an individual organisation that is based in UK
-    Given I am not signed into LITE but signed into GREAT SSO
+    Given I make sure that I am not logged in
     When I sign in as a new user without an organisation registered
     Then I pick an organisation "Private individual"
     And I choose the option "In the United Kingdom"
