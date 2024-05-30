@@ -79,12 +79,12 @@ def test_search_denials_party_type(mock_denials_search, party_type, authorized_c
         data={party_type: party_type_id},
     )
     assert response.status_code == 200
+
     expected_query_params = {
         "search": f"name:({party_type_name}) address:({party_type_address})",
         "page": 1,
         "country": {party_type_country},
     }
-
     search_url = client._build_absolute_uri("/external-data/denial-search/")
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
 
@@ -115,7 +115,6 @@ def test_search_denials_party_type_ultimate_and_third_party(
     response = authorized_client.get(url + f"?{party_type}={party_users[0]['id']}&{party_type}={party_users[1]['id']}")
     assert response.status_code == 200
 
-    #
     search_params = f"name:({party_users[0]['name']}) address:({party_users[0]['address']}) name:({party_users[1]['name']}) address:({party_users[1]['address']})"
 
     expected_query_params = {"search": search_params, "page": 1, "country": {"United Kingdom"}}
