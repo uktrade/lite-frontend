@@ -57,13 +57,7 @@ class Denials(LoginRequiredMixin, FormView):
             search_filter.append(f'name:({party["name"]})')
             search_filter.append(f'address:({party["address"]})')
             filter["country"].add(party["country"]["name"])
-
-        if search_filter:
-            default_search_string = f'{" ".join(search_filter)} denial_cle:"" item_description:""'
-        else:
-            default_search_string = " ".join(search_filter)
-
-        return (default_search_string, filter)
+        return (" ".join(search_filter), filter)
 
     def get_initial(self):
         session_search_string = self.get_search_string_from_session()
