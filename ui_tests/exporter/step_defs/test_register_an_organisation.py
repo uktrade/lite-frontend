@@ -1,3 +1,5 @@
+import pytest
+
 from django.conf import settings
 from bs4 import BeautifulSoup
 from faker import Faker
@@ -128,7 +130,7 @@ def pick_org(driver, organisation):
         Shared(driver).click_on_radio_buttons(no)
         functions.click_submit(driver)
     else:
-        assert False, "The current URL does not contain 'register-an-organisation'."
+        pytest.fail("The current URL does not contain 'register-an-organisation'.", pytrace=False)
 
 
 @then(parsers.parse('I choose the option "{option}"'))
