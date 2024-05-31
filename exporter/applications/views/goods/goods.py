@@ -17,6 +17,7 @@ from core.constants import (
     OrganisationDocumentType,
     ProductCategories,
 )
+from core.decorators import expect_status
 from core.file_handler import download_document_from_s3
 from core.helpers import (
     convert_dict_to_query_params,
@@ -27,7 +28,6 @@ from core.summaries.summaries import (
     NoSummaryForType,
     SummaryTypes,
 )
-
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
@@ -42,6 +42,7 @@ from exporter.applications.services import (
     post_additional_document,
     post_application_document,
     post_good_on_application,
+    edit_good_on_application,
 )
 from exporter.applications.summaries.component import (
     component_accessory_summary,
@@ -120,6 +121,7 @@ from exporter.goods.services import (
     post_good_documents,
     post_goods,
 )
+from exporter.applications.views.goods.common.edit import ProductQuantityValueEdit
 from lite_forms.components import BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
@@ -1034,6 +1036,11 @@ class GoodOnApplicationDocumentView(LoginRequiredMixin, TemplateView):
 
         document, _ = get_application_document(request, pk, good_pk, doc_pk)
         return download_document_from_s3(document["s3_key"], document["name"])
+
+
+class EditQuantityValueExistingGood(ProductQuantityValueEdit):
+    def get_success_url(self):
+        return reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
 
 
 class RemovePreexistingGood(LoginRequiredMixin, TemplateView):
