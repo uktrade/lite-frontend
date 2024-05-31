@@ -200,7 +200,7 @@ class ApplicationSummaryPage:
 
 
 class ApplicationsSummaryPage:
-    NAME = "Name"
+    YOUR_REFERENCE = "Your reference"
     REFERENCE_CODE = "ECJU reference"
     TYPE = "Type"
     EXPORT_TYPE = "Export type"
