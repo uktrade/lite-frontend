@@ -57,10 +57,7 @@ class ProductControlListEntryForm(BaseForm):
         TITLE = "Do you know the product's control list entry?"
 
     is_good_controlled = forms.TypedChoiceField(
-        choices=(
-            (True, "Yes"),
-            (False, "No"),
-        ),
+        choices=((True, "Yes"), (False, "No"), (False, "It does not have one")),
         coerce=coerce_str_to_bool,
         label="",
         error_messages={
@@ -99,6 +96,9 @@ class ProductControlListEntryForm(BaseForm):
                         "If the product isn't subject to any controls, you'll be issued "
                         "with a 'no licence required' document."
                     ),
+                ),
+                ConditionalRadiosQuestion(
+                    "It does not have one",
                 ),
             ),
             HTML.details(
