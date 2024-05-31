@@ -127,8 +127,8 @@ def test_search_denials_party_type_ultimate_and_third_party(
 @pytest.mark.parametrize(
     "search_string",
     (
-        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)",
-        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",
+        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)",  # /PS-IGNORE
+        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",  # /PS-IGNORE
         "name:(Smith)",
     ),
 )
@@ -161,7 +161,9 @@ def test_search_denials_session_search_string_matchs(
 
     assert response.status_code == 200
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search="name:(End User) address:(44)"
+        filter={"country": {"United Kingdom"}},
+        request=mock.ANY,
+        search="name:(End User) address:(44)",
     )
 
     search_string = {"search_string": "name:(End User2) address:(23)"}
@@ -178,7 +180,9 @@ def test_search_denials_session_search_string_matchs(
     )
 
     mock_search_denials.assert_called_with(
-        filter={"country": {"Abu Dhabi"}}, request=mock.ANY, search="name:(Consignee) address:(44)"
+        filter={"country": {"Abu Dhabi"}},
+        request=mock.ANY,
+        search="name:(Consignee) address:(44)",
     )
 
 

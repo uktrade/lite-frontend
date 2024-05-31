@@ -124,3 +124,14 @@ def test_exporter_accessibility_statement_view(authorized_client):
 
     expected_back_url = reverse("core:home")
     assert response.context["back_url"] == expected_back_url
+
+
+def test_help_support_view(authorized_client):
+    response = authorized_client.get(reverse("exporter-help-support"))
+
+    assert response.status_code == 200
+    assertTemplateUsed(response, "core/help_support.html")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1").string.strip() == "Get help with your application"
+    assert soup.title.string.strip() == "Help and support - LITE - GOV.UK"

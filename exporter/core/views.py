@@ -232,3 +232,7 @@ def handler403(request, exception):
 
 class PrivacyNotice(TemplateView):
     template_name = "core/privacy_notice.html"
+
+
+class HelpSupportView(TemplateView):
+    template_name = "core/help_support.html"
