@@ -19,47 +19,6 @@ from ui_tests.exporter.pages.shared import Shared
 
 scenarios("../features/register_an_organisation.feature", strict_gherkin=False)
 
-
-@given("I register but I don't belong to an organisation")
-def new_log_in(context):
-    response = create_govuk_sso_user()
-    context.newly_registered_email = response["email"]
-    context.newly_registered_password = response["password"]
-
-
-@when("I enter my information from steps 1-4 to register a commercial organisation")
-def register_commercial(driver, get_eori_number):
-    register = RegisterOrganisation(driver)
-    register.click_create_an_account_button()
-    register.select_commercial_or_individual_organisation("commercial")
-    functions.click_submit(driver)
-    register.click_inside_of_uk_location()
-    functions.click_submit(driver)
-    register.enter_random_company_name()
-    register.enter_random_eori_number(get_eori_number)
-    register.enter_random_sic_number()
-    register.enter_random_vat_number()
-    register.enter_random_registration_number()
-    functions.click_submit(driver)
-    register.enter_random_site()
-    functions.click_submit(driver)
-    functions.click_finish_button(driver)
-
-
-def register_individual(driver):
-    register = RegisterOrganisation(driver)
-    register.click_create_an_account_button()
-    register.select_commercial_or_individual_organisation("individual")
-    functions.click_submit(driver)
-    register.click_outside_of_uk_location()
-    functions.click_submit(driver)
-    register.enter_random_company_name()
-    functions.click_submit(driver)
-    register.enter_random_site_with_country_and_address_box()
-    functions.click_submit(driver)
-    functions.click_finish_button(driver)
-
-
 fake = Faker("en_GB")
 
 
@@ -78,30 +37,40 @@ def not_logged_into_LITE(exporter_url, driver, context):
         driver.get(exporter_url)
 
 
-@when("I enter my information to register a commercial organisation")
-def register_commercial(driver, get_eori_number):
-
+@when("I enter company name")
+def enter_company(driver):
     register = RegisterOrganisation(driver)
     register.enter_random_company_name()
+
+
+@when("I enter company EORI number")
+def enter_eori(driver, get_eori_number):
+    register = RegisterOrganisation(driver)
     register.enter_random_eori_number(get_eori_number)
+
+
+@when("I enter company SIC number")
+def enter_sic(driver):
+    register = RegisterOrganisation(driver)
     register.enter_random_sic_number()
-    register.enter_random_vat_number()
-    register.enter_random_registration_number()
-    functions.click_submit(driver)
-
-    register.enter_random_site()
-    functions.click_submit(driver)
-    functions.click_submit(driver)
 
 
-@when("I enter my information to register an individual organisation")
-def register_individual(driver, get_eori_number):
+@when("I enter company VAT number")
+def enter_vat(driver):
     register = RegisterOrganisation(driver)
-    register.enter_random_company_name()
-    register.enter_random_eori_number(get_eori_number)
+    register.enter_random_vat_number()
+
+
+@when("I enter company registration number and continue")
+def enter_vat(driver):
+    register = RegisterOrganisation(driver)
     register.enter_random_registration_number()
     functions.click_submit(driver)
 
+
+@when("I enter random site details and finish submitting")
+def enter_vat(driver):
+    register = RegisterOrganisation(driver)
     register.enter_random_site()
     functions.click_submit(driver)
     functions.click_submit(driver)
@@ -111,32 +80,28 @@ def register_individual(driver, get_eori_number):
 def go_to_exporter_when(driver, exporter_url):  # noqa
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
+    MockSigninPage(driver).sign_in(fake.email())
 
-    if "signin" in driver.current_url and not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
-        GovukSigninPage(driver).sign_in(fake.email(), fake.password())
-
-    if settings.MOCK_SSO_ACTIVATE_ENDPOINTS and not getattr(settings, "MOCK_SSO_USER_EMAIL", None):
-        MockSigninPage(driver).sign_in(fake.email())
-
-        driver.find_element(by=By.ID, value="id_first_name").send_keys(fake.first_name())
-        driver.find_element(by=By.ID, value="id_last_name").send_keys(fake.last_name())
-        driver.find_element(by=By.CSS_SELECTOR, value="[type='submit']").click()
+    driver.find_element(by=By.ID, value="id_first_name").send_keys(fake.first_name())
+    driver.find_element(by=By.ID, value="id_last_name").send_keys(fake.last_name())
+    driver.find_element(by=By.CSS_SELECTOR, value="[type='submit']").click()
 
 
-@then(parsers.parse('I pick an organisation "{organisation}"'))
-def pick_org(driver, organisation):
-    if "register-an-organisation" in driver.current_url:
-        no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), organisation)
-        Shared(driver).click_on_radio_buttons(no)
-        functions.click_submit(driver)
-    else:
-        pytest.fail("The current URL does not contain 'register-an-organisation'.", pytrace=False)
+@then("I choose the Commercial organisation and continue")
+def pick_commercial(driver):
+    driver.find_element(By.ID, "id_REGISTRATION_TYPE-type_1").click()
+    functions.click_submit(driver)
 
 
-@then(parsers.parse('I choose the option "{option}"'))
-def pick_option(driver, option):
-    no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), option)
-    Shared(driver).click_on_radio_buttons(no)
+@then("I choose the Private invidual and continue")
+def pick_individual(driver):
+    driver.find_element(By.ID, "id_REGISTRATION_TYPE-type_2").click()
+    functions.click_submit(driver)
+
+
+@then("I choose the option In the United Kingdom and submit")
+def select_uk(driver):
+    driver.find_element(By.ID, "id_UK_BASED-location_1").click()
     functions.click_submit(driver)
 
 

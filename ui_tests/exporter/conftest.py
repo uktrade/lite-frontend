@@ -7,6 +7,7 @@ from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 
 import tests_common.tools.helpers as utils
 from ui_tests.exporter.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
@@ -122,14 +123,15 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
 
+    try:
+        mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+    except NoSuchElementException:
+        mock_sso_login_screen = None
+
     if "signin" in driver.current_url and not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         GovukSigninPage(driver).sign_in(exporter_info["email"], exporter_info["password"])
 
-    if (
-        "authorize" in driver.current_url
-        and settings.MOCK_SSO_ACTIVATE_ENDPOINTS
-        and not getattr(settings, "MOCK_SSO_USER_EMAIL", None)
-    ):
+    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         MockSigninPage(driver).sign_in(exporter_info["email"])
 
     if "select-organisation" in driver.current_url:
