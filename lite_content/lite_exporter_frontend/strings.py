@@ -160,7 +160,7 @@ class UltimateEndUser:
         class AttachDocuments:
             TITLE = "Attach a document (optional)"
             DESCRIPTION = (
-                "Upload a DOCX, DOC, PDF or PNG file."
+                "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
                 "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
                 "\n\nThe file must be smaller than 50MB."
             )
@@ -189,7 +189,7 @@ class Consignee:
         class AttachDocuments:
             TITLE = "Attach a document (optional)"
             DESCRIPTION = (
-                "Upload a DOCX, DOC, PDF or PNG file."
+                "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
                 "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
                 "\n\nThe file must be smaller than 50MB."
             )
@@ -221,7 +221,7 @@ class ThirdParties:
         class AttachDocuments:
             TITLE = "Attach a document (optional)"
             DESCRIPTION = (
-                "Upload a DOCX, DOC, PDF or PNG file."
+                "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
                 "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
                 "\n\nThe file must be smaller than 50MB."
             )
@@ -372,7 +372,7 @@ class AdditionalDocuments:
         class AttachDocuments:
             TITLE = "Attach a supporting document"
             DESCRIPTION = (
-                "Upload a DOCX, DOC, PDF or PNG file."
+                "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
                 "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
                 "\n\nThe file must be smaller than 50MB."
             )

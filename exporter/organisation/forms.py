@@ -58,7 +58,7 @@ class UploadFirearmsCertificateForm(forms.Form):
         TITLE = "Attach your registered firearms dealer certificate"
 
     file = forms.FileField(
-        label="Upload a DOCX, DOC, PDF or PNG file.",
+        label="Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file.",
         help_text="The file must be smaller than 50MB",
         error_messages={"required": "Select certificate file to upload"},
     )

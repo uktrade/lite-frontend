@@ -334,7 +334,7 @@ class EditGoodForm:
 class AttachDocumentForm:
     TITLE = "Attach a document"
     DESCRIPTION = (
-        "Upload a DOCX, DOC, PDF or PNG file."
+        "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
         "\n\nDocumentation could be specifications, datasheets, sales brochures, drawings "
         "or anything else that fully details what the product is and what it's designed to do."
         "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "

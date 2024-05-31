@@ -331,7 +331,7 @@ def test_add_good_attach_firearm_dealer_certificate(url, authorized_client):
     )
 
     title = b"Attach your registered firearms dealer certificate"
-    label = b"Upload a DOCX, DOC, PDF or PNG file."
+    label = b"Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
     response = authorized_client.post(
         url, data={"wizard_goto_step": AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE}
     )
