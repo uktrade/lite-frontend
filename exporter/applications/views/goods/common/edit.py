@@ -17,7 +17,11 @@ from exporter.goods.forms.common import (
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
+    ProductQuantityAndValueForm,
 )
+from exporter.applications.services import edit_good_on_application
+from exporter.applications.views.goods.common.initial import get_quantity_and_value_initial_data
+from exporter.applications.views.goods.common.payloads import get_quantity_and_value_payload
 from exporter.goods.services import (
     delete_good_document,
     post_good_documents,
@@ -33,6 +37,7 @@ from .helpers import get_product_document
 from .mixins import (
     ApplicationMixin,
     GoodMixin,
+    GoodOnApplicationMixin,
 )
 from .payloads import (
     ProductEditProductDocumentAvailabilityPayloadBuilder,
@@ -122,6 +127,46 @@ class BaseProductEditWizardView(
         self.process_forms(form_list, form_dict, **kwargs)
 
         return redirect(self.get_success_url())
+
+
+class BaseGoodOnApplicationEditView(
+    LoginRequiredMixin,
+    ApplicationMixin,
+    GoodOnApplicationMixin,
+    FormView,
+):
+    template_name = "core/form.html"
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating good on application",
+        "Unexpected error updating good on application",
+    )
+    def edit_good_on_application(self, request, good_on_application_id, payload):
+        return edit_good_on_application(
+            request,
+            good_on_application_id,
+            payload,
+        )
+
+    def perform_actions(self, form):
+        self.edit_good_on_application(
+            self.request,
+            self.good_on_application["id"],
+            self.get_edit_payload(form),
+        )
+
+    def get_edit_payload(self, form):
+        raise NotImplementedError(f"Implement `get_edit_payload` for {self.__class__.__name__}")
+
+    def form_valid(self, form):
+        self.perform_actions(form)
+        return super().form_valid(form)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["form_title"] = self.form_class.Layout.TITLE
+        return context
 
 
 class BaseEditProductDocumentView:
@@ -334,3 +379,13 @@ class BaseProductDocumentUpload:
             self.update_good_document_data(payload)
 
         return redirect(self.get_success_url())
+
+
+class ProductQuantityValueEdit(BaseGoodOnApplicationEditView):
+    form_class = ProductQuantityAndValueForm
+
+    def get_initial(self):
+        return get_quantity_and_value_initial_data(self.good_on_application)
+
+    def get_edit_payload(self, form):
+        return get_quantity_and_value_payload(form)

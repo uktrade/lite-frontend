@@ -27,7 +27,6 @@ from core.summaries.summaries import (
     NoSummaryForType,
     SummaryTypes,
 )
-
 from exporter.applications.helpers.check_your_answers import get_total_goods_value
 from exporter.applications.helpers.date_fields import format_date
 from exporter.applications.services import (
@@ -120,6 +119,7 @@ from exporter.goods.services import (
     post_good_documents,
     post_goods,
 )
+from exporter.applications.views.goods.common.edit import ProductQuantityValueEdit
 from lite_forms.components import BackLink, FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.views import SingleFormView
@@ -1034,6 +1034,11 @@ class GoodOnApplicationDocumentView(LoginRequiredMixin, TemplateView):
 
         document, _ = get_application_document(request, pk, good_pk, doc_pk)
         return download_document_from_s3(document["s3_key"], document["name"])
+
+
+class EditQuantityValueExistingGood(ProductQuantityValueEdit):
+    def get_success_url(self):
+        return reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})
 
 
 class RemovePreexistingGood(LoginRequiredMixin, TemplateView):

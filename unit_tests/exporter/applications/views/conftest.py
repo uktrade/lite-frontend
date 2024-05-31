@@ -383,6 +383,16 @@ def application_without_rfd_document(application):
 
 
 @pytest.fixture
+def application_products_url(data_standard_case):
+    return reverse(
+        "applications:goods",
+        kwargs={
+            "pk": data_standard_case["case"]["id"],
+        },
+    )
+
+
+@pytest.fixture
 def firearm_product_summary_url(data_standard_case, good_id):
     return reverse(
         "applications:firearm_product_summary",
