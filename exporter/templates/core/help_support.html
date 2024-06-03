@@ -1,0 +1,73 @@
+{% extends 'layouts/base.html' %}
+
+{% block back_link %}
+<a href="{% url 'core:home' %}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block title %}Help and support{% endblock %}
+
+{% block body %}
+<div class="govuk-width-container">
+    <main id="main-content" class="govuk-main-wrapper govuk-!-padding-top-0">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-l">
+                    Get help with your application
+                </h1>
+                <h2 class="govuk-heading-m">Telephone</h2>
+                <p class="govuk-body">
+                    Telephone: +44 (0)20 7215 4594 (select option 2)<br>
+                    Monday to Friday, 10am to 4pm
+                </p>
+
+                <h2 class="govuk-heading-m">Email</h2>
+                <p class="govuk-body">
+                <a class="govuk-link govuk-link--no-visited-state"
+                    href=mailto:LITE.support@businessandtrade.gov.uk >LITE.support@businessandtrade.gov.uk </a><br>
+                    We aim to acknowledge your query in one working day. It may take longer to solve if we need to investigate.
+                </p>
+
+                <h2 class="govuk-heading-m">Address</h2>
+                <p class="govuk-body">
+                    Export Control Joint Unit<br>
+                    Department for Business and Trade<br>
+                    Old Admiralty Building<br>
+                    Admiralty Place<br>
+                    London<br>
+                    SW1A 2DY<br>
+                    United Kingdom
+                </p>
+
+                <h2 class="govuk-heading-m">Accessibility needs</h2>
+                <p class="govuk-body">
+                    If you or any of your colleagues have accessibility needs, tell us how we can improve your user experience. Contact
+                    <a class="govuk-link govuk-link--no-visited-state"
+                    href=mailto:LITE.support@businessandtrade.gov.uk >LITE.support@businessandtrade.gov.uk </a>
+                </p>
+
+                <h2 class="govuk-heading-m">GOV.UK One Login help</h2>
+                <p class="govuk-body">
+                    Get support if you have
+                    <a class="govuk-link govuk-link--no-visited-state" href="https://home.account.gov.uk/contact-gov-uk-one-login">problems with GOV.UK One Login</a>.
+                </p>
+
+                <h2 class="govuk-heading-m">Watch guidance videos</h2>
+                <p class="govuk-body">
+                    <a class="govuk-link govuk-link--no-visited-state" href="https://www.youtube.com/playlist?list=PLx8TFJYkqt4_L9XAv_VNQg2ViB3Vayt2b">Watch our YouTube playlist</a> for guidance on making an application.
+                </p>
+
+                <h2 class="govuk-heading-m">Read export control updates</h2>
+                <p class="govuk-body">
+                    <a class="govuk-link govuk-link--no-visited-state" href="https://www.gov.uk/government/collections/notices-to-exporters">Subscribe to our notices</a> to exporters for alerts on:
+                    <ul class="govuk-list govuk-list--bullet">
+                      <li>updates on legislation and sanctions</li>
+                      <li>changes to the list of controlled goods</li>
+                      <li>licence amendments</li>
+                    </ul>
+                </p>
+            </div>
+        </div>
+    </main>
+</div>
+
+{% endblock %}
