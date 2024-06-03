@@ -8,6 +8,8 @@ from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Submit, Layout, HTML
 
+from exporter.core.constants import FileUploadFileTypes
+
 
 def validate_expiry_date(value):
     today = timezone.now().date()
@@ -58,7 +60,7 @@ class UploadFirearmsCertificateForm(forms.Form):
         TITLE = "Attach your registered firearms dealer certificate"
 
     file = forms.FileField(
-        label="Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file.",
+        label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         help_text="The file must be smaller than 50MB",
         error_messages={"required": "Select certificate file to upload"},
     )

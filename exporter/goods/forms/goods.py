@@ -18,6 +18,7 @@ from exporter.core.constants import (
     ProductSecurityFeatures,
     ProductDeclaredAtCustoms,
     FIREARM_AMMUNITION_COMPONENT_TYPES,
+    FileUploadFileTypes,
 )
 from exporter.core.helpers import (
     convert_control_list_entries,
@@ -261,7 +262,7 @@ def format_list_item(link, name, description):
 def upload_firearms_act_certificate_form(section, filename, back_link):
     return Form(
         title=f"Attach your Firearms Act 1968 {section} certificate",
-        description="Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file.\n\nThe file must be smaller than 50MB.",
+        description=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT + "\n\nThe file must be smaller than 50MB.",
         questions=[
             HiddenField("firearms_certificate_uploaded", False),
             FileUpload(),
@@ -1095,7 +1096,7 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
     title = "Attach your registered firearms dealer certificate"
 
     file = forms.FileField(
-        label="Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file.",
+        label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         help_text="The file must be smaller than 50MB",
         error_messages={
             "required": "Select certificate file to upload",

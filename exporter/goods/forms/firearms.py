@@ -27,6 +27,7 @@ from exporter.core.validators import (
     RelativeDeltaDateValidator,
 )
 from exporter.goods.forms.goods import SerialNumbersField
+from exporter.core.constants import FileUploadFileTypes
 
 
 class FirearmCategoryForm(BaseForm):
@@ -217,7 +218,7 @@ class FirearmAttachRFDCertificate(BaseForm):
         TITLE = "Upload a registered firearms dealer certificate"
 
     file = forms.FileField(
-        label="Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file.",
+        label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         error_messages={
             "required": "Select a registered firearms dealer certificate",
         },

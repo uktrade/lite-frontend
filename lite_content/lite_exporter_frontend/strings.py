@@ -15,6 +15,7 @@ from lite_content.lite_exporter_frontend import (  # noqa
     licences,  # noqa
     ecju_queries,  # noqa
 )  # noqa
+from exporter.core.constants import FileUploadFileTypes
 
 # Generic (used as defaults in forms)
 BACK_TO_APPLICATION = "Back to application"
@@ -160,8 +161,8 @@ class UltimateEndUser:
         class AttachDocuments:
             TITLE = "Attach a document (optional)"
             DESCRIPTION = (
-                "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
-                "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
+                FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT
+                + "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
                 "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
@@ -189,8 +190,8 @@ class Consignee:
         class AttachDocuments:
             TITLE = "Attach a document (optional)"
             DESCRIPTION = (
-                "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
-                "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
+                FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT
+                + "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
                 "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
@@ -221,8 +222,8 @@ class ThirdParties:
         class AttachDocuments:
             TITLE = "Attach a document (optional)"
             DESCRIPTION = (
-                "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
-                "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
+                FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT
+                + "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
                 "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
@@ -372,8 +373,8 @@ class AdditionalDocuments:
         class AttachDocuments:
             TITLE = "Attach a supporting document"
             DESCRIPTION = (
-                "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
-                "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
+                FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT
+                + "\n\nDo not attach a document that's above OFFICIAL-SENSITIVE."
                 "\n\nThe file must be smaller than 50MB."
             )
             DESCRIPTION_FIELD_TITLE = "Description"
