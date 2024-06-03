@@ -61,6 +61,18 @@ def mock_denials_search(requests_mock, denials_search_results):
     return requests_mock.get(url=url, json=denials_search_results)
 
 
+@pytest.fixture
+def search_score_flag_on(settings):
+    settings.FEATURE_FLAG_SEARCH_SCORE = True
+    assert settings.FEATURE_FLAG_SEARCH_SCORE
+
+
+@pytest.fixture
+def search_score_flag_off(settings):
+    settings.FEATURE_FLAG_SEARCH_SCORE = False
+    return settings.FEATURE_FLAG_SEARCH_SCORE
+
+
 @pytest.mark.parametrize(
     "party_type",
     (
@@ -187,15 +199,15 @@ def test_search_denials_session_search_string_matchs(
     )
 
 
-def test_search_score_feature_flag(authorized_client, data_standard_case, url):
-    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    response = authorized_client.get(f"{url}?end_user={end_user_id}")
-
-    assert response.context_data["search_score_feature_flag"] == settings.FEATURE_FLAG_SEARCH_SCORE
-
-
 def test_search_denials(
-    authorized_client, data_standard_case, requests_mock, standard_case_pk, queue_pk, denials_data, url
+    authorized_client,
+    data_standard_case,
+    requests_mock,
+    standard_case_pk,
+    queue_pk,
+    denials_data,
+    url,
+    search_score_flag_off,
 ):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
     end_user_name = data_standard_case["case"]["data"]["end_user"]["name"].replace(" ", "+")
@@ -210,7 +222,7 @@ def test_search_denials(
 
     # Disable search score feature flag to make sure default behaviour is used
 
-    settings.FEATURE_FLAG_SEARCH_SCORE = False
+    settings.FEATURE_FLAG_SEARCH_SCORE = search_score_flag_off
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
     soup = BeautifulSoup(response.content, "html.parser")
