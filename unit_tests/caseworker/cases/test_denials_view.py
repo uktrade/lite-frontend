@@ -64,7 +64,7 @@ def mock_denials_search(requests_mock, denials_search_results):
 @pytest.fixture
 def search_score_flag_on(settings):
     settings.FEATURE_FLAG_SEARCH_SCORE = True
-    assert settings.FEATURE_FLAG_SEARCH_SCORE
+    return settings.FEATURE_FLAG_SEARCH_SCORE
 
 
 @pytest.fixture
@@ -197,6 +197,13 @@ def test_search_denials_session_search_string_matchs(
         request=mock.ANY,
         search="name:(Consignee) address:(44)",
     )
+
+
+def test_search_score_feature_flag(authorized_client, data_standard_case, url, search_score_flag_on):
+    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
+    settings.FEATURE_FLAG_SEARCH_SCORE = search_score_flag_on
+    response = authorized_client.get(f"{url}?end_user={end_user_id}")
+    assert response.context_data["search_score_feature_flag"]
 
 
 def test_search_denials(
