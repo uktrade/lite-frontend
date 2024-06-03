@@ -241,3 +241,7 @@ class OrganisationStatus:
     DRAFT = "draft"
     REVIEW = "in_review"
     ACTIVE = "active"
+
+
+class FileUploadFileTypes:
+    UPLOAD_GUIDANCE_TEXT = "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."

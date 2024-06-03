@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from core import client
 
-from exporter.core.constants import AddGoodFormSteps
+from exporter.core.constants import AddGoodFormSteps, FileUploadFileTypes
 from exporter.goods.forms import (
     AddGoodsQuestionsForm,
     AttachFirearmsDealerCertificateForm,
@@ -26,7 +26,6 @@ from exporter.goods.forms import (
     SoftwareTechnologyDetailsForm,
 )
 from lite_content.lite_exporter_frontend.goods import CreateGoodForm, GoodGradingForm
-
 
 ADD_GOOD_VIEW = "add_good"
 
@@ -331,7 +330,7 @@ def test_add_good_attach_firearm_dealer_certificate(url, authorized_client):
     )
 
     title = b"Attach your registered firearms dealer certificate"
-    label = b"Upload a DOCX, DOC, PDF or PNG file."
+    label = FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT.encode("utf-8")
     response = authorized_client.post(
         url, data={"wizard_goto_step": AddGoodFormSteps.ATTACH_FIREARM_DEALER_CERTIFICATE}
     )

@@ -302,6 +302,7 @@ class FileUploadTest(TestCase):
         assert accept == [
             "application/pdf",
             "application/msword",
+            "application/vnd.oasis.opendocument.text",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             "application/rtf",
             "application/xml",
