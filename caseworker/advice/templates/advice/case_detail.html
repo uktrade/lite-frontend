@@ -195,6 +195,7 @@
               Denial matches
             </dt>
             <dd class="govuk-summary-list__value">
+              {{ case.data.denial_matches }}
                 {% if case.data.denial_matches %}
                   {% for denial in case.data.denial_matches %}
                     <p>
