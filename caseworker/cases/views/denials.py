@@ -54,8 +54,9 @@ class Denials(LoginRequiredMixin, FormView):
         }
 
         for party in self.parties_to_search:
+            address_alphaumeric_chars_only = "".join(char for char in party["address"] if char.isalnum())
             search_filter.append(f'name:({party["name"]})')
-            search_filter.append(f'address:({party["address"]})')
+            search_filter.append(f"address:({address_alphaumeric_chars_only})")
             filter["country"].add(party["country"]["name"])
         return (" ".join(search_filter), filter)
 
