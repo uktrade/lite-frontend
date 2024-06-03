@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 from core import client
 from bs4 import BeautifulSoup
+from django.conf import settings
 
 
 @pytest.fixture(autouse=True)
@@ -186,6 +187,13 @@ def test_search_denials_session_search_string_matchs(
     )
 
 
+def test_search_score_feature_flag(authorized_client, data_standard_case, url):
+    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
+    response = authorized_client.get(f"{url}?end_user={end_user_id}")
+
+    assert response.context_data["search_score_feature_flag"] == settings.FEATURE_FLAG_SEARCH_SCORE
+
+
 def test_search_denials(
     authorized_client, data_standard_case, requests_mock, standard_case_pk, queue_pk, denials_data, url
 ):
@@ -200,6 +208,9 @@ def test_search_denials(
         json={"count": "26", "total_pages": "2", "results": denials_data * 26},
     )
 
+    # Disable search score feature flag to make sure default behaviour is used
+
+    settings.FEATURE_FLAG_SEARCH_SCORE = False
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
     soup = BeautifulSoup(response.content, "html.parser")
@@ -222,7 +233,6 @@ def test_search_denials(
         "Item description",
         "End use",
         "Party type",
-        "Search Score",
     ]
     header_values = [header.text for header in headers]
     assert header_values == header_order
