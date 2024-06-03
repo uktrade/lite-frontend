@@ -57,7 +57,6 @@ from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import confirm_form
-from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView, MultiFormView
 from exporter.applications.forms.hcsat import HCSATminiform
 from core.auth.views import LoginRequiredMixin
@@ -112,17 +111,11 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
     form_class = EditApplicationForm
     template_name = "edit_application_form.html"
 
-    def dispatch(self, request, *args, **kwargs):
-        self.application_id = str(kwargs["pk"])
-        self.data = get_application(request, self.application_id)
-
-        if self.data.get("status") and self.data.get("status").get("key") == APPLICANT_EDITING:
-            return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
-
-        return super().dispatch(request, *args, **kwargs)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        self.application_id = str(self.kwargs["pk"])
+        self.data = get_application(self.request, self.application_id)
 
         context.update(
             {
@@ -133,12 +126,12 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        application_id = str(self.kwargs["pk"])
 
+        self.application_id = str(self.kwargs["pk"])
         if form.cleaned_data.get("edit_type") == "major":
-            set_application_status(self.request, application_id, APPLICANT_EDITING)
+            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
 
-        return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
+        return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
