@@ -33,6 +33,11 @@ urlpatterns += [
         ExporterAccessibilityStatementView.as_view(),
         name="exporter-accessibility-statement",
     ),
+    path(
+        "help-support/",
+        exporter.core.views.HelpSupportView.as_view(),
+        name="exporter-help-support",
+    ),
 ]
 
 if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
