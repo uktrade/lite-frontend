@@ -222,6 +222,7 @@ def test_search_denials(
         "Item description",
         "End use",
         "Party type",
+        "Search Score",
     ]
     header_values = [header.text for header in headers]
     assert header_values == header_order

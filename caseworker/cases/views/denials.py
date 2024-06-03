@@ -95,14 +95,12 @@ class Denials(LoginRequiredMixin, FormView):
             search_results, _ = search_denials(request=self.request, search=search, filter=filter)
             total_pages = search_results.get("total_pages", 0)
 
-        context = super().get_context_data(
+        return super().get_context_data(
             search_string=search,
             case=self.case,
             total_pages=total_pages,
             search_results=search_results,
             parties=self.parties_to_search,
+            search_score_feature_flag=settings.FEATURE_FLAG_SEARCH_SCORE,
             **kwargs,
         )
-        context["search_score_feature_flag"] = settings.FEATURE_FLAG_SEARCH_SCORE
-
-        return context
