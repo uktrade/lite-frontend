@@ -195,11 +195,10 @@
               Denial matches
             </dt>
             <dd class="govuk-summary-list__value">
-              {{ case.data.denial_matches }}
                 {% if case.data.denial_matches %}
                   {% for denial in case.data.denial_matches %}
                     <p>
-                      <a href="{% url 'external_data:denial-detail' pk=denial.denial.id %}?queue_id={{queue.id}}&case_id={{case.id}}">
+                      <a href="{% url 'external_data:denial-detail' pk=denial.denial_entity.id %}?queue_id={{queue.id}}&case_id={{case.id}}">
                         {{ denial.denial.reference }}
                       </a>
                       <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
