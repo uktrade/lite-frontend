@@ -24,7 +24,7 @@ from exporter.core.services import (
     get_units,
 )
 from exporter.core.validators import PastDateValidator
-from exporter.core.constants import ProductSecurityFeatures
+from exporter.core.constants import ProductSecurityFeatures, FileUploadFileTypes
 
 
 class ProductNameForm(BaseForm):
@@ -358,7 +358,7 @@ class ProductDocumentUploadForm(BaseForm):
         TITLE = "Upload a document that shows what your product is designed to do"
 
     product_document = forms.FileField(
-        label="Upload a DOCX, DOC, PDF or PNG file.",
+        label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         error_messages={
             "required": "Select a document that shows what your product is designed to do",
         },
