@@ -2,7 +2,7 @@ import pytest
 
 from django.core.exceptions import ValidationError
 
-from exporter.core.organisation.validators import validate_phone, validate_registration
+from exporter.core.organisation.validators import validate_phone, validate_registration, validate_website
 
 
 @pytest.mark.parametrize(
@@ -53,3 +53,14 @@ def test_validate_registration_number_valid_numbers(registration_number):
 def test_validate_registration_number_invalid_numbers(registration_number):
     with pytest.raises(ValidationError):
         validate_registration(registration_number)
+
+
+@pytest.mark.parametrize(("website"), ["https://www.example.com", "www.example.com", "example.com"])
+def test_validate_website(website):
+    assert validate_website(website) is website
+
+
+@pytest.mark.parametrize(("website"), ["example", "com", ".com"])
+def test_validate_website_invalid_url(website):
+    with pytest.raises(ValidationError):
+        validate_website(website)

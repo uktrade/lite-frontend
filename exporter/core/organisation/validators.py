@@ -43,7 +43,10 @@ def validate_website(value):
             validator = URLValidator()
             validator(value)
         except ValidationError:
-            raise ValidationError("Enter a valid URL")
+            try:
+                validator("https://" + value)
+            except ValidationError:
+                raise ValidationError("Enter a valid URL")
     return value
 
 
