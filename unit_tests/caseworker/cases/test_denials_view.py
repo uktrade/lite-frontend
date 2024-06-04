@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 from core import client
 from bs4 import BeautifulSoup
+from django.conf import settings
 
 
 @pytest.fixture(autouse=True)
@@ -58,6 +59,16 @@ def denials_search_results(denials_data):
 def mock_denials_search(requests_mock, denials_search_results):
     url = client._build_absolute_uri("/external-data/denial-search/")
     return requests_mock.get(url=url, json=denials_search_results)
+
+
+@pytest.fixture
+def denials_search_score_flag_on(settings):
+    settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE = True
+
+
+@pytest.fixture
+def denials_search_score_flag_off(settings):
+    settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE = False
 
 
 @pytest.mark.parametrize(
@@ -186,8 +197,23 @@ def test_search_denials_session_search_string_matchs(
     )
 
 
+def test_search_score_feature_flag_on(authorized_client, data_standard_case, url, denials_search_score_flag_on):
+    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
+    response = authorized_client.get(f"{url}?end_user={end_user_id}")
+    soup = BeautifulSoup(response.content, "html.parser")
+    search_header = soup.find("th", string="Search score")
+    assert search_header
+
+
 def test_search_denials(
-    authorized_client, data_standard_case, requests_mock, standard_case_pk, queue_pk, denials_data, url
+    authorized_client,
+    data_standard_case,
+    requests_mock,
+    standard_case_pk,
+    queue_pk,
+    denials_data,
+    url,
+    denials_search_score_flag_off,
 ):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
     end_user_name = data_standard_case["case"]["data"]["end_user"]["name"].replace(" ", "+")
