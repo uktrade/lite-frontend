@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from core.common.forms import BaseForm
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
-from exporter.core.constants import CaseTypes
+from exporter.core.constants import CaseTypes, FileUploadFileTypes
 from exporter.core.services import get_countries
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.applications import PartyForm, PartyTypeForm
@@ -351,7 +351,7 @@ class PartyDocumentsForm(forms.Form):
 class PartyDocumentUploadForm(forms.Form):
     title = "Upload an end-user document"
     party_document = forms.FileField(
-        label="Upload a DOCX, DOC, PDF or PNG file.",
+        label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         error_messages={
             "required": "Select an end-user document",
         },
@@ -407,7 +407,7 @@ class PartyDocumentUploadForm(forms.Form):
 class PartyEnglishTranslationDocumentUploadForm(forms.Form):
     title = "Upload an English translation"
     party_eng_translation_document = forms.FileField(
-        label="Upload a DOCX, DOC, PDF or PNG file.",
+        label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         error_messages={
             "required": "Select an English translation",
         },
@@ -432,7 +432,7 @@ class PartyEnglishTranslationDocumentUploadForm(forms.Form):
 class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
     title = "Upload a document on company letterhead"
     party_letterhead_document = forms.FileField(
-        label="Upload a DOCX, DOC, PDF or PNG file.",
+        label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         error_messages={
             "required": "Select a document on company letterhead",
         },
