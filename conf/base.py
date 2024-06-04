@@ -166,10 +166,11 @@ FILE_UPLOAD_HANDLERS = env.list("FILE_UPLOAD_HANDLERS", default=["core.file_hand
 ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
     "ACCEPTED_FILE_UPLOAD_MIME_TYPES",
     default=(
-        # Default file-types supported by LITE are pdf, doc, docx,
-        # rtf, jpeg, png and tiff
+        # Default file types supported by LITE are
+        # DOCX, DOC, PDF, PNG, JPEG, ODT
         "application/pdf",
         "application/msword",
+        "application/vnd.oasis.opendocument.text",
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/rtf",
         "application/xml",

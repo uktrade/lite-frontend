@@ -86,6 +86,9 @@
                                 <th scope="col" class="govuk-table__header">Item description</th>
                                 <th scope="col" class="govuk-table__header">End use</th>
                                 <th scope="col" class="govuk-table__header">Party type</th>
+                                {% if search_score_feature_flag %}
+                                    <th scope="col" class="govuk-table__header">Search score</th>
+                                {% endif %}
                             {% endif %}
                         </tr>
                     </thead>
@@ -100,7 +103,7 @@
                                 </td>
                                 <td class="govuk-table__cell">
 
-                                    <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.regime_reg_ref }}</a>
+                                    <a style="position: relative;" href="{% url 'external_data:denial-detail' pk=denial.id %}">{{ denial.regime_reg_ref|safe }}</a>
                                 </td>
                                 <td class="govuk-table__cell">{{ denial.reference|sentence_case }}</td>
                                 <td class="govuk-table__cell">{{ denial.name|safe }}</td>
@@ -110,6 +113,9 @@
                                 <td class="govuk-table__cell">{{ denial.item_description|safe }}</td>
                                 <td class="govuk-table__cell">{{ denial.end_use }}</td>
                                 <td class="govuk-table__cell">{{ denial.entity_type.value }}</td>
+                                {% if search_score_feature_flag %}
+                                    <td class="govuk-table__cell">{{ denial.search_score }}</td>
+                                {% endif %}
                             </tr>
                         {% endfor %}
 
