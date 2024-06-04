@@ -62,13 +62,13 @@ def mock_denials_search(requests_mock, denials_search_results):
 
 
 @pytest.fixture
-def search_score_flag_on(settings):
-    settings.FEATURE_FLAG_SEARCH_SCORE = True
+def denials_search_score_flag_on(settings):
+    settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE = True
 
 
 @pytest.fixture
-def search_score_flag_off(settings):
-    settings.FEATURE_FLAG_SEARCH_SCORE = False
+def denials_search_score_flag_off(settings):
+    settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE = False
 
 
 @pytest.mark.parametrize(
@@ -197,10 +197,12 @@ def test_search_denials_session_search_string_matchs(
     )
 
 
-def test_search_score_feature_flag(authorized_client, data_standard_case, url, search_score_flag_on):
+def test_search_score_feature_flag(authorized_client, data_standard_case, url, denials_search_score_flag_on):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
-    assert response.context_data["search_score_feature_flag"]
+    soup = BeautifulSoup(response.content, "html.parser")
+    search_header = soup.find("th", string="Search score")
+    assert search_header
 
 
 def test_search_denials(
@@ -211,7 +213,7 @@ def test_search_denials(
     queue_pk,
     denials_data,
     url,
-    search_score_flag_off,
+    denials_search_score_flag_off,
 ):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
     end_user_name = data_standard_case["case"]["data"]["end_user"]["name"].replace(" ", "+")

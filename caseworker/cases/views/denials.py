@@ -101,7 +101,7 @@ class Denials(LoginRequiredMixin, FormView):
             total_pages=total_pages,
             search_results=search_results,
             parties=self.parties_to_search,
-            search_score_feature_flag=settings.FEATURE_FLAG_SEARCH_SCORE,
+            search_score_feature_flag=settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE,
             **kwargs,
         )
 
