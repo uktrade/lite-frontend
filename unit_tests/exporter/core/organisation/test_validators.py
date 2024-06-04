@@ -55,7 +55,7 @@ def test_validate_registration_number_invalid_numbers(registration_number):
         validate_registration(registration_number)
 
 
-@pytest.mark.parametrize(("website"), ["https://www.example.com", "www.example.com", "example.com"])
+@pytest.mark.parametrize(("website"), ["https://www.example.com", "www.example.com", "example.com", ""])
 def test_validate_website(website):
     assert validate_website(website) is website
 
