@@ -1074,7 +1074,7 @@ def data_standard_case(
                     {
                         "id": "a7175133-d0ae-4c59-9c6a-190a2ed7f5e7",
                         "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
-                        "denial": {
+                        "denial_entity": {
                             "id": "e1175133-d0ae-4c59-9c6a-190a2ed7f5e7",
                             "created_by": "",
                             "name": "",
@@ -1096,7 +1096,7 @@ def data_standard_case(
                     {
                         "id": "c8175133-d0ae-4c59-9c6a-190a2ed7f5e7",
                         "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
-                        "denial": {
+                        "denial_entity": {
                             "id": "f1175133-d0ae-4c59-9c6a-190a2ed7f5e7",
                             "created_by": "",
                             "name": "",

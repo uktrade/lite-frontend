@@ -137,7 +137,7 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
         assert party["country"]["name"] in table_text
 
     for denial_match in data_standard_case["case"]["data"]["denial_matches"]:
-        assert denial_match["denial"]["reference"] in table_text
+        assert denial_match["denial_entity"]["reference"] in table_text
 
     for sanction_match in data_standard_case["case"]["data"]["sanction_matches"]:
         assert sanction_match["list_name"] in table_text
