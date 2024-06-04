@@ -64,13 +64,11 @@ def mock_denials_search(requests_mock, denials_search_results):
 @pytest.fixture
 def search_score_flag_on(settings):
     settings.FEATURE_FLAG_SEARCH_SCORE = True
-    return settings.FEATURE_FLAG_SEARCH_SCORE
 
 
 @pytest.fixture
 def search_score_flag_off(settings):
     settings.FEATURE_FLAG_SEARCH_SCORE = False
-    return settings.FEATURE_FLAG_SEARCH_SCORE
 
 
 @pytest.mark.parametrize(
@@ -201,7 +199,6 @@ def test_search_denials_session_search_string_matchs(
 
 def test_search_score_feature_flag(authorized_client, data_standard_case, url, search_score_flag_on):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    settings.FEATURE_FLAG_SEARCH_SCORE = search_score_flag_on
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
     assert response.context_data["search_score_feature_flag"]
 
@@ -227,9 +224,6 @@ def test_search_denials(
         json={"count": "26", "total_pages": "2", "results": denials_data * 26},
     )
 
-    # Disable search score feature flag to make sure default behaviour is used
-
-    settings.FEATURE_FLAG_SEARCH_SCORE = search_score_flag_off
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
 
     soup = BeautifulSoup(response.content, "html.parser")
