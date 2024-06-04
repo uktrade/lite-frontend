@@ -41,8 +41,13 @@ def is_application_appealed(request, application):
 
 
 @rules.predicate
-def is_draft_application(request, application):
+def is_application_in_draft(request, application):
     return application and application.status == "draft"
+
+
+@rules.predicate
+def is_application_in_major_edit(request, application):
+    return application and application.status == "applicant_editing"
 
 
 rules.add_rule(
@@ -55,4 +60,4 @@ rules.add_rule(
     is_application_refused & is_application_appealed,
 )
 
-rules.add_rule("can_edit_quantity_value", is_draft_application)
+rules.add_rule("can_edit_quantity_value", is_application_in_draft | is_application_in_major_edit)  # noqa

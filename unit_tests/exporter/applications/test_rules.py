@@ -75,6 +75,9 @@ def test_view_appeal_details(settings, rf, data_standard_case, appeal, expected)
     (
         ({"key": "draft", "value": "Draft"}, True),
         ({"key": "submitted", "value": "Submitted"}, False),
+        ({"key": "under_review", "value": "Under review"}, False),
+        ({"key": "initial_checks", "value": "Initial checks"}, False),
+        ({"key": "applicant_editing", "value": "Applicant editing"}, True),
         ({"key": "finalised", "value": "Finalised"}, False),
     ),
 )
