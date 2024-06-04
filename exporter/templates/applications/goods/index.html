@@ -1,6 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% load svg humanize %}
+{% load rules %}
 
 {% block back_link %}
 	<a href="{% url 'applications:task_list' application.id %}#goods" id="back-link" class="govuk-back-link">Back to application overview</a>
@@ -34,7 +35,11 @@
 					<th scope="col" class="govuk-table__header">Type</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.QUANTITY' %}</th>
 					<th scope="col" class="govuk-table__header">{% lcs 'goods.GoodsList.Table.VALUE' %}</th>
-					<th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Actions</span></th>
+					{% test_rule 'can_edit_quantity_value' request application as can_edit_quantity_value %}
+					{% if can_edit_quantity_value %}
+						<th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Actions</span></th>
+					{% endif %}
+
 					<th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Actions</span></th>
 				</tr>
 			</thead>
@@ -58,11 +63,14 @@
 						<td class="govuk-table__cell">
 							£{{ good_on_application.value|intcomma }}
 						</td>
-						<td class="govuk-table__cell">
-							<a class="govuk-link" href="{% url 'applications:edit_preexisting_good' application.id good_on_application.id %}">
-								Edit
-							</a>
-						</td>
+						{% test_rule 'can_edit_quantity_value' request application as can_edit_quantity_value %}
+						{% if can_edit_quantity_value %}
+							<td class="govuk-table__cell">
+								<a class="govuk-link" href="{% url 'applications:edit_preexisting_good' application.id good_on_application.id %}">
+									Edit
+								</a>
+							</td>
+						{% endif %}
 						<td class="govuk-table__cell">
 							<a class="govuk-link" href="{% url 'applications:remove_preexisting_good' application.id good_on_application.id %}">
 								Remove

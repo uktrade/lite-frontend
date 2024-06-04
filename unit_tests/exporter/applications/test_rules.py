@@ -68,3 +68,19 @@ def test_view_appeal_details(settings, rf, data_standard_case, appeal, expected)
 
     request = rf.get("/")
     assert rules.test_rule("can_view_appeal_details", request, application) is expected
+
+
+@pytest.mark.parametrize(
+    "status, expected",
+    (
+        ({"key": "draft", "value": "Draft"}, True),
+        ({"key": "submitted", "value": "Submitted"}, False),
+        ({"key": "finalised", "value": "Finalised"}, False),
+    ),
+)
+def test_user_can_edit_quantity_value(settings, rf, data_standard_case, status, expected):
+    data_standard_case["case"]["data"]["status"] = status
+    application = Application(data_standard_case["case"]["data"])
+
+    request = rf.get("/")
+    assert rules.test_rule("can_edit_quantity_value", request, application) is expected

@@ -40,6 +40,11 @@ def is_application_appealed(request, application):
     return bool(application.appeal)
 
 
+@rules.predicate
+def is_draft_application(request, application):
+    return application and application.status == "draft"
+
+
 rules.add_rule(
     "can_user_appeal_case",
     is_application_finalised & is_application_refused & appeal_within_deadline & ~is_application_appealed,  # noqa
@@ -49,3 +54,5 @@ rules.add_rule(
     "can_view_appeal_details",
     is_application_refused & is_application_appealed,
 )
+
+rules.add_rule("can_edit_quantity_value", is_draft_application)
