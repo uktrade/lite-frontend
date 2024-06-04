@@ -205,14 +205,6 @@ def test_search_score_feature_flag_on(authorized_client, data_standard_case, url
     assert search_header
 
 
-def test_search_score_feature_flag_off(authorized_client, data_standard_case, url, denials_search_score_flag_off):
-    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    response = authorized_client.get(f"{url}?end_user={end_user_id}")
-    soup = BeautifulSoup(response.content, "html.parser")
-    search_header = soup.find("th", string="Search score")
-    assert not search_header
-
-
 def test_search_denials(
     authorized_client,
     data_standard_case,
