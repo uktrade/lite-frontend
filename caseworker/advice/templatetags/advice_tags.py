@@ -54,7 +54,7 @@ def get_flags_list(flags):
 def get_denial_references(denial_matches):
     denial_references = []
     for denial_match in denial_matches:
-        denial_references.append(denial_match["denial"]["reference"])
+        denial_references.append(denial_match["denial_entity"]["reference"])
     return denial_references
 
 
