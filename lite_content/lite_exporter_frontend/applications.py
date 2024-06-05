@@ -848,6 +848,7 @@ class EndUseDetails:
 
     class EndUseDetailsSummaryList:
         TITLE = "End use summary list"
+        BACK_LINK_TEXT = "Back to application overview"
         INTENDED_END_USE = "Intended end use of the products"
         INFORMED_TO_APPLY = "Informed by ECJU to apply for a licence"
         INFORMED_WMD = "Informed by ECJU that products may be used in WMD"
