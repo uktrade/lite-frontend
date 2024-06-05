@@ -1,4 +1,3 @@
-import re
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 from django.conf import settings
