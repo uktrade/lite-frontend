@@ -43,15 +43,19 @@ class Denials(LoginRequiredMixin, FormView):
         return parties_to_search
 
     def get_search_filter(self):
-
+        """
+        This is building the query_string that will be executed directly by the backend
+        The field query is contained within () without this ES gets confused and searches
+        across columns even when the column name is given.
+        """
         search_filter = []
         filter = {
             "country": set(),
         }
 
         for party in self.parties_to_search:
-            search_filter.append(f'name:"{party["name"]}"')
-            search_filter.append(f'address:"{party["address"]}"')
+            search_filter.append(f'name:({party["name"]})')
+            search_filter.append(f'address:({party["address"]})')
             filter["country"].add(party["country"]["name"])
         return (" ".join(search_filter), filter)
 
@@ -79,30 +83,22 @@ class Denials(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         total_pages = 0
-        count = 0
-        results = []
-        search = []
+        search_results = []
 
         default_search_string, filter = self.get_search_filter()
         session_search_string = self.get_search_string_from_session()
 
-        search_string = session_search_string or default_search_string
-
-        search_string = self.reg_expression_search_query.findall(search_string)
-        search = [s.replace('"', "") for s in search_string]
+        search = session_search_string or default_search_string
 
         if search:
             search_results, _ = search_denials(request=self.request, search=search, filter=filter)
-            results = search_results["results"]
-            total_pages = search_results["total_pages"]
-            count = search_results["count"]
+            total_pages = search_results.get("total_pages", 0)
 
         return super().get_context_data(
             search_string=search,
             case=self.case,
-            results=results,
-            count=count,
             total_pages=total_pages,
+            search_results=search_results,
             parties=self.parties_to_search,
             **kwargs,
         )

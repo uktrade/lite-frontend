@@ -81,7 +81,7 @@ def test_search_denials_party_type(mock_denials_search, party_type, authorized_c
     assert response.status_code == 200
 
     expected_query_params = {
-        "search": [f"name:{party_type_name}", f"address:{party_type_address}"],
+        "search": f"name:({party_type_name}) address:({party_type_address})",
         "page": 1,
         "country": {party_type_country},
     }
@@ -115,12 +115,8 @@ def test_search_denials_party_type_ultimate_and_third_party(
     response = authorized_client.get(url + f"?{party_type}={party_users[0]['id']}&{party_type}={party_users[1]['id']}")
     assert response.status_code == 200
 
-    search_params = [
-        f"name:{party_users[0]['name']}",
-        f"address:{party_users[0]['address']}",
-        f"name:{party_users[1]['name']}",
-        f"address:{party_users[1]['address']}",
-    ]
+    search_params = f"name:({party_users[0]['name']}) address:({party_users[0]['address']}) name:({party_users[1]['name']}) address:({party_users[1]['address']})"
+
     expected_query_params = {"search": search_params, "page": 1, "country": {"United Kingdom"}}
     search_url = client._build_absolute_uri("/external-data/denial-search/")
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
@@ -129,28 +125,19 @@ def test_search_denials_party_type_ultimate_and_third_party(
 
 
 @pytest.mark.parametrize(
-    "search_string, expected_search_string",
+    "search_string",
     (
-        [
-            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA"',
-            ["name:John Smith", "address:Studio 47v, ferry, town, DD1 4AA"],
-        ],
-        [
-            'name:"John Smith" address:"Studio 47v, ferry, town, DD1 4AA" name:"time" address:"2 doc rd"',
-            ["name:John Smith", "address:Studio 47v, ferry, town, DD1 4AA", "name:time", "address:2 doc rd"],
-        ],
-        ['name:"Smith"', ["name:Smith"]],
+        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)",  # /PS-IGNORE
+        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",  # /PS-IGNORE
+        "name:(Smith)",
     ),
 )
-def test_search_denials_search_string(
-    authorized_client, search_string, expected_search_string, data_standard_case, mock_denials_search, url
-):
+def test_search_denials_search_string(authorized_client, search_string, data_standard_case, mock_denials_search, url):
 
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    search_string = {"search_string": search_string}
-    authorized_client.post(f"{url}?end_user={end_user_id}", data=search_string)
+    authorized_client.post(f"{url}?end_user={end_user_id}", data={"search_string": search_string})
 
-    expected_query_params = {"search": expected_search_string, "page": 1, "country": {"United Kingdom"}}
+    expected_query_params = {"search": search_string, "page": 1, "country": {"United Kingdom"}}
     search_url = client._build_absolute_uri("/external-data/denial-search/")
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
 
@@ -174,15 +161,17 @@ def test_search_denials_session_search_string_matchs(
 
     assert response.status_code == 200
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search=["name:End User", "address:44"]
+        filter={"country": {"United Kingdom"}},
+        request=mock.ANY,
+        search="name:(End User) address:(44)",
     )
 
-    search_string = {"search_string": 'name:"End User2" address:"23"'}
+    search_string = {"search_string": "name:(End User2) address:(23)"}
     authorized_client.post(f"{url}?end_user={party_id}&search_id=123", data=search_string)
 
-    assert authorized_client.session.get("search_string") == {"123": 'name:"End User2" address:"23"'}
+    assert authorized_client.session.get("search_string") == {"123": "name:(End User2) address:(23)"}
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search=["name:End User2", "address:23"]
+        filter={"country": {"United Kingdom"}}, request=mock.ANY, search="name:(End User2) address:(23)"
     )
 
     response = authorized_client.get(
@@ -191,7 +180,9 @@ def test_search_denials_session_search_string_matchs(
     )
 
     mock_search_denials.assert_called_with(
-        filter={"country": {"Abu Dhabi"}}, request=mock.ANY, search=["name:Consignee", "address:44"]
+        filter={"country": {"Abu Dhabi"}},
+        request=mock.ANY,
+        search="name:(Consignee) address:(44)",
     )
 
 
@@ -199,12 +190,12 @@ def test_search_denials(
     authorized_client, data_standard_case, requests_mock, standard_case_pk, queue_pk, denials_data, url
 ):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    end_user_name = data_standard_case["case"]["data"]["end_user"]["name"]
+    end_user_name = data_standard_case["case"]["data"]["end_user"]["name"].replace(" ", "+")
     end_user_address = data_standard_case["case"]["data"]["end_user"]["address"]
 
     requests_mock.get(
         client._build_absolute_uri(
-            f"/external-data/denial-search/?search=name:{end_user_name}&search=address:{end_user_address}"
+            f"/external-data/denial-search/?search=name:({end_user_name})+address:({end_user_address})&page=1&country=United+Kingdom"
         ),
         json={"count": "26", "total_pages": "2", "results": denials_data * 26},
     )
@@ -283,3 +274,17 @@ def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, s
     soup = BeautifulSoup(response.content, "html.parser")
     assert response.status_code == 200
     assert "No matching denials" in soup.get_text()
+
+
+def test_search_denials_query_string_error(authorized_client, requests_mock, queue_pk, data_standard_case, url):
+    requests_mock.get(
+        client._build_absolute_uri("/external-data/denial-search/?search=%5E%25%24&page=1"),
+        json={"errors": {"search": "Invalid search string"}},
+    )
+
+    response = authorized_client.post(url, data={"search_string": "^%$"})
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert response.status_code == 200
+    assert "Enter a valid query string" in soup.get_text()
