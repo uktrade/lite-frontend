@@ -200,7 +200,7 @@ class ApplicationSummaryPage:
 
 
 class ApplicationsSummaryPage:
-    NAME = "Name"
+    YOUR_REFERENCE = "Your reference"
     REFERENCE_CODE = "ECJU reference"
     TYPE = "Type"
     EXPORT_TYPE = "Export type"
@@ -213,7 +213,7 @@ class ApplicationsSummaryPage:
 class InitialApplicationQuestionsForms:
     class ReferenceNameQuestion:
         TITLE = "Name the application"
-        ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference name"
+        ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
         DESCRIPTION = "Give the application a reference name so you can refer back to it when needed."
         LABEL = ""
         BACK_TO_LICENCE_TYPE = "Back to export licence type"
@@ -488,7 +488,7 @@ class DestinationsSummaryList:
 
 
 class StandardApplicationTaskList:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
     NEW_TITLE = "Standard Individual Export Licence application"
     EDIT_TITLE = "Edit the application"
     END_USE_CONTROL = "Informed to apply"
@@ -506,7 +506,7 @@ class StandardApplicationTaskList:
 
 
 class OpenApplicationTaskList:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
     NEW_TITLE = "Open Individual Export Licence application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
@@ -523,7 +523,7 @@ class OpenApplicationTaskList:
 
 
 class HMRCApplicationTaskList:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
     END_USER = "End user"
@@ -536,7 +536,7 @@ class HMRCApplicationTaskList:
 
 
 class ExhibitionClearanceTaskList:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
     DETAILS = "Exhibition details"
     NEW_TITLE = "Exhibition Clearance application"
     EDIT_TITLE = "Edit the application"
@@ -551,7 +551,7 @@ class ExhibitionClearanceTaskList:
 
 
 class GiftingClearanceTaskList:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
     NEW_TITLE = "Gifting Clearance application"
     EDIT_TITLE = "Edit the application"
     GOODS = "Products"
@@ -563,7 +563,7 @@ class GiftingClearanceTaskList:
 
 
 class F680ClearanceTaskList:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Reference"
+    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
     SAVE_AND_RETURN = "Save and return to application overview"
     NOTICE_TITLE = ""
     NOTICE_TEXT = ""

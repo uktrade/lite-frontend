@@ -15,7 +15,7 @@ from exporter.applications.forms.application_actions import (
     surrender_application_confirmation,
 )
 from exporter.applications.forms.common import (
-    edit_type_form,
+    EditApplicationForm,
     application_copy_form,
     exhibition_details_form,
     declaration_form,
@@ -57,7 +57,6 @@ from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import confirm_form
-from lite_forms.generators import form_page
 from lite_forms.views import SingleFormView, MultiFormView
 from exporter.applications.forms.hcsat import HCSATminiform
 from core.auth.views import LoginRequiredMixin
@@ -108,34 +107,31 @@ class DeleteApplication(LoginRequiredMixin, SingleFormView):
             return self.request.GET.get("return_to")
 
 
-class ApplicationEditType(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        application_id = str(kwargs["pk"])
-        data = get_application(request, application_id)
+class ApplicationEditType(LoginRequiredMixin, FormView):
+    form_class = EditApplicationForm
+    template_name = "edit_application_form.html"
 
-        if data.get("status") and data.get("status").get("key") == APPLICANT_EDITING:
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": application_id}))
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-        return form_page(request, edit_type_form(application_id))
+        self.application_id = str(self.kwargs["pk"])
+        self.data = get_application(self.request, self.application_id)
 
-    def post(self, request, **kwargs):
-        application_id = str(kwargs["pk"])
-        edit_type = request.POST.get("edit-type")
+        context.update(
+            {
+                "application_id": self.application_id,
+                "data": self.data,
+            }
+        )
+        return context
 
-        if edit_type == "major":
-            data, status_code = set_application_status(request, str(kwargs["pk"]), APPLICANT_EDITING)
+    def form_valid(self, form):
 
-            if status_code != HTTPStatus.OK:
-                return form_page(request, edit_type_form(str(kwargs["pk"])), errors=data)
+        self.application_id = str(self.kwargs["pk"])
+        if form.cleaned_data.get("edit_type") == "major":
+            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
 
-        elif edit_type is None:
-            return form_page(
-                request,
-                edit_type_form(application_id),
-                errors={"edit-type": ["Select the type of edit you need to make"]},
-            )
-
-        return redirect(reverse_lazy("applications:task_list", kwargs={"pk": str(kwargs["pk"])}))
+        return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):

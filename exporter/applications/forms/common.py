@@ -1,3 +1,5 @@
+from django import forms
+
 from django.urls import reverse_lazy
 
 from exporter.applications.forms.edit import told_by_an_official_form, reference_name_form
@@ -8,7 +10,6 @@ from lite_forms.components import (
     Form,
     BackLink,
     TextArea,
-    RadioButtons,
     Option,
     FormGroup,
     TextInput,
@@ -17,35 +18,8 @@ from lite_forms.components import (
     Checkboxes,
 )
 from lite_forms.helpers import conditional
-
-
-def edit_type_form(application_id):
-    return Form(
-        title=strings.Applications.Edit.TITLE,
-        description=strings.Applications.Edit.DESCRIPTION,
-        questions=[
-            RadioButtons(
-                name="edit-type",
-                options=[
-                    Option(
-                        key="minor",
-                        value=strings.Applications.Edit.Minor.TITLE,
-                        description=strings.Applications.Edit.Minor.DESCRIPTION,
-                    ),
-                    Option(
-                        key="major",
-                        value=strings.Applications.Edit.Major.TITLE,
-                        description=strings.Applications.Edit.Major.DESCRIPTION,
-                    ),
-                ],
-            )
-        ],
-        back_link=BackLink(
-            strings.BACK_TO_APPLICATION,
-            reverse_lazy("applications:application", kwargs={"pk": application_id}),
-        ),
-        default_button_name=strings.CONTINUE,
-    )
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Submit
 
 
 def application_copy_form(application_type=None):
@@ -130,3 +104,23 @@ def declaration_form(application_id):
         ),
         javascript_imports={"/javascripts/declaration.js"},
     )
+
+
+class EditApplicationForm(forms.Form):
+    CHOICES = [
+        ("minor", "Delete a product, third party or country"),
+        ("major", "Add a product or edit something else"),
+    ]
+    edit_type = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={
+            "required": "Please select an option to proceed.",
+        },
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.add_input(Submit("submit", "Continue"))
