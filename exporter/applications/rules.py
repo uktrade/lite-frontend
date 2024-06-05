@@ -3,13 +3,15 @@ import rules
 
 from datetime import datetime
 
+from exporter.applications.constants import ApplicationStatus
+
 
 @rules.predicate
 def is_application_finalised(request, application):
     if not application:
         return False
 
-    return application.status == "finalised"
+    return application.status == ApplicationStatus.FINALISED
 
 
 @rules.predicate
@@ -42,12 +44,12 @@ def is_application_appealed(request, application):
 
 @rules.predicate
 def is_application_in_draft(request, application):
-    return application and application.status == "draft"
+    return application and application.status == ApplicationStatus.DRAFT
 
 
 @rules.predicate
 def is_application_in_major_edit(request, application):
-    return application and application.status == "applicant_editing"
+    return application and application.status == ApplicationStatus.APPLICANT_EDITING
 
 
 rules.add_rule(

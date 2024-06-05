@@ -6,6 +6,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from exporter.applications import rules as appeal_rules
+from exporter.applications.constants import ApplicationStatus
 from exporter.core.objects import Application
 
 
@@ -73,16 +74,16 @@ def test_view_appeal_details(settings, rf, data_standard_case, appeal, expected)
 @pytest.mark.parametrize(
     "status, expected",
     (
-        ({"key": "draft", "value": "Draft"}, True),
-        ({"key": "submitted", "value": "Submitted"}, False),
-        ({"key": "under_review", "value": "Under review"}, False),
-        ({"key": "initial_checks", "value": "Initial checks"}, False),
-        ({"key": "applicant_editing", "value": "Applicant editing"}, True),
-        ({"key": "finalised", "value": "Finalised"}, False),
+        (ApplicationStatus.DRAFT, True),
+        (ApplicationStatus.SUBMITTED, False),
+        (ApplicationStatus.UNDER_REVIEW, False),
+        (ApplicationStatus.INITIAL_CHECKS, False),
+        (ApplicationStatus.APPLICANT_EDITING, True),
+        (ApplicationStatus.FINALISED, False),
     ),
 )
 def test_user_can_edit_quantity_value(settings, rf, data_standard_case, status, expected):
-    data_standard_case["case"]["data"]["status"] = status
+    data_standard_case["case"]["data"]["status"] = {"key": status, "value": status}
     application = Application(data_standard_case["case"]["data"])
 
     request = rf.get("/")
