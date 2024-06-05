@@ -1,6 +1,7 @@
 import re
 from django.utils.functional import cached_property
 from django.views.generic import FormView
+from django.conf import settings
 
 from core.auth.views import LoginRequiredMixin
 from caseworker.cases.forms.denial_forms import DenialSearchForm
@@ -111,11 +112,14 @@ class Denials(LoginRequiredMixin, FormView):
             search_results, _ = search_denials(request=self.request, search=search, filter=filter)
             total_pages = search_results.get("total_pages", 0)
 
-        return super().get_context_data(
+        context = super().get_context_data(
             search_string=search,
             case=self.case,
             total_pages=total_pages,
             search_results=search_results,
             parties=self.parties_to_search,
+            search_score_feature_flag=settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE,
             **kwargs,
         )
+
+        return context

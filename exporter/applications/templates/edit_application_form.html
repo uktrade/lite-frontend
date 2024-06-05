@@ -1,0 +1,27 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% block title%}How do you want to edit the application?{% endblock %}
+
+{% block back_link %}
+    <a href="{% url 'applications:application' application_id %}" id="back-link" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block body %}
+
+  {% error_summary form %}
+
+  <h1 class="govuk-heading-l">How do you want to edit the application?</h1>
+  <p class="govuk-hint">
+    If you make changes, it will take longer to process your application.<br>
+    You cannot edit a product, only add a new one or remove an existing one.
+  </p>
+  <div class="govuk-body govuk-!-margin-bottom-4">
+    <a class="govuk-link" href="{% url 'exporter-help-support' %}">Contact us if you need help editing your application</a>.
+  </div>
+  <form method="post">
+    {% csrf_token %}
+    {% crispy form %}
+  </form>
+
+{% endblock %}
