@@ -82,6 +82,9 @@ class ProductControlListEntryForm(BaseForm):
 
     def get_layout_fields(self):
         return (
+            HTML.p(
+                '<div class="govuk-hint">We will assess it and assign a control list entry if it is subject to controls.</div>'
+            ),
             ConditionalRadios(
                 "is_good_controlled",
                 ConditionalRadiosQuestion(
@@ -95,9 +98,7 @@ class ProductControlListEntryForm(BaseForm):
                 ConditionalRadiosQuestion(
                     "No",
                     HTML.p(
-                        "The product will be assessed and given a control list entry. "
-                        "If the product isn't subject to any controls, you'll be issued "
-                        "with a 'no licence required' document."
+                        "Select this answer if you do not know the control list entry or if your product does not have one."
                     ),
                 ),
             ),
