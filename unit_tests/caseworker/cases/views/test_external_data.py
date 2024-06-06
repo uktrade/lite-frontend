@@ -46,9 +46,9 @@ def test_matching_denials(authorized_client, mock_application_denial_match_post,
     assert response.url == reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": open_case_pk, "tab": "details"})
 
     assert mock_application_denial_match_post.last_request.json() == [
-        {"application": open_case_pk, "denial": "1", "category": "partial"},
-        {"application": open_case_pk, "denial": "2", "category": "partial"},
-        {"application": open_case_pk, "denial": "3", "category": "partial"},
+        {"application": open_case_pk, "denial_entity": "1", "category": "partial"},
+        {"application": open_case_pk, "denial_entity": "2", "category": "partial"},
+        {"application": open_case_pk, "denial_entity": "3", "category": "partial"},
     ]
 
 

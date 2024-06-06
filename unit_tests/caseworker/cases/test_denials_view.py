@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 from core import client
 from bs4 import BeautifulSoup
+from django.conf import settings
 
 
 @pytest.fixture(autouse=True)
@@ -58,6 +59,16 @@ def denials_search_results(denials_data):
 def mock_denials_search(requests_mock, denials_search_results):
     url = client._build_absolute_uri("/external-data/denial-search/")
     return requests_mock.get(url=url, json=denials_search_results)
+
+
+@pytest.fixture
+def denials_search_score_flag_on(settings):
+    settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE = True
+
+
+@pytest.fixture
+def denials_search_score_flag_off(settings):
+    settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE = False
 
 
 @pytest.mark.parametrize(
@@ -125,19 +136,26 @@ def test_search_denials_party_type_ultimate_and_third_party(
 
 
 @pytest.mark.parametrize(
-    "search_string",
+    "search_string, country_filter",
     (
-        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)",  # /PS-IGNORE
-        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",  # /PS-IGNORE
-        "name:(Smith)",
+        ("name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)", {"country": ["United Kingdom"]}),  # /PS-IGNORE
+        (
+            "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",
+            {"country": ["United Kingdom"]},
+        ),  # /PS-IGNORE
+        ("name:(Smith)", {"country": []}),
     ),
 )
-def test_search_denials_search_string(authorized_client, search_string, data_standard_case, mock_denials_search, url):
-
+def test_search_denials_search_string(
+    authorized_client, search_string, country_filter, data_standard_case, mock_denials_search, url
+):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    authorized_client.post(f"{url}?end_user={end_user_id}", data={"search_string": search_string})
+    authorized_client.post(
+        f"{url}?end_user={end_user_id}",
+        data={"search_string": search_string, "country_filter": country_filter["country"]},
+    )
 
-    expected_query_params = {"search": search_string, "page": 1, "country": {"United Kingdom"}}
+    expected_query_params = {"search": search_string, "page": 1, **country_filter}
     search_url = client._build_absolute_uri("/external-data/denial-search/")
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
 
@@ -167,11 +185,17 @@ def test_search_denials_session_search_string_matchs(
     )
 
     search_string = {"search_string": "name:(End User2) address:(23)"}
-    authorized_client.post(f"{url}?end_user={party_id}&search_id=123", data=search_string)
+    country_filter = {"country": {"United Kingdom"}}
 
-    assert authorized_client.session.get("search_string") == {"123": "name:(End User2) address:(23)"}
+    authorized_client.post(
+        f"{url}?end_user={party_id}&search_id=123", data={**search_string, "country_filter": "United Kingdom"}
+    )
+
+    assert authorized_client.session["search_params"] == {
+        "123": ("name:(End User2) address:(23)", {"United Kingdom"}, ["United Kingdom"])
+    }
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search="name:(End User2) address:(23)"
+        filter=country_filter, request=mock.ANY, search="name:(End User2) address:(23)"
     )
 
     response = authorized_client.get(
@@ -186,8 +210,23 @@ def test_search_denials_session_search_string_matchs(
     )
 
 
+def test_search_score_feature_flag_on(authorized_client, data_standard_case, url, denials_search_score_flag_on):
+    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
+    response = authorized_client.get(f"{url}?end_user={end_user_id}")
+    soup = BeautifulSoup(response.content, "html.parser")
+    search_header = soup.find("th", string="Search score")
+    assert search_header
+
+
 def test_search_denials(
-    authorized_client, data_standard_case, requests_mock, standard_case_pk, queue_pk, denials_data, url
+    authorized_client,
+    data_standard_case,
+    requests_mock,
+    standard_case_pk,
+    queue_pk,
+    denials_data,
+    url,
+    denials_search_score_flag_off,
 ):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
     end_user_name = data_standard_case["case"]["data"]["end_user"]["name"].replace(" ", "+")
