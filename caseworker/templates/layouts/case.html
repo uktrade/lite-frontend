@@ -143,6 +143,32 @@
 				</div>
 			</div>
 		{% endif %}
+        {% if case.superseded_by %}
+			<div id="superseded-warning" class="app-case-warning-banner-important">
+				<div class="app-case-warning-banner__warning">
+					<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
+					<span class="app-case-warning-banner__text">
+                        This case has been amended by the exporter and is now superseded.<br/>
+                        {% if case.superseded_by.reference_code %}
+                        The amendment case is <a class="govuk-link govuk-link--inverse" href="{% url 'cases:case' "00000000-0000-0000-0000-000000000001" case.superseded_by.id %}">{{case.superseded_by.reference_code}}</a>.
+                        {% else %}
+                        The exporter is still working on their amendments and will submit the amended case when they are finished.
+                        {% endif %}
+					</span>
+				</div>
+			</div>
+        {% endif %}
+        {% if case.amendment_of %}
+			<div id="amendment-warning" class="app-case-warning-banner-important">
+				<div class="app-case-warning-banner__warning">
+					<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
+					<span class="app-case-warning-banner__text">
+                        This case is an amendment.<br/>
+                        The original case is <a class="govuk-link govuk-link--inverse" href="{% url 'cases:case' "00000000-0000-0000-0000-000000000001" case.amendment_of.id %}">{{case.amendment_of.reference_code}}</a>.
+					</span>
+				</div>
+			</div>
+        {% endif %}
 		{% block header_tabs %}
 		{% if tabs %}
 			<div id="tab-bar" class="app-case-tab-bar">
