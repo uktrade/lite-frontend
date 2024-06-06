@@ -2,7 +2,6 @@ import re
 import phonenumbers
 
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator
 
 from .constants import Validation
 
