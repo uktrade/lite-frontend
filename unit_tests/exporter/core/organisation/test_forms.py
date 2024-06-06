@@ -305,16 +305,21 @@ def test_select_organisation_form_valid(data_organisations):
     assert form.is_valid()
 
 
+register_address_details_website_test_cases = [
+    ("https://www.example.com", True, {}),
+    ("http://www.example.com", True, {}),
+    ("www.example.com", True, {}),
+    ("example.com", True, {}),
+    ("example", False, {"website": ["Enter a valid URL."]}),
+    (".com", False, {"website": ["Enter a valid URL."]}),
+    ("https://", False, {"website": ["Enter a valid URL."]}),
+    ("http://", False, {"website": ["Enter a valid URL."]}),
+]
+
+
 @pytest.mark.parametrize(
     ("website", "is_valid", "errors"),
-    [
-        ("https://www.example.com", True, {}),
-        ("http://www.example.com", True, {}),
-        ("www.example.com", True, {}),
-        ("example.com", True, {}),
-        ("example", False, {"website": ["Enter a valid URL."]}),
-        (".com", False, {"website": ["Enter a valid URL."]}),
-    ],
+    register_address_details_website_test_cases,
 )
 def test_register_address_details_website_uk(website, is_valid, errors):
     data = {
@@ -334,14 +339,7 @@ def test_register_address_details_website_uk(website, is_valid, errors):
 
 @pytest.mark.parametrize(
     ("website", "is_valid", "errors"),
-    [
-        ("https://www.example.com", True, {}),
-        ("http://www.example.com", True, {}),
-        ("www.example.com", True, {}),
-        ("example.com", True, {}),
-        ("example", False, {"website": ["Enter a valid URL."]}),
-        (".com", False, {"website": ["Enter a valid URL."]}),
-    ],
+    register_address_details_website_test_cases,
 )
 def test_register_address_details_website_overseas(website, is_valid, errors, mock_request, mock_get_countries):
     data = {

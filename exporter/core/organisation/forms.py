@@ -226,12 +226,15 @@ class RegisterAddressDetailsBaseForm(BaseForm):
             try:
                 validator(website)
             except ValidationError:
-                if not website.startswith("http://") or website.startswith("https://"):
-                    website = "https://" + website
-                    try:
-                        validator(website)
-                    except ValidationError:
-                        raise ValidationError("Enter a valid URL.")
+                website = "https://" + website
+                try:
+                    validator(website)
+                except ValidationError:
+                    raise ValidationError("Enter a valid URL.")
+                else:
+                    return website
+            else:
+                return website
 
         return website
 
