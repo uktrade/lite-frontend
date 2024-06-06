@@ -86,53 +86,29 @@ class Denials(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
-        _, session_countries_list, _ = self.get_search_params_from_session()
         _, country_list = self.get_search_params()
-        kwargs["countries"] = session_countries_list or country_list
+        kwargs["countries"] = country_list
 
         kwargs["form_action"] = self.get_form_action()
 
         return kwargs
 
     def get_initial(self):
-        session_search_string, _, session_selected_countries = self.get_search_params_from_session()
-        default_search_string, default_country_list = self.get_search_params()
+        search_string, selected_countries = self.get_search_params()
 
         return {
-            "search_string": session_search_string or default_search_string,
-            "country_filter": session_selected_countries or default_country_list,
+            "search_string": search_string,
+            "country_filter": selected_countries,
         }
 
     def form_valid(self, form):
-        search_id = self.request.GET.get("search_id", 1)
-        countries_list = set(c[0] for c in form.fields["country_filter"].choices)
-        search_string = form.cleaned_data["search_string"]
-        selected_countries = form.cleaned_data["country_filter"]
-
-        self.request.session["search_params"] = {search_id: (search_string, countries_list, selected_countries)}
         return self.render_to_response(self.get_context_data(form=form))
-
-    def get_search_params_from_session(self):
-        # This is required since the search_string shouldn't be sent in the query string due to sensative data
-        # so we require a search_string to be sent via post. Since the pagination currently works as a get only
-        # the query_string set by the user gets lost we should aim to move away from sessions once we have
-        # pagination that works with a post
-        search_id = self.request.GET.get("search_id", 1)
-
-        if self.request.session.get("search_params") and self.request.session.get("search_params").get(search_id):
-            return self.request.session["search_params"][search_id]
-        # We store a tuble of 3 values if nothing is found return all 3 as None.
-        return (None, None, None)
 
     def get_context_data(self, **kwargs):
         total_pages = 0
         search_results = []
 
-        default_search_string, country_list = self.get_search_params()
-
-        session_search_string, _, session_selected_countries = self.get_search_params_from_session()
-        search = session_search_string or default_search_string
-        country_filter = country_list if session_selected_countries is None else session_selected_countries
+        search, country_filter = self.get_search_params()
 
         if search:
             filter = {
