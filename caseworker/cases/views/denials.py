@@ -43,7 +43,7 @@ class Denials(LoginRequiredMixin, FormView):
                 )
         return parties_to_search
 
-    def get_search_params(self):
+    def get_initial_search_params(self):
         """
         This is building the query_string that will be executed directly by the backend
         The field query is contained within () without this ES gets confused and searches
@@ -56,6 +56,7 @@ class Denials(LoginRequiredMixin, FormView):
             search_filter.append(f'name:({party["name"]})')
             search_filter.append(f'address:({party["address"]})')
             country_list.add(party["country"]["name"])
+
         return (" ".join(search_filter), country_list)
 
     def get_form_action(self):
@@ -86,7 +87,7 @@ class Denials(LoginRequiredMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
-        _, country_list = self.get_search_params()
+        _, country_list = self.get_initial_search_params()
         kwargs["countries"] = country_list
 
         kwargs["form_action"] = self.get_form_action()
@@ -94,37 +95,41 @@ class Denials(LoginRequiredMixin, FormView):
         return kwargs
 
     def get_initial(self):
-        search_string, selected_countries = self.get_search_params()
+        search_string, selected_countries = self.get_initial_search_params()
 
         return {
             "search_string": search_string,
             "country_filter": selected_countries,
         }
 
+    def get_search_params(self, form):
+        try:
+            form_data = form.cleaned_data
+        except AttributeError:
+            form_data = form.initial
+
+        return form_data["search_string"], {"country": form_data["country_filter"]}
+
     def form_valid(self, form):
         return self.render_to_response(self.get_context_data(form=form))
 
     def get_context_data(self, **kwargs):
-        total_pages = 0
-        search_results = []
+        context = super().get_context_data(**kwargs)
 
-        search, country_filter = self.get_search_params()
+        form = context["form"]
+        search, country_filter = self.get_search_params(form)
+        search_results, _ = search_denials(request=self.request, search=search, filter=country_filter)
+        total_pages = search_results.get("total_pages", 0)
 
-        if search:
-            filter = {
-                "country": set(country_filter),
+        context.update(
+            {
+                "search_string": search,
+                "case": self.case,
+                "total_pages": total_pages,
+                "search_results": search_results,
+                "parties": self.parties_to_search,
+                "search_score_feature_flag": settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE,
             }
-            search_results, _ = search_denials(request=self.request, search=search, filter=filter)
-            total_pages = search_results.get("total_pages", 0)
-
-        context = super().get_context_data(
-            search_string=search,
-            case=self.case,
-            total_pages=total_pages,
-            search_results=search_results,
-            parties=self.parties_to_search,
-            search_score_feature_flag=settings.FEATURE_FLAG_DENIALS_SEARCH_SCORE,
-            **kwargs,
         )
 
         return context

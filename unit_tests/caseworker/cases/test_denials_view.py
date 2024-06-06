@@ -254,16 +254,21 @@ def test_search_denials(
     assert form["action"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?page=1&end_user={end_user_id}"
 
     page_2 = soup.find(id="page-2")
-    assert page_2.a["href"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
+    assert (
+        page_2.button["formaction"]
+        == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
+    )
+    assert page_2.button["form"] == "denials-search-form"
 
 
 def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, standard_case_pk):
     requests_mock.get(
         client._build_absolute_uri(f"/external-data/denial-search/"),
+        json={"count": 0, "total_pages": 1, "results": []},
     )
 
     url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
-    response = authorized_client.get(f"{url}")
+    response = authorized_client.get(url)
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert response.status_code == 200
