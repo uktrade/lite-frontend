@@ -37,19 +37,6 @@ def validate_phone(value):
         raise ValidationError("Invalid telephone number")
 
 
-def validate_website(value):
-    if value:
-        try:
-            validator = URLValidator()
-            validator(value)
-        except ValidationError:
-            try:
-                validator("https://" + value)
-            except ValidationError:
-                raise ValidationError("Enter a valid URL")
-    return value
-
-
 def validate_sic_number(value):
     if value:
         if not value.isdigit():
