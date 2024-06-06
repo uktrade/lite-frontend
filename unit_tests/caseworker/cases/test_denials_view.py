@@ -136,19 +136,26 @@ def test_search_denials_party_type_ultimate_and_third_party(
 
 
 @pytest.mark.parametrize(
-    "search_string",
+    "search_string, country_filter",
     (
-        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)",  # /PS-IGNORE
-        "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",  # /PS-IGNORE
-        "name:(Smith)",
+        ("name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)", {"country": ["United Kingdom"]}),  # /PS-IGNORE
+        (
+            "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",
+            {"country": ["United Kingdom"]},
+        ),  # /PS-IGNORE
+        ("name:(Smith)", {"country": []}),
     ),
 )
-def test_search_denials_search_string(authorized_client, search_string, data_standard_case, mock_denials_search, url):
-
+def test_search_denials_search_string(
+    authorized_client, search_string, country_filter, data_standard_case, mock_denials_search, url
+):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    authorized_client.post(f"{url}?end_user={end_user_id}", data={"search_string": search_string})
+    authorized_client.post(
+        f"{url}?end_user={end_user_id}",
+        data={"search_string": search_string, "country_filter": country_filter["country"]},
+    )
 
-    expected_query_params = {"search": search_string, "page": 1, "country": {"United Kingdom"}}
+    expected_query_params = {"search": search_string, "page": 1, **country_filter}
     search_url = client._build_absolute_uri("/external-data/denial-search/")
     expected_url = f"{search_url}?{parse.urlencode(expected_query_params, doseq=True, safe=':')}"
 
@@ -178,11 +185,17 @@ def test_search_denials_session_search_string_matchs(
     )
 
     search_string = {"search_string": "name:(End User2) address:(23)"}
-    authorized_client.post(f"{url}?end_user={party_id}&search_id=123", data=search_string)
+    country_filter = {"country": {"United Kingdom"}}
 
-    assert authorized_client.session.get("search_string") == {"123": "name:(End User2) address:(23)"}
+    authorized_client.post(
+        f"{url}?end_user={party_id}&search_id=123", data={**search_string, "country_filter": "United Kingdom"}
+    )
+
+    assert authorized_client.session["search_params"] == {
+        "123": ("name:(End User2) address:(23)", {"United Kingdom"}, ["United Kingdom"])
+    }
     mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}}, request=mock.ANY, search="name:(End User2) address:(23)"
+        filter=country_filter, request=mock.ANY, search="name:(End User2) address:(23)"
     )
 
     response = authorized_client.get(
