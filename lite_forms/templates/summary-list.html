@@ -13,6 +13,10 @@
 		{% endblock %}
 	</h1>
 
+	{% if instruction_text %}
+		<p class="govuk-body">{{ instruction_text }}</p>
+	{% endif %}
+
 	{% for form in forms.forms %}
 		{% if not form.single_form_element and not hide_titles %}
 			<h2 class="govuk-heading-m">{{ form.title }}</h2>
