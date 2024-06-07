@@ -63,7 +63,7 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
         summary_list_form_view.back_url = self.success_url
         summary_list_form_view.back_link_text = strings.EndUseDetailsSummaryList.BACK_LINK_TEXT
 
-        summary_list_form_view.instruction_text = "Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress."
+        summary_list_form_view.instruction_text = strings.EndUseDetailsSummaryList.INSTRUCTION_TEXT
 
         summary_list_form_view.init = init
         summary_list_form_view.request = request
