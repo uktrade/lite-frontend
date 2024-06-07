@@ -1,6 +1,15 @@
 from enum import Enum
 
 
+class ApplicationStatus:
+    DRAFT = "draft"
+    SUBMITTED = "submitted"
+    UNDER_REVIEW = "under_review"
+    INITIAL_CHECKS = "initial_checks"
+    APPLICANT_EDITING = "applicant_editing"
+    FINALISED = "finalised"
+
+
 class F680:
     FIELDS = [
         "expedited",

@@ -3,13 +3,15 @@ import rules
 
 from datetime import datetime
 
+from exporter.applications.constants import ApplicationStatus
+
 
 @rules.predicate
 def is_application_finalised(request, application):
     if not application:
         return False
 
-    return application.status == "finalised"
+    return application.status == ApplicationStatus.FINALISED
 
 
 @rules.predicate
@@ -40,6 +42,16 @@ def is_application_appealed(request, application):
     return bool(application.appeal)
 
 
+@rules.predicate
+def is_application_in_draft(request, application):
+    return application and application.status == ApplicationStatus.DRAFT
+
+
+@rules.predicate
+def is_application_in_major_edit(request, application):
+    return application and application.status == ApplicationStatus.APPLICANT_EDITING
+
+
 rules.add_rule(
     "can_user_appeal_case",
     is_application_finalised & is_application_refused & appeal_within_deadline & ~is_application_appealed,  # noqa
@@ -49,3 +61,5 @@ rules.add_rule(
     "can_view_appeal_details",
     is_application_refused & is_application_appealed,
 )
+
+rules.add_rule("can_edit_quantity_value", is_application_in_draft | is_application_in_major_edit)  # noqa
