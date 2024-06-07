@@ -220,14 +220,24 @@ def test_application_security_approvals_short(
     )
 
 
+@pytest.fixture
+def task_list_url(application):
+    return reverse(
+        "applications:task_list",
+        kwargs={
+            "pk": application["id"],
+        },
+    )
+
+
 def test_application_summary(
     authorized_client,
     application_security_approvals_summary_url,
-    application_security_approvals_url,
+    task_list_url,
     mock_application_get,
 ):
 
     response = authorized_client.get(application_security_approvals_summary_url)
     assert response.context["security_classified_approvals_types"]
     assert response.context["application"]
-    assert response.context["back_link_url"] == application_security_approvals_url
+    assert response.context["back_link_url"] == task_list_url
