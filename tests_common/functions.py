@@ -29,6 +29,10 @@ def click_continue_link(driver: WebDriver):
     driver.find_element(by=By.LINK_TEXT, value="Continue").click()
 
 
+def click_save_and_continue_link(driver: WebDriver):
+    driver.find_element(by=By.LINK_TEXT, value="Save and continue").click()
+
+
 def element_with_css_selector_exists(driver: WebDriver, css_selector: str) -> bool:
     driver.implicitly_wait(0)
     return_value = len(driver.find_elements(by=By.CSS_SELECTOR, value=css_selector)) != 0
