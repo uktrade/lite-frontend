@@ -180,7 +180,6 @@ def test_registration_individual_end_to_end_uk_based(
     assertTemplateUsed(response, "core/registration/confirmation-registration-individual-uk.html")
 
     soup = BeautifulSoup(response.content, "html.parser")
-    
     name_div = soup.find("div", {"id": "name"})
     assert expected_data["name"] in name_div.text
 
@@ -251,7 +250,6 @@ def test_registration_individual_end_to_end_non_uk_based(
     assertTemplateUsed(response, "core/registration/confirmation-registration-individual-abroad.html")
 
     soup = BeautifulSoup(response.content, "html.parser")
-
     name_div = soup.find("div", {"id": "name"})
     assert expected_data["name"] in name_div.text
 
