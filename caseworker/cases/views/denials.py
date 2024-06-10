@@ -1,6 +1,8 @@
+from django.conf import settings
+from django.http import QueryDict
+from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views.generic import FormView
-from django.conf import settings
 
 from core.auth.views import LoginRequiredMixin
 from caseworker.cases.forms.denial_forms import DenialSearchForm
@@ -56,12 +58,40 @@ class Denials(LoginRequiredMixin, FormView):
             country_list.add(party["country"]["name"])
         return (" ".join(search_filter), country_list)
 
+    def get_form_action(self):
+        form_action = reverse(
+            "cases:denials",
+            kwargs={
+                "queue_pk": str(self.kwargs["queue_pk"]),
+                "pk": str(self.kwargs["pk"]),
+            },
+        )
+
+        query = QueryDict("page=1", mutable=True)
+        for party_type in [
+            PartyType.END_USER,
+            PartyType.CONSIGNEE,
+            PartyType.ULTIMATE_END_USER,
+            PartyType.THIRD_PARTY,
+        ]:
+            items = self.request.GET.getlist(party_type)
+            if items:
+                query.setlist(
+                    party_type,
+                    items,
+                )
+
+        return f"{form_action}?{query.urlencode()}"
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+
         _, session_countries_list, _ = self.get_search_params_from_session()
         _, country_list = self.get_search_params()
-
         kwargs["countries"] = session_countries_list or country_list
+
+        kwargs["form_action"] = self.get_form_action()
+
         return kwargs
 
     def get_initial(self):
