@@ -6,6 +6,8 @@ import json
 import os
 import re
 
+import urllib.parse as urlparse
+
 from collections import Counter, OrderedDict
 from decimal import Decimal
 from importlib import import_module
@@ -16,10 +18,12 @@ from dateutil.relativedelta import relativedelta
 
 from django import template
 from django.conf import settings
+from django.http import QueryDict
 from django.template.defaultfilters import stringfilter, safe, capfirst
 from django.templatetags.tz import localtime
 from django.utils.html import escape
 from django.utils.safestring import mark_safe, SafeString
+
 
 from exporter.core.constants import (
     DATE_FORMAT,
@@ -1010,3 +1014,81 @@ def parse_date(date_string):
 @register.filter
 def pprint_dict(value):
     return json.dumps(value, indent=4)
+
+
+@register.filter
+def pagination_params(url, page):
+    url_parts = urlparse.urlparse(url)
+    query_dict = QueryDict(url_parts.query, mutable=True)
+    query_dict["page"] = page
+    url_parts = url_parts._replace(query=query_dict.urlencode())
+
+    return urlparse.urlunparse(url_parts)
+
+
+@register.inclusion_tag("components/pagination.html", takes_context=True)
+def pagination(context, *args, **kwargs):
+    class PageItem:
+        def __init__(self, number, url, selected=False):
+            self.number = number
+            self.url = url
+            self.selected = selected
+            self.type = "page_item"
+
+    class PageEllipsis:
+        def __init__(self, text="..."):
+            self.text = text
+            self.type = "page_ellipsis"
+
+    if "data" not in kwargs:
+        data = context["data"] if "data" in context else context
+    else:
+        data = kwargs["data"]
+
+    # If the data provided isn't
+    if not data or "total_pages" not in data:
+        return
+
+    request = context["request"]
+    current_path = request.get_full_path()
+    current_page = int(context["request"].GET.get("page") or 1)
+    max_pages = int(data["total_pages"])
+    max_range = 5
+    pages = []
+
+    # We want there to be a max_range bubble around the current page
+    # eg current page is 6 and max range is 4, therefore we'll see 2 3 4 5 6 7 8 9 10
+    start_range = max(1, current_page - max_range)
+    end_range = min(max_pages, current_page + max_range)
+
+    # Account for starting at 1, instead of 0
+    if (start_range - 2) <= 1:
+        start_range = 1
+    else:
+        pages.insert(0, PageItem(1, pagination_params(current_path, 1)))
+        pages.insert(1, PageEllipsis())
+
+    # UX: If end range + 2 (2 representing an ellipsis and final element) just show the last
+    # two pages as well
+    if (end_range + 2) >= max_pages:
+        end_range = max_pages
+
+    # Account for starting at 1, instead of 0
+    end_range += 1
+
+    # Add page items
+    for i in range(start_range, end_range):
+        pages.append(PageItem(i, pagination_params(current_path, i), i == current_page))
+
+    # If current page + max range is more than two pages away from the last page, show an ellipsis
+    if current_page + max_range < max_pages - 2:
+        pages.append(PageEllipsis())
+        pages.append(PageItem(max_pages, pagination_params(current_path, max_pages)))
+
+    context["previous_link_url"] = pagination_params(current_path, current_page - 1) if current_page != 1 else None
+    context["next_link_url"] = pagination_params(current_path, current_page + 1) if current_page != max_pages else None
+    context["pages"] = pages
+    context["previous_page_number"] = current_page - 1
+    context["next_page_number"] = current_page + 1
+
+    return context

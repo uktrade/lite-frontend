@@ -1,9 +1,7 @@
 import json
 from html import escape
 from json import JSONDecodeError
-import urllib.parse as urlparse
 
-from django.http import QueryDict
 from django.template.defaulttags import register
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -192,16 +190,6 @@ def make_list(*args):
     return args
 
 
-@register.filter
-def pagination_params(url, page):
-    url_parts = urlparse.urlparse(url)
-    query_dict = QueryDict(url_parts.query, mutable=True)
-    query_dict["page"] = page
-    url_parts = url_parts._replace(query=query_dict.urlencode())
-
-    return urlparse.urlunparse(url_parts)
-
-
 @register.filter()
 def item_with_rating_exists(items, rating):
     if not items:
@@ -238,74 +226,6 @@ def govuk_link_button(text, url, url_param=None, id="", classes="", query_params
         f'<a {id} href="{url}{query_params}" role="button" draggable="false" class="govuk-button {classes}" {hidden} '
         f'data-module="govuk-button">{text}{chevron}</a>'
     )
-
-
-@register.inclusion_tag("components/pagination.html", takes_context=True)
-def pagination(context, *args, **kwargs):
-    class PageItem:
-        def __init__(self, number, url, selected=False):
-            self.number = number
-            self.url = url
-            self.selected = selected
-            self.type = "page_item"
-
-    class PageEllipsis:
-        def __init__(self, text="..."):
-            self.text = text
-            self.type = "page_ellipsis"
-
-    if "data" not in kwargs:
-        data = context["data"] if "data" in context else context
-    else:
-        data = kwargs["data"]
-
-    # If the data provided isn't
-    if not data or "total_pages" not in data:
-        return
-
-    request = context["request"]
-    current_path = request.get_full_path()
-    current_page = int(context["request"].GET.get("page") or 1)
-    max_pages = int(data["total_pages"])
-    max_range = 5
-    pages = []
-
-    # We want there to be a max_range bubble around the current page
-    # eg current page is 6 and max range is 4, therefore we'll see 2 3 4 5 6 7 8 9 10
-    start_range = max(1, current_page - max_range)
-    end_range = min(max_pages, current_page + max_range)
-
-    # Account for starting at 1, instead of 0
-    if (start_range - 2) <= 1:
-        start_range = 1
-    else:
-        pages.insert(0, PageItem(1, pagination_params(current_path, 1)))
-        pages.insert(1, PageEllipsis())
-
-    # UX: If end range + 2 (2 representing an ellipsis and final element) just show the last
-    # two pages as well
-    if (end_range + 2) >= max_pages:
-        end_range = max_pages
-
-    # Account for starting at 1, instead of 0
-    end_range += 1
-
-    # Add page items
-    for i in range(start_range, end_range):
-        pages.append(PageItem(i, pagination_params(current_path, i), i == current_page))
-
-    # If current page + max range is more than two pages away from the last page, show an ellipsis
-    if current_page + max_range < max_pages - 2:
-        pages.append(PageEllipsis())
-        pages.append(PageItem(max_pages, pagination_params(current_path, max_pages)))
-
-    context["previous_link_url"] = pagination_params(current_path, current_page - 1) if current_page != 1 else None
-    context["next_link_url"] = pagination_params(current_path, current_page + 1) if current_page != max_pages else None
-    context["pages"] = pages
-    context["previous_page_number"] = current_page - 1
-    context["next_page_number"] = current_page + 1
-
-    return context
 
 
 @register.filter()

@@ -140,9 +140,9 @@ def test_search_denials_party_type_ultimate_and_third_party(
     (
         ("name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA)", {"country": ["United Kingdom"]}),  # /PS-IGNORE
         (
-            "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",
+            "name:(John Smith) address:(Studio 47v, ferry, town, DD1 4AA) name:(time) address:(2 doc rd)",  # /PS-IGNORE
             {"country": ["United Kingdom"]},
-        ),  # /PS-IGNORE
+        ),
         ("name:(Smith)", {"country": []}),
     ),
 )
@@ -297,6 +297,9 @@ def test_search_denials(
 
     for i, value in enumerate(table_body_values):
         assert value == expected_table_values[data_key_map[i]]
+
+    form = soup.find(id="denials-search-form")
+    assert form["action"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?page=1&end_user={end_user_id}"
 
     page_2 = soup.find(id="page-2")
     assert page_2.a["href"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"

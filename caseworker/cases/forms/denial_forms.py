@@ -14,7 +14,6 @@ from core.forms.layouts import RenderTemplate
 
 
 class DenialSearchForm(forms.Form):
-
     search_string = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "2"}),
         label="",
@@ -28,13 +27,14 @@ class DenialSearchForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, countries, *args, **kwargs):
+    def __init__(self, countries, form_action, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.fields["country_filter"].choices = [(c, c) for c in countries]
 
         self.helper = FormHelper()
-
+        self.helper.form_action = form_action
+        self.helper.form_id = "denials-search-form"
         self.helper.layout = Layout(
             HTML.p("Or manually edit the query."),
             Field("search_string"),
