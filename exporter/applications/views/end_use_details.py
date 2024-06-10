@@ -60,8 +60,10 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
             pass
 
         summary_list_form_view = SummaryListFormView()
-        summary_list_form_view.cancel_link_text = "cancel"
-        summary_list_form_view.cancel_link_url = self.success_url
+        summary_list_form_view.back_url = self.success_url
+        summary_list_form_view.back_link_text = "Back to application overview"
+
+        summary_list_form_view.instruction_text = "Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress."
 
         summary_list_form_view.init = init
         summary_list_form_view.request = request

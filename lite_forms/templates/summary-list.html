@@ -1,6 +1,10 @@
 {% extends 'layouts/two-pane.html' %}
 
-{% block back_link %}{% endblock %}
+{% block back_link %}
+	{% if back_url and back_link_text %}
+		<a href="{{ back_url }}" id="back-link" class="govuk-back-link">{{ back_link_text }}</a>
+	{% endif %}
+{% endblock %}
 
 {% block two_thirds %}
 	<h1 class="govuk-heading-xl {% if forms.forms.0.single_form_element %}govuk-!-margin-bottom-7{% endif %}">
@@ -8,6 +12,10 @@
 			{{ title }}
 		{% endblock %}
 	</h1>
+
+	{% if instruction_text %}
+		<p class="govuk-body">{{ instruction_text }}</p>
+	{% endif %}
 
 	{% for form in forms.forms %}
 		{% if not form.single_form_element and not hide_titles %}

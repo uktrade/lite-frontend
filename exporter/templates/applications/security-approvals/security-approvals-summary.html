@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block back_link %}
-	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">{% lcs 'generic.BACK' %}</a>
+	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">{% lcs 'generic.BACK_TO_APPLICATION_OVERVIEW' %}</a>
 {% endblock %}
 
 {% block body %}
@@ -14,6 +14,8 @@
                 </h1>
             </div>
         </div>
+
+        <p class="govuk-body">Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress.</p>
 
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
@@ -89,6 +91,6 @@
     </div>
 </div>
     <div class="govuk-button-group">
-	<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Continue</a>
+	<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Save and continue</a>
 </div>
 {% endblock %}

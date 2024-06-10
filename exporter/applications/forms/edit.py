@@ -13,7 +13,7 @@ def reference_name_form(application_id=None):
             TextInput(name="name"),
         ],
         back_link=back_to_task_list(application_id),
-        default_button_name=conditional(application_id, generic.SAVE_AND_RETURN, generic.CONTINUE),
+        default_button_name=conditional(application_id, generic.SAVE_AND_RETURN, generic.SAVE_AND_CONTINUE),
     )
 
 
@@ -60,5 +60,5 @@ def told_by_an_official_form(application_id=None):
             ),
         ],
         back_link=back_to_task_list(application_id),
-        default_button_name=conditional(application_id, generic.SAVE_AND_RETURN, generic.CONTINUE),
+        default_button_name=conditional(application_id, generic.SAVE_AND_RETURN, generic.SAVE_AND_CONTINUE),
     )

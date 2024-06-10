@@ -232,6 +232,9 @@ class SummaryListFormView(FormView):
     cancel_link_prefix = "or "
     cancel_link_text = ""
     cancel_link_url = ""
+    back_url = ""
+    back_link_text = ""
+    instruction_text = ""
 
     def get_forms(self):
         if not self.forms:
@@ -272,6 +275,9 @@ class SummaryListFormView(FormView):
         data = self.clean_data(self.get_validated_data())
         context = {
             "forms": self.get_forms(),
+            "back_url": self.back_url,
+            "back_link_text": self.back_link_text,
+            "instruction_text": self.instruction_text,
             "data": data,
             "pretty_data": self.prettify_data(data.copy()),
             "title": self.summary_list_title,
