@@ -2,8 +2,6 @@ import pytest
 
 from django.urls import reverse
 
-from lite_content.lite_exporter_frontend.applications import EndUseDetails
-
 
 @pytest.fixture
 def application_pk(data_standard_case):
@@ -30,5 +28,8 @@ def test_application_end_use_summary(
 ):
     response = authorized_client.get(application_end_use_summary_url)
     assert response.context["back_url"] == application_task_list_url + "#end_use_details"
-    assert response.context["back_link_text"] == EndUseDetails.EndUseDetailsSummaryList.BACK_LINK_TEXT
-    assert response.context["instruction_text"] == EndUseDetails.EndUseDetailsSummaryList.INSTRUCTION_TEXT
+    assert response.context["back_link_text"] == "Back to application overview"
+    assert (
+        response.context["instruction_text"]
+        == "Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress."
+    )
