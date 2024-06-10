@@ -180,7 +180,14 @@ def test_registration_individual_end_to_end_uk_based(
     assertTemplateUsed(response, "core/registration/confirmation-registration-individual-uk.html")
 
     soup = BeautifulSoup(response.content, "html.parser")
-    crn_div = soup.find("div", {"id": "org-registration-number"})
+    
+    name_div = soup.find("div", {"id": "name"})
+    assert expected_data["name"] in name_div.text
+
+    eori_div = soup.find("div", {"id": "eori-number"})
+    assert expected_data["eori_number"] in eori_div.text
+
+    crn_div = soup.find("div", {"id": "registration-number"})
     assert expected_data["registration_number"] in crn_div.text
 
     expected_data["user"] = {"email": "foo@example.com"}
@@ -244,7 +251,14 @@ def test_registration_individual_end_to_end_non_uk_based(
     assertTemplateUsed(response, "core/registration/confirmation-registration-individual-abroad.html")
 
     soup = BeautifulSoup(response.content, "html.parser")
-    crn_div = soup.find("div", {"id": "org-registration-number"})
+
+    name_div = soup.find("div", {"id": "name"})
+    assert expected_data["name"] in name_div.text
+
+    eori_div = soup.find("div", {"id": "eori-number"})
+    assert expected_data["eori_number"] in eori_div.text
+
+    crn_div = soup.find("div", {"id": "registration-number"})
     assert expected_data["registration_number"] in crn_div.text
 
     response = post_to_step(RegistrationSteps.REGISTRATION_CONFIRMATION, {})
