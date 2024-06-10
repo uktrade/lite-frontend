@@ -179,6 +179,10 @@ def test_registration_individual_end_to_end_uk_based(
 
     assertTemplateUsed(response, "core/registration/confirmation-registration-individual-uk.html")
 
+    soup = BeautifulSoup(response.content, "html.parser")
+    crn_div = soup.find("div", {"id": "org-registration-number"})
+    assert expected_data["registration_number"] in crn_div.text
+
     expected_data["user"] = {"email": "foo@example.com"}
 
     response = post_to_step(RegistrationSteps.REGISTRATION_CONFIRMATION, {})
@@ -238,6 +242,10 @@ def test_registration_individual_end_to_end_non_uk_based(
     assert response.context["registration_data"] == expected_data
 
     assertTemplateUsed(response, "core/registration/confirmation-registration-individual-abroad.html")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    crn_div = soup.find("div", {"id": "org-registration-number"})
+    assert expected_data["registration_number"] in crn_div.text
 
     response = post_to_step(RegistrationSteps.REGISTRATION_CONFIRMATION, {})
 
