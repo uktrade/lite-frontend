@@ -12,7 +12,6 @@ class CasesListPage:
     STATUS = "Status"
     NOT_UPDATED_RECENTLY = "This case has not been updated in over 5 days"
     OPEN_TEAM_ECJU = "This case contains open enquiries by your team"
-    FUTURE_REVIEW_DATE = "This case has a next review date set in the future"
     OPEN_ALL = "Open all"
     CLOSE_ALL = "Close all"
 
@@ -151,8 +150,6 @@ class CasePage:
         TRADE_CONTROL_ACTIVITY_CATEGORIES = "Trade control activity categories"
         INSPECTOR = "Inspector"
         ADDRESS = "Address"
-        NEXT_REVIEW_DATE = "Next review date"
-        NO_NEXT_REVIEW_DATE = "No review date set"
 
         class Goods:
             TITLE = "good"
@@ -706,10 +703,6 @@ class Manage:
         SUBMIT = "Submit"
         ERROR = "Select an option"
         NOTE = "Explain why you're making this decision (optional)"
-
-    class SetNextReviewDate:
-        TITLE = "Set next review date"
-        DESCRIPTION = "For example, 12 11 2020"
 
 
 class ReviewGoodsForm:
