@@ -71,50 +71,6 @@ def exhibition_details_form(application_id):
     )
 
 
-def declaration_form(application_id):
-    return Form(
-        title=strings.declaration.Declaration.TITLE,
-        questions=[
-            HiddenField(name="submit_declaration", value=True),
-            Label(strings.declaration.Declaration.PARAGRAPH_ONE),
-            Label(strings.declaration.Declaration.PARAGRAPH_TWO),
-            Label(strings.declaration.Declaration.PARAGRAPH_THREE),
-            Label(strings.declaration.Declaration.PARAGRAPH_FOUR),
-            Checkboxes(
-                name="agreed_to_foi",
-                options=[
-                    Option(
-                        key="True",
-                        value=strings.declaration.FOI.INFORMATION_DISCLOSURE_TITLE,
-                    ),
-                ],
-                classes=["govuk-checkboxes--small"],
-            ),
-            TextArea(
-                title=strings.declaration.FOI.INFORMATION_DISCLOSURE_DETAILS,
-                name="foi_reason",
-            ),
-            Label(strings.declaration.Declaration.FOI_MORE_ADVICE),
-            Label(strings.declaration.Declaration.FOI_GUIDANCE),
-            TextInput(
-                title="Confirm that you agree to the above by typing 'I AGREE' in this box",
-                name="agreed_to_declaration_text",
-            ),
-            Label(
-                """Please note, your application must be checked thoroughly and only say 'I agree' if you are content
-                that the ELA is accurate. It may not be possible to make changes to the application after
-                it has been submitted and if so, you may have to reapply."""
-            ),
-        ],
-        default_button_name=strings.declaration.Declaration.BUTTON_TITLE,
-        back_link=BackLink(
-            strings.declaration.Declaration.BACK,
-            reverse_lazy("applications:summary", kwargs={"pk": application_id}),
-        ),
-        javascript_imports={"/javascripts/declaration.js"},
-    )
-
-
 class EditApplicationForm(forms.Form):
     CHOICES = [
         ("minor", "Delete a product, third party or country"),
