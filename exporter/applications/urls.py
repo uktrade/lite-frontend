@@ -16,6 +16,7 @@ from exporter.applications.views import (
     end_use_details,
     route_of_goods,
     export_details,
+    declaration,
 )
 from exporter.applications.views.security_approvals.views import (
     SecurityApprovals,
@@ -28,7 +29,6 @@ from exporter.applications.views.security_approvals.edit_views import (
     EditF1686Details,
     EditSecurityApprovalDetails,
 )
-
 
 from exporter.applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
 from exporter.applications.views.parties import consignees, end_users, third_parties, ultimate_end_users
@@ -524,6 +524,11 @@ urlpatterns = [
     ),
     path("<uuid:pk>/clearance/", clearance.SetClearanceLevel.as_view(), name="clearance_level"),
     path("<uuid:pk>/good-detail-summary/", GoodsDetailSummaryCheckYourAnswers.as_view(), name="good_detail_summary"),
+    path(
+        "<uuid:pk>/application-declaration/",
+        declaration.ApplicationDeclarationView.as_view(),
+        name="application_declaration",
+    ),
     # This HAS to be at the bottom, otherwise it will swallow other url calls
     path("<uuid:pk>/", common.ApplicationDetail.as_view(), name="application"),
     path("<uuid:pk>/exhibition-details/", common.ExhibitionDetail.as_view(), name="exhibition_details"),
