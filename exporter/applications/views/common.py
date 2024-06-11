@@ -232,32 +232,28 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
 
 
 class ApplicationSummary(LoginRequiredMixin, TemplateView):
-    application_id = None
-    application = None
-    case_id = None
-    view_type = None
+    template_name = "applications/application.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.application_id = str(kwargs["pk"])
         self.application = get_application(request, self.application_id)
         self.case_id = self.application["case"]
-
         return super(ApplicationSummary, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
-
-        context = {
-            "case_id": self.application_id,
-            "application": self.application,
-            "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
-            "summary_page": True,
-            "application_type": get_application_type_string(self.application),
-        }
-
-        context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
-        context["reference_code"] = get_reference_number_description(self.application)
-
-        return render(request, "applications/application.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "case_id": self.application_id,
+                "application": self.application,
+                "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
+                "summary_page": True,
+                "application_type": get_application_type_string(self.application),
+                "notes": get_case_notes(self.request, self.case_id)["case_notes"],
+                "reference_code": get_reference_number_description(self.application),
+            }
+        )
+        return context
 
     def post(self, request, **kwargs):
         return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
