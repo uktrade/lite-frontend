@@ -53,7 +53,7 @@ from exporter.applications.services import (
 )
 from exporter.organisation.members.services import get_user
 
-from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
+from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType
 from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
