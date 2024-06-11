@@ -255,9 +255,7 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, **kwargs):
-        return HttpResponseRedirect(
-            reverse_lazy("applications:application_declaration", kwargs={"pk": self.application_id})
-        )
+        return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
 
 
 class WithdrawApplication(LoginRequiredMixin, SingleFormView):
