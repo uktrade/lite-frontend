@@ -19,7 +19,6 @@ from exporter.applications.forms.common import (
     EditApplicationForm,
     application_copy_form,
     exhibition_details_form,
-    declaration_form,
 )
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
