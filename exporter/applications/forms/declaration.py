@@ -29,11 +29,10 @@ class ApplicationDeclarationForm(BaseForm):
     foi_reason = forms.CharField(
         widget=forms.Textarea,
         label="Explain why the disclosure of information would be harmful to your interests. While the Export Control Joint Unit (ECJU) will take your views into account, they cannot guarantee that the information will not be made public.",
-        error_messages={"required": "Explain why the disclosure of information would be harmful to your interests"},
         required=False,
     )
 
-    def clean_foi_reason(self):
+    def clean(self):
         """
         We want the foi_reason field to be required if agreed_to_foi is No, but
         using the default required=True makes it error if this question is never
@@ -41,11 +40,12 @@ class ApplicationDeclarationForm(BaseForm):
         desired behaviour we can raise a ValidationError if the No answer is given
         and foi_reason is left blank which displays a field error to the user.
         """
-        agreed_to_foi = self.cleaned_data.get("agreed_to_foi")
-        foi_reason = self.cleaned_data.get("foi_reason")
-        if agreed_to_foi and not foi_reason:
+        cleaned_data = super().clean()
+        agreed_to_foi = cleaned_data.get("agreed_to_foi")
+        foi_reason = cleaned_data.get("foi_reason")
+        if agreed_to_foi == "True" and not foi_reason:
             raise ValidationError("Explain why the disclosure of information would be harmful to your interests")
-        return foi_reason
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
