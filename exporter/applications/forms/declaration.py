@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from crispy_forms_gds.layout import HTML
 
@@ -31,6 +32,20 @@ class ApplicationDeclarationForm(BaseForm):
         error_messages={"required": "Explain why the disclosure of information would be harmful to your interests"},
         required=False,
     )
+
+    def clean_foi_reason(self):
+        """
+        We want the foi_reason field to be required if agreed_to_foi is No, but
+        using the default required=True makes it error if this question is never
+        shown. This is a difficulty with using ConditionalRadios. To achieve the
+        desired behaviour we can raise a ValidationError if the No answer is given
+        and foi_reason is left blank which displays a field error to the user.
+        """
+        agreed_to_foi = self.cleaned_data.get("agreed_to_foi")
+        foi_reason = self.cleaned_data.get("foi_reason")
+        if agreed_to_foi and not foi_reason:
+            raise ValidationError("Explain why the disclosure of information would be harmful to your interests")
+        return foi_reason
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
