@@ -156,7 +156,10 @@
 									{% govuk_link_button id='reissue-ogl' text='cases.ApplicationPage.Actions.REISSUE_OGL' url='cases:reissue_ogl' url_param=button_params query_params='?return_to='|add:CURRENT_PATH %}
 								{% endif %}
 							{% endif %}
-							{% govuk_link_button id='rerun-routing-rules' text='cases.ApplicationPage.Actions.RERUN_ROUTING_RULES' url='cases:rerun_routing_rules' url_param=button_params query_params='?return_to='|add:CURRENT_PATH classes='govuk-button--secondary' %}
+							{% test_rule 'can_user_rerun_routing_rules' request case as can_user_rerun_routing_rules %}
+							{% if can_user_rerun_routing_rules %}
+								{% govuk_link_button id='rerun-routing-rules' text='cases.ApplicationPage.Actions.RERUN_ROUTING_RULES' url='cases:rerun_routing_rules' url_param=button_params query_params='?return_to='|add:CURRENT_PATH classes='govuk-button--secondary' %}
+							{% endif %}
 							{% if can_set_done and case.case_type.reference.key != "comp_c" %}
 							{% test_rule 'can_user_move_case_forward' request case as can_user_move_case_forward %}
                                 {% if can_user_move_case_forward %}
