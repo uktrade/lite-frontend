@@ -256,7 +256,9 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
         return context
 
     def post(self, request, **kwargs):
-        return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
+        return HttpResponseRedirect(
+            reverse_lazy("applications:application_declaration", kwargs={"pk": self.application_id})
+        )
 
 
 class WithdrawApplication(LoginRequiredMixin, SingleFormView):
@@ -342,6 +344,7 @@ class ApplicationSubmitSuccessPage(LoginRequiredMixin, FormView):
         application = get_application(self.request, application_id)
 
         if application.status in ["draft", "applicant_editing"]:
+            print(application.status)
             raise Http404
         context["reference_code"] = application["reference_code"]
 
