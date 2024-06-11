@@ -341,7 +341,6 @@ class ApplicationSubmitSuccessPage(LoginRequiredMixin, FormView):
         application = get_application(self.request, application_id)
 
         if application.status in ["draft", "applicant_editing"]:
-            print(application.status)
             raise Http404
         context["reference_code"] = application["reference_code"]
 
