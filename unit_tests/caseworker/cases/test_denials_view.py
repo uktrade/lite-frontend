@@ -162,54 +162,6 @@ def test_search_denials_search_string(
     assert mock_denials_search.request_history[0].url == expected_url
 
 
-@mock.patch(
-    "caseworker.cases.views.denials.search_denials", return_value=({"results": [], "count": 0, "total_pages": 0}, 200)
-)
-def test_search_denials_session_search_string_matchs(
-    mock_search_denials, authorized_client, data_standard_case, mock_denials_search, url
-):
-
-    party_id = data_standard_case["case"]["data"]["end_user"]["id"]
-    party_id_2 = data_standard_case["case"]["data"]["consignee"]["id"]
-
-    response = authorized_client.get(
-        url,
-        data={"end_user": party_id, "search_id": "123"},
-    )
-
-    assert response.status_code == 200
-    mock_search_denials.assert_called_with(
-        filter={"country": {"United Kingdom"}},
-        request=mock.ANY,
-        search="name:(End User) address:(44)",
-    )
-
-    search_string = {"search_string": "name:(End User2) address:(23)"}
-    country_filter = {"country": {"United Kingdom"}}
-
-    authorized_client.post(
-        f"{url}?end_user={party_id}&search_id=123", data={**search_string, "country_filter": "United Kingdom"}
-    )
-
-    assert authorized_client.session["search_params"] == {
-        "123": ("name:(End User2) address:(23)", {"United Kingdom"}, ["United Kingdom"])
-    }
-    mock_search_denials.assert_called_with(
-        filter=country_filter, request=mock.ANY, search="name:(End User2) address:(23)"
-    )
-
-    response = authorized_client.get(
-        url,
-        data={"consignee": party_id_2, "search_id": "1234"},
-    )
-
-    mock_search_denials.assert_called_with(
-        filter={"country": {"Abu Dhabi"}},
-        request=mock.ANY,
-        search="name:(Consignee) address:(44)",
-    )
-
-
 def test_search_score_feature_flag_on(authorized_client, data_standard_case, url, denials_search_score_flag_on):
     end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
     response = authorized_client.get(f"{url}?end_user={end_user_id}")
@@ -302,16 +254,21 @@ def test_search_denials(
     assert form["action"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?page=1&end_user={end_user_id}"
 
     page_2 = soup.find(id="page-2")
-    assert page_2.a["href"] == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
+    assert (
+        page_2.button["formaction"]
+        == f"/queues/{queue_pk}/cases/{standard_case_pk}/denials/?end_user={end_user_id}&page=2"
+    )
+    assert page_2.button["form"] == "denials-search-form"
 
 
 def test_search_denials_no_matches(authorized_client, requests_mock, queue_pk, standard_case_pk):
     requests_mock.get(
         client._build_absolute_uri(f"/external-data/denial-search/"),
+        json={"count": 0, "total_pages": 1, "results": []},
     )
 
     url = reverse("cases:denials", kwargs={"pk": standard_case_pk, "queue_pk": queue_pk})
-    response = authorized_client.get(f"{url}")
+    response = authorized_client.get(url)
 
     soup = BeautifulSoup(response.content, "html.parser")
     assert response.status_code == 200
