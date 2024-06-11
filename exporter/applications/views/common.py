@@ -254,24 +254,13 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
             "application_type": get_application_type_string(self.application),
         }
 
-        if self.application.sub_type != HMRC:
-            context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
-            if self.application.sub_type == STANDARD:
-                context["reference_code"] = get_reference_number_description(self.application)
+        context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
+        context["reference_code"] = get_reference_number_description(self.application)
 
         return render(request, "applications/application.html", context)
 
     def post(self, request, **kwargs):
-        # As it's the summary page, either attempt to submit the application (if of type HMRC)
-        # or proceed to the declaration page
-        if self.application.sub_type == HMRC:
-            data, status_code = submit_application(request, self.application_id, json={"submit_hmrc": True})
-            if status_code != HTTPStatus.OK:
-                return get_application_task_list(request, self.application, errors=data.get("errors"))
-
-            return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": self.application_id}))
-        else:
-            return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
+        return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
 
 
 class WithdrawApplication(LoginRequiredMixin, SingleFormView):
