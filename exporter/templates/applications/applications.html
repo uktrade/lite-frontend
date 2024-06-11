@@ -55,6 +55,7 @@
 						<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.REFERENCE_CODE" %}</th>
 						<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.TYPE" %}</th>
 					{% endif %}
+					<th class="govuk-table__header" scope="col">Date submitted</th>
 					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.LAST_UPDATED_AT" %}</th>
 					{% if organisation.type.key != 'hmrc' %}
 						<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.STATUS" %}</th>
@@ -87,6 +88,9 @@
 								{{ application.case_type.sub_type.value }}
 							</td>
 						{% endif %}
+						<td class="govuk-table__cell">
+							{{ application.submitted_at|str_date }}
+						</td>
 						<td class="govuk-table__cell">
 							{{ application.updated_at|str_date }}
 						</td>
