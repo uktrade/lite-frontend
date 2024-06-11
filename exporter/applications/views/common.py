@@ -413,16 +413,6 @@ class ExhibitionDetail(LoginRequiredMixin, SingleFormView):
         return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
 
 
-class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.form = declaration_form(self.object_pk)
-        self.action = submit_application
-
-    def get_success_url(self):
-        return reverse_lazy("applications:success_page", kwargs={"pk": self.object_pk})
-
-
 class AppealApplication(LoginRequiredMixin, FormView):
     form_class = AppealForm
     template_name = "core/form.html"
