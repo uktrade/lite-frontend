@@ -28,7 +28,11 @@ class ApplicationDeclarationForm(BaseForm):
 
     foi_reason = forms.CharField(
         widget=forms.Textarea,
-        label="Explain why the disclosure of information would be harmful to your interests. While the Export Control Joint Unit (ECJU) will take your views into account, they cannot guarantee that the information will not be made public.",
+        label=(
+            "Explain why the disclosure of information would be harmful to your interests. "
+            "While the Export Control Joint Unit (ECJU) will take your views into account, "
+            "they cannot guarantee that the information will not be made public."
+        ),
         required=False,
     )
 
@@ -59,19 +63,24 @@ class ApplicationDeclarationForm(BaseForm):
             HTML.p("Do you agree to make the application details publicly available?"),
             ConditionalRadios("agreed_to_foi", "Yes", ConditionalRadiosQuestion("No", "foi_reason")),
             HTML(
-                '<p class="govuk-body"><a class="govuk-link" href="https://ico.org.uk/for-organisations/guide-to-freedom-of-information/">Find out more about the Freedom of Information Act 2000 and exemptions at the Information Commissioner\'s Office</a>.</p>'
+                '<p class="govuk-body"><a class="govuk-link" href="https://ico.org.uk/for-organisations/guide-to-freedom-of-information/">'
+                "Find out more about the Freedom of Information Act 2000 and exemptions at the Information Commissioner's Office</a>.</p>"
             ),
             HTML(f'<h2 class="govuk-heading-m">{self.Layout.HEADING_DECLARATION}</h2>'),
             HTML(
-                f'<p class="govuk-body">Making a misleading application is an offence as set out in the <a class="govuk-link" href="https://www.legislation.gov.uk/uksi/2008/3231/contents/made">Export Control Order 2008</a>.</p>'
+                '<p class="govuk-body">Making a misleading application is an offence as set out in the '
+                '<a class="govuk-link" href="https://www.legislation.gov.uk/uksi/2008/3231/contents/made">Export Control Order 2008</a>.</p>'
             ),
             HTML.p(
-                "The licensee must comply with the licence conditions even, where relevant, after completing the activity authorised by the licence. Failure to do so is an offence."
+                "The licensee must comply with the licence conditions even, where relevant, after completing the activity authorised by the licence. "
+                "Failure to do so is an offence."
             ),
             HTML.p(
-                "Information provided in this application may be passed to international organisations or other governments in accordance with commitments entered into by His Majesty's Government."
+                "Information provided in this application may be passed to international organisations or other governments in accordance with commitments "
+                "entered into by His Majesty's Government."
             ),
             HTML.p(
-                "If ECJU staff have completed this application on your behalf, they based it on the information you provided. You as the exporter are responsible for the accuracy of the information."
+                "If ECJU staff have completed this application on your behalf, they based it on the information you provided. You as the exporter are "
+                "responsible for the accuracy of the information."
             ),
         ]
