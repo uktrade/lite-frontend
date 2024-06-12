@@ -112,3 +112,26 @@ def test_declaration_application_not_found_raises_404(
 
     response = authorized_client.get(declaration_url_invalid_pk)
     assert response.status_code == 404
+
+
+@pytest.fixture
+def mock_put_application_submit(requests_mock, data_standard_case):
+    applications_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/submit/")
+    requests_mock.put(url=applications_url, json=data_standard_case["case"]["data"])
+
+
+@pytest.fixture
+def success_url(application_pk):
+    return reverse("applications:success_page", kwargs={"pk": application_pk})
+
+
+def test_declaration_post_submits_application(
+    authorized_client, declaration_url, success_url, mock_get_application, mock_put_application_submit
+):
+    response = authorized_client.get(declaration_url)
+    assert response.status_code == 200
+
+    data = {"agreed_to_foi": False, "foi_reason": ""}
+    response = authorized_client.post(declaration_url, data=data)
+    assert response.status_code == 302
+    assert response.url == success_url
