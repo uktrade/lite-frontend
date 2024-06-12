@@ -90,7 +90,7 @@ def test_technology_product_on_application_summary_response_status_code(
 @pytest.fixture
 def technology_on_application_summary():
     return (
-        ("is-onward-exported", "Yes", "Will the product be onward exported to any additional countries?"),
+        ("is-onward-exported", "Yes", "Is the product going to any ultimate end-users?"),
         ("is-altered", "Yes", "Will the item be altered or processed before it is exported again?"),
         ("is-altered-comments", "I will alter it real good", "Explain how the product will be processed or altered"),
         ("is-incorporated", "Yes", "Will the product be incorporated into another item before it is onward exported?"),
