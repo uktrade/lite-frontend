@@ -22,16 +22,16 @@ def summary_url(application_pk):
 
 
 @pytest.fixture
-def application_reference_number(data_standard_case):
-    return data_standard_case["case"]["reference_code"]
+def mock_get_application(requests_mock, data_standard_case):
+    applications_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
+    requests_mock.get(url=applications_url, json=data_standard_case["case"]["data"])
 
 
 @pytest.fixture
-def mock_get_application(requests_mock, application_pk, application_reference_number):
+def mock_get_case_notes(application, requests_mock):
     return requests_mock.get(
-        client._build_absolute_uri(f"/applications/{application_pk}"),
-        json={"id": application_pk, "reference_code": application_reference_number, "status": "draft"},
-        status_code=200,
+        f"/cases/{application['id']}/case-notes/",
+        json={"case_notes": []},
     )
 
 
@@ -77,3 +77,14 @@ def test_declaration_view(authorized_client, declaration_url, summary_url, mock_
         ],
     ]
     assert soup.find("input", id="submit-id-submit")["value"] == "Accept and submit"
+
+
+def test_summary_post_redirects_to_declaration(
+    authorized_client, summary_url, declaration_url, mock_get_application, mock_get_case_notes
+):
+    response = authorized_client.get(summary_url)
+    assert response.status_code == 200
+
+    response = authorized_client.post(summary_url, data={})
+    assert response.status_code == 302
+    assert response.url == declaration_url
