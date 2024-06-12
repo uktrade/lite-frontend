@@ -215,7 +215,7 @@ class RegisterAddressDetailsBaseForm(BaseForm):
         validators=[validate_phone],
     )
 
-    website = forms.CharField(label="Website", required=False)
+    website = forms.CharField(label="Website", help_text="Use the format https://www.example.com", required=False)
 
     def clean_website(self):
         website = self.cleaned_data.get("website")
