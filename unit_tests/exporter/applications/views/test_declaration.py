@@ -2,6 +2,7 @@ import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
+from requests.exceptions import HTTPError
 
 from core import client
 
@@ -88,3 +89,26 @@ def test_summary_post_redirects_to_declaration(
     response = authorized_client.post(summary_url, data={})
     assert response.status_code == 302
     assert response.url == declaration_url
+
+
+@pytest.fixture
+def invalid_application_pk():
+    return "82617c05-a050-428b-ae68-ed5dc985f4af"
+
+
+@pytest.fixture
+def mock_get_application_invalid_pk(requests_mock, invalid_application_pk):
+    requests_mock.get(
+        client._build_absolute_uri(f"/applications/{invalid_application_pk}/"),
+        json={},
+        status_code=404,
+    )
+
+
+def test_declaration_application_not_found_raises_404(
+    authorized_client, declaration_url, invalid_application_pk, mock_get_application_invalid_pk
+):
+    declaration_url_invalid_pk = reverse("applications:declaration", kwargs={"pk": invalid_application_pk})
+
+    response = authorized_client.get(declaration_url_invalid_pk)
+    assert response.status_code == 404
