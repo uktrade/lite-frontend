@@ -18,7 +18,18 @@ class ApplicationDeclarationForm(BaseForm):
         HEADING_DECLARATION = "Declaration"
         SUBMIT_BUTTON_TEXT = "Accept and submit"
 
-    # TODO: we should update lite-api so that Yes is True and No is False
+    # TODO: we should rename agreed_to_foi to be less confusing. The old
+    # question asked if the exporter would find an FOI harmful to their
+    # interests, but the variable name agreed_to_foi suggests the opposite,
+    # that they agree to have their application be made public under FOI.
+    # Maybe agreed_that_foi_harmful would be less confusing.
+
+    # The new question asks if the exporter agrees to make their application
+    # publicly available, and the variable should reflect that. However that
+    # would mean changing the choices to ((True, "Yes"), (False, "No")) and if
+    # we then made a corresponding change in lite-api to handle this we
+    # would need to think about how that impacts older applications. Until
+    # lite-api is updated we should keep using the old variable.
     agreed_to_foi = forms.ChoiceField(
         choices=((False, "Yes"), (True, "No")),
         widget=forms.RadioSelect,
