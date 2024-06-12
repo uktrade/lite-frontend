@@ -287,3 +287,17 @@ def test_case_details_sub_status_change_displayed(
     html = BeautifulSoup(response.content, "html.parser")
 
     assert len(html.find_all(id="link-case-sub-status-change")) == expected
+
+
+def test_case_details_rerun_routing_rules_action(
+    data_standard_case,
+    data_queue,
+    authorized_client,
+):
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+
+    assertTemplateUsed(response, "layouts/case.html")
+
+    html = BeautifulSoup(response.content, "html.parser")
+    assert html.find(id="button-rerun-routing-rules") is None
