@@ -1,5 +1,7 @@
 from django import forms
 from django.db import models
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 
 from crispy_forms_gds.layout import HTML
 
@@ -9,7 +11,6 @@ from .validators import (
     validate_vat,
     validate_eori,
     validate_phone,
-    validate_website,
     validate_registration,
     validate_sic_number,
 )
@@ -214,7 +215,28 @@ class RegisterAddressDetailsBaseForm(BaseForm):
         validators=[validate_phone],
     )
 
-    website = forms.CharField(label="Website", required=False, validators=[validate_website])
+    website = forms.CharField(label="Website", required=False)
+
+    def clean_website(self):
+        website = self.cleaned_data.get("website")
+
+        validator = URLValidator()
+
+        if website:
+            try:
+                validator(website)
+            except ValidationError:
+                website = "https://" + website
+                try:
+                    validator(website)
+                except ValidationError:
+                    raise ValidationError("Enter a valid URL.")
+                else:
+                    return website
+            else:
+                return website
+
+        return website
 
 
 class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):

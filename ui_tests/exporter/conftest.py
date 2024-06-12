@@ -444,6 +444,11 @@ def i_click_continue_link(driver):  # noqa
     functions.click_continue_link(driver)
 
 
+@when("I click save and continue link")  # noqa
+def i_click_save_and_continue_link(driver):  # noqa
+    functions.click_save_and_continue_link(driver)
+
+
 @when("I click the back link")  # noqa
 def click_back_link(driver):  # noqa
     functions.click_back_link(driver)

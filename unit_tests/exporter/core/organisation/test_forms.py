@@ -303,3 +303,53 @@ def test_select_organisation_form_valid(data_organisations):
         organisations=data_organisations, data={"organisation": data_organisations[0]["id"]}
     )
     assert form.is_valid()
+
+
+register_address_details_website_test_cases = [
+    ("https://www.example.com", True, {}),
+    ("http://www.example.com", True, {}),
+    ("www.example.com", True, {}),
+    ("example.com", True, {}),
+    ("example", False, {"website": ["Enter a valid URL."]}),
+    (".com", False, {"website": ["Enter a valid URL."]}),
+    ("https://", False, {"website": ["Enter a valid URL."]}),
+    ("http://", False, {"website": ["Enter a valid URL."]}),
+]
+
+
+@pytest.mark.parametrize(
+    ("website", "is_valid", "errors"),
+    register_address_details_website_test_cases,
+)
+def test_register_address_details_website_uk(website, is_valid, errors):
+    data = {
+        "name": "Tokugawa Building",
+        "address_line_1": "1 Example Street",
+        "city": "Example City",
+        "region": "Example County",
+        "postcode": "SW1A 1AA",  # /PS-IGNORE
+        "phone_number": "07890123456",
+    }
+    data["website"] = website
+
+    form = forms.RegisterAddressDetailsUKForm(is_individual=False, data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    ("website", "is_valid", "errors"),
+    register_address_details_website_test_cases,
+)
+def test_register_address_details_website_overseas(website, is_valid, errors, mock_request, mock_get_countries):
+    data = {
+        "name": "Tokugawa Building",
+        "address": "1 Example Street, Example City",
+        "country": "JP",
+        "phone_number": "+447890123456",
+    }
+    data["website"] = website
+
+    form = forms.RegisterAddressDetailsOverseasForm(is_individual=False, data=data, request=mock_request)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors

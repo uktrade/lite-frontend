@@ -4,10 +4,21 @@
 <nav role="navigation" aria-label="Pagination Navigation">
 	<div class="lite-pagination__container">
 		{% if previous_link_url %}
-			<a id="link-previous-page" href="{{ previous_link_url }}" id="link-previous-page" class="lite-pagination__navigation-link lite-pagination__link">
-				{% svg 'previous' %}
-				<span data-number="{{ previous_page_number }}">Previous page</span>
-			</a>
+			{% if paging_link_type == "anchor" %}
+				<a id="link-previous-page" href="{{ previous_link_url }}" id="link-previous-page" class="lite-pagination__navigation-link lite-pagination__link">
+					{% svg 'previous' %}
+					<span data-number="{{ previous_page_number }}">Previous page</span>
+				</a>
+			{% elif paging_link_type == "form" %}
+				<button
+					class="lite-pagination__navigation-link lite-pagination__link"
+					form="{{ paging_form_id }}"
+					formaction="{{ previous_link_url }}"
+				>
+					{% svg 'previous' %}
+					<span data-number="{{ previous_page_number }}">Previous page</span>
+				</button>
+			{% endif %}
 		{% else %}
 			<p id="link-previous-page" class="lite-pagination__navigation-link lite-pagination__navigation-link--disabled">
 				{% svg 'previous' %}
@@ -23,9 +34,19 @@
 						{% if item.selected %}
 							{{ item.number }}
 						{% else %}
-							<a href="{{ item.url }}" {% if not item.selected %}aria-label="Goto Page {{ item.number}}" {% endif %} class="lite-pagination__link" data-number="{{ item.number }}">
-								{{ item.number }}
-							</a>
+							{% if paging_link_type == "anchor" %}
+								<a href="{{ item.url }}" {% if not item.selected %}aria-label="Goto Page {{ item.number}}" {% endif %} class="lite-pagination__link" data-number="{{ item.number }}">
+									{{ item.number }}
+								</a>
+							{% elif paging_link_type == "form" %}
+								<button
+									class="lite-pagination__navigation-link lite-pagination__link"
+									form="{{ paging_form_id }}"
+									formaction="{{ item.url }}"
+								>
+									{{ item.number }}
+								</button>
+							{% endif %}
 						{% endif %}
 					</li>
 				{% elif item.type == 'page_ellipsis' %}
@@ -38,10 +59,21 @@
 		{% endif %}
 
 		{% if next_link_url %}
-			<a id="link-next-page" href="{{ next_link_url }}" id="link-next-page" class="lite-pagination__navigation-link lite-pagination__link" >
-				<span data-number="{{ next_page_number }}">Next page</span>
-				{% svg 'next' %}
-			</a>
+			{% if paging_link_type == "anchor" %}
+				<a id="link-next-page" href="{{ next_link_url }}" id="link-next-page" class="lite-pagination__navigation-link lite-pagination__link" >
+					<span data-number="{{ next_page_number }}">Next page</span>
+					{% svg 'next' %}
+				</a>
+			{% elif paging_link_type == "form" %}
+				<button
+					class="lite-pagination__navigation-link lite-pagination__link"
+					form="{{ paging_form_id }}"
+					formaction="{{ next_link_url }}"
+				>
+					<span data-number="{{ next_page_number }}">Next page</span>
+					{% svg 'next' %}
+				</button>
+			{% endif %}
 		{% else %}
 			<p id="link-next-page" class="lite-pagination__navigation-link lite-pagination__navigation-link--disabled">
 				<span>Next page</span>

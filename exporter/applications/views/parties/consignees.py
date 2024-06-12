@@ -19,7 +19,6 @@ class Consignee(LoginRequiredMixin, TemplateView):
             kwargs = {"pk": application_id, "obj_pk": application["consignee"]["id"]}
             context = {
                 "application": application,
-                "title": ConsigneePage.TITLE,
                 "edit_url": reverse("applications:edit_consignee", kwargs=kwargs),
                 "remove_url": reverse("applications:remove_consignee", kwargs=kwargs),
                 "answers": convert_party(
@@ -28,7 +27,7 @@ class Consignee(LoginRequiredMixin, TemplateView):
                     editable=application["status"]["value"] == "draft",
                 ),
             }
-            return render(request, "applications/end-user.html", context)
+            return render(request, "applications/consignee.html", context)
         else:
             return redirect(reverse("applications:add_consignee", kwargs={"pk": application_id}))
 

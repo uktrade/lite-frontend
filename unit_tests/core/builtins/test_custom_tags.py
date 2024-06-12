@@ -421,3 +421,8 @@ def test_get_parties_status_optional_documents(parties, expected_status):
 )
 def test_pagination_params(url, page, expected):
     assert custom_tags.pagination_params(url, page) == expected
+
+
+def test_pagination():
+    with pytest.raises(ValueError):
+        custom_tags.pagination({}, link_type="madeup")
