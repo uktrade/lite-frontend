@@ -48,7 +48,9 @@ class ApplicationDeclarationForm(BaseForm):
         agreed_to_foi = cleaned_data.get("agreed_to_foi")
         foi_reason = cleaned_data.get("foi_reason")
         if agreed_to_foi == "True" and not foi_reason:
-            raise ValidationError("Explain why the disclosure of information would be harmful to your interests")
+            raise ValidationError(
+                {"foi_reason": "Explain why the disclosure of information would be harmful to your interests"}
+            )
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
