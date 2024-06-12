@@ -7,6 +7,7 @@ from core.summaries.formatters import (
 from core.summaries.summaries import (
     firearm_summary as core_firearm_summary,
     firearm_on_application_summary as core_firearm_on_application_summary,
+    firearm_ammunition_summary as core_firearm_ammunition_summary,
 )
 
 
@@ -95,6 +96,39 @@ def firearm_summary(good, is_user_rfd, organisation_documents):
         },
     )
 
+
+def firearm_ammunition_summary(good, is_user_rfd, organisation_documents):
+    def goods_document_formatter(document):
+        url = reverse(
+            "goods:document",
+            kwargs={
+                "pk": good["id"],
+                "file_pk": document["id"],
+            },
+        )
+
+        return document_formatter(document, url)
+
+    def rfd_document_formatter(document):
+        url = reverse(
+            "goods:document",
+            kwargs={
+                "pk": good["id"],
+                "file_pk": document["id"],
+            },
+        )
+
+        return document_formatter(document["document"], url)
+
+    return core_firearm_ammunition_summary(
+        good,
+        is_user_rfd,
+        organisation_documents,
+        {
+            "product-document": goods_document_formatter,
+            "rfd-certificate-document": rfd_document_formatter,
+        },
+    )
 
 def firearm_on_application_summary(good_on_application, good_on_application_documents):
     def good_on_application_document_formatter(document):

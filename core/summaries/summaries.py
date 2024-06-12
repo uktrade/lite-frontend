@@ -31,6 +31,7 @@ from core.summaries.formatters import (
 from core.summaries.reducers import (
     firearm_on_application_reducer,
     firearm_reducer,
+    firearm_ammunition_reducer,
     complete_item_on_application_reducer,
     complete_item_reducer,
     technology_on_application_reducer,
@@ -78,7 +79,41 @@ FIREARM_FIELDS = (
     "product-document",
     "product-document-description",
 )
-
+FIREARM_AMMUNITION_FIELDS = (
+    "firearm-type",
+    "name",
+    "is-good-controlled",
+    "control-list-entries",
+    "assessed-control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "calibre",
+    "is-replica",
+    "is-replica-description",
+    "is-registered-firearms-dealer",
+    "rfd-certificate-document",
+    "rfd-certificate-reference-number",
+    "rfd-certificate-date-of-expiry",
+    "is-covered-by-firearm-act-section-five",
+    "firearms-act-1968-section",
+    "is-covered-by-firearm-act-section-one-two-or-five-explanation",
+    "section-5-certificate-document",
+    "section-5-certificate-reference-number",
+    "section-5-certificate-date-of-expiry",
+    "section-5-certificate-missing",
+    "section-5-certificate-missing-reason",
+    "has-product-document",
+    "no-product-document-explanation",
+    "product-description",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+)
 COMPLETE_ITEM_FIELDS = (
     "is-firearm-product",
     "product-category",
@@ -209,6 +244,22 @@ def firearm_summary(good, is_user_rfd, organisation_documents, additional_format
         **additional_formatters,
     }
     summary = pick_fields(summary, FIREARM_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, FIREARM_LABELS)
+
+    return summary
+
+
+def firearm_ammunition_summary(good, is_user_rfd, organisation_documents, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = firearm_ammunition_reducer(good, is_user_rfd, organisation_documents)
+    formatters = {
+        **FIREARM_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, FIREARM_AMMUNITION_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, FIREARM_LABELS)
 
@@ -454,6 +505,7 @@ class NoSummaryForType(Exception):
 
 class SummaryTypes:
     FIREARM = "FIREARM"
+    FIREARM_AMMUNITION = "FIREARM_AMMUNITION"
     COMPLETE_ITEM = "COMPLETE_ITEM"
     MATERIAL = "MATERIAL"
     TECHNOLOGY = "TECHNOLOGY"
@@ -479,6 +531,8 @@ def get_summary_type_for_good(good):
     if firearm_details:
         if firearm_details["type"]["key"] == FirearmsProductType.FIREARMS:
             return SummaryTypes.FIREARM
+        if firearm_details["type"]["key"] == FirearmsProductType.AMMUNITION:
+            return SummaryTypes.FIREARM_AMMUNITION
         raise NoSummaryForType
 
     item_category = good.get("item_category")
