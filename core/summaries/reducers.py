@@ -319,6 +319,7 @@ def firearms_accessory_reducer(good):
     summary += part_number_reducer(good)
     summary += is_good_controlled_reducer(good)
     summary += is_pv_graded_reducer(good)
+    summary += product_component_reducer(good)
     summary += uses_information_security_reducer(good)
     summary += designed_for_military_use_reducer(good)
     summary += has_product_document_reducer(good)
@@ -571,6 +572,10 @@ def part_number_reducer(good):
             ("no-part-number-comments", no_part_number_comments),
         )
     return (("part-number", good["part_number"]),)
+
+
+def product_component_reducer(good):
+    return (("product-component", good["is_component"]["value"]),)
 
 
 def complete_item_reducer(good):

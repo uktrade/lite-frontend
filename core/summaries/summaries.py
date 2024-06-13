@@ -93,6 +93,7 @@ FIREARM_FIELDS = (
 COMPONENTS_FOR_FIREARMS_FIELDS = (
     "firearm-type",
     "name",
+    "part-number",
     "is-good-controlled",
     "control-list-entries",
     "assessed-control-list-entries",
@@ -182,6 +183,7 @@ FIREARMS_ACCESSORY_FIELDS = (
     "is-document-sensitive",
     "product-document",
     "product-document-description",
+    "product-component",
     "uses-information-security",
     "uses-information-security-details",
     "military-use",
