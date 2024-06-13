@@ -4,6 +4,7 @@ from django.urls import path
 from exporter.goods import views
 from exporter.goods.component.views import ComponentAccessoryProductDetails
 from exporter.goods.firearms.views import (
+    ComponentsForFirearmsAmmunitionProductDetails,
     ComponentsForFirearmsProductDetails,
     FirearmProductDetails,
     FirearmAmmunitionProductDetails,
@@ -62,6 +63,11 @@ urlpatterns = [
         name="components_for_firearms_detail",
     ),
     path("firearm-ammunition/<uuid:pk>/", FirearmAmmunitionProductDetails.as_view(), name="firearm_ammunition_detail"),
+    path(
+        "components-for-firearms-ammunition/<uuid:pk>/",
+        ComponentsForFirearmsAmmunitionProductDetails.as_view(),
+        name="components_for_firearms_ammunition_detail",
+    ),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
     path("platform/<uuid:pk>/", CompleteItemProductDetails.as_view(), name="complete_item_detail"),
