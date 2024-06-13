@@ -12,6 +12,7 @@ from core.summaries.summaries import (
     components_for_firearms_ammunition_summary as core_components_for_firearms_ammunition_summary,
     components_for_firearms_summary as core_components_for_firearms_summary,
     software_related_to_firearms_summary as core_software_related_to_firearms_summary,
+    technology_related_to_firearms_summary as core_technology_related_to_firearms_summary,
 )
 
 
@@ -256,6 +257,25 @@ def software_related_to_firearms_summary(good):
         },
     )
 
+
+def technology_related_to_firearms_summary(good):
+    def goods_document_formatter(document):
+        url = reverse(
+            "goods:document",
+            kwargs={
+                "pk": good["id"],
+                "file_pk": document["id"],
+            },
+        )
+
+        return document_formatter(document, url)
+
+    return core_technology_related_to_firearms_summary(
+        good,
+        {
+            "product-document": goods_document_formatter,
+        },
+    )
 
 def firearm_on_application_summary(good_on_application, good_on_application_documents):
     def good_on_application_document_formatter(document):

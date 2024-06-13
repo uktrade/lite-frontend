@@ -10,6 +10,7 @@ from exporter.goods.firearms.views import (
     FirearmProductDetails,
     FirearmAmmunitionProductDetails,
     SoftwareRelatedToFirearmsProductDetails,
+    TechnologyRelatedToFirearmsProductDetails,
 )
 from exporter.goods.materials.views import MaterialProductDetails
 from exporter.goods.software.views import TechnologyProductDetails
@@ -75,6 +76,11 @@ urlpatterns = [
         "software-related-to-firearms/<uuid:pk>/",
         SoftwareRelatedToFirearmsProductDetails.as_view(),
         name="software_related_to_firearms_detail",
+    ),
+    path(
+        "technology-related-to-firearms/<uuid:pk>/",
+        TechnologyRelatedToFirearmsProductDetails.as_view(),
+        name="technology_related_to_firearms_detail",
     ),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
