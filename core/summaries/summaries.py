@@ -320,6 +320,22 @@ def firearm_ammunition_summary(good, is_user_rfd, organisation_documents, additi
     return summary
 
 
+def components_for_firearms_ammunition_summary(good, is_user_rfd, organisation_documents, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = components_for_firearms_reducer(good, is_user_rfd, organisation_documents)
+    formatters = {
+        **FIREARM_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, COMPONENTS_FOR_FIREARMS_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, FIREARM_LABELS)
+
+    return summary
+
+
 FIREARM_ON_APPLICATION_FIELDS = (
     "firearm-certificate",
     "firearm-certificate-missing",
@@ -561,6 +577,7 @@ class SummaryTypes:
     FIREARM = "FIREARM"
     COMPONENTS_FOR_FIREARMS = "COMPONENTS_FOR_FIREARMS"
     FIREARM_AMMUNITION = "FIREARM_AMMUNITION"
+    COMPONENTS_FOR_FIREARMS_AMMUNITION = "COMPONENTS_FOR_FIREARMS_AMMUNITION"
     COMPLETE_ITEM = "COMPLETE_ITEM"
     MATERIAL = "MATERIAL"
     TECHNOLOGY = "TECHNOLOGY"
@@ -590,6 +607,8 @@ def get_summary_type_for_good(good):
             return SummaryTypes.COMPONENTS_FOR_FIREARMS
         if firearm_details["type"]["key"] == FirearmsProductType.AMMUNITION:
             return SummaryTypes.FIREARM_AMMUNITION
+        if firearm_details["type"]["key"] == FirearmsProductType.COMPONENTS_FOR_AMMUNITION:
+            return SummaryTypes.COMPONENTS_FOR_FIREARMS_AMMUNITION
         raise NoSummaryForType
 
     item_category = good.get("item_category")
