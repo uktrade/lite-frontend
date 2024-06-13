@@ -1,10 +1,8 @@
-import logging
-from django_log_formatter_asim import ASIMFormatter
-
 import os
 from urllib.parse import urljoin
 
 from conf.base import *
+from conf.logging_config import logging_config
 
 
 ROOT_URLCONF = "caseworker.urls"
@@ -141,21 +139,4 @@ CONFIG_ADMIN_USERS_LIST = env.list("CONFIG_ADMIN_USERS_LIST", default=[])
 
 # Logging formatting
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "asim_formatter": {
-            "()": ASIMFormatter,
-        },
-    },
-    "handlers": {
-        "asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"},
-    },
-    "root": {
-        "handlers": ["asim"],
-    },
-    "loggers": {
-        "django": {"handlers": ["asim"], "propagate": False},
-    },
-}
+LOGGING = logging_config
