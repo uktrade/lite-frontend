@@ -31,6 +31,8 @@ from core.summaries.formatters import (
     COMPONENT_ACCESSORY_ON_APPLICATION_LABELS,
     SOFTWARE_RELATED_TO_FIREARMS_LABELS,
     SOFTWARE_RELATED_TO_FIREARMS_VALUE_FORMATTERS,
+    TECHNOLOGY_RELATED_TO_FIREARMS_LABELS,
+    TECHNOLOGY_RELATED_TO_FIREARMS_VALUE_FORMATTERS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
@@ -46,6 +48,7 @@ from core.summaries.reducers import (
     component_accessory_on_application_reducer,
     component_accessory_reducer,
     software_related_to_firearms_reducer,
+    technology_related_to_firearms_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -185,6 +188,33 @@ FIREARMS_ACCESSORY_FIELDS = (
 )
 
 SOFTWARE_RELATED_TO_FIREARMS_FIELDS = (
+    "firearm-type",
+    "name",
+    "part-number",
+    "is-good-controlled",
+    "control-list-entries",
+    "assessed-control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "has-product-document",
+    "no-product-document-explanation",
+    "product-description",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+    "general-details",
+    "uses-information-security",
+    "uses-information-security-details",
+    "military-use",
+    "military-use-details",
+)
+
+TECHNOLOGY_RELATED_TO_FIREARMS_FIELDS = (
     "firearm-type",
     "name",
     "part-number",
@@ -423,6 +453,22 @@ def software_related_to_firearms_summary(good, additional_formatters=None):
     summary = pick_fields(summary, SOFTWARE_RELATED_TO_FIREARMS_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, SOFTWARE_RELATED_TO_FIREARMS_LABELS)
+
+    return summary
+
+
+def technology_related_to_firearms_summary(good, additional_formatters=None):
+    if not additional_formatters:
+        additional_formatters = {}
+
+    summary = technology_related_to_firearms_reducer(good)
+    formatters = {
+        **TECHNOLOGY_RELATED_TO_FIREARMS_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, TECHNOLOGY_RELATED_TO_FIREARMS_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, TECHNOLOGY_RELATED_TO_FIREARMS_LABELS)
 
     return summary
 
@@ -671,6 +717,7 @@ class SummaryTypes:
     COMPONENTS_FOR_FIREARMS_AMMUNITION = "COMPONENTS_FOR_FIREARMS_AMMUNITION"
     FIREARMS_ACCESSORY = "FIREARMS_ACCESSORY"
     SOFTWARE_RELATED_TO_FIREARMS = "SOFTWARE_RELATED_TO_FIREARMS"
+    TECHNOLOGY_RELATED_TO_FIREARMS = "TECHNOLOGY_RELATED_TO_FIREARMS"
     COMPLETE_ITEM = "COMPLETE_ITEM"
     MATERIAL = "MATERIAL"
     TECHNOLOGY = "TECHNOLOGY"
@@ -706,6 +753,8 @@ def get_summary_type_for_good(good):
             return SummaryTypes.FIREARMS_ACCESSORY
         if firearm_details["type"]["key"] == FirearmsProductType.SOFTWARE_RELATED_TO_FIREARM:
             return SummaryTypes.SOFTWARE_RELATED_TO_FIREARMS
+        if firearm_details["type"]["key"] == FirearmsProductType.TECHNOLOGY_RELATED_TO_FIREARM:
+            return SummaryTypes.TECHNOLOGY_RELATED_TO_FIREARMS
         raise NoSummaryForType
 
     item_category = good.get("item_category")

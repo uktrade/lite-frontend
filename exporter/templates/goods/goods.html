@@ -90,6 +90,8 @@
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearms_accessory_detail" good.id %}">View</a>
 								{% elif good.firearm_details.type.key == "software_related_to_firearms" %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:software_related_to_firearms_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "technology_related_to_firearms" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:technology_related_to_firearms_detail" good.id %}">View</a>
 								{% else %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
 								{% endif %}
