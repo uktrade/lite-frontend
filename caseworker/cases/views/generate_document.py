@@ -51,6 +51,7 @@ class GenerateDocument(MultiFormView):
         return json, HTTPStatus.OK
 
     def get_forms(self):
+
         if self.contacts:
             return FormGroup(
                 [
@@ -86,6 +87,18 @@ class GenerateDocument(MultiFormView):
         if self.kwargs.get("decision_key"):
             params["decision"] = self.kwargs["decision_key"]
         self.templates, _ = get_letter_templates(self.request, convert_dict_to_query_params(params))
+
+        # Commented out code below is a hack to allow letter template to appear on the page
+        self.templates["results"].append(
+            {
+                "id": "d71c3cfc-a127-46b6-96c0-a435cdd63cdb",  # /PS-IGNORE
+                "name": "No licence required letter template",
+                "case_types": [{"reference": {"key": "siel", "value": "Standard Individual Export Licence"}}],
+                "layout": {"filename": "nlr", "name": "No Licence Required Letter"},
+                "updated_at": "2022-01-28T15:40:02.564904Z",
+            }
+        )
+
         self.data = {"total_pages": self.templates["total_pages"]}
 
         if self.template and not request.POST.get(TEXT):
