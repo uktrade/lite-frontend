@@ -41,6 +41,7 @@ from core.summaries.reducers import (
     components_for_firearms_reducer,
     complete_item_on_application_reducer,
     complete_item_reducer,
+    firearms_accessory_reducer,
     technology_on_application_reducer,
     technology_reducer,
     material_reducer,
@@ -425,11 +426,11 @@ def components_for_firearms_ammunition_summary(good, is_user_rfd, organisation_d
     return summary
 
 
-def firearms_accessory_summary(good, is_user_rfd, organisation_documents, additional_formatters=None):
+def firearms_accessory_summary(good, additional_formatters=None):
     if not additional_formatters:
         additional_formatters = {}
 
-    summary = components_for_firearms_reducer(good, is_user_rfd, organisation_documents)
+    summary = firearms_accessory_reducer(good)
     formatters = {
         **FIREARMS_ACCESSORY_VALUE_FORMATTERS,
         **additional_formatters,

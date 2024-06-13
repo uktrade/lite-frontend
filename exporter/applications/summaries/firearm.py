@@ -204,7 +204,7 @@ def components_for_firearms_ammunition_summary(good, is_user_rfd, organisation_d
     )
 
 
-def firearms_accessory_summary(good, is_user_rfd, organisation_documents):
+def firearms_accessory_summary(good):
     def goods_document_formatter(document):
         url = reverse(
             "goods:document",
@@ -216,24 +216,10 @@ def firearms_accessory_summary(good, is_user_rfd, organisation_documents):
 
         return document_formatter(document, url)
 
-    def rfd_document_formatter(document):
-        url = reverse(
-            "goods:document",
-            kwargs={
-                "pk": good["id"],
-                "file_pk": document["id"],
-            },
-        )
-
-        return document_formatter(document["document"], url)
-
     return core_firearms_accessory_summary(
         good,
-        is_user_rfd,
-        organisation_documents,
         {
             "product-document": goods_document_formatter,
-            "rfd-certificate-document": rfd_document_formatter,
         },
     )
 
@@ -276,6 +262,7 @@ def technology_related_to_firearms_summary(good):
             "product-document": goods_document_formatter,
         },
     )
+
 
 def firearm_on_application_summary(good_on_application, good_on_application_documents):
     def good_on_application_document_formatter(document):
