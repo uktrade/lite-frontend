@@ -1,14 +1,12 @@
 from http import HTTPStatus
-from requests.exceptions import HTTPError
 
-from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from exporter.applications.forms.declaration import ApplicationDeclarationForm
-from exporter.applications.services import get_application, submit_application
+from exporter.applications.services import submit_application
 
 
 class ApplicationDeclarationView(LoginRequiredMixin, FormView):
