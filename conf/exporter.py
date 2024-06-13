@@ -27,6 +27,7 @@ if MOCK_SSO_ACTIVATE_ENDPOINTS:
         "exporter.mock_sso",
     ]
 
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -142,9 +143,7 @@ LOGGING = {
         },
     },
     "handlers": {
-        "asim": {
-            "formatter": "asim_formatter",
-        },
+        "asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"},
     },
     "root": {
         "handlers": ["asim"],

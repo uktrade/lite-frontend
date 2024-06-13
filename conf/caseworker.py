@@ -150,9 +150,7 @@ LOGGING = {
         },
     },
     "handlers": {
-        "asim": {
-            "formatter": "asim_formatter",
-        },
+        "asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"},
     },
     "root": {
         "handlers": ["asim"],
