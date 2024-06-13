@@ -16,18 +16,14 @@ class ApplicationDeclarationView(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
 
     def dispatch(self, request, **kwargs):
-        try:
-            self.application = get_application(request, kwargs["pk"])
-        except HTTPError:
-            raise Http404()
-
+        self.application_pk = kwargs["pk"]
         return super().dispatch(request, **kwargs)
 
     def get_summary_url(self):
-        return reverse("applications:summary", kwargs={"pk": self.application["id"]})
+        return reverse("applications:summary", kwargs={"pk": self.application_pk})
 
     def get_success_url(self):
-        return reverse_lazy("applications:success_page", kwargs={"pk": self.application["id"]})
+        return reverse_lazy("applications:success_page", kwargs={"pk": self.application_pk})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -48,5 +44,5 @@ class ApplicationDeclarationView(LoginRequiredMixin, FormView):
         data = form.cleaned_data
         # TODO: we should update lite-api so we can remove these extra fields
         data.update({"submit_declaration": True, "agreed_to_declaration_text": "I AGREE"})
-        self.submit_application(self.request, self.application["id"], data)
+        self.submit_application(self.request, self.application_pk, data)
         return super().form_valid(form)
