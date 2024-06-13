@@ -86,6 +86,8 @@
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_ammunition_detail" good.id %}">View</a>
 								{% elif good.firearm_details.type.key == "components_for_ammunition" %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:components_for_firearms_ammunition_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "firearms_accessory" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearms_accessory_detail" good.id %}">View</a>
 								{% else %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
 								{% endif %}

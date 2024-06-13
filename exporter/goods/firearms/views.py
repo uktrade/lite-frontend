@@ -7,6 +7,7 @@ from exporter.core.helpers import (
 from exporter.applications.summaries.firearm import (
     components_for_firearms_ammunition_summary,
     components_for_firearms_summary,
+    firearms_accessory_summary,
     firearm_summary,
     firearm_ammunition_summary,
 )
@@ -60,6 +61,19 @@ class ComponentsForFirearmsAmmunitionProductDetails(BaseProductDetails):
         is_user_rfd = has_valid_organisation_rfd_certificate(self.organisation)
         organisation_documents = get_user_organisation_documents(self.organisation)
         return components_for_firearms_ammunition_summary(
+            self.good,
+            is_user_rfd,
+            organisation_documents,
+        )
+
+
+class FirearmsAccessoryProductDetails(BaseProductDetails):
+    summary_type = SummaryTypes.FIREARMS_ACCESSORY
+
+    def get_summary(self):
+        is_user_rfd = has_valid_organisation_rfd_certificate(self.organisation)
+        organisation_documents = get_user_organisation_documents(self.organisation)
+        return firearms_accessory_summary(
             self.good,
             is_user_rfd,
             organisation_documents,

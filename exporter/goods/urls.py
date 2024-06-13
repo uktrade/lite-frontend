@@ -6,6 +6,7 @@ from exporter.goods.component.views import ComponentAccessoryProductDetails
 from exporter.goods.firearms.views import (
     ComponentsForFirearmsAmmunitionProductDetails,
     ComponentsForFirearmsProductDetails,
+    FirearmsAccessoryProductDetails,
     FirearmProductDetails,
     FirearmAmmunitionProductDetails,
 )
@@ -68,6 +69,7 @@ urlpatterns = [
         ComponentsForFirearmsAmmunitionProductDetails.as_view(),
         name="components_for_firearms_ammunition_detail",
     ),
+    path("firearms-accessory/<uuid:pk>/", FirearmsAccessoryProductDetails.as_view(), name="firearms_accessory_detail"),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
     path("platform/<uuid:pk>/", CompleteItemProductDetails.as_view(), name="complete_item_detail"),
