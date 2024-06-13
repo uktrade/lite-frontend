@@ -47,6 +47,6 @@ class ApplicationDeclarationView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         data = form.cleaned_data
         # TODO: we should update lite-api so we can remove these extra fields
-        data.update({"submit_declaration": "True", "agreed_to_declaration_text": "I AGREE"})
+        data.update({"submit_declaration": True, "agreed_to_declaration_text": "I AGREE"})
         self.submit_application(self.request, self.application["id"], data)
         return super().form_valid(form)
