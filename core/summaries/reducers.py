@@ -269,6 +269,38 @@ def firearm_reducer(good, is_user_rfd, organisation_documents):
     return summary
 
 
+def components_for_firearms_reducer(good, is_user_rfd, organisation_documents):
+    firearm_details = good["firearm_details"]
+
+    summary = (
+        (
+            "firearm-type",
+            firearm_details["type"],
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+        (
+            "calibre",
+            firearm_details["calibre"],
+        ),
+        (
+            "is-registered-firearms-dealer",
+            is_user_rfd,
+        ),
+    )
+
+    summary += rfd_reducer(is_user_rfd, organisation_documents)
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += is_replica_reducer(firearm_details)
+    summary += firearms_act_reducer(firearm_details, is_user_rfd, organisation_documents)
+    summary += has_product_document_reducer(good)
+
+    return summary
+
+
 def firearm_ammunition_reducer(good, is_user_rfd, organisation_documents):
     firearm_details = good["firearm_details"]
 

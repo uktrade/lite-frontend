@@ -80,8 +80,12 @@
 							{% if good.item_category.key == "group2_firearms" %}
 								{% if good.firearm_details.type.key == "firearms" %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "components_for_firearms" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:components_for_firearms_detail" good.id %}">View</a>
 								{% elif good.firearm_details.type.key == "ammunition" %}
 									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_ammunition_detail" good.id %}">View</a>
+								{% else %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
 								{% endif %}
                             {% elif good.item_category.key == "group1_platform"  %}
                     		    <a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:complete_item_detail" good.id %}">View</a>
