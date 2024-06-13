@@ -11,6 +11,7 @@ from core.summaries.summaries import (
     firearm_ammunition_summary as core_firearm_ammunition_summary,
     components_for_firearms_ammunition_summary as core_components_for_firearms_ammunition_summary,
     components_for_firearms_summary as core_components_for_firearms_summary,
+    software_related_to_firearms_summary as core_software_related_to_firearms_summary,
 )
 
 
@@ -232,6 +233,26 @@ def firearms_accessory_summary(good, is_user_rfd, organisation_documents):
         {
             "product-document": goods_document_formatter,
             "rfd-certificate-document": rfd_document_formatter,
+        },
+    )
+
+
+def software_related_to_firearms_summary(good):
+    def goods_document_formatter(document):
+        url = reverse(
+            "goods:document",
+            kwargs={
+                "pk": good["id"],
+                "file_pk": document["id"],
+            },
+        )
+
+        return document_formatter(document, url)
+
+    return core_software_related_to_firearms_summary(
+        good,
+        {
+            "product-document": goods_document_formatter,
         },
     )
 

@@ -10,6 +10,7 @@ from exporter.applications.summaries.firearm import (
     firearms_accessory_summary,
     firearm_summary,
     firearm_ammunition_summary,
+    software_related_to_firearms_summary,
 )
 
 from ..common.base import BaseProductDetails
@@ -78,3 +79,10 @@ class FirearmsAccessoryProductDetails(BaseProductDetails):
             is_user_rfd,
             organisation_documents,
         )
+
+
+class SoftwareRelatedToFirearmsProductDetails(BaseProductDetails):
+    summary_type = SummaryTypes.SOFTWARE_RELATED_TO_FIREARMS
+
+    def get_summary(self):
+        return software_related_to_firearms_summary(self.good)
