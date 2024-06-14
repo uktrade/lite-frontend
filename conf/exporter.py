@@ -24,7 +24,6 @@ if MOCK_SSO_ACTIVATE_ENDPOINTS:
         "exporter.mock_sso",
     ]
 
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
