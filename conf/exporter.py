@@ -4,7 +4,6 @@ from urllib.parse import urljoin
 from django.urls import reverse_lazy
 
 from conf.base import *
-from conf.logging_config import logging_config
 
 
 ROOT_URLCONF = "exporter.urls"
