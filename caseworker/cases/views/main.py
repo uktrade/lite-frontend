@@ -1,4 +1,3 @@
-import datetime
 import rules
 
 from logging import getLogger
@@ -10,7 +9,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views.generic import (
     FormView,
@@ -48,7 +46,6 @@ from caseworker.cases.forms.change_status import ChangeStatusForm
 from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
 from caseworker.cases.forms.done_with_case import done_with_case_form
 from caseworker.cases.forms.move_case import move_case_form
-from caseworker.cases.forms.next_review_date import set_next_review_date_form
 from caseworker.cases.forms.reissue_ogl_form import reissue_ogl_confirmation_form
 from caseworker.cases.forms.rerun_routing_rules import rerun_routing_rules_confirmation_form
 import caseworker.cases.helpers.advice as advice_helpers
@@ -60,7 +57,6 @@ from caseworker.cases.services import (
     put_unassign_queues,
     put_rerun_case_routing_rules,
     put_application_status,
-    put_next_review_date,
     reissue_ogl,
     post_case_documents,
     get_blocking_flags,
@@ -365,11 +361,7 @@ class ImDoneView(SingleFormView):
         case = get_case(request, self.object_pk)
         self.data = {"queues": [str(kwargs["queue_pk"])]}
         self.context = {"case": case}
-        has_review_date = (
-            case.next_review_date
-            and datetime.datetime.strptime(case.next_review_date, "%Y-%m-%d").date() > timezone.localtime().date()
-        )
-        self.form = done_with_case_form(request, kwargs["queue_pk"], self.object_pk, has_review_date)
+        self.form = done_with_case_form(request, kwargs["queue_pk"], self.object_pk)
         self.action = put_unassign_queues
         self.success_url = reverse_lazy("queues:cases", kwargs={"queue_pk": kwargs["queue_pk"]})
         self.success_message = DoneWithCaseOnQueueForm.SUCCESS_MESSAGE.format(case.reference_code)
@@ -626,30 +618,3 @@ class ReissueOGL(SingleFormView):
             return redirect(self.success_url)
 
         return super(ReissueOGL, self).post(request, **kwargs)
-
-
-class NextReviewDate(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.data = get_case(request, self.object_pk)
-        self.form = set_next_review_date_form(
-            self.kwargs["queue_pk"],
-            self.object_pk,
-        )
-        self.success_url = reverse("cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.object_pk})
-
-    def get_action(self):
-        action = self.get_validated_data().get("_action")
-
-        if action == "submit":
-            self.success_message = "Next review date set successfully"
-            return put_next_review_date
-
-    def get_data(self):
-        data = self.data
-        date_fields = ["next_review_date"]
-        for field in date_fields:
-            if data.get(field, False):
-                date_split = data[field].split("-")
-                data[field + "year"], data[field + "month"], data[field + "day"] = date_split
-        return data

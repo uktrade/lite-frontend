@@ -220,7 +220,4 @@
 			return false;
 		}
 	</script>
-	{% if has_future_next_review_date and not is_system_queue %}
-		<script src="{% static 'javascripts/assign_queue.js' %}"></script>
-	{% endif %}
 {% endblock %}
