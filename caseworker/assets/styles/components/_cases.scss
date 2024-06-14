@@ -689,6 +689,13 @@ $case-header-text-colour: govuk-colour('white');
   }
 }
 
+.app-case-warning-banner-important {
+  @extend .app-case-warning-banner;
+  &::before {
+    background-color: govuk-colour('orange');
+  }
+}
+
 #allocate-to-me-button {
   cursor: pointer;
 }

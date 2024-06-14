@@ -2,6 +2,7 @@ import rules
 
 from http import HTTPStatus
 
+from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -49,6 +50,7 @@ from exporter.applications.services import (
     post_appeal,
     post_appeal_document,
     get_appeal,
+    create_application_amendment,
 )
 from exporter.organisation.members.services import get_user
 
@@ -125,11 +127,28 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
         )
         return context
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error creating amendment",
+        "Unexpected error creating amendment",
+    )
+    def create_amendment(self):
+        return create_application_amendment(self.request, str(self.kwargs["pk"]))
+
+    def handle_major_edit(self):
+        organisation = get_organisation(self.request, self.request.session["organisation"])
+        if organisation["id"] in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS:
+            data, _ = self.create_amendment()
+            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": data["id"]}))
+        else:
+            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
+            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+
     def form_valid(self, form):
 
         self.application_id = str(self.kwargs["pk"])
         if form.cleaned_data.get("edit_type") == "major":
-            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
+            return self.handle_major_edit()
 
         return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
 

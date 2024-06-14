@@ -124,13 +124,16 @@ def new_mentions(request):
     }
 
 
-def is_all_cases_queue(request):
+def all_cases_queue(request):
     kwargs = getattr(request.resolver_match, "kwargs", {})
     is_all_cases_queue = False
     if "queue_pk" in kwargs:
         queue_pk = request.resolver_match.kwargs["queue_pk"]
         is_all_cases_queue = str(queue_pk) == ALL_CASES_QUEUE_ID
-    return {"is_all_cases_queue": is_all_cases_queue}
+    return {
+        "is_all_cases_queue": is_all_cases_queue,
+        "all_cases_queue_id": ALL_CASES_QUEUE_ID,
+    }
 
 
 def feature_flags(request):
