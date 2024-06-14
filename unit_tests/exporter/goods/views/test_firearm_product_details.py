@@ -1,3 +1,4 @@
+import datetime
 import pytest
 
 from pytest_django.asserts import assertTemplateUsed
@@ -5,6 +6,7 @@ from pytest_django.asserts import assertTemplateUsed
 from django.urls import reverse
 
 from core import client
+from core.constants import OrganisationDocumentType
 
 
 @pytest.fixture
@@ -75,6 +77,36 @@ def technology_related_to_firearm_product_details_url(good_id):
             "pk": good_id,
         },
     )
+
+
+@pytest.fixture
+def mock_get_organisation_with_rfd(requests_mock, mock_exporter_user_me, data_standard_case):
+    organisation = data_standard_case["case"]["data"]["organisation"]
+    expiry_date = datetime.date.today() + datetime.timedelta(days=100)
+    organisation["id"] = mock_exporter_user_me["organisations"][0]["id"]
+    organisation["name"] = mock_exporter_user_me["organisations"][0]["name"]
+    organisation["documents"].extend(
+        [
+            {
+                "id": "b4a2da59-c0bc-4b6d-8ed9-4ca28ffbf65a",
+                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
+                "expiry_date": expiry_date.strftime("%d %B %Y"),
+                "reference_code": "RFD123",
+                "is_expired": False,
+                "document": {
+                    "id": "9c2222db-98e5-47e8-9e01-653354e95322",
+                    "name": "rfd_certificate.txt",
+                    "s3_key": "rfd_certificate.txt.s3_key",
+                    "size": 0,
+                    "safe": True,
+                },
+            }
+        ]
+    )
+
+    url = client._build_absolute_uri(f"/organisations/{organisation['id']}")
+    requests_mock.get(url=url, json=organisation)
+    yield organisation
 
 
 @pytest.fixture
@@ -234,11 +266,14 @@ def test_firearm_product_details_template_used(
 def test_firearm_product_details_context(
     authorized_client,
     firearm_product_details_url,
+    mock_get_organisation_with_rfd,
     mock_good_get,
 ):
 
     response = authorized_client.get(firearm_product_details_url)
     assert response.status_code == 200
+
+    expiry_date = datetime.date.today() + datetime.timedelta(days=100)
     assert response.context["summary"] == (
         ("firearm-type", "Firearms", "Select the type of firearm product"),
         ("firearm-category", "Non automatic shotgun, Non automatic rim-fired handgun", "Firearm category"),
@@ -254,11 +289,20 @@ def test_firearm_product_details_context(
         ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
         ("calibre", "0.25", "What is the calibre of the product?"),
         ("is-replica", "No", "Is the product a replica firearm?"),
-        ("is-registered-firearms-dealer", "No", "Are you a registered firearms dealer?"),
+        ("is-registered-firearms-dealer", "Yes", "Are you a registered firearms dealer?"),
         (
-            "firearms-act-1968-section",
-            "Section 5",
-            "Which section of the Firearms Act 1968 is the product covered by?",
+            "rfd-certificate-document",
+            '<a class="govuk-link govuk-link--no-visited-state" '
+            'href="/product-list/8b730c06-ab4e-401c-aeb0-32b3c92e912c/documents/b4a2da59-c0bc-4b6d-8ed9-4ca28ffbf65a/" '
+            'target="_blank">rfd_certificate.txt</a>',
+            "Upload a registered firearms dealer certificate",
+        ),
+        ("rfd-certificate-reference-number", "RFD123", "Certificate reference number"),
+        ("rfd-certificate-date-of-expiry", expiry_date.strftime("%d %B %Y"), "Certificate date of expiry"),
+        (
+            "is-covered-by-firearm-act-section-five",
+            "Yes",
+            "Is the product covered by section 5 of the Firearms Act 1968?",
         ),
         (
             "section-5-certificate-missing",
@@ -288,11 +332,14 @@ def test_firearm_product_details_context(
 def test_firearm_ammunition_product_details_context(
     authorized_client,
     firearm_ammunition_product_details_url,
+    mock_get_organisation_with_rfd,
     mock_firearm_ammunition_good_get,
 ):
 
     response = authorized_client.get(firearm_ammunition_product_details_url)
     assert response.status_code == 200
+
+    expiry_date = datetime.date.today() + datetime.timedelta(days=100)
     assert response.context["summary"] == (
         ("firearm-type", "Ammunition", "Select the type of firearm product"),
         ("name", "p1", "Give the product a descriptive name"),
@@ -307,11 +354,20 @@ def test_firearm_ammunition_product_details_context(
         ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
         ("calibre", "0.25", "What is the calibre of the product?"),
         ("is-replica", "No", "Is the product a replica firearm?"),
-        ("is-registered-firearms-dealer", "No", "Are you a registered firearms dealer?"),
+        ("is-registered-firearms-dealer", "Yes", "Are you a registered firearms dealer?"),
         (
-            "firearms-act-1968-section",
-            "Section 5",
-            "Which section of the Firearms Act 1968 is the product covered by?",
+            "rfd-certificate-document",
+            '<a class="govuk-link govuk-link--no-visited-state" '
+            'href="/product-list/8b730c06-ab4e-401c-aeb0-32b3c92e912c/documents/b4a2da59-c0bc-4b6d-8ed9-4ca28ffbf65a/" '
+            'target="_blank">rfd_certificate.txt</a>',
+            "Upload a registered firearms dealer certificate",
+        ),
+        ("rfd-certificate-reference-number", "RFD123", "Certificate reference number"),
+        ("rfd-certificate-date-of-expiry", expiry_date.strftime("%d %B %Y"), "Certificate date of expiry"),
+        (
+            "is-covered-by-firearm-act-section-five",
+            "Yes",
+            "Is the product covered by section 5 of the Firearms Act 1968?",
         ),
         (
             "section-5-certificate-missing",
@@ -341,11 +397,14 @@ def test_firearm_ammunition_product_details_context(
 def test_components_for_firearm_product_details_context(
     authorized_client,
     components_for_firearm_product_details_url,
+    mock_get_organisation_with_rfd,
     mock_components_for_firearm_good_get,
 ):
 
     response = authorized_client.get(components_for_firearm_product_details_url)
     assert response.status_code == 200
+
+    expiry_date = datetime.date.today() + datetime.timedelta(days=100)
     assert response.context["summary"] == (
         ("firearm-type", "Components for firearms", "Select the type of firearm product"),
         ("name", "p1", "Give the product a descriptive name"),
@@ -361,11 +420,20 @@ def test_components_for_firearm_product_details_context(
         ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
         ("calibre", "0.25", "What is the calibre of the product?"),
         ("is-replica", "No", "Is the product a replica firearm?"),
-        ("is-registered-firearms-dealer", "No", "Are you a registered firearms dealer?"),
+        ("is-registered-firearms-dealer", "Yes", "Are you a registered firearms dealer?"),
         (
-            "firearms-act-1968-section",
-            "Section 5",
-            "Which section of the Firearms Act 1968 is the product covered by?",
+            "rfd-certificate-document",
+            '<a class="govuk-link govuk-link--no-visited-state" '
+            'href="/product-list/8b730c06-ab4e-401c-aeb0-32b3c92e912c/documents/b4a2da59-c0bc-4b6d-8ed9-4ca28ffbf65a/" '
+            'target="_blank">rfd_certificate.txt</a>',
+            "Upload a registered firearms dealer certificate",
+        ),
+        ("rfd-certificate-reference-number", "RFD123", "Certificate reference number"),
+        ("rfd-certificate-date-of-expiry", expiry_date.strftime("%d %B %Y"), "Certificate date of expiry"),
+        (
+            "is-covered-by-firearm-act-section-five",
+            "Yes",
+            "Is the product covered by section 5 of the Firearms Act 1968?",
         ),
         (
             "section-5-certificate-missing",
@@ -395,11 +463,14 @@ def test_components_for_firearm_product_details_context(
 def test_components_for_ammunition_product_details_context(
     authorized_client,
     components_for_ammunition_product_details_url,
+    mock_get_organisation_with_rfd,
     mock_components_for_ammunition_good_get,
 ):
 
     response = authorized_client.get(components_for_ammunition_product_details_url)
     assert response.status_code == 200
+
+    expiry_date = datetime.date.today() + datetime.timedelta(days=100)
     assert response.context["summary"] == (
         ("firearm-type", "Components for ammunition", "Select the type of firearm product"),
         ("name", "p1", "Give the product a descriptive name"),
@@ -415,11 +486,20 @@ def test_components_for_ammunition_product_details_context(
         ("pv-grading-details-date-of-issue", "20 February 2020", "Date of issue"),
         ("calibre", "0.25", "What is the calibre of the product?"),
         ("is-replica", "No", "Is the product a replica firearm?"),
-        ("is-registered-firearms-dealer", "No", "Are you a registered firearms dealer?"),
+        ("is-registered-firearms-dealer", "Yes", "Are you a registered firearms dealer?"),
         (
-            "firearms-act-1968-section",
-            "Section 5",
-            "Which section of the Firearms Act 1968 is the product covered by?",
+            "rfd-certificate-document",
+            '<a class="govuk-link govuk-link--no-visited-state" '
+            'href="/product-list/8b730c06-ab4e-401c-aeb0-32b3c92e912c/documents/b4a2da59-c0bc-4b6d-8ed9-4ca28ffbf65a/" '
+            'target="_blank">rfd_certificate.txt</a>',
+            "Upload a registered firearms dealer certificate",
+        ),
+        ("rfd-certificate-reference-number", "RFD123", "Certificate reference number"),
+        ("rfd-certificate-date-of-expiry", expiry_date.strftime("%d %B %Y"), "Certificate date of expiry"),
+        (
+            "is-covered-by-firearm-act-section-five",
+            "Yes",
+            "Is the product covered by section 5 of the Firearms Act 1968?",
         ),
         (
             "section-5-certificate-missing",

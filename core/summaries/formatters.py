@@ -80,7 +80,6 @@ FIREARMS_ACCESSORY_LABELS = {
     "product-component": "Is the product a component?",
     "uses-information-security": "Does the product include cryptography or other information security features?",
     "uses-information-security-details": "Provide details of the cryptography or information security features",
-    "product-description": "Describe the product and what it is designed to do",
     "military-use": "Is the product specially designed or modified for military use?",
     "military-use-details": "Provide details of the modifications",
 }
