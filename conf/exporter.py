@@ -130,6 +130,3 @@ MIDDLEWARE += [
 ]
 
 SURVEY_URL = env.str("SURVEY_URL", "")
-
-# Logging formatting
-LOGGING = logging_config
