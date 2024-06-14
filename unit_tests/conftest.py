@@ -663,7 +663,7 @@ def data_standard_case(
                     "documents": [],
                     "primary_site": {
                         "id": "c86d3df2-5f48-40cd-a720-e76322df71a9",
-                        "name": "Rich org",
+                        "name": "Systems Ltd",
                         "address": {
                             "id": "8d8a7631-32fc-4873-9a1f-d5e9afeecc0e",
                             "address_line_1": "jim",

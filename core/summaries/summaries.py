@@ -380,9 +380,7 @@ def firearm_summary(good, is_user_rfd, organisation_documents, additional_format
     return summary
 
 
-def components_for_firearms_summary(good, is_user_rfd, organisation_documents, additional_formatters=None):
-    if not additional_formatters:
-        additional_formatters = {}
+def components_for_firearms_summary(good, is_user_rfd, organisation_documents, additional_formatters):
 
     summary = components_for_firearms_reducer(good, is_user_rfd, organisation_documents)
     formatters = {
@@ -396,9 +394,7 @@ def components_for_firearms_summary(good, is_user_rfd, organisation_documents, a
     return summary
 
 
-def firearm_ammunition_summary(good, is_user_rfd, organisation_documents, additional_formatters=None):
-    if not additional_formatters:
-        additional_formatters = {}
+def firearm_ammunition_summary(good, is_user_rfd, organisation_documents, additional_formatters):
 
     summary = firearm_ammunition_reducer(good, is_user_rfd, organisation_documents)
     formatters = {
@@ -412,9 +408,7 @@ def firearm_ammunition_summary(good, is_user_rfd, organisation_documents, additi
     return summary
 
 
-def components_for_firearms_ammunition_summary(good, is_user_rfd, organisation_documents, additional_formatters=None):
-    if not additional_formatters:
-        additional_formatters = {}
+def components_for_firearms_ammunition_summary(good, is_user_rfd, organisation_documents, additional_formatters):
 
     summary = components_for_firearms_reducer(good, is_user_rfd, organisation_documents)
     formatters = {
@@ -428,9 +422,7 @@ def components_for_firearms_ammunition_summary(good, is_user_rfd, organisation_d
     return summary
 
 
-def firearms_accessory_summary(good, additional_formatters=None):
-    if not additional_formatters:
-        additional_formatters = {}
+def firearms_accessory_summary(good, additional_formatters):
 
     summary = firearms_accessory_reducer(good)
     formatters = {
@@ -444,9 +436,7 @@ def firearms_accessory_summary(good, additional_formatters=None):
     return summary
 
 
-def software_related_to_firearms_summary(good, additional_formatters=None):
-    if not additional_formatters:
-        additional_formatters = {}
+def software_related_to_firearms_summary(good, additional_formatters):
 
     summary = software_related_to_firearms_reducer(good)
     formatters = {
@@ -460,9 +450,7 @@ def software_related_to_firearms_summary(good, additional_formatters=None):
     return summary
 
 
-def technology_related_to_firearms_summary(good, additional_formatters=None):
-    if not additional_formatters:
-        additional_formatters = {}
+def technology_related_to_firearms_summary(good, additional_formatters):
 
     summary = technology_related_to_firearms_reducer(good)
     formatters = {
