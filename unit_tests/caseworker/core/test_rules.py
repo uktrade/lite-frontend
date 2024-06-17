@@ -428,3 +428,10 @@ def test_can_user_review_and_combine_based_on_advice(mock_gov_user, get_mock_req
     request = get_mock_request(user)
 
     assert rules.test_rule("can_user_review_and_combine", request, case) == expected
+
+
+def test_can_user_rerun_routing_rules(get_mock_request):
+    case = {}
+    user = {}
+    request = get_mock_request(user)
+    assert not rules.test_rule("can_user_rerun_routing_rules", request, case)

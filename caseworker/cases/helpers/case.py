@@ -1,4 +1,3 @@
-from datetime import datetime
 from dateutil.parser import parse
 from decimal import Decimal
 
@@ -187,12 +186,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             and self.case.data["status"]["key"] != CaseStatusEnum.APPLICANT_EDITING
             and not self.is_tau_user()
         )
-        future_next_review_date = (
-            True
-            if self.case.next_review_date
-            and datetime.strptime(self.case.next_review_date, "%Y-%m-%d ").date() > timezone.localtime().date()
-            else False
-        )
 
         context = super().get_context_data()
         default_tab = "quick-summary"
@@ -225,7 +218,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             "is_terminal": status_props["is_terminal"],
             "is_read_only": status_props["is_read_only"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
-            "has_future_next_review_date": future_next_review_date,
             "user": self.caseworker,
             **self.additional_context,
         }

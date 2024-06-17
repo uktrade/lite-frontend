@@ -331,7 +331,7 @@ FIREARM_ON_APPLICATION_LABELS = {
     "shotgun-certificate-expiry-date": "Certificate date of expiry",
     "made-before-1938": "Was the product made before 1938?",
     "manufacture-year": "What year was it made?",
-    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-onward-exported": "Is the product going to any ultimate end-users?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
@@ -394,7 +394,7 @@ COMPLETE_ITEM_ON_APPLICATION_FORMATTERS = {
 }
 
 COMPLETE_ITEM_ON_APPLICATION_LABELS = {
-    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-onward-exported": "Is the product going to any ultimate end-users?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
@@ -434,7 +434,7 @@ MATERIAL_ON_APPLICATION_FORMATTERS = {
 }
 
 MATERIAL_ON_APPLICATION_LABELS = {
-    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-onward-exported": "Is the product going to any ultimate end-users?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
@@ -503,7 +503,7 @@ TECHNOLOGY_ON_APPLICATION_FORMATTERS = {
 }
 
 TECHNOLOGY_ON_APPLICATION_LABELS = {
-    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-onward-exported": "Is the product going to any ultimate end-users?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
@@ -545,7 +545,7 @@ COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS = {
 }
 
 COMPONENT_ACCESSORY_ON_APPLICATION_LABELS = {
-    "is-onward-exported": "Will the product be onward exported to any additional countries?",
+    "is-onward-exported": "Is the product going to any ultimate end-users?",
     "is-altered": "Will the item be altered or processed before it is exported again?",
     "is-altered-comments": "Explain how the product will be processed or altered",
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",

@@ -442,3 +442,37 @@ def test_close_query_view_show_closed_queries_on_page(
     assert data_query_closed_by_caseworker["question"] in str(closed_queries)
     assert data_query_closed_by_caseworker["response"] in str(closed_queries)
     assert data_query_closed_by_caseworker["responded_by_user_name"] in str(closed_queries)
+
+
+def test_im_done_page(
+    authorized_client,
+    queue_pk,
+    standard_case_pk,
+):
+    url = reverse("cases:done", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk})
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert soup.find("h1", {"class": "govuk-fieldset__heading"}).text.strip() == "Unassign All cases"
+
+    form = soup.find("form")
+    assert form.find("input", {"name": "queues[]"})["value"] == queue_pk
+
+
+def test_im_done_page_submit(
+    authorized_client,
+    queue_pk,
+    standard_case_pk,
+    requests_mock,
+):
+    put_matcher = requests_mock.put(
+        client._build_absolute_uri(f"/cases/{standard_case_pk}/assigned-queues/"),
+        json={},
+    )
+    url = reverse("cases:done", kwargs={"queue_pk": queue_pk, "pk": standard_case_pk})
+    response = authorized_client.post(url)
+    assert response.status_code == 302
+    assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
+
+    assert put_matcher.last_request.json() == {}

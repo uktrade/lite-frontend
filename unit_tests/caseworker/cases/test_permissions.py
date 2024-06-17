@@ -33,8 +33,6 @@ def setup(
         ["link-change-status", False, False],
         ["link-change-queues", True, True],
         ["link-change-queues", False, False],
-        ["link-change-review-date", True, True],
-        ["link-change-review-date", False, False],
     ),
 )
 def test_permission_summary_change_links(

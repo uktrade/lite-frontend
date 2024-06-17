@@ -34,8 +34,6 @@ class CasePage(BasePage):
     LINK_ASSIGN_CASE_OFFICER_ID = "link-case-officer-add"
     LINK_REMOVE_CASE_OFFICER_ID = "link-case-officer-remove"
     LINK_ASSIGN_USERS_ID = "link-change-assigned-users"
-    LINK_SET_NEXT_REVIEW_DATE_ID = "link-change-review-date"
-    NEXT_REVIEW_DATE_ID = "next-review-date"
     LINK_SELECT_ALL_GOODS_ID = "link-select-all-goods"
 
     BANNER_REFERENCE_CODE_ID = "reference-code"
@@ -60,13 +58,6 @@ class CasePage(BasePage):
     def click_remove_case_officer(self):
         scroll_to_element_by_id(self.driver, self.LINK_REMOVE_CASE_OFFICER_ID)
         self.driver.find_element(by=By.ID, value=self.LINK_REMOVE_CASE_OFFICER_ID).click()
-
-    def click_set_next_review_date(self):
-        scroll_to_element_by_id(self.driver, self.LINK_SET_NEXT_REVIEW_DATE_ID)
-        self.driver.find_element(by=By.ID, value=self.LINK_SET_NEXT_REVIEW_DATE_ID).click()
-
-    def get_next_review_date(self):
-        return self.driver.find_element(by=By.ID, value=self.NEXT_REVIEW_DATE_ID).text
 
     def click_assign_users(self):
         scroll_to_element_by_id(self.driver, self.LINK_ASSIGN_USERS_ID)

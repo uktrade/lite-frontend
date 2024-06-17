@@ -406,7 +406,7 @@ class ProductDocumentUploadForm(BaseForm):
 
 class ProductOnwardExportedForm(BaseForm):
     class Layout:
-        TITLE = "Will the product be onward exported to any additional countries?"
+        TITLE = "Is the product going to any ultimate end-users?"
 
     is_onward_exported = forms.TypedChoiceField(
         choices=(
@@ -417,18 +417,16 @@ class ProductOnwardExportedForm(BaseForm):
         label="",
         widget=forms.RadioSelect,
         error_messages={
-            "required": "Select yes if the product will be onward exported to additional countries",
+            "required": "Select yes if the product is going to any ultimate end-users",
         },
     )
 
     def get_layout_fields(self):
         return (
-            HTML.p("Tell us if the item will be exported again, beyond its first destination."),
-            HTML.p("This includes when the product has been incorporated into another item."),
             "is_onward_exported",
             HTML.details(
-                "Help with incorporated products",
-                render_to_string("goods/forms/common/help_with_incorporated_products.html"),
+                "Help with ultimate end-users",
+                render_to_string("goods/forms/common/help_with_ultimate_end-users.html"),
             ),
         )
 
