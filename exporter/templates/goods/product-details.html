@@ -39,11 +39,11 @@
             {% endif %}
 
             {% if allow_archive %}
-                <a role="button" draggable="false" id="archive-good" class="govuk-button govuk-button--secondary" href="#">
+                <a role="button" draggable="false" id="archive-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_archive_restore' good.id 'archive' %}">
                     Archive product
                 </a>
             {% elif allow_restore %}
-                <a role="button" draggable="false" id="restore-good" class="govuk-button govuk-button--secondary" href="#">
+                <a role="button" draggable="false" id="restore-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_archive_restore' good.id 'restore' %}">
                     Restore product
                 </a>
             {% endif %}
