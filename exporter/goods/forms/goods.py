@@ -1995,3 +1995,59 @@ class ProductComponentDetailsForm(BaseForm):
             )
 
         return cleaned_data
+
+
+class GoodArchiveForm(BaseForm):
+    class Layout:
+        TITLE = "Are you sure you want to archive this product?"
+        SUBMIT_BUTTON_TEXT = "Archive product"
+
+    def __init__(self, *args, cancel_url, **kwargs):
+        self.cancel_url = cancel_url
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return [
+            HTML.p(
+                "If you move this product to the archive you will not be able to use it on any applications and it will be "
+                "hidden from your default product list."
+            ),
+            HTML.p("You can remove it from the archive and restore it to your product list at any time."),
+        ]
+
+    def get_layout_actions(self):
+        layout_actions = super().get_layout_actions()
+
+        layout_actions.append(
+            HTML(
+                f'<a class="govuk-button govuk-button--secondary" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
+            ),
+        )
+
+        return layout_actions
+
+
+class GoodRestoreForm(BaseForm):
+    class Layout:
+        TITLE = "Are you sure you want to restore this product?"
+        SUBMIT_BUTTON_TEXT = "Restore product"
+
+    def __init__(self, *args, cancel_url, **kwargs):
+        self.cancel_url = cancel_url
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return [
+            HTML.p("This product will show in your product list and you will be able to add it to applications."),
+        ]
+
+    def get_layout_actions(self):
+        layout_actions = super().get_layout_actions()
+
+        layout_actions.append(
+            HTML(
+                f'<a class="govuk-button govuk-button--secondary" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
+            ),
+        )
+
+        return layout_actions
