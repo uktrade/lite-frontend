@@ -61,7 +61,6 @@ $item-size: govuk-spacing(7);
         justify-content: center;
         list-style-type: none;
         margin: 0;
-        margin-right: govuk-spacing(6);  // Visually center the list
         padding: 0;
 
         @include govuk-media-query($until: tablet) {
@@ -71,32 +70,12 @@ $item-size: govuk-spacing(7);
 
     &__list-item {
         @include govuk-font($size: 19);
+        display: flex;
+        justify-content: center;
         line-height: $item-size !important;
         position: relative;
         text-align: center;
         width: $item-size;
-
-        a {
-            @extend .govuk-link;
-            @extend .govuk-link--no-visited-state;
-            display: inline-block;
-            line-height: $item-size !important;
-            position: relative;
-            text-decoration: none;
-            width: $item-size;
-
-            &:hover {
-                &::after {
-                    background: currentColor;
-                    bottom: 0;
-                    content: "";
-                    height: 2px;
-                    left: govuk-spacing(1);
-                    position: absolute;
-                    right: govuk-spacing(1);
-                }
-            }
-        }
 
         &--selected {
             font-weight: bold;
@@ -111,6 +90,39 @@ $item-size: govuk-spacing(7);
                 right: govuk-spacing(1);
             }
         }
+
+        .lite-pagination__link {
+            width: 100%;
+        }
+    }
+
+    &__link {
+        @extend .govuk-link;
+        @extend .govuk-link--no-visited-state;
+        @include govuk-font($size: 19);
+        align-items: center;
+        background-color: inherit;
+        border: 0;
+        color: $govuk-link-colour;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        line-height: $item-size !important;
+        position: relative;
+        text-decoration: none;
+        white-space: nowrap;
+
+        &:hover {
+            &::after {
+                background: currentColor;
+                bottom: 0;
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                height: 2px;
+            }
+        }
     }
 
     &__list-ellipsis {
@@ -120,7 +132,7 @@ $item-size: govuk-spacing(7);
         display: flex;
         justify-content: center;
         letter-spacing: 3px;
-        line-height: $item-size!important;
+        line-height: $item-size !important;
         margin: 0 govuk-spacing(2);
         position: relative;
         text-align: center;

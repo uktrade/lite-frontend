@@ -90,7 +90,7 @@ Feature: I want to indicate the standard licence I want
     And I click on "Submit"
     And I click on "Do you have a security approval?"
     And I select "No" to if you are exporting classified products
-    And I click continue link
+    And I click save and continue link
     And I click on "End user"
     And I select "no" to reusing an existing party
     And I select "commercial organisation" as the type of end user
@@ -221,7 +221,7 @@ Feature: I want to indicate the standard licence I want
     And I click on "Submit"
     And I click on "Do you have a security approval?"
     And I select "No" to if you are exporting classified products
-    And I click continue link
+    And I click save and continue link
     And I click on "End user"
     And I select "no" to reusing an existing party
     And I select "commercial organisation" as the type of end user

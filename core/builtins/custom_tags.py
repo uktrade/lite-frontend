@@ -1026,8 +1026,14 @@ def pagination_params(url, page):
     return urlparse.urlunparse(url_parts)
 
 
+PAGINATION_LINK_TYPES = ["anchor", "form"]
+
+
 @register.inclusion_tag("components/pagination.html", takes_context=True)
-def pagination(context, *args, **kwargs):
+def pagination(context, *args, link_type="anchor", form_id=None, **kwargs):
+    if link_type not in PAGINATION_LINK_TYPES:
+        raise ValueError(f"Incorrect `link_type`. Choose either {' or '.join(PAGINATION_LINK_TYPES)}.")
+
     class PageItem:
         def __init__(self, number, url, selected=False):
             self.number = number
@@ -1090,5 +1096,7 @@ def pagination(context, *args, **kwargs):
     context["pages"] = pages
     context["previous_page_number"] = current_page - 1
     context["next_page_number"] = current_page + 1
+    context["paging_link_type"] = link_type
+    context["paging_form_id"] = form_id
 
     return context
