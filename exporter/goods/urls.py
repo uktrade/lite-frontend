@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import path
 
 from exporter.goods import views
+from exporter.goods.common import views as common_views
 from exporter.goods.component.views import ComponentAccessoryProductDetails
 from exporter.goods.firearms.views import (
     ComponentsForFirearmsAmmunitionProductDetails,
@@ -88,6 +89,7 @@ urlpatterns = [
     path("material/<uuid:pk>/", MaterialProductDetails.as_view(), name="material_detail"),
     path("software/<uuid:pk>/", TechnologyProductDetails.as_view(), name="technology_detail"),
     path("component/<uuid:pk>/", ComponentAccessoryProductDetails.as_view(), name="component_accessory_detail"),
+    path("<uuid:pk>/archive-restore/<str:action>/", common_views.GoodArchiveRestoreView.as_view(), name="good_archive_restore"),
 ]
 
 

@@ -51,9 +51,8 @@ class BaseProductDetails(LoginRequiredMixin, TemplateView):
         context["allow_delete"] = self.good["status"]["key"] == GoodStatus.DRAFT
         context["allow_archive"] = (
             self.good["status"]["key"] in [GoodStatus.SUBMITTED, GoodStatus.VERIFIED]
-            or self.good["is_archived"] is False
+            and self.good["is_archived"] is not True
         )
         context["allow_restore"] = self.good["is_archived"] is True
-        context["archive_button_text"] = "Archive product" if context["allow_archive"] else "Restore product"
 
         return context

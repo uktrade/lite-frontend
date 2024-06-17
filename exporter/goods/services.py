@@ -204,8 +204,9 @@ def validate_good(request, json):
 
 
 def edit_good(request, pk, json):
-    data = client.put(request, f"/goods/{pk}/", json)
-    return data.json(), data.status_code
+    response = client.put(request, f"/goods/{pk}/", json)
+    response.raise_for_status()
+    return response.json(), response.status_code
 
 
 def edit_good_details(request, pk, json):
