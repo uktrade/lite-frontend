@@ -8,6 +8,7 @@ from core.decorators import expect_status
 from core.summaries.summaries import get_summary_type_for_good
 
 from exporter.core.services import get_organisation
+from exporter.goods.constants import GoodStatus
 from exporter.goods.services import get_good
 
 
@@ -47,5 +48,12 @@ class BaseProductDetails(LoginRequiredMixin, TemplateView):
 
         context["good"] = self.good
         context["summary"] = self.get_summary()
+        context["allow_delete"] = self.good["status"]["key"] == GoodStatus.DRAFT
+        context["allow_archive"] = (
+            self.good["status"]["key"] in [GoodStatus.SUBMITTED, GoodStatus.VERIFIED]
+            or self.good["is_archived"] is False
+        )
+        context["allow_restore"] = self.good["is_archived"] is True
+        context["archive_button_text"] = "Archive product" if context["allow_archive"] else "Restore product"
 
         return context
