@@ -31,11 +31,24 @@
                 {% endblock %}
             </h1>
         </div>
-		{% if good.status.key == 'draft' %}
-			<div class="lite-app-bar__controls">
-				{% govuk_link_button id='delete-good' text='goods.GoodPage.DELETE_GOOD' url='goods:delete' url_param=good.id classes='govuk-button--secondary' %}
-			</div>
-		{% endif %}
+        <div class="lite-app-bar__controls">
+            {% if allow_delete %}
+                <a role="button" draggable="false" id="delete-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:delete' good.id %}">
+                    Delete product
+                </a>
+            {% endif %}
+
+            {% if allow_archive %}
+                <a role="button" draggable="false" id="archive-good" class="govuk-button govuk-button--secondary" href="#">
+                    Archive product
+                </a>
+            {% elif allow_restore %}
+                <a role="button" draggable="false" id="restore-good" class="govuk-button govuk-button--secondary" href="#">
+                    Restore product
+                </a>
+            {% endif %}
+        </div>
+
     </div>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
