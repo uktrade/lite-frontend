@@ -1,5 +1,6 @@
 {% extends 'layouts/base.html' %}
 
+{% load rules %}
 {% load date firearm_details_summary %}
 
 {% block back_link %}
@@ -32,17 +33,20 @@
             </h1>
         </div>
         <div class="lite-app-bar__controls">
-            {% if allow_delete %}
+            {% test_rule 'can_delete_product' request good as can_delete_product %}
+            {% if can_delete_product %}
                 <a role="button" draggable="false" id="delete-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:delete' good.id %}">
                     Delete product
                 </a>
             {% endif %}
 
-            {% if allow_archive %}
+            {% test_rule 'can_archive_product' request good as can_archive_product %}
+            {% test_rule 'can_restore_product' request good as can_restore_product %}
+            {% if can_archive_product %}
                 <a role="button" draggable="false" id="archive-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_archive_restore' good.id 'archive' %}">
                     Archive product
                 </a>
-            {% elif allow_restore %}
+            {% elif can_restore_product %}
                 <a role="button" draggable="false" id="restore-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_archive_restore' good.id 'restore' %}">
                     Restore product
                 </a>
