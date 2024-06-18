@@ -24,14 +24,9 @@ class ApplicationDeclarationForm(BaseForm):
     # question asked if the exporter would find an FOI harmful to their
     # interests, but the variable name agreed_to_foi suggests the opposite,
     # that they agree to have their application be made public under FOI.
-    # Maybe agreed_that_foi_harmful would be less confusing.
-
-    # The new question asks if the exporter agrees to make their application
-    # publicly available, and the variable should reflect that. However that
-    # would mean changing the choices to ((True, "Yes"), (False, "No")) and if
-    # we then made a corresponding change in lite-api to handle this we
-    # would need to think about how that impacts older applications. Until
-    # lite-api is updated we should keep using the old variable.
+    # Maybe agreed_that_foi_harmful would be less confusing. Also,
+    # the new question asks if the exporter agrees to make their application
+    # publicly available, and the variable name should reflect that.
     agreed_to_foi = forms.TypedChoiceField(
         choices=((False, "Yes"), (True, "No")),
         coerce=coerce_str_to_bool,
