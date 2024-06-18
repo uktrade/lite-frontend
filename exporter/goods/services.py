@@ -14,6 +14,13 @@ def get_goods(
     data = client.get(request, "/goods/" + convert_parameters_to_query_params(locals()))
     return data.json()
 
+def get_archived_goods(
+    request, page: int = 1, name=None, part_number=None, control_list_entry=None, for_application=None
+):
+    response = client.get(request, "/goods/archived-goods/" + convert_parameters_to_query_params(locals()))
+    response.raise_for_status()
+    return response.json()
+
 
 def get_good(request, pk, full_detail=False):
     url = f"/goods/{pk}/" + convert_parameters_to_query_params(locals())
