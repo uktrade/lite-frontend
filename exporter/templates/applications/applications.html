@@ -1,4 +1,5 @@
 {% extends 'layouts/base.html' %}
+{% load url_filters %}
 
 {% block back_link %}
 	{% include 'includes/breadcrumbs.html' with title='hub.Tiles.APPLICATIONS' %}
@@ -36,14 +37,40 @@
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
-			<a href="{% url 'applications:applications' %}?submitted=True" class="lite-tabs__tab lite-tabs__tab--selected" id="applications-tab-submitted">
-				{% lcs "applications.ApplicationsList.IN_PROGRESS_TAB" %}
+			<a href="{% url 'applications:applications' %}?sort=-submitted_at&submitted=True"
+				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"finalised=True" %}{% else %}lite-tabs__tab--selected{% endif %}"
+				id="applications-tab-submitted">
+					{% lcs "applications.ApplicationsList.IN_PROGRESS_TAB" %}
+			</a>
+			<a href="{% url 'applications:applications' %}?sort=-submitted_at&submitted=True&finalised=True"
+				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"finalised=True" %}lite-tabs__tab--selected{% endif %}"
+				id="applications-tab-draft">
+					Finalised
 			</a>
 			<a href="{% url 'applications:applications' %}?submitted=False" class="lite-tabs__tab" id="applications-tab-draft">
 				{% lcs "applications.ApplicationsList.DRAFTS_TAB" %}
 			</a>
 		</div>
 	</div>
+
+	<form method="GET" action="{% url 'applications:applications' %}">
+		<div class="govuk-form-group">
+			<label class="govuk-label" for="sort">
+				Sort by
+			</label>
+			<select class="govuk-select" id="sort" name="sort">
+            <option value="-updated_at" {% if request.GET.sort == '-updated_at' %}selected{% endif %}>Recently updated</option>
+            <option value="submitted_at" {% if request.GET.sort == 'submitted_at' %}selected{% endif %}>Date ascending</option>
+            <option value="-submitted_at" {% if request.GET.sort == '-submitted_at' %}selected{% endif %}>Date descending</option>
+			</select>
+		</div>
+
+	  {% for key, value in request.GET.items %}
+			{% if key != 'sort' %}
+					<input type="hidden" name="{{ key }}" value="{{ value }}">
+			{% endif %}
+    {% endfor %}
+	</form>
 
 	{% if applications.results %}
 		<table class="govuk-table">
@@ -96,7 +123,9 @@
 						</td>
 						{% if organisation.type.key != 'hmrc' %}
 							<td class="govuk-table__cell">
-								<span class="lite-mobile-tag">{{ application.status.value }}</span>
+								<div class="govuk-tag govuk-tag--grey govuk-!-margin-0">
+									{{ application.status.value }}
+								</div>
 							</td>
 						{% endif %}
 					</tr>
@@ -104,7 +133,34 @@
 			</tbody>
 		</table>
 
+		<details class="govuk-details">
+			<summary class="govuk-details__summary">
+				<span class="govuk-details__summary-text">
+					Understand your application status
+				</span>
+			</summary>
+			<div class="govuk-details__text">
+				<div>
+					The status column will update as your application goes through different checks. Depending on what is in your application, these statuses may not always appear in order.
+				</div>
+				<div class="govuk-!-static-margin-top-5">
+					The most common statuses you'll see are:
+				</div>
+				<ul>
+					<li>submitted - application pending initial checks</li>
+					<li>initial checks - application details checked</li>
+					<li>application editing - if you make changes</li>
+					<li>under review - your products assessed and other details reviewed</li>
+					<li>OGD advice - other government departments (OGD) review your application</li>
+					<li>under final review - final checks</li>
+					<li>finalised - view the decision made on your application</li>
+				</ul>
+			</div>
+		</details>
+
 		{% pagination with data=applications %}
+
+
 	{% else %}
 		{% include "includes/notice.html" with text="applications.ApplicationsList.NO_CONTENT_NOTICE" %}
 	{% endif %}
