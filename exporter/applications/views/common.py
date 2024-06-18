@@ -67,7 +67,12 @@ from core.helpers import convert_dict_to_query_params, get_document_data
 
 class ApplicationsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
-        params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
+        params = {
+            "page": int(request.GET.get("page", 1)),
+            "submitted": str_to_bool(request.GET.get("submitted", True)),
+            "finalised": str_to_bool(request.GET.get("finalised", False)),
+            "sort": request.GET.get("sort", "-updated_at"),
+        }
         organisation = get_organisation(request, request.session["organisation"])
         applications = get_applications(request, **params)
         is_user_multiple_organisations = len(get_user(self.request)["organisations"]) > 1
