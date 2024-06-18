@@ -784,6 +784,18 @@ def get_summary_url_for_good(good):
     if firearm_details:
         if firearm_details["type"]["key"] == FirearmsProductType.FIREARMS:
             return reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.COMPONENTS_FOR_FIREARMS:
+            return reverse("goods:components_for_firearms_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.AMMUNITION:
+            return reverse("goods:firearm_ammunition_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.COMPONENTS_FOR_AMMUNITION:
+            return reverse("goods:components_for_firearms_ammunition_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.FIREARMS_ACCESSORY:
+            return reverse("goods:firearms_accessory_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.SOFTWARE_RELATED_TO_FIREARM:
+            return reverse("goods:software_related_to_firearms_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.TECHNOLOGY_RELATED_TO_FIREARM:
+            return reverse("goods:technology_related_to_firearms_detail", kwargs={"pk": good["id"]})
         raise NoSummaryForType
 
     item_category = good.get("item_category")
