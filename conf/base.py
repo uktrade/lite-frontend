@@ -4,6 +4,7 @@ from environ import Env
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from django_log_formatter_ecs import ECSFormatter
+from django_log_formatter_asim import ASIMFormatter
 
 from django.urls import reverse_lazy
 
@@ -204,12 +205,16 @@ LOGGING = {
     "formatters": {
         "simple": {"format": "{asctime} {levelname} {message}", "style": "{"},
         "ecs_formatter": {"()": ECSFormatter},
+        "asim_formatter": {
+            "()": ASIMFormatter,
+        },
     },
     "handlers": {
         "stdout": {"class": "logging.StreamHandler", "formatter": "simple"},
         "ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"},
+        "asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"},
     },
-    "root": {"handlers": ["stdout", "ecs"], "level": env.str("LOG_LEVEL", "info").upper()},
+    "root": {"handlers": ["stdout", "ecs", "asim"], "level": env.str("LOG_LEVEL", "info").upper()},
 }
 additional_logger_config = env.json("ADDITIONAL_LOGGER_CONFIG", default=None)
 if additional_logger_config:

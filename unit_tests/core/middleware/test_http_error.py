@@ -5,6 +5,8 @@ from core.middleware import HttpErrorHandlerMiddleware
 import pytest
 from json import JSONDecodeError
 
+import logging
+
 
 def test_http_error_handler_non_http_error_exception(rf, mocker, caplog):
     get_response = mocker.MagicMock()
@@ -38,5 +40,6 @@ def test_http_error_handler_with_http_errors(mock_error_page, rf, mocker, caplog
 
     http_error = HTTPError(response=response)
     request = rf.get("/")
+    caplog.set_level(logging.INFO)
     assert http_error_handler.process_exception(request, http_error) is returned_value
     assert ("INFO", error_log) in [(r.levelname, r.msg) for r in caplog.records]
