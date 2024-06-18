@@ -15,8 +15,6 @@ class ApplicationDeclarationForm(BaseForm):
     class Layout:
         TITLE = "Submit your application"
         BACK_LINK_TEXT = "Back to check your answers"
-        HEADING_FOI_DISCLOSURE = "Freedom of Information disclosure"
-        HEADING_DECLARATION = "Declaration"
         SUBMIT_BUTTON_TEXT = "Accept and submit"
 
     # TODO: we should rename agreed_to_foi to be less confusing. The old
@@ -67,14 +65,12 @@ class ApplicationDeclarationForm(BaseForm):
             HTML(
                 render_to_string(
                     "applications/forms/declaration/declaration-heading-question.html",
-                    context={"HEADING_FOI_DISCLOSURE": self.Layout.HEADING_FOI_DISCLOSURE},
                 )
             ),
             ConditionalRadios("agreed_to_foi", "Yes", ConditionalRadiosQuestion("No", "foi_reason")),
             HTML(
                 render_to_string(
                     "applications/forms/declaration/declaration-heading-declaration.html",
-                    context={"HEADING_DECLARATION": self.Layout.HEADING_DECLARATION},
                 )
             ),
         ]
