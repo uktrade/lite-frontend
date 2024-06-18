@@ -48,11 +48,5 @@ class BaseProductDetails(LoginRequiredMixin, TemplateView):
 
         context["good"] = self.good
         context["summary"] = self.get_summary()
-        context["allow_delete"] = self.good["status"]["key"] == GoodStatus.DRAFT
-        context["allow_archive"] = (
-            self.good["status"]["key"] in [GoodStatus.SUBMITTED, GoodStatus.VERIFIED]
-            and self.good["is_archived"] is not True
-        )
-        context["allow_restore"] = self.good["is_archived"] is True
 
         return context
