@@ -192,6 +192,9 @@ commands:
       - cache_env_circleci_dir
       - store_artifacts:
           path: ui_tests/screenshots
+      - run: docker logs api > ui_tests/api_logs.txt
+      - store_artifacts:
+          path: ui_tests/api_logs.txt
       - store_test_results:
           path: test_results
 
