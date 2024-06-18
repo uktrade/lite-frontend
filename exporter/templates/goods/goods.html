@@ -77,8 +77,24 @@
 							{{ good.status.value }}
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--tight">
-							{% if good.firearm_details.type.key == "firearms" %}
-								<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">View</a>
+							{% if good.item_category.key == "group2_firearms" %}
+								{% if good.firearm_details.type.key == "firearms" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "components_for_firearms" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:components_for_firearms_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "ammunition" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearm_ammunition_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "components_for_ammunition" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:components_for_firearms_ammunition_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "firearms_accessory" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:firearms_accessory_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "software_related_to_firearms" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:software_related_to_firearms_detail" good.id %}">View</a>
+								{% elif good.firearm_details.type.key == "technology_related_to_firearms" %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:technology_related_to_firearms_detail" good.id %}">View</a>
+								{% else %}
+									<a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:good" good.id %}">View</a>
+								{% endif %}
                             {% elif good.item_category.key == "group1_platform"  %}
                     		    <a class="govuk-link govuk-link--no-visited-state" href="{% url "goods:complete_item_detail" good.id %}">View</a>
 							{% elif good.item_category.key == "group1_components" %}
