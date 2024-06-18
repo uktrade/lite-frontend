@@ -1798,7 +1798,7 @@ def standard_firearm_expected_product_summary():
 def standard_firearm_expected_product_on_application_summary():
     return (
         ("manufacture-year", "1990", "What year was it made?"),
-        ("is-onward-exported", "No", "Will the product be onward exported to any additional countries?"),
+        ("is-onward-exported", "No", "Is the product going to any ultimate end-users?"),
         ("is-deactivated", "No", "Has the product been deactivated?"),
         ("number-of-items", 2, "Number of items"),
         ("total-value", "£444.00", "Total value"),
@@ -1940,7 +1940,7 @@ def standard_complete_item_expected_product_on_application_summary():
         (
             "is-onward-exported",
             "Yes",
-            "Will the product be onward exported to any additional countries?",
+            "Is the product going to any ultimate end-users?",
         ),
         (
             "is-altered",
@@ -2083,7 +2083,7 @@ def standard_component_accessory_expected_product_on_application_summary():
         (
             "is-onward-exported",
             "Yes",
-            "Will the product be onward exported to any additional countries?",
+            "Is the product going to any ultimate end-users?",
         ),
         (
             "is-altered",
@@ -2213,7 +2213,7 @@ def standard_material_expected_product_on_application_summary():
         (
             "is-onward-exported",
             "Yes",
-            "Will the product be onward exported to any additional countries?",
+            "Is the product going to any ultimate end-users?",
         ),
         (
             "is-altered",
@@ -2370,7 +2370,7 @@ def standard_technology_expected_product_on_application_summary():
         (
             "is-onward-exported",
             "Yes",
-            "Will the product be onward exported to any additional countries?",
+            "Is the product going to any ultimate end-users?",
         ),
         (
             "is-altered",

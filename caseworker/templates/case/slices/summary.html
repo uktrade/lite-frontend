@@ -229,29 +229,6 @@
             </div>
 		</dd>
 	</div>
-	<div class="app-case__summary-list__row">
-		<dt class="app-case__summary-list__key">
-			{% lcs 'cases.CasePage.DetailsTab.NEXT_REVIEW_DATE' %}
-		</dt>
-		<dd class="app-case__summary-list__value" id="next-review-date">
-			{% if case.next_review_date %}
-				{{ case.next_review_date|str_date_only }}
-			{% else %}
-				<span class="govuk-hint govuk-!-margin-0">
-					{% lcs 'cases.CasePage.DetailsTab.NO_NEXT_REVIEW_DATE' %}
-				</span>
-			{% endif %}
-		</dd>
-		<dd class="app-case__summary-list__actions">
-			{% if not is_terminal %}
-				{% if can_user_change_case %}
-					<a id="link-change-review-date" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:review_date' queue.id case.id %}">
-						{% lcs 'generic.CHANGE' %}
-					</a>
-				{% endif %}
-			{% endif %}
-		</dd>
-	</div>
 	{% if case.data.case_type.sub_type.key == 'f680_clearance' %}
 		<div class="app-case__summary-list__row">
 			<dt class="app-case__summary-list__key">
