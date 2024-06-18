@@ -64,7 +64,10 @@ def test_party_name_form(data, valid, errors):
 @pytest.mark.parametrize(
     "data, valid, errors",
     (
-        ({"website": "test"}, True, None),
+        ({"website": "test"}, False, {"website": ["Enter a valid URL."]}),
+        ({"website": "https://www.example.com"}, True, None),
+        ({"website": "www.example.com"}, True, None),
+        ({"website": "example.com"}, True, None),
         ({"website": ""}, True, None),
         ({}, True, None),
     ),
