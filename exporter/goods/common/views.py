@@ -1,13 +1,11 @@
 from http import HTTPStatus
 
 from django.shortcuts import redirect
-from django.urls import reverse
 from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.summaries.summaries import get_summary_url_for_good
-from exporter.goods.constants import GoodStatus
 from exporter.goods.forms import GoodArchiveForm, GoodRestoreForm
 from exporter.goods.services import get_good, edit_good
 
