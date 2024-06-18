@@ -2,7 +2,8 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
-from django.core.validators import MaxLengthValidator
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxLengthValidator, URLValidator
 from django.urls import reverse_lazy
 
 from core.common.forms import BaseForm
@@ -235,7 +236,28 @@ class PartyWebsiteForm(BaseForm):
         TITLE = "End user website address (optional)"
         TITLE_AS_LABEL_FOR = "website"
 
-    website = forms.CharField(required=False, label="")
+    website = forms.CharField(required=False, label="", help_text="Use the format https://www.example.com")
+
+    def clean_website(self):
+        website = self.cleaned_data.get("website")
+
+        validator = URLValidator()
+
+        if website:
+            try:
+                validator(website)
+            except ValidationError:
+                website = "https://" + website
+                try:
+                    validator(website)
+                except ValidationError:
+                    raise ValidationError("Enter a valid URL.")
+                else:
+                    return website
+            else:
+                return website
+
+        return website
 
     def get_layout_fields(self):
         return ("website",)
