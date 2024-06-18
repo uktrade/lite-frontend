@@ -57,5 +57,10 @@ repos:
       - id: eslint
         files: "^(core|caseworker|exporter)/assets/javascripts"
         additional_dependencies:
-          - eslint@8.44.0
-          - eslint-plugin-jest@27.2.3
+          - eslint@8.44.0 # /PS-IGNORE
+          - eslint-plugin-jest@27.2.3 # /PS-IGNORE
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.2.1
+    hooks:
+      - id: autoflake
+        args: [--remove-all-unused-imports, --in-place]
