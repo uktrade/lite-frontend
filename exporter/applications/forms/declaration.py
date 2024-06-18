@@ -57,9 +57,6 @@ class ApplicationDeclarationForm(BaseForm):
             self.add_error("foi_reason", "Explain why the disclosure of information would be harmful to your interests")
         return cleaned_data
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def get_layout_fields(self):
         return [
             HTML(
