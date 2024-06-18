@@ -9,6 +9,7 @@ from core.forms.layouts import (
     ConditionalRadiosQuestion,
     ConditionalRadios,
 )
+from core.forms.utils import coerce_str_to_bool
 
 
 class ApplicationDeclarationForm(BaseForm):
@@ -31,8 +32,9 @@ class ApplicationDeclarationForm(BaseForm):
     # we then made a corresponding change in lite-api to handle this we
     # would need to think about how that impacts older applications. Until
     # lite-api is updated we should keep using the old variable.
-    agreed_to_foi = forms.ChoiceField(
+    agreed_to_foi = forms.TypedChoiceField(
         choices=((False, "Yes"), (True, "No")),
+        coerce=coerce_str_to_bool,
         widget=forms.RadioSelect,
         label="",
         help_text="",
@@ -59,10 +61,8 @@ class ApplicationDeclarationForm(BaseForm):
         cleaned_data = super().clean()
         agreed_to_foi = cleaned_data.get("agreed_to_foi")
         foi_reason = cleaned_data.get("foi_reason")
-        if agreed_to_foi == "True" and not foi_reason:
-            raise ValidationError(
-                {"foi_reason": "Explain why the disclosure of information would be harmful to your interests"}
-            )
+        if agreed_to_foi and not foi_reason:
+            self.add_error("foi_reason", "Explain why the disclosure of information would be harmful to your interests")
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
