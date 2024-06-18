@@ -80,7 +80,7 @@ class RegisterDetailsBaseForm(BaseForm):
 
     VAT_LABEL = "UK VAT number"
     EORI_LABEL = "European Union registration and identification number (EORI)"
-    SIC_CODE_LABEL = "SIC Code"
+    SIC_CODE_LABEL = "Standard industrial classification (SIC code)"
     REGISTRATION_LABEL = "Companies House registration number (CRN)"
 
     class Layout:
