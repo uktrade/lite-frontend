@@ -9,7 +9,6 @@ from core.decorators import expect_status
 from core.summaries.summaries import get_summary_type_for_good
 
 from exporter.core.services import get_organisation
-from exporter.goods.constants import GoodStatus
 from exporter.goods.services import get_good
 
 

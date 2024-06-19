@@ -1,6 +1,5 @@
 from http import HTTPStatus
 
-from django.shortcuts import redirect
 from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
@@ -28,9 +27,9 @@ class GoodArchiveRestoreView(LoginRequiredMixin, FormView):
 
     def get_form(self):
         if self.is_archiving():
-            return GoodArchiveForm(**self.get_form_kwargs())
+            return GoodArchiveForm(**self.get_form_kwargs())  # noqa
         else:
-            return GoodRestoreForm(**self.get_form_kwargs())
+            return GoodRestoreForm(**self.get_form_kwargs())  # noqa
 
     @expect_status(
         HTTPStatus.OK,
@@ -44,11 +43,6 @@ class GoodArchiveRestoreView(LoginRequiredMixin, FormView):
         return self.get_good_detail_url()
 
     def form_valid(self, form):
-        post_keys = self.request.POST.keys()
-
-        if "cancel" in post_keys:
-            return redirect(self.get_good_detail_url())
-
         good_id = str(self.kwargs["pk"])
         data = {"is_archived": self.is_archiving()}
 

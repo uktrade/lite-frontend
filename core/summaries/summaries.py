@@ -812,4 +812,4 @@ def get_summary_url_for_good(good):
     elif item_category == ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY:
         return reverse("goods:component_accessory_detail", kwargs={"pk": good["id"]})
 
-    return reverse("goods:goods")
+    raise NoSummaryForType
