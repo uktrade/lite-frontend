@@ -81,6 +81,7 @@ rules="~=3.3.0"
 django-extra-views = "~=0.14.0"
 djangorestframework = "~=3.14.0"
 django = "~=4.2.11"
+django-log-formatter-asim = "~=0.0.5"
 
 [requires]
 python_version = "3.9"
