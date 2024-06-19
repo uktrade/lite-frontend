@@ -4,10 +4,11 @@ from django.urls import include, path
 import exporter.core.views
 
 from core.accessibility.views import ExporterAccessibilityStatementView
-
+from core.health_check.views import HealthCheckPingdomView
 
 urlpatterns = [
     path("healthcheck/", include("health_check.urls")),
+    path("pingdom/ping.xml", HealthCheckPingdomView.as_view(), name="healthcheck-pingdom"),
     path("", include("exporter.core.urls")),
     path("applications/", include("exporter.applications.urls")),
     path("apply-for-a-licence/", include("exporter.apply_for_a_licence.urls")),
