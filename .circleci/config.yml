@@ -153,6 +153,7 @@ commands:
       - run: pipenv run bandit -r . --skip=B101 --exclude=/.venv,/ui_tests,/unit_tests,/tests_common
       - run: pipenv run prospector
       - run: pipenv run black . --check --diff
+      - run: pipenv run pre-commit run ruff --from-ref origin/HEAD --to-ref HEAD
       - save_cache:
           key: pre-commit-cache-{{ checksum ".pre-commit-config.yaml" }}
           paths:
