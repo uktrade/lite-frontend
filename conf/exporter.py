@@ -17,6 +17,7 @@ INSTALLED_APPS += [
     "exporter.core",
     "exporter.applications",
     "exporter.organisation",
+    "exporter.goods",
 ]
 
 if MOCK_SSO_ACTIVATE_ENDPOINTS:
