@@ -1,25 +1,22 @@
 from django import forms
 
+from crispy_forms_gds.helper import FormHelper
+from crispy_forms_gds.layout import Submit
+
 from django.urls import reverse_lazy
 
 from exporter.applications.forms.edit import told_by_an_official_form, reference_name_form
 from exporter.core.constants import STANDARD
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.components import (
-    HiddenField,
     Form,
     BackLink,
     TextArea,
-    Option,
     FormGroup,
     TextInput,
     DateInput,
-    Label,
-    Checkboxes,
 )
 from lite_forms.helpers import conditional
-from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Submit
 
 
 def application_copy_form(application_type=None):
@@ -59,50 +56,6 @@ def exhibition_details_form(application_id):
             strings.BACK_TO_APPLICATION,
             reverse_lazy("applications:task_list", kwargs={"pk": application_id}),
         ),
-    )
-
-
-def declaration_form(application_id):
-    return Form(
-        title=strings.declaration.Declaration.TITLE,
-        questions=[
-            HiddenField(name="submit_declaration", value=True),
-            Label(strings.declaration.Declaration.PARAGRAPH_ONE),
-            Label(strings.declaration.Declaration.PARAGRAPH_TWO),
-            Label(strings.declaration.Declaration.PARAGRAPH_THREE),
-            Label(strings.declaration.Declaration.PARAGRAPH_FOUR),
-            Checkboxes(
-                name="agreed_to_foi",
-                options=[
-                    Option(
-                        key="True",
-                        value=strings.declaration.FOI.INFORMATION_DISCLOSURE_TITLE,
-                    ),
-                ],
-                classes=["govuk-checkboxes--small"],
-            ),
-            TextArea(
-                title=strings.declaration.FOI.INFORMATION_DISCLOSURE_DETAILS,
-                name="foi_reason",
-            ),
-            Label(strings.declaration.Declaration.FOI_MORE_ADVICE),
-            Label(strings.declaration.Declaration.FOI_GUIDANCE),
-            TextInput(
-                title="Confirm that you agree to the above by typing 'I AGREE' in this box",
-                name="agreed_to_declaration_text",
-            ),
-            Label(
-                """Please note, your application must be checked thoroughly and only say 'I agree' if you are content
-                that the ELA is accurate. It may not be possible to make changes to the application after
-                it has been submitted and if so, you may have to reapply."""
-            ),
-        ],
-        default_button_name=strings.declaration.Declaration.BUTTON_TITLE,
-        back_link=BackLink(
-            strings.declaration.Declaration.BACK,
-            reverse_lazy("applications:summary", kwargs={"pk": application_id}),
-        ),
-        javascript_imports={"/javascripts/declaration.js"},
     )
 
 
