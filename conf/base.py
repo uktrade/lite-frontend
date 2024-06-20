@@ -199,26 +199,38 @@ AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
 AWS_DEFAULT_ACL = env.str("AWS_DEFAULT_ACL", None)
 AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
+ENVIRONMENT = env.str("ENVIRONMENT", "")
+
+LOGGING = {"version": 1, "disable_existing_loggers": False}
+
+if ENVIRONMENT == "local":
+    LOGGING["formatters"] = {
         "simple": {"format": "{asctime} {levelname} {message}", "style": "{"},
+    }
+    LOGGING["handlers"] = {
+        "stdout": {"class": "logging.StreamHandler", "formatter": "simple"},
+    }
+    LOGGING["root"] = {"handlers": ["stdout"], "level": env.str("LOG_LEVEL", "info").upper()}
+
+elif VCAP_SERVICES:
+    LOGGING["formatters"] = {
         "ecs_formatter": {"()": ECSFormatter},
+    }
+    LOGGING["handlers"] = {
+        "ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"},
+    }
+    LOGGING["root"] = {"handlers": ["ecs"], "level": env.str("LOG_LEVEL", "info").upper()}
+
+else:
+    LOGGING["formatters"] = {
         "asim_formatter": {
             "()": ASIMFormatter,
         },
-    },
-    "handlers": {
-        "stdout": {"class": "logging.StreamHandler", "formatter": "simple"},
-        "ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"},
+    }
+    LOGGING["handlers"] = {
         "asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"},
-    },
-    "root": {"handlers": ["stdout", "ecs", "asim"], "level": env.str("LOG_LEVEL", "info").upper()},
-}
-additional_logger_config = env.json("ADDITIONAL_LOGGER_CONFIG", default=None)
-if additional_logger_config:
-    LOGGING["loggers"] = additional_logger_config
+    }
+    LOGGING["root"] = {"handlers": ["asim"], "level": env.str("LOG_LEVEL", "info").upper()}
 
 # Enable security features in hosted environments
 
