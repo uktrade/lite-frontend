@@ -37,12 +37,12 @@
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
-			<a href="{% url 'applications:applications' %}?sort=-submitted_at&submitted=True"
+			<a href="{% url 'applications:applications' %}?sort=submitted_at&submitted=True"
 				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"finalised=True" %}{% else %}lite-tabs__tab--selected{% endif %}"
 				id="applications-tab-submitted">
 					{% lcs "applications.ApplicationsList.IN_PROGRESS_TAB" %}
 			</a>
-			<a href="{% url 'applications:applications' %}?sort=-submitted_at&submitted=True&finalised=True"
+			<a href="{% url 'applications:applications' %}?sort=submitted_at&submitted=True&finalised=True"
 				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"finalised=True" %}lite-tabs__tab--selected{% endif %}"
 				id="applications-tab-draft">
 					Finalised
@@ -59,9 +59,8 @@
 				Sort by
 			</label>
 			<select class="govuk-select" id="sort" name="sort">
-            <option value="-updated_at" {% if request.GET.sort == '-updated_at' %}selected{% endif %}>Recently updated</option>
-            <option value="submitted_at" {% if request.GET.sort == 'submitted_at' %}selected{% endif %}>Date ascending</option>
-            <option value="-submitted_at" {% if request.GET.sort == '-submitted_at' %}selected{% endif %}>Date descending</option>
+            <option value="submitted_at" {% if request.GET.sort == 'submitted_at' %}selected{% endif %}>Date submitted</option>
+						<option value="-updated_at" {% if request.GET.sort == '-updated_at' %}selected{% endif %}>Date updated</option>
 			</select>
 		</div>
 
@@ -147,13 +146,13 @@
 					The most common statuses you'll see are:
 				</div>
 				<ul>
-					<li>submitted - application pending initial checks</li>
-					<li>initial checks - application details checked</li>
-					<li>application editing - if you make changes</li>
-					<li>under review - your products assessed and other details reviewed</li>
-					<li>OGD advice - other government departments (OGD) review your application</li>
-					<li>under final review - final checks</li>
-					<li>finalised - view the decision made on your application</li>
+					<li>submitted – application pending initial checks</li>
+					<li>initial checks – application details checked</li>
+					<li>application editing – if you make changes</li>
+					<li>under review – your products assessed and other details reviewed</li>
+					<li>OGD advice – other government departments (OGD) review your application</li>
+					<li>under final review – final checks</li>
+					<li>finalised – view the decision made on your application</li>
 				</ul>
 			</div>
 		</details>

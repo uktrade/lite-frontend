@@ -71,7 +71,7 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
             "page": int(request.GET.get("page", 1)),
             "submitted": str_to_bool(request.GET.get("submitted", True)),
             "finalised": str_to_bool(request.GET.get("finalised", False)),
-            "sort": request.GET.get("sort", "-updated_at"),
+            "sort": request.GET.get("sort", "submitted_at"),
         }
         organisation = get_organisation(request, request.session["organisation"])
         applications = get_applications(request, **params)
