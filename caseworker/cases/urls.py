@@ -104,7 +104,6 @@ urlpatterns = [
         generate_document.SendExistingDocument.as_view(),
         name="generate_document_send",
     ),
-    path("review-date/", main.NextReviewDate.as_view(), name="review_date"),
     path(
         "rerun-routing-rules/",
         main.RerunRoutingRules.as_view(),

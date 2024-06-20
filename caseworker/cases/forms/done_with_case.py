@@ -7,7 +7,7 @@ from lite_forms.helpers import conditional
 from caseworker.queues.services import get_queue
 
 
-def done_with_case_form(request, queue_pk, case_pk, has_review_date):
+def done_with_case_form(request, queue_pk, case_pk):
     queue = None
     queues, _ = get_user_case_queues(request, case_pk)
 
@@ -39,5 +39,4 @@ def done_with_case_form(request, queue_pk, case_pk, has_review_date):
         default_button_name=DoneWithCaseOnQueueForm.SUBMIT,
         container="case",
         back_link=BackLink(url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_pk, "tab": "details"})),
-        javascript_imports=conditional(has_review_date, {"/javascripts/assign_queue.js"}, None),
     )

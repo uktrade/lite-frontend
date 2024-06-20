@@ -211,7 +211,7 @@ def product_on_application_summary():
     return (
         ("made-before-1938", "Yes", "Was the product made before 1938?"),
         ("manufacture-year", 1930, "What year was it made?"),
-        ("is-onward-exported", "Yes", "Will the product be onward exported to any additional countries?"),
+        ("is-onward-exported", "Yes", "Is the product going to any ultimate end-users?"),
         ("is-altered", "Yes", "Will the item be altered or processed before it is exported again?"),
         ("is-altered-comments", "I will alter it real good", "Explain how the product will be processed or altered"),
         ("is-incorporated", "Yes", "Will the product be incorporated into another item before it is onward exported?"),

@@ -1,7 +1,6 @@
 from caseworker.cases.objects import Case
 from core import client
 
-from caseworker.core.helpers import format_date
 from caseworker.flags.enums import FlagStatus
 from core.helpers import convert_parameters_to_query_params
 
@@ -337,13 +336,6 @@ def update_case_officer_on_cases(request, case_ids, user_id):
 
 def delete_case_officer(request, pk, *args):
     data = client.delete(request, f"/cases/{pk}/case-officer/")
-    return data.json(), data.status_code
-
-
-def put_next_review_date(request, pk, json):
-    if "next_review_dateday" in json:
-        json["next_review_date"] = format_date(json, "next_review_date")
-    data = client.put(request, f"/cases/{pk}/review-date/", json)
     return data.json(), data.status_code
 
 

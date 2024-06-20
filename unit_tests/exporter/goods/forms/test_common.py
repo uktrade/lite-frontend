@@ -453,7 +453,7 @@ def test_product_unit_quantity_and_value_form_validation(data, is_valid, errors,
         (
             {},
             False,
-            {"is_onward_exported": ["Select yes if the product will be onward exported to additional countries"]},
+            {"is_onward_exported": ["Select yes if the product is going to any ultimate end-users"]},
         ),
         (
             {"is_onward_exported": True},
