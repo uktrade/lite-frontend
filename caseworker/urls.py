@@ -2,12 +2,14 @@ from django.conf import settings
 from django.urls import include, path
 
 import caseworker.core.views
+from core.health_check.views import HealthCheckPingdomView
 
 from core.accessibility.views import CaseworkerAccessibilityStatementView
 
 
 urlpatterns = [
     path("healthcheck/", include("health_check.urls")),
+    path("pingdom/ping.xml", HealthCheckPingdomView.as_view(), name="healthcheck-pingdom"),
     path("", include("caseworker.core.urls")),
     path("auth/", include("caseworker.auth.urls")),
     path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("caseworker.cases.urls")),
