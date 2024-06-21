@@ -2,6 +2,7 @@ from django.conf import settings
 from django.urls import path
 
 from exporter.goods import views
+from exporter.goods.common import views as common_views
 from exporter.goods.component.views import ComponentAccessoryProductDetails
 from exporter.goods.firearms.views import (
     ComponentsForFirearmsAmmunitionProductDetails,
@@ -19,6 +20,7 @@ from exporter.goods.platform.views import CompleteItemProductDetails
 app_name = "goods"
 urlpatterns = [
     path("", views.Goods.as_view(), name="goods"),
+    path("archived-goods/", views.ArchivedGoods.as_view(), name="archived_goods"),
     path("<uuid:pk>/edit/", views.EditGood.as_view(), name="edit"),
     path("<uuid:pk>/software-technology/", views.GoodSoftwareTechnologyView.as_view(), name="good_software_technology"),
     path("<uuid:pk>/military-use/", views.GoodMilitaryUseView.as_view(), name="good_military_use"),
@@ -82,6 +84,8 @@ urlpatterns = [
         TechnologyRelatedToFirearmsProductDetails.as_view(),
         name="technology_related_to_firearms_detail",
     ),
+    path("<uuid:pk>/archive/", common_views.GoodArchiveView.as_view(), name="good_archive"),
+    path("<uuid:pk>/restore/", common_views.GoodRestoreView.as_view(), name="good_restore"),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
     path("platform/<uuid:pk>/", CompleteItemProductDetails.as_view(), name="complete_item_detail"),
