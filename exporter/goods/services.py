@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 from core import client
 from core.constants import ProductCategories
@@ -13,6 +14,13 @@ def get_goods(
 ):
     data = client.get(request, "/goods/" + convert_parameters_to_query_params(locals()))
     return data.json()
+
+
+def get_archived_goods(request, page: int = 1, name=None, part_number=None, control_list_entry=None):
+    query_params = {"page": page, "name": name, "part_number": part_number, "control_list_entry": control_list_entry}
+    response = client.get(request, "/goods/archived-goods/?" + urlencode(query_params, doseq=True))
+    response.raise_for_status()
+    return response.json()
 
 
 def get_good(request, pk, full_detail=False):
@@ -204,8 +212,9 @@ def validate_good(request, json):
 
 
 def edit_good(request, pk, json):
-    data = client.put(request, f"/goods/{pk}/", json)
-    return data.json(), data.status_code
+    response = client.put(request, f"/goods/{pk}/", json)
+    response.raise_for_status()
+    return response.json(), response.status_code
 
 
 def edit_good_details(request, pk, json):
