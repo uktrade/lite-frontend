@@ -13,10 +13,9 @@ from exporter.goods.constants import GoodStatus
 @pytest.fixture
 def archive_product_url(good_id):
     return reverse(
-        "goods:good_archive_restore",
+        "goods:good_archive",
         kwargs={
             "pk": good_id,
-            "action": "archive",
         },
     )
 
@@ -24,10 +23,9 @@ def archive_product_url(good_id):
 @pytest.fixture
 def restore_product_url(good_id):
     return reverse(
-        "goods:good_archive_restore",
+        "goods:good_restore",
         kwargs={
             "pk": good_id,
-            "action": "restore",
         },
     )
 
