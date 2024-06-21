@@ -5,6 +5,7 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from django_log_formatter_ecs import ECSFormatter
 from django_log_formatter_asim import ASIMFormatter
+from dbt_copilot_python.utility import is_copilot
 
 from django.urls import reverse_lazy
 
@@ -202,20 +203,25 @@ AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "simple": {"format": "{asctime} {levelname} {message}", "style": "{"},
-        "ecs_formatter": {"()": ECSFormatter},
-        "asim_formatter": {
-            "()": ASIMFormatter,
-        },
-    },
-    "handlers": {
-        "stdout": {"class": "logging.StreamHandler", "formatter": "simple"},
-        "ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"},
-        "asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"},
-    },
-    "root": {"handlers": ["stdout", "ecs", "asim"], "level": env.str("LOG_LEVEL", "info").upper()},
 }
+ENVIRONMENT = env.str("ENVIRONMENT", "")
+
+if ENVIRONMENT == "local":
+    LOGGING.update({"formatters": {"simple": {"format": "{asctime} {levelname} {message}", "style": "{"}}})
+    LOGGING.update({"handlers": {"stdout": {"class": "logging.StreamHandler", "formatter": "simple"}}})
+    LOGGING.update({"root": {"handlers": ["stdout"]}})
+
+
+elif not is_copilot():
+    LOGGING.update({"formatters": {"ecs_formatter": {"()": ECSFormatter}}})
+    LOGGING.update({"handlers": {"ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"}}})
+    LOGGING.update({"root": {"handlers": ["ecs"]}})
+
+else:
+    LOGGING.update({"formatters": {"asim_formatter": {"()": ASIMFormatter}}})
+    LOGGING.update({"handlers": {"asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"}}})
+    LOGGING.update({"root": {"handlers": ["asim"]}})
+
 additional_logger_config = env.json("ADDITIONAL_LOGGER_CONFIG", default=None)
 if additional_logger_config:
     LOGGING["loggers"] = additional_logger_config

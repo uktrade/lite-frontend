@@ -70,7 +70,6 @@ django-redis = "~=4.12.1"
 notifications-python-client = "~=6.4.1"
 python-magic = "~=0.4.27"
 django-log-formatter-ecs = "==0.0.5"
-importlib-metadata = "==4.6.3"  # Dependency for some packages. Might not be needed for Python3.8+
 Authlib = "==0.15.5"
 regex = "==2022.3.2"
 deepmerge = "*"
@@ -82,6 +81,7 @@ django-extra-views = "~=0.14.0"
 djangorestframework = "~=3.14.0"
 django = "~=4.2.11"
 django-log-formatter-asim = "~=0.0.5"
+dbt-copilot-python = "~=0.2.1"
 
 [requires]
 python_version = "3.9"
