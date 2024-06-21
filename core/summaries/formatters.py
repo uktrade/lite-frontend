@@ -21,6 +21,7 @@ FIREARM_LABELS = {
     "firearm-type": "Select the type of firearm product",
     "firearm-category": "Firearm category",
     "name": "Give the product a descriptive name",
+    "part-number": "Part number",
     "calibre": "What is the calibre of the product?",
     "is-registered-firearms-dealer": "Are you a registered firearms dealer?",
     "rfd-certificate-document": "Upload a registered firearms dealer certificate",
@@ -52,6 +53,91 @@ FIREARM_LABELS = {
     "section-5-certificate-date-of-expiry": "Certificate date of expiry",
     "section-5-certificate-missing": "Upload your section 5 letter of authority",
     "section-5-certificate-missing-reason": "Explain why you do not have a section 5 letter of authority",
+}
+
+FIREARMS_ACCESSORY_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "firearm-type": "Select the type of firearm product",
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Part number",
+    "has-part-number": "I do not have a part number",
+    "no-part-number-comments": "Explain why you do not have a part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "product-component": "Is the product a component?",
+    "uses-information-security": "Does the product include cryptography or other information security features?",
+    "uses-information-security-details": "Provide details of the cryptography or information security features",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "Provide details of the modifications",
+}
+
+SOFTWARE_RELATED_TO_FIREARMS_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "firearm-type": "Select the type of firearm product",
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Part number",
+    "has-part-number": "I do not have a part number",
+    "no-part-number-comments": "Explain why you do not have a part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "uses-information-security": "Does the product include cryptography or other information security features?",
+    "uses-information-security-details": "Provide details of the cryptography or information security features",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "Provide details of the modifications",
+}
+
+TECHNOLOGY_RELATED_TO_FIREARMS_LABELS = {
+    "is-firearm-product": "Is it a firearm product?",
+    "firearm-type": "Select the type of firearm product",
+    "name": "Give the product a descriptive name",
+    "is-good-controlled": "Do you know the product's control list entry?",
+    "control-list-entries": "Enter the control list entry",
+    "part-number": "Part number",
+    "has-part-number": "I do not have a part number",
+    "no-part-number-comments": "Explain why you do not have a part number",
+    "is-pv-graded": "Does the product have a government security grading or classification?",
+    "pv-grading-prefix": "Enter a prefix (optional)",
+    "pv-grading-grading": "What is the security grading or classification?",
+    "pv-grading-suffix": "Enter a suffix (optional)",
+    "pv-grading-issuing-authority": "Name and address of the issuing authority",
+    "pv-grading-details-reference": "Reference",
+    "pv-grading-details-date-of-issue": "Date of issue",
+    "has-product-document": "Do you have a document that shows what your product is and what it’s designed to do?",
+    "no-product-document-explanation": "Explain why you are not able to upload a product document",
+    "product-description": "Describe the product and what it is designed to do",
+    "is-document-sensitive": "Is the document rated above Official-sensitive?",
+    "product-document": "Upload a document that shows what your product is designed to do",
+    "product-document-description": "Description (optional)",
+    "uses-information-security": "Does the product include cryptography or other information security features?",
+    "uses-information-security-details": "Provide details of the cryptography or information security features",
+    "military-use": "Is the product specially designed or modified for military use?",
+    "military-use-details": "Provide details of the modifications",
 }
 
 COMPLETE_ITEM_LABELS = {
@@ -279,6 +365,79 @@ FIREARM_VALUE_FORMATTERS = {
             "Unsure": "Don't know",
         }
     ),
+}
+
+
+FIREARMS_ACCESSORY_VALUE_FORMATTERS = {
+    "firearm-type": key_value_formatter,
+    "is-good-controlled": key_value_formatter,
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "assessed-control-list-entries": template_formatter(
+        "goods/includes/assessed_control_list_entries.html",
+        lambda val: {"assessed_control_list_entries": val},
+    ),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+    "uses-information-security": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
+}
+
+
+SOFTWARE_RELATED_TO_FIREARMS_VALUE_FORMATTERS = {
+    "firearm-type": key_value_formatter,
+    "has-part-number": just("Yes"),
+    "is-good-controlled": key_value_formatter,
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "assessed-control-list-entries": template_formatter(
+        "goods/includes/assessed_control_list_entries.html",
+        lambda val: {"assessed_control_list_entries": val},
+    ),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+    "general-details": "Provide details of the intended general-purpose use",
+    "uses-information-security": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
+}
+
+
+TECHNOLOGY_RELATED_TO_FIREARMS_VALUE_FORMATTERS = {
+    "firearm-type": key_value_formatter,
+    "has-part-number": just("Yes"),
+    "is-good-controlled": key_value_formatter,
+    "control-list-entries": comma_separated_list(itemgetter("rating")),
+    "assessed-control-list-entries": template_formatter(
+        "goods/includes/assessed_control_list_entries.html",
+        lambda val: {"assessed_control_list_entries": val},
+    ),
+    "is-pv-graded": mapping_formatter(
+        {
+            "yes": "Yes",
+            "no": "No",
+        }
+    ),
+    "pv-grading-grading": key_value_formatter,
+    "pv-grading-details-date-of-issue": date_formatter("j F Y"),
+    "has-product-document": yesno,
+    "is-document-sensitive": yesno,
+    "general-details": "Provide details of the intended general-purpose use",
+    "uses-information-security": yesno,
+    "military-use": model_choices_formatter(ProductMilitaryUseForm.IsMilitaryUseChoices),
 }
 
 

@@ -10,11 +10,13 @@ from core.summaries.formatters import (
     FIREARM_ON_APPLICATION_FORMATTERS,
     FIREARM_ON_APPLICATION_LABELS,
     FIREARM_VALUE_FORMATTERS,
+    FIREARMS_ACCESSORY_VALUE_FORMATTERS,
     template_formatter,
     COMPLETE_ITEM_LABELS,
     COMPLETE_ITEM_VALUE_FORMATTERS,
     COMPLETE_ITEM_ON_APPLICATION_FORMATTERS,
     COMPLETE_ITEM_ON_APPLICATION_LABELS,
+    FIREARMS_ACCESSORY_LABELS,
     TECHNOLOGY_LABELS,
     TECHNOLOGY_VALUE_FORMATTERS,
     TECHNOLOGY_ON_APPLICATION_FORMATTERS,
@@ -27,18 +29,27 @@ from core.summaries.formatters import (
     COMPONENT_ACCESSORY_VALUE_FORMATTERS,
     COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS,
     COMPONENT_ACCESSORY_ON_APPLICATION_LABELS,
+    SOFTWARE_RELATED_TO_FIREARMS_LABELS,
+    SOFTWARE_RELATED_TO_FIREARMS_VALUE_FORMATTERS,
+    TECHNOLOGY_RELATED_TO_FIREARMS_LABELS,
+    TECHNOLOGY_RELATED_TO_FIREARMS_VALUE_FORMATTERS,
 )
 from core.summaries.reducers import (
     firearm_on_application_reducer,
     firearm_reducer,
+    firearm_ammunition_reducer,
+    components_for_firearms_reducer,
     complete_item_on_application_reducer,
     complete_item_reducer,
+    firearms_accessory_reducer,
     technology_on_application_reducer,
     technology_reducer,
     material_reducer,
     material_on_application_reducer,
     component_accessory_on_application_reducer,
     component_accessory_reducer,
+    software_related_to_firearms_reducer,
+    technology_related_to_firearms_reducer,
 )
 from core.summaries.utils import pick_fields
 
@@ -77,6 +88,160 @@ FIREARM_FIELDS = (
     "is-document-sensitive",
     "product-document",
     "product-document-description",
+)
+
+COMPONENTS_FOR_FIREARMS_FIELDS = (
+    "firearm-type",
+    "name",
+    "part-number",
+    "is-good-controlled",
+    "control-list-entries",
+    "assessed-control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "calibre",
+    "is-replica",
+    "is-replica-description",
+    "is-registered-firearms-dealer",
+    "rfd-certificate-document",
+    "rfd-certificate-reference-number",
+    "rfd-certificate-date-of-expiry",
+    "is-covered-by-firearm-act-section-five",
+    "firearms-act-1968-section",
+    "is-covered-by-firearm-act-section-one-two-or-five-explanation",
+    "section-5-certificate-document",
+    "section-5-certificate-reference-number",
+    "section-5-certificate-date-of-expiry",
+    "section-5-certificate-missing",
+    "section-5-certificate-missing-reason",
+    "has-product-document",
+    "no-product-document-explanation",
+    "product-description",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+)
+
+FIREARM_AMMUNITION_FIELDS = (
+    "firearm-type",
+    "name",
+    "is-good-controlled",
+    "control-list-entries",
+    "assessed-control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "calibre",
+    "is-replica",
+    "is-replica-description",
+    "is-registered-firearms-dealer",
+    "rfd-certificate-document",
+    "rfd-certificate-reference-number",
+    "rfd-certificate-date-of-expiry",
+    "is-covered-by-firearm-act-section-five",
+    "firearms-act-1968-section",
+    "is-covered-by-firearm-act-section-one-two-or-five-explanation",
+    "section-5-certificate-document",
+    "section-5-certificate-reference-number",
+    "section-5-certificate-date-of-expiry",
+    "section-5-certificate-missing",
+    "section-5-certificate-missing-reason",
+    "has-product-document",
+    "no-product-document-explanation",
+    "product-description",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+)
+
+FIREARMS_ACCESSORY_FIELDS = (
+    "firearm-type",
+    "name",
+    "part-number",
+    "is-good-controlled",
+    "control-list-entries",
+    "assessed-control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "has-product-document",
+    "no-product-document-explanation",
+    "product-description",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+    "product-component",
+    "uses-information-security",
+    "uses-information-security-details",
+    "military-use",
+    "military-use-details",
+)
+
+SOFTWARE_RELATED_TO_FIREARMS_FIELDS = (
+    "firearm-type",
+    "name",
+    "part-number",
+    "is-good-controlled",
+    "control-list-entries",
+    "assessed-control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "has-product-document",
+    "no-product-document-explanation",
+    "product-description",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+    "general-details",
+    "uses-information-security",
+    "uses-information-security-details",
+    "military-use",
+    "military-use-details",
+)
+
+TECHNOLOGY_RELATED_TO_FIREARMS_FIELDS = (
+    "firearm-type",
+    "name",
+    "part-number",
+    "is-good-controlled",
+    "control-list-entries",
+    "assessed-control-list-entries",
+    "is-pv-graded",
+    "pv-grading-prefix",
+    "pv-grading-grading",
+    "pv-grading-suffix",
+    "pv-grading-issuing-authority",
+    "pv-grading-details-reference",
+    "pv-grading-details-date-of-issue",
+    "has-product-document",
+    "no-product-document-explanation",
+    "product-description",
+    "is-document-sensitive",
+    "product-document",
+    "product-document-description",
+    "general-details",
+    "uses-information-security",
+    "uses-information-security-details",
+    "military-use",
+    "military-use-details",
 )
 
 COMPLETE_ITEM_FIELDS = (
@@ -211,6 +376,90 @@ def firearm_summary(good, is_user_rfd, organisation_documents, additional_format
     summary = pick_fields(summary, FIREARM_FIELDS)
     summary = format_values(summary, formatters)
     summary = add_labels(summary, FIREARM_LABELS)
+
+    return summary
+
+
+def components_for_firearms_summary(good, is_user_rfd, organisation_documents, additional_formatters):
+
+    summary = components_for_firearms_reducer(good, is_user_rfd, organisation_documents)
+    formatters = {
+        **FIREARM_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, COMPONENTS_FOR_FIREARMS_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, FIREARM_LABELS)
+
+    return summary
+
+
+def firearm_ammunition_summary(good, is_user_rfd, organisation_documents, additional_formatters):
+
+    summary = firearm_ammunition_reducer(good, is_user_rfd, organisation_documents)
+    formatters = {
+        **FIREARM_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, FIREARM_AMMUNITION_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, FIREARM_LABELS)
+
+    return summary
+
+
+def components_for_firearms_ammunition_summary(good, is_user_rfd, organisation_documents, additional_formatters):
+
+    summary = components_for_firearms_reducer(good, is_user_rfd, organisation_documents)
+    formatters = {
+        **FIREARM_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, COMPONENTS_FOR_FIREARMS_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, FIREARM_LABELS)
+
+    return summary
+
+
+def firearms_accessory_summary(good, additional_formatters):
+
+    summary = firearms_accessory_reducer(good)
+    formatters = {
+        **FIREARMS_ACCESSORY_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, FIREARMS_ACCESSORY_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, FIREARMS_ACCESSORY_LABELS)
+
+    return summary
+
+
+def software_related_to_firearms_summary(good, additional_formatters):
+
+    summary = software_related_to_firearms_reducer(good)
+    formatters = {
+        **SOFTWARE_RELATED_TO_FIREARMS_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, SOFTWARE_RELATED_TO_FIREARMS_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, SOFTWARE_RELATED_TO_FIREARMS_LABELS)
+
+    return summary
+
+
+def technology_related_to_firearms_summary(good, additional_formatters):
+
+    summary = technology_related_to_firearms_reducer(good)
+    formatters = {
+        **TECHNOLOGY_RELATED_TO_FIREARMS_VALUE_FORMATTERS,
+        **additional_formatters,
+    }
+    summary = pick_fields(summary, TECHNOLOGY_RELATED_TO_FIREARMS_FIELDS)
+    summary = format_values(summary, formatters)
+    summary = add_labels(summary, TECHNOLOGY_RELATED_TO_FIREARMS_LABELS)
 
     return summary
 
@@ -454,6 +703,12 @@ class NoSummaryForType(Exception):
 
 class SummaryTypes:
     FIREARM = "FIREARM"
+    COMPONENTS_FOR_FIREARMS = "COMPONENTS_FOR_FIREARMS"
+    FIREARM_AMMUNITION = "FIREARM_AMMUNITION"
+    COMPONENTS_FOR_FIREARMS_AMMUNITION = "COMPONENTS_FOR_FIREARMS_AMMUNITION"
+    FIREARMS_ACCESSORY = "FIREARMS_ACCESSORY"
+    SOFTWARE_RELATED_TO_FIREARMS = "SOFTWARE_RELATED_TO_FIREARMS"
+    TECHNOLOGY_RELATED_TO_FIREARMS = "TECHNOLOGY_RELATED_TO_FIREARMS"
     COMPLETE_ITEM = "COMPLETE_ITEM"
     MATERIAL = "MATERIAL"
     TECHNOLOGY = "TECHNOLOGY"
@@ -479,6 +734,18 @@ def get_summary_type_for_good(good):
     if firearm_details:
         if firearm_details["type"]["key"] == FirearmsProductType.FIREARMS:
             return SummaryTypes.FIREARM
+        if firearm_details["type"]["key"] == FirearmsProductType.COMPONENTS_FOR_FIREARMS:
+            return SummaryTypes.COMPONENTS_FOR_FIREARMS
+        if firearm_details["type"]["key"] == FirearmsProductType.AMMUNITION:
+            return SummaryTypes.FIREARM_AMMUNITION
+        if firearm_details["type"]["key"] == FirearmsProductType.COMPONENTS_FOR_AMMUNITION:
+            return SummaryTypes.COMPONENTS_FOR_FIREARMS_AMMUNITION
+        if firearm_details["type"]["key"] == FirearmsProductType.FIREARMS_ACCESSORY:
+            return SummaryTypes.FIREARMS_ACCESSORY
+        if firearm_details["type"]["key"] == FirearmsProductType.SOFTWARE_RELATED_TO_FIREARM:
+            return SummaryTypes.SOFTWARE_RELATED_TO_FIREARMS
+        if firearm_details["type"]["key"] == FirearmsProductType.TECHNOLOGY_RELATED_TO_FIREARM:
+            return SummaryTypes.TECHNOLOGY_RELATED_TO_FIREARMS
         raise NoSummaryForType
 
     item_category = good.get("item_category")
