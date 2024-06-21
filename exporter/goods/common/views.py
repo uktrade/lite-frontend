@@ -9,27 +9,21 @@ from exporter.goods.forms import GoodArchiveForm, GoodRestoreForm
 from exporter.goods.services import get_good, edit_good
 
 
-class GoodArchiveRestoreView(LoginRequiredMixin, FormView):
+class GoodArchiveRestoreBaseView(LoginRequiredMixin, FormView):
     template_name = "core/form.html"
 
+    @property
+    def good_id(self):
+        return str(self.kwargs["pk"])
+
     def get_good_detail_url(self):
-        good_id = str(self.kwargs["pk"])
-        self.good, _ = self.get_good(self.request, good_id)
+        self.good, _ = self.get_good(self.request, self.good_id)
         return get_summary_url_for_good(self.good)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["cancel_url"] = self.get_good_detail_url()
         return kwargs
-
-    def is_archiving(self):
-        return self.kwargs["action"] == "archive"
-
-    def get_form(self):
-        if self.is_archiving():
-            return GoodArchiveForm(**self.get_form_kwargs())  # noqa
-        else:
-            return GoodRestoreForm(**self.get_form_kwargs())  # noqa
 
     @expect_status(
         HTTPStatus.OK,
@@ -42,10 +36,24 @@ class GoodArchiveRestoreView(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return self.get_good_detail_url()
 
-    def form_valid(self, form):
-        good_id = str(self.kwargs["pk"])
-        data = {"is_archived": self.is_archiving()}
 
-        edit_good(self.request, good_id, data)
+class GoodArchiveView(GoodArchiveRestoreBaseView):
+    form_class = GoodArchiveForm
+
+    def form_valid(self, form):
+        data = {"is_archived": True}
+
+        edit_good(self.request, self.good_id, data)
+
+        return super().form_valid(form)
+
+
+class GoodRestoreView(GoodArchiveRestoreBaseView):
+    form_class = GoodRestoreForm
+
+    def form_valid(self, form):
+        data = {"is_archived": False}
+
+        edit_good(self.request, self.good_id, data)
 
         return super().form_valid(form)

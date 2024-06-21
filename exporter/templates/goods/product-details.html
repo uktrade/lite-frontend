@@ -43,11 +43,11 @@
             {% test_rule 'can_archive_product' request good as can_archive_product %}
             {% test_rule 'can_restore_product' request good as can_restore_product %}
             {% if can_archive_product %}
-                <a role="button" draggable="false" id="archive-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_archive_restore' good.id 'archive' %}">
+                <a role="button" draggable="false" id="archive-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_archive' good.id %}">
                     Archive product
                 </a>
             {% elif can_restore_product %}
-                <a role="button" draggable="false" id="restore-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_archive_restore' good.id 'restore' %}">
+                <a role="button" draggable="false" id="restore-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_restore' good.id %}">
                     Restore product
                 </a>
             {% endif %}

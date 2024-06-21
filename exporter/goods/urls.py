@@ -84,17 +84,14 @@ urlpatterns = [
         TechnologyRelatedToFirearmsProductDetails.as_view(),
         name="technology_related_to_firearms_detail",
     ),
+    path("<uuid:pk>/archive/", common_views.GoodArchiveView.as_view(), name="good_archive"),
+    path("<uuid:pk>/restore/", common_views.GoodRestoreView.as_view(), name="good_restore"),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
     path("platform/<uuid:pk>/", CompleteItemProductDetails.as_view(), name="complete_item_detail"),
     path("material/<uuid:pk>/", MaterialProductDetails.as_view(), name="material_detail"),
     path("software/<uuid:pk>/", TechnologyProductDetails.as_view(), name="technology_detail"),
     path("component/<uuid:pk>/", ComponentAccessoryProductDetails.as_view(), name="component_accessory_detail"),
-    path(
-        "<uuid:pk>/archive-restore/<str:action>/",
-        common_views.GoodArchiveRestoreView.as_view(),
-        name="good_archive_restore",
-    ),
 ]
 
 
