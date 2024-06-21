@@ -3,8 +3,6 @@ import pytest
 
 from pytest_django.asserts import assertTemplateUsed
 
-from django.urls import reverse
-
 from core import client
 from core.constants import OrganisationDocumentType
 

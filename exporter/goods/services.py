@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from urllib.parse import urlencode
 
 from core import client
 from core.constants import ProductCategories
@@ -15,10 +16,9 @@ def get_goods(
     return data.json()
 
 
-def get_archived_goods(
-    request, page: int = 1, name=None, part_number=None, control_list_entry=None, for_application=None
-):
-    response = client.get(request, "/goods/archived-goods/" + convert_parameters_to_query_params(locals()))
+def get_archived_goods(request, page: int = 1, name=None, part_number=None, control_list_entry=None):
+    query_params = {"page": page, "name": name, "part_number": part_number, "control_list_entry": control_list_entry}
+    response = client.get(request, "/goods/archived-goods/?" + urlencode(query_params, doseq=True))
     response.raise_for_status()
     return response.json()
 
