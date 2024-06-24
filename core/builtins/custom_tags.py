@@ -227,15 +227,12 @@ def default_na(value):
 @register.filter()
 def get_agreed_to_foi_value(boolean):
     """
-    Returns 'No' if the boolean is equal to some variant of True, else 'Yes'.
+    Returns 'No' if the boolean is True, else 'Yes'.
     This is needed as long as the agreed_to_foi model field has yet to be
     updated in lite-api. For more context see the agreed_to_foi question in
     exporter: exporter/applications/forms/declaration.py
     """
-    if boolean is True or boolean == "true" or boolean == "True" or boolean == "yes" or boolean == "Yes":
-        return "No"
-    else:
-        return "Yes"
+    return "No" if boolean is True else "Yes"
 
 
 @register.filter()

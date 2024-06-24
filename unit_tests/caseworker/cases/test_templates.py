@@ -86,8 +86,8 @@ def test_good_on_application_display_quantity(data_good_on_application, quantity
 @pytest.mark.parametrize(
     ("agreed_to_foi", "agreed_to_foi_display_value", "foi_reason"),
     [
-        ("True", "No", "internal details"),
-        ("False", "Yes", ""),
+        (True, "No", "internal details"),
+        (False, "Yes", ""),
     ],
 )
 def test_foi_details_on_summary_page(data_standard_case, agreed_to_foi, agreed_to_foi_display_value, foi_reason):
