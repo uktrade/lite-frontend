@@ -225,6 +225,17 @@ def default_na(value):
 
 
 @register.filter()
+def get_agreed_to_foi_value(boolean):
+    """
+    Returns 'No' if the boolean is equal to True, else 'Yes'
+    """
+    if boolean is True or boolean == "true" or boolean == "True" or boolean == "yes" or boolean == "Yes":
+        return "No"
+    else:
+        return "Yes"
+
+
+@register.filter()
 def get_address(data):
     """
     Returns a correctly formatted address
