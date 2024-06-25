@@ -43,8 +43,39 @@ def mock_get_applications(requests_mock):
     )
 
 
+@pytest.fixture
+def mock_get_draft_applications(requests_mock):
+    return requests_mock.get(
+        f"/applications/?selected_tab=draft_tab",
+        json={
+            "count": 1,
+            "total_pages": 1,
+            "results": [
+                {
+                    "id": "e3e902de-e9b7-42c7-8290-589b25ba4e03",
+                    "name": "Le Application 99",
+                    "case_type": {"sub_type": {"key": "standard", "value": "Standard Licence"}},
+                    "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "draft"},
+                    "submitted_at": None,
+                    "updated_at": "2024-06-07T12:21:42.268966+01:00",
+                    "reference_code": None,
+                    "export_type": {"key": "permanent", "value": "Permanent"},
+                    "exporter_user_notification_count": 0,
+                }
+            ],
+        },
+    )
+
+
 def test_get_applications(authorized_client, mock_get_applications):
     url = reverse("applications:applications")
     response = authorized_client.get(url)
     assert response.status_code == 200
     assertTemplateUsed(response, "applications/applications.html")
+
+
+def test_get_draft_applications(authorized_client, mock_get_draft_applications):
+    url = reverse("applications:applications") + "?selected_tab=draft_tab"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assertTemplateUsed(response, "applications/drafts.html")
