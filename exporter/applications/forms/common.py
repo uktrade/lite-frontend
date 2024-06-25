@@ -5,6 +5,7 @@ from crispy_forms_gds.layout import Submit
 
 from django.urls import reverse_lazy
 
+from core.common.forms import BaseForm
 from exporter.applications.forms.edit import told_by_an_official_form, reference_name_form
 from exporter.core.constants import STANDARD
 from lite_content.lite_exporter_frontend import strings
@@ -77,3 +78,25 @@ class EditApplicationForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Continue"))
+
+
+class ApplicationEditJourneyTypeForm(BaseForm):
+    class Layout:
+        TITLE = "How do you want to edit the application?"
+
+    CHOICES = [
+        ("edit_reference", "Edit 'Your reference'"),
+        ("delete_something", "Delete something"),
+        ("change_add_something", "Change or add something"),
+    ]
+    journey_type = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={
+            "required": "Please select an option to proceed.",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ["journey_type"]

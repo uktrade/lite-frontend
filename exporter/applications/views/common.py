@@ -19,7 +19,9 @@ from exporter.applications.forms.common import (
     EditApplicationForm,
     application_copy_form,
     exhibition_details_form,
+    ApplicationEditJourneyTypeForm,
 )
+from exporter.applications.forms.edit import ApplicationReferenceForm
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
     get_application_type_string,
@@ -50,6 +52,7 @@ from exporter.applications.services import (
     post_appeal_document,
     get_appeal,
     create_application_amendment,
+    put_application,
 )
 from exporter.organisation.members.services import get_user
 
@@ -150,6 +153,75 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
             return self.handle_major_edit()
 
         return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+
+
+class ApplicationEditJourneySelectView(LoginRequiredMixin, FormView):
+    form_class = ApplicationEditJourneyTypeForm
+    template_name = "core/form.html"
+
+    @property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
+    def get_success_url(self):
+        return reverse("applications:task_list", kwargs={"pk": self.application_id})
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error creating amendment",
+        "Unexpected error creating amendment",
+    )
+    def create_amendment(self):
+        return create_application_amendment(self.request, self.application_id)
+
+    def handle_major_edit(self):
+        organisation = get_organisation(self.request, self.request.session["organisation"])
+        if organisation["id"] in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS:
+            data, _ = self.create_amendment()
+            return redirect(reverse("applications:task_list", kwargs={"pk": data["id"]}))
+        else:
+            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
+            return redirect(reverse("applications:task_list", kwargs={"pk": self.application_id}))
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        if data.get("journey_type") == "edit_reference":
+            return redirect(reverse("applications:edit_reference_name", kwargs={"pk": self.application_id}))
+        elif data.get("journey_type") == "delete_something":
+            pass
+        elif data.get("journey_type") == "change_add_something":
+            return self.handle_major_edit()
+
+        return super().form_valid(form)
+
+
+class ApplicationEditReferenceView(LoginRequiredMixin, FormView):
+    form_class = ApplicationReferenceForm
+    template_name = "core/form.html"
+
+    @property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
+    def get_initial(self):
+        return {"name": self.application["name"]}
+
+    def get_success_url(self):
+        return reverse("applications:application", kwargs={"pk": self.application_id})
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        put_application(self.request, self.application_id, {"name": data["name"]})
+
+        return super().form_valid(form)
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):

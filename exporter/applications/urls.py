@@ -63,12 +63,12 @@ urlpatterns = [
     path("<uuid:pk>/summary/", common.ApplicationSummary.as_view(), name="summary"),
     path("<uuid:pk>/submit-success/", common.ApplicationSubmitSuccessPage.as_view(), name="success_page"),
     path("<uuid:pk>/hcsat/<uuid:sid>/", HCSATApplicationPage.as_view(), name="application-hcsat"),
-    path("<uuid:pk>/edit-type/", common.ApplicationEditType.as_view(), name="edit_type"),
+    path("<uuid:pk>/edit-type/", common.ApplicationEditJourneySelectView.as_view(), name="edit_journey_type"),
     path("<uuid:pk>/check-your-answers/", common.CheckYourAnswers.as_view(), name="check_your_answers"),
     path("<uuid:pk>/submit/", common.Submit.as_view(), name="submit"),
     path("<uuid:pk>/copy/", common.ApplicationCopy.as_view(), name="copy"),
     # Standard and Open Licence
-    path("<uuid:pk>/edit/reference-name/", edit.EditReferenceName.as_view(), name="edit_reference_name"),
+    path("<uuid:pk>/edit/reference-name/", common.ApplicationEditReferenceView.as_view(), name="edit_reference_name"),
     path(
         "<uuid:pk>/edit/told-by-an-official/",
         told_by_an_official.ApplicationEditToldByAnOfficial.as_view(),
