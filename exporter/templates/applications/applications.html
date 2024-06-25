@@ -37,17 +37,17 @@
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
-			<a href="{% url 'applications:applications' %}?sort=submitted_at&selected_tab=submitted_tab"
-				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"selected_tab=finalised_tab" %}{% else %}lite-tabs__tab--selected{% endif %}"
+			<a href="{% url 'applications:applications' %}?sort_by=submitted_at&selected_filter=submitted_applications"
+				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"selected_filter=finalised_applications" %}{% else %}lite-tabs__tab--selected{% endif %}"
 				id="applications-tab-submitted">
 					{% lcs "applications.ApplicationsList.IN_PROGRESS_TAB" %}
 			</a>
-			<a href="{% url 'applications:applications' %}?sort=submitted_at&selected_tab=finalised_tab"
-				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"selected_tab=finalised_tab" %}lite-tabs__tab--selected{% endif %}"
+			<a href="{% url 'applications:applications' %}?sort_by=submitted_at&selected_filter=finalised_applications"
+				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"selected_filter=finalised_applications" %}lite-tabs__tab--selected{% endif %}"
 				id="applications-tab-draft">
 					Finalised
 			</a>
-			<a href="{% url 'applications:applications' %}?selected_tab=draft_tab" class="lite-tabs__tab" id="applications-tab-draft">
+			<a href="{% url 'applications:applications' %}?sort_by=-created_at&selected_filter=draft_tab" class="lite-tabs__tab" id="applications-tab-draft">
 				{% lcs "applications.ApplicationsList.DRAFTS_TAB" %}
 			</a>
 		</div>
@@ -55,17 +55,17 @@
 
 	<form method="GET" action="{% url 'applications:applications' %}">
 		<div class="govuk-form-group">
-			<label class="govuk-label" for="sort">
+			<label class="govuk-label" for="sort_by">
 				Sort by
 			</label>
-			<select class="govuk-select" id="sort" name="sort">
-            <option value="submitted_at" {% if request.GET.sort == 'submitted_at' %}selected{% endif %}>Date submitted</option>
-						<option value="-updated_at" {% if request.GET.sort == '-updated_at' %}selected{% endif %}>Date updated</option>
+			<select class="govuk-select" id="sort_by" name="sort_by">
+            <option value="submitted_at" {% if request.GET.sort_by == 'submitted_at' %}selected{% endif %}>Date submitted</option>
+						<option value="-updated_at" {% if request.GET.sort_by == '-updated_at' %}selected{% endif %}>Date updated</option>
 			</select>
 		</div>
 
 	  {% for key, value in request.GET.items %}
-			{% if key != 'sort' %}
+			{% if key != 'sort_by' %}
 					<input type="hidden" name="{{ key }}" value="{{ value }}">
 			{% endif %}
     {% endfor %}

@@ -33,15 +33,16 @@
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
-			<a href="{% url 'applications:applications' %}?sort=submitted_at&selected_tab=submitted_tab" class="lite-tabs__tab">
+			<a href="{% url 'applications:applications' %}?sort_by=submitted_at&selected_filter=submitted_applications"
+				class="lite-tabs__tab">
 				{% lcs "applications.ApplicationsList.IN_PROGRESS_TAB" %}
 			</a>
-			<a href="{% url 'applications:applications' %}?sort=submitted_at&selected_tab=finalised_tab"
+			<a href="{% url 'applications:applications' %}?sort_by=submitted_at&selected_filter=finalised_applications"
 				class="lite-tabs__tab"
 				id="applications-tab-draft">
 					Finalised
 			</a>
-			<a href="{% url 'applications:applications' %}?submitted=False" class="lite-tabs__tab lite-tabs__tab--selected">
+			<a href="{% url 'applications:applications' %}?sort_by=-created_at&selected_tab=draft_tab" class="lite-tabs__tab lite-tabs__tab--selected">
 				{% lcs "applications.ApplicationsList.DRAFTS_TAB" %}
 			</a>
 		</div>

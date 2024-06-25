@@ -1498,12 +1498,9 @@ def should_see_notification_check_progress(driver):  # noqa
 
 @then("I see a notification next to the application")
 def should_see_notification_application(driver, context):  # noqa
-    try:
-        dropdown = driver.find_element(By.ID, "sort")
-        select = Select(dropdown)
-        select.select_by_value("-updated_at")
-    except NoSuchElementException:
-        pass
+    dropdown = driver.find_element(By.ID, "sort_by")
+    select = Select(dropdown)
+    select.select_by_value("-updated_at")
 
     elements = driver.find_elements(by=By.CSS_SELECTOR, value=".govuk-table__row")
     no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)

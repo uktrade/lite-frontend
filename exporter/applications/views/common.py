@@ -68,9 +68,10 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         params = {
             "page": int(request.GET.get("page", 1)),
-            "selected_tab": request.GET.get("selected_tab", "submitted_tab"),
-            "sort": request.GET.get("sort", "submitted_at"),
+            "selected_filter": request.GET.get("selected_filter", "submitted_applications"),
+            "sort_by": request.GET.get("sort_by", "submitted_at"),
         }
+
         organisation = get_organisation(request, request.session["organisation"])
         applications = get_applications(request, **params)
         is_user_multiple_organisations = len(get_user(self.request)["organisations"]) > 1
@@ -83,7 +84,7 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
             "is_user_multiple_organisations": is_user_multiple_organisations,
         }
 
-        if params["selected_tab"] in ["submitted_tab", "finalised_tab"]:
+        if params["selected_filter"] in ["submitted_applications", "finalised_applications"]:
             template_name = "applications/applications.html"
         else:
             template_name = "applications/drafts.html"
