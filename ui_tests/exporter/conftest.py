@@ -7,6 +7,7 @@ from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 
 import tests_common.tools.helpers as utils
@@ -1497,6 +1498,10 @@ def should_see_notification_check_progress(driver):  # noqa
 
 @then("I see a notification next to the application")
 def should_see_notification_application(driver, context):  # noqa
+    dropdown = driver.find_element(By.ID, "sort_by")
+    select = Select(dropdown)
+    select.select_by_value("-updated_at")
+
     elements = driver.find_elements(by=By.CSS_SELECTOR, value=".govuk-table__row")
     no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)
     assert "1" in elements[no].find_element(by=By.CSS_SELECTOR, value=Shared(driver).NOTIFICATION).text
