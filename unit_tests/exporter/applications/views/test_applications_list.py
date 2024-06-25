@@ -46,7 +46,7 @@ def mock_get_applications(requests_mock):
 @pytest.fixture
 def mock_get_draft_applications(requests_mock):
     return requests_mock.get(
-        f"/applications/?selected_tab=draft_tab",
+        f"/applications/?sort_by=-created_at&selected_filter=draft_applications",
         json={
             "count": 1,
             "total_pages": 1,
@@ -75,7 +75,7 @@ def test_get_applications(authorized_client, mock_get_applications):
 
 
 def test_get_draft_applications(authorized_client, mock_get_draft_applications):
-    url = reverse("applications:applications") + "?selected_tab=draft_tab"
+    url = reverse("applications:applications") + "?sort_by=-created_at&selected_filter=draft_applications"
     response = authorized_client.get(url)
     assert response.status_code == 200
     assertTemplateUsed(response, "applications/drafts.html")

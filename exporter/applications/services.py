@@ -24,7 +24,7 @@ def get_applications(request, page: int = 1, **params):
     :param submitted: Returns submitted applications if True, else returns draft applications if False
     """
     querystring = convert_parameters_to_query_params(
-        {"page": page, "selected_tab": params.get("selected_tab"), "sort": params.get("sort")}
+        {"page": page, "selected_filter": params.get("selected_filter"), "sort_by": params.get("sort_by")}
     )
     data = client.get(request, f"/applications/{querystring}")
     return data.json()
