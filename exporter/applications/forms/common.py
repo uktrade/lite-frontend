@@ -100,3 +100,25 @@ class ApplicationEditJourneyTypeForm(BaseForm):
 
     def get_layout_fields(self):
         return ["journey_type"]
+
+
+class ApplicationSelectEntityTypeForm(BaseForm):
+    class Layout:
+        TITLE = "What would you like to delete from the application?"
+
+    CHOICES = [
+        ("product", "A product"),
+        ("consignee", "A consignee"),
+        ("third_party", "A third party"),
+    ]
+    entity_type = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={
+            "required": "Please select an option to proceed.",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ["entity_type"]

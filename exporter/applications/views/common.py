@@ -20,6 +20,7 @@ from exporter.applications.forms.common import (
     application_copy_form,
     exhibition_details_form,
     ApplicationEditJourneyTypeForm,
+    ApplicationSelectEntityTypeForm,
 )
 from exporter.applications.forms.edit import ApplicationReferenceForm
 from exporter.applications.helpers.check_your_answers import (
@@ -168,7 +169,7 @@ class ApplicationEditJourneySelectView(LoginRequiredMixin, FormView):
         return get_application(self.request, self.application_id)
 
     def get_success_url(self):
-        return reverse("applications:task_list", kwargs={"pk": self.application_id})
+        return reverse("applications:application", kwargs={"pk": self.application_id})
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -192,7 +193,7 @@ class ApplicationEditJourneySelectView(LoginRequiredMixin, FormView):
         if data.get("journey_type") == "edit_reference":
             return redirect(reverse("applications:edit_reference_name", kwargs={"pk": self.application_id}))
         elif data.get("journey_type") == "delete_something":
-            pass
+            return redirect(reverse("applications:select_entity_type", kwargs={"pk": self.application_id}))
         elif data.get("journey_type") == "change_add_something":
             return self.handle_major_edit()
 
@@ -222,6 +223,80 @@ class ApplicationEditReferenceView(LoginRequiredMixin, FormView):
         put_application(self.request, self.application_id, {"name": data["name"]})
 
         return super().form_valid(form)
+
+
+class ApplicationSelectEntityTypeSelectView(LoginRequiredMixin, FormView):
+    form_class = ApplicationSelectEntityTypeForm
+    template_name = "core/form.html"
+
+    @property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
+    def get_success_url(self):
+        return reverse("applications:application", kwargs={"pk": self.application_id})
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        if data.get("entity_type") == "product":
+            return redirect(reverse("applications:goods", kwargs={"pk": self.application_id}))
+        elif data.get("entity_type") == "consignee":
+            if self.application["consignee"] is not None:
+                return redirect(reverse("applications:consignee", kwargs={"pk": self.application_id}))
+            else:
+                return redirect(
+                    reverse(
+                        "applications:entity_not_available",
+                        kwargs={"pk": self.application_id, "party_type": "consignee"},
+                    )
+                )
+        elif data.get("entity_type") == "third_party":
+            if self.application["third_parties"]:
+                return redirect(reverse("applications:third_parties", kwargs={"pk": self.application_id}))
+            else:
+                return redirect(
+                    reverse(
+                        "applications:entity_not_available",
+                        kwargs={"pk": self.application_id, "party_type": "third_party"},
+                    )
+                )
+
+        return super().form_valid(form)
+
+
+class ApplicationEntityNotAvailableView(LoginRequiredMixin, TemplateView):
+    template_name = "applications/entity_not_available.html"
+
+    @property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
+    def get_content(self):
+        if self.kwargs["party_type"] == "consignee":
+            return {"title": "Consignee", "description": "There are no consignees on this application"}
+        if self.kwargs["party_type"] == "third_party":
+            return {"title": "Third parties", "description": "There are no third parties on this application"}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        content = self.get_content()
+        context.update(
+            {
+                "case_id": self.application_id,
+                "title": content["title"],
+                "description": content["description"],
+                "back_url": reverse("applications:application", kwargs={"pk": self.application_id}),
+            }
+        )
+        return context
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
