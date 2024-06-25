@@ -16,7 +16,7 @@ from core.helpers import convert_parameters_to_query_params
 from exporter.core.objects import Application
 
 
-def get_applications(request, page: int = 1, submitted: bool = True, **params):
+def get_applications(request, page: int = 1, **params):
     """
     Returns a list of applications
     :param request: Standard HttpRequest object
@@ -24,7 +24,7 @@ def get_applications(request, page: int = 1, submitted: bool = True, **params):
     :param submitted: Returns submitted applications if True, else returns draft applications if False
     """
     querystring = convert_parameters_to_query_params(
-        {"page": page, "submitted": submitted, "finalised": params.get("finalised"), "sort": params.get("sort")}
+        {"page": page, "selected_tab": params.get("selected_tab"), "sort": params.get("sort")}
     )
     data = client.get(request, f"/applications/{querystring}")
     return data.json()

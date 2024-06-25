@@ -1,5 +1,4 @@
 {% extends 'layouts/base.html' %}
-{% load url_filters %}
 
 {% block back_link %}
 	{% include 'includes/breadcrumbs.html' with title='hub.Tiles.APPLICATIONS' %}
@@ -34,11 +33,11 @@
 
 	<div class="lite-tabs__container">
 		<div class="lite-tabs">
-			<a href="{% url 'applications:applications' %}?submitted=True" class="lite-tabs__tab">
+			<a href="{% url 'applications:applications' %}?sort=submitted_at&selected_tab=submitted_tab" class="lite-tabs__tab">
 				{% lcs "applications.ApplicationsList.IN_PROGRESS_TAB" %}
 			</a>
-			<a href="{% url 'applications:applications' %}?submitted=True&finalised=True"
-				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"finalised=True" %}lite-tabs__tab--selected{% endif %}"
+			<a href="{% url 'applications:applications' %}?sort=submitted_at&selected_tab=finalised_tab"
+				class="lite-tabs__tab"
 				id="applications-tab-draft">
 					Finalised
 			</a>
