@@ -7,7 +7,7 @@ from pytest_django.asserts import assertTemplateUsed
 @pytest.fixture
 def mock_get_applications(requests_mock):
     return requests_mock.get(
-        f"/applications/?page=1&submitted=True&finalised=False&sort=submitted_at",
+        f"/applications/",
         json={
             "count": 2,
             "total_pages": 1,

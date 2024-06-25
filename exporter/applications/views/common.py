@@ -54,7 +54,6 @@ from exporter.applications.services import (
 from exporter.organisation.members.services import get_user
 
 from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType
-from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import confirm_form
@@ -69,8 +68,7 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         params = {
             "page": int(request.GET.get("page", 1)),
-            "submitted": str_to_bool(request.GET.get("submitted", True)),
-            "finalised": str_to_bool(request.GET.get("finalised", False)),
+            "selected_tab": request.GET.get("selected_tab", "submitted_tab"),
             "sort": request.GET.get("sort", "submitted_at"),
         }
         organisation = get_organisation(request, request.session["organisation"])
@@ -84,9 +82,13 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
             "params_str": convert_dict_to_query_params(params),
             "is_user_multiple_organisations": is_user_multiple_organisations,
         }
-        return render(
-            request, "applications/applications.html" if params["submitted"] else "applications/drafts.html", context
-        )
+
+        if params["selected_tab"] in ["submitted_tab", "finalised_tab"]:
+            template_name = "applications/applications.html"
+        else:
+            template_name = "applications/drafts.html"
+
+        return render(request, template_name, context)
 
 
 class DeleteApplication(LoginRequiredMixin, SingleFormView):
