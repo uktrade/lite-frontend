@@ -25,6 +25,7 @@ services:
 
   db:
     image: eu.gcr.io/sre-docker-registry/lite-db:dbt_platform
+    platform: linux/amd64
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=lite-api

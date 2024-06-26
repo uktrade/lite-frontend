@@ -3,13 +3,13 @@ ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
 ifdef CI
 	docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
 	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
-	docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml --platform linux/amd64
-	docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml --platform linux/amd64
+	docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml
+	docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml
 else
 	docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
 	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
-	docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml --platform linux/amd64
-	docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml --platform linux/amd64
+	docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml
+	docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml
 endif
 
 wait-for-caseworker = dockerize -wait http://caseworker:8200/healthcheck -timeout 10m -wait-retry-interval 5s
