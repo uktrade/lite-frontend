@@ -74,7 +74,7 @@ class EditApplicationForm(forms.Form):
     #     },
     # )
     # The minor edit flow has been temporarily disabled
-    edit_type = forms.CharField(widget=HiddenInput, initial="major")
+    edit_type = forms.CharField(widget=HiddenInput)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
