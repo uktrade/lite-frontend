@@ -1,13 +1,11 @@
 ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
 
 ifdef CI
-	postgres-version-check = psql --version
 	docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
 	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
 	docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml
 	docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml
 else
-	postgres-version-check = psql --version
 	docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
 	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
 	docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml

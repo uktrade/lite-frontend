@@ -201,32 +201,37 @@ commands:
   run_e2e_exporter:
     steps:
       - run:
-            name: "decode secret ENV variable"
-            command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
+        name: "decode secret ENV variable"
+        command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
       - run_make:
-          label: Run exporter e2e tests
-          target: start-exporter exporter-e2e-selenium-test
+        label: Run exporter e2e tests
+        target: start-exporter exporter-e2e-selenium-test
+      - run: psql --version
+      
 
   run_e2e_exporter_dbt_platform:
     steps:
       - run:
-            name: "decode secret ENV variable"
-            command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
+        name: "decode secret ENV variable"
+        command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
       - run_make:
-          label: Run exporter e2e tests on dbt platform
-          target: start-exporter-dbt-platform exporter-e2e-selenium-test-dbt-plafform
+        label: Run exporter e2e tests on dbt platform
+        target: start-exporter-dbt-platform exporter-e2e-selenium-test-dbt-plafform
+      - run: psql --version
 
   run_e2e_caseworker:
     steps:
       - run_make:
-          label: Run caseworker e2e tests
-          target: start-caseworker caseworker-e2e-selenium-test
+        label: Run caseworker e2e tests
+        target: start-caseworker caseworker-e2e-selenium-test
+      - run: psql --version
 
   run_e2e_caseworker_dbt_platform:
     steps:
       - run_make:
-          label: Run caseworker e2e tests on dbt platform
-          target: start-caseworker-dbt-platform caseworker-e2e-selenium-test-dbt-platform
+        label: Run caseworker e2e tests on dbt platform
+        target: start-caseworker-dbt-platform caseworker-e2e-selenium-test-dbt-platform
+      - run: psql --version
 
 ###############################################################################
 # Jobs
@@ -461,5 +466,3 @@ workflows:
       - caseworker_e2e_test_jenkins_dbt_platform
       - exporter_e2e_test_jenkins
       - exporter_e2e_test_jenkins_dbt_platform
-
-# test
