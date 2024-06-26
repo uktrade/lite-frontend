@@ -1,5 +1,4 @@
 from django import forms
-from django.forms.widgets import HiddenInput
 
 from django.urls import reverse_lazy
 
@@ -108,9 +107,8 @@ def declaration_form(application_id):
 
 
 class EditApplicationForm(forms.Form):
-    # The minor edit flow has been temporarily disabled,
+    # The minor edit flow has been disabled,
     # so all edits are major edits
-    edit_type = forms.CharField(widget=HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
