@@ -112,17 +112,17 @@ caseworker-e2e-selenium-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseworker' ***"
 	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker)' && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker
 
-# caseworker-e2e-selenium-test-dbt-platform:
-# 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseworker' ***"
-# 	$(docker-e2e-caseworker-dbt-plafform) exec caseworker bash -c '$(wait-for-caseworker)' && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker
+caseworker-e2e-selenium-test-dbt-plafform:
+	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseworker-dbt-plafform' ***"
+	$(docker-e2e-caseworker-dbt-plafform) exec caseworker bash -c '$(wait-for-caseworker)' && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker
 
 exporter-e2e-selenium-test:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
 	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter)' && PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter
 
-# exporter-e2e-selenium-test-dbt-plafform:
-# 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
-# 	$(docker-e2e-exporter-dbt-plafform) exec exporter bash -c '$(wait-for-exporter)' && PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter
+exporter-e2e-selenium-test-dbt-plafform:
+	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
+	$(docker-e2e-exporter-dbt-plafform) exec exporter bash -c '$(wait-for-exporter)' && PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter
 
 build-exporter:
 	$(docker-e2e-exporter) build
