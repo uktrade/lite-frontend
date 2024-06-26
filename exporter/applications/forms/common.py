@@ -1,4 +1,5 @@
 from django import forms
+from django.forms.widgets import HiddenInput
 
 from django.urls import reverse_lazy
 
@@ -107,18 +108,20 @@ def declaration_form(application_id):
 
 
 class EditApplicationForm(forms.Form):
-    CHOICES = [
-        ("minor", "Delete a product, third party or country"),
-        ("major", "Add a product or edit something else"),
-    ]
-    edit_type = forms.ChoiceField(
-        choices=CHOICES,
-        widget=forms.RadioSelect,
-        label="",
-        error_messages={
-            "required": "Please select an option to proceed.",
-        },
-    )
+    # CHOICES = [
+    #     ("minor", "Delete a product, third party or country"),
+    #     ("major", "Add a product or edit something else"),
+    # ]
+    # edit_type = forms.ChoiceField(
+    #     choices=CHOICES,
+    #     widget=forms.RadioSelect,
+    #     label="",
+    #     error_messages={
+    #         "required": "Please select an option to proceed.",
+    #     },
+    # )
+    # The minor edit flow has been temporarily disabled
+    edit_type = forms.CharField(widget=HiddenInput, initial="major")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
