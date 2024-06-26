@@ -3,13 +3,13 @@ ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
 ifdef CI
 	docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
 	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
-	ls; docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml -f docker-compose.dbt-platform.yml
-	ls; docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml -f docker-compose.dbt-platform.yml
+	docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml -f docker-compose.dbt-platform.yml
+	docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml -f docker-compose.dbt-platform.yml
 else
 	docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
 	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
-	ls; docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml -f docker-compose.dbt-platform.yml
-	ls; docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml -f docker-compose.dbt-platform.yml
+	docker-e2e-caseworker-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.caseworker.yml -f docker-compose.dbt-platform.yml
+	docker-e2e-exporter-dbt-plafform = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.dbt.platform.yml -f docker-compose.exporter.yml -f docker-compose.dbt-platform.yml
 endif
 
 wait-for-caseworker = dockerize -wait http://caseworker:8200/healthcheck -timeout 10m -wait-retry-interval 5s
@@ -121,7 +121,7 @@ exporter-e2e-selenium-test:
 	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter)' && PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter
 
 exporter-e2e-selenium-test-dbt-plafform:
-	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseworker' ***"
+	@echo "*** Requires starting the caseworker, which can be started running: 'make start-caseworker' ***"
 	$(docker-e2e-exporter-dbt-plafform) exec caseworker bash -c '$(wait-for-caseworker)' && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker
 
 build-exporter:
