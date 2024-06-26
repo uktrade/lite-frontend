@@ -334,7 +334,7 @@ jobs:
       - prepare_e2e_tests:
           api_branch: auto
       - run_e2e_caseworker
-      - run: docker exec db psql --version
+      - run: docker exec lite-db-1 psql --version
       - finish_e2e_tests
 
   caseworker_e2e_test_dbt_platform:
