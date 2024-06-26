@@ -130,8 +130,8 @@ commands:
     steps:
       - run:
           name: Clone API
-          command: | 
-            git clone git@github.com:uktrade/lite-api.git # /PS-IGNORE
+          command: |
+            git clone git@github.com:uktrade/lite-api.git
             cd lite-api
             git checkout $(python ../which_branch.py <<parameters.api_branch>>)
       - run:
@@ -337,6 +337,20 @@ jobs:
       - run_e2e_caseworker_dbt_platform
       - finish_e2e_tests
 
+  caseworker_e2e_test_dbt_platform:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: large
+    parallelism: 10
+    environment:
+      PIPENV_YES: 1
+    steps:
+      - prepare_e2e_tests:
+          api_branch: auto
+      - run_e2e_caseworker_dbt_platform
+      - finish_e2e_tests
+
   exporter_e2e_test:
     machine:
       image: ubuntu-2204:current
@@ -349,6 +363,20 @@ jobs:
       - prepare_e2e_tests:
           api_branch: auto
       - run_e2e_exporter
+      - run_e2e_exporter_dbt_platform
+      - finish_e2e_tests
+
+  exporter_e2e_test_dbt_platform:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: large
+    parallelism: 2
+    environment:
+      PIPENV_YES: 1
+    steps:
+      - prepare_e2e_tests:
+          api_branch: auto
       - run_e2e_exporter_dbt_platform
       - finish_e2e_tests
 
@@ -367,6 +395,20 @@ jobs:
       - run_e2e_caseworker_dbt_platform
       - finish_e2e_tests
 
+  caseworker_e2e_test_jenkins_dbt_platform:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: large
+    parallelism: 10
+    environment:
+      PIPENV_YES: 1
+    steps:
+      - prepare_e2e_tests:
+          api_branch: << pipeline.parameters.api_git_tag >>
+      - run_e2e_caseworker_dbt_platform
+      - finish_e2e_tests
+
   exporter_e2e_test_jenkins:
     machine:
       image: ubuntu-2204:current
@@ -379,6 +421,19 @@ jobs:
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
       - run_e2e_exporter
+      - finish_e2e_tests
+
+exporter_e2e_test_jenkins_dbt_platform:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: large
+    parallelism: 2
+    environment:
+      PIPENV_YES: 1
+    steps:
+      - prepare_e2e_tests:
+          api_branch: << pipeline.parameters.api_git_tag >>
       - run_e2e_exporter_dbt_platform
       - finish_e2e_tests
 
@@ -399,9 +454,13 @@ workflows:
       - frontend_unit_test
       - frontend_artefacts_check
       - caseworker_e2e_test
+      - caseworker_e2e_test_dbt_platform
       - exporter_e2e_test
+      - exporter_e2e_test_dbt_platform
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:
       - caseworker_e2e_test_jenkins
+      - caseworker_e2e_test_jenkins_dbt_platform
       - exporter_e2e_test_jenkins
+      - exporter_e2e_test_jenkins_dbt_platform
