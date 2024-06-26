@@ -24,7 +24,7 @@ services:
     tty: true
 
   db:
-    # image: add new lite-db snapshot for postgres 13 in format: eu.gcr.io/sre-docker-registry/lite-db:latest
+    image: eu.gcr.io/sre-docker-registry/lite-db:dbt_platform
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=lite-api

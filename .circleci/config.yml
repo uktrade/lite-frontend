@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.4.7
+  browser-tools: circleci/browser-tools@1.4.7 # /PS-IGNORE
 
 parameters:
   run_ui_tests:
@@ -130,8 +130,8 @@ commands:
     steps:
       - run:
           name: Clone API
-          command: |
-            git clone git@github.com:uktrade/lite-api.git
+          command: | 
+            git clone git@github.com:uktrade/lite-api.git # /PS-IGNORE
             cd lite-api
             git checkout $(python ../which_branch.py <<parameters.api_branch>>)
       - run:
@@ -207,11 +207,26 @@ commands:
           label: Run exporter e2e tests
           target: start-exporter exporter-e2e-selenium-test
 
+  run_e2e_exporter_dbt_platform:
+    steps:
+      - run:
+            name: "decode secret ENV variable"
+            command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
+      - run_make:
+          label: Run exporter e2e tests on dbt platform
+          target: start-exporter-dbt-platform exporter-e2e-selenium-test-dbt-plafform
+
   run_e2e_caseworker:
     steps:
       - run_make:
           label: Run caseworker e2e tests
           target: start-caseworker caseworker-e2e-selenium-test
+
+  run_e2e_caseworker_dbt_platform:
+    steps:
+      - run_make:
+          label: Run caseworker e2e tests on dbt platform
+          target: start-caseworker-dbt-platform caseworker-e2e-selenium-test-dbt-platform
 
 ###############################################################################
 # Jobs
@@ -319,6 +334,7 @@ jobs:
       - prepare_e2e_tests:
           api_branch: auto
       - run_e2e_caseworker
+      - run_e2e_caseworker_dbt_platform
       - finish_e2e_tests
 
   exporter_e2e_test:
@@ -333,6 +349,7 @@ jobs:
       - prepare_e2e_tests:
           api_branch: auto
       - run_e2e_exporter
+      - run_e2e_exporter_dbt_platform
       - finish_e2e_tests
 
   caseworker_e2e_test_jenkins:
@@ -347,6 +364,7 @@ jobs:
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
       - run_e2e_caseworker
+      - run_e2e_caseworker_dbt_platform
       - finish_e2e_tests
 
   exporter_e2e_test_jenkins:
@@ -361,6 +379,7 @@ jobs:
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
       - run_e2e_exporter
+      - run_e2e_exporter_dbt_platform
       - finish_e2e_tests
 
 workflows:
