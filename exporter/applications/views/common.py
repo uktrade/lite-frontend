@@ -145,12 +145,15 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
             return redirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
 
     def form_valid(self, form):
+        # self.application_id = str(self.kwargs["pk"])
+        # if form.cleaned_data.get("edit_type") == "major":
+        #     return self.handle_major_edit()
 
-        self.application_id = str(self.kwargs["pk"])
-        if form.cleaned_data.get("edit_type") == "major":
-            return self.handle_major_edit()
+        # return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
 
-        return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+        # The minor edit flow has been temporarily disabled,
+        # so all edits are major edits
+        return self.handle_major_edit()
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
