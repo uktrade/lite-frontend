@@ -1,5 +1,4 @@
 from django import forms
-from django.forms.widgets import HiddenInput
 
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Submit
@@ -61,9 +60,8 @@ def exhibition_details_form(application_id):
 
 
 class EditApplicationForm(forms.Form):
-    # The minor edit flow has been temporarily disabled,
+    # The minor edit flow has been disabled,
     # so all edits are major edits
-    edit_type = forms.CharField(widget=HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

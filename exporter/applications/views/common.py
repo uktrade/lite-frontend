@@ -154,9 +154,8 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         self.application_id = str(self.kwargs["pk"])
 
-        # The minor edit flow has been temporarily disabled,
+        # The minor edit flow has been disabled,
         # so all edits are major edits
-
         return self.handle_major_edit()
 
 
