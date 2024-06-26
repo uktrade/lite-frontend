@@ -118,7 +118,7 @@ caseworker-e2e-selenium-test-dbt-platform:
 
 exporter-e2e-selenium-test:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
-	$(docker-e2e-exporter) exec exporter bash -c '$(postgres-version-check); $(wait-for-exporter)' && PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter
+	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter)' && PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter
 
 exporter-e2e-selenium-test-dbt-plafform:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
