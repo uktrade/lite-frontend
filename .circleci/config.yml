@@ -423,7 +423,7 @@ jobs:
       - run_e2e_exporter
       - finish_e2e_tests
 
-exporter_e2e_test_jenkins_dbt_platform:
+  exporter_e2e_test_jenkins_dbt_platform:
     machine:
       image: ubuntu-2204:current
       docker_layer_caching: true
