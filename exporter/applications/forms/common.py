@@ -107,18 +107,8 @@ def declaration_form(application_id):
 
 
 class EditApplicationForm(forms.Form):
-    CHOICES = [
-        ("minor", "Delete a product, third party or country"),
-        ("major", "Add a product or edit something else"),
-    ]
-    edit_type = forms.ChoiceField(
-        choices=CHOICES,
-        widget=forms.RadioSelect,
-        label="",
-        error_messages={
-            "required": "Please select an option to proceed.",
-        },
-    )
+    # The minor edit flow has been disabled,
+    # so all edits are major edits
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
