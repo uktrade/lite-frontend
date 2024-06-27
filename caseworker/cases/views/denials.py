@@ -118,9 +118,10 @@ class Denials(LoginRequiredMixin, FormView):
 
         form = context["form"]
         search, country_filter = self.get_search_params(form)
-        search_results, _ = search_denials(request=self.request, search=search, filter=country_filter)
+        # ES doesn't like ES Query string searches if we escape using doube // this works.
+        safe_search = search.replace("/", "//")
+        search_results, _ = search_denials(request=self.request, search=safe_search, filter=country_filter)
         total_pages = search_results.get("total_pages", 0)
-
         context.update(
             {
                 "search_string": search,
