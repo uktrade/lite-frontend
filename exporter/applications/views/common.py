@@ -58,7 +58,6 @@ from exporter.applications.services import (
 from exporter.organisation.members.services import get_user
 
 from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType
-from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import confirm_form
@@ -71,7 +70,12 @@ from core.helpers import convert_dict_to_query_params, get_document_data
 
 class ApplicationsList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
-        params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
+        params = {
+            "page": int(request.GET.get("page", 1)),
+            "selected_filter": request.GET.get("selected_filter", "submitted_applications"),
+            "sort_by": request.GET.get("sort_by", "submitted_at"),
+        }
+
         organisation = get_organisation(request, request.session["organisation"])
         applications = get_applications(request, **params)
         is_user_multiple_organisations = len(get_user(self.request)["organisations"]) > 1
@@ -83,9 +87,13 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
             "params_str": convert_dict_to_query_params(params),
             "is_user_multiple_organisations": is_user_multiple_organisations,
         }
-        return render(
-            request, "applications/applications.html" if params["submitted"] else "applications/drafts.html", context
-        )
+
+        if params["selected_filter"] in ["submitted_applications", "finalised_applications"]:
+            template_name = "applications/applications.html"
+        else:
+            template_name = "applications/drafts.html"
+
+        return render(request, template_name, context)
 
 
 class DeleteApplication(LoginRequiredMixin, SingleFormView):
