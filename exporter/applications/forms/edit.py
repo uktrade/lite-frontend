@@ -1,3 +1,6 @@
+from django import forms
+
+from core.common.forms import BaseForm
 from exporter.applications.components import back_to_task_list
 from lite_content.lite_exporter_frontend import applications, generic, strings
 from lite_content.lite_exporter_frontend.applications import ExportLicenceQuestions
@@ -62,3 +65,18 @@ def told_by_an_official_form(application_id=None):
         back_link=back_to_task_list(application_id),
         default_button_name=conditional(application_id, generic.SAVE_AND_RETURN, generic.SAVE_AND_CONTINUE),
     )
+
+
+class ApplicationReferenceForm(BaseForm):
+    class Layout:
+        TITLE = "Name the application"
+        SUBMIT_BUTTON_TEXT = "Save and return to application overview"
+
+    name = forms.CharField(
+        required=False,
+        label="",
+        help_text="Give the application a reference name so you can refer back to it when needed.",
+    )
+
+    def get_layout_fields(self):
+        return ["name"]

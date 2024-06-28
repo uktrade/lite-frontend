@@ -1,0 +1,34 @@
+{% extends 'layouts/base.html' %}
+
+{% load rules %}
+
+{% block back_link %}
+    <a href="{{ back_url }}" id="back-link" class="govuk-back-link">
+        Back to application overview
+    </a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+                    {{ title }}
+				{% endblock %}
+			</h1>
+
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                    {{ description }}
+                </strong>
+            </div>
+
+        </div>
+
+	</div>
+
+
+{% endblock %}
+
