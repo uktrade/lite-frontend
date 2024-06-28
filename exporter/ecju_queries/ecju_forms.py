@@ -42,7 +42,7 @@ class ECJUQueryRespondForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def get_layout_fields(self):
-        edit_type_url = reverse("applications:edit_type", kwargs={"pk": self.case_id})
+        edit_type_url = reverse("applications:edit_journey_type", kwargs={"pk": self.case_id})
         return [
             HTML.p(f'<div class="app-ecju-query__text"> {linebreaksbr(self.ecju_query["question"]) }</div>'),
             HTML.p("Your application will be paused until the case worker receives a response. To reply: "),
