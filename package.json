@@ -12,6 +12,7 @@
     "build": "npm install --no-save && npm run build_all",
     "build_all": "export NODE_ENV=production && concurrently 'npm run build_exporter' 'npm run build_caseworker'",
     "heroku-postbuild": "npm run build && rm -r node_modules",
+    "start": "echo start",
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
