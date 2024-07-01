@@ -1,4 +1,4 @@
 repository: lite/lite-frontend
 builder:
   name: paketobuildpacks/builder-jammy-full
-  version: 0.3.376
+  version: 0.3.339
