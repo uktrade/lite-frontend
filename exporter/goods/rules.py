@@ -27,7 +27,7 @@ rules.add_rule("can_delete_product", is_draft_product)
 
 rules.add_rule(
     "can_archive_product",
-    (is_submitted_product | is_verified_product) & ~is_archived_product,  # noqa
+    lambda _: False,  # noqa
 )
 
-rules.add_rule("can_restore_product", is_archived_product)  # noqa
+rules.add_rule("can_restore_product", lambda _: False)  # noqa

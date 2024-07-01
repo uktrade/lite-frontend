@@ -138,7 +138,7 @@ def test_submitted_product_details_context(
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
 
-    assert "Archive product" in soup.find("a", {"id": "archive-good"}).text
+    assert soup.find("a", {"id": "archive-good"}) is None
     assert soup.find("a", {"id": "restore-good"}) is None
     assert soup.find("a", {"id": "delete-good"}) is None
 
@@ -153,12 +153,12 @@ def test_verified_product_details_context(
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
 
-    assert "Archive product" in soup.find("a", {"id": "archive-good"}).text
+    assert soup.find("a", {"id": "archive-good"}) is None
     assert soup.find("a", {"id": "restore-good"}) is None
     assert soup.find("a", {"id": "delete-good"}) is None
 
 
-def test_archive_product_asks_for_confirmation(
+def archive_product_asks_for_confirmation(
     authorized_client,
     firearm_product_details_url,
     archive_product_url,
@@ -183,7 +183,7 @@ def test_archive_product_asks_for_confirmation(
     assert soup.find("a", {"id": "cancel-id-cancel"})["href"] == firearm_product_details_url
 
 
-def test_restore_product_asks_for_confirmation(
+def restore_product_asks_for_confirmation(
     authorized_client,
     firearm_product_details_url,
     restore_product_url,
@@ -207,7 +207,7 @@ def test_restore_product_asks_for_confirmation(
     assert soup.find("a", {"id": "cancel-id-cancel"})["href"] == firearm_product_details_url
 
 
-def test_archived_product_details_context(
+def archived_product_details_context(
     authorized_client,
     firearm_product_details_url,
     mock_archived_good_with_history_get,

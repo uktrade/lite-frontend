@@ -24,8 +24,8 @@ def test_can_user_delete_product_predicates(settings, rf, data_standard_case, st
     "status, is_archived, expected",
     (
         ({"key": GoodStatus.DRAFT, "value": GoodStatus.DRAFT.title()}, False, False),
-        ({"key": GoodStatus.SUBMITTED, "value": GoodStatus.SUBMITTED.title()}, False, True),
-        ({"key": GoodStatus.VERIFIED, "value": GoodStatus.VERIFIED.title()}, False, True),
+        ({"key": GoodStatus.SUBMITTED, "value": GoodStatus.SUBMITTED.title()}, False, False),
+        ({"key": GoodStatus.VERIFIED, "value": GoodStatus.VERIFIED.title()}, False, False),
         ({"key": GoodStatus.SUBMITTED, "value": GoodStatus.SUBMITTED.title()}, True, False),
         ({"key": GoodStatus.VERIFIED, "value": GoodStatus.VERIFIED.title()}, True, False),
     ),
@@ -45,8 +45,8 @@ def test_can_user_archive_product_predicates(settings, rf, data_standard_case, s
         ({"key": GoodStatus.DRAFT, "value": GoodStatus.DRAFT.title()}, False, False),
         ({"key": GoodStatus.SUBMITTED, "value": GoodStatus.SUBMITTED.title()}, False, False),
         ({"key": GoodStatus.VERIFIED, "value": GoodStatus.VERIFIED.title()}, False, False),
-        ({"key": GoodStatus.SUBMITTED, "value": GoodStatus.SUBMITTED.title()}, True, True),
-        ({"key": GoodStatus.VERIFIED, "value": GoodStatus.VERIFIED.title()}, True, True),
+        ({"key": GoodStatus.SUBMITTED, "value": GoodStatus.SUBMITTED.title()}, True, False),
+        ({"key": GoodStatus.VERIFIED, "value": GoodStatus.VERIFIED.title()}, True, False),
     ),
 )
 def test_can_user_restore_product_predicates(settings, rf, data_standard_case, status, is_archived, expected):
