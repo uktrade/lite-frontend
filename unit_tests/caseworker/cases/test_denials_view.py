@@ -1,11 +1,9 @@
 from urllib import parse
 import uuid
 from django.urls import reverse
-from unittest import mock
 import pytest
 from core import client
 from bs4 import BeautifulSoup
-from django.conf import settings
 
 
 @pytest.fixture(autouse=True)
@@ -29,7 +27,7 @@ def denials_data():
     return [
         {
             "id": "00000000-0000-0000-0000-000000000001",
-            "address": "726 example road",
+            "address": "726 \nexample road",
             "country": "Germany",
             "end_use": 'For the needs of "example company"',
             "item_description": "example something",
@@ -287,3 +285,41 @@ def test_search_denials_query_string_error(authorized_client, requests_mock, que
 
     assert response.status_code == 200
     assert "Enter a valid query string" in soup.get_text()
+
+
+@pytest.fixture
+def mock_newline_case(requests_mock, data_newline_enduser_address):
+    url = client._build_absolute_uri(f"/cases/{data_newline_enduser_address['case']['id']}/")
+    yield requests_mock.get(url=url, json=data_newline_enduser_address)
+
+
+def test_search_textarea_newline(
+    authorized_client,
+    data_newline_enduser_address,
+    requests_mock,
+    standard_case_pk,
+    queue_pk,
+    denials_data,
+    url,
+    denials_search_score_flag_off,
+    mock_newline_case,
+):
+    end_user_id = data_newline_enduser_address["case"]["data"]["end_user"]["id"]
+    end_user_name = data_newline_enduser_address["case"]["data"]["end_user"]["name"].replace(" ", "+")
+    end_user_address = data_newline_enduser_address["case"]["data"]["end_user"]["address"]
+
+    assert end_user_address == "42 \nWallaby \nWay"
+
+    requests_mock.get(
+        client._build_absolute_uri(
+            f"/external-data/denial-search/?search=name:({end_user_name})+address:({end_user_address})&page=1&country=United+Kingdom"
+        ),
+        json={"count": "26", "total_pages": "2", "results": denials_data * 26},
+    )
+
+    response = authorized_client.get(f"{url}?end_user={end_user_id}")
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    search_input = soup.find("textarea", id="id_search_string")
+    assert search_input
+    assert search_input.text == "\nname:(End User) address:(42 Wallaby Way)"
