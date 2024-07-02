@@ -27,7 +27,7 @@ def denials_data():
     return [
         {
             "id": "00000000-0000-0000-0000-000000000001",
-            "address": "726 \nexample road",
+            "address": "726 example road",
             "country": "Germany",
             "end_use": 'For the needs of "example company"',
             "item_description": "example something",
