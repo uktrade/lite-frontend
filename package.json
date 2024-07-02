@@ -61,7 +61,7 @@
     "lodash.debounce": "^4.0.8",
     "mark.js": "^8.11.1",
     "moment": "^2.29.4",
-    "parcel": "^2.11.0",
+    "parcel": "^2.12.0",
     "sass": "^1.38.0",
     "sortablejs": "^1.11.2-alpha.3",
     "tippy.js": "^6.3.7",
