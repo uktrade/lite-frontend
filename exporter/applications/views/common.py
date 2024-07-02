@@ -10,6 +10,7 @@ from django.views.generic import FormView, TemplateView
 
 from requests.exceptions import HTTPError
 
+from exporter.applications.constants import ApplicationStatus
 from exporter.applications.forms.appeal import AppealForm
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -155,6 +156,8 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application = get_application(request, kwargs["pk"])
+        if application["status"]["key"] not in [ApplicationStatus.DRAFT, ApplicationStatus.APPLICANT_EDITING]:
+            return redirect(reverse("applications:application", kwargs={"pk": kwargs["pk"]}))
         return get_application_task_list(request, application)
 
     def post(self, request, **kwargs):
