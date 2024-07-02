@@ -188,10 +188,9 @@ class AddGoodMaterialToApplication(
         ctx = super().get_context_data(form, **kwargs)
 
         ctx["back_link_url"] = reverse(
-            "applications:material_product_summary",
+            "applications:preexisting_good",
             kwargs={
                 "pk": self.kwargs["pk"],
-                "good_pk": self.good["id"],
             },
         )
         ctx["title"] = form.Layout.TITLE
