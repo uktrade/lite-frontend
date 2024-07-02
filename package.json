@@ -71,5 +71,6 @@
   },
   "alias": {
     "core": "./core/assets/javascripts"
-  }
+  },
+  "environmentVariables": { "NODE_OPTIONS": "" }
 }
