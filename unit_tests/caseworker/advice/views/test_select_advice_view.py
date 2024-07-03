@@ -3,8 +3,6 @@ from bs4 import BeautifulSoup
 
 from django.urls import reverse
 
-from unit_tests.caseworker.conftest import standard_case_pk
-
 
 @pytest.fixture(autouse=True)
 def setup(mock_queue, mock_case):
@@ -55,3 +53,26 @@ def test_serial_numbers_not_added_for_firearm_product_in_select_advice_view(auth
     assert "1. 12345" not in str(product_details)
     assert "2. ABC-123" not in str(product_details)
     assert "Not added yet" in str(product_details)
+
+
+def test_select_advice_get_check_denials(authorized_client, data_standard_case, url):
+    denial_match_1 = data_standard_case["case"]["data"]["denial_matches"][0]["denial_entity"]
+    denial_match_2 = data_standard_case["case"]["data"]["denial_matches"][1]["denial_entity"]
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    search_input = soup.find_all("p", class_="denial_matches")
+
+    denial_1 = search_input[0]
+    assert denial_1.a.get_text(strip=True) == denial_match_1["regime_reg_ref"]
+    assert denial_1.span.get_text(strip=True) == "POSSIBLE MATCH"
+    id_1 = denial_match_1["id"]
+    assert f"/denials/{id_1}" in str(denial_1.a)
+
+    denial_2 = search_input[1]
+    assert denial_2.a.get_text(strip=True) == denial_match_2["regime_reg_ref"]
+    assert denial_2.span.get_text(strip=True) == "FULL MATCH"
+    id_2 = denial_match_2["id"]
+    assert f"/denials/{id_2}" in str(denial_2.a)

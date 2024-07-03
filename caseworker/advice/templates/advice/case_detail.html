@@ -197,18 +197,20 @@
             <dd class="govuk-summary-list__value">
                 {% if case.data.denial_matches %}
                   {% for denial in case.data.denial_matches %}
-                    <p>
+                    <p class="denial_matches">
                       <a href="{% url 'external_data:denial-detail' pk=denial.denial_entity.id %}?queue_id={{queue.id}}&case_id={{case.id}}">
-                        {{ denial.denial.reference }}
+                        {{ denial.denial_entity.regime_reg_ref }}
                       </a>
-                      <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
-                        {% if denial.category == "exact" %}
-                          FULL MATCH
-                        {% elif denial.category == "partial" %}
-                          POSSIBLE MATCH
-                        {% endif %}
-                      </span>
+                      <p>
+                        <span class="govuk-tag govuk-tag--grey govuk-!-margin-0">
 
+                          {% if denial.category == "exact" %}
+                            FULL MATCH
+                          {% elif denial.category == "partial" %}
+                            POSSIBLE MATCH
+                          {% endif %}
+                        </span>
+                     </p>
                     </p>
                   {% endfor %}
                 {% else %}
