@@ -197,7 +197,6 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
             "type": self.view_type,
             "answers": convert_application_to_check_your_answers(self.application),
             "status_is_terminal": status_props["is_terminal"],
-            "status_is_major_editable": status_props["is_major_editable"],
             "errors": kwargs.get("errors"),
             "text": kwargs.get("text", ""),
             "activity": get_activity(request, self.application_id) or {},

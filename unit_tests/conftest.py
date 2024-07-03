@@ -1651,6 +1651,7 @@ def mock_status_properties(requests_mock):
         "is_read_only": False,
         "is_terminal": False,
         "is_major_editable": False,
+        "can_invoke_major_editable": False,
     }
     requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
     return data

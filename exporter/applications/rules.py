@@ -54,9 +54,9 @@ def is_application_in_major_edit(request, application):
 
 
 @rules.predicate
-def is_application_major_editable(request, application):
+def can_invoke_major_editable(request, application):
     status_props, _ = get_status_properties(request, application.status)
-    return application and status_props["is_major_editable"]
+    return application and status_props["can_invoke_major_editable"]
 
 
 rules.add_rule(
@@ -72,6 +72,6 @@ rules.add_rule(
 rules.add_rule("can_edit_quantity_value", is_application_in_draft | is_application_in_major_edit)  # noqa
 
 rules.add_rule(
-    "can_user_initiate_major_edit",
-    is_application_major_editable,
+    "can_user_invoke_major_edit",
+    can_invoke_major_editable,
 )

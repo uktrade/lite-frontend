@@ -5,21 +5,25 @@ from django.urls import reverse
 
 
 @pytest.mark.parametrize(
-    "is_major_editable",
+    "can_invoke_major_editable",
     [True, False],
 )
 def test_edit_button(
-    authorized_client, data_standard_case, mock_application_get, mock_status_properties, is_major_editable
+    authorized_client,
+    data_standard_case,
+    mock_application_get,
+    mock_status_properties,
+    can_invoke_major_editable,
 ):
     pk = data_standard_case["case"]["id"]
-    mock_status_properties["is_major_editable"] = is_major_editable
+    mock_status_properties["can_invoke_major_editable"] = can_invoke_major_editable
 
     application_url = reverse("applications:application", kwargs={"pk": pk})
     response = authorized_client.get(application_url)
     soup = BeautifulSoup(response.content, "html.parser")
 
     found_button = soup.find(id="button-edit-application") is not None
-    assert found_button is is_major_editable
+    assert found_button is can_invoke_major_editable
 
 
 def test_appeal_refusal_decision_button(
