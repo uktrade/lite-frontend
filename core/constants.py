@@ -49,18 +49,6 @@ class CaseStatusEnum:
         return [cls.SUBMITTED, cls.CLOSED, cls.WITHDRAWN]
 
     @classmethod
-    def is_terminal(cls, status):
-        return status in [
-            cls.CLOSED,
-            cls.DEREGISTERED,
-            cls.FINALISED,
-            cls.REGISTERED,
-            cls.REVOKED,
-            cls.SURRENDERED,
-            cls.WITHDRAWN,
-        ]
-
-    @classmethod
     def all(cls):
         is_all_upper = re.compile(r"^[A-Z_]+$")
         return [getattr(cls, param) for param in dir(cls) if is_all_upper.match(param)]
