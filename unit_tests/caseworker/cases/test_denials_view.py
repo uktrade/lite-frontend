@@ -288,14 +288,15 @@ def test_search_denials_query_string_error(authorized_client, requests_mock, que
 
 
 @pytest.fixture
-def mock_newline_case(requests_mock, data_newline_enduser_address):
-    url = client._build_absolute_uri(f"/cases/{data_newline_enduser_address['case']['id']}/")
-    yield requests_mock.get(url=url, json=data_newline_enduser_address)
+def mock_newline_case(requests_mock, data_standard_case):
+    data_standard_case["case"]["data"]["end_user"]["address"] = "42 \nWallaby \nWay"
+    url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
+    yield requests_mock.get(url=url, json=data_standard_case)
 
 
 def test_search_textarea_newline(
     authorized_client,
-    data_newline_enduser_address,
+    data_standard_case,
     requests_mock,
     standard_case_pk,
     queue_pk,
@@ -304,15 +305,13 @@ def test_search_textarea_newline(
     denials_search_score_flag_off,
     mock_newline_case,
 ):
-    end_user_id = data_newline_enduser_address["case"]["data"]["end_user"]["id"]
-    end_user_name = data_newline_enduser_address["case"]["data"]["end_user"]["name"].replace(" ", "+")
-    end_user_address = data_newline_enduser_address["case"]["data"]["end_user"]["address"]
-
-    assert end_user_address == "42 \nWallaby \nWay"
+    address = "42 \nWallaby \nWay"
+    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
+    end_user_name = data_standard_case["case"]["data"]["end_user"]["name"].replace(" ", "+")
 
     requests_mock.get(
         client._build_absolute_uri(
-            f"/external-data/denial-search/?search=name:({end_user_name})+address:({end_user_address})&page=1&country=United+Kingdom"
+            f"/external-data/denial-search/?search=name:({end_user_name})+address:({address})&page=1&country=United+Kingdom"
         ),
         json={"count": "26", "total_pages": "2", "results": denials_data * 26},
     )
