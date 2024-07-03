@@ -57,14 +57,14 @@ def mock_submitted_good_get(requests_mock, data_standard_case):
 
 
 @pytest.fixture
-def put_good_api_url(good_id):
-    return client._build_absolute_uri(f"/goods/{good_id}/")
+def archive_restore_good_api_url(good_id):
+    return client._build_absolute_uri(f"/goods/{good_id}/archive-restore/")
 
 
 @pytest.fixture
-def mock_put_good(requests_mock, put_good_api_url):
+def mock_archive_restore_good(requests_mock, archive_restore_good_api_url):
     return requests_mock.put(
-        put_good_api_url,
+        archive_restore_good_api_url,
         json={"is_archived": True},
         status_code=200,
     )
@@ -234,13 +234,13 @@ def test_post_archive_product(
     firearm_product_details_url,
     archive_product_url,
     mock_good_get,
-    mock_put_good,
+    mock_archive_restore_good,
 ):
     response = authorized_client.post(archive_product_url)
     assert response.status_code == 302
     assert response.url == firearm_product_details_url
-    assert mock_put_good.called_once
-    assert mock_put_good.last_request.json() == {"is_archived": True}
+    assert mock_archive_restore_good.called_once
+    assert mock_archive_restore_good.last_request.json() == {"is_archived": True}
 
 
 def test_post_restore_product(
@@ -248,13 +248,13 @@ def test_post_restore_product(
     firearm_product_details_url,
     restore_product_url,
     mock_good_get,
-    mock_put_good,
+    mock_archive_restore_good,
 ):
     response = authorized_client.post(restore_product_url)
     assert response.status_code == 302
     assert response.url == firearm_product_details_url
-    assert mock_put_good.called_once
-    assert mock_put_good.last_request.json() == {"is_archived": False}
+    assert mock_archive_restore_good.called_once
+    assert mock_archive_restore_good.last_request.json() == {"is_archived": False}
 
 
 def test_product_summary_url_for_each_type(product_summary_url, good_id):
