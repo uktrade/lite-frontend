@@ -70,12 +70,9 @@
         {% endfor %}
     </dl>
 
-    {% test_rule 'can_archive_product' request good as can_archive_product %}
-    {% if can_archive_product %}
-        <div id="archive_history">
-            {% for item in archive_history %}
-                <p class="govuk-body govuk-!-font-size-12 govuk-!-margin-bottom-0 govuk-!-margin-top-0"> {{ item }} </p>
-            {% endfor %}
-        </div>
-    {% endif %}
+    <div id="archive_history">
+        {% for item in archive_history %}
+            <p class="govuk-body govuk-!-font-size-12 govuk-!-margin-bottom-0 govuk-!-margin-top-0"> {{ item }} </p>
+        {% endfor %}
+    </div>
 {% endblock %}
