@@ -5,23 +5,26 @@ from django.urls import reverse
 
 
 @pytest.mark.parametrize(
-    "is_read_only",
+    "is_major_editable",
     [True, False],
 )
-def test_edit_button(authorized_client, data_standard_case, mock_application_get, mock_status_properties, is_read_only):
+def test_edit_button(
+    authorized_client, data_standard_case, mock_application_get, mock_status_properties, is_major_editable
+):
     pk = data_standard_case["case"]["id"]
-    mock_status_properties["is_read_only"] = is_read_only
+    mock_status_properties["is_major_editable"] = is_major_editable
 
     application_url = reverse("applications:application", kwargs={"pk": pk})
     response = authorized_client.get(application_url)
     soup = BeautifulSoup(response.content, "html.parser")
-    if is_read_only:
-        assert not soup.find(id="button-edit-application")
-    else:
-        assert soup.find(id="button-edit-application")
+
+    found_button = soup.find(id="button-edit-application") is not None
+    assert found_button is is_major_editable
 
 
-def test_appeal_refusal_decision_button(authorized_client, data_standard_case, mock_refused_application_get):
+def test_appeal_refusal_decision_button(
+    authorized_client, data_standard_case, mock_refused_application_get, mock_status_properties
+):
     pk = data_standard_case["case"]["id"]
 
     application_url = reverse("applications:application", kwargs={"pk": pk})
@@ -31,7 +34,9 @@ def test_appeal_refusal_decision_button(authorized_client, data_standard_case, m
 
 
 def test_appeal_button_not_shown_for_successful_application(
-    authorized_client, data_standard_case, mock_application_get
+    authorized_client,
+    data_standard_case,
+    mock_application_get,
 ):
     pk = data_standard_case["case"]["id"]
 
@@ -69,7 +74,12 @@ def test_appeal_deadline_date_format(
     assert response.status_code == 200
 
 
-def test_user_id_hidden_field(authorized_client, data_standard_case, mock_application_get, mock_exporter_user):
+def test_user_id_hidden_field(
+    authorized_client,
+    data_standard_case,
+    mock_application_get,
+    mock_exporter_user,
+):
     pk = data_standard_case["case"]["id"]
     application_url = reverse("applications:application", kwargs={"pk": pk})
     response = authorized_client.get(application_url)
