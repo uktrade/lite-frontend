@@ -353,8 +353,8 @@ def edit_technology(request, pk, json):
     return response.json(), response.status_code
 
 
-def archive_restore_good(request, pk, status):
-    data = {"is_archived": status}
+def archive_restore_good(request, pk, is_archived):
+    data = {"is_archived": is_archived}
     response = client.put(request, f"/goods/{pk}/archive-restore/", data)
     response.raise_for_status()
     return response.json(), response.status_code

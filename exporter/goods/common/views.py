@@ -42,7 +42,7 @@ class GoodArchiveView(GoodArchiveRestoreBaseView):
 
     def form_valid(self, form):
 
-        archive_restore_good(self.request, self.good_id, True)
+        archive_restore_good(self.request, self.good_id, is_archived=True)
 
         return super().form_valid(form)
 
@@ -52,6 +52,6 @@ class GoodRestoreView(GoodArchiveRestoreBaseView):
 
     def form_valid(self, form):
 
-        archive_restore_good(self.request, self.good_id, False)
+        archive_restore_good(self.request, self.good_id, is_archived=False)
 
         return super().form_valid(form)
