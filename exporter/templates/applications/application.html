@@ -35,8 +35,8 @@
 							{% lcs 'applications.ApplicationSummaryPage.Buttons.WITHDRAW_ACCESS_BUTTON' %}
 						</a>
 					{% endif %}
-					{% test_rule 'can_user_initiate_major_edit' request application as can_user_initiate_major_edit %}
-					{% if can_user_initiate_major_edit %}
+					{% test_rule 'can_user_invoke_major_edit' request application as can_user_invoke_major_edit %}
+					{% if can_user_invoke_major_edit %}
 						<a href="{% url 'applications:edit_type' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
 							{% lcs 'applications.ApplicationSummaryPage.Buttons.EDIT_APPLICATION_BUTTON' %}
 						</a>
