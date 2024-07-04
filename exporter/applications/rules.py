@@ -72,6 +72,6 @@ rules.add_rule(
 rules.add_rule("can_edit_quantity_value", is_application_in_draft | is_application_in_major_edit)  # noqa
 
 rules.add_rule(
-    "can_user_invoke_major_edit",
+    "can_invoke_major_editable",
     can_invoke_major_editable,
 )
