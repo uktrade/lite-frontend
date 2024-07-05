@@ -239,7 +239,6 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
         if self.good["query"]:
             context["case_id"] = self.good["query"]["id"]
             status_props, _ = get_status_properties(request, self.good["case_status"]["key"])
-            context["status_is_read_only"] = status_props["is_read_only"]
             context["status_is_terminal"] = status_props["is_terminal"]
 
             if self.view_type == "ecju-generated-documents":

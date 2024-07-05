@@ -216,7 +216,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             "permissible_statuses": get_permissible_statuses(self.request, self.case),
             "filters": generate_activity_filters(get_activity_filters(self.request, self.case_id), ApplicationPage),
             "is_terminal": status_props["is_terminal"],
-            "is_read_only": status_props["is_read_only"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "user": self.caseworker,
             **self.additional_context,

@@ -86,8 +86,13 @@ class BaseEditView(
     def get_success_url(self):
         return reverse("applications:component_accessory_product_summary", kwargs=self.kwargs)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
     def edit_object(self, request, good_id, payload):
-        edit_component_accessory(request, good_id, payload)
+        return edit_component_accessory(request, good_id, payload)
 
 
 class BaseComponentAccessoryEditView(BaseEditView):
@@ -156,6 +161,11 @@ class BaseComponentAccessoryEditWizardView(
     def get_success_url(self):
         return reverse("applications:component_accessory_product_summary", kwargs=self.kwargs)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
     def edit_object(self, request, good_pk, payload):
         return edit_component_accessory(self.request, good_pk, payload)
 
