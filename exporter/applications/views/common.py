@@ -19,6 +19,7 @@ from exporter.applications.forms.common import (
     EditApplicationForm,
     application_copy_form,
     exhibition_details_form,
+    ApplicationMajorEditConfirmationForm,
 )
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
@@ -62,6 +63,34 @@ from exporter.applications.forms.hcsat import HCSATminiform
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.helpers import convert_dict_to_query_params, get_document_data
+
+
+class ApplicationAmendmentMixin(LoginRequiredMixin):
+
+    @property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
+    @property
+    def organisation_id(self):
+        organisation = get_organisation(self.request, self.request.session["organisation"])
+        return organisation["id"]
+
+    @property
+    def amend_by_copy_whitelisted_organisation(self):
+        return self.organisation_id in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS
+
+    def get_application_detail_url(self):
+        return reverse("applications:application", kwargs={"pk": self.application_id})
+
+    def get_application_task_list_url(self, pk=None):
+        if not pk:
+            pk = self.application_id
+        return reverse("applications:task_list", kwargs={"pk": pk})
 
 
 class ApplicationsList(LoginRequiredMixin, TemplateView):
@@ -116,16 +145,13 @@ class DeleteApplication(LoginRequiredMixin, SingleFormView):
             return self.request.GET.get("return_to")
 
 
-class ApplicationEditType(LoginRequiredMixin, FormView):
+class ApplicationEditType(ApplicationAmendmentMixin, FormView):
     form_class = EditApplicationForm
     template_name = "edit_application_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        self.application_id = str(self.kwargs["pk"])
         self.data = get_application(self.request, self.application_id)
-
         context.update(
             {
                 "application_id": self.application_id,
@@ -134,30 +160,61 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
         )
         return context
 
+    def get_success_url(self):
+        if self.amend_by_copy_whitelisted_organisation:
+            return reverse("applications:major_edit_confirm", kwargs={"pk": self.application_id})
+        else:
+            return self.get_application_task_list_url()
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+
+        if data.get("edit_type") != "major":
+            return redirect(self.get_application_detail_url())
+
+        if not self.amend_by_copy_whitelisted_organisation:
+            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
+
+        return super().form_valid(form)
+
+
+class ApplicationMajorEditConfirmView(ApplicationAmendmentMixin, FormView):
+    form_class = ApplicationMajorEditConfirmationForm
+    template_name = "core/form.html"
+    amended_application_id = None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["application_reference"] = self.application["name"]
+        kwargs["cancel_url"] = reverse("applications:edit_type", kwargs={"pk": self.application_id})
+        return kwargs
+
+    def get_success_url(self):
+        if self.amend_by_copy_whitelisted_organisation:
+            return self.get_application_task_list_url(self.amended_application_id)
+        else:
+            return self.get_application_detail_url()
+
     @expect_status(
         HTTPStatus.CREATED,
         "Error creating amendment",
         "Unexpected error creating amendment",
     )
     def create_amendment(self):
-        return create_application_amendment(self.request, str(self.kwargs["pk"]))
+        return create_application_amendment(self.request, self.application_id)
 
     def handle_major_edit(self):
-        organisation = get_organisation(self.request, self.request.session["organisation"])
-        if organisation["id"] in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS:
-            data, _ = self.create_amendment()
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": data["id"]}))
-        else:
-            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+        if not self.amend_by_copy_whitelisted_organisation:
+            return
+
+        data, _ = self.create_amendment()
+        self.amended_application_id = data["id"]
 
     def form_valid(self, form):
 
-        self.application_id = str(self.kwargs["pk"])
-        if form.cleaned_data.get("edit_type") == "major":
-            return self.handle_major_edit()
+        self.handle_major_edit()
 
-        return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+        return super().form_valid(form)
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
