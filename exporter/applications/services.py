@@ -451,7 +451,7 @@ def get_case_generated_documents(request, pk):
 
 
 def get_status_properties(request, status):
-    data = client.get(request, "/static/statuses/properties/" + status)
+    data = client.get(request, f"/static/statuses/properties/{status}/")
     return data.json(), data.status_code
 
 

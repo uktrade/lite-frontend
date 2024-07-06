@@ -1,10 +1,12 @@
 from datetime import datetime
+from http import HTTPStatus
 
 from django.views.generic import FormView
 from django.urls import reverse
 from django.shortcuts import redirect
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
@@ -46,8 +48,13 @@ class BaseApplicationEditView(
             kwargs={"pk": self.application["id"]},
         )
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
     def edit_object(self, request, application_id, payload):
-        put_application(request, application_id, payload)
+        return put_application(request, application_id, payload)
 
     def form_valid(self, form):
         self.edit_object(self.request, self.application["id"], self.get_edit_payload(form))
@@ -87,8 +94,13 @@ class BaseApplicationEditWizardView(
         export_details_payload = SecurityApprovalStepsPayloadBuilder().build(form_dict)
         return export_details_payload
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
     def edit_object(self, request, application_id, payload):
-        put_application(request, application_id, payload)
+        return put_application(request, application_id, payload)
 
     def process_forms(self, form_list, form_dict, **kwargs):
         self.edit_object(self.request, self.application["id"], self.get_payload(form_dict))

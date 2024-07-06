@@ -3,6 +3,7 @@ import rules
 
 from datetime import datetime
 
+from exporter.applications.services import get_status_properties
 from exporter.applications.constants import ApplicationStatus
 
 
@@ -52,6 +53,12 @@ def is_application_in_major_edit(request, application):
     return application and application.status == ApplicationStatus.APPLICANT_EDITING
 
 
+@rules.predicate
+def can_invoke_major_editable(request, application):
+    status_props, _ = get_status_properties(request, application.status)
+    return application and status_props["can_invoke_major_editable"]
+
+
 rules.add_rule(
     "can_user_appeal_case",
     is_application_finalised & is_application_refused & appeal_within_deadline & ~is_application_appealed,  # noqa
@@ -63,3 +70,8 @@ rules.add_rule(
 )
 
 rules.add_rule("can_edit_quantity_value", is_application_in_draft | is_application_in_major_edit)  # noqa
+
+rules.add_rule(
+    "can_invoke_major_editable",
+    can_invoke_major_editable,
+)
