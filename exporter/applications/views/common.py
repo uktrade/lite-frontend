@@ -10,6 +10,7 @@ from django.views.generic import FormView, TemplateView
 
 from requests.exceptions import HTTPError
 
+from exporter.applications.constants import ApplicationStatus
 from exporter.applications.forms.appeal import AppealForm
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -152,17 +153,18 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
             return redirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
 
     def form_valid(self, form):
-
         self.application_id = str(self.kwargs["pk"])
-        if form.cleaned_data.get("edit_type") == "major":
-            return self.handle_major_edit()
 
-        return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+        # The minor edit flow has been disabled,
+        # so all edits are major edits
+        return self.handle_major_edit()
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application = get_application(request, kwargs["pk"])
+        if application["status"]["key"] not in [ApplicationStatus.DRAFT, ApplicationStatus.APPLICANT_EDITING]:
+            return redirect(reverse("applications:application", kwargs={"pk": kwargs["pk"]}))
         return get_application_task_list(request, application)
 
     def post(self, request, **kwargs):
@@ -204,7 +206,6 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
             "application": self.application,
             "type": self.view_type,
             "answers": convert_application_to_check_your_answers(self.application),
-            "status_is_read_only": status_props["is_read_only"],
             "status_is_terminal": status_props["is_terminal"],
             "errors": kwargs.get("errors"),
             "text": kwargs.get("text", ""),

@@ -4,7 +4,7 @@ from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
-from exporter.core.objects import Application
+from exporter.applications.constants import ApplicationStatus
 
 
 @pytest.fixture
@@ -13,11 +13,20 @@ def application(data_standard_case):
 
 
 @pytest.fixture
-def task_list_url(application):
+def draft_application(data_standard_case):
+    data_standard_case["case"]["data"]["status"] = {
+        "key": ApplicationStatus.DRAFT,
+        "value": ApplicationStatus.DRAFT.title(),
+    }
+    return data_standard_case["case"]
+
+
+@pytest.fixture
+def task_list_url(draft_application):
     return reverse(
         "applications:task_list",
         kwargs={
-            "pk": application["id"],
+            "pk": draft_application["id"],
         },
     )
 
@@ -131,14 +140,14 @@ def test_application_task_list_ultimate_end_users_required(
     ultimate_end_users_required,
     authorized_client,
     task_list_url,
-    application,
+    draft_application,
     mock_application_get,
     mock_application_documents_get,
     mock_case_notes_get,
     requests_mock,
 ):
     requests_mock.get(
-        f"/applications/{application['id']}/goods/",
+        f"/applications/{draft_application['id']}/goods/",
         json={"goods": goods},
     )
     response = authorized_client.get(task_list_url)
