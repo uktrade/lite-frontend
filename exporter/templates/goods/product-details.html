@@ -70,9 +70,11 @@
         {% endfor %}
     </dl>
 
-    <div id="archive_history">
-        {% for item in archive_history %}
-            <p class="govuk-body govuk-!-font-size-12 govuk-!-margin-bottom-0 govuk-!-margin-top-0"> {{ item }} </p>
-        {% endfor %}
-    </div>
+    {% if can_archive_product or can_restore_product %}
+        <div id="archive_history">
+            {% for item in archive_history %}
+                <p class="govuk-body govuk-!-font-size-12 govuk-!-margin-bottom-0 govuk-!-margin-top-0"> {{ item }} </p>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}

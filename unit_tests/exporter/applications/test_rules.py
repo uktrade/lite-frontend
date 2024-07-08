@@ -3,7 +3,6 @@ import rules
 
 from datetime import timedelta
 
-from django.conf import settings
 from django.utils import timezone
 
 from exporter.applications import rules as appeal_rules
