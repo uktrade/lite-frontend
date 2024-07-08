@@ -595,5 +595,10 @@ def application_task_list_url(application_id):
 
 
 @pytest.fixture
+def application_major_edit_existing_confirm_url(application_id):
+    return reverse(f"applications:edit_type", kwargs={"pk": application_id})
+
+
+@pytest.fixture
 def application_major_edit_confirm_url(application_id):
     return reverse(f"applications:major_edit_confirm", kwargs={"pk": application_id})

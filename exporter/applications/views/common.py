@@ -2,7 +2,6 @@ import rules
 
 from http import HTTPStatus
 
-from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -34,6 +33,7 @@ from exporter.applications.helpers.validators import (
     validate_delete_draft,
     validate_surrender_application_and_update_case_status,
 )
+from exporter.applications.rules import is_major_edit_whitelisted_organisation
 from exporter.applications.services import (
     get_activity,
     get_applications,
@@ -66,7 +66,7 @@ from core.decorators import expect_status
 from core.helpers import convert_dict_to_query_params, get_document_data
 
 
-class ApplicationAmendmentMixin(LoginRequiredMixin):
+class ApplicationMixin(LoginRequiredMixin):
 
     @property
     def application_id(self):
@@ -76,21 +76,10 @@ class ApplicationAmendmentMixin(LoginRequiredMixin):
     def application(self):
         return get_application(self.request, self.application_id)
 
-    @property
-    def organisation_id(self):
-        organisation = get_organisation(self.request, self.request.session["organisation"])
-        return organisation["id"]
-
-    @property
-    def amend_by_copy_whitelisted_organisation(self):
-        return self.organisation_id in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS
-
     def get_application_detail_url(self):
         return reverse("applications:application", kwargs={"pk": self.application_id})
 
-    def get_application_task_list_url(self, pk=None):
-        if not pk:
-            pk = self.application_id
+    def get_application_task_list_url(self, pk):
         return reverse("applications:task_list", kwargs={"pk": pk})
 
 
@@ -146,40 +135,39 @@ class DeleteApplication(LoginRequiredMixin, SingleFormView):
             return self.request.GET.get("return_to")
 
 
-class ApplicationEditType(ApplicationAmendmentMixin, FormView):
+class ApplicationEditType(ApplicationMixin, FormView):
+    """This is essentially now a temporary confirmation view before making a major edit"""
+
     form_class = EditApplicationForm
     template_name = "edit_application_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        self.data = get_application(self.request, self.application_id)
-        context.update(
-            {
-                "application_id": self.application_id,
-                "data": self.data,
-            }
-        )
-        return context
+        return {
+            **context,
+            "application_id": self.application_id,
+            "data": self.application,
+        }
 
     def get_success_url(self):
-        if self.amend_by_copy_whitelisted_organisation:
-            return reverse("applications:major_edit_confirm", kwargs={"pk": self.application_id})
-        else:
-            return self.get_application_task_list_url()
+        return self.get_application_task_list_url(self.application_id)
+
+    def handle_major_edit(self):
+        set_application_status(self.request, self.application_id, APPLICANT_EDITING)
 
     def form_valid(self, form):
-        data = form.cleaned_data
 
-        if data.get("edit_type") != "major":
-            return redirect(self.get_application_detail_url())
-
-        if not self.amend_by_copy_whitelisted_organisation:
-            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
+        self.handle_major_edit()
 
         return super().form_valid(form)
 
 
-class ApplicationMajorEditConfirmView(ApplicationAmendmentMixin, FormView):
+class ApplicationMajorEditConfirmView(ApplicationMixin, FormView):
+    """
+    This is the confirmation page for whitelisted organisation before amending
+    an application by copy
+    """
+
     form_class = ApplicationMajorEditConfirmationForm
     template_name = "core/form.html"
     amended_application_id = None
@@ -187,14 +175,18 @@ class ApplicationMajorEditConfirmView(ApplicationAmendmentMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["application_reference"] = self.application["name"]
-        kwargs["cancel_url"] = reverse("applications:edit_type", kwargs={"pk": self.application_id})
+        kwargs["cancel_url"] = self.get_application_detail_url()
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "back_link_url": self.get_application_detail_url(),
+        }
+
     def get_success_url(self):
-        if self.amend_by_copy_whitelisted_organisation:
-            return self.get_application_task_list_url(self.amended_application_id)
-        else:
-            return self.get_application_detail_url()
+        return self.get_application_task_list_url(self.amended_application_id)
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -205,8 +197,8 @@ class ApplicationMajorEditConfirmView(ApplicationAmendmentMixin, FormView):
         return create_application_amendment(self.request, self.application_id)
 
     def handle_major_edit(self):
-        if not self.amend_by_copy_whitelisted_organisation:
-            return
+        if not is_major_edit_whitelisted_organisation(self.request, self.application):
+            raise ValueError
 
         data, _ = self.create_amendment()
         self.amended_application_id = data["id"]

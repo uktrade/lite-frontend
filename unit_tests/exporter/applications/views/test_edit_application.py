@@ -25,13 +25,12 @@ def test_edit_application_form_valid_major_edit(
     requests_mock, authorized_client, application_id, application_task_list_url, mock_application_status_put
 ):
     url = reverse("applications:edit_type", kwargs={"pk": application_id})
-    form_data = {"edit_type": "major"}
-    response = authorized_client.post(url, form_data)
+    response = authorized_client.post(url, {})
 
     assert response.status_code == 302
     assert response.url == application_task_list_url
 
-    history = requests_mock.request_history[-2]
+    history = requests_mock.request_history.pop()
     assert history.method == "PUT"
     assert history.json() == {"status": APPLICANT_EDITING}
 
@@ -41,11 +40,12 @@ def test_edit_application_form_valid_major_edit_by_copy(
     authorized_client,
     application_id,
     data_organisation,
-    application_major_edit_confirm_url,
+    application_task_list_url,
+    mock_application_status_put,
 ):
     settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
     url = reverse("applications:edit_type", kwargs={"pk": application_id})
-    response = authorized_client.post(url, {"edit_type": "major"})
+    response = authorized_client.post(url, {})
 
     assert response.status_code == 302
-    assert response.url == application_major_edit_confirm_url
+    assert response.url == application_task_list_url

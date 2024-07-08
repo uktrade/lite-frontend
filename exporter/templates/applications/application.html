@@ -37,9 +37,16 @@
 					{% endif %}
 					{% test_rule 'can_invoke_major_editable' request application as can_invoke_major_editable %}
 					{% if can_invoke_major_editable %}
-						<a href="{% url 'applications:edit_type' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
-							{% lcs 'applications.ApplicationSummaryPage.Buttons.EDIT_APPLICATION_BUTTON' %}
-						</a>
+						{% test_rule 'is_major_edit_whitelisted_organisation' request application as is_major_edit_whitelisted_organisation %}
+						{% if is_major_edit_whitelisted_organisation %}
+							<a href="{% url 'applications:major_edit_confirm' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
+								{% lcs 'applications.ApplicationSummaryPage.Buttons.EDIT_APPLICATION_BUTTON' %}
+							</a>
+						{% else %}
+							<a href="{% url 'applications:edit_type' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
+								{% lcs 'applications.ApplicationSummaryPage.Buttons.EDIT_APPLICATION_BUTTON' %}
+							</a>
+						{% endif %}
 					{% endif %}
 					{# Using licence_duration to check that there is a licence to surrender #}
 					{% if application.licence and application.licence.status.key != "surrendered" %}

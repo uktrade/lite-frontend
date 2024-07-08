@@ -3,6 +3,7 @@ import rules
 
 from datetime import timedelta
 
+from django.conf import settings
 from django.utils import timezone
 
 from exporter.applications import rules as appeal_rules
@@ -88,3 +89,19 @@ def test_user_can_edit_quantity_value(settings, rf, data_standard_case, status, 
 
     request = rf.get("/")
     assert rules.test_rule("can_edit_quantity_value", request, application) is expected
+
+
+def test_is_major_edit_whitelisted_organisation_success(settings, rf, data_standard_case, data_organisation):
+    settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
+
+    application = Application(data_standard_case["case"]["data"])
+
+    request = rf.get("/")
+    assert rules.test_rule("is_major_edit_whitelisted_organisation", request, application)
+
+
+def test_is_major_edit_whitelisted_organisation_fail(settings, rf, data_standard_case):
+    application = Application(data_standard_case["case"]["data"])
+
+    request = rf.get("/")
+    assert not rules.test_rule("is_major_edit_whitelisted_organisation", request, application)

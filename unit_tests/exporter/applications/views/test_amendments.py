@@ -6,9 +6,25 @@ from django.conf import settings
 from django.urls import reverse
 
 from core import client
-from exporter.applications.forms.common import EditApplicationForm
 
 amended_application_id = str(uuid.uuid4())
+
+
+@pytest.fixture(autouse=True)
+def setup(
+    mock_application_get,
+):
+    yield
+
+
+@pytest.fixture
+def application_detail_url(application_id):
+    return reverse("applications:application", kwargs={"pk": application_id})
+
+
+@pytest.fixture
+def application_major_edit_cancel_url(application_id):
+    return reverse("applications:edit_type", kwargs={"pk": application_id})
 
 
 @pytest.fixture
@@ -38,26 +54,73 @@ def mock_application_amendment_post_failure(requests_mock, application_id):
     return requests_mock.post(url, json={"error": "not allowed"}, status_code=500)
 
 
-def test_major_edit_redirects_to_confirm_page_for_whitelisted_organisation(
+def test_edit_button_points_to_new_confirmation_for_whitelisted_organisations(
     authorized_client,
     data_organisation,
-    application_edit_type_url,
+    application_detail_url,
+    application_major_edit_confirm_url,
+    mock_status_properties,
+):
+    settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
+    mock_status_properties["can_invoke_major_editable"] = True
+
+    response = authorized_client.get(application_detail_url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    edit_button = soup.find("a", {"id": "button-edit-application"})
+    assert edit_button and edit_button["href"] == application_major_edit_confirm_url
+
+
+def test_edit_button_points_to_existing_confirmation_for_all_organisations(
+    authorized_client,
+    application_detail_url,
+    application_major_edit_existing_confirm_url,
+    mock_status_properties,
+):
+    mock_status_properties["can_invoke_major_editable"] = True
+
+    response = authorized_client.get(application_detail_url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    edit_button = soup.find("a", {"id": "button-edit-application"})
+    assert edit_button and edit_button["href"] == application_major_edit_existing_confirm_url
+
+
+def test_edit_button_presents_new_confirmation_for_whitelisted_organisations(
+    authorized_client,
+    data_standard_case,
+    data_organisation,
+    application_detail_url,
     application_major_edit_confirm_url,
 ):
     settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
-    response = authorized_client.post(application_edit_type_url, {"edit_type": "major"})
-    assert response.status_code == 302
-    assert response.url == application_major_edit_confirm_url
 
-
-def test_major_edit_cancel_redirects_to_edit_type_page(
-    authorized_client,
-    mock_application_get,
-    application_major_edit_cancel_url,
-):
-    response = authorized_client.get(application_major_edit_cancel_url)
+    response = authorized_client.get(application_major_edit_confirm_url)
     assert response.status_code == 200
-    assert isinstance(response.context["form"], EditApplicationForm)
+
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    assert data_standard_case["case"]["data"]["name"] in response.content.decode("utf-8")
+
+    submit_button = soup.find("input", {"id": "submit-id-submit"})
+    assert submit_button and "Continue" in str(submit_button)
+
+    cancel_url = soup.find("a", {"id": "cancel-id-cancel"})
+    assert cancel_url and cancel_url["href"] == application_detail_url
+
+
+def test_major_edit_cancel_from_whitelisted_exporter_goes_to_application_detail(
+    authorized_client,
+    data_organisation,
+    application_major_edit_confirm_url,
+    application_detail_url,
+):
+    settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
+    response = authorized_client.get(application_major_edit_confirm_url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    cancel_url = soup.find("a", {"id": "cancel-id-cancel"})
+    assert cancel_url and cancel_url["href"] == application_detail_url
 
 
 def test_major_edit_confirmation_from_whitelisted_exporter_goes_to_task_list(
@@ -65,7 +128,6 @@ def test_major_edit_confirmation_from_whitelisted_exporter_goes_to_task_list(
     data_organisation,
     application_major_edit_confirm_url,
     amended_application_task_list_url,
-    mock_application_get,
     mock_application_amendment_post,
 ):
     settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
@@ -78,7 +140,6 @@ def test_whitelisted_organisation_creates_amendment_by_copy(
     authorized_client,
     requests_mock,
     data_organisation,
-    mock_application_get,
     mock_application_amendment_post,
     application_major_edit_confirm_url,
     application_amendment_create_url,
@@ -88,7 +149,7 @@ def test_whitelisted_organisation_creates_amendment_by_copy(
     response = authorized_client.post(application_major_edit_confirm_url)
     assert response.status_code == 302
     assert response.url == amended_application_task_list_url
-    history = requests_mock.request_history[-2]
+    history = requests_mock.request_history.pop()
     assert history.method == "POST"
     assert history.url == application_amendment_create_url
 
@@ -100,7 +161,6 @@ def test_whitelisted_organisation_creates_amendment_by_copy_bad_response(
     data_organisation,
     application_major_edit_confirm_url,
     application_amendment_create_url,
-    mock_application_get,
     mock_application_amendment_post_failure,
 ):
     settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
@@ -113,3 +173,11 @@ def test_whitelisted_organisation_creates_amendment_by_copy_bad_response(
     history = requests_mock.request_history.pop()
     assert history.method == "POST"
     assert history.url == application_amendment_create_url
+
+
+def test_regular_organisation_creates_amendment_by_copy_failure(
+    authorized_client,
+    application_major_edit_confirm_url,
+):
+    with pytest.raises(ValueError):
+        authorized_client.post(application_major_edit_confirm_url)
