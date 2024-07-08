@@ -2,6 +2,7 @@ import dateparser
 import rules
 
 from datetime import datetime
+from django.conf import settings
 
 from exporter.applications.services import get_status_properties
 from exporter.applications.constants import ApplicationStatus
@@ -59,6 +60,11 @@ def can_invoke_major_editable(request, application):
     return application and status_props["can_invoke_major_editable"]
 
 
+@rules.predicate
+def is_major_edit_whitelisted_organisation(request, application):
+    return application and application["organisation"]["id"] in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS
+
+
 rules.add_rule(
     "can_user_appeal_case",
     is_application_finalised & is_application_refused & appeal_within_deadline & ~is_application_appealed,  # noqa
@@ -74,4 +80,9 @@ rules.add_rule("can_edit_quantity_value", is_application_in_draft | is_applicati
 rules.add_rule(
     "can_invoke_major_editable",
     can_invoke_major_editable,
+)
+
+rules.add_rule(
+    "is_major_edit_whitelisted_organisation",
+    is_major_edit_whitelisted_organisation,
 )
