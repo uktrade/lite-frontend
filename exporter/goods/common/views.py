@@ -6,7 +6,7 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.summaries.summaries import get_summary_url_for_good
 from exporter.goods.forms import GoodArchiveForm, GoodRestoreForm
-from exporter.goods.services import get_good, edit_good
+from exporter.goods.services import archive_restore_good, get_good
 
 
 class GoodArchiveRestoreBaseView(LoginRequiredMixin, FormView):
@@ -41,9 +41,8 @@ class GoodArchiveView(GoodArchiveRestoreBaseView):
     form_class = GoodArchiveForm
 
     def form_valid(self, form):
-        data = {"is_archived": True}
 
-        edit_good(self.request, self.good_id, data)
+        archive_restore_good(self.request, self.good_id, is_archived=True)
 
         return super().form_valid(form)
 
@@ -52,8 +51,7 @@ class GoodRestoreView(GoodArchiveRestoreBaseView):
     form_class = GoodRestoreForm
 
     def form_valid(self, form):
-        data = {"is_archived": False}
 
-        edit_good(self.request, self.good_id, data)
+        archive_restore_good(self.request, self.good_id, is_archived=False)
 
         return super().form_valid(form)
