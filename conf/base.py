@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     "lite_forms",
     "health_check",
     "health_check.cache",
-    "health_check.storage",
     "core.api",
     "core.forms",
     "crispy_forms",
