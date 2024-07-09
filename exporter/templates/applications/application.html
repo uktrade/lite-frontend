@@ -37,8 +37,8 @@
 					{% endif %}
 					{% test_rule 'can_invoke_major_editable' request application as can_invoke_major_editable %}
 					{% if can_invoke_major_editable %}
-						{% test_rule 'is_major_edit_whitelisted_organisation' request application as is_major_edit_whitelisted_organisation %}
-						{% if is_major_edit_whitelisted_organisation %}
+						{% test_rule 'can_amend_by_copy' request application as can_amend_by_copy %}
+						{% if can_amend_by_copy %}
 							<a href="{% url 'applications:major_edit_confirm' application.id %}" id="button-edit-application" class="govuk-button govuk-button--secondary">
 								{% lcs 'applications.ApplicationSummaryPage.Buttons.EDIT_APPLICATION_BUTTON' %}
 							</a>

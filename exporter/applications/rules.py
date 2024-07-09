@@ -61,7 +61,7 @@ def can_invoke_major_editable(request, application):
 
 
 @rules.predicate
-def is_major_edit_whitelisted_organisation(request, application):
+def can_amend_by_copy(request, application):
     return application and application["organisation"]["id"] in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS
 
 
@@ -83,6 +83,6 @@ rules.add_rule(
 )
 
 rules.add_rule(
-    "is_major_edit_whitelisted_organisation",
-    is_major_edit_whitelisted_organisation,
+    "can_amend_by_copy",
+    can_amend_by_copy,
 )

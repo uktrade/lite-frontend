@@ -33,7 +33,7 @@ from exporter.applications.helpers.validators import (
     validate_delete_draft,
     validate_surrender_application_and_update_case_status,
 )
-from exporter.applications.rules import is_major_edit_whitelisted_organisation
+from exporter.applications.rules import can_amend_by_copy
 from exporter.applications.services import (
     get_activity,
     get_applications,
@@ -197,7 +197,7 @@ class ApplicationMajorEditConfirmView(ApplicationMixin, FormView):
         return create_application_amendment(self.request, self.application_id)
 
     def handle_major_edit(self):
-        if not is_major_edit_whitelisted_organisation(self.request, self.application):
+        if not can_amend_by_copy(self.request, self.application):
             raise ValueError
 
         data, _ = self.create_amendment()
