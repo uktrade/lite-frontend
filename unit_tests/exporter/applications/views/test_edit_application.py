@@ -1,5 +1,6 @@
 import pytest
 
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from exporter.core.constants import APPLICANT_EDITING
@@ -22,13 +23,36 @@ def test_edit_application_view_exists(
 
 
 def test_edit_application_form_valid_major_edit(
-    requests_mock, authorized_client, application_id, application_task_list_url, mock_application_status_put
+    requests_mock,
+    authorized_client,
+    application_id,
+    application_task_list_url,
+    mock_application_status_put,
 ):
     url = reverse("applications:edit_type", kwargs={"pk": application_id})
     response = authorized_client.post(url, {})
 
     assert response.status_code == 302
     assert response.url == application_task_list_url
+
+    history = requests_mock.request_history.pop()
+    assert history.method == "PUT"
+    assert history.json() == {"status": APPLICANT_EDITING}
+
+
+def test_edit_application_major_edit_change_status_fail(
+    requests_mock,
+    authorized_client,
+    application_id,
+    mock_application_status_put_failure,
+):
+    url = reverse("applications:edit_type", kwargs={"pk": application_id})
+    response = authorized_client.post(url, {})
+
+    assert response.status_code == 200
+
+    response_body = BeautifulSoup(response.content, "html.parser")
+    assert "Unexpected error changing application status to APPLICANT_EDITING" in response_body.text
 
     history = requests_mock.request_history.pop()
     assert history.method == "PUT"

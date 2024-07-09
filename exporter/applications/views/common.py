@@ -152,8 +152,13 @@ class ApplicationEditType(ApplicationMixin, FormView):
     def get_success_url(self):
         return self.get_application_task_list_url(self.application_id)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating status",
+        "Unexpected error changing application status to APPLICANT_EDITING",
+    )
     def handle_major_edit(self):
-        set_application_status(self.request, self.application_id, APPLICANT_EDITING)
+        return set_application_status(self.request, self.application_id, APPLICANT_EDITING)
 
     def form_valid(self, form):
 
