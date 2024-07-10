@@ -82,7 +82,7 @@ class ApplicationMajorEditConfirmationForm(BaseForm):
     def get_layout_fields(self):
         return [
             HTML.p(
-                "Progress on the case will stop while you are making changes. The application will appear in your draft until you re-submit."
+                "Progress on the case will stop while you are making changes. The application will appear in your drafts until you re-submit."
             ),
             HTML.p(
                 "Re-submitting the application with changes means it will take longer to process and will have a new ECJU case reference."
