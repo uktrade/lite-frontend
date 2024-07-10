@@ -27,18 +27,6 @@
 				{% endblock %}
 			</h1>
 		</div>
-		<div class="lite-app-bar__controls">
-			{% if remove_url %}
-				<a href="{{ remove_url }}" class="govuk-button govuk-button--secondary" draggable="false" role="button">
-					Remove consignee
-				</a>
-			{% endif %}
-			{% if edit_url %}
-				<a href="{{ edit_url }}" class="govuk-button" draggable="false" role="button">
-					Edit
-				</a>
-			{% endif %}
-		</div>
 	</div>
 
 	<p class="govuk-body">Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress</p>
@@ -57,8 +45,15 @@
 	</dl>
 
 	<div>
-        <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' application.id %}">
-            Save and continue
-        </a>
+		<span>
+			<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' application.id %}">
+				Save and continue
+			</a>
+		</span>
+		<span>
+			<a draggable="false" class="govuk-button govuk-button--secondary govuk-!-margin-left-1" href="{{ remove_url }}" role="button">
+				Remove consignee
+			</a>
+		</span>
 	</div>
 {% endblock %}
