@@ -177,6 +177,12 @@ class ApplicationMajorEditConfirmView(ApplicationMixin, FormView):
     template_name = "core/form.html"
     amended_application_id = None
 
+    def dispatch(self, request, **kwargs):
+        if not can_amend_by_copy(request, self.application):
+            raise Http404()
+
+        return super().dispatch(request, **kwargs)
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["application_reference"] = self.application["name"]
@@ -202,8 +208,6 @@ class ApplicationMajorEditConfirmView(ApplicationMixin, FormView):
         return create_application_amendment(self.request, self.application_id)
 
     def handle_major_edit(self):
-        if not can_amend_by_copy(self.request, self.application):
-            raise ValueError
 
         data, _ = self.create_amendment()
         self.amended_application_id = data["id"]

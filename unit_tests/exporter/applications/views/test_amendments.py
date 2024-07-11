@@ -179,5 +179,5 @@ def test_regular_organisation_creates_amendment_by_copy_failure(
     authorized_client,
     application_major_edit_confirm_url,
 ):
-    with pytest.raises(ValueError):
-        authorized_client.post(application_major_edit_confirm_url)
+    response = authorized_client.post(application_major_edit_confirm_url)
+    assert response.status_code == 404
