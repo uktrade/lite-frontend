@@ -40,6 +40,19 @@
 				<dd id="{{ key|idify }}" class="govuk-summary-list__value">
 					{{ value|default_na|linebreaksbr }}
 				</dd>
+				<dd class="govuk-summary-list__actions">
+					{% if key == "Document" %}
+					<a href="{{ edit_url }}">
+						{% lcs 'generic.DELETE' %}
+						<span class="govuk-visually-hidden">{{ key }}</span>
+					</a>
+					{% else %}
+					<a href="{{ edit_url }}">
+						{% lcs 'generic.CHANGE' %}
+						<span class="govuk-visually-hidden">{{ key }}</span>
+					</a>
+					{% endif %}
+				</dd>
 			</div>
 		{% endfor %}
 	</dl>
