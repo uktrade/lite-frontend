@@ -20,7 +20,6 @@ from exporter.applications.forms.common import (
     EditApplicationForm,
     application_copy_form,
     exhibition_details_form,
-    declaration_form,
 )
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
@@ -55,7 +54,7 @@ from exporter.applications.services import (
 )
 from exporter.organisation.members.services import get_user
 
-from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
+from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType
 from exporter.core.helpers import str_to_bool
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
@@ -233,46 +232,31 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
 
 
 class ApplicationSummary(LoginRequiredMixin, TemplateView):
-    application_id = None
-    application = None
-    case_id = None
-    view_type = None
+    template_name = "applications/application.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.application_id = str(kwargs["pk"])
         self.application = get_application(request, self.application_id)
         self.case_id = self.application["case"]
-
         return super(ApplicationSummary, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
-
-        context = {
-            "case_id": self.application_id,
-            "application": self.application,
-            "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
-            "summary_page": True,
-            "application_type": get_application_type_string(self.application),
-        }
-
-        if self.application.sub_type != HMRC:
-            context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
-            if self.application.sub_type == STANDARD:
-                context["reference_code"] = get_reference_number_description(self.application)
-
-        return render(request, "applications/application.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "case_id": self.application_id,
+                "application": self.application,
+                "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
+                "summary_page": True,
+                "application_type": get_application_type_string(self.application),
+                "notes": get_case_notes(self.request, self.case_id)["case_notes"],
+                "reference_code": get_reference_number_description(self.application),
+            }
+        )
+        return context
 
     def post(self, request, **kwargs):
-        # As it's the summary page, either attempt to submit the application (if of type HMRC)
-        # or proceed to the declaration page
-        if self.application.sub_type == HMRC:
-            data, status_code = submit_application(request, self.application_id, json={"submit_hmrc": True})
-            if status_code != HTTPStatus.OK:
-                return get_application_task_list(request, self.application, errors=data.get("errors"))
-
-            return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": self.application_id}))
-        else:
-            return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
+        return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
 
 
 class WithdrawApplication(LoginRequiredMixin, SingleFormView):
@@ -424,16 +408,6 @@ class ExhibitionDetail(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
-
-
-class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.form = declaration_form(self.object_pk)
-        self.action = submit_application
-
-    def get_success_url(self):
-        return reverse_lazy("applications:success_page", kwargs={"pk": self.object_pk})
 
 
 class AppealApplication(LoginRequiredMixin, FormView):

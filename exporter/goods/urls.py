@@ -3,7 +3,15 @@ from django.urls import path
 
 from exporter.goods import views
 from exporter.goods.component.views import ComponentAccessoryProductDetails
-from exporter.goods.firearms.views import FirearmProductDetails
+from exporter.goods.firearms.views import (
+    ComponentsForFirearmsAmmunitionProductDetails,
+    ComponentsForFirearmsProductDetails,
+    FirearmsAccessoryProductDetails,
+    FirearmProductDetails,
+    FirearmAmmunitionProductDetails,
+    SoftwareRelatedToFirearmsProductDetails,
+    TechnologyRelatedToFirearmsProductDetails,
+)
 from exporter.goods.materials.views import MaterialProductDetails
 from exporter.goods.software.views import TechnologyProductDetails
 from exporter.goods.platform.views import CompleteItemProductDetails
@@ -52,6 +60,28 @@ urlpatterns = [
     path("<uuid:pk>/documents/<uuid:file_pk>/delete/", views.DeleteDocument.as_view(), name="delete_document"),
     path("<uuid:pk>/attach/", views.AttachDocuments.as_view(), name="attach_documents"),
     path("firearm/<uuid:pk>/", FirearmProductDetails.as_view(), name="firearm_detail"),
+    path(
+        "components-for-firearms/<uuid:pk>/",
+        ComponentsForFirearmsProductDetails.as_view(),
+        name="components_for_firearms_detail",
+    ),
+    path("firearm-ammunition/<uuid:pk>/", FirearmAmmunitionProductDetails.as_view(), name="firearm_ammunition_detail"),
+    path(
+        "components-for-firearms-ammunition/<uuid:pk>/",
+        ComponentsForFirearmsAmmunitionProductDetails.as_view(),
+        name="components_for_firearms_ammunition_detail",
+    ),
+    path("firearms-accessory/<uuid:pk>/", FirearmsAccessoryProductDetails.as_view(), name="firearms_accessory_detail"),
+    path(
+        "software-related-to-firearms/<uuid:pk>/",
+        SoftwareRelatedToFirearmsProductDetails.as_view(),
+        name="software_related_to_firearms_detail",
+    ),
+    path(
+        "technology-related-to-firearms/<uuid:pk>/",
+        TechnologyRelatedToFirearmsProductDetails.as_view(),
+        name="technology_related_to_firearms_detail",
+    ),
     path("<uuid:pk>/", views.GoodsDetailEmpty.as_view(), name="good"),
     path("<uuid:pk>/<str:type>/", views.GoodsDetail.as_view(), name="good_detail"),
     path("platform/<uuid:pk>/", CompleteItemProductDetails.as_view(), name="complete_item_detail"),

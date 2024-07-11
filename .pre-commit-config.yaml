@@ -2,6 +2,13 @@ exclude: (exporter/assets/built/|caseworker/assets/built/)
 default_language_version:
   python: python3.9
 repos:
+  # ruff-pre-commit docs recommend running ruff before black
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.4
+    hooks:
+      # Config for ruff lives in pyproject.toml
+      - id: ruff
+        args: [ --fix ]
   - repo: https://github.com/psf/black
     rev: 24.3.0
     hooks:
@@ -57,5 +64,5 @@ repos:
       - id: eslint
         files: "^(core|caseworker|exporter)/assets/javascripts"
         additional_dependencies:
-          - eslint@8.44.0
-          - eslint-plugin-jest@27.2.3
+          - eslint@8.44.0 # /PS-IGNORE
+          - eslint-plugin-jest@27.2.3 # /PS-IGNORE
