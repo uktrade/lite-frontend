@@ -346,6 +346,7 @@ urlpatterns = [
     path("<uuid:pk>/consignee/<uuid:obj_pk>/edit/", consignees.EditConsignee.as_view(), name="edit_consignee"),
     path("<uuid:pk>/consignee/<uuid:obj_pk>/copy/", consignees.CopyConsignee.as_view(), name="copy_consignee"),
     path("<uuid:pk>/consignee/<uuid:obj_pk>/remove/", consignees.RemoveConsignee.as_view(), name="remove_consignee"),
+    path("<uuid:pk>/consignee/<uuid:obj_pk>/summary/", consignees.ConsigneeSummary.as_view(), name="consignee_summary"),
     path(
         "<uuid:pk>/consignee/<uuid:obj_pk>/document/attach/",
         documents.AttachDocuments.as_view(),

@@ -6,6 +6,7 @@ from exporter.applications.forms.parties import new_party_form_group
 from exporter.applications.helpers.check_your_answers import convert_party
 from exporter.applications.services import get_application, post_party, delete_party, validate_party
 from exporter.applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
+from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from lite_content.lite_exporter_frontend.applications import ConsigneeForm, ConsigneePage
 
 from core.auth.views import LoginRequiredMixin
@@ -93,3 +94,14 @@ class EditConsignee(LoginRequiredMixin, CopyAndSetParty):
             validate_action=validate_party,
             post_action=post_party,
         )
+
+
+class ConsigneeSummary(LoginRequiredMixin, ApplicationMixin, TemplateView):
+    template_name = "applications/consignee_summary.html"
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["application"] = self.application
+        context["consignee"] = self.application["consignee"]
+        context["back_link_url"] = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
+        return context
