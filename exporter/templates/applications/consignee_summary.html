@@ -1,0 +1,126 @@
+{% extends 'layouts/two-pane.html' %}
+
+{% block back_link %}
+	<a href="{% url 'applications:task_list' application.id %}#consignee" id="back-link" class="govuk-back-link">Back to application overview</a>
+{% endblock %}
+
+{% block two_thirds %}
+	{% if highlight %}
+		<div class="lite-warning-summary" role="alert" tabindex="-1" data-module="govuk-error-summary">
+			<div class="lite-error-summary__body">
+				<ul class="govuk-list lite-error-summary__list">
+					{% for item in highlight %}
+						<li>
+							<a href="#{{ item|idify }}">You need to attach a document</a>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+	{% endif %}
+
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">
+				{% block title %}
+					Consignee summary
+				{% endblock %}
+			</h1>
+		</div>
+	</div>
+
+	<p class="govuk-body">Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress</p>
+
+	<dl class="govuk-summary-list">
+		<div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Select the type of consignee</dt>
+            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__actions">
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+               {% comment %} href="{% url 'applications:edit_consignee_subtype' application.id %}">Change</a> {% endcomment %}
+			   >Change</a>
+            </dd>
+        </div>
+		<div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Consignee name</dt>
+            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__actions">
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+               {% comment %} href="{% url 'applications:edit_consignee_name' application.id %}">Change</a> {% endcomment %}
+			   >Change</a>
+            </dd>
+        </div>
+		<div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Consignee website address (optional)</dt>
+            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__actions">
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+               {% comment %} href="{% url 'applications:edit_consignee_website_address' application.id %}">Change</a> {% endcomment %}
+			   >Change</a>
+            </dd>
+        </div>
+		<div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Consignee address</dt>
+            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__actions">
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+               {% comment %} href="{% url 'applications:edit_consignee_address' application.id %}">Change</a> {% endcomment %}
+			   >Change</a>
+            </dd>
+        </div>
+		<div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Attach a document (optional)</dt>
+            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__actions">
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+               {% comment %} href="{% url 'applications:delete_consignee_document' application.id %}">Delete</a> {% endcomment %}
+			   >Delete</a>
+            </dd>
+        </div>
+		<div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">Description (optional)</dt>
+            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__actions">
+            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+               {% comment %} href="{% url 'applications:edit_consignee_description' application.id %}">Change</a> {% endcomment %}
+			   >Change</a>
+            </dd>
+        </div>
+		{% comment %} {% for key, value in answers.items %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key {% if key in highlight %}govuk-summary-list__key--highlight{% endif %}">
+					{{ key }}
+				</dt>
+				<dd id="{{ key|idify }}" class="govuk-summary-list__value">
+					{{ value|default_na|linebreaksbr }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					{% if key == "Document" %}
+					<a href="{{ edit_url }}">
+						{% lcs 'generic.DELETE' %}
+						<span class="govuk-visually-hidden">{{ key }}</span>
+					</a>
+					{% else %}
+					<a href="{{ edit_url }}">
+						{% lcs 'generic.CHANGE' %}
+						<span class="govuk-visually-hidden">{{ key }}</span>
+					</a>
+					{% endif %}
+				</dd>
+			</div>
+		{% endfor %} {% endcomment %}
+	</dl>
+
+	<div>
+		<span>
+			<a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' application.id %}">
+				Save and continue
+			</a>
+		</span>
+		<span>
+			<a draggable="false" class="govuk-button govuk-button--secondary govuk-!-margin-left-1" href="{{ remove_url }}" role="button">
+				Remove consignee
+			</a>
+		</span>
+	</div>
+{% endblock %}
