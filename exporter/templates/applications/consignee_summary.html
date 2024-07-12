@@ -34,58 +34,64 @@
 	<dl class="govuk-summary-list">
 		<div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Select the type of consignee</dt>
-            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__value">{{ consignee.sub_type.value }}</dd>
             <dd class="govuk-summary-list__actions">
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+            <a class="govuk-link govuk-link--no-visited-state"
                {% comment %} href="{% url 'applications:edit_consignee_subtype' application.id %}">Change</a> {% endcomment %}
 			   >Change</a>
             </dd>
         </div>
 		<div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Consignee name</dt>
-            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__value">{{ consignee.name}}</dd>
             <dd class="govuk-summary-list__actions">
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+            <a class="govuk-link govuk-link--no-visited-state"
                {% comment %} href="{% url 'applications:edit_consignee_name' application.id %}">Change</a> {% endcomment %}
 			   >Change</a>
             </dd>
         </div>
-		<div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Consignee website address (optional)</dt>
-            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
-            <dd class="govuk-summary-list__actions">
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-               {% comment %} href="{% url 'applications:edit_consignee_website_address' application.id %}">Change</a> {% endcomment %}
-			   >Change</a>
-            </dd>
-        </div>
+		{% if consignee.website %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">Consignee website address (optional)</dt>
+				<dd class="govuk-summary-list__value">{{ consignee.website }}</dd>
+				<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state"
+				{% comment %} href="{% url 'applications:edit_consignee_website_address' application.id %}">Change</a> {% endcomment %}
+				>Change</a>
+				</dd>
+			</div>
+		{% endif %}
 		<div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Consignee address</dt>
-            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
+            <dd class="govuk-summary-list__value">{{ consignee.address }}</dd>
             <dd class="govuk-summary-list__actions">
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+            <a class="govuk-link govuk-link--no-visited-state"
                {% comment %} href="{% url 'applications:edit_consignee_address' application.id %}">Change</a> {% endcomment %}
 			   >Change</a>
             </dd>
         </div>
-		<div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Attach a document (optional)</dt>
-            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
-            <dd class="govuk-summary-list__actions">
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-               {% comment %} href="{% url 'applications:delete_consignee_document' application.id %}">Delete</a> {% endcomment %}
-			   >Delete</a>
-            </dd>
-        </div>
-		<div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">Description (optional)</dt>
-            <dd class="govuk-summary-list__value">#ENTER VALUE#</dd>
-            <dd class="govuk-summary-list__actions">
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
-               {% comment %} href="{% url 'applications:edit_consignee_description' application.id %}">Change</a> {% endcomment %}
-			   >Change</a>
-            </dd>
-        </div>
+		{% if consignee.document %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">Attach a document (optional)</dt>
+				<dd class="govuk-summary-list__value"> {{ consignee.document.name }}</dd>
+				<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state"
+				{% comment %} href="{% url 'applications:delete_consignee_document' application.id %}">Delete</a> {% endcomment %}
+				>Delete</a>
+				</dd>
+			</div>
+		{% endif %}
+		{% if consignee.document.description %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">Description (optional)</dt>
+				<dd class="govuk-summary-list__value">{{ consignee.document.description }}</dd>
+				<dd class="govuk-summary-list__actions">
+				<a class="govuk-link govuk-link--no-visited-state"
+				{% comment %} href="{% url 'applications:edit_consignee_description' application.id %}">Change</a> {% endcomment %}
+				>Change</a>
+				</dd>
+			</div>
+		{% endif %}
 	</dl>
 
 	<div>

@@ -1,12 +1,18 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
+from django.utils.functional import cached_property
 
 from exporter.applications.forms.parties import new_party_form_group
 from exporter.applications.helpers.check_your_answers import convert_party
-from exporter.applications.services import get_application, post_party, delete_party, validate_party
+from exporter.applications.services import (
+    get_application,
+    post_party,
+    delete_party,
+    validate_party,
+    get_party,
+)
 from exporter.applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
-from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from lite_content.lite_exporter_frontend.applications import ConsigneeForm, ConsigneePage
 
 from core.auth.views import LoginRequiredMixin
@@ -96,12 +102,37 @@ class EditConsignee(LoginRequiredMixin, CopyAndSetParty):
         )
 
 
-class ConsigneeSummary(LoginRequiredMixin, ApplicationMixin, TemplateView):
+class PartyContextMixin:
+    template_name = "core/form.html"
+
+    @cached_property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @cached_property
+    def party_id(self):
+        return str(self.kwargs["obj_pk"])
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    @property
+    def party(self):
+        party = get_party(self.request, self.kwargs["pk"], self.kwargs["obj_pk"])
+        return party["data"]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {**context, "party": self.party}
+
+
+class ConsigneeSummary(LoginRequiredMixin, PartyContextMixin, TemplateView):
     template_name = "applications/consignee_summary.html"
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["application"] = self.application
-        context["consignee"] = self.application["consignee"]
+        context["consignee"] = self.party
         context["back_link_url"] = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
         return context
