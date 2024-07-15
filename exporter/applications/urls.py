@@ -353,6 +353,21 @@ urlpatterns = [
         name="consignee_edit_sub_type",
     ),
     path(
+        "<uuid:pk>/consignee/<uuid:obj_pk>/edit/name/",
+        consignees.ConsigneeNameEditView.as_view(),
+        name="consignee_edit_name",
+    ),
+    path(
+        "<uuid:pk>/consignee<uuid:obj_pk>/edit/website/",
+        consignees.ConsigneeWebsiteEditView.as_view(),
+        name="consignee_edit_website",
+    ),
+    path(
+        "<uuid:pk>/consignee/<uuid:obj_pk>/edit/address/",
+        consignees.ConsigneeAddressEditView.as_view(),
+        name="consignee_edit_address",
+    ),
+    path(
         "<uuid:pk>/consignee/<uuid:obj_pk>/document/attach/",
         documents.AttachDocuments.as_view(),
         name="consignee_attach_document",

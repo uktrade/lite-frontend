@@ -5,10 +5,13 @@ from django.utils.functional import cached_property
 
 from exporter.applications.forms.parties import (
     PartySubTypeSelectForm,
+    PartyNameForm,
+    PartyWebsiteForm,
+    PartyAddressForm,
     new_party_form_group,
 )
 
-from exporter.applications.helpers.check_your_answers import convert_party
+from exporter.applications.helpers.check_your_answers import convert_party, convert_consignee
 from exporter.applications.services import (
     get_application,
     post_party,
@@ -140,14 +143,14 @@ class ConsigneeSummary(LoginRequiredMixin, PartyContextMixin, TemplateView):
         context = {
             "application": self.application,
             "consignee": self.party,
-            "fields": convert_party(
+            "fields": convert_consignee(
                 party=self.application["consignee"],
                 application=self.application,
                 editable=self.application["status"]["value"] == "draft",
             ),
             "pk": self.kwargs["pk"],
             "obj_pk": self.kwargs["obj_pk"],
-            "back_link_url": reverse("applications:consignee", kwargs={"pk": self.kwargs["pk"]}),
+            "remove_url": reverse("applications:remove_consignee", kwargs=kwargs),
         }
         return context
 
@@ -165,34 +168,38 @@ class ConsigneeSubTypeEditView(ConsigneeEditView):
     form_class = PartySubTypeSelectForm
     PartySubTypeSelectForm.title = ConsigneeForm.TITLE
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        return context
+
     def get_initial(self):
         return {"sub_type": self.party["sub_type"]["key"], "sub_type_other": self.party["sub_type_other"]}
 
 
-# class ConsigneeNameEditView(ConsigneeEditView):
-#     form_class = PartyNameForm
-#     title = ConsigneeForm.NAME_FORM_TITLE
+class ConsigneeNameEditView(ConsigneeEditView):
+    form_class = PartyNameForm
+    PartyNameForm.Layout.TITLE = ConsigneeForm.NAME_FORM_TITLE
 
-#     def get_initial(self):
-#         return {"name": self.party["name"]}
-
-
-# class ConsigneeWebsiteEditView(ConsigneeEditView):
-#     form_class = PartyWebsiteForm
-#     title = ConsigneeForm.WEBSITE_FORM_TITLE
-
-#     def get_initial(self):
-#         return {"website": self.party["website"]}
+    def get_initial(self):
+        return {"name": self.party["name"]}
 
 
-# class ConsigneeAddressEditView(ConsigneeEditView):
-#     form_class = PartyAddressForm
-#     title = ConsigneeForm.ADDRESS_FORM_TITLE
+class ConsigneeWebsiteEditView(ConsigneeEditView):
+    form_class = PartyWebsiteForm
+    title = ConsigneeForm.WEBSITE_FORM_TITLE
 
-#     def get_form_kwargs(self):
-#         kwargs = super().get_form_kwargs()
-#         kwargs["request"] = self.request
-#         return kwargs
+    def get_initial(self):
+        return {"website": self.party["website"]}
 
-#     def get_initial(self):
-#         return {"address": self.party["address"], "country": self.party["country"]["id"]}
+
+class ConsigneeAddressEditView(ConsigneeEditView):
+    form_class = PartyAddressForm
+    title = ConsigneeForm.ADDRESS_FORM_TITLE
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
+    def get_initial(self):
+        return {"address": self.party["address"], "country": self.party["country"]["id"]}

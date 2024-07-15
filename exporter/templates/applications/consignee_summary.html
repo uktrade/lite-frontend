@@ -35,14 +35,15 @@
 		{% for key, value in fields.items %}
 		<div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ key }}</dt>
-            <dd class="govuk-summary-list__value">{{ value|default_na|linebreaksbr }}</dd>
+            <dd class="govuk-summary-list__value">{{ value.0|default_na|linebreaksbr }}</dd>
             <dd class="govuk-summary-list__actions">
-				<a class="govuk-link" href="{% url 'applications:consignee_edit_sub_type' pk obj_pk %}">
+				<a class="govuk-link" href="{% url value.1 pk obj_pk %}">
+					{% if key == 'Attach a document (optional)' %}
+					Delete<span class="govuk-visually-hidden"> name</span>
+					{% else %}
 					Change<span class="govuk-visually-hidden"> name</span>
+					{% endif %}
 				</a>
-            {% comment %}<a class="govuk-link govuk-link--no-visited-state"
-                href="{% url 'applications:edit_consignee_subtype' application.id %}">Change</a>
-			   >Change</a>{% endcomment %}
             </dd>
         </div>
 		{% endfor %}
