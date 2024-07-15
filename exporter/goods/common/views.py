@@ -25,6 +25,13 @@ class GoodArchiveRestoreBaseView(LoginRequiredMixin, FormView):
         kwargs["cancel_url"] = self.get_good_detail_url()
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "back_link_url": self.get_good_detail_url(),
+        }
+
     @expect_status(
         HTTPStatus.OK,
         "Error retrieving good",
