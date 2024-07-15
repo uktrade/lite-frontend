@@ -17,6 +17,7 @@ INSTALLED_APPS += [
     "exporter.core",
     "exporter.applications",
     "exporter.organisation",
+    "exporter.goods",
 ]
 
 if MOCK_SSO_ACTIVATE_ENDPOINTS:
@@ -91,11 +92,6 @@ SPIRE_URL = "https://www.spire.trade.gov.uk/spire/fox/espire/LOGIN/login"
 
 FEATURE_FLAG_FIREARMS_ENABLED = env.bool("FEATURE_FLAG_FIREARMS_ENABLED", False)
 FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = env.list("FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS", default=[])
-
-if "redis" in VCAP_SERVICES:
-    REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
-else:
-    REDIS_URL = env.str("REDIS_URL", "")
 
 # session
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"

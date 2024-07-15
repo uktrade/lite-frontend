@@ -1,0 +1,13 @@
+{% spaceless %}
+<?xml version="1.0" encoding="UTF-8"?>
+<pingdom_http_custom_check>
+    <status>
+    {% for plugin in errored_plugins %}
+        {{ plugin.identifier }}: {{ plugin.pretty_status }}
+    {% empty %}
+        OK
+    {% endfor %}
+    </status>
+    <response_time>{{ total_response_time }}</response_time>
+</pingdom_http_custom_check>
+{% endspaceless %}

@@ -84,13 +84,13 @@ def test_good_on_application_display_quantity(data_good_on_application, quantity
 
 
 @pytest.mark.parametrize(
-    "agreed_to_foi,foi_reason",
+    ("agreed_to_foi", "agreed_to_foi_display_value", "foi_reason"),
     [
-        ("Yes", "internal details"),
-        ("No", ""),
+        (True, "No", "internal details"),
+        (False, "Yes", ""),
     ],
 )
-def test_foi_details_on_summary_page(data_standard_case, agreed_to_foi, foi_reason):
+def test_foi_details_on_summary_page(data_standard_case, agreed_to_foi, agreed_to_foi_display_value, foi_reason):
     case = data_standard_case["case"]
     case["data"]["agreed_to_foi"] = agreed_to_foi
     case["data"]["foi_reason"] = foi_reason
@@ -100,5 +100,5 @@ def test_foi_details_on_summary_page(data_standard_case, agreed_to_foi, foi_reas
     soup = BeautifulSoup(html, "html.parser")
     actual_foi_value = soup.find(id="agreed-to-foi-value").text
     actual_foi_reason_value = soup.find(id="foi-reason-value").text
-    assert agreed_to_foi == actual_foi_value
+    assert agreed_to_foi_display_value == actual_foi_value
     assert foi_reason == actual_foi_reason_value

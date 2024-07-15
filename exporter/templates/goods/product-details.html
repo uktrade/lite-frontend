@@ -1,5 +1,6 @@
 {% extends 'layouts/base.html' %}
 
+{% load rules %}
 {% load date firearm_details_summary %}
 
 {% block back_link %}
@@ -31,11 +32,27 @@
                 {% endblock %}
             </h1>
         </div>
-		{% if good.status.key == 'draft' %}
-			<div class="lite-app-bar__controls">
-				{% govuk_link_button id='delete-good' text='goods.GoodPage.DELETE_GOOD' url='goods:delete' url_param=good.id classes='govuk-button--secondary' %}
-			</div>
-		{% endif %}
+        <div class="lite-app-bar__controls">
+            {% test_rule 'can_delete_product' request good as can_delete_product %}
+            {% if can_delete_product %}
+                <a role="button" draggable="false" id="delete-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:delete' good.id %}">
+                    Delete product
+                </a>
+            {% endif %}
+
+            {% test_rule 'can_archive_product' request good as can_archive_product %}
+            {% test_rule 'can_restore_product' request good as can_restore_product %}
+            {% if can_archive_product %}
+                <a role="button" draggable="false" id="archive-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_archive' good.id %}">
+                    Archive product
+                </a>
+            {% elif can_restore_product %}
+                <a role="button" draggable="false" id="restore-good" class="govuk-button govuk-button--secondary" href="{% url 'goods:good_restore' good.id %}">
+                    Restore product
+                </a>
+            {% endif %}
+        </div>
+
     </div>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-detail-summary">
@@ -52,4 +69,12 @@
             </div>
         {% endfor %}
     </dl>
+
+    {% if can_archive_product or can_restore_product %}
+        <div id="archive_history">
+            {% for item in archive_history %}
+                <p class="govuk-body govuk-!-font-size-12 govuk-!-margin-bottom-0 govuk-!-margin-top-0"> {{ item }} </p>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}

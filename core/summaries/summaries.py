@@ -1,3 +1,5 @@
+from django.urls import reverse
+
 from core.constants import (
     FirearmsProductType,
     ProductCategories,
@@ -775,3 +777,39 @@ def get_summary_type_for_good_on_application(good_on_application):
     item_category = item_category["key"]
 
     return get_summary_type_from_item_category(item_category)
+
+
+def get_summary_url_for_good(good):
+    firearm_details = good.get("firearm_details")
+    if firearm_details:
+        if firearm_details["type"]["key"] == FirearmsProductType.FIREARMS:
+            return reverse("goods:firearm_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.COMPONENTS_FOR_FIREARMS:
+            return reverse("goods:components_for_firearms_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.AMMUNITION:
+            return reverse("goods:firearm_ammunition_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.COMPONENTS_FOR_AMMUNITION:
+            return reverse("goods:components_for_firearms_ammunition_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.FIREARMS_ACCESSORY:
+            return reverse("goods:firearms_accessory_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.SOFTWARE_RELATED_TO_FIREARM:
+            return reverse("goods:software_related_to_firearms_detail", kwargs={"pk": good["id"]})
+        if firearm_details["type"]["key"] == FirearmsProductType.TECHNOLOGY_RELATED_TO_FIREARM:
+            return reverse("goods:technology_related_to_firearms_detail", kwargs={"pk": good["id"]})
+        raise NoSummaryForType
+
+    item_category = good.get("item_category")
+    if not item_category:
+        raise NoSummaryForType
+
+    item_category = item_category["key"]
+    if item_category == ProductCategories.PRODUCT_CATEGORY_COMPLETE_ITEM:
+        return reverse("goods:complete_item_detail", kwargs={"pk": good["id"]})
+    elif item_category == ProductCategories.PRODUCT_CATEGORY_MATERIAL:
+        return reverse("goods:material_detail", kwargs={"pk": good["id"]})
+    elif item_category == ProductCategories.PRODUCT_CATEGORY_SOFTWARE:
+        return reverse("goods:technology_detail", kwargs={"pk": good["id"]})
+    elif item_category == ProductCategories.PRODUCT_CATEGORY_COMPONENT_ACCESSORY:
+        return reverse("goods:component_accessory_detail", kwargs={"pk": good["id"]})
+
+    raise NoSummaryForType
