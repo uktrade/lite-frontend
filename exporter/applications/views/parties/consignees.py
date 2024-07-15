@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 from django.utils.functional import cached_property
 
-from exporter.applications.forms.parties import new_party_form_group
+from exporter.applications.forms.parties import (
+    PartySubTypeSelectForm,
+    new_party_form_group,
+)
+
 from exporter.applications.helpers.check_your_answers import convert_party
 from exporter.applications.services import (
     get_application,
@@ -11,6 +15,7 @@ from exporter.applications.services import (
     delete_party,
     validate_party,
     get_party,
+    update_party,
 )
 from exporter.applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
 from lite_content.lite_exporter_frontend.applications import ConsigneeForm, ConsigneePage
@@ -132,7 +137,62 @@ class ConsigneeSummary(LoginRequiredMixin, PartyContextMixin, TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["application"] = self.application
-        context["consignee"] = self.party
-        context["back_link_url"] = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
+        context = {
+            "application": self.application,
+            "consignee": self.party,
+            "fields": convert_party(
+                party=self.application["consignee"],
+                application=self.application,
+                editable=self.application["status"]["value"] == "draft",
+            ),
+            "pk": self.kwargs["pk"],
+            "obj_pk": self.kwargs["obj_pk"],
+            "back_link_url": reverse("applications:consignee", kwargs={"pk": self.kwargs["pk"]}),
+        }
         return context
+
+
+class ConsigneeEditView(LoginRequiredMixin, PartyContextMixin, FormView):
+    def form_valid(self, form):
+        update_party(self.request, self.application_id, self.party_id, form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("applications:consignee_summary", kwargs=self.kwargs)
+
+
+class ConsigneeSubTypeEditView(ConsigneeEditView):
+    form_class = PartySubTypeSelectForm
+    PartySubTypeSelectForm.title = ConsigneeForm.TITLE
+
+    def get_initial(self):
+        return {"sub_type": self.party["sub_type"]["key"], "sub_type_other": self.party["sub_type_other"]}
+
+
+# class ConsigneeNameEditView(ConsigneeEditView):
+#     form_class = PartyNameForm
+#     title = ConsigneeForm.NAME_FORM_TITLE
+
+#     def get_initial(self):
+#         return {"name": self.party["name"]}
+
+
+# class ConsigneeWebsiteEditView(ConsigneeEditView):
+#     form_class = PartyWebsiteForm
+#     title = ConsigneeForm.WEBSITE_FORM_TITLE
+
+#     def get_initial(self):
+#         return {"website": self.party["website"]}
+
+
+# class ConsigneeAddressEditView(ConsigneeEditView):
+#     form_class = PartyAddressForm
+#     title = ConsigneeForm.ADDRESS_FORM_TITLE
+
+#     def get_form_kwargs(self):
+#         kwargs = super().get_form_kwargs()
+#         kwargs["request"] = self.request
+#         return kwargs
+
+#     def get_initial(self):
+#         return {"address": self.party["address"], "country": self.party["country"]["id"]}

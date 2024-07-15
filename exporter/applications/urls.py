@@ -348,6 +348,11 @@ urlpatterns = [
     path("<uuid:pk>/consignee/<uuid:obj_pk>/remove/", consignees.RemoveConsignee.as_view(), name="remove_consignee"),
     path("<uuid:pk>/consignee/<uuid:obj_pk>/summary/", consignees.ConsigneeSummary.as_view(), name="consignee_summary"),
     path(
+        "<uuid:pk>/consignee/<uuid:obj_pk>/edit/sub-type/",
+        consignees.ConsigneeSubTypeEditView.as_view(),
+        name="consignee_edit_sub_type",
+    ),
+    path(
         "<uuid:pk>/consignee/<uuid:obj_pk>/document/attach/",
         documents.AttachDocuments.as_view(),
         name="consignee_attach_document",
