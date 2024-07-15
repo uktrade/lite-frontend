@@ -557,7 +557,7 @@ def convert_party(party, application, editable):
 
     data = {
         "Name": party["name"],
-        "Type": party["sub_type_other"] if party["sub_type_other"] else party["sub_type"]["value"],
+        "Type": party["sub_type"]["value"] if party["sub_type"]["value"] not in "Other" else party["sub_type_other"],
         "Clearance level": None,
         "Descriptors": party.get("descriptors"),
         "Address": get_address(party),
@@ -598,6 +598,37 @@ def convert_party(party, application, editable):
         # Only display descriptors on third parties for non F680 applications
         if party["type"] != "third_party" and not data.get("Descriptors"):
             data.pop("Descriptors")
+
+    return data
+
+
+def convert_consignee(party, application, editable):
+    if not party:
+        return {}
+
+    if party.get("document"):
+        document = _convert_document(party, party["type"], application["id"], editable)
+        document_description = party["document"]["description"]
+    else:
+        document = convert_to_link(
+            reverse(
+                f"applications:{party['type']}_attach_document",
+                kwargs={"pk": application["id"], "obj_pk": party["id"]},
+            ),
+            "Attach document",
+        )
+
+    data = {
+        "Select type of consignee": (
+            (party["sub_type"]["value"] if party["sub_type"]["value"] not in "Other" else party["sub_type_other"]),
+            "applications:consignee_edit_sub_type",
+        ),
+        "Consignee name": (party["name"], "applications:consignee_edit_name"),
+        "Consignee website (optional)": (convert_to_link(party["website"]), "applications:consignee_edit_website"),
+        "Consignee address": (get_address(party), "applications:consignee_edit_address"),
+        "Attach a document (optional)": (document, "applications:consignee_delete_document"),
+        "Description (optional)": (document_description, "applications:consignee_edit_sub_type"),
+    }
 
     return data
 
