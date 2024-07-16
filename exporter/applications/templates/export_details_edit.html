@@ -1,0 +1,18 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% block title%} {{ form_title }} {% endblock %}
+{% block back_link %}
+    <a href={{ back_link_url }} id="back-link" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block body %}
+
+  {% error_summary form %}
+
+  <form method="post">
+      {% csrf_token %}
+      {% crispy form %}
+  </form>
+
+{% endblock %}

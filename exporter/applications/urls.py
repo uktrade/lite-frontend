@@ -17,6 +17,7 @@ from exporter.applications.views import (
     route_of_goods,
     export_details,
     declaration,
+    product_location_journey_summary_edit,
 )
 from exporter.applications.views.security_approvals.views import (
     SecurityApprovals,
@@ -369,6 +370,30 @@ urlpatterns = [
         "<uuid:pk>/temporary-or-permanent/",
         locations.TemporaryOrPermanentFormView.as_view(),
         name="temporary_or_permanent",
+    ),
+    # Single edit to temporary export details
+    path(
+        "<uuid:pk>/temporary-export-details/",
+        product_location_journey_summary_edit.TemporaryExportDetailsView.as_view(),
+        name="temporary_export_details",
+    ),
+    # Temporary direct control
+    path(
+        "<uuid:pk>/is-temp-direct-control/",
+        product_location_journey_summary_edit.TemporaryDirectControlView.as_view(),
+        name="is_temp_direct_control",
+    ),
+    # Proposed return date
+    path(
+        "<uuid:pk>/proposed-return-date/",
+        product_location_journey_summary_edit.ProposedReturnDateView.as_view(),
+        name="proposed_return_date",
+    ),
+    # Is shipped waybill or lading
+    path(
+        "<uuid:pk>/is-shipped-waybill-or-lading/",
+        product_location_journey_summary_edit.ShippedWaybillOrLadingView.as_view(),
+        name="is_shipped_waybill_or_lading",
     ),
     # Temporary export details
     path(

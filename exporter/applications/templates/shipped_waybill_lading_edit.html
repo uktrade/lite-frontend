@@ -1,0 +1,77 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% block title%} {{ form_title }} {% endblock %}
+{% block back_link %}
+    <a href={{ back_link_url }} id="back-link" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block body %}
+
+
+  <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+    <h1 class="govuk-fieldset__heading">
+      {{ form_title }}
+    </h1>
+  </legend>
+
+	{% if form.errors %}
+		{% include "forms-errors.html" with errors=form.errors%}
+	{% endif %}
+
+  <form method="post">
+      {% csrf_token %}
+      <div class="govuk-form-group">
+        <div class="govuk-radios" data-module="govuk-radios">
+            {% for choice in form.is_shipped_waybill_or_lading %}
+            <div class="govuk-radios__item">
+                <input
+                  class="govuk-radios__input"
+                  id="{{ choice.id_for_label }}"
+                  name="{{ form.is_shipped_waybill_or_lading.html_name }}"
+                  type="radio" value="{{ choice.data.value }}"
+                  {% if choice.data.value|lower == 'false' %}data-aria-controls="conditional-control" {% endif %}
+                  {% if choice.data.selected %}checked{% endif %}>
+
+                <label class="govuk-label govuk-radios__label" for="{{ choice.id_for_label }}">
+                    {{ choice.choice_label }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-control">
+          <div id="pane_non_waybill_or_lading_route_details" class="govuk-form-group{% if form.non_waybill_or_lading_route_details.errors %} govuk-form-group--error{% endif %}">
+            <label class="govuk-label" for="id_non_waybill_or_lading_route_details">
+              {{ form.non_waybill_or_lading_route_details.label }}
+            </label>
+            {% if form.non_waybill_or_lading_route_details.errors %}
+                <span id="error-non_waybill_or_lading_route_details" for="id_non_waybill_or_lading_route_details" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ form.non_waybill_or_lading_route_details.errors|striptags }}
+                </span>
+            {% endif %}
+            <textarea id="id_non_waybill_or_lading_route_details" class="govuk-textarea{% if form.non_waybill_or_lading_route_details.errors %} govuk-textarea--error{% endif %}" name="{{ form.non_waybill_or_lading_route_details.html_name }}" rows="5">{{ form.non_waybill_or_lading_route_details.value }}</textarea>
+          </div>
+        </div>
+
+        <details class="govuk-details govuk-!-static-margin-top-5">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+              Help with airway bill and bill of lading
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            <div>
+              An air waybill is a receipt issued by an international airline for goods, and evidence of the contract of carriage. It obliges the carrier to carry the goods to the airport of destination, according to specified conditions. It is a document of title, which proves ownership, and is non-negotiable.
+            </div>
+            <div class="govuk-!-static-margin-top-5">
+              A bill of lading is a contract between the owner of the goods and the carrier. It is a receipt, contains the terms of the carriage contract, and importantly, is a document of title, which proves ownership of the goods.
+            </div>
+          </div>
+        </details>
+    </div>
+      <button type="submit" class="govuk-button">Continue</button>
+  </form>
+
+{% endblock %}

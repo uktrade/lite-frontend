@@ -1,0 +1,61 @@
+{% extends 'layouts/base.html' %}
+{% load crispy_forms_tags crispy_forms_gds %}
+
+{% block title%} {{ form_title }} {% endblock %}
+{% block back_link %}
+    <a href={{ back_link_url }} id="back-link" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block body %}
+
+
+  <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+    <h1 class="govuk-fieldset__heading">
+      {{ form_title }}
+    </h1>
+  </legend>
+
+	{% if form.errors %}
+		{% include "forms-errors.html" with errors=form.errors%}
+	{% endif %}
+
+  <form method="post">
+      {% csrf_token %}
+      <div class="govuk-form-group">
+        <div class="govuk-radios" data-module="govuk-radios">
+            {% for choice in form.is_temp_direct_control %}
+            <div class="govuk-radios__item">
+                <input
+                  class="govuk-radios__input"
+                  id="{{ choice.id_for_label }}"
+                  name="{{ form.is_temp_direct_control.html_name }}"
+                  type="radio" value="{{ choice.data.value }}"
+                  {% if choice.data.value|lower == 'false' %}data-aria-controls="conditional-control" {% endif %}
+                  {% if choice.data.selected %}checked{% endif %}>
+
+                <label class="govuk-label govuk-radios__label" for="{{ choice.id_for_label }}">
+                    {{ choice.choice_label }}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-control">
+          <div id="pane_temp_direct_control_details" class="govuk-form-group{% if form.temp_direct_control_details.errors %} govuk-form-group--error{% endif %}">
+            <label class="govuk-label" for="id_temp_direct_control_details">
+              {{ form.temp_direct_control_details.label }}
+            </label>
+            {% if form.temp_direct_control_details.errors %}
+                <span id="error-temp_direct_control_details" for="id_temp_direct_control_details" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ form.temp_direct_control_details.errors|striptags }}
+                </span>
+            {% endif %}
+            <textarea id="id_temp_direct_control_details" class="govuk-textarea{% if form.temp_direct_control_details.errors %} govuk-textarea--error{% endif %}" name="{{ form.temp_direct_control_details.html_name }}" rows="5">{{ form.temp_direct_control_details.value }}</textarea>
+          </div>
+        </div>
+    </div>
+      <button type="submit" class="govuk-button">Continue</button>
+  </form>
+
+{% endblock %}
