@@ -3,13 +3,16 @@
 {% block title%} Product location and journey summary {% endblock %}
 
 {% block back_link %}
-	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">{% lcs 'generic.BACK' %}</a>
+	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">Back to application overview</a>
 {% endblock %}
 
 {% block body %}
 
 <h1 class="govuk-heading-xl">Product location and journey summary</h1>
 
+<div class="govuk-details">
+	Review your answers below and make any amends you need to. Click ‘Save and continue’ to save your progress.
+</div>
 <dl class="govuk-summary-list govuk-!-margin-bottom-9" id="good-locations-summary">
 
 	<div class="govuk-summary-list__row">
@@ -86,6 +89,6 @@
 </dl>
 
 <div class="govuk-button-group">
-	<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Submit</a>
+	<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Save and continue</a>
 </div>
 {% endblock %}
