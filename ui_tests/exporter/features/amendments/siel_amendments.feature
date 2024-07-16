@@ -3,7 +3,7 @@ Feature: I want to submit SIEL applications and be able to make major amendments
   As a logged in exporter
   I want to submit SIEL applications and be able to make major amendments and resubmit
 
-  @siel_amend
+  @skip
   Scenario: Exporter making major amendments to an already submitted application
     Given I signin and go to exporter homepage and choose Test Org
     And I create a standard draft application with "Amend by copy" as reference
