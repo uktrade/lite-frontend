@@ -2,7 +2,6 @@ import rules
 
 from http import HTTPStatus
 
-from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
@@ -20,6 +19,7 @@ from exporter.applications.forms.common import (
     EditApplicationForm,
     application_copy_form,
     exhibition_details_form,
+    ApplicationMajorEditConfirmationForm,
 )
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
@@ -33,6 +33,7 @@ from exporter.applications.helpers.validators import (
     validate_delete_draft,
     validate_surrender_application_and_update_case_status,
 )
+from exporter.applications.rules import can_amend_by_copy
 from exporter.applications.services import (
     get_activity,
     get_applications,
@@ -63,6 +64,23 @@ from exporter.applications.forms.hcsat import HCSATminiform
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.helpers import convert_dict_to_query_params, get_document_data
+
+
+class ApplicationMixin(LoginRequiredMixin):
+
+    @property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
+    def get_application_detail_url(self):
+        return reverse("applications:application", kwargs={"pk": self.application_id})
+
+    def get_application_task_list_url(self, pk):
+        return reverse("applications:task_list", kwargs={"pk": pk})
 
 
 class ApplicationsList(LoginRequiredMixin, TemplateView):
@@ -117,23 +135,69 @@ class DeleteApplication(LoginRequiredMixin, SingleFormView):
             return self.request.GET.get("return_to")
 
 
-class ApplicationEditType(LoginRequiredMixin, FormView):
+class ApplicationEditType(ApplicationMixin, FormView):
+    """This is essentially now a temporary confirmation view before making a major edit"""
+
     form_class = EditApplicationForm
     template_name = "edit_application_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "application_id": self.application_id,
+            "data": self.application,
+        }
 
-        self.application_id = str(self.kwargs["pk"])
-        self.data = get_application(self.request, self.application_id)
+    def get_success_url(self):
+        return self.get_application_task_list_url(self.application_id)
 
-        context.update(
-            {
-                "application_id": self.application_id,
-                "data": self.data,
-            }
-        )
-        return context
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating status",
+        "Unexpected error changing application status to APPLICANT_EDITING",
+    )
+    def handle_major_edit(self):
+        return set_application_status(self.request, self.application_id, APPLICANT_EDITING)
+
+    def form_valid(self, form):
+
+        self.handle_major_edit()
+
+        return super().form_valid(form)
+
+
+class ApplicationMajorEditConfirmView(ApplicationMixin, FormView):
+    """
+    This is the confirmation page for whitelisted organisation before amending
+    an application by copy
+    """
+
+    form_class = ApplicationMajorEditConfirmationForm
+    template_name = "core/form.html"
+    amended_application_id = None
+
+    def dispatch(self, request, **kwargs):
+        if not can_amend_by_copy(request, self.application):
+            raise Http404()
+
+        return super().dispatch(request, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["application_reference"] = self.application["name"]
+        kwargs["cancel_url"] = self.get_application_detail_url()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "back_link_url": self.get_application_detail_url(),
+        }
+
+    def get_success_url(self):
+        return self.get_application_task_list_url(self.amended_application_id)
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -141,23 +205,18 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
         "Unexpected error creating amendment",
     )
     def create_amendment(self):
-        return create_application_amendment(self.request, str(self.kwargs["pk"]))
+        return create_application_amendment(self.request, self.application_id)
 
     def handle_major_edit(self):
-        organisation = get_organisation(self.request, self.request.session["organisation"])
-        if organisation["id"] in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS:
-            data, _ = self.create_amendment()
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": data["id"]}))
-        else:
-            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+
+        data, _ = self.create_amendment()
+        self.amended_application_id = data["id"]
 
     def form_valid(self, form):
-        self.application_id = str(self.kwargs["pk"])
 
-        # The minor edit flow has been disabled,
-        # so all edits are major edits
-        return self.handle_major_edit()
+        self.handle_major_edit()
+
+        return super().form_valid(form)
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
