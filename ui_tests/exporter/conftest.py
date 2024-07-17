@@ -124,12 +124,10 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()
 
-    mock_sso_login_screen = None
-    if not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
-        try:
-            mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
-        except NoSuchElementException:
-            mock_sso_login_screen = None
+    try:
+        mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+    except NoSuchElementException:
+        mock_sso_login_screen = None
 
     if "signin" in driver.current_url and not settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         GovukSigninPage(driver).sign_in(exporter_info["email"], exporter_info["password"])

@@ -260,3 +260,20 @@ def check_end_user_details(driver, end_user_name, end_user_address):
     all_values = driver.find_elements(by=By.CLASS_NAME, value="govuk-summary-list__value")
     assert all_values[1].text.strip() == end_user_name
     assert all_values[3].text.strip() == end_user_address
+
+
+@when(parsers.parse('I edit exporter reference as "{reference}" and submit'))
+def edit_exporter_reference(driver, reference):
+    name = driver.find_element(by=By.ID, value="name")
+    name.clear()
+    name.send_keys(reference)
+    functions.click_submit(driver)
+
+
+@then(parsers.parse('I see exporter reference updated as "{expected}"'))
+def check_updated_exporter_reference(driver, expected):
+    all_elements = driver.find_elements(by=By.CLASS_NAME, value="lite-task-list__item-details")
+    assert len(all_elements) > 0
+
+    actual = all_elements[0].find_element(by=By.XPATH, value=".//p").text
+    assert actual == expected

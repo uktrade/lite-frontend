@@ -4,6 +4,7 @@ Feature: I want to submit SIEL applications and be able to make major amendments
   I want to submit SIEL applications and be able to make major amendments and resubmit
 
   @skip
+  # Enable this scenario when this flow is enabled by default for all Exporters
   Scenario: Exporter making major amendments to an already submitted application
     Given I signin and go to exporter homepage and choose Test Org
     And I create a standard draft application with "Amend by copy" as reference
@@ -54,3 +55,17 @@ Feature: I want to submit SIEL applications and be able to make major amendments
     When I go to task list of the amended draft application
     And I click on "End user" section
     Then I see End-user with details "End user", "1234 End-user address Australia"
+    #
+    # Making an edit
+    #
+    When I go to task list of the amended draft application
+    And I click on "Your reference" section
+    And I edit exporter reference as "Amended reference" and submit
+    Then I see exporter reference updated as "Amended reference"
+    #
+    # Submit amended application
+    #
+    When I continue to submit application
+    And I click continue
+    And I agree to the declaration
+    Then application is submitted
