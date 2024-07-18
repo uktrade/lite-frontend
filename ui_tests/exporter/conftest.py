@@ -1,3 +1,4 @@
+import json
 import os
 
 from django.conf import settings
@@ -81,7 +82,7 @@ from tests_common.helpers import applications
 
 
 strict_gherkin = False
-fake = Faker()
+faker = Faker()
 
 
 @given("I create a standard application via api")  # noqa
@@ -172,7 +173,7 @@ def go_to_exporter_when(driver, exporter_url):  # noqa
 @when("I enter a licence name")  # noqa
 def enter_application_name(driver, context):  # noqa
     apply = ApplyForALicencePage(driver)
-    app_name = fake.bs()
+    app_name = faker.bs()
     apply.enter_name_or_reference_for_application(app_name)
     context.app_name = app_name
     functions.click_submit(driver)
@@ -255,7 +256,7 @@ def verify_section_is_saved(driver, section_name):  # noqa
 @when(parsers.parse("I provide details of the intended end use of the products"))  # noqa
 def intended_end_use_details(driver):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)
-    end_use_details.answer_intended_end_use_details(fake.sentence(nb_words=30))
+    end_use_details.answer_intended_end_use_details(faker.sentence(nb_words=30))
     functions.click_submit(driver)
 
 
@@ -263,7 +264,7 @@ def intended_end_use_details(driver):  # noqa
 def military_end_use_details(driver, choice):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)
     if choice.lower() == "yes":
-        end_use_details.answer_military_end_use_controls(True, fake.ean(length=13))
+        end_use_details.answer_military_end_use_controls(True, faker.ean(length=13))
     else:
         end_use_details.answer_military_end_use_controls(False)
     functions.click_submit(driver)
@@ -273,7 +274,7 @@ def military_end_use_details(driver, choice):  # noqa
 def informed_wmd_end_use_details(driver, choice):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)
     if choice.lower() == "yes":
-        end_use_details.answer_is_informed_wmd(True, fake.ean(length=13))
+        end_use_details.answer_is_informed_wmd(True, faker.ean(length=13))
     else:
         end_use_details.answer_is_informed_wmd(False)
     functions.click_submit(driver)
@@ -283,7 +284,7 @@ def informed_wmd_end_use_details(driver, choice):  # noqa
 def suspected_wmd_end_use_details(driver, choice):  # noqa
     end_use_details = EndUseDetailsFormPage(driver)
     if choice.lower() == "yes":
-        end_use_details.answer_is_suspected_wmd(True, fake.sentence(nb_words=30))
+        end_use_details.answer_is_suspected_wmd(True, faker.sentence(nb_words=30))
     else:
         end_use_details.answer_is_suspected_wmd(False)
     functions.click_submit(driver)
@@ -320,7 +321,7 @@ def temporary_export_direct_control(driver, choice):  # noqa
     if choice == "Yes":
         temporary_export_details.answer_is_temp_direct_control(True)
     else:
-        temporary_export_details.answer_is_temp_direct_control(False, fake.sentence(nb_words=30))
+        temporary_export_details.answer_is_temp_direct_control(False, faker.sentence(nb_words=30))
     functions.click_submit(driver)
 
 
@@ -530,7 +531,7 @@ def submit_response_confirmation(driver, value):  # noqa
 @when(parsers.parse("I enter text for case note"))  # noqa
 def enter_case_note_text(driver, context):  # noqa
     application_page = SubmittedApplicationsPages(driver)
-    context.text = fake.catch_phrase()
+    context.text = faker.catch_phrase()
     application_page.enter_case_note(context.text)
 
 
@@ -1505,3 +1506,131 @@ def should_see_notification_application(driver, context):  # noqa
     elements = driver.find_elements(by=By.CSS_SELECTOR, value=".govuk-table__row")
     no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)
     assert "1" in elements[no].find_element(by=By.CSS_SELECTOR, value=Shared(driver).NOTIFICATION).text
+
+
+@given(parsers.parse('I create a standard draft application with "{reference}" as reference'))
+def create_standard_draft_with_reference(api_test_client, context, reference):
+    draft = {
+        "name": reference,
+        "application_type": "siel",
+        "export_type": "permanent",
+        "have_you_been_informed": "yes",
+        "reference_number_on_information_form": "1234",
+    }
+    draft_id = api_test_client.applications.create_draft(draft)
+
+    end_use_details = {
+        "intended_end_use": "Research and development",
+        "is_military_end_use_controls": False,
+        "is_informed_wmd": False,
+        "is_suspected_wmd": False,
+        "is_eu_military": False,
+    }
+    route_of_goods = {
+        "goods_starting_point": "GB",
+        "is_shipped_waybill_or_lading": True,
+        "goods_recipients": "via_consignee",
+    }
+    additional_information = {"is_mod_security_approved": False}
+
+    api_test_client.applications.add_end_use_details(draft_id=draft_id, details=end_use_details)
+    api_test_client.applications.add_route_of_goods(draft_id=draft_id, route_of_goods=route_of_goods)
+    api_test_client.applications.add_additional_information(draft_id=draft_id, json=additional_information)
+
+    context.application_id = draft_id
+    context.exporter_reference = reference
+
+
+@when(parsers.parse("I go to task list of the draft application"))
+def application_task_list(driver, context):
+    driver.find_element(by=By.ID, value="link-applications").click()
+    driver.find_element(by=By.ID, value="applications-tab-drafts").click()
+
+    # There could be multiple drafts with the same reference so use the
+    # application_id to find the correct element
+    assert context.application_id
+    task_list_url = f"/applications/{context.application_id}/task-list/"
+    driver.find_element(by=By.XPATH, value=f'//a[@href="{task_list_url}"]').click()
+
+
+@when(parsers.parse('I add Consignee with details "{name}", "{address}", "{country}"'))
+def add_consignee_to_application(api_test_client, context, name, address, country):
+    party_type = "consignee"
+    consignee = {
+        "type": party_type,
+        "name": name,
+        "address": address,
+        "country": country,
+        "sub_type": "government",
+        "website": faker.uri(),
+    }
+    api_test_client.applications.parties.add_party(context.application_id, party_type, consignee)
+
+
+@when(parsers.parse('I add End-user with details "{name}", "{address}", "{country}"'))
+def add_end_user_to_application(api_test_client, context, name, address, country):
+    party_type = "end_user"
+    end_user = {
+        "type": party_type,
+        "name": name,
+        "address": address,
+        "country": country,
+        "sub_type": "government",
+        "website": faker.uri(),
+        "signatory_name_euu": name,
+        "end_user_document_available": False,
+        "end_user_document_missing_reason": "document not available",
+    }
+    api_test_client.applications.parties.add_party(context.application_id, party_type, end_user)
+
+
+@when(parsers.parse("I add a set of products to the application as json:\n{products_data}"))
+def add_products_to_application(api_test_client, context, products_data):
+    good_ids = {}
+    good_on_application_ids = []
+    products = json.loads(products_data.replace("\n", ""))
+    for product in products:
+        data = {
+            **product,
+            "is_good_controlled": True,
+            "is_pv_graded": "no",
+            "item_category": "group1_platform",
+            "is_military_use": "no",
+            "modified_military_use_details": "na",
+        }
+        good = api_test_client.applications.goods.post_good(data)
+
+        data = {
+            "good_id": good["id"],
+            "quantity": 64,
+            "unit": "NAR",
+            "value": 256.32,
+            "is_good_incorporated": False,
+        }
+        if "firearm_details" in product:
+            details = {
+                **product["firearm_details"],
+                "number_of_items": 2,
+                "year_of_manufacture": 2000,
+                "serial_numbers_available": "AVAILABLE",
+            }
+            data["firearm_details"] = details
+        good_on_application = api_test_client.applications.goods.add_good_to_draft(context.application_id, data)
+
+        good_ids[product["name"]] = good["id"]
+        good_on_application_ids.append(good_on_application["id"])
+
+    context.good_ids = good_ids
+    context.good_on_application_ids = good_on_application_ids
+
+
+@when("I continue to submit application")
+def continue_submitting_application(driver):
+    functions.click_submit(driver)
+
+
+@then("I record application reference code")
+def record_application_reference_code(driver, context):
+    message = driver.find_element(by=By.ID, value="application-processing-message-value").text
+    index = message.index("GBSIEL")
+    context.reference_code = message[index : index + 21]
