@@ -4,6 +4,7 @@ Feature: I want to edit and remove goods on the goods list
   I want to add edit and remove goods on my goods list
   So that I can ensure the correct goods are listed on my goods list
 
+
   @skip @legacy
   Scenario: Add, edit and delete good
     Given I go to exporter homepage and choose Test Org
