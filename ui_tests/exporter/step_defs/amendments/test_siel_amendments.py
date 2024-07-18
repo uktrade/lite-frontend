@@ -132,7 +132,7 @@ def continue_submitting_application(driver):
 def record_application_reference_code(driver, context):
     message = driver.find_element(by=By.ID, value="application-processing-message-value").text
     index = message.index("GBSIEL")
-    context.reference_code = message[index:]
+    context.reference_code = message[index : index + 21]
 
 
 @when("I go to my list of applications")
