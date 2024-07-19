@@ -22,6 +22,7 @@ urlpatterns = [
     path("im-done/", main.ImDoneView.as_view(), name="done"),
     path("change-status/", main.ChangeStatus.as_view(), name="change_status"),
     path("change-sub-status/", main.ChangeSubStatus.as_view(), name="change_sub_status"),
+    path("change-license-status/", main.ChangeLicenseStatus.as_view(), name="change_license_status"),
     path("move/", main.MoveCase.as_view(), name="move"),
     path("attach/", main.AttachDocuments.as_view(), name="attach_documents"),
     # This needs to be before "case" path b/c the regex in that sinks everything

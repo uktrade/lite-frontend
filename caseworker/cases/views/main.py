@@ -43,6 +43,7 @@ from lite_forms.views import SingleFormView
 from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import ChangeStatusForm
+from caseworker.cases.forms.change_status_license import ChangeLicenseStatusForm
 from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
 from caseworker.cases.forms.done_with_case import done_with_case_form
 from caseworker.cases.forms.move_case import move_case_form
@@ -53,6 +54,7 @@ from caseworker.cases.helpers.case import CaseView, Tabs, Slices
 from caseworker.cases.services import (
     get_case,
     post_case_notes,
+    put_application_license_status,
     put_case_queues,
     put_unassign_queues,
     put_rerun_case_routing_rules,
@@ -365,6 +367,67 @@ class ImDoneView(SingleFormView):
         self.action = put_unassign_queues
         self.success_url = reverse_lazy("queues:cases", kwargs={"queue_pk": kwargs["queue_pk"]})
         self.success_message = DoneWithCaseOnQueueForm.SUCCESS_MESSAGE.format(case.reference_code)
+
+
+class ChangeLicenseStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    form_class = ChangeLicenseStatusForm
+    template_name = "case/form.html"
+    success_message = "License status successfully changed"
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.case = get_case(self.request, self.kwargs["pk"])
+        except HTTPError:
+            raise Http404()
+
+        if not rules.test_rule("can_user_change_case", self.request, self.case):
+            raise Http404()
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["case"] = self.case
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        status_choices = [("issued", "Issued"), ("revoked", "Revoked"), ("suspended", "Suspended")]
+        kwargs["statuses"] = status_choices
+
+        return kwargs
+
+    def get_initial(self):
+        initial = super().get_initial()
+
+        status = self.case["data"].get("status")
+        if status:
+            initial["status"] = status["key"]
+
+        return initial
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error changing case status",
+        "Unexpected error changing case status",
+    )
+    def put_case_status(self, request, case_id, data):
+        return put_application_license_status(request, case_id, data)
+
+    def form_valid(self, form):
+        self.put_case_status(self.request, self.case.id, form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(
+            "cases:case",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.case.id,
+                "tab": "details",
+            },
+        )
 
 
 class ChangeStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
