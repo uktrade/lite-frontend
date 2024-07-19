@@ -131,8 +131,9 @@ def continue_submitting_application(driver):
 @then("I record application reference code")
 def record_application_reference_code(driver, context):
     message = driver.find_element(by=By.ID, value="application-processing-message-value").text
-    index = message.index("GBSIEL")
-    context.reference_code = message[index : index + 21]
+    matches = re.findall(r"GBSIEL/[0-9]+/[0-9]+/[P|T]", message)
+    assert len(matches) == 1
+    context.reference_code = matches[0]
 
 
 @when("I go to my list of applications")
