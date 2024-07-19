@@ -1,3 +1,4 @@
+from dateutil.parser import parse
 from http import HTTPStatus
 
 from django.http import Http404
@@ -42,10 +43,27 @@ class BaseProductDetails(LoginRequiredMixin, TemplateView):
     def get_summary(self):
         raise NotImplementedError(f"Implement `get_summary` on {self.__class__.__name__}")
 
+    def get_archive_history(self):
+        archive_history = []
+        for item in self.good["archive_history"]:
+            date_obj = parse(item["actioned_on"])
+            user = f"{item['user']['first_name']} {item['user']['last_name']}"
+            if item["is_archived"]:
+                archive_history.append(
+                    f"Archived by {user} at {date_obj.strftime('%H:%M')} on {date_obj.strftime('%d %B %Y')}"
+                )
+            else:
+                archive_history.append(
+                    f"Restored by {user} at {date_obj.strftime('%H:%M')} on {date_obj.strftime('%d %B %Y')}"
+                )
+
+        return archive_history
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context["good"] = self.good
         context["summary"] = self.get_summary()
+        context["archive_history"] = self.get_archive_history()
 
         return context

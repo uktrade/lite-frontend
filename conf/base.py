@@ -5,6 +5,8 @@ import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 from django_log_formatter_ecs import ECSFormatter
 from django_log_formatter_asim import ASIMFormatter
+from dbt_copilot_python.utility import is_copilot
+from dbt_copilot_python.network import setup_allowed_hosts
 
 from django.urls import reverse_lazy
 
@@ -28,6 +30,13 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 DEBUG = env.bool("DEBUG", False)
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
+
+ENVIRONMENT = env.str("ENVIRONMENT", "")
+VCAP_SERVICES = env.json("VCAP_SERVICES", {})
+
+
+IS_ENV_DBT_PLATFORM = is_copilot()
+IS_ENV_GOV_PAAS = bool(VCAP_SERVICES)
 
 # django-allow-cidr
 ALLOWED_CIDR_NETS = ["10.0.0.0/8"]
@@ -189,7 +198,6 @@ CLAM_AV_PASSWORD = env.str("CLAM_AV_PASSWORD", "")
 CLAM_AV_DOMAIN = env.str("CLAM_AV_DOMAIN", "")
 
 # AWS
-VCAP_SERVICES = env.json("VCAP_SERVICES", {})
 
 AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
 AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
@@ -202,26 +210,33 @@ AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "formatters": {
-        "simple": {"format": "{asctime} {levelname} {message}", "style": "{"},
-        "ecs_formatter": {"()": ECSFormatter},
-        "asim_formatter": {
-            "()": ASIMFormatter,
-        },
-    },
-    "handlers": {
-        "stdout": {"class": "logging.StreamHandler", "formatter": "simple"},
-        "ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"},
-        "asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"},
-    },
-    "root": {"handlers": ["stdout", "ecs", "asim"], "level": env.str("LOG_LEVEL", "info").upper()},
 }
+
+
+if IS_ENV_DBT_PLATFORM:
+    ALLOWED_HOSTS = setup_allowed_hosts(ALLOWED_HOSTS)
+    REDIS_URL = env.str("REDIS_URL", "")
+    LOGGING.update({"formatters": {"asim_formatter": {"()": ASIMFormatter}}})
+    LOGGING.update({"handlers": {"asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"}}})
+    LOGGING.update({"root": {"handlers": ["asim"]}})
+elif IS_ENV_GOV_PAAS:
+    REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
+    LOGGING.update({"formatters": {"ecs_formatter": {"()": ECSFormatter}}})
+    LOGGING.update({"handlers": {"ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"}}})
+    LOGGING.update({"root": {"handlers": ["ecs"]}})
+else:
+    # Local configurations and CircleCI
+    REDIS_URL = env.str("REDIS_URL", "")
+    LOGGING.update({"formatters": {"simple": {"format": "{asctime} {levelname} {message}", "style": "{"}}})
+    LOGGING.update({"handlers": {"stdout": {"class": "logging.StreamHandler", "formatter": "simple"}}})
+    LOGGING.update({"root": {"handlers": ["stdout"]}})
+
 additional_logger_config = env.json("ADDITIONAL_LOGGER_CONFIG", default=None)
 if additional_logger_config:
     LOGGING["loggers"] = additional_logger_config
 
-# Enable security features in hosted environments
 
+# Enable security features in hosted environments
 SECURE_HSTS_ENABLED = env.bool("SECURE_HSTS_ENABLED", False)
 SECURE_HSTS_SECONDS = 60 * 60 * 24 * 365 if SECURE_HSTS_ENABLED else None  # 1 year
 SECURE_BROWSER_XSS_FILTER = not DEBUG

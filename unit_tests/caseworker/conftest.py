@@ -14,7 +14,7 @@ from django.utils import timezone
 from caseworker.advice import services
 from core import client
 from core.helpers import convert_value_to_query_param
-from caseworker.advice.services import LICENSING_UNIT_TEAM, FIRST_COUNTERSIGN, SECOND_COUNTERSIGN
+from caseworker.advice.services import LICENSING_UNIT_TEAM, SECOND_COUNTERSIGN
 from caseworker.core.constants import SUPER_USER_ROLE_ID
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
