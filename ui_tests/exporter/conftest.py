@@ -135,15 +135,24 @@ def go_to_exporter(driver, register_organisation, sso_sign_in, exporter_url, con
     if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         MockSigninPage(driver).sign_in(exporter_info["email"])
 
-    if "select-organisation" in driver.current_url:
-        no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
-        Shared(driver).click_on_radio_buttons(no)
-        functions.click_submit(driver)
-    elif Shared(driver).get_text_of_organisation_heading() != context.org_name:
+    organisation_index = None
+    if "select-organisation" not in driver.current_url:
         Hub(driver).click_switch_link()
-        no = utils.get_element_index_by_text(Shared(driver).get_radio_buttons_elements(), context.org_name)
-        Shared(driver).click_on_radio_buttons(no)
-        functions.click_submit(driver)
+
+    organisation_index = utils.get_element_index_by_text(
+        Shared(driver).get_radio_buttons_elements(),
+        context.org_name,
+    )
+    Shared(driver).click_on_radio_buttons(organisation_index)
+
+    organisation_id = driver.find_element(
+        by=By.ID,
+        value=f"id_organisation_{organisation_index + 1}",
+    ).get_property("value")
+
+    context.organisation = {"id": organisation_id, "name": context.org_name}
+
+    functions.click_submit(driver)
 
 
 @given("Only my email is to be processed by LITE-HMRC")

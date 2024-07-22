@@ -39,10 +39,10 @@
 			</a>
 			<a href="{% url 'applications:applications' %}?sort_by=submitted_at&selected_filter=finalised_applications"
 				class="lite-tabs__tab"
-				id="applications-tab-draft">
+				id="applications-tab-finalised">
 					Finalised
 			</a>
-			<a href="{% url 'applications:applications' %}?sort_by=-created_at&selected_tab=draft_tab" class="lite-tabs__tab lite-tabs__tab--selected">
+			<a href="{% url 'applications:applications' %}?sort_by=-created_at&selected_tab=draft_tab" class="lite-tabs__tab lite-tabs__tab--selected" id="applications-tab-drafts">
 				{% lcs "applications.ApplicationsList.DRAFTS_TAB" %}
 			</a>
 		</div>

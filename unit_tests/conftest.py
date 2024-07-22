@@ -559,6 +559,7 @@ def data_open_case():
 
 @pytest.fixture
 def data_standard_case(
+    data_organisation,
     wassenaar_regime_entry,
     mtcr_regime_entry,
     nsg_regime_entry,
@@ -659,7 +660,7 @@ def data_standard_case(
                 "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",
                 "name": "444",
                 "organisation": {
-                    "id": "b7175103-d0ae-4b59-9c6a-190a2ed7f5e7",
+                    "id": data_organisation["id"],
                     "documents": [],
                     "primary_site": {
                         "id": "c86d3df2-5f48-40cd-a720-e76322df71a9",

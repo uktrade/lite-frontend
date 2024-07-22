@@ -44,10 +44,10 @@
 			</a>
 			<a href="{% url 'applications:applications' %}?sort_by=submitted_at&selected_filter=finalised_applications"
 				class="lite-tabs__tab {% if request.build_absolute_uri|has_param:"selected_filter=finalised_applications" %}lite-tabs__tab--selected{% endif %}"
-				id="applications-tab-draft">
+				id="applications-tab-finalised">
 					Finalised
 			</a>
-			<a href="{% url 'applications:applications' %}?sort_by=-created_at&selected_filter=draft_tab" class="lite-tabs__tab" id="applications-tab-draft">
+			<a href="{% url 'applications:applications' %}?sort_by=-created_at&selected_filter=draft_tab" class="lite-tabs__tab" id="applications-tab-drafts">
 				{% lcs "applications.ApplicationsList.DRAFTS_TAB" %}
 			</a>
 		</div>

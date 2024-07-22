@@ -88,3 +88,19 @@ def test_user_can_edit_quantity_value(settings, rf, data_standard_case, status, 
 
     request = rf.get("/")
     assert rules.test_rule("can_edit_quantity_value", request, application) is expected
+
+
+def test_can_amend_by_copy_organisation_success(settings, rf, data_standard_case, data_organisation):
+    settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
+
+    application = Application(data_standard_case["case"]["data"])
+
+    request = rf.get("/")
+    assert rules.test_rule("can_amend_by_copy", request, application)
+
+
+def test_can_amend_by_copy_organisation_fail(settings, rf, data_standard_case):
+    application = Application(data_standard_case["case"]["data"])
+
+    request = rf.get("/")
+    assert not rules.test_rule("can_amend_by_copy", request, application)
