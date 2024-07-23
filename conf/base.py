@@ -283,6 +283,7 @@ if env.str("SENTRY_DSN", ""):
         environment=env.str("SENTRY_ENVIRONMENT"),
         integrations=[DjangoIntegration()],
         send_default_pii=True,
+        traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", 1.0),
     )
 
 LITE_API_URL = env.str("LITE_API_URL")
