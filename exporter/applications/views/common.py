@@ -97,9 +97,8 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
         context = {
             "applications": applications,
             "organisation": organisation,
-            "params": params,
+            "selected_filter": params["selected_filter"],
             "page": params.pop("page"),
-            "params_str": convert_dict_to_query_params(params),
             "is_user_multiple_organisations": is_user_multiple_organisations,
             "sort_options": params["selected_filter"] != "draft_applications",
         }
