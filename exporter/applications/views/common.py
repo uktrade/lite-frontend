@@ -101,14 +101,10 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
             "page": params.pop("page"),
             "params_str": convert_dict_to_query_params(params),
             "is_user_multiple_organisations": is_user_multiple_organisations,
+            "sort_options": params["selected_filter"] != "draft_applications",
         }
 
-        if params["selected_filter"] in ["submitted_applications", "finalised_applications"]:
-            template_name = "applications/applications.html"
-        else:
-            template_name = "applications/drafts.html"
-
-        return render(request, template_name, context)
+        return render(request, "applications/applications.html", context)
 
 
 class DeleteApplication(LoginRequiredMixin, SingleFormView):
