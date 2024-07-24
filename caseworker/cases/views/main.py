@@ -43,7 +43,7 @@ from lite_forms.views import SingleFormView
 from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import ChangeStatusForm
-from caseworker.cases.forms.change_status_license import ChangeLicenseStatusForm
+from caseworker.cases.forms.change_status_license import ChangeLicenseStatusConfirmationForm, ChangeLicenseStatusForm
 from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
 from caseworker.cases.forms.done_with_case import done_with_case_form
 from caseworker.cases.forms.move_case import move_case_form
@@ -53,8 +53,9 @@ import caseworker.cases.helpers.advice as advice_helpers
 from caseworker.cases.helpers.case import CaseView, Tabs, Slices
 from caseworker.cases.services import (
     get_case,
+    get_licence_details,
+    update_licence_details,
     post_case_notes,
-    put_application_license_status,
     put_case_queues,
     put_unassign_queues,
     put_rerun_case_routing_rules,
@@ -372,39 +373,46 @@ class ImDoneView(SingleFormView):
 class ChangeLicenseStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
     form_class = ChangeLicenseStatusForm
     template_name = "case/form.html"
-    success_message = "License status successfully changed"
 
     def dispatch(self, *args, **kwargs):
         try:
+            self.license = get_licence_details(self.request, self.kwargs["license_pk"])
             self.case = get_case(self.request, self.kwargs["pk"])
         except HTTPError:
-            raise Http404()
-
-        if not rules.test_rule("can_user_change_case", self.request, self.case):
             raise Http404()
 
         return super().dispatch(*args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        context["license"] = self.license
         context["case"] = self.case
         return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
+        cancel_url = reverse(
+            "cases:case",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.case.id,
+                "tab": "details",
+            },
+        )
+
         status_choices = [("issued", "Issued"), ("revoked", "Revoked"), ("suspended", "Suspended")]
         kwargs["statuses"] = status_choices
+        kwargs["license"] = self.license
+        kwargs["cancel_url"] = cancel_url
 
         return kwargs
 
     def get_initial(self):
         initial = super().get_initial()
-
-        status = self.case["data"].get("status")
+        status = self.license.get("status")
         if status:
-            initial["status"] = status["key"]
-
+            initial["status"] = status
         return initial
 
     @expect_status(
@@ -412,11 +420,67 @@ class ChangeLicenseStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
         "Error changing case status",
         "Unexpected error changing case status",
     )
-    def put_case_status(self, request, case_id, data):
-        return put_application_license_status(request, case_id, data)
+    def update_licence_details(self, request, license_id, data):
+        return update_licence_details(request, license_id, data)
+
+    def get_success_url(self):
+        status = self.get_form().data["status"]
+        return reverse(
+            "cases:change_license_status_confirmation",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.case.id,
+                "license_pk": self.kwargs["license_pk"],
+                "status": status,
+            },
+        )
+
+
+class ChangeLicenseStatusConfirmation(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    form_class = ChangeLicenseStatusConfirmationForm
+    template_name = "case/form.html"
+    success_message = "License status successfully changed"
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.license = get_licence_details(self.request, self.kwargs["license_pk"])
+            self.status = self.kwargs["status"]
+            self.case = get_case(self.request, self.kwargs["pk"])
+        except HTTPError:
+            raise Http404()
+
+        return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["license"] = self.license
+        context["case"] = self.case
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["cancel_url"] = reverse(
+            "cases:case",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.case.id,
+                "tab": "details",
+            },
+        )
+
+        return kwargs
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error changing case status",
+        "Unexpected error changing case status",
+    )
+    def update_licence_details(self, request, license_id, data):
+        return update_licence_details(request, license_id, data)
 
     def form_valid(self, form):
-        self.put_case_status(self.request, self.case.id, form.cleaned_data)
+
+        self.update_licence_details(self.request, self.license["id"], {"status": self.status})
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -425,7 +489,7 @@ class ChangeLicenseStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
             kwargs={
                 "queue_pk": self.kwargs["queue_pk"],
                 "pk": self.case.id,
-                "tab": "details",
+                "tab": "licences",
             },
         )
 

@@ -173,6 +173,18 @@ def get_licence(request, case_pk):
     return data.json(), data.status_code
 
 
+def get_licence_details(request, licence_pk):
+    response = client.get(request, f"/licences/license_details/{licence_pk}")
+    response.raise_for_status()
+    return response.json()
+
+
+def update_licence_details(request, licence_pk, data):
+    response = client.patch(request, f"/licences/license_details/{licence_pk}", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def coalesce_team_advice(request, case_pk):
     data = client.get(request, f"/cases/{case_pk}/final-advice/")
     return data.json(), data.status_code
