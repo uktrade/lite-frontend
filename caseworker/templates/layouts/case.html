@@ -116,8 +116,9 @@
 				</div>
 			{% endif %}
 		</div>
+		{% test_rule 'can_user_allocate_case' request case as can_user_allocate_case %}
 		{% test_rule 'can_user_change_case' request case as can_user_change_case %}
-		{% if not can_user_change_case %}
+		{% if not can_user_change_case and can_user_allocate_case %}
 			<div id="allocation-warning" class="app-case-warning-banner">
 				<div class="app-case-warning-banner__warning">
 					<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
