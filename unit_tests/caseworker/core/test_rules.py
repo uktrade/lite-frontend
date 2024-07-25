@@ -11,7 +11,12 @@ from caseworker.advice.services import (
     OGD_TEAMS,
 )
 from caseworker.core import rules as caseworker_rules
-from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
+from caseworker.core.constants import (
+    ADMIN_TEAM_ID,
+    FCDO_TEAM_ID,
+    LICENSING_UNIT_TEAM_ID,
+    TAU_TEAM_ID,
+)
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
@@ -435,3 +440,43 @@ def test_can_user_rerun_routing_rules(get_mock_request):
     user = {}
     request = get_mock_request(user)
     assert not rules.test_rule("can_user_rerun_routing_rules", request, case)
+
+
+@pytest.mark.parametrize(
+    ("mock_gov_user_role", "expected"),
+    (
+        (
+            {
+                "id": "3ae08e0c-47b3-47ba-965f-48318129c147",
+                "name": "Licencing Unit Senior Manager",
+                "type": "internal",
+                "organsiation_id": None,
+            },
+            True,
+        ),
+        (
+            {
+                "id": "a9d4a865-ccf0-4752-bd93-9d62b6130ce0",
+                "name": "Licencing Unit Manager",
+                "type": "internal",
+                "organsiation_id": None,
+            },
+            False,
+        ),
+        (
+            {
+                "id": "a3b70367-e37d-4725-87fe-129ecc3e464d",
+                "name": "Licensing Unit Officer",
+                "type": "internal",
+                "organsiation_id": None,
+            },
+            False,
+        ),
+    ),
+)
+def test_can_user_change_licence_status(get_mock_request, mock_gov_user, mock_gov_user_role, expected):
+    user = mock_gov_user["user"]
+    user["role"] = mock_gov_user_role
+
+    request = get_mock_request(user)
+    assert rules.test_rule("can_user_change_licence_status", request) == expected

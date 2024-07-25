@@ -88,6 +88,4 @@ rules.add_rule("can_user_add_contact", is_user_allocated)
 rules.add_rule("can_user_change_sub_status", is_user_allocated & has_available_sub_statuses)
 rules.add_rule("can_user_search_products", is_user_in_admin_team | is_user_in_tau_team)  # noqa
 rules.add_rule("can_user_rerun_routing_rules", rules.always_deny)
-
-
 rules.add_rule("can_user_change_licence_status", is_user_licencing_unit_senior_manager)
