@@ -8,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, TemplateView
 
 from requests.exceptions import HTTPError
+from urllib.parse import urlencode
 
 from exporter.applications.constants import ApplicationStatus
 from exporter.applications.forms.appeal import AppealForm
@@ -90,7 +91,7 @@ class ApplicationsList(LoginRequiredMixin, FormView):
 
     def get_initial(self):
         return {
-            "sort_by": self.request.GET.get("sort_by", "submitted_at"),
+            "sort_by": self.request.GET.get("sort_by", "-submitted_at"),
         }
 
     def get_form_kwargs(self):
@@ -98,13 +99,40 @@ class ApplicationsList(LoginRequiredMixin, FormView):
         kwargs["action"] = reverse("applications:applications")
         return kwargs
 
+    def get_tabs(self):
+        tabs = [
+            {
+                "name": "Submitted",
+                "filter": "submitted_applications",
+            },
+            {
+                "name": "Finalised",
+                "filter": "finalised_applications",
+            },
+            {
+                "name": "Drafts",
+                "filter": "draft_applications",
+                "sort_by": "-created_at",
+            },
+            {
+                "name": "Archived",
+                "filter": "archived_applications",
+            },
+        ]
+        for tab in tabs:
+            sort_by = tab.get("sort_by", "-submitted_at")
+            query_params = {"selected_filter": tab["filter"], "sort_by": sort_by}
+            tab["url"] = f"/applications/?{urlencode(query_params, doseq=True)}"
+
+        return tabs
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         params = {
             "page": int(self.request.GET.get("page", 1)),
             "selected_filter": self.request.GET.get("selected_filter", "submitted_applications"),
-            "sort_by": self.request.GET.get("sort_by", "submitted_at"),
+            "sort_by": self.request.GET.get("sort_by", "-submitted_at"),
         }
 
         organisation = get_organisation(self.request, self.request.session["organisation"])
@@ -115,6 +143,7 @@ class ApplicationsList(LoginRequiredMixin, FormView):
             **context,
             "applications": applications,
             "organisation": organisation,
+            "tabs": self.get_tabs(),
             "selected_filter": params["selected_filter"],
             "page": params.pop("page"),
             "is_user_multiple_organisations": is_user_multiple_organisations,
