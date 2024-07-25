@@ -1,4 +1,5 @@
 {% extends 'layouts/base.html' %}
+{% load crispy_forms_tags %}
 {% load url_filters %}
 
 {% block back_link %}
@@ -55,24 +56,9 @@
 	</div>
 
 	{% if sort_options %}
-		<form method="GET" action="{% url 'applications:applications' %}">
-			<div class="govuk-form-group">
-				<label class="govuk-label" for="sort_by">
-					Sort by
-				</label>
-				<select class="govuk-select" id="sort_by" name="sort_by">
-				<option value="submitted_at" {% if request.GET.sort_by == 'submitted_at' %}selected{% endif %}>Date submitted</option>
-							<option value="-updated_at" {% if request.GET.sort_by == '-updated_at' %}selected{% endif %}>Date updated</option>
-				</select>
-			</div>
-
-		{% for key, value in request.GET.items %}
-				{% if key != 'sort_by' %}
-						<input type="hidden" name="{{ key }}" value="{{ value }}">
-				{% endif %}
-		{% endfor %}
-		</form>
+		{% crispy form %}
 	{% endif %}
+
 
 	{% if applications.results %}
 		<table class="govuk-table">

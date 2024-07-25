@@ -20,6 +20,7 @@ from exporter.applications.forms.common import (
     application_copy_form,
     exhibition_details_form,
     ApplicationMajorEditConfirmationForm,
+    ApplicationsListSortForm,
 )
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
@@ -63,7 +64,7 @@ from lite_forms.views import SingleFormView, MultiFormView
 from exporter.applications.forms.hcsat import HCSATminiform
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
-from core.helpers import convert_dict_to_query_params, get_document_data
+from core.helpers import get_document_data
 
 
 class ApplicationMixin(LoginRequiredMixin):
@@ -83,18 +84,35 @@ class ApplicationMixin(LoginRequiredMixin):
         return reverse("applications:task_list", kwargs={"pk": pk})
 
 
-class ApplicationsList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        params = {
-            "page": int(request.GET.get("page", 1)),
-            "selected_filter": request.GET.get("selected_filter", "submitted_applications"),
-            "sort_by": request.GET.get("sort_by", "submitted_at"),
+class ApplicationsList(LoginRequiredMixin, FormView):
+    template_name = "applications/applications.html"
+    form_class = ApplicationsListSortForm
+
+    def get_initial(self):
+        return {
+            "sort_by": self.request.GET.get("sort_by", "submitted_at"),
         }
 
-        organisation = get_organisation(request, request.session["organisation"])
-        applications = get_applications(request, **params)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["action"] = reverse("applications:applications")
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        params = {
+            "page": int(self.request.GET.get("page", 1)),
+            "selected_filter": self.request.GET.get("selected_filter", "submitted_applications"),
+            "sort_by": self.request.GET.get("sort_by", "submitted_at"),
+        }
+
+        organisation = get_organisation(self.request, self.request.session["organisation"])
+        applications = get_applications(self.request, **params)
         is_user_multiple_organisations = len(get_user(self.request)["organisations"]) > 1
-        context = {
+
+        return {
+            **context,
             "applications": applications,
             "organisation": organisation,
             "selected_filter": params["selected_filter"],
@@ -102,8 +120,6 @@ class ApplicationsList(LoginRequiredMixin, TemplateView):
             "is_user_multiple_organisations": is_user_multiple_organisations,
             "sort_options": params["selected_filter"] != "draft_applications",
         }
-
-        return render(request, "applications/applications.html", context)
 
 
 class DeleteApplication(LoginRequiredMixin, SingleFormView):

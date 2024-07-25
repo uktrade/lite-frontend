@@ -112,6 +112,7 @@ class ApplicationsListSortForm(BaseForm):
         choices=CHOICES,
         widget=forms.Select,
         label="Sort by",
+        required=False,
     )
 
     def __init__(self, *args, action, **kwargs):
