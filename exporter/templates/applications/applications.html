@@ -46,6 +46,11 @@
 				id="applications-tab-drafts">
 					Drafts
 			</a>
+			<a href="{% url 'applications:applications' %}?sort_by=submitted_at&selected_filter=archived_applications"
+				class="lite-tabs__tab {% if selected_filter == 'archived_applications' %}lite-tabs__tab--selected{% endif %}"
+				id="applications-tab-archived">
+					Archived
+			</a>
 		</div>
 	</div>
 

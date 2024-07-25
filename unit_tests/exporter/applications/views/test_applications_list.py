@@ -78,4 +78,4 @@ def test_get_draft_applications(authorized_client, mock_get_draft_applications):
     url = reverse("applications:applications") + "?sort_by=-created_at&selected_filter=draft_applications"
     response = authorized_client.get(url)
     assert response.status_code == 200
-    assertTemplateUsed(response, "applications/drafts.html")
+    assertTemplateUsed(response, "applications/applications.html")
