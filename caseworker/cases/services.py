@@ -25,11 +25,6 @@ def get_case_basic_details(request, pk):
     return response.json()
 
 
-def patch_case(request, pk, json):
-    response = client.patch(request, f"/cases/{pk}", json)
-    return response.json(), response.status_code
-
-
 # Case Queues
 def put_case_queues(request, pk, json):
     data = client.put(request, f"/cases/{pk}/queues/", json)
