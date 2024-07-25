@@ -1,10 +1,11 @@
 from django import forms
 
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Submit
+from crispy_forms_gds.layout import HTML, Submit
 
 from django.urls import reverse_lazy
 
+from core.common.forms import BaseForm
 from exporter.applications.forms.edit import told_by_an_official_form, reference_name_form
 from exporter.core.constants import STANDARD
 from lite_content.lite_exporter_frontend import strings
@@ -67,3 +68,35 @@ class EditApplicationForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Continue"))
+
+
+class ApplicationMajorEditConfirmationForm(BaseForm):
+    class Layout:
+        TITLE = "Are you sure you want to open your application for editing?"
+
+    def __init__(self, *args, application_reference, cancel_url, **kwargs):
+        self.application_reference = application_reference
+        self.cancel_url = cancel_url
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return [
+            HTML.p(
+                "Progress on the case will stop while you are making changes. The application will appear in your drafts until you re-submit."
+            ),
+            HTML.p(
+                "Re-submitting the application with changes means it will take longer to process and will have a new ECJU case reference."
+            ),
+            HTML.p(f"Your own application reference '{self.application_reference}' will remain the same."),
+        ]
+
+    def get_layout_actions(self):
+        layout_actions = super().get_layout_actions()
+
+        layout_actions.append(
+            HTML(
+                f'<a class="govuk-button govuk-button--secondary" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
+            ),
+        )
+
+        return layout_actions

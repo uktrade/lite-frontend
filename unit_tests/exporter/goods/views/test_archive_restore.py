@@ -181,6 +181,7 @@ def test_archive_product_asks_for_confirmation(
     ]
     assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Archive product"
     assert soup.find("a", {"id": "cancel-id-cancel"})["href"] == firearm_product_details_url
+    assert soup.find("a", {"id": "back-link"})["href"] == firearm_product_details_url
 
 
 def test_restore_product_asks_for_confirmation(
@@ -205,6 +206,7 @@ def test_restore_product_asks_for_confirmation(
     ]
     assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Restore product"
     assert soup.find("a", {"id": "cancel-id-cancel"})["href"] == firearm_product_details_url
+    assert soup.find("a", {"id": "back-link"})["href"] == firearm_product_details_url
 
 
 def test_archived_product_details_context(
