@@ -1130,7 +1130,14 @@ def data_standard_case(
                 "sub_status": None,
             },
             "next_review_date": None,
-            "licences": [],
+            "licences": [
+                {
+                    "id": "2d001261-4369-49ba-7928-7ada66aa5cee",
+                    "reference_code": "GBSIEL/2024/0001234/T",
+                    "status": "draft",
+                    "case_status": "draft",
+                }
+            ],
         }
     }
 
