@@ -79,7 +79,7 @@ setuptools = "~=65.5.1"
 rules="~=3.3.0"
 django-extra-views = "~=0.14.0"
 djangorestframework = "~=3.14.0"
-django = "~=4.2.11"
+django = "~=4.2.14"
 django-log-formatter-asim = "~=0.0.5"
 dbt-copilot-python = "~=0.2.1"
 
