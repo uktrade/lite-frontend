@@ -7,14 +7,12 @@ from selenium.webdriver.common.by import By
 from tests_common.tools import helpers
 from ui_tests.exporter.pages.add_goods_details import AddGoodDetails
 from ui_tests.exporter.pages.add_goods_grading_page import AddGoodGradingPage
-from ui_tests.exporter.conftest import get_file_upload_path
 from ui_tests.exporter.pages.add_goods_page import AddGoodPage
 from ui_tests.exporter.pages.attach_document_page import AttachDocumentPage
 from ui_tests.exporter.pages.goods_list import GoodsListPage
 from ui_tests.exporter.pages.goods_page import GoodsPage
 from ui_tests.exporter.pages.shared import Shared
 from ui_tests.exporter.pages.standard_application.goods import StandardApplicationGoodsPage
-from ui_tests.exporter.pages.standard_application.good_details import StandardApplicationGoodDetails
 from tests_common import functions
 import tests_common.tools.helpers as utils
 
