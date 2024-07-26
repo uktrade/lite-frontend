@@ -1507,10 +1507,16 @@ def should_see_notification_check_progress(driver):  # noqa
 
 @then("I see a notification next to the application")
 def should_see_notification_application(driver, context):  # noqa
-    dropdown = driver.find_element(By.ID, "id_sort_by")
-    select = Select(dropdown)
+    sort_options = driver.find_element(By.ID, "id_sort_by")
+    select = Select(sort_options)
     select.select_by_value("updated_at")
 
-    elements = driver.find_elements(by=By.CSS_SELECTOR, value=".govuk-table__row")
-    no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)
-    assert "1" in elements[no].find_element(by=By.CSS_SELECTOR, value=Shared(driver).NOTIFICATION).text
+    application_row = [
+        row for row in driver.find_elements(by=By.XPATH, value="//table/tbody/tr") if context.reference_code in row.text
+    ]
+    assert len(application_row) == 1
+    application_row = application_row[0]
+
+    num_notifications = application_row.find_elements(by=By.CLASS_NAME, value="lite-notification-bubble")
+    assert len(num_notifications) == 1
+    assert "1" in num_notifications[0].text
