@@ -70,6 +70,16 @@ def case_is_nlr(request, case):
     return has_flag(case, GOODS_NOT_LISTED_ID)
 
 
+@rules.predicate
+def is_case_finalised(request, case):
+    return case["status"] in ["finalised", "withdrawn"]
+
+
+@rules.predicate
+def is_licence_status_able_to_be_changed(request, licence):
+    return licence["status"] in ["issued", "reinstated", "suspended"]
+
+
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
 rules.add_rule("can_user_review_and_countersign", is_user_allocated)
