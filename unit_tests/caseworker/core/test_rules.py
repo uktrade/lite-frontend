@@ -441,7 +441,7 @@ def test_can_user_rerun_routing_rules(get_mock_request):
     ("case_status", "expected"),
     (
         ("finalised", True),
-        ("withdrawn", True),
+        ("withdrawn", False),
         ("under_review", False),
         ("revoked", False),
         ("open", False),

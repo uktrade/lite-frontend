@@ -76,7 +76,7 @@ def is_case_finalised(request, case):
 
 
 @rules.predicate
-def is_licence_status_able_to_be_changed(request, licence):
+def is_license_status_editable(request, licence):
     return licence["status"] in ["issued", "reinstated", "suspended"]
 
 
@@ -93,4 +93,4 @@ rules.add_rule("can_user_change_sub_status", is_user_allocated & has_available_s
 rules.add_rule("can_user_search_products", is_user_in_admin_team | is_user_in_tau_team)  # noqa
 rules.add_rule("can_user_rerun_routing_rules", rules.always_deny)
 rules.add_rule("can_licence_status_be_changed_on_case", is_case_finalised)
-rules.add_rule("can_licence_status_be_changed", is_licence_status_able_to_be_changed)
+rules.add_rule("can_licence_status_be_changed", is_license_status_editable)
