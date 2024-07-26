@@ -8,6 +8,7 @@ from caseworker.advice.services import (
 from caseworker.core.constants import ADMIN_TEAM_ID, TAU_TEAM_ID
 from caseworker.cases.services import get_case_sub_statuses
 from caseworker.flags.helpers import has_flag
+from core.constants import CaseStatusEnum, LicenceStatusEnum
 
 
 @rules.predicate
@@ -72,12 +73,12 @@ def case_is_nlr(request, case):
 
 @rules.predicate
 def is_case_finalised(request, case):
-    return case["status"] == "finalised"
+    return case["status"] == CaseStatusEnum.FINALISED
 
 
 @rules.predicate
 def is_license_status_editable(request, licence):
-    return licence["status"] in ["issued", "reinstated", "suspended"]
+    return licence["status"] in [LicenceStatusEnum.ISSUED, LicenceStatusEnum.REINSTATED, LicenceStatusEnum.SUSPENDED]
 
 
 rules.add_rule("can_user_change_case", is_user_allocated)

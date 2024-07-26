@@ -12,6 +12,7 @@ from caseworker.advice.services import (
 )
 from caseworker.core import rules as caseworker_rules
 from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
+from core.constants import CaseStatusEnum, LicenceStatusEnum
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
@@ -440,12 +441,12 @@ def test_can_user_rerun_routing_rules(get_mock_request):
 @pytest.mark.parametrize(
     ("case_status", "expected"),
     (
-        ("finalised", True),
-        ("withdrawn", False),
-        ("under_review", False),
-        ("revoked", False),
-        ("open", False),
-        ("draft", False),
+        (CaseStatusEnum.FINALISED, True),
+        (CaseStatusEnum.WITHDRAWN, False),
+        (CaseStatusEnum.UNDER_REVIEW, False),
+        (CaseStatusEnum.REVOKED, False),
+        (CaseStatusEnum.OPEN, False),
+        (CaseStatusEnum.DRAFT, False),
     ),
 )
 def test_can_licence_status_be_changed_on_case(mock_gov_user, get_mock_request, case_status, expected):
@@ -461,12 +462,12 @@ def test_can_licence_status_be_changed_on_case(mock_gov_user, get_mock_request, 
 @pytest.mark.parametrize(
     ("licence_status", "expected"),
     (
-        ("issued", True),
-        ("reinstated", True),
-        ("suspended", True),
-        ("expired", False),
-        ("exhausted", False),
-        ("cancelled", False),
+        (LicenceStatusEnum.ISSUED, True),
+        (LicenceStatusEnum.REINSTATED, True),
+        (LicenceStatusEnum.SUSPENDED, True),
+        (LicenceStatusEnum.EXPIRED, False),
+        (LicenceStatusEnum.EXHASUTED, False),
+        (LicenceStatusEnum.CANCELLED, False),
     ),
 )
 def test_can_licence_status_be_changed(mock_gov_user, get_mock_request, licence_status, expected):
