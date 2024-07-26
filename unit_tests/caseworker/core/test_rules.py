@@ -67,7 +67,7 @@ def get_mock_request(client):
 )
 def test_is_user_assigned(data, mock_gov_user, get_mock_request, expected_result):
     assigned_users = {"assigned_users": data}
-    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) == expected_result
+    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) is expected_result
 
 
 def test_is_user_assigned_request_missing_attribute():
@@ -97,7 +97,7 @@ def test_is_user_case_officer_none(get_mock_request):
     ),
 )
 def test_is_user_case_officer(data, mock_gov_user, get_mock_request, expected_result):
-    assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) == expected_result
+    assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) is expected_result
 
 
 def test_is_user_case_officer_request_missing_attribute():
@@ -167,7 +167,7 @@ def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expe
         "can_user_add_contact",
         "can_user_change_sub_status",
     ):
-        assert rules.test_rule(rule_name, get_mock_request(mock_gov_user["user"]), data) == expected_result
+        assert rules.test_rule(rule_name, get_mock_request(mock_gov_user["user"]), data) is expected_result
 
 
 @pytest.mark.parametrize(
@@ -270,7 +270,7 @@ def test_can_user_search_products(mock_gov_user, get_mock_request, mock_gov_user
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_search_products", request) == expected
+    assert rules.test_rule("can_user_search_products", request) is expected
 
 
 @pytest.mark.parametrize(
@@ -297,7 +297,7 @@ def test_can_assigned_user_assess_products(mock_gov_user, get_mock_request, mock
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_assess_products", request, case) == expected
+    assert rules.test_rule("can_user_assess_products", request, case) is expected
 
 
 @pytest.mark.parametrize(
@@ -324,7 +324,7 @@ def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request, mo
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_assess_products", request, case) == expected
+    assert rules.test_rule("can_user_assess_products", request, case) is expected
 
 
 @pytest.mark.parametrize(
@@ -391,7 +391,7 @@ def test_can_user_review_and_combine_based_on_allocation(mock_gov_user, get_mock
     user = mock_gov_user["user"]
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_review_and_combine", request, case) == expected_result
+    assert rules.test_rule("can_user_review_and_combine", request, case) is expected_result
 
 
 @pytest.mark.parametrize(
@@ -427,7 +427,7 @@ def test_can_user_review_and_combine_based_on_advice(mock_gov_user, get_mock_req
     user = mock_gov_user["user"]
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_review_and_combine", request, case) == expected
+    assert rules.test_rule("can_user_review_and_combine", request, case) is expected
 
 
 def test_can_user_rerun_routing_rules(get_mock_request):
@@ -435,3 +435,45 @@ def test_can_user_rerun_routing_rules(get_mock_request):
     user = {}
     request = get_mock_request(user)
     assert not rules.test_rule("can_user_rerun_routing_rules", request, case)
+
+
+@pytest.mark.parametrize(
+    ("case_status", "expected"),
+    (
+        ("finalised", True),
+        ("withdrawn", True),
+        ("under_review", False),
+        ("revoked", False),
+        ("open", False),
+        ("draft", False),
+    ),
+)
+def test_can_licence_status_be_changed_on_case(mock_gov_user, get_mock_request, case_status, expected):
+    case = {
+        "status": case_status,
+    }
+    user = mock_gov_user["user"]
+    request = get_mock_request(user)
+
+    assert rules.test_rule("can_licence_status_be_changed_on_case", request, case) is expected
+
+
+@pytest.mark.parametrize(
+    ("licence_status", "expected"),
+    (
+        ("issued", True),
+        ("reinstated", True),
+        ("suspended", True),
+        ("expired", False),
+        ("exhausted", False),
+        ("cancelled", False),
+    ),
+)
+def test_can_licence_status_be_changed(mock_gov_user, get_mock_request, licence_status, expected):
+    licence = {
+        "status": licence_status,
+    }
+    user = mock_gov_user["user"]
+    request = get_mock_request(user)
+
+    assert rules.test_rule("can_licence_status_be_changed", request, licence) is expected

@@ -71,7 +71,7 @@ def case_is_nlr(request, case):
 
 
 @rules.predicate
-def is_case_finalised(request, case):
+def is_case_finalised_or_withdrawn(request, case):
     return case["status"] in ["finalised", "withdrawn"]
 
 
@@ -92,4 +92,5 @@ rules.add_rule("can_user_add_contact", is_user_allocated)
 rules.add_rule("can_user_change_sub_status", is_user_allocated & has_available_sub_statuses)
 rules.add_rule("can_user_search_products", is_user_in_admin_team | is_user_in_tau_team)  # noqa
 rules.add_rule("can_user_rerun_routing_rules", rules.always_deny)
-rules.add_rule("can_licence_status_be_changed", is_case_finalised & is_licence_status_able_to_be_changed)
+rules.add_rule("can_licence_status_be_changed_on_case", is_case_finalised_or_withdrawn)
+rules.add_rule("can_licence_status_be_changed", is_licence_status_able_to_be_changed)
