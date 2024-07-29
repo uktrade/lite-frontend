@@ -11,7 +11,13 @@ from caseworker.advice.services import (
     OGD_TEAMS,
 )
 from caseworker.core import rules as caseworker_rules
-from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
+from caseworker.core.constants import (
+    ADMIN_TEAM_ID,
+    FCDO_TEAM_ID,
+    LICENSING_UNIT_TEAM_ID,
+    TAU_TEAM_ID,
+    LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
+)
 from core.constants import CaseStatusEnum, LicenceStatusEnum
 
 
@@ -438,43 +444,54 @@ def test_can_user_rerun_routing_rules(get_mock_request):
     assert not rules.test_rule("can_user_rerun_routing_rules", request, case)
 
 
+# @pytest.mark.parametrize(
+#     ("case_status", "expected"),
+#     (
+#         (CaseStatusEnumCaseStatusEnum.FINALISED, True),
+#         (CaseStatusEnum.WITHDRAWN, False),
+#         (CaseStatusEnum.UNDER_REVIEW, False),
+#         (CaseStatusEnum.REVOKED, False),
+#         (CaseStatusEnum.OPEN, False),
+#         (CaseStatusEnum.DRAFT, False),
+#     ),
+# )
+# def test_can_licence_status_be_changed_on_case(mock_gov_user, get_mock_request, case_status, expected):
+#     case = {
+#         "status": case_status,
+#     }
+#     user = mock_gov_user["user"]
+#     request = get_mock_request(user)
+
+#     assert rules.test_rule("can_licence_status_be_changed_on_case", request, case) is expected
+
+
 @pytest.mark.parametrize(
-    ("case_status", "expected"),
+    ("user_role_id", "licence_status", "case_status", "expected"),
     (
-        (CaseStatusEnum.FINALISED, True),
-        (CaseStatusEnum.WITHDRAWN, False),
-        (CaseStatusEnum.UNDER_REVIEW, False),
-        (CaseStatusEnum.REVOKED, False),
-        (CaseStatusEnum.OPEN, False),
-        (CaseStatusEnum.DRAFT, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.REINSTATED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.FINALISED, True),
+        ("00c341d1-d83e-4a12-b103-c3fb575a5962", LicenceStatusEnum.SUSPENDED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.WITHDRAWN, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.OPEN, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXPIRED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXHAUSTED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.CANCELLED, CaseStatusEnum.UNDER_REVIEW, False),
     ),
 )
-def test_can_licence_status_be_changed_on_case(mock_gov_user, get_mock_request, case_status, expected):
-    case = {
-        "status": case_status,
-    }
-    user = mock_gov_user["user"]
-    request = get_mock_request(user)
-
-    assert rules.test_rule("can_licence_status_be_changed_on_case", request, case) is expected
-
-
-@pytest.mark.parametrize(
-    ("licence_status", "expected"),
-    (
-        (LicenceStatusEnum.ISSUED, True),
-        (LicenceStatusEnum.REINSTATED, True),
-        (LicenceStatusEnum.SUSPENDED, True),
-        (LicenceStatusEnum.EXPIRED, False),
-        (LicenceStatusEnum.EXHASUTED, False),
-        (LicenceStatusEnum.CANCELLED, False),
-    ),
-)
-def test_can_licence_status_be_changed(mock_gov_user, get_mock_request, licence_status, expected):
+def test_can_licence_status_be_changed(
+    mock_gov_user, get_mock_request, user_role_id, licence_status, case_status, expected
+):
     licence = {
         "status": licence_status,
     }
+    case = {
+        "status": case_status,
+        "licences": [licence],
+    }
     user = mock_gov_user["user"]
+    user["role"]["id"] = user_role_id
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_licence_status_be_changed", request, licence) is expected
+    assert rules.test_rule("can_licence_status_be_changed", request, case) is expected

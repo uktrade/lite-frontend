@@ -122,6 +122,6 @@ class LicenceStatusEnum:
     ISSUED = "issued"
     CANCELLED = "cancelled"
     EXPIRED = "expired"
-    EXHASUTED = "exhausted"
+    EXHAUSTED = "exhausted"
     REINSTATED = "reinstated"
     SUSPENDED = "suspended"
