@@ -27,6 +27,11 @@
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						{{ licence.status }}
 					</td>
+					{% if can_change_licence_status %}
+					<td class="govuk-table__cell govuk-table__cell--tight">
+						Change Status
+					</td>
+					{% endif %}
 				</tr>
 			{% endfor %}
 		</tbody>
