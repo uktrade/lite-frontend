@@ -472,7 +472,7 @@ def test_can_user_rerun_routing_rules(get_mock_request):
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, True),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.REINSTATED, CaseStatusEnum.FINALISED, True),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.FINALISED, True),
-        ("00c341d1-d83e-4a12-b103-c3fb575a5962", LicenceStatusEnum.SUSPENDED, CaseStatusEnum.FINALISED, False),
+        ("00c341d1-d83e-4a12-b103-c3fb575a5962", LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, False),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.WITHDRAWN, False),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.OPEN, False),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXPIRED, CaseStatusEnum.FINALISED, False),
@@ -483,15 +483,16 @@ def test_can_user_rerun_routing_rules(get_mock_request):
 def test_can_licence_status_be_changed(
     mock_gov_user, get_mock_request, user_role_id, licence_status, case_status, expected
 ):
-    licence = {
-        "status": licence_status,
-    }
-    case = {
-        "status": case_status,
-        "licences": [licence],
+    licence_dict = {
+        "case": {
+            "status": case_status,
+        },
+        "licence": {
+            "status": licence_status,
+        },
     }
     user = mock_gov_user["user"]
     user["role"]["id"] = user_role_id
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_licence_status_be_changed", request, case) is expected
+    assert rules.test_rule("can_licence_status_be_changed", request, licence_dict) is expected

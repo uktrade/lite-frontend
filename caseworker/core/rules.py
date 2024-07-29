@@ -78,19 +78,14 @@ def is_user_licencing_unit_senior_manager(request):
 
 
 @rules.predicate
-def is_case_and_license_in_editable_state(request, case):
-    is_case_finalised = case["status"] == CaseStatusEnum.FINALISED
-    editable_licences = False
-    for licence in case["licences"]:
-        if licence["status"] in [
-            LicenceStatusEnum.ISSUED,
-            LicenceStatusEnum.REINSTATED,
-            LicenceStatusEnum.SUSPENDED,
-        ]:
-            editable_licences = True
-            break
-
-    return is_case_finalised & editable_licences
+def is_case_and_license_in_editable_state(request, dict):
+    is_case_finalised = dict["case"]["status"] == CaseStatusEnum.FINALISED
+    is_licence_editable = dict["licence"]["status"] in [
+        LicenceStatusEnum.ISSUED,
+        LicenceStatusEnum.REINSTATED,
+        LicenceStatusEnum.SUSPENDED,
+    ]
+    return is_case_finalised & is_licence_editable
 
 
 rules.add_rule("can_user_change_case", is_user_allocated)
