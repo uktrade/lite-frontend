@@ -22,10 +22,10 @@
      	</div>
 		<div class="lite-app-bar__controls">
 			<a href="." class="govuk-button govuk-button--secondary" draggable="false" role="button">
-				{% lcs "applications.ApplicationsList.REFRESH_BUTTON" %}
+				Refresh
 			</a>
 			<a href="{% url 'apply_for_a_licence:start' %}" class="govuk-button" draggable="false" role="button">
-				{% lcs "applications.ApplicationsList.APPLY_FOR_A_LICENCE_BUTTON" %}
+				Apply for a licence
 			</a>
 		</div>
 	</div>
@@ -41,7 +41,7 @@
 		</div>
 	</div>
 
-	{% if sort_options %}
+	{% if show_sort_options %}
 		{% crispy form %}
 	{% endif %}
 

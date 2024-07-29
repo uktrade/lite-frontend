@@ -147,7 +147,7 @@ class ApplicationsList(LoginRequiredMixin, FormView):
             "selected_filter": params["selected_filter"],
             "page": params.pop("page"),
             "is_user_multiple_organisations": is_user_multiple_organisations,
-            "sort_options": params["selected_filter"] != "draft_applications",
+            "show_sort_options": params["selected_filter"] != "draft_applications",
         }
 
 
