@@ -1,4 +1,3 @@
-import rules
 from dateutil.parser import parse
 from decimal import Decimal
 
@@ -83,6 +82,9 @@ class CaseworkerMixin:
 
     def is_lu_user(self):
         return self.caseworker["team"]["alias"] == LU_ALIAS
+
+    def is_case_finalised(self):
+        return self.case.data["status"]["key"] == CaseStatusEnum.FINALISED
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -174,6 +176,8 @@ class CaseView(CaseworkerMixin, TemplateView):
         return open_ecju_queries_with_forms
 
     def get_licence_dict(self):
+        # for licence in self.case.data["licences"]:
+
         return {
             "case": {"status": self.case.data["status"]["key"]},
             "licence": {"status": self.case.data["licence"]["status"]["key"]},
@@ -197,10 +201,10 @@ class CaseView(CaseworkerMixin, TemplateView):
         context = super().get_context_data()
         default_tab = "quick-summary"
         current_tab = default_tab if self.kwargs["tab"] == "default" else self.kwargs["tab"]
-        licence_dict = {
-            "case": {"status": self.case.data["status"]["key"]},
-            "licence": {"status": self.case.data["licence"]["status"]["key"]},
-        }
+        # licence_dict = {
+        #     "case": {"status": self.case.data["status"]["key"]},
+        #     "licence": {"status": self.case.data["licence"]["status"]["key"]},
+        # }
 
         return {
             **context,
@@ -229,7 +233,8 @@ class CaseView(CaseworkerMixin, TemplateView):
             "is_terminal": status_props["is_terminal"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "user": self.caseworker,
-            "can_change_licence_status": rules.test_rule("can_licence_status_be_changed", self.request, licence_dict),
+            "is_case_finalised": self.is_case_finalised(),
+            # "can_change_licence_status": rules.test_rule("can_licence_status_be_changed", self.request, licence_dict),
             **self.additional_context,
         }
 

@@ -1,3 +1,4 @@
+{% load rules %}
 {% if case.licences %}
 	<table id="table-licences" class="govuk-table">
 		<thead class="govuk-table__head">
@@ -27,7 +28,9 @@
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						{{ licence.status }}
 					</td>
-					{% if can_change_licence_status %}
+
+					{% test_rule 'can_licence_status_be_changed' user licence as can_licence_status_be_changed %}
+					{% if can_licence_status_be_changed and is_case_finalised %}
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						Change Status
 					</td>
