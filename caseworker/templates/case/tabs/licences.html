@@ -7,6 +7,7 @@
 				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.PRODUCTS_COLUMN' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.USAGE_COLUMN' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.STATUS_COLUMN' %}</th>
+				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.ACTIONS' %}</th>
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
@@ -28,8 +29,7 @@
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						{{ licence.status }}
 					</td>
-
-					{% test_rule 'can_licence_status_be_changed' user licence as can_licence_status_be_changed %}
+					{% test_rule 'can_licence_status_be_changed' request.lite_user licence as can_licence_status_be_changed %}
 					{% if can_licence_status_be_changed and is_case_finalised %}
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						Change Status

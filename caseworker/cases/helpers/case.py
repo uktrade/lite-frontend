@@ -175,14 +175,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             open_ecju_queries_with_forms.append((open_query, CloseQueryForm(prefix=str(open_query["id"]))))
         return open_ecju_queries_with_forms
 
-    def get_licence_dict(self):
-        # for licence in self.case.data["licences"]:
-
-        return {
-            "case": {"status": self.case.data["status"]["key"]},
-            "licence": {"status": self.case.data["licence"]["status"]["key"]},
-        }
-
     def get_context(self):
         if not self.tabs:
             self.tabs = []
@@ -201,10 +193,6 @@ class CaseView(CaseworkerMixin, TemplateView):
         context = super().get_context_data()
         default_tab = "quick-summary"
         current_tab = default_tab if self.kwargs["tab"] == "default" else self.kwargs["tab"]
-        # licence_dict = {
-        #     "case": {"status": self.case.data["status"]["key"]},
-        #     "licence": {"status": self.case.data["licence"]["status"]["key"]},
-        # }
 
         return {
             **context,
@@ -234,7 +222,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "user": self.caseworker,
             "is_case_finalised": self.is_case_finalised(),
-            # "can_change_licence_status": rules.test_rule("can_licence_status_be_changed", self.request, licence_dict),
             **self.additional_context,
         }
 

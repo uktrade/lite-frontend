@@ -123,6 +123,7 @@ class CasePage:
         USAGE_COLUMN = "Usage"
         STATUS_COLUMN = "Status"
         NO_CONTENT_NOTICE = "No licences on application"
+        ACTIONS = "Actions"
 
     class DetailsTab:
         ADMINISTRATIVE_CENTRE = "Administrative Centre"
