@@ -1,4 +1,5 @@
 {% load rules %}
+
 {% if case.licences %}
 	<table id="table-licences" class="govuk-table">
 		<thead class="govuk-table__head">
@@ -7,11 +8,17 @@
 				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.PRODUCTS_COLUMN' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.USAGE_COLUMN' %}</th>
 				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.STATUS_COLUMN' %}</th>
-				<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.ACTIONS' %}</th>
+				{% for licence in case.licences %}
+					{% test_rule 'can_licence_status_be_changed' request.lite_user licence as can_licence_status_be_changed %}
+					{% if can_licence_status_be_changed and is_case_finalised %}
+						<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.ACTIONS' %}</th>
+					{% endif %}
+				{% endfor %}
 			</tr>
 		</thead>
 		<tbody class="govuk-table__body">
 			{% for licence in case.licences %}
+				{% test_rule 'can_licence_status_be_changed' request.lite_user licence as can_licence_status_be_changed %}
 				<tr class="govuk-table__row" id="{{ case.id }}">
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						{{ licence.reference_code }}
