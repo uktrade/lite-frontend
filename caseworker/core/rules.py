@@ -13,7 +13,7 @@ from caseworker.core.constants import (
 )
 from caseworker.cases.services import get_case_sub_statuses
 from caseworker.flags.helpers import has_flag
-from core.constants import LicenceStatusEnum
+from core.constants import CaseStatusEnum, LicenceStatusEnum
 
 
 @rules.predicate
@@ -83,12 +83,14 @@ def is_user_licencing_unit_senior_manager(user):
 
 
 @rules.predicate
-def is_license_in_editable_state(user, licence):
-    return licence["status"] in [
+def is_license_and_case_in_editable_state(user, licence):
+    is_case_editable = licence["case_status"] == CaseStatusEnum.FINALISED.capitalize()
+    is_licence_editable = licence["status"] in [
         LicenceStatusEnum.ISSUED,
         LicenceStatusEnum.REINSTATED,
         LicenceStatusEnum.SUSPENDED,
     ]
+    return is_case_editable and is_licence_editable
 
 
 rules.add_rule("can_user_change_case", is_user_allocated)
@@ -103,4 +105,6 @@ rules.add_rule("can_user_add_contact", is_user_allocated)
 rules.add_rule("can_user_change_sub_status", is_user_allocated & has_available_sub_statuses)
 rules.add_rule("can_user_search_products", is_user_in_admin_team | is_user_in_tau_team)  # noqa
 rules.add_rule("can_user_rerun_routing_rules", rules.always_deny)
-rules.add_rule("can_licence_status_be_changed", is_user_licencing_unit_senior_manager & is_license_in_editable_state)
+rules.add_rule(
+    "can_licence_status_be_changed", is_user_licencing_unit_senior_manager & is_license_and_case_in_editable_state
+)
