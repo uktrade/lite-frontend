@@ -83,9 +83,6 @@ class CaseworkerMixin:
     def is_lu_user(self):
         return self.caseworker["team"]["alias"] == LU_ALIAS
 
-    def is_case_finalised(self):
-        return self.case.data["status"]["key"] == CaseStatusEnum.FINALISED
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         allocate_to_me_form = (
@@ -221,7 +218,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             "is_terminal": status_props["is_terminal"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "user": self.caseworker,
-            "is_case_finalised": self.is_case_finalised(),
             **self.additional_context,
         }
 
