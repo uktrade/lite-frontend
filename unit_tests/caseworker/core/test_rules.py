@@ -18,7 +18,7 @@ from caseworker.core.constants import (
     TAU_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
 )
-from core.constants import LicenceStatusEnum
+from core.constants import CaseStatusEnum, LicenceStatusEnum
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
@@ -445,21 +445,26 @@ def test_can_user_rerun_routing_rules(get_mock_request):
 
 
 @pytest.mark.parametrize(
-    ("user_role_id", "licence_status", "expected"),
+    ("user_role_id", "licence_status", "case_status", "expected"),
     (
-        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, True),
-        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, True),
-        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.REINSTATED, True),
-        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, True),
-        ("00c341d1-d83e-4a12-b103-c3fb575a5962", LicenceStatusEnum.ISSUED, False),
-        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXPIRED, False),
-        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXHAUSTED, False),
-        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.CANCELLED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.REINSTATED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.FINALISED, True),
+        ("00c341d1-d83e-4a12-b103-c3fb575a5962", LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXPIRED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXHAUSTED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.CANCELLED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.SUSPENDED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.WITHDRAWN, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.SUSPENDED, False),
     ),
 )
-def test_can_licence_status_be_changed(mock_gov_user, get_mock_request, user_role_id, licence_status, expected):
+def test_can_licence_status_be_changed(
+    mock_gov_user, get_mock_request, user_role_id, licence_status, case_status, expected
+):
     licence = {
         "status": licence_status,
+        "case_status": case_status.capitalize(),
     }
 
     user = mock_gov_user["user"]
