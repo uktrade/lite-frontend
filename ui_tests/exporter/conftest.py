@@ -8,7 +8,6 @@ from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 
 import tests_common.tools.helpers as utils
@@ -1491,9 +1490,13 @@ def application_submitted(driver, context):  # noqa
 
 @when("I click on my application")
 def click_on_application(driver, context):  # noqa
-    elements = Shared(driver).get_gov_table_cell_links()
-    no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)
-    elements[no].click()
+    assert context.reference_code
+    application_row = [
+        row for row in driver.find_elements(by=By.XPATH, value="//table/tbody/tr") if context.reference_code in row.text
+    ]
+    assert len(application_row) == 1
+
+    application_row[0].find_element(by=By.XPATH, value=".//a").click()
 
 
 @when("I click check progress")
@@ -1508,13 +1511,15 @@ def should_see_notification_check_progress(driver):  # noqa
 
 @then("I see a notification next to the application")
 def should_see_notification_application(driver, context):  # noqa
-    dropdown = driver.find_element(By.ID, "sort_by")
-    select = Select(dropdown)
-    select.select_by_value("-updated_at")
+    application_row = [
+        row for row in driver.find_elements(by=By.XPATH, value="//table/tbody/tr") if context.reference_code in row.text
+    ]
+    assert len(application_row) == 1
+    application_row = application_row[0]
 
-    elements = driver.find_elements(by=By.CSS_SELECTOR, value=".govuk-table__row")
-    no = utils.get_element_index_by_text(elements, context.app_name, complete_match=False)
-    assert "1" in elements[no].find_element(by=By.CSS_SELECTOR, value=Shared(driver).NOTIFICATION).text
+    num_notifications = application_row.find_elements(by=By.CLASS_NAME, value="lite-notification-bubble")
+    assert len(num_notifications) == 1
+    assert "1" in num_notifications[0].text
 
 
 @given(parsers.parse('I create a standard draft application with "{reference}" as reference'))
@@ -1553,7 +1558,7 @@ def create_standard_draft_with_reference(api_test_client, context, reference):
 @when(parsers.parse("I go to task list of the draft application"))
 def application_task_list(driver, context):
     driver.find_element(by=By.ID, value="link-applications").click()
-    driver.find_element(by=By.ID, value="applications-tab-drafts").click()
+    driver.find_element(by=By.ID, value="draft_applications").click()
 
     # There could be multiple drafts with the same reference so use the
     # application_id to find the correct element
