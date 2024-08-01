@@ -9,7 +9,6 @@ from caseworker.core.constants import (
     ADMIN_TEAM_ID,
     TAU_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
-    SUPER_USER_ROLE_ID,
 )
 from caseworker.cases.services import get_case_sub_statuses
 from caseworker.flags.helpers import has_flag
@@ -80,7 +79,7 @@ def case_is_nlr(request, case):
 def is_user_licencing_unit_senior_manager(user):
     user_role_id = user["role"]["id"]
 
-    return user_role_id in [LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, SUPER_USER_ROLE_ID]
+    return user_role_id is LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
 
 
 @rules.predicate
