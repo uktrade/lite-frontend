@@ -1,4 +1,3 @@
-import rules
 from dateutil.parser import parse
 from decimal import Decimal
 
@@ -173,14 +172,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             open_ecju_queries_with_forms.append((open_query, CloseQueryForm(prefix=str(open_query["id"]))))
         return open_ecju_queries_with_forms
 
-    def show_actions_column(self):
-        show_actions_column = False
-        for licence in self.case.licences:
-            if rules.test_rule("can_licence_status_be_changed", self.caseworker, licence):
-                show_actions_column = True
-                break
-        return show_actions_column
-
     def get_context(self):
         if not self.tabs:
             self.tabs = []
@@ -227,7 +218,6 @@ class CaseView(CaseworkerMixin, TemplateView):
             "is_terminal": status_props["is_terminal"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "user": self.caseworker,
-            "show_actions_column": self.show_actions_column(),
             **self.additional_context,
         }
 
