@@ -88,6 +88,25 @@ class ApplicationMixin(LoginRequiredMixin):
 class ApplicationsList(LoginRequiredMixin, FormView):
     template_name = "applications/applications.html"
     form_class = ApplicationsListSortForm
+    filters = [
+        {
+            "name": "Submitted",
+            "filter": "submitted_applications",
+        },
+        {
+            "name": "Finalised",
+            "filter": "finalised_applications",
+        },
+        {
+            "name": "Drafts",
+            "filter": "draft_applications",
+            "sort_by": "-created_at",
+        },
+        {
+            "name": "Archived",
+            "filter": "archived_applications",
+        },
+    ]
 
     def get_initial(self):
         return {
@@ -100,29 +119,12 @@ class ApplicationsList(LoginRequiredMixin, FormView):
         return kwargs
 
     def get_tabs(self):
-        tabs = [
-            {
-                "name": "Submitted",
-                "filter": "submitted_applications",
-            },
-            {
-                "name": "Finalised",
-                "filter": "finalised_applications",
-            },
-            {
-                "name": "Drafts",
-                "filter": "draft_applications",
-                "sort_by": "-created_at",
-            },
-            {
-                "name": "Archived",
-                "filter": "archived_applications",
-            },
-        ]
-        for tab in tabs:
+        tabs = []
+        for tab in self.filters:
             sort_by = tab.get("sort_by", "-submitted_at")
             query_params = {"selected_filter": tab["filter"], "sort_by": sort_by}
             tab["url"] = f"/applications/?{urlencode(query_params, doseq=True)}"
+            tabs.append(tab)
 
         return tabs
 
