@@ -10,7 +10,7 @@
 				{% for licence in case.licences %}
 					{% test_rule 'can_licence_status_be_changed' request.lite_user licence as can_licence_status_be_changed %}
 					{% if can_licence_status_be_changed %}
-						<th class="govuk-table__header" scope="col">{% lcs 'cases.CasePage.LicencesTab.ACTIONS' %}</th>
+						<th class="govuk-table__header" scope="col">Actions</th>
 					{% endif %}
 				{% endfor %}
 			</tr>
