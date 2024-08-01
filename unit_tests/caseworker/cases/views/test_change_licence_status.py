@@ -68,7 +68,7 @@ def case_url(queue_id, case_id):
         kwargs={
             "queue_pk": queue_id,
             "pk": case_id,
-            "tab": "details",
+            "tab": "licences",
         },
     )
 
@@ -105,15 +105,15 @@ def licence_details(licence_id):
     (
         (
             LicenceStatusEnum.ISSUED,
-            [("issued", "Issued"), ("suspended", "Suspended"), ("reinstated", "Reinstated")],
+            [("suspended", "Suspended"), ("revoked", "Revoked")],
         ),
         (
             LicenceStatusEnum.REINSTATED,
-            [("reinstated", "Reinstated"), ("suspended", "Suspended"), ("revoked", "Revoked")],
+            [("suspended", "Suspended"), ("revoked", "Revoked")],
         ),
         (
             LicenceStatusEnum.SUSPENDED,
-            [("suspended", "Suspended"), ("reinstated", "Reinstated"), ("revoked", "Revoked")],
+            [("reinstated", "Reinstated"), ("revoked", "Revoked")],
         ),
     ),
 )
@@ -143,9 +143,22 @@ def test_get_change_licence_status(
     change_licence_form = response.context["form"]
 
     assert change_licence_form.fields["status"].choices == expected
-    assert change_licence_form.initial == {"status": licence_state}
     assert change_licence_form.cancel_url == case_url
     assert change_licence_form.reference_code == licence_details["reference_code"]
+
+
+def test_get_change_licence_status_no_status_selected(
+    authorized_client,
+    mock_queue,
+    mock_case,
+    mock_get_licence_details,
+    change_licence_status_url,
+):
+    """Test to check licence change status form gives error when no status is selected"""
+
+    response = authorized_client.post(change_licence_status_url, data={})
+    assert response.status_code == 200
+    assert response.context["form"].errors == {"status": ["Select a status to change the licence to"]}
 
 
 def test_change_licence_status_submit_form(

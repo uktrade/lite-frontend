@@ -7,7 +7,6 @@ from crispy_forms_gds.layout import HTML
 class ChangeLicenceStatusForm(BaseForm):
     class Layout:
         TITLE = "Change licence status"
-        SUBMIT_BUTTON_TEXT = "Continue"
 
     status = forms.ChoiceField(
         choices=[],
@@ -20,7 +19,7 @@ class ChangeLicenceStatusForm(BaseForm):
         self.fields["status"].choices += self.statuses
 
         p_text = HTML.p(
-            f"You should only alter the licence status of  {self.reference_code} "
+            f"You should only alter the licence status of {self.reference_code} "
             "if you have documented the reasons why in the case notes and timeline."
         )
 
@@ -52,7 +51,6 @@ class ChangeLicenceStatusForm(BaseForm):
 class ChangeLicenceStatusConfirmationForm(BaseForm):
     class Layout:
         TITLE = "Are you sure you want to alter the status of the licence?"
-        SUBMIT_BUTTON_TEXT = "Continue"
 
     def __init__(self, *args, cancel_url, **kwargs):
         self.cancel_url = cancel_url
@@ -61,9 +59,9 @@ class ChangeLicenceStatusConfirmationForm(BaseForm):
     def get_layout_fields(self):
         return (
             HTML.p(
-                "if you change it to "
-                "Revoked"
-                "  or Suspended  the exporter cannot export the products and any attempt to do so will be viewed as an offence."
+                """
+                If you change it to 'Revoked' or 'Suspended'  the exporter cannot export the products and any attempt to do so will be viewed as an offence.
+                """
             ),
         )
 

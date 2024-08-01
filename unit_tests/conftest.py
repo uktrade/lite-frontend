@@ -1672,6 +1672,19 @@ def mock_status_properties(requests_mock):
 
 
 @pytest.fixture
+def mock_status_properties_can_invoke_major_editable(requests_mock):
+    url = client._build_absolute_uri("/static/statuses/properties/")
+    data = {
+        "is_read_only": False,
+        "is_terminal": False,
+        "is_major_editable": False,
+        "can_invoke_major_editable": True,
+    }
+    requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
+    return data
+
+
+@pytest.fixture
 def data_organisation():
     expiry_date = datetime.date.today() + datetime.timedelta(days=100)
 
