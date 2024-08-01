@@ -9,6 +9,7 @@ from caseworker.core.constants import (
     ADMIN_TEAM_ID,
     TAU_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
+    SUPER_USER_ROLE_ID,
 )
 from caseworker.cases.services import get_case_sub_statuses
 from caseworker.flags.helpers import has_flag
@@ -78,17 +79,19 @@ def case_is_nlr(request, case):
 @rules.predicate
 def is_user_licencing_unit_senior_manager(user):
     user_role_id = user["role"]["id"]
-    return user_role_id is LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
+
+    return user_role_id in [LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, SUPER_USER_ROLE_ID]
 
 
 @rules.predicate
 def is_license_and_case_in_editable_state(user, licence):
-    is_case_editable = licence["case_status"] == CaseStatusEnum.FINALISED.capitalize()
+    is_case_editable = licence["case_status"] == CaseStatusEnum.FINALISED
     is_licence_editable = licence["status"] in [
         LicenceStatusEnum.ISSUED,
         LicenceStatusEnum.REINSTATED,
         LicenceStatusEnum.SUSPENDED,
     ]
+
     return is_case_editable and is_licence_editable
 
 

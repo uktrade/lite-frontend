@@ -464,7 +464,7 @@ def test_can_licence_status_be_changed(
 ):
     licence = {
         "status": licence_status,
-        "case_status": case_status.capitalize(),
+        "case_status": case_status,
     }
 
     user = mock_gov_user["user"]
