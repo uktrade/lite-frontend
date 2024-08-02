@@ -509,8 +509,12 @@ class ChangeLicenseStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
         try:
             self.license = get_licence_details(self.request, self.kwargs["license_pk"])
             self.case = get_case(self.request, self.kwargs["pk"])
+
         except HTTPError:
             raise Http404()
+
+        # if not rules.test_rule("can_licence_status_be_changed", self.request.user, self.license):
+        #     raise Http404()
 
         return super().dispatch(*args, **kwargs)
 
