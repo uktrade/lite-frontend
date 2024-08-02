@@ -300,6 +300,7 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "finalised",
                     "reference_code": "12345AB",
                     "link_expected": True,
+                    "created_at": "2021-11-16",
                 },
                 {
                     "id": str(uuid.uuid4()),
@@ -307,6 +308,7 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "withdrawn",
                     "reference_code": "12345AB",
                     "link_expected": False,
+                    "created_at": "2021-11-17",
                 },
             ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
@@ -320,6 +322,7 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "finalised",
                     "reference_code": "12345AB",
                     "link_expected": True,
+                    "created_at": "2021-11-17",
                 },
                 {
                     "id": str(uuid.uuid4()),
@@ -327,6 +330,7 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "finalised",
                     "reference_code": "12345AB",
                     "link_expected": False,
+                    "created_at": "2021-11-19",
                 },
             ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
@@ -340,6 +344,7 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "finalised",
                     "reference_code": "12345AB",
                     "link_expected": True,
+                    "created_at": "2021-11-16",
                 }
             ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
@@ -353,6 +358,7 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "submitted",
                     "reference_code": "12345AB",
                     "link_expected": False,
+                    "created_at": "2021-11-16",
                 }
             ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
@@ -366,6 +372,7 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "finalised",
                     "reference_code": "12345AB",
                     "link_expected": False,
+                    "created_at": "2021-11-16",
                 }
             ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
@@ -379,6 +386,7 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "finalised",
                     "reference_code": "12345AB",
                     "link_expected": False,
+                    "created_at": "2021-11-16",
                 }
             ],
             str(uuid.uuid4()),
@@ -412,6 +420,38 @@ def test_licence_details_actions_column_and_licence_status_change_link_display(
     for licence in licence_details:
         show_licence_status_change_link = bool(html.find(id=licence["id"]))
         assert show_licence_status_change_link is licence["link_expected"]
+
+
+@pytest.mark.parametrize(
+    "licence_data, expected_status, expected_text",
+    (
+        ([], None, "No licence status set"),
+        ([{"created_at": "2023-08-08", "status": "Issued"}], "Issued", "Issued"),
+        (
+            [{"created_at": "2023-08-11", "status": "Cancelled"}, {"created_at": "2023-08-09", "status": "Revoked"}],
+            "Cancelled",
+            "Cancelled",
+        ),
+    ),
+)
+def test_case_details_licence_status_displayed(
+    data_standard_case,
+    requests_mock,
+    data_queue,
+    authorized_client,
+    mock_gov_user,
+    licence_data,
+    expected_status,
+    expected_text,
+):
+
+    data_standard_case["case"]["licences"] = licence_data
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+    assert response.context["licence_status"] == expected_status
+    html = BeautifulSoup(response.content, "html.parser")
+
+    assert html.find(id="case-licence-status").span.text.strip() == expected_text
 
 
 @pytest.mark.parametrize(
