@@ -4,7 +4,7 @@ from core.common.forms import BaseForm
 from crispy_forms_gds.layout import HTML
 
 
-class ChangeLicenseStatusForm(BaseForm):
+class ChangeLicenceStatusForm(BaseForm):
     class Layout:
         TITLE = "Change license status"
         SUBMIT_BUTTON_TEXT = "Continue"
@@ -29,14 +29,14 @@ class ChangeLicenseStatusForm(BaseForm):
             "status",
         )
 
-    def __init__(self, *args, statuses, license, cancel_url, **kwargs):
+    def __init__(self, *args, statuses, licence, cancel_url, **kwargs):
 
         self.cancel_url = cancel_url
         self.statuses = statuses
 
-        self.license = license
+        self.licence = licence
 
-        self.reference_code = license["reference_code"]
+        self.reference_code = licence["reference_code"]
 
         super().__init__(*args, **kwargs)
 
