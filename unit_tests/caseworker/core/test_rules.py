@@ -1,6 +1,7 @@
 import pytest
 import requests
 import rules
+import uuid
 
 from django.http import HttpRequest
 
@@ -11,7 +12,15 @@ from caseworker.advice.services import (
     OGD_TEAMS,
 )
 from caseworker.core import rules as caseworker_rules
-from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
+from caseworker.core.constants import (
+    ADMIN_TEAM_ID,
+    FCDO_TEAM_ID,
+    LICENSING_UNIT_TEAM_ID,
+    TAU_TEAM_ID,
+    LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
+)
+from core.constants import CaseStatusEnum, LicenceStatusEnum
+from caseworker.cases.objects import Case
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
@@ -67,7 +76,7 @@ def get_mock_request(client):
 )
 def test_is_user_assigned(data, mock_gov_user, get_mock_request, expected_result):
     assigned_users = {"assigned_users": data}
-    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) == expected_result
+    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) is expected_result
 
 
 def test_is_user_assigned_request_missing_attribute():
@@ -97,7 +106,7 @@ def test_is_user_case_officer_none(get_mock_request):
     ),
 )
 def test_is_user_case_officer(data, mock_gov_user, get_mock_request, expected_result):
-    assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) == expected_result
+    assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) is expected_result
 
 
 def test_is_user_case_officer_request_missing_attribute():
@@ -167,7 +176,7 @@ def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expe
         "can_user_add_contact",
         "can_user_change_sub_status",
     ):
-        assert rules.test_rule(rule_name, get_mock_request(mock_gov_user["user"]), data) == expected_result
+        assert rules.test_rule(rule_name, get_mock_request(mock_gov_user["user"]), data) is expected_result
 
 
 @pytest.mark.parametrize(
@@ -270,7 +279,7 @@ def test_can_user_search_products(mock_gov_user, get_mock_request, mock_gov_user
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_search_products", request) == expected
+    assert rules.test_rule("can_user_search_products", request) is expected
 
 
 @pytest.mark.parametrize(
@@ -297,7 +306,7 @@ def test_can_assigned_user_assess_products(mock_gov_user, get_mock_request, mock
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_assess_products", request, case) == expected
+    assert rules.test_rule("can_user_assess_products", request, case) is expected
 
 
 @pytest.mark.parametrize(
@@ -324,7 +333,7 @@ def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request, mo
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_assess_products", request, case) == expected
+    assert rules.test_rule("can_user_assess_products", request, case) is expected
 
 
 @pytest.mark.parametrize(
@@ -391,7 +400,7 @@ def test_can_user_review_and_combine_based_on_allocation(mock_gov_user, get_mock
     user = mock_gov_user["user"]
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_review_and_combine", request, case) == expected_result
+    assert rules.test_rule("can_user_review_and_combine", request, case) is expected_result
 
 
 @pytest.mark.parametrize(
@@ -427,7 +436,7 @@ def test_can_user_review_and_combine_based_on_advice(mock_gov_user, get_mock_req
     user = mock_gov_user["user"]
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_review_and_combine", request, case) == expected
+    assert rules.test_rule("can_user_review_and_combine", request, case) is expected
 
 
 def test_can_user_rerun_routing_rules(get_mock_request):
@@ -435,3 +444,43 @@ def test_can_user_rerun_routing_rules(get_mock_request):
     user = {}
     request = get_mock_request(user)
     assert not rules.test_rule("can_user_rerun_routing_rules", request, case)
+
+
+@pytest.mark.parametrize(
+    ("user_role_id", "licence_status", "case_status", "expected"),
+    (
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.REINSTATED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.FINALISED, True),
+        (str(uuid.uuid4()), LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXPIRED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXHAUSTED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.CANCELLED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.SUSPENDED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.WITHDRAWN, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.SUSPENDED, False),
+    ),
+)
+def test_can_licence_status_be_changed(
+    mock_gov_user, get_mock_request, user_role_id, licence_status, case_status, expected, data_standard_case
+):
+    case = Case(data_standard_case["case"])
+
+    case.licences = [
+        {
+            "id": str(uuid.uuid4()),
+            "reference_code": "GBSIEL/2000/0000001/P",
+            "status": licence_status,
+            "case_status": case_status,
+            "goods": [],
+        },
+    ]
+
+    licence = case.licences[0]
+
+    user = mock_gov_user["user"]
+    user["role"]["id"] = user_role_id
+    request = get_mock_request(user)
+    user = request.lite_user
+
+    assert rules.test_rule("can_licence_status_be_changed", user, licence) is expected

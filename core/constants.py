@@ -116,3 +116,12 @@ class SecurityClassifiedApprovalsType:
         (F1686, "F1686"),
         (OTHER, "Other written approval"),
     )
+
+
+class LicenceStatusEnum:
+    ISSUED = "Issued"
+    CANCELLED = "Cancelled"
+    EXPIRED = "Expired"
+    EXHAUSTED = "Exhausted"
+    REINSTATED = "Reinstated"
+    SUSPENDED = "Suspended"
