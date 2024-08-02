@@ -1,7 +1,6 @@
 import pytest
 import re
 import uuid
-from unittest import mock
 
 from bs4 import BeautifulSoup
 
@@ -288,6 +287,36 @@ def test_case_details_sub_status_change_displayed(
     html = BeautifulSoup(response.content, "html.parser")
 
     assert len(html.find_all(id="link-case-sub-status-change")) == expected
+
+
+@pytest.mark.parametrize(
+    "licence_data, expected_status, expected_text",
+    (
+        ([], None, "No Licence"),
+        ([{"created_at": "2023-08-08", "status": "Issued"}], "Issued", "Issued"),
+        (
+            [{"created_at": "2023-08-08", "status": "Cancelled"}, {"created_at": "2023-08-09", "status": "Revoked"}],
+            "Revoked",
+            "Revoked",
+        ),
+    ),
+)
+def test_case_details_licence_status_displayed(
+    data_standard_case,
+    requests_mock,
+    data_queue,
+    authorized_client,
+    mock_gov_user,
+    licence_data,
+    expected_status,
+    expected_text,
+):
+    data_standard_case["case"]["licences"] = licence_data
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+    assert response.context["licence_status"] == expected_status
+    html = BeautifulSoup(response.content, "html.parser")
+    assert html.find(id="case-license-status").span.text.strip() == expected_text
 
 
 @pytest.mark.parametrize(
