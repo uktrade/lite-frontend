@@ -1,6 +1,7 @@
 import pytest
 import requests
 import rules
+import uuid
 
 from django.http import HttpRequest
 
@@ -19,6 +20,7 @@ from caseworker.core.constants import (
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
 )
 from core.constants import CaseStatusEnum, LicenceStatusEnum
+from caseworker.cases.objects import Case
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
@@ -450,7 +452,7 @@ def test_can_user_rerun_routing_rules(get_mock_request):
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, True),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.REINSTATED, CaseStatusEnum.FINALISED, True),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.FINALISED, True),
-        ("00c341d1-d83e-4a12-b103-c3fb575a5962", LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, False),
+        (str(uuid.uuid4()), LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, False),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXPIRED, CaseStatusEnum.FINALISED, False),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXHAUSTED, CaseStatusEnum.FINALISED, False),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.CANCELLED, CaseStatusEnum.FINALISED, False),
@@ -460,12 +462,21 @@ def test_can_user_rerun_routing_rules(get_mock_request):
     ),
 )
 def test_can_licence_status_be_changed(
-    mock_gov_user, get_mock_request, user_role_id, licence_status, case_status, expected
+    mock_gov_user, get_mock_request, user_role_id, licence_status, case_status, expected, data_standard_case
 ):
-    licence = {
-        "status": licence_status,
-        "case_status": case_status,
-    }
+    case = Case(data_standard_case["case"])
+
+    case.licences = [
+        {
+            "id": str(uuid.uuid4()),
+            "reference_code": "GBSIEL/2000/0000001/P",
+            "status": licence_status,
+            "case_status": case_status,
+            "goods": [],
+        },
+    ]
+
+    licence = case.licences[0]
 
     user = mock_gov_user["user"]
     user["role"]["id"] = user_role_id

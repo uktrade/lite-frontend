@@ -83,15 +83,15 @@ def is_user_licencing_unit_senior_manager(user):
 
 
 @rules.predicate
-def is_license_and_case_in_editable_state(user, licence):
-    is_case_editable = licence["case_status"] == CaseStatusEnum.FINALISED
+def is_case_finalised_and_licence_editable(user, licence):
+    is_case_finalised = licence["case_status"] == CaseStatusEnum.FINALISED
     is_licence_editable = licence["status"] in [
         LicenceStatusEnum.ISSUED,
         LicenceStatusEnum.REINSTATED,
         LicenceStatusEnum.SUSPENDED,
     ]
 
-    return is_case_editable and is_licence_editable
+    return is_case_finalised and is_licence_editable
 
 
 rules.add_rule("can_user_change_case", is_user_allocated)
@@ -107,5 +107,5 @@ rules.add_rule("can_user_change_sub_status", is_user_allocated & has_available_s
 rules.add_rule("can_user_search_products", is_user_in_admin_team | is_user_in_tau_team)  # noqa
 rules.add_rule("can_user_rerun_routing_rules", rules.always_deny)
 rules.add_rule(
-    "can_licence_status_be_changed", is_user_licencing_unit_senior_manager & is_license_and_case_in_editable_state
+    "can_licence_status_be_changed", is_user_licencing_unit_senior_manager & is_case_finalised_and_licence_editable
 )
