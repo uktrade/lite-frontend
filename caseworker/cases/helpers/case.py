@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
+from caseworker.cases.helpers.licence import get_latest_licence_status
 from caseworker.queues.forms import CaseAssignmentsAllocateToMeForm
 from core.constants import CaseStatusEnum, SecurityClassifiedApprovalsType
 
@@ -218,6 +219,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             "is_terminal": status_props["is_terminal"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "user": self.caseworker,
+            "licence_status": get_latest_licence_status(self.case),
             **self.additional_context,
         }
 
