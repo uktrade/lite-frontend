@@ -76,16 +76,17 @@ def case_is_nlr(request, case):
 
 
 @rules.predicate
-def is_user_licencing_unit_senior_manager(user):
-    user_role_id = user["role"]["id"]
+def is_user_licencing_unit_senior_manager(request):
+    user = getattr(request, "lite_user", None)
 
-    return user_role_id is LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
+    user_role_id = user["role"]["id"]
+    return user_role_id == LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
 
 
 @rules.predicate
-def is_case_finalised_and_licence_editable(user, licence):
-    is_case_finalised = licence["case_status"] == CaseStatusEnum.FINALISED
-    is_licence_editable = licence["status"] in [
+def is_case_finalised_and_licence_editable(request, licence):
+    is_case_finalised = licence.get("case_status") == CaseStatusEnum.FINALISED
+    is_licence_editable = licence.get("status") in [
         LicenceStatusEnum.ISSUED,
         LicenceStatusEnum.REINSTATED,
         LicenceStatusEnum.SUSPENDED,

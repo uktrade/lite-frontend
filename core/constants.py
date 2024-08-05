@@ -119,9 +119,24 @@ class SecurityClassifiedApprovalsType:
 
 
 class LicenceStatusEnum:
-    ISSUED = "Issued"
-    CANCELLED = "Cancelled"
-    EXPIRED = "Expired"
-    EXHAUSTED = "Exhausted"
-    REINSTATED = "Reinstated"
-    SUSPENDED = "Suspended"
+    ISSUED = "issued"
+    CANCELLED = "cancelled"
+    EXPIRED = "expired"
+    EXHAUSTED = "exhausted"
+    REINSTATED = "reinstated"
+    SUSPENDED = "suspended"
+    REVOKED = "revoked"
+
+    issued_choice = (ISSUED, "Issued")
+    suspended_choice = (
+        SUSPENDED,
+        "Suspended",
+    )
+    revoked_choice = (
+        REVOKED,
+        "Revoked",
+    )
+    reinstated_choice = (
+        REINSTATED,
+        "Reinstated",
+    )

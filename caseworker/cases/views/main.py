@@ -1,3 +1,4 @@
+from core.constants import LicenceStatusEnum
 import rules
 
 from logging import getLogger
@@ -501,21 +502,21 @@ class ChangeSubStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
         )
 
 
-class ChangeLicenceStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
+class ChangeLicenceStatus(LoginRequiredMixin, FormView):
     form_class = ChangeLicenceStatusForm
     template_name = "case/form.html"
 
     def dispatch(self, *args, **kwargs):
         try:
+
             self.licence = get_licence_details(self.request, self.kwargs["licence_pk"])
             self.case = get_case(self.request, self.kwargs["pk"])
 
         except HTTPError:
             raise Http404()
 
-        # if not rules.test_rule("can_licence_status_be_changed", self.request.user, self.license):
-        #     raise Http404()
-
+        if not rules.test_rule("can_licence_status_be_changed", self.request, self.licence):
+            raise Http404()
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
@@ -530,9 +531,8 @@ class ChangeLicenceStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
             },
         )
 
-        status_choices = [("issued", "Issued"), ("revoked", "Revoked"), ("suspended", "Suspended")]
-        kwargs["statuses"] = status_choices
-        kwargs["licence"] = self.licence
+        kwargs["statuses"] = self.get_edit_licence_choices()
+        kwargs["reference_code"] = self.licence["reference_code"]
         kwargs["cancel_url"] = cancel_url
 
         return kwargs
@@ -545,25 +545,35 @@ class ChangeLicenceStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return initial
 
     def get_edit_licence_choices(self):
-
-        licence_choice_map = 1
-        {
-            "reinstated": [],
-            "issues": [],
+        licence_choice_map = {
+            LicenceStatusEnum.REINSTATED: [
+                LicenceStatusEnum.reinstated_choice,
+                LicenceStatusEnum.suspended_choice,
+                LicenceStatusEnum.revoked_choice,
+            ],
+            LicenceStatusEnum.ISSUED: [
+                LicenceStatusEnum.issued_choice,
+                LicenceStatusEnum.suspended_choice,
+                LicenceStatusEnum.reinstated_choice,
+            ],
+            LicenceStatusEnum.SUSPENDED: [
+                LicenceStatusEnum.suspended_choice,
+                LicenceStatusEnum.reinstated_choice,
+                LicenceStatusEnum.revoked_choice,
+            ],
         }
         status = self.licence.get("status")
+        return licence_choice_map[status]
 
     def get_success_url(self):
-        # TODO Next is the confirmation Licence where we save the Licence details
-        # For now we just post bacl to this page
-        status = self.get_form().data["status"]
+        # TODO Next is the confirmation License where we save the Licese details
+        # For now we just post back to this page
         return reverse(
             "cases:change_licence_status",
             kwargs={
                 "queue_pk": self.kwargs["queue_pk"],
                 "pk": self.case.id,
                 "licence_pk": self.kwargs["licence_pk"],
-                "status": status,
             },
         )
 

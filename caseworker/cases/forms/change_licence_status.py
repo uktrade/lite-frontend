@@ -6,14 +6,14 @@ from crispy_forms_gds.layout import HTML
 
 class ChangeLicenceStatusForm(BaseForm):
     class Layout:
-        TITLE = "Change license status"
+        TITLE = "Change licence status"
         SUBMIT_BUTTON_TEXT = "Continue"
 
     status = forms.ChoiceField(
         choices=[],
         widget=forms.RadioSelect,
-        label="Select a license status to change",
-        error_messages={"required": "Select a status to change the license to"},
+        label="Select a licence status to change",
+        error_messages={"required": "Select a status to change the licence to"},
     )
 
     def get_layout_fields(self):
@@ -29,14 +29,11 @@ class ChangeLicenceStatusForm(BaseForm):
             "status",
         )
 
-    def __init__(self, *args, statuses, licence, cancel_url, **kwargs):
+    def __init__(self, *args, statuses, reference_code, cancel_url, **kwargs):
 
         self.cancel_url = cancel_url
         self.statuses = statuses
-
-        self.licence = licence
-
-        self.reference_code = licence["reference_code"]
+        self.reference_code = reference_code
 
         super().__init__(*args, **kwargs)
 
