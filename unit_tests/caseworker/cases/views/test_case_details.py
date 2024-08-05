@@ -1,7 +1,6 @@
 import pytest
 import re
 import uuid
-from unittest import mock
 
 from bs4 import BeautifulSoup
 
@@ -294,12 +293,12 @@ def test_case_details_sub_status_change_displayed(
     "reference_code,expected_banner_msg",
     (
         (
-            "GBSIEL/Blah",
-            "The amendment case is GBSIEL/Blah.",
+            "GBSIEL/2024/0000010/P",
+            "The exporter edited this application and the case has been superseded by GBSIEL/2024/0000010/P.",
         ),
         (
             None,
-            "The exporter is still working on their amendments and will submit the amended case when they are finished.",
+            "The exporter is editing their application. A new case will be created when they resubmit.",
         ),
     ),
 )
@@ -320,7 +319,6 @@ def test_case_superseded_warning(
     superseded_banner = html.find(id="superseded-warning")
     superseded_message = superseded_banner.find("span", attrs={"class": "app-case-warning-banner__text"})
 
-    assert "This case has been amended by the exporter and is now superseded." in superseded_message.text
     assert expected_banner_msg in superseded_message.text
 
 
@@ -331,7 +329,10 @@ def test_case_amendment_warning(
     mock_gov_user,
 ):
     synthetic_superseded_id = str(uuid.uuid4())
-    data_standard_case["case"]["amendment_of"] = {"id": synthetic_superseded_id, "reference_code": "GBSIEL/OLD"}
+    data_standard_case["case"]["amendment_of"] = {
+        "id": synthetic_superseded_id,
+        "reference_code": "GBSIEL/2024/0000002/P",
+    }
     case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(case_url)
 
@@ -339,5 +340,7 @@ def test_case_amendment_warning(
     amendment_banner = html.find(id="amendment-warning")
     amendment_message = amendment_banner.find("span", attrs={"class": "app-case-warning-banner__text"})
 
-    assert "This case is an amendment." in amendment_message.text
-    assert "The original case is GBSIEL/OLD." in amendment_message.text
+    assert (
+        "This case was created when the exporter edited the original application at GBSIEL/2024/0000002/P."
+        in amendment_message.text
+    )
