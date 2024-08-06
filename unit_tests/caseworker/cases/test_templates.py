@@ -1,7 +1,9 @@
 import pytest
+from django.http import HttpRequest
 
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
+from caseworker.core.constants import LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
 
 from caseworker.cases.objects import Case
 
@@ -102,3 +104,36 @@ def test_foi_details_on_summary_page(data_standard_case, agreed_to_foi, agreed_t
     actual_foi_reason_value = soup.find(id="foi-reason-value").text
     assert agreed_to_foi_display_value == actual_foi_value
     assert foi_reason == actual_foi_reason_value
+
+
+@pytest.fixture
+def licence_details(data_standard_case):
+    return {
+        "id": data_standard_case["case"]["licences"][0]["id"],
+        "status": "issued",
+        "case_status": "finalised",
+        "reference_code": "12345AB",
+    }
+
+
+def test_actions_column_appears_adn_change_link_displays(data_standard_case, mock_gov_user, licence_details):
+    mock_gov_user["user"]["role"]["id"] = LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
+    data_standard_case["case"]["licences"] = [licence_details]
+    case = data_standard_case["case"]
+    request = HttpRequest()
+
+    request.lite_user = mock_gov_user["user"]
+    context = {
+        "case": case,
+        "queue": {"id": "00000000-0000-0000-0000-000000000001"},
+        "request": request,
+        "show_actions_column": True,
+    }
+
+    html = render_to_string("case/tabs/licences.html", context)
+    soup = BeautifulSoup(html, "html.parser")
+
+    show_actions_column = bool(soup.find(id="actions_column_header"))
+    show_licence_status_change_link = bool(soup.find(id="actions_column_header"))
+
+    assert show_actions_column and show_licence_status_change_link

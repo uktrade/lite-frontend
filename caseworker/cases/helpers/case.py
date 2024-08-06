@@ -193,7 +193,7 @@ class CaseView(CaseworkerMixin, TemplateView):
         current_tab = default_tab if self.kwargs["tab"] == "default" else self.kwargs["tab"]
         show_actions_column = False
         for licence in self.case.licences:
-            show_actions_column = rules.test_rule("can_licence_status_be_changed", self.request.user, licence)
+            show_actions_column = rules.test_rule("can_licence_status_be_changed", self.request, licence)
             break
 
         return {
