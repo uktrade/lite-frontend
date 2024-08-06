@@ -379,3 +379,9 @@ def put_case_sub_status(request, case_id, data):
     )
     response.raise_for_status()
     return response.json(), response.status_code
+
+
+def get_licence_details(request, licence_pk):
+    response = client.get(request, f"/licences/licence_details/{licence_pk}")
+    response.raise_for_status()
+    return response.json()

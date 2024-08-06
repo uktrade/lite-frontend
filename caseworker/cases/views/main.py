@@ -1,3 +1,4 @@
+from core.constants import LicenceStatusEnum
 import rules
 
 from logging import getLogger
@@ -44,6 +45,7 @@ from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import ChangeStatusForm
 from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
+from caseworker.cases.forms.change_licence_status import ChangeLicenceStatusForm
 from caseworker.cases.forms.done_with_case import done_with_case_form
 from caseworker.cases.forms.move_case import move_case_form
 from caseworker.cases.forms.reissue_ogl_form import reissue_ogl_confirmation_form
@@ -62,6 +64,7 @@ from caseworker.cases.services import (
     get_blocking_flags,
     get_case_sub_statuses,
     put_case_sub_status,
+    get_licence_details,
 )
 from caseworker.compliance.services import get_compliance_licences
 from caseworker.cases.services import get_case_basic_details
@@ -497,6 +500,87 @@ class ChangeSubStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
                 "tab": "details",
             },
         )
+
+
+class ChangeLicenceStatus(LoginRequiredMixin, FormView):
+    form_class = ChangeLicenceStatusForm
+    template_name = "case/form.html"
+
+    def dispatch(self, *args, **kwargs):
+        try:
+
+            self.licence = get_licence_details(self.request, self.kwargs["licence_pk"])
+            self.case = get_case(self.request, self.kwargs["pk"])
+
+        except HTTPError:
+            raise Http404()
+
+        if not rules.test_rule("can_licence_status_be_changed", self.request, self.licence):
+            raise Http404()
+        return super().dispatch(*args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        cancel_url = reverse(
+            "cases:case",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.case.id,
+                "tab": "details",
+            },
+        )
+
+        kwargs["statuses"] = self.get_edit_licence_choices()
+        kwargs["reference_code"] = self.licence["reference_code"]
+        kwargs["cancel_url"] = cancel_url
+
+        return kwargs
+
+    def get_initial(self):
+        initial = super().get_initial()
+        status = self.licence.get("status")
+        if status:
+            initial["status"] = status
+        return initial
+
+    def get_edit_licence_choices(self):
+        licence_choice_map = {
+            LicenceStatusEnum.REINSTATED: [
+                LicenceStatusEnum.reinstated_choice,
+                LicenceStatusEnum.suspended_choice,
+                LicenceStatusEnum.revoked_choice,
+            ],
+            LicenceStatusEnum.ISSUED: [
+                LicenceStatusEnum.issued_choice,
+                LicenceStatusEnum.suspended_choice,
+                LicenceStatusEnum.reinstated_choice,
+            ],
+            LicenceStatusEnum.SUSPENDED: [
+                LicenceStatusEnum.suspended_choice,
+                LicenceStatusEnum.reinstated_choice,
+                LicenceStatusEnum.revoked_choice,
+            ],
+        }
+        status = self.licence.get("status")
+        return licence_choice_map[status]
+
+    def get_success_url(self):
+        # TODO Next is the confirmation License where we save the Licese details
+        # For now we just post back to this page
+        return reverse(
+            "cases:change_licence_status",
+            kwargs={
+                "queue_pk": self.kwargs["queue_pk"],
+                "pk": self.case.id,
+                "licence_pk": self.kwargs["licence_pk"],
+            },
+        )
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["case"] = self.case
+        return context
 
 
 class MoveCase(SingleFormView):
