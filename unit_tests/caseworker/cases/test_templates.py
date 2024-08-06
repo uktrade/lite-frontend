@@ -116,7 +116,9 @@ def licence_details(data_standard_case):
     }
 
 
-def test_actions_column_appears_adn_change_link_displays(data_standard_case, mock_gov_user, licence_details):
+def test_actions_column_appears_and_change_link_displays_on_licence_details(
+    data_standard_case, mock_gov_user, licence_details
+):
     mock_gov_user["user"]["role"]["id"] = LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
     data_standard_case["case"]["licences"] = [licence_details]
     case = data_standard_case["case"]
