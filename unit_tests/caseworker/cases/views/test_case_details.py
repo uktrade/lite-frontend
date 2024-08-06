@@ -16,6 +16,7 @@ from django.utils import timezone
 
 from core import client
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS
+from caseworker.core.constants import LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
 
 
 @pytest.fixture(autouse=True)
@@ -254,39 +255,65 @@ def test_case_details_sub_status(
 @pytest.mark.parametrize(
     "value, expected",
     (
-        ([], 0),
+        (None, "No sub-status set"),
         (
-            [
-                {
-                    "id": "status-1",
-                    "name": "Status 1",
-                }
-            ],
-            1,
+            {
+                "id": "status-1",
+                "name": "Status 1",
+            },
+            "Status 1",
         ),
     ),
 )
-def test_case_details_sub_status_change_displayed(
+def test_case_details_licence_change_status(
     data_standard_case,
-    requests_mock,
     data_queue,
     authorized_client,
-    mock_gov_user,
     value,
     expected,
 ):
-    data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
-    case_id = data_standard_case["case"]["id"]
-    requests_mock.get(
-        client._build_absolute_uri(f"/applications/{case_id}/sub-statuses/"),
-        json=value,
-    )
+    data_standard_case["case"]["data"]["sub_status"] = value
     case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(case_url)
 
     html = BeautifulSoup(response.content, "html.parser")
+    dt = html.find("dt", string=re.compile("Sub-status"))
+    assert dt
+    dd = dt.find_next()
+    assert dd.get_text().replace("\n", "").replace("\t", "") == expected
 
-    assert len(html.find_all(id="link-case-sub-status-change")) == expected
+
+@pytest.fixture
+def licence_details(data_standard_case):
+    return {
+        "id": data_standard_case["case"]["licences"][0]["id"],
+        "status": "issued",
+        "case_status": "finalised",
+        "reference_code": "12345AB",
+    }
+
+
+def test_case_details_sub_status_change_displayed(
+    data_standard_case,
+    data_queue,
+    authorized_client,
+    mock_gov_user,
+    licence_details,
+):
+    mock_gov_user["user"]["role"]["id"] = LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
+    data_standard_case["case"]["licences"] = [licence_details]
+
+    case_url = reverse(
+        "cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"], "tab": "licences"}
+    )
+
+    response = authorized_client.get(case_url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    show_actions_column = bool(html.find(id="actions_column_header"))
+    show_licence_status_change_link = bool(html.find(id="actions_column_header"))
+
+    assert show_actions_column & show_licence_status_change_link
 
 
 @pytest.mark.parametrize(

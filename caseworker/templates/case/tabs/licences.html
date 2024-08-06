@@ -14,7 +14,6 @@
 		</thead>
 		<tbody class="govuk-table__body">
 			{% for licence in case.licences %}
-			{{ request.lite_user}}
 				<tr class="govuk-table__row" id="{{ case.id }}">
 					<td class="govuk-table__cell govuk-table__cell--tight">
 						{{ licence.reference_code }}
