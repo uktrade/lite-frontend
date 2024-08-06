@@ -1,3 +1,4 @@
+import rules
 from dateutil.parser import parse
 from decimal import Decimal
 
@@ -190,6 +191,10 @@ class CaseView(CaseworkerMixin, TemplateView):
         context = super().get_context_data()
         default_tab = "quick-summary"
         current_tab = default_tab if self.kwargs["tab"] == "default" else self.kwargs["tab"]
+        show_actions_column = False
+        for licence in self.case.licences:
+            show_actions_column = rules.test_rule("can_licence_status_be_changed", self.request.user, licence)
+            break
 
         return {
             **context,
@@ -218,6 +223,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             "is_terminal": status_props["is_terminal"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "user": self.caseworker,
+            "show_actions_column": show_actions_column,
             **self.additional_context,
         }
 
