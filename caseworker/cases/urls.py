@@ -23,6 +23,11 @@ urlpatterns = [
     path("change-status/", main.ChangeStatus.as_view(), name="change_status"),
     path("change-sub-status/", main.ChangeSubStatus.as_view(), name="change_sub_status"),
     path("change-licence-status/<uuid:licence_pk>/", main.ChangeLicenceStatus.as_view(), name="change_licence_status"),
+    path(
+        "change-licence-status-confirmation/<uuid:licence_pk>/<str:status>/",
+        main.ChangeLicenceStatusConfirmation.as_view(),
+        name="change_licence_status_confirmation",
+    ),
     path("move/", main.MoveCase.as_view(), name="move"),
     path("attach/", main.AttachDocuments.as_view(), name="attach_documents"),
     # This needs to be before "case" path b/c the regex in that sinks everything

@@ -20,7 +20,7 @@ class ChangeLicenceStatusForm(BaseForm):
         self.fields["status"].choices += self.statuses
 
         p_text = HTML.p(
-            f"You should only alter the license status of  {self.reference_code} "
+            f"You should only alter the licence status of  {self.reference_code} "
             "if you have documented the reasons why in the case notes and timeline."
         )
 
@@ -46,4 +46,33 @@ class ChangeLicenceStatusForm(BaseForm):
             ),
         )
 
+        return layout_actions
+
+
+class ChangeLicenceStatusConfirmationForm(BaseForm):
+    class Layout:
+        TITLE = "Are you sure you want to alter the status of the licence?"
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    def __init__(self, *args, cancel_url, **kwargs):
+        self.cancel_url = cancel_url
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return (
+            HTML.p(
+                "if you change it to "
+                "Revoked"
+                "  or Suspended  the exporter cannot export the products and any attempt to do so will be viewed as an offence."
+            ),
+        )
+
+    def get_layout_actions(self):
+        layout_actions = super().get_layout_actions()
+
+        layout_actions.append(
+            HTML(
+                f'<a class="govuk-button govuk-button--secondary" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
+            ),
+        )
         return layout_actions
