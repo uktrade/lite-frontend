@@ -97,6 +97,40 @@ def get_permissible_statuses(request, case):
     return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
 
 
+def get_permissible_license_statuses(request, case):
+    """Get a list of case statuses permissible for the user's role."""
+
+    user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
+    # user_permissible_statuses = user["user"]["role"]["statuses"]
+
+    statuses, _ = get_statuses(request)
+    case_type = case["case_type"]["type"]["key"]
+    case_type_applicable_statuses = []
+
+    if case_type == CaseType.APPLICATION.value:
+        case_type_applicable_statuses = [
+            status
+            for status in statuses
+            if status["key"]
+            not in [
+                CaseStatusEnum.APPLICANT_EDITING,
+                CaseStatusEnum.FINALISED,
+                CaseStatusEnum.REGISTERED,
+                CaseStatusEnum.CLC,
+                CaseStatusEnum.PV,
+                CaseStatusEnum.SURRENDERED,
+            ]
+        ]
+
+        user_team_alias = user["user"]["team"].get("alias")
+        # Allow LU users to set Finalised status as required for Appeals
+        if user_team_alias and user_team_alias == LICENSING_UNIT_TEAM:
+            finalised_status = [status for status in statuses if status["key"] == CaseStatusEnum.FINALISED]
+            case_type_applicable_statuses.extend(finalised_status)
+
+    return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
+
+
 def get_status_properties(request, status):
     data = client.get(request, f"/static/statuses/properties/{status}")
     return data.json(), data.status_code
