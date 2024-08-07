@@ -34,7 +34,7 @@
 					{% test_rule 'can_licence_status_be_changed' request licence as can_licence_status_be_changed %}
 					{% if can_licence_status_be_changed %}
 						<td class="govuk-table__cell govuk-table__cell--tight">
-							<a id="licence_status_change_link" href="" {%comment%} "{% url 'case:change-licence-status' request licence %}" {%endcomment%} class="govuk-link">Change status</a>
+							<a id="{{ licence.id }}" href="" {%comment%} "{% url 'case:change-licence-status' request licence %}" {%endcomment%} class="govuk-link">Change status</a>
 						</td>
 					{% endif %}
 				</tr>

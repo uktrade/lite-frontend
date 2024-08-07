@@ -290,65 +290,90 @@ def test_case_details_sub_status_change_displayed(
 
 
 @pytest.mark.parametrize(
-    "licence_details, role_id, expected",
+    "licence_details, role_id, column_expected",
     [
         (
-            {
-                "id": str(uuid.uuid4()),
-                "status": "issued",
-                "case_status": "finalised",
-                "reference_code": "12345AB",
-            },
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "issued",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": True,
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "issued",
+                    "case_status": "withdrawn",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                },
+            ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
             True,
         ),
         (
-            {
-                "id": str(uuid.uuid4()),
-                "status": "reinstated",
-                "case_status": "finalised",
-                "reference_code": "12345AB",
-            },
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "reinstated",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": True,
+                }
+            ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
             True,
         ),
         (
-            {
-                "id": str(uuid.uuid4()),
-                "status": "suspended",
-                "case_status": "finalised",
-                "reference_code": "12345AB",
-            },
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "suspended",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": True,
+                }
+            ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
             True,
         ),
         (
-            {
-                "id": str(uuid.uuid4()),
-                "status": "issued",
-                "case_status": "submitted",
-                "reference_code": "12345AB",
-            },
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "issued",
+                    "case_status": "submitted",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                }
+            ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
             False,
         ),
         (
-            {
-                "id": str(uuid.uuid4()),
-                "status": "revoked",
-                "case_status": "finalised",
-                "reference_code": "12345AB",
-            },
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "revoked",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                }
+            ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
             False,
         ),
         (
-            {
-                "id": str(uuid.uuid4()),
-                "status": "issued",
-                "case_status": "finalised",
-                "reference_code": "12345AB",
-            },
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "issued",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                }
+            ],
             str(uuid.uuid4()),
             False,
         ),
@@ -361,10 +386,10 @@ def test_licence_details_actions_column_and_licence_status_change_link_display(
     mock_gov_user,
     licence_details,
     role_id,
-    expected,
+    column_expected,
 ):
     mock_gov_user["user"]["role"]["id"] = role_id
-    data_standard_case["case"]["licences"] = [licence_details]
+    data_standard_case["case"]["licences"] = licence_details
 
     case_url = reverse(
         "cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"], "tab": "licences"}
@@ -374,10 +399,12 @@ def test_licence_details_actions_column_and_licence_status_change_link_display(
 
     html = BeautifulSoup(response.content, "html.parser")
     show_actions_column = bool(html.find(id="actions_column_header"))
-    show_licence_status_change_link = bool(html.find(id="licence_status_change_link"))
 
-    assert show_actions_column is expected
-    assert show_licence_status_change_link is expected
+    for licence in licence_details:
+        show_licence_status_change_link = bool(html.find(id=licence["id"]))
+        assert show_licence_status_change_link is licence["link_expected"]
+
+    assert show_actions_column is column_expected
 
 
 @pytest.mark.parametrize(
