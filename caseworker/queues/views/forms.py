@@ -130,6 +130,17 @@ class CasesFiltersForm(forms.Form):
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
 
+        licence_choices = {
+            "licence_statuses": [
+                {"value": "Issued", "key": "issued"},
+                {"value": "Suspended", "key": "suspended"},
+                {"value": "Reinstated", "key": "reinstated"},
+                {"value": "Revoked", "key": "revoked"},
+            ]
+        }
+
+        licence_status_choices = self.get_field_choices(licence_choices, "licence_statuses")
+
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
         regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]
@@ -159,6 +170,12 @@ class CasesFiltersForm(forms.Form):
             choices=gov_user_choices,
             label="Case adviser",
             widget=forms.Select(attrs={"id": "case_adviser"}),
+            required=False,
+        )
+
+        self.fields["licence_status"] = forms.ChoiceField(
+            choices=licence_status_choices,
+            label="Licence status",
             required=False,
         )
 
@@ -206,6 +223,7 @@ class CasesFiltersForm(forms.Form):
             "sub_status",
             Field("case_officer", css_class="single-select-filter"),
             Field("assigned_user", css_class="single-select-filter"),
+            "licence_status",
             "export_type",
             "includes_refusal_recommendation_from_ogd",
             "submitted_from",
