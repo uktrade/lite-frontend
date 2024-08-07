@@ -125,3 +125,18 @@ class LicenceStatusEnum:
     EXHAUSTED = "Exhausted"
     REINSTATED = "Reinstated"
     SUSPENDED = "Suspended"
+
+    licence_choices_dict = {
+        "licence_statuses": [
+            {"key": "issued", "value": "Issued"},
+            {"key": "cancelled", "value": "Cancelled"},
+            {"key": "expired", "value": "Expired"},
+            {"key": "exhausted", "value": "Exhausted"},
+            {"key": "suspended", "value": "Suspended"},
+            {
+                "key": "reinstated",
+                "value": "Reinstated",
+            },
+            {"key": "revoked", "value": "Revoked"},
+        ]
+    }

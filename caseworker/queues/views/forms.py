@@ -13,6 +13,7 @@ from crispy_forms_gds.layout import (
 
 from django import forms
 from django.urls import reverse
+from core.constants import LicenceStatusEnum
 
 
 SLA_DAYS_RANGE = 99
@@ -130,16 +131,7 @@ class CasesFiltersForm(forms.Form):
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
 
-        licence_choices = {
-            "licence_statuses": [
-                {"value": "Issued", "key": "issued"},
-                {"value": "Suspended", "key": "suspended"},
-                {"value": "Reinstated", "key": "reinstated"},
-                {"value": "Revoked", "key": "revoked"},
-            ]
-        }
-
-        licence_status_choices = self.get_field_choices(licence_choices, "licence_statuses")
+        licence_status_choices = self.get_field_choices(LicenceStatusEnum.licence_choices_dict, "licence_statuses")
 
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
