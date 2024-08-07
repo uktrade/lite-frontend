@@ -16,7 +16,6 @@ from django.utils import timezone
 
 from core import client
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS
-from caseworker.core.constants import LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
 
 
 @pytest.fixture(autouse=True)
@@ -283,24 +282,41 @@ def test_case_details_licence_change_status(
     assert dd.get_text().replace("\n", "").replace("\t", "") == expected
 
 
-@pytest.fixture
-def licence_details(data_standard_case):
-    return {
-        "id": data_standard_case["case"]["licences"][0]["id"],
-        "status": "issued",
-        "case_status": "finalised",
-        "reference_code": "12345AB",
-    }
-
-
-def test_case_details_sub_status_change_displayed(
+@pytest.mark.parametrize(
+    "licence_details, role_id, expected",
+    [
+        (
+            {
+                "id": str(uuid.uuid4()),
+                "status": "issued",
+                "case_status": "finalised",
+                "reference_code": "12345AB",
+            },
+            "3ae08e0c-47b3-47ba-965f-48318129c147",
+            True,
+        ),
+        (
+            {
+                "id": str(uuid.uuid4()),
+                "status": "reinstated",
+                "case_status": "finalised",
+                "reference_code": "12345AB",
+            },
+            "3ae08e0c-47b3-47ba-965f-48318129c147",
+            True,
+        ),
+    ],
+)
+def test_licence_details_actions_column_and_licence_status_change_link_display(
     data_standard_case,
     data_queue,
     authorized_client,
     mock_gov_user,
     licence_details,
+    role_id,
+    expected,
 ):
-    mock_gov_user["user"]["role"]["id"] = LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID
+    mock_gov_user["user"]["role"]["id"] = role_id
     data_standard_case["case"]["licences"] = [licence_details]
 
     case_url = reverse(
@@ -311,9 +327,9 @@ def test_case_details_sub_status_change_displayed(
 
     html = BeautifulSoup(response.content, "html.parser")
     show_actions_column = bool(html.find(id="actions_column_header"))
-    show_licence_status_change_link = bool(html.find(id="actions_column_header"))
+    show_licence_status_change_link = bool(html.find(id="licence_status_change_link"))
 
-    assert show_actions_column & show_licence_status_change_link
+    assert show_actions_column and show_licence_status_change_link == expected
 
 
 @pytest.mark.parametrize(
