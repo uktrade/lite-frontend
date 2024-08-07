@@ -96,7 +96,12 @@ def is_case_finalised_and_licence_editable(request, licence):
     return is_case_finalised and is_licence_editable
 
 
+@rules.predicate
 def is_case_caseworker_operable(request, case):
+    try:
+        request.lite_user
+    except AttributeError:
+        return False
     return case.status in get_caseworker_operable_case_statuses(request)
 
 
