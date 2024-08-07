@@ -320,7 +320,14 @@ def test_case_details_sub_status_change_displayed(
                     "case_status": "finalised",
                     "reference_code": "12345AB",
                     "link_expected": True,
-                }
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "revoked",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                },
             ],
             "3ae08e0c-47b3-47ba-965f-48318129c147",
             True,
@@ -400,11 +407,11 @@ def test_licence_details_actions_column_and_licence_status_change_link_display(
     html = BeautifulSoup(response.content, "html.parser")
     show_actions_column = bool(html.find(id="actions_column_header"))
 
+    assert show_actions_column is column_expected
+
     for licence in licence_details:
         show_licence_status_change_link = bool(html.find(id=licence["id"]))
         assert show_licence_status_change_link is licence["link_expected"]
-
-    assert show_actions_column is column_expected
 
 
 @pytest.mark.parametrize(
