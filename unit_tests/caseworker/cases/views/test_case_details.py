@@ -254,32 +254,39 @@ def test_case_details_sub_status(
 @pytest.mark.parametrize(
     "value, expected",
     (
-        (None, "No sub-status set"),
+        ([], 0),
         (
-            {
-                "id": "status-1",
-                "name": "Status 1",
-            },
-            "Status 1",
+            [
+                {
+                    "id": "status-1",
+                    "name": "Status 1",
+                }
+            ],
+            1,
         ),
     ),
 )
-def test_case_details_licence_change_status(
+def test_case_details_sub_status_change_displayed(
     data_standard_case,
+    requests_mock,
     data_queue,
     authorized_client,
+    mock_gov_user,
     value,
     expected,
 ):
-    data_standard_case["case"]["data"]["sub_status"] = value
+    data_standard_case["case"]["case_officer"] = mock_gov_user["user"]
+    case_id = data_standard_case["case"]["id"]
+    requests_mock.get(
+        client._build_absolute_uri(f"/applications/{case_id}/sub-statuses/"),
+        json=value,
+    )
     case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(case_url)
 
     html = BeautifulSoup(response.content, "html.parser")
-    dt = html.find("dt", string=re.compile("Sub-status"))
-    assert dt
-    dd = dt.find_next()
-    assert dd.get_text().replace("\n", "").replace("\t", "") == expected
+
+    assert len(html.find_all(id="link-case-sub-status-change")) == expected
 
 
 @pytest.mark.parametrize(
