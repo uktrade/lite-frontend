@@ -49,7 +49,7 @@ def create_standard_draft_with_reference(api_test_client, context, reference):
 @when(parsers.parse("I go to task list of the draft application"))
 def application_task_list(driver, context):
     driver.find_element(by=By.ID, value="link-applications").click()
-    driver.find_element(by=By.ID, value="applications-tab-drafts").click()
+    driver.find_element(by=By.ID, value="draft_applications").click()
 
     # There could be multiple drafts with the same reference so use the
     # application_id to find the correct element
@@ -206,7 +206,7 @@ def confirm_editing_application(driver, status):
 
 @then("I see new application ready for amendments under drafts")
 def amended_application_under_drafts(driver, context):
-    driver.find_element(by=By.ID, value="applications-tab-drafts").click()
+    driver.find_element(by=By.ID, value="draft_applications").click()
 
     assert context.amended_application_id
     task_list_url = f"/applications/{context.amended_application_id}/task-list/"
@@ -217,7 +217,7 @@ def amended_application_under_drafts(driver, context):
 def amended_application_task_list(driver, context):
     driver.find_element(by=By.CLASS_NAME, value="govuk-header__link--service-name").click()
     driver.find_element(by=By.ID, value="link-applications").click()
-    driver.find_element(by=By.ID, value="applications-tab-drafts").click()
+    driver.find_element(by=By.ID, value="draft_applications").click()
 
     # There could be multiple drafts with the same reference so use the
     # application_id to find the correct element
