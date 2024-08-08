@@ -467,7 +467,7 @@ def get_status_properties(request, status):
 
 def set_application_status(request, pk, status):
     json = {"status": status}
-    data = client.put(request, f"/applications/{pk}/status/", json)
+    data = client.post(request, f"/exporter/applications/{pk}/status/", json)
     return data.json(), data.status_code
 
 

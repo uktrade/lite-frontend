@@ -58,7 +58,7 @@ from caseworker.cases.services import (
     put_case_queues,
     put_unassign_queues,
     put_rerun_case_routing_rules,
-    put_application_status,
+    post_application_status,
     reissue_ogl,
     post_case_documents,
     get_blocking_flags,
@@ -415,11 +415,11 @@ class ChangeStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
         "Error changing case status",
         "Unexpected error changing case status",
     )
-    def put_case_status(self, request, case_id, data):
-        return put_application_status(request, case_id, data)
+    def change_case_status(self, request, case_id, data):
+        return post_application_status(request, case_id, data)
 
     def form_valid(self, form):
-        self.put_case_status(self.request, self.case.id, form.cleaned_data)
+        self.change_case_status(self.request, self.case.id, form.cleaned_data)
         return super().form_valid(form)
 
     def get_success_url(self):

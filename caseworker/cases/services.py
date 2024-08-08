@@ -48,8 +48,8 @@ def delete_case_assignment(request, case_id, assignment_id):
 
 
 # Applications
-def put_application_status(request, pk, json):
-    response = client.put(request, f"/applications/{pk}/status/", json)
+def post_application_status(request, pk, json):
+    response = client.post(request, f"/caseworker/applications/{pk}/status/", json)
     response.raise_for_status()
     return response.json(), response.status_code
 
