@@ -19,7 +19,7 @@ from exporter.goods.forms.common import (
     ProductDocumentUploadForm,
     ProductQuantityAndValueForm,
 )
-from exporter.applications.services import edit_good_on_application
+from exporter.applications.services import edit_good_on_application, edit_quantity_value
 from exporter.applications.views.goods.common.initial import get_quantity_and_value_initial_data
 from exporter.applications.views.goods.common.payloads import get_quantity_and_value_payload
 from exporter.goods.services import (
@@ -389,3 +389,24 @@ class ProductQuantityValueEdit(BaseGoodOnApplicationEditView):
 
     def get_edit_payload(self, form):
         return get_quantity_and_value_payload(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating quantity/value of good on application",
+        "Unexpected error updating quantity/value of good on application",
+    )
+    def edit_quantity_value(self, request, pk, good_on_application_id, payload):
+        return edit_quantity_value(
+            request,
+            pk,
+            good_on_application_id,
+            payload,
+        )
+
+    def perform_actions(self, form):
+        self.edit_quantity_value(
+            self.request,
+            self.application["id"],
+            self.good_on_application["id"],
+            self.get_edit_payload(form),
+        )

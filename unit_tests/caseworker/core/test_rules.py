@@ -481,6 +481,5 @@ def test_can_licence_status_be_changed(
     user = mock_gov_user["user"]
     user["role"]["id"] = user_role_id
     request = get_mock_request(user)
-    user = request.lite_user
 
-    assert rules.test_rule("can_licence_status_be_changed", user, licence) is expected
+    assert rules.test_rule("can_licence_status_be_changed", request, licence) is expected
