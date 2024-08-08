@@ -119,12 +119,15 @@ class SecurityClassifiedApprovalsType:
 
 
 class LicenceStatusEnum:
-    ISSUED = "Issued"
-    CANCELLED = "Cancelled"
-    EXPIRED = "Expired"
-    EXHAUSTED = "Exhausted"
-    REINSTATED = "Reinstated"
-    SUSPENDED = "Suspended"
+    ISSUED = "issued"
+    REINSTATED = "reinstated"
+    REVOKED = "revoked"
+    SURRENDERED = "surrendered"
+    SUSPENDED = "suspended"
+    EXHAUSTED = "exhausted"
+    EXPIRED = "expired"
+    DRAFT = "draft"
+    CANCELLED = "cancelled"
 
     licence_choices_dict = {
         "licence_statuses": [
@@ -138,5 +141,7 @@ class LicenceStatusEnum:
                 "value": "Reinstated",
             },
             {"key": "revoked", "value": "Revoked"},
+            {"key": "surrendered", "value": "Surrendered"},
+            {"key": "draft", "value": "Draft"},
         ]
     }
