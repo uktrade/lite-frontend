@@ -339,7 +339,7 @@ def get_party_document(request, application_pk, obj_pk):
 
 
 def get_ultimate_end_users(request, pk):
-    data = client.get(request, f"/applications/{pk}/parties/?type=ultimate_end_user")
+    data = client.get(request, f"/applications/{pk}/parties/?type=ultimate_end_user&role_other=Ultimate End-User")
     return data.json()["ultimate_end_users"]
 
 
