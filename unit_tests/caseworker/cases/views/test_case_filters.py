@@ -21,6 +21,7 @@ def setup(
 @pytest.mark.parametrize(
     "filters_data",
     [
+        ({"params": {"case_type": "siel", "licence_status": "issued"}}),
         ({"params": {"case_type": "siel", "status": "finalised"}}),
         ({"params": {"case_reference": "GBSIEL/2022", "status": "finalised"}}),
         ({"params": {"case_reference": "GBSIEL/2022", "flags": ["1", "2"]}}),
