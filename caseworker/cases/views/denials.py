@@ -53,7 +53,7 @@ class Denials(LoginRequiredMixin, FormView):
         country_list = set()
 
         for party in self.parties_to_search:
-            address = party["address"].replace("\n", "")
+            address = party["address"].replace("\n", "").replace("\r", "")
             search_filter.append(f'name:({party["name"]})')
             search_filter.append(f"address:({address})")
             country_list.add(party["country"]["name"])
