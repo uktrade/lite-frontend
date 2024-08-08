@@ -215,7 +215,10 @@ def test_archived_product_details_context(
     mock_archived_good_with_history_get,
 ):
 
-    response = authorized_client.get(firearm_product_details_url)
+    response = authorized_client.get(
+        firearm_product_details_url,
+        HTTP_REFERER=reverse("goods:archived_goods"),
+    )
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
 
@@ -228,6 +231,21 @@ def test_archived_product_details_context(
         "Archived by Exporter User1 at 20:47 on 18 June 2024",
         "Restored by Exporter User2 at 13:02 on 24 May 2024",
         "Archived by Exporter User1 at 12:46 on 10 April 2024",
+    ]
+
+    assert response.context["breadcrumbs"] == [
+        {
+            "title": "Account home",
+            "url": reverse("core:home"),
+        },
+        {
+            "title": "Product list",
+            "url": reverse("goods:goods"),
+        },
+        {
+            "title": "Archived products",
+            "url": reverse("goods:archived_goods"),
+        },
     ]
 
 
