@@ -385,3 +385,9 @@ def get_licence_details(request, licence_pk):
     response = client.get(request, f"/licences/licence_details/{licence_pk}")
     response.raise_for_status()
     return response.json()
+
+
+def update_licence_details(request, licence_pk, data):
+    response = client.patch(request, f"/licences/licence_details/{licence_pk}", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
