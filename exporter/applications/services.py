@@ -212,6 +212,16 @@ def edit_good_on_application(request, pk, json):
     return response.json(), response.status_code
 
 
+def edit_quantity_value(request, pk, good_on_application_pk, json):
+    response = client.patch(
+        request,
+        f"/applications/{pk}/good-on-application/{good_on_application_pk}/quantity-value/",
+        json,
+    )
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def post_good_on_application(request, pk, json):
     good = None
     preexisting = str_to_bool(request.GET.get("preexisting"))
