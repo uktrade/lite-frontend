@@ -13,21 +13,25 @@ from exporter.core.services import get_organisation
 from exporter.goods.services import get_good
 
 
+def product_detail_breadcrumbs():
+    return [
+        {
+            "title": "Account home",
+            "url": reverse("core:home"),
+        },
+        {
+            "title": "Product list",
+            "url": reverse("goods:goods"),
+        },
+    ]
+
+
 class BaseProductDetails(LoginRequiredMixin, TemplateView):
     template_name = "goods/product-details.html"
     summary_type = None
 
     def get_breadcrumbs(self):
-        breadcrumbs = [
-            {
-                "title": "Account home",
-                "url": reverse("core:home"),
-            },
-            {
-                "title": "Product list",
-                "url": reverse("goods:goods"),
-            },
-        ]
+        breadcrumbs = product_detail_breadcrumbs()
 
         if reverse("goods:archived_goods") in self.request.META.get("HTTP_REFERER", ""):
             breadcrumbs.append(
