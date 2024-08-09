@@ -1,4 +1,5 @@
 from dateutil.parser import parse
+from django.urls import reverse
 from http import HTTPStatus
 
 from django.http import Http404
@@ -12,9 +13,35 @@ from exporter.core.services import get_organisation
 from exporter.goods.services import get_good
 
 
+def product_detail_breadcrumbs():
+    return [
+        {
+            "title": "Account home",
+            "url": reverse("core:home"),
+        },
+        {
+            "title": "Product list",
+            "url": reverse("goods:goods"),
+        },
+    ]
+
+
 class BaseProductDetails(LoginRequiredMixin, TemplateView):
     template_name = "goods/product-details.html"
     summary_type = None
+
+    def get_breadcrumbs(self):
+        breadcrumbs = product_detail_breadcrumbs()
+
+        if reverse("goods:archived_goods") in self.request.META.get("HTTP_REFERER", ""):
+            breadcrumbs.append(
+                {
+                    "title": "Archived products",
+                    "url": reverse("goods:archived_goods"),
+                },
+            )
+
+        return breadcrumbs
 
     @expect_status(
         HTTPStatus.OK,
@@ -65,5 +92,6 @@ class BaseProductDetails(LoginRequiredMixin, TemplateView):
         context["good"] = self.good
         context["summary"] = self.get_summary()
         context["archive_history"] = self.get_archive_history()
+        context["breadcrumbs"] = self.get_breadcrumbs()
 
         return context

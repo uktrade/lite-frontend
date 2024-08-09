@@ -3,7 +3,17 @@
 {% load svg %}
 
 {% block back_link %}
-	{% include 'includes/breadcrumbs.html' with title='goods.GoodsList.TITLE' %}
+<div class="govuk-breadcrumbs">
+	<ol class="govuk-breadcrumbs__list">
+		{% for item in breadcrumbs %}
+			<li class="govuk-breadcrumbs__list-item">
+				<a class="govuk-breadcrumbs__link" href="{{ item.url }}">
+					{{ item.title }}
+				</a>
+			</li>
+		{% endfor %}
+	</ol>
+</div>
 {% endblock %}
 
 {% block body %}

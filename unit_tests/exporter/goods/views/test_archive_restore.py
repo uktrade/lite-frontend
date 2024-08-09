@@ -209,13 +209,55 @@ def test_restore_product_asks_for_confirmation(
     assert soup.find("a", {"id": "back-link"})["href"] == firearm_product_details_url
 
 
+@pytest.mark.parametrize(
+    "additional_headers,expected",
+    (
+        (
+            {
+                "HTTP_REFERER": reverse("goods:archived_goods"),
+            },
+            [
+                {
+                    "title": "Account home",
+                    "url": reverse("core:home"),
+                },
+                {
+                    "title": "Product list",
+                    "url": reverse("goods:goods"),
+                },
+                {
+                    "title": "Archived products",
+                    "url": reverse("goods:archived_goods"),
+                },
+            ],
+        ),
+        (
+            {},
+            [
+                {
+                    "title": "Account home",
+                    "url": reverse("core:home"),
+                },
+                {
+                    "title": "Product list",
+                    "url": reverse("goods:goods"),
+                },
+            ],
+        ),
+    ),
+)
 def test_archived_product_details_context(
     authorized_client,
     firearm_product_details_url,
     mock_archived_good_with_history_get,
+    additional_headers,
+    expected,
 ):
 
-    response = authorized_client.get(firearm_product_details_url)
+    response = authorized_client.get(
+        firearm_product_details_url,
+        **additional_headers,
+    )
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
 
@@ -229,6 +271,8 @@ def test_archived_product_details_context(
         "Restored by Exporter User2 at 13:02 on 24 May 2024",
         "Archived by Exporter User1 at 12:46 on 10 April 2024",
     ]
+
+    assert response.context["breadcrumbs"] == expected
 
 
 def test_post_archive_product(
