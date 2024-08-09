@@ -166,6 +166,7 @@ def test_cases_home_page_view_context(authorized_client):
         "sub_status",
         "case_officer",
         "assigned_user",
+        "licence_status",
         "flags",
         "countries",
         "assigned_queues",
