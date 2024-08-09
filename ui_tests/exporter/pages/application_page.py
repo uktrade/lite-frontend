@@ -25,7 +25,7 @@ class ApplicationPage(BasePage):
     LINK_EDIT_APPLICATION = "a[href*='/edit-type/']"
     AUDIT_TRAIL_ITEM = ".app-activity__item"  # CSS
     CASE_BUTTONS = ".lite-app-bar__controls"  # CSS
-    DRAFT_TAB = "applications-tab-draft"  # ID
+    DRAFT_TAB = "draft_applications"  # ID
 
     def click_withdraw_application_button(self):
         self.driver.find_element(by=By.ID, value=self.BUTTON_WITHDRAW_APPLICATION_ID).click()

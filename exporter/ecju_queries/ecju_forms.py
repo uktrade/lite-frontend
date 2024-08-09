@@ -4,7 +4,6 @@ from django.template.loader import render_to_string
 
 from crispy_forms_gds.layout import HTML, Button
 from django.template.defaultfilters import linebreaksbr
-from django.urls import reverse
 
 
 class ECJUQueryRespondForm(BaseForm):
@@ -23,6 +22,7 @@ class ECJUQueryRespondForm(BaseForm):
         documents,
         case_id,
         ecju_response,
+        edit_url,
         *args,
         **kwargs,
     ):
@@ -31,6 +31,7 @@ class ECJUQueryRespondForm(BaseForm):
         self.case_id = case_id
         self.ecju_response = ecju_response
         self.documents = documents
+        self.edit_url = edit_url
 
         self.declared_fields["response"] = forms.CharField(
             initial=self.ecju_response,
@@ -42,15 +43,22 @@ class ECJUQueryRespondForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def get_layout_fields(self):
-        edit_type_url = reverse("applications:edit_type", kwargs={"pk": self.case_id})
+
+        reply_html = HTML(
+            "<ol><li>Write a response message below.</li>"
+            + "<li>Then select 'Continue' to notify the case worker that the query has been answered.</li></ol>"
+        )
+        if self.edit_url:
+            reply_html = HTML(
+                f'<ol><li><a class="govuk-link govuk-link--no-visited-state application-edit-link" href="{self.edit_url}">'
+                + "Edit and submit your application</a> as required, or send a written message below.</li>"
+                + "<li>Then select 'Continue' to notify the case worker that the query has been answered.</li></ol>"
+            )
+
         return [
             HTML.p(f'<div class="app-ecju-query__text"> {linebreaksbr(self.ecju_query["question"]) }</div>'),
             HTML.p("Your application will be paused until the case worker receives a response. To reply: "),
-            HTML(
-                f'<ol><li><a class="govuk-link govuk-link--no-visited-state" href="{edit_type_url}">'
-                + "Edit and submit your application</a> as required, or send a written message below.</li>"
-                + "<li>Then select 'Continue' to notify the case worker that the query has been answered.</li></ol>"
-            ),
+            reply_html,
             "response",
             HTML.p("<div class=" "govuk-hint" ">You can enter up to 2200 characters</div>"),
             HTML.h2("Documents"),

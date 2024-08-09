@@ -100,3 +100,31 @@ class ApplicationMajorEditConfirmationForm(BaseForm):
         )
 
         return layout_actions
+
+
+class ApplicationsListSortForm(BaseForm):
+    class Layout:
+        TITLE = ""
+
+    CHOICES = [("submitted_at", "Date submitted"), ("updated_at", "Date updated")]
+
+    sort_by = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.Select,
+        label="Sort by",
+        required=False,
+    )
+
+    def __init__(self, *args, action, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper.form_method = "GET"
+        self.helper.form_action = action
+
+    def get_layout_fields(self):
+        return [
+            "sort_by",
+        ]
+
+    def get_layout_actions(self):
+        return []

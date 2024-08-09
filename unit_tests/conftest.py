@@ -1130,7 +1130,14 @@ def data_standard_case(
                 "sub_status": None,
             },
             "next_review_date": None,
-            "licences": [],
+            "licences": [
+                {
+                    "id": "2d001261-4369-49ba-7928-7ada66aa5cee",
+                    "reference_code": "GBSIEL/2024/0001234/T",
+                    "status": "draft",
+                    "case_status": "draft",
+                }
+            ],
         }
     }
 
@@ -1659,6 +1666,19 @@ def mock_status_properties(requests_mock):
         "is_terminal": False,
         "is_major_editable": False,
         "can_invoke_major_editable": False,
+    }
+    requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
+    return data
+
+
+@pytest.fixture
+def mock_status_properties_can_invoke_major_editable(requests_mock):
+    url = client._build_absolute_uri("/static/statuses/properties/")
+    data = {
+        "is_read_only": False,
+        "is_terminal": False,
+        "is_major_editable": False,
+        "can_invoke_major_editable": True,
     }
     requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
     return data

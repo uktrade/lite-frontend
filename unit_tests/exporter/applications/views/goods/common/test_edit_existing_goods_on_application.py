@@ -22,11 +22,18 @@ def edit_quantity_value_url(application, good_on_application):
     return url
 
 
+@pytest.fixture
+def mock_good_on_application_edit_quantity_value(requests_mock, data_standard_case, good_on_application):
+    application_id = data_standard_case["case"]["id"]
+    url = f"/applications/{application_id}/good-on-application/{good_on_application['id']}/quantity-value/"
+    return requests_mock.patch(url, json={})
+
+
 def test_edit_quantity_value_existing_good(
     authorized_client,
     edit_quantity_value_url,
     application_products_url,
-    mock_good_on_application_put,
+    mock_good_on_application_edit_quantity_value,
 ):
     response = authorized_client.get(edit_quantity_value_url)
     assert response.status_code == 200
@@ -47,8 +54,9 @@ def test_edit_quantity_value_existing_good(
     )
     assert response.status_code == 302
     assert response.url == application_products_url
-    assert mock_good_on_application_put.called_once
-    assert mock_good_on_application_put.last_request.json() == {
+    assert mock_good_on_application_edit_quantity_value.called_once
+    assert mock_good_on_application_edit_quantity_value.last_request.method == "PATCH"
+    assert mock_good_on_application_edit_quantity_value.last_request.json() == {
         "quantity": "20",
         "unit": "NAR",
         "value": "20.22",

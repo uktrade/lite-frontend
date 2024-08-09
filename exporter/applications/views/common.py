@@ -8,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, TemplateView
 
 from requests.exceptions import HTTPError
+from urllib.parse import urlencode
 
 from exporter.applications.constants import ApplicationStatus
 from exporter.applications.forms.appeal import AppealForm
@@ -20,6 +21,7 @@ from exporter.applications.forms.common import (
     application_copy_form,
     exhibition_details_form,
     ApplicationMajorEditConfirmationForm,
+    ApplicationsListSortForm,
 )
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
@@ -63,7 +65,7 @@ from lite_forms.views import SingleFormView, MultiFormView
 from exporter.applications.forms.hcsat import HCSATminiform
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
-from core.helpers import convert_dict_to_query_params, get_document_data
+from core.helpers import get_document_data
 
 
 class ApplicationMixin(LoginRequiredMixin):
@@ -83,32 +85,72 @@ class ApplicationMixin(LoginRequiredMixin):
         return reverse("applications:task_list", kwargs={"pk": pk})
 
 
-class ApplicationsList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        params = {
-            "page": int(request.GET.get("page", 1)),
-            "selected_filter": request.GET.get("selected_filter", "submitted_applications"),
-            "sort_by": request.GET.get("sort_by", "submitted_at"),
+class ApplicationsList(LoginRequiredMixin, FormView):
+    template_name = "applications/applications.html"
+    form_class = ApplicationsListSortForm
+    filters = [
+        {
+            "name": "Submitted",
+            "filter": "submitted_applications",
+        },
+        {
+            "name": "Finalised",
+            "filter": "finalised_applications",
+        },
+        {
+            "name": "Drafts",
+            "filter": "draft_applications",
+            "sort_by": "-created_at",
+        },
+        {
+            "name": "Archived",
+            "filter": "archived_applications",
+        },
+    ]
+
+    def get_initial(self):
+        return {
+            "sort_by": self.request.GET.get("sort_by", "-submitted_at"),
         }
 
-        organisation = get_organisation(request, request.session["organisation"])
-        applications = get_applications(request, **params)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["action"] = reverse("applications:applications")
+        return kwargs
+
+    def get_tabs(self):
+        tabs = []
+        for tab in self.filters:
+            sort_by = tab.get("sort_by", "-submitted_at")
+            query_params = {"selected_filter": tab["filter"], "sort_by": sort_by}
+            tab["url"] = f"/applications/?{urlencode(query_params, doseq=True)}"
+            tabs.append(tab)
+
+        return tabs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        params = {
+            "page": int(self.request.GET.get("page", 1)),
+            "selected_filter": self.request.GET.get("selected_filter", "submitted_applications"),
+            "sort_by": self.request.GET.get("sort_by", "-submitted_at"),
+        }
+
+        organisation = get_organisation(self.request, self.request.session["organisation"])
+        applications = get_applications(self.request, **params)
         is_user_multiple_organisations = len(get_user(self.request)["organisations"]) > 1
-        context = {
+
+        return {
+            **context,
             "applications": applications,
             "organisation": organisation,
-            "params": params,
+            "tabs": self.get_tabs(),
+            "selected_filter": params["selected_filter"],
             "page": params.pop("page"),
-            "params_str": convert_dict_to_query_params(params),
             "is_user_multiple_organisations": is_user_multiple_organisations,
+            "show_sort_options": params["selected_filter"] != "draft_applications",
         }
-
-        if params["selected_filter"] in ["submitted_applications", "finalised_applications"]:
-            template_name = "applications/applications.html"
-        else:
-            template_name = "applications/drafts.html"
-
-        return render(request, template_name, context)
 
 
 class DeleteApplication(LoginRequiredMixin, SingleFormView):

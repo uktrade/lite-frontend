@@ -289,7 +289,13 @@ def test_search_denials_query_string_error(authorized_client, requests_mock, que
 
 @pytest.fixture
 def mock_newline_case(requests_mock, data_standard_case):
-    data_standard_case["case"]["data"]["end_user"]["address"] = "42 \nWallaby \nWay"
+    data_standard_case["case"]["data"]["end_user"][
+        "address"
+    ] = """42 \n\r\n\r
+
+Wallaby\r\n\r Way\n
+
+"""
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
     yield requests_mock.get(url=url, json=data_standard_case)
 
