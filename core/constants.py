@@ -129,6 +129,20 @@ class LicenceStatusEnum:
     DRAFT = "draft"
     CANCELLED = "cancelled"
 
+    issued_choice = (ISSUED, "Issued")
+    suspended_choice = (
+        SUSPENDED,
+        "Suspended",
+    )
+    revoked_choice = (
+        REVOKED,
+        "Revoked",
+    )
+    reinstated_choice = (
+        REINSTATED,
+        "Reinstated",
+    )
+
     licence_choices_dict = {
         "licence_statuses": [
             {"key": "issued", "value": "Issued"},
