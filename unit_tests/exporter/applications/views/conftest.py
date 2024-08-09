@@ -50,15 +50,15 @@ def mock_application_put(requests_mock, data_standard_case):
 
 
 @pytest.fixture
-def mock_application_status_put(requests_mock, application_id):
-    url = client._build_absolute_uri(f"/applications/{application_id}/status/")
-    return requests_mock.put(url=url, json={})
+def mock_application_status_post(requests_mock, application_id):
+    url = client._build_absolute_uri(f"/exporter/applications/{application_id}/status/")
+    return requests_mock.post(url=url, json={})
 
 
 @pytest.fixture
-def mock_application_status_put_failure(requests_mock, application_id):
-    url = client._build_absolute_uri(f"/applications/{application_id}/status/")
-    return requests_mock.put(url=url, json={"error": "unexpected error"}, status_code=500)
+def mock_application_status_post_failure(requests_mock, application_id):
+    url = client._build_absolute_uri(f"/exporter/applications/{application_id}/status/")
+    return requests_mock.post(url=url, json={"error": "unexpected error"}, status_code=500)
 
 
 @pytest.fixture
