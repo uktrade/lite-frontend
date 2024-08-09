@@ -131,8 +131,7 @@ class CasesFiltersForm(forms.Form):
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
         ]
 
-        licence_status_choices = self.get_field_choices(LicenceStatusEnum.licence_choices_dict, "licence_statuses")
-
+        licence_status_choices = [("", "Select")] + LicenceStatusEnum.choices
         flags_choices = [(flag["id"], flag["name"]) for flag in all_flags]
         cle_choices = [(cle["rating"], cle["rating"]) for cle in all_cles]
         regime_choices = [(regime["id"], regime["name"]) for regime in all_regimes]

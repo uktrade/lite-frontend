@@ -143,19 +143,14 @@ class LicenceStatusEnum:
         "Reinstated",
     )
 
-    licence_choices_dict = {
-        "licence_statuses": [
-            {"key": "issued", "value": "Issued"},
-            {"key": "cancelled", "value": "Cancelled"},
-            {"key": "expired", "value": "Expired"},
-            {"key": "exhausted", "value": "Exhausted"},
-            {"key": "suspended", "value": "Suspended"},
-            {
-                "key": "reinstated",
-                "value": "Reinstated",
-            },
-            {"key": "revoked", "value": "Revoked"},
-            {"key": "surrendered", "value": "Surrendered"},
-            {"key": "draft", "value": "Draft"},
-        ]
-    }
+    choices = [
+        (ISSUED, "Issued"),
+        (REINSTATED, "Reinstated"),
+        (REVOKED, "Revoked"),
+        (SURRENDERED, "Surrendered"),
+        (SUSPENDED, "Suspended"),
+        (EXHAUSTED, "Exhasted"),
+        (EXPIRED, "Expired"),
+        (DRAFT, "Draft"),
+        (CANCELLED, "Cancelled"),
+    ]
