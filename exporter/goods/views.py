@@ -160,20 +160,6 @@ class Goods(LoginRequiredMixin, TemplateView):
 
 class ArchivedGoods(LoginRequiredMixin, TemplateView):
 
-    def get_breadcrumbs(self):
-        breadcrumbs = [
-            {
-                "title": "Account home",
-                "url": reverse("core:home"),
-            },
-            {
-                "title": "Product list",
-                "url": reverse("goods:goods"),
-            },
-        ]
-
-        return breadcrumbs
-
     def get(self, request, **kwargs):
         name = request.GET.get("name", "").strip()
         part_number = request.GET.get("part_number", "").strip()
