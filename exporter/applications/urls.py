@@ -169,7 +169,7 @@ urlpatterns = [
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
     path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application"),
     path(
-        "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/edit/",
+        "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/edit-quantity-value/",
         goods.EditQuantityValueExistingGood.as_view(),
         name="edit_preexisting_good",
     ),
