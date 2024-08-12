@@ -15,7 +15,7 @@ from core.builtins.custom_tags import str_date
 faker = Faker()
 
 
-headers = [
+draft_headers = [
     {"key": "name", "value": "Your reference"},
     {"key": "exporter_user_notification_count", "value": ""},
     {"key": "reference_code", "value": "ECJU reference"},
@@ -24,7 +24,7 @@ headers = [
     {"key": "updated_at", "value": "Last updated"},
     {"key": "status", "value": "Status"},
 ]
-archived_headers = [
+headers = [
     {"key": "name", "value": "Your reference"},
     {"key": "exporter_user_notification_count", "value": ""},
     {"key": "submitted_by", "value": "Submitted by"},
@@ -246,7 +246,7 @@ def test_get_draft_applications(authorized_client, mock_get_draft_applications):
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, draft_applications())
+    verify_application_data(response, draft_headers, draft_applications())
 
 
 def test_get_submitted_applications(authorized_client, mock_get_submitted_applications):
@@ -279,4 +279,4 @@ def test_get_archived_applications(authorized_client, mock_get_archived_applicat
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, archived_headers, archived_applications())
+    verify_application_data(response, headers, archived_applications())
