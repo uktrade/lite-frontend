@@ -1065,6 +1065,7 @@ def data_standard_case(
                 "non_waybill_or_lading_route_details": "44",
                 "is_mod_security_approved": None,
                 "security_approvals": ["F680"],
+                "subject_to_itar_controls": None,
                 "f680_reference_number": None,
                 "f1686_contracting_authority": None,
                 "f1686_reference_number": None,
