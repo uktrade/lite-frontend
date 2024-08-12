@@ -6,19 +6,13 @@
 {% block back_link %}
 	<div class="govuk-breadcrumbs">
 		<ol class="govuk-breadcrumbs__list">
-			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="{% url 'core:home' %}">
-					{% lcs 'hub.ACCOUNT_HOME' %}
-				</a>
-			</li>
-			<li class="govuk-breadcrumbs__list-item">
-				<a class="govuk-breadcrumbs__link" href="{% url 'goods:goods' %}">
-					{% lcs 'goods.GoodsList.TITLE' %}
-				</a>
-			</li>
-			<li class="govuk-breadcrumbs__list-item">
-				{% lcs 'goods.GoodPage.TITLE' %}
-			</li>
+            {% for item in breadcrumbs %}
+                <li class="govuk-breadcrumbs__list-item">
+                    <a class="govuk-breadcrumbs__link" href="{{ item.url }}">
+                        {{ item.title }}
+                    </a>
+                </li>
+            {% endfor %}
 		</ol>
 	</div>
 {% endblock %}
