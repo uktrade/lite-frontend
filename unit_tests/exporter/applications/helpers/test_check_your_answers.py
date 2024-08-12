@@ -171,10 +171,16 @@ def test_actions_column_is_balanced_across_rows(application, data_good_on_applic
     (
         ({"is_mod_security_approved": False}, {"Do you have an MOD security approval, such as F680 or F1686?": "No"}),
         (
-            {"is_mod_security_approved": True, "security_approvals": ["F680"], "f680_reference_number": "Test Ref"},
+            {
+                "is_mod_security_approved": True,
+                "security_approvals": ["F680"],
+                "subject_to_itar_controls": True,
+                "f680_reference_number": "Test Ref",
+            },
             {
                 "Do you have an MOD security approval, such as F680 or F1686?": "Yes",
                 "What type of approval do you have?": "F680",
+                "Are any products on this application subject to ITAR controls?": "Yes",
                 "What is the F680 reference number?": "Test Ref",
             },
         ),

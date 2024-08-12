@@ -28,6 +28,7 @@ from exporter.applications.views.security_approvals.edit_views import (
     EditSecurityOtherDetails,
     EditF1686Details,
     EditSecurityApprovalDetails,
+    EditSubjectToITARControls,
 )
 
 from exporter.applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
@@ -392,6 +393,11 @@ urlpatterns = [
         "<uuid:pk>/edit-security-approvals/",
         EditSecurityApprovalDetails.as_view(),
         name="edit_security_approvals_details",
+    ),
+    path(
+        "<uuid:pk>/edit-security-approvals-itar-controls-status/",
+        EditSubjectToITARControls.as_view(),
+        name="edit_security_approvals_subject_to_itar_controls",
     ),
     path(
         "<uuid:pk>/edit-security-approvals-f680-reference-number/",
