@@ -39,6 +39,16 @@
         {% endif %}
         {% if "F680" in application.security_approvals %}
             <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Are any products on this application subject to ITAR controls?</dt>
+                <dd class="govuk-summary-list__value">{{ application.subject_to_itar_controls|yesno|capfirst }}</dd>
+                <dd class="govuk-summary-list__actions">
+                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                    href="{% url 'applications:edit_security_approvals_subject_to_itar_controls' application.id %}">Change
+                    </a>
+                </dd>
+            </div>
+
+            <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">What is the F680 reference number?</dt>
                 <dd class="govuk-summary-list__value">{{ application.f680_reference_number }}</dd>
                 <dd class="govuk-summary-list__actions">
