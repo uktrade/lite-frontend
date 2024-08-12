@@ -1137,6 +1137,7 @@ def data_standard_case(
                     "reference_code": "GBSIEL/2024/0001234/T",
                     "status": "draft",
                     "case_status": "draft",
+                    "created_at": "2020-10-07T15:26:36.976341+01:00",
                 }
             ],
         }
