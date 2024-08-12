@@ -76,6 +76,9 @@ class CasePage(BasePage):
     def click_change_status(self):
         self.driver.find_element(by=By.ID, value=self.LINK_CHANGE_STATUS_ID).click()
 
+    def click_change_licence_status(self):
+        return self.driver.find_element(by=By.LINK_TEXT, value="Change status").click()
+
     def click_rerun_routing_rules(self):
         self.driver.find_element(by=By.ID, value=self.BUTTON_RERUN_ROUTING_RULES_ID).click()
 

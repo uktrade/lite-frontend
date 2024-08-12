@@ -269,6 +269,13 @@ def click_post_note(driver):  # noqa
     case_page.click_change_status()
 
 
+@when("I click change licence status on the case page")  # noqa
+def click_change_licence_status(driver):
+    case_page = CasePage(driver)
+    case_page.change_tab("licences")
+    case_page.click_change_licence_status()
+
+
 @when(parsers.parse('I select status "{status}" and save'))  # noqa
 def select_status_save(driver, status, context):  # noqa
     application_page = ApplicationPage(driver)
