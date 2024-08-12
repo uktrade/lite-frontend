@@ -13,7 +13,13 @@ from core.wizard.views import BaseSessionWizardView
 from exporter.applications.services import put_application
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 
-from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
+from .forms import (
+    F1686DetailsForm,
+    F680ReferenceNumberForm,
+    SecurityClassifiedDetailsForm,
+    SecurityOtherDetailsForm,
+    SubjectToITARControlsForm,
+)
 
 from .constants import SecurityApprovalSteps
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
@@ -29,12 +35,14 @@ class SecurityApprovals(
 ):
     form_list = [
         (SecurityApprovalSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
+        (SecurityApprovalSteps.SUBJECT_TO_ITAR_CONTROLS, SubjectToITARControlsForm),
         (SecurityApprovalSteps.F680_REFERENCE_NUMBER, F680ReferenceNumberForm),
         (SecurityApprovalSteps.F1686_DETAILS, F1686DetailsForm),
         (SecurityApprovalSteps.SECURITY_OTHER_DETAILS, SecurityOtherDetailsForm),
     ]
 
     condition_dict = {
+        SecurityApprovalSteps.SUBJECT_TO_ITAR_CONTROLS: is_f680_approval,
         SecurityApprovalSteps.F680_REFERENCE_NUMBER: is_f680_approval,
         SecurityApprovalSteps.F1686_DETAILS: is_f1686_approval,
         SecurityApprovalSteps.SECURITY_OTHER_DETAILS: is_other_approval,
