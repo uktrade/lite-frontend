@@ -131,9 +131,10 @@ class ApplicationsList(LoginRequiredMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        selected_filter = self.request.GET.get("selected_filter", "submitted_applications")
         params = {
             "page": int(self.request.GET.get("page", 1)),
-            "selected_filter": self.request.GET.get("selected_filter", "submitted_applications"),
+            "selected_filter": selected_filter,
             "sort_by": self.request.GET.get("sort_by", "-submitted_at"),
         }
 
@@ -146,10 +147,10 @@ class ApplicationsList(LoginRequiredMixin, FormView):
             "applications": applications,
             "organisation": organisation,
             "tabs": self.get_tabs(),
-            "selected_filter": params["selected_filter"],
+            "selected_filter": selected_filter,
             "page": params.pop("page"),
             "is_user_multiple_organisations": is_user_multiple_organisations,
-            "show_sort_options": params["selected_filter"] != "draft_applications",
+            "show_sort_options": selected_filter != "draft_applications",
         }
 
 
