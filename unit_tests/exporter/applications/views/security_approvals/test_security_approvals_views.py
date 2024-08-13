@@ -7,6 +7,7 @@ from exporter.applications.views.security_approvals.forms import (
     F680ReferenceNumberForm,
     F1686DetailsForm,
     SecurityOtherDetailsForm,
+    SubjectToITARControlsForm,
 )
 
 
@@ -66,6 +67,16 @@ def test_application_security_approvals_end_to_end(
     )
 
     assert response.status_code == 200
+    assert isinstance(response.context["form"], SubjectToITARControlsForm)
+
+    response = post_to_step(
+        SecurityApprovalSteps.SUBJECT_TO_ITAR_CONTROLS,
+        {
+            "subject_to_itar_controls": False,
+        },
+    )
+
+    assert response.status_code == 200
     assert isinstance(response.context["form"], F680ReferenceNumberForm)
 
     response = post_to_step(
@@ -107,6 +118,7 @@ def test_application_security_approvals_end_to_end(
     assert last_request.json() == {
         "security_approvals": ["F680", "F1686", "Other"],
         "is_mod_security_approved": True,
+        "subject_to_itar_controls": False,
         "f680_reference_number": "dummy ref",
         "f1686_contracting_authority": "dummy contracting authority",
         "f1686_reference_number": "f1686  reference number update",

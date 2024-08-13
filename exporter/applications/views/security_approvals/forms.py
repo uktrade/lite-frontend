@@ -66,6 +66,32 @@ class SecurityClassifiedDetailsForm(BaseForm):
         return cleaned_data
 
 
+class SubjectToITARControlsForm(BaseForm):
+    class Layout:
+        TITLE = "Are any products on this application subject to ITAR controls?"
+
+    label = """
+    We need to know if this export involves any defence articles including technical data that are 
+    subject to controls under the United States (US) International Traffic in Arms regulations (ITAR).
+    """
+
+    subject_to_itar_controls = forms.TypedChoiceField(
+        choices=(
+            (False, "No"),
+            (True, "Yes"),
+        ),
+        coerce=coerce_str_to_bool,
+        widget=forms.RadioSelect,
+        label=label,
+        error_messages={
+            "required": "Select no if the products are not subject to ITAR controls",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("subject_to_itar_controls",)
+
+
 class F680ReferenceNumberForm(BaseForm):
     class Layout:
         TITLE = "What is the F680 reference number?"

@@ -52,6 +52,9 @@
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.YOUR_REFERENCE" %}</th>
 					<th class="govuk-table__header" scope="col"></th>
+					{% if show_sort_options %}
+						<th class="govuk-table__header" scope="col">Submitted by</th>
+					{% endif %}
 					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.REFERENCE_CODE" %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs "applications.ApplicationsSummaryPage.TYPE" %}</th>
 					<th class="govuk-table__header" scope="col">Date submitted</th>
@@ -77,6 +80,11 @@
 								<span class="lite-notification-bubble">{{ application.exporter_user_notification_count }} <span class="govuk-visually-hidden"> {% lcs "applications.ApplicationsList.NOTIFICATIONS_SUFFIX" %}</span></span>
 							{% endif %}
 						</td>
+						{% if show_sort_options %}
+							<td class="govuk-table__cell">
+								{{ application.submitted_by }}
+							</td>
+						{% endif %}
 						<td class="govuk-table__cell">
 							{{ application.reference_code }}
 						</td>
