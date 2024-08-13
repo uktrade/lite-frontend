@@ -16,6 +16,10 @@ def get_initial_other_security_approval_details(application):
     return {"other_security_approval_details": application["other_security_approval_details"]}
 
 
+def get_initial_subject_to_itar_controls(application):
+    return {"subject_to_itar_controls": application["subject_to_itar_controls"]}
+
+
 def get_initial_f680_reference_number(application):
     return {"f680_reference_number": application["f680_reference_number"]}
 

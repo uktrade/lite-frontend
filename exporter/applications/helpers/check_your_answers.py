@@ -337,6 +337,8 @@ def _get_security_approvals(application):
             application.security_approvals, SecurityClassifiedApprovalsType
         )
         if SecurityClassifiedApprovalsType.F680 in application.security_approvals:
+            itar_question = "Are any products on this application subject to ITAR controls?"
+            security_details[itar_question] = friendly_boolean(application.subject_to_itar_controls)
             security_details["What is the F680 reference number?"] = application.f680_reference_number
 
         if SecurityClassifiedApprovalsType.F1686 in application.security_approvals:
