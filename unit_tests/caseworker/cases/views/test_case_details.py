@@ -332,6 +332,7 @@ def test_case_details_licence_status_displayed(
                     "status": "issued",
                     "case_status": "finalised",
                     "reference_code": "12345AB",
+                    "created_at": "2020-08-03T12:52:35.345826Z",
                     "link_expected": True,
                 },
                 {
@@ -339,6 +340,7 @@ def test_case_details_licence_status_displayed(
                     "status": "issued",
                     "case_status": "withdrawn",
                     "reference_code": "12345AB",
+                    "created_at": "2020-08-03T12:52:35.345826Z",
                     "link_expected": False,
                 },
             ],
@@ -352,6 +354,7 @@ def test_case_details_licence_status_displayed(
                     "status": "reinstated",
                     "case_status": "finalised",
                     "reference_code": "12345AB",
+                    "created_at": "2020-08-03T12:52:35.345826Z",
                     "link_expected": True,
                 },
                 {
@@ -359,6 +362,7 @@ def test_case_details_licence_status_displayed(
                     "status": "revoked",
                     "case_status": "finalised",
                     "reference_code": "12345AB",
+                    "created_at": "2020-08-03T12:52:35.345826Z",
                     "link_expected": False,
                 },
             ],
@@ -372,6 +376,7 @@ def test_case_details_licence_status_displayed(
                     "status": "suspended",
                     "case_status": "finalised",
                     "reference_code": "12345AB",
+                    "created_at": "2020-08-03T12:52:35.345826Z",
                     "link_expected": True,
                 }
             ],
@@ -385,6 +390,7 @@ def test_case_details_licence_status_displayed(
                     "status": "issued",
                     "case_status": "submitted",
                     "reference_code": "12345AB",
+                    "created_at": "2020-08-03T12:52:35.345826Z",
                     "link_expected": False,
                 }
             ],
@@ -398,6 +404,7 @@ def test_case_details_licence_status_displayed(
                     "status": "revoked",
                     "case_status": "finalised",
                     "reference_code": "12345AB",
+                    "created_at": "2020-08-03T12:52:35.345826Z",
                     "link_expected": False,
                 }
             ],
@@ -411,6 +418,7 @@ def test_case_details_licence_status_displayed(
                     "status": "issued",
                     "case_status": "finalised",
                     "reference_code": "12345AB",
+                    "created_at": "2020-08-03T12:52:35.345826Z",
                     "link_expected": False,
                 }
             ],
