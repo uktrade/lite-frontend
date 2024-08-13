@@ -12,6 +12,10 @@
 
         {% if "F680" in case.data.security_approvals %}
             <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Are any products on this application subject to ITAR controls?</dt>
+                <dd class="govuk-summary-list__value">{{ case.data.subject_to_itar_controls|yesno|capfirst }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">What is the F680 reference number?</dt>
                 <dd class="govuk-summary-list__value">{{ case.data.f680_reference_number }}</dd>
             </div>
