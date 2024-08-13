@@ -149,8 +149,7 @@ class LicenceStatusEnum:
         (REVOKED, "Revoked"),
         (SURRENDERED, "Surrendered"),
         (SUSPENDED, "Suspended"),
-        (EXHAUSTED, "Exhasted"),
+        (EXHAUSTED, "Exhausted"),
         (EXPIRED, "Expired"),
-        (DRAFT, "Draft"),
         (CANCELLED, "Cancelled"),
     ]
