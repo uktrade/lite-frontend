@@ -291,7 +291,7 @@ def test_search_denials_query_string_error(authorized_client, requests_mock, que
 def mock_newline_case(requests_mock, data_standard_case):
     data_standard_case["case"]["data"]["end_user"][
         "address"
-    ] = """42 \n\r\n\r
+    ] = """42\n\r\n\r
 
 Wallaby\r\n\r Way\n
 
