@@ -5,6 +5,7 @@ from exporter.applications.views.security_approvals.forms import (
     F680ReferenceNumberForm,
     SecurityOtherDetailsForm,
     F1686DetailsForm,
+    SubjectToITARControlsForm,
 )
 
 
@@ -35,6 +36,32 @@ from exporter.applications.views.security_approvals.forms import (
 )
 def test_security_classified_details(data, is_valid, errors):
     form = SecurityClassifiedDetailsForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        (
+            {},
+            False,
+            {"subject_to_itar_controls": ["Select no if the products are not subject to ITAR controls"]},
+        ),
+        (
+            {"subject_to_itar_controls": True},
+            True,
+            {},
+        ),
+        (
+            {"subject_to_itar_controls": False},
+            True,
+            {},
+        ),
+    ),
+)
+def test_subject_to_itar_controls(data, is_valid, errors):
+    form = SubjectToITARControlsForm(data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
 

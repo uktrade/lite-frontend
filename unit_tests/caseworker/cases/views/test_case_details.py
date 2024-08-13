@@ -16,6 +16,7 @@ from django.utils import timezone
 
 from core import client
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS
+from core.constants import SecurityClassifiedApprovalsType
 
 
 @pytest.fixture(autouse=True)
@@ -290,6 +291,38 @@ def test_case_details_sub_status_change_displayed(
 
 
 @pytest.mark.parametrize(
+    "licence_data, expected_status, expected_text",
+    (
+        ([], None, "No licence status set"),
+        ([{"created_at": "2023-08-08", "status": "Issued"}], "Issued", "Issued"),
+        (
+            [{"created_at": "2023-08-11", "status": "Cancelled"}, {"created_at": "2023-08-09", "status": "Revoked"}],
+            "Cancelled",
+            "Cancelled",
+        ),
+    ),
+)
+def test_case_details_licence_status_displayed(
+    data_standard_case,
+    requests_mock,
+    data_queue,
+    authorized_client,
+    mock_gov_user,
+    licence_data,
+    expected_status,
+    expected_text,
+):
+
+    data_standard_case["case"]["licences"] = licence_data
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+    assert response.context["licence_status"] == expected_status
+    html = BeautifulSoup(response.content, "html.parser")
+
+    assert html.find(id="case-licence-status").span.text.strip() == expected_text
+
+
+@pytest.mark.parametrize(
     "licence_details, role_id, column_expected",
     [
         (
@@ -469,3 +502,36 @@ def test_case_amendment_warning(
         "This case was created when the exporter edited the original application at GBSIEL/2024/0000002/P."
         in amendment_message.text
     )
+
+
+@pytest.mark.parametrize(
+    "itar_controls_status,expected",
+    (
+        (False, "No"),
+        (True, "Yes"),
+    ),
+)
+def test_case_details_security_approvals(
+    data_standard_case, data_queue, authorized_client, itar_controls_status, expected
+):
+    data_standard_case["case"]["data"]["is_mod_security_approved"] = True
+    data_standard_case["case"]["data"]["security_approvals"] = [SecurityClassifiedApprovalsType.F680]
+    data_standard_case["case"]["data"]["subject_to_itar_controls"] = itar_controls_status
+
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+
+    assertTemplateUsed(response, "components/security-approvals.html")
+
+    html = BeautifulSoup(response.content, "html.parser")
+    dt = html.find("dt", string=re.compile("Do you have an MOD security approval, such as F680 or F1686?"))
+    assert dt
+    assert dt.find_next().string == "Yes"
+
+    dt = html.find("dt", string=re.compile("What type of approval do you have?"))
+    assert dt
+    assert dt.find_next().string == "F680"
+
+    dt = html.find("dt", string=re.compile("Are any products on this application subject to ITAR controls?"))
+    assert dt
+    assert dt.find_next().string == expected

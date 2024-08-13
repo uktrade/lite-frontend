@@ -37,6 +37,7 @@ from exporter.core.helpers import (
     has_valid_rfd_certificate,
     str_to_bool,
 )
+from exporter.goods.common.base import product_detail_breadcrumbs
 from exporter.goods.forms import (
     FirearmsActConfirmationForm,
     FirearmsCalibreDetailsForm,
@@ -158,6 +159,7 @@ class Goods(LoginRequiredMixin, TemplateView):
 
 
 class ArchivedGoods(LoginRequiredMixin, TemplateView):
+
     def get(self, request, **kwargs):
         name = request.GET.get("name", "").strip()
         part_number = request.GET.get("part_number", "").strip()
@@ -184,6 +186,7 @@ class ArchivedGoods(LoginRequiredMixin, TemplateView):
             "part_number": part_number,
             "control_list_entry": control_list_entry,
             "filters": filters,
+            "breadcrumbs": product_detail_breadcrumbs(),
         }
         return render(request, "goods/archived_goods.html", context)
 
