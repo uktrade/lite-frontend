@@ -22,7 +22,7 @@
             <dt class="govuk-summary-list__key">Do you have an MOD security approval, such as F680 or F1686?</dt>
             <dd class="govuk-summary-list__value">{{ application.is_mod_security_approved|yesno|capfirst }}</dd>
             <dd class="govuk-summary-list__actions">
-            <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+            <a id="mod-approval-status" class="govuk-link govuk-link--no-visited-state"
                href="{% url 'applications:edit_security_approvals_details' application.id %}">Change</a>
             </dd>
         </div>
@@ -31,7 +31,7 @@
                     <dt class="govuk-summary-list__key">What type of approval do you have?</dt>
                     <dd class="govuk-summary-list__value">{{ application.security_approvals|list_to_choice_labels:security_classified_approvals_types }}</dd>
                     <dd class="govuk-summary-list__actions">
-                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                    <a id="security-approvals" class="govuk-link govuk-link--no-visited-state"
                        href="{% url 'applications:edit_security_approvals_details' application.id %}">Change
                     </a>
                     </dd>
@@ -39,10 +39,20 @@
         {% endif %}
         {% if "F680" in application.security_approvals %}
             <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Are any products on this application subject to ITAR controls?</dt>
+                <dd class="govuk-summary-list__value">{{ application.subject_to_itar_controls|yesno|capfirst }}</dd>
+                <dd class="govuk-summary-list__actions">
+                    <a id="itar-controls-status" class="govuk-link govuk-link--no-visited-state"
+                    href="{% url 'applications:edit_security_approvals_subject_to_itar_controls' application.id %}">Change
+                    </a>
+                </dd>
+            </div>
+
+            <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">What is the F680 reference number?</dt>
                 <dd class="govuk-summary-list__value">{{ application.f680_reference_number }}</dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                    <a id="f680-reference-number" class="govuk-link govuk-link--no-visited-state"
                        href="{% url 'applications:edit_security_approvals_f680_reference_number' application.id %}">Change
                     </a>
                 </dd>
@@ -54,7 +64,7 @@
                 <dt class="govuk-summary-list__key">Who is the contracting authority (or signatory and job role) for your F1686 approval?</dt>
                 <dd class="govuk-summary-list__value">{{ application.f1686_contracting_authority  }}</dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                    <a id="f1686-authority" class="govuk-link govuk-link--no-visited-state"
                        href="{% url 'applications:edit_security_approvals_f1686_details' application.id %}">Change</a>
                 </dd>
             </div>
@@ -62,7 +72,7 @@
                 <dt class="govuk-summary-list__key">What is the F1686 reference number?</dt>
                 <dd class="govuk-summary-list__value">{{ application.f1686_reference_number }}</dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                    <a id="f1686-reference-number" class="govuk-link govuk-link--no-visited-state"
                        href="{% url 'applications:edit_security_approvals_f1686_details' application.id %}">Change</a>
                 </dd>
             </div>
@@ -70,7 +80,7 @@
                 <dt class="govuk-summary-list__key">When was the F1686 approved?</dt>
                 <dd class="govuk-summary-list__value">{{ application.f1686_approval_date|str_date_only }}</dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                    <a id="f1686-approval-date" class="govuk-link govuk-link--no-visited-state"
                        href="{% url 'applications:edit_security_approvals_f1686_details' application.id %}">Change
                     </a>
                 </dd>
@@ -81,7 +91,7 @@
                 <dt class="govuk-summary-list__key">Provide details of your written approval</dt>
                 <dd class="govuk-summary-list__value">{{ application.other_security_approval_details  }}</dd>
                 <dd class="govuk-summary-list__actions">
-                    <a id="change-good-name" class="govuk-link govuk-link--no-visited-state"
+                    <a id="other-security-approvals" class="govuk-link govuk-link--no-visited-state"
                        href="{% url 'applications:edit_security_approvals_security_other_details' application.id %}">Change
                     </a>
                 </dd>

@@ -7,10 +7,10 @@ from django.urls import reverse
 
 from exporter.applications.views.security_approvals.constants import SecurityApprovalSteps
 from exporter.applications.views.security_approvals.forms import (
-    F680ReferenceNumberForm,
     F1686DetailsForm,
     SecurityOtherDetailsForm,
     SecurityClassifiedDetailsForm,
+    SubjectToITARControlsForm,
 )
 
 
@@ -53,6 +53,11 @@ def post_to_edit_security_approvals(post_to_step_factory, edit_security_approval
 @pytest.mark.parametrize(
     "url_name, form_data, expected",
     (
+        (
+            "edit_security_approvals_subject_to_itar_controls",
+            {"subject_to_itar_controls": False},
+            {"subject_to_itar_controls": False},
+        ),
         (
             "edit_security_approvals_f680_reference_number",
             {"f680_reference_number": "new ref number"},
@@ -239,7 +244,7 @@ def test_edit_security_approvals_true(
         (
             ["F1686"],
             ["F680", "F1686"],
-            F680ReferenceNumberForm,
+            SubjectToITARControlsForm,
         ),
         (
             ["F680"],
