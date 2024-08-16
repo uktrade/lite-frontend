@@ -35,6 +35,7 @@ class CasePage(BasePage):
     LINK_REMOVE_CASE_OFFICER_ID = "link-case-officer-remove"
     LINK_ASSIGN_USERS_ID = "link-change-assigned-users"
     LINK_SELECT_ALL_GOODS_ID = "link-select-all-goods"
+    LINK_CHANGE_LICENCE_STATUS_ID = "link-change-licence-status"
 
     BANNER_REFERENCE_CODE_ID = "reference-code"
 
@@ -75,6 +76,9 @@ class CasePage(BasePage):
 
     def click_change_status(self):
         self.driver.find_element(by=By.ID, value=self.LINK_CHANGE_STATUS_ID).click()
+
+    def click_change_licence_status(self):
+        self.driver.find_element(by=By.ID, value=self.LINK_CHANGE_LICENCE_STATUS_ID).click()
 
     def click_rerun_routing_rules(self):
         self.driver.find_element(by=By.ID, value=self.BUTTON_RERUN_ROUTING_RULES_ID).click()
