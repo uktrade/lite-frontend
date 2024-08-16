@@ -84,6 +84,8 @@ def get_permissible_statuses(request, case):
                 CaseStatusEnum.CLC,
                 CaseStatusEnum.PV,
                 CaseStatusEnum.SURRENDERED,
+                CaseStatusEnum.REVOKED,
+                CaseStatusEnum.SUSPENDED,
             ]
         ]
 
