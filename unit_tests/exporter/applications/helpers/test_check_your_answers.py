@@ -222,3 +222,18 @@ def test_convert_standard_application_has_security_approvals(application, settin
     test_application = Application(application)
     actual = check_your_answers._convert_standard_application(test_application)
     assert "Do you have a security approval?" in actual.keys()
+
+
+def test_goods_on_application_when_application_detail(application, data_good_on_application):
+    data_good_on_application["is_good_controlled"] = True
+    # Given this is an application detail page
+    actual = check_your_answers.convert_goods_on_application(
+        application, [data_good_on_application], is_application_detail=True
+    )
+
+    assert len(actual) == 1
+    # Shows assessed CLE-s by TAU
+    assert (
+        actual[0]["Control list entries"]
+        == "<span data-definition-title='ML1' data-definition-text='Smooth-bore weapons...'>ML1</span>, <span data-definition-title='ML2' data-definition-text='Smooth-bore weapons...'>ML2</span>"
+    )

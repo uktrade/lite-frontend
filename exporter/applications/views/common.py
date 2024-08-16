@@ -295,12 +295,11 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
 
     def get(self, request, **kwargs):
         status_props, _ = get_status_properties(request, self.application["status"]["key"])
-
         context = {
             "case_id": self.application_id,
             "application": self.application,
             "type": self.view_type,
-            "answers": convert_application_to_check_your_answers(self.application),
+            "answers": convert_application_to_check_your_answers(self.application, is_application_detail=True),
             "status_is_terminal": status_props["is_terminal"],
             "errors": kwargs.get("errors"),
             "text": kwargs.get("text", ""),
