@@ -49,7 +49,7 @@ Feature: I want to change the license state of a licence that has been issued.
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
-    And I click on "Licences" tab
+    When I edit my role LU
     When I click change licence status
 
     Examples:
