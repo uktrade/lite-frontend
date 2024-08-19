@@ -89,6 +89,18 @@ def test_change_status_GET(
     all_h1s = [elem.get_text().strip() for elem in html.find_all("h1")]
     assert "Change case status" in all_h1s
 
+    status_options = [item["value"] for item in html.find_all("option")]
+    excluded_statuses = [
+        CaseStatusEnum.APPLICANT_EDITING,
+        CaseStatusEnum.FINALISED,
+        CaseStatusEnum.REGISTERED,
+        CaseStatusEnum.CLC,
+        CaseStatusEnum.PV,
+        CaseStatusEnum.SURRENDERED,
+    ]
+    for excluded_status in excluded_statuses:
+        assert excluded_status not in status_options
+
 
 @pytest.mark.parametrize(
     "gov_user_type,expected",
