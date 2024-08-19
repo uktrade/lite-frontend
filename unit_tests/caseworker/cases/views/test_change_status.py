@@ -90,6 +90,7 @@ def test_change_status_GET(
     assert "Change case status" in all_h1s
 
     status_options = [item["value"] for item in html.find_all("option")]
+
     excluded_statuses = [
         CaseStatusEnum.APPLICANT_EDITING,
         CaseStatusEnum.FINALISED,
@@ -97,6 +98,8 @@ def test_change_status_GET(
         CaseStatusEnum.CLC,
         CaseStatusEnum.PV,
         CaseStatusEnum.SURRENDERED,
+        CaseStatusEnum.REVOKED,
+        CaseStatusEnum.SUSPENDED,
     ]
     for excluded_status in excluded_statuses:
         assert excluded_status not in status_options
