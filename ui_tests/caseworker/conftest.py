@@ -270,9 +270,9 @@ def click_post_note(driver):  # noqa
 
 
 @when("I click change licence status")  # noqa
-def click_post_note(driver):  # noqa
+def click_change_licence_status(driver):  # noqa
     case_page = CasePage(driver)
-    case_page.change_tab(CaseTabs.DETAILS)
+    case_page.change_tab(CaseTabs.LICENCES)
     case_page.click_change_licence_status()
 
 
