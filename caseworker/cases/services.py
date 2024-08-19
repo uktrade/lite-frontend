@@ -25,11 +25,6 @@ def get_case_basic_details(request, pk):
     return response.json()
 
 
-def patch_case(request, pk, json):
-    response = client.patch(request, f"/cases/{pk}", json)
-    return response.json(), response.status_code
-
-
 # Case Queues
 def put_case_queues(request, pk, json):
     data = client.put(request, f"/cases/{pk}/queues/", json)
@@ -53,8 +48,8 @@ def delete_case_assignment(request, case_id, assignment_id):
 
 
 # Applications
-def put_application_status(request, pk, json):
-    response = client.put(request, f"/applications/{pk}/status/", json)
+def post_application_status(request, pk, json):
+    response = client.post(request, f"/caseworker/applications/{pk}/status/", json)
     response.raise_for_status()
     return response.json(), response.status_code
 
