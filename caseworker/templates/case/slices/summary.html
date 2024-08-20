@@ -222,11 +222,14 @@
 					{% lcs 'cases.CasePage.DetailsTab.NO_USERS_ASSIGNED' %}
 				</span>
 			{% endfor %}
+            {% test_rule 'can_user_allocate_case' request case as can_user_allocate_case %}
+            {% if can_user_allocate_case %}
             <div class="app-case__summary-list__value__actions">
 			    <a id="link-change-assigned-users" class="govuk-link govuk-link--no-visited-state" href="{% url 'queues:case_assignments_assign_user' queue.id %}?cases={{case.id}}&return_to={{CURRENT_PATH|urlencode}}">
 			    	{% lcs 'cases.CasePage.DetailsTab.ADD_ASSIGNED_USER' %}
 			    </a>
             </div>
+            {% endif %}
 		</dd>
 	</div>
 	<div class="app-case__summary-list__row" id="case-licence-status">
