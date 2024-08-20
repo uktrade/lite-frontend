@@ -366,6 +366,20 @@ def test_product_uses_information_security_form(data, valid):
             "is_pv_graded",
             "Select an option",
         ),
+        (
+            {
+                "name": "test \r\nname",
+                "description": "test desc",
+                "part_number": "part_no",
+                "is_good_controlled": "True",
+                "control_list_entries": ["ML1", "ML1a"],
+                "is_pv_graded": "",
+            },
+            None,
+            False,
+            "name",
+            """Invalid character, allowed characters: A-Z a-z 0-9 -()/'+:=?!"_ ."%&*;<>""",
+        ),
     ),
 )
 def test_add_goods_questions_form(rf, client, data, application_pk, valid, error_field, error_message):
