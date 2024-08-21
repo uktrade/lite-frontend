@@ -6,7 +6,7 @@ Feature: I want to change the license state of a licence that has been issued.
   @lu_change_licence_status
   Scenario: LU change licence status
     Given I sign in to SSO or am signed into SSO
-    And I create an application with <name>,<email>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I prepare the application for final review
     When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
@@ -49,8 +49,8 @@ Feature: I want to change the license state of a licence that has been issued.
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
-    When I go to edit user role
+    And I go to users
 
     Examples:
-    | name    | email           | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
-    | Test    | test@test.com   | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
+    | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
