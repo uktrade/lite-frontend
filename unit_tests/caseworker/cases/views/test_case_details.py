@@ -419,7 +419,7 @@ def test_licence_details_actions_column_and_licence_status_change_link_display(
     assert show_actions_column is column_expected
 
     for licence in licence_details:
-        show_licence_status_change_link = bool(html.find(id="link-change-licence-status"))
+        show_licence_status_change_link = bool(html.find(id=f"link-change-licence-status-{licence['id']}"))
         assert show_licence_status_change_link is licence["link_expected"]
 
 
