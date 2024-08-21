@@ -6,7 +6,7 @@ Feature: I want to change the license state of a licence that has been issued.
   @lu_change_licence_status
   Scenario: LU change licence status
     Given I sign in to SSO or am signed into SSO
-    And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
+    And I create an application with <name>,<email>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I prepare the application for final review
     When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
