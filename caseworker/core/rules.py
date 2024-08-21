@@ -87,7 +87,7 @@ def is_user_licencing_unit_senior_manager(request):
 @rules.predicate
 def is_case_finalised_and_licence_editable(request, licence):
     is_case_finalised = licence.get("case_status") == CaseStatusEnum.FINALISED
-    is_licence_editable = licence.get("status") in [
+    is_licence_editable = licence.get("status").lower() in [
         LicenceStatusEnum.ISSUED,
         LicenceStatusEnum.REINSTATED,
         LicenceStatusEnum.SUSPENDED,
