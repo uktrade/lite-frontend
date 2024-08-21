@@ -497,11 +497,6 @@ def should_see_case_status(driver, status):  # noqa
     assert CasePage(driver).get_status() == status
 
 
-@when("I go to users")  # noqa
-def go_to_users(driver, sso_sign_in, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/users/")
-
-
 @given("an Exhibition Clearance is created")  # noqa
 def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance):  # noqa
     pass
