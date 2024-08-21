@@ -9,6 +9,9 @@ scenarios("../../features/give_advice/lu_licence_change_status.feature", strict_
 
 @when("I go to edit user role")
 def edit_user(driver, context):
+    import pdb
+
+    pdb.set_trace()
     user_page = UsersPage(driver)
     user_page.go_to_user_page(context)
     user_page.click_change_email_link()
