@@ -49,9 +49,8 @@ Feature: I want to change the license state of a licence that has been issued.
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
-    When I edit my role LU
-    When I click change licence status
+    When I go to edit user role
 
     Examples:
-    | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
-    | Test    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
+    | name    | email           | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test    | test@test.com   | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development | # /PS-IGNORE
