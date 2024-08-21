@@ -27,7 +27,7 @@ def test_edit_application_form_valid_major_edit(
     authorized_client,
     application_id,
     application_task_list_url,
-    mock_application_status_put,
+    mock_application_status_post,
 ):
     url = reverse("applications:edit_type", kwargs={"pk": application_id})
     response = authorized_client.post(url, {})
@@ -36,7 +36,7 @@ def test_edit_application_form_valid_major_edit(
     assert response.url == application_task_list_url
 
     history = requests_mock.request_history.pop()
-    assert history.method == "PUT"
+    assert history.method == "POST"
     assert history.json() == {"status": APPLICANT_EDITING}
 
 
@@ -44,7 +44,7 @@ def test_edit_application_major_edit_change_status_fail(
     requests_mock,
     authorized_client,
     application_id,
-    mock_application_status_put_failure,
+    mock_application_status_post_failure,
 ):
     url = reverse("applications:edit_type", kwargs={"pk": application_id})
     response = authorized_client.post(url, {})
@@ -55,7 +55,7 @@ def test_edit_application_major_edit_change_status_fail(
     assert "Unexpected error changing application status to APPLICANT_EDITING" in response_body.text
 
     history = requests_mock.request_history.pop()
-    assert history.method == "PUT"
+    assert history.method == "POST"
     assert history.json() == {"status": APPLICANT_EDITING}
 
 
@@ -65,7 +65,7 @@ def test_edit_application_form_valid_major_edit_by_copy(
     application_id,
     data_organisation,
     application_task_list_url,
-    mock_application_status_put,
+    mock_application_status_post,
 ):
     settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
     url = reverse("applications:edit_type", kwargs={"pk": application_id})
