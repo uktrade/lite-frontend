@@ -48,7 +48,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   chrome:
-    image: "seleniarm/node-chromium:latest"
+    image: selenium/node-chromium:127.0-chromedriver-127.0
     shm_size: 2gb
     depends_on:
       - selenium-hub
