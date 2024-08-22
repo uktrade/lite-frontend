@@ -41,6 +41,7 @@ class CaseStatusEnum:
     UNDER_FINAL_REVIEW = "under_final_review"
     UNDER_REVIEW = "under_review"
     WITHDRAWN = "withdrawn"
+    SUPERSEDED_BY_EXPORTER_EDIT = "superseded_by_exporter_edit"
 
     @classmethod
     def base_query_statuses(cls):
