@@ -1,5 +1,5 @@
 import pytest
-
+from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
 from urllib import parse
 
@@ -89,3 +89,32 @@ def test_regime_entries_get(authorized_client):
     url = reverse("api:regime-entries")
     response = authorized_client.get(url)
     assert response.status_code == 200
+
+
+def test_case_filters_licence(
+    authorized_client,
+    requests_mock,
+    mock_queues_list,
+    mock_cases,
+    mock_cases_head,
+    mock_no_bookmarks,
+):
+
+    url = reverse("core:index", kwargs={"disable_queue_lookup": True})
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    id_licence_status = html.find(id="id_licence_status")
+    status_options = [item["value"] for item in id_licence_status.find_all("option")]
+    assert status_options == [
+        "",
+        "issued",
+        "reinstated",
+        "revoked",
+        "surrendered",
+        "suspended",
+        "exhausted",
+        "expired",
+        "cancelled",
+        "draft",
+    ]

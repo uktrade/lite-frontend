@@ -20,6 +20,11 @@ class SecurityClassifiedDetailsForm(BaseForm):
     class Layout:
         TITLE = "If you are exporting security classified products, you may need a Ministry of Defence (MOD) approval"
 
+    label = """
+    This includes the release of United States ITAR (International Traffic in Arms regulations) material.<br><br>
+    Do you have an MOD security approval, such as F680 or F1686?
+    """
+
     security_approvals = forms.MultipleChoiceField(
         choices=SecurityClassifiedApprovalsType.choices,
         label="What type of approval do you have?",
@@ -33,7 +38,7 @@ class SecurityClassifiedDetailsForm(BaseForm):
             (False, "No"),
         ),
         coerce=coerce_str_to_bool,
-        label="Do you have an MOD security approval, such as F680 or F1686?",
+        label=label,
         error_messages={
             "required": "Select no if you do not have an MOD security approval",
         },
@@ -50,7 +55,7 @@ class SecurityClassifiedDetailsForm(BaseForm):
                 ),
             ),
             HTML.details(
-                "Help with security approvals",
+                "Help with security approvals and ITAR",
                 render_to_string("applications/forms/help_with_security_approvals.html"),
             ),
         )

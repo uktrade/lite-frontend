@@ -152,4 +152,5 @@ class LicenceStatusEnum:
         (EXHAUSTED, "Exhausted"),
         (EXPIRED, "Expired"),
         (CANCELLED, "Cancelled"),
+        (DRAFT, "Draft"),
     ]

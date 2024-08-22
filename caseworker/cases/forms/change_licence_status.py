@@ -57,13 +57,18 @@ class ChangeLicenceStatusConfirmationForm(BaseForm):
         super().__init__(*args, **kwargs)
 
     def get_layout_fields(self):
-        return (
+        return [
             HTML.p(
                 """
                 If you change it to 'Revoked' or 'Suspended'  the exporter cannot export the products and any attempt to do so will be viewed as an offence.
                 """
             ),
-        )
+            HTML.p(
+                """
+                You must ask HMRC to suspend or unsuspend a licence, as it is not possible to notify them in LITE.
+                """
+            ),
+        ]
 
     def get_layout_actions(self):
         layout_actions = super().get_layout_actions()
