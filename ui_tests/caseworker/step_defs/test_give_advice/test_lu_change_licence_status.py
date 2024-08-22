@@ -1,23 +1,15 @@
 from pytest_bdd import scenarios
-from pytest_bdd import scenarios, when
+from pytest_bdd import scenarios
 
-
-from ui_tests.caseworker.pages.users_page import UsersPage
 
 scenarios("../../features/give_advice/lu_licence_change_status.feature", strict_gherkin=False)
 
 
-@when("I go to edit user role")
-def edit_user(driver, context):
-    import pdb
-
-    pdb.set_trace()
-    user_page = UsersPage(driver)
-    user_page.go_to_user_page(context)
-    user_page.click_change_email_link()
-
-
-# @when("I edit my role LU")
-# def edit_existing_role(driver, context):
-#     # This code needs to edit the user role not edit the details of the role
-#     return
+# Log out as current user
+# Log in as a user with the role "Licensing Unit Senior Manager"
+# Go to the "Cases" page
+# Filter for the case with licence status "finalised"
+# Click on the case
+# Click on the "Change licence status" button
+# Select the new licence status "suspended"
+# Assert that it's visible in the UI
