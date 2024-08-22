@@ -62,11 +62,6 @@ class UsersPage(BasePage):
         element_id = "link-" + context.added_email
         self.driver.find_element(by=By.ID, value=element_id).click()
 
-    def go_to_user_page_by_name(self, context):
-        self.filter_by_email(context.added_email)
-        element_id = "link-" + context.added_email
-        self.driver.find_element(by=By.ID, value=element_id).click()
-
     def filter_by_email(self, name):
         functions.try_open_filters(self.driver)
         self.driver.find_element(by=By.ID, value=self.INPUT_EMAIL_FILTER_ID).clear()
