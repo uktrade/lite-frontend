@@ -1,8 +1,13 @@
-from pytest_bdd import scenarios
-from pytest_bdd import scenarios
+from pytest_bdd import when, scenarios
+from selenium.webdriver.common.by import By
 
 
 scenarios("../../features/give_advice/lu_licence_change_status.feature", strict_gherkin=False)
+
+
+@when("I log out as current user")
+def click_the_logout_link(driver):
+    driver.find_element(by=By.LINK_TEXT, value="Sign out").click()
 
 
 # Log out as current user
