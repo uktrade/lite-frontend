@@ -49,12 +49,14 @@ Feature: I want to change the license state of a licence that has been issued.
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
-    And I log out as current user
+    # And I log out as current user
     # Log in as a user with the role "Licensing Unit Senior Manager"
-    # Go to the "Cases" page
-    # Filter for the case with licence status "finalised"
-    # Click on the case
-    # Click on the "Change licence status" button
+    And I go to my profile page
+    And I change my team to "Licensing Unit" and default queue to "All cases"
+    And I go to my case list
+    And I click the application previously created
+    And I click on "Licences" tab
+    # And I click change licence status
     # Select the new licence status "suspended"
     # Assert that it's visible in the UI
 
