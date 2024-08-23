@@ -84,6 +84,8 @@ def get_permissible_statuses(request, case):
     case_type = case["case_type"]["type"]["key"]
     case_type_applicable_statuses = []
 
+    # TODO: Make this list of dis-allowed caseworker-settable statuses driven
+    # by the API
     if case_type == CaseType.APPLICATION.value:
         case_type_applicable_statuses = [
             status
@@ -92,6 +94,7 @@ def get_permissible_statuses(request, case):
             not in [
                 CaseStatusEnum.APPLICANT_EDITING,
                 CaseStatusEnum.FINALISED,
+                CaseStatusEnum.SUPERSEDED_BY_EXPORTER_EDIT,
                 CaseStatusEnum.REGISTERED,
                 CaseStatusEnum.CLC,
                 CaseStatusEnum.PV,
