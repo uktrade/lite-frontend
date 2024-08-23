@@ -11,6 +11,7 @@ from caseworker.core.constants import (
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
 )
 from caseworker.cases.services import get_case_sub_statuses
+from caseworker.core.services import get_caseworker_operable_case_statuses
 from caseworker.flags.helpers import has_flag
 from core.constants import CaseStatusEnum, LicenceStatusEnum
 
@@ -71,7 +72,7 @@ def case_has_ogd_advice(request, case):
 
 
 @rules.predicate
-def case_is_nlr(request, case):
+def is_case_nlr(request, case):
     return has_flag(case, GOODS_NOT_LISTED_ID)
 
 
@@ -86,7 +87,7 @@ def is_user_licencing_unit_senior_manager(request):
 @rules.predicate
 def is_case_finalised_and_licence_editable(request, licence):
     is_case_finalised = licence.get("case_status") == CaseStatusEnum.FINALISED
-    is_licence_editable = licence.get("status") in [
+    is_licence_editable = licence.get("status").lower() in [
         LicenceStatusEnum.ISSUED,
         LicenceStatusEnum.REINSTATED,
         LicenceStatusEnum.SUSPENDED,
@@ -95,10 +96,20 @@ def is_case_finalised_and_licence_editable(request, licence):
     return is_case_finalised and is_licence_editable
 
 
+@rules.predicate
+def is_case_caseworker_operable(request, case):
+    try:
+        request.lite_user
+    except AttributeError:
+        return False
+    return case.status in get_caseworker_operable_case_statuses(request)
+
+
+rules.add_rule("can_user_allocate_case", is_case_caseworker_operable)
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
 rules.add_rule("can_user_review_and_countersign", is_user_allocated)
-rules.add_rule("can_user_review_and_combine", is_user_allocated & (case_has_ogd_advice | case_is_nlr))  # noqa
+rules.add_rule("can_user_review_and_combine", is_user_allocated & (case_has_ogd_advice | is_case_nlr))  # noqa
 rules.add_rule("can_user_assess_products", is_user_allocated & (is_user_in_tau_team | is_user_in_admin_team))  # noqa
 rules.add_rule("can_user_add_an_ejcu_query", is_user_allocated)
 rules.add_rule("can_user_attach_document", rules.always_allow)

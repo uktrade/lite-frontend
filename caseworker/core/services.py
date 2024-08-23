@@ -64,6 +64,18 @@ def get_statuses(request, convert_to_options=False):
     return data.json()["statuses"], data.status_code
 
 
+def get_caseworker_operable_case_statuses(request):
+    """
+    Get list of case statuses which are operable - that is cases which can be
+    assigned/worked upon by caseworkers.
+    """
+    response = client.get(request, "/static/statuses/")
+    response.raise_for_status()
+    operable_statuses = [status["status"] for status in response.json()["statuses"] if status["is_caseworker_operable"]]
+
+    return operable_statuses
+
+
 def get_permissible_statuses(request, case):
     """Get a list of case statuses permissible for the user's role."""
     user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
@@ -72,6 +84,8 @@ def get_permissible_statuses(request, case):
     case_type = case["case_type"]["type"]["key"]
     case_type_applicable_statuses = []
 
+    # TODO: Make this list of dis-allowed caseworker-settable statuses driven
+    # by the API
     if case_type == CaseType.APPLICATION.value:
         case_type_applicable_statuses = [
             status
@@ -80,10 +94,13 @@ def get_permissible_statuses(request, case):
             not in [
                 CaseStatusEnum.APPLICANT_EDITING,
                 CaseStatusEnum.FINALISED,
+                CaseStatusEnum.SUPERSEDED_BY_EXPORTER_EDIT,
                 CaseStatusEnum.REGISTERED,
                 CaseStatusEnum.CLC,
                 CaseStatusEnum.PV,
                 CaseStatusEnum.SURRENDERED,
+                CaseStatusEnum.REVOKED,
+                CaseStatusEnum.SUSPENDED,
             ]
         ]
 

@@ -51,17 +51,17 @@ def case_url(queue_id, case_id):
 
 @pytest.fixture
 def post_status_api_url(case_id):
-    return client._build_absolute_uri(f"/applications/{case_id}/status/")
+    return client._build_absolute_uri(f"/caseworker/applications/{case_id}/status/")
 
 
 @pytest.fixture
-def mock_put_case_status(requests_mock, post_status_api_url):
-    return requests_mock.put(url=post_status_api_url, json={})
+def mock_post_case_status(requests_mock, post_status_api_url):
+    return requests_mock.post(url=post_status_api_url, json={})
 
 
 @pytest.fixture
-def mock_put_case_status_failure(requests_mock, post_status_api_url):
-    return requests_mock.put(
+def mock_post_case_status_failure(requests_mock, post_status_api_url):
+    return requests_mock.post(
         url=post_status_api_url,
         json={},
         status_code=500,
@@ -88,6 +88,21 @@ def test_change_status_GET(
     html = BeautifulSoup(response.content, "html.parser")
     all_h1s = [elem.get_text().strip() for elem in html.find_all("h1")]
     assert "Change case status" in all_h1s
+
+    status_options = [item["value"] for item in html.find_all("option")]
+    excluded_statuses = [
+        CaseStatusEnum.APPLICANT_EDITING,
+        CaseStatusEnum.FINALISED,
+        CaseStatusEnum.SUPERSEDED_BY_EXPORTER_EDIT,
+        CaseStatusEnum.REGISTERED,
+        CaseStatusEnum.CLC,
+        CaseStatusEnum.PV,
+        CaseStatusEnum.SURRENDERED,
+        CaseStatusEnum.REVOKED,
+        CaseStatusEnum.SUSPENDED,
+    ]
+    for excluded_status in excluded_statuses:
+        assert excluded_status not in status_options
 
 
 @pytest.mark.parametrize(
@@ -165,13 +180,13 @@ def test_change_status_success(
     authorized_client,
     case_url,
     change_status_url,
-    mock_put_case_status,
+    mock_post_case_status,
 ):
     response = authorized_client.post(change_status_url, data={"status": "submitted"})
     assert response.status_code == 302
     assert response.url == case_url
-    assert mock_put_case_status.called
-    assert mock_put_case_status.last_request.json() == {
+    assert mock_post_case_status.called
+    assert mock_post_case_status.last_request.json() == {
         "status": "submitted",
     }
     assert [(m.level, m.message) for m in get_messages(response.wsgi_request)] == [
@@ -182,7 +197,7 @@ def test_change_status_success(
 def test_change_status_failure(
     authorized_client,
     change_status_url,
-    mock_put_case_status_failure,
+    mock_post_case_status_failure,
 ):
     with pytest.raises(ServiceError) as ex:
         authorized_client.post(change_status_url, data={"status": "under_review"})
