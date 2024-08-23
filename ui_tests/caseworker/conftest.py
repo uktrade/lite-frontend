@@ -269,11 +269,29 @@ def click_post_note(driver):  # noqa
     case_page.click_change_status()
 
 
-@when("I click change licence status")  # noqa
-def click_change_licence_status(driver):  # noqa
-    case_page = CasePage(driver)
-    case_page.change_tab(CaseTabs.LICENCES)
-    case_page.click_change_licence_status()
+@when("I click change licence status")
+def click_change_licence_status(driver):
+    driver.find_element(by=By.LINK_TEXT, value="Change status").click()
+
+
+@when("I click suspend licence and submit")
+def click_suspend_licence_status_and_submit(driver):
+    driver.find_element(By.XPATH, "//input[@type='radio' and @value='suspended']").click()
+    Shared(driver).click_submit()
+
+
+@when("I confirm the suspension")
+def click_continue(driver):
+    Shared(driver).click_submit()
+
+
+@then("I see that licence status shows as suspended")
+def should_see_suspended_under_status(driver, context):
+    element = driver.find_element(
+        By.XPATH,
+        '//td[contains(@class, "govuk-table__cell") and contains(@class, "govuk-table__cell--tight") and text()="Suspended"]',
+    )
+    assert element.text == "Suspended"
 
 
 @when(parsers.parse('I select status "{status}" and save'))  # noqa
