@@ -1,9 +1,13 @@
 import rules
 
+from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import (
-    filter_advice_by_teams,
     GOODS_NOT_LISTED_ID,
     OGD_TEAMS,
+    LICENSING_UNIT_TEAM,
+    filter_advice_by_teams,
+    filter_advice_by_level,
+    get_countersigners_decision_advice,
 )
 from caseworker.core.constants import (
     ADMIN_TEAM_ID,
@@ -66,6 +70,20 @@ def case_has_ogd_advice(request, case):
         return False
 
     if not filter_advice_by_teams(case["advice"], OGD_TEAMS):
+        return False
+
+    return True
+
+
+@rules.predicate
+def case_has_final_advice(request, case):
+    if not case["advice"]:
+        return False
+
+    if not filter_advice_by_teams(case["advice"], [LICENSING_UNIT_TEAM]):
+        return False
+
+    if not filter_advice_by_level(case["advice"], [AdviceLevel.FINAL]):
         return False
 
     return True
