@@ -49,7 +49,12 @@ Feature: I want to change the license state of a licence that has been issued.
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
-    And I go to users
+    Then I logout
+    Given I sign in as "lumanager@example.com"
+    When I go to my case list
+    And I click the application previously created
+    When I click change licence status
+
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |

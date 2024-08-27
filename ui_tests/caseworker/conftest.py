@@ -1,10 +1,12 @@
 import json
 
 from django.utils import timezone
+from django.conf import settings
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 
 from core.constants import CaseStatusEnum
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, RecommendationsAndDecisionPage, TeamAdvicePage
@@ -59,6 +61,8 @@ from tests_common.helpers import applications
 from ui_tests.exporter.pages.add_goods_page import AddGoodPage
 from ui_tests.caseworker.pages.ecju_queries_pages import EcjuQueriesPages
 from ui_tests.caseworker.pages.product_assessment import ProductAssessmentPage
+from ui_tests.exporter.pages.govuk_signin_page import GovukSigninPage
+from ui_tests.caseworker.pages.mock_signin_page import MockSigninPage
 
 
 @when("I go to the internal homepage")  # noqa
@@ -74,6 +78,29 @@ def go_to_internal_homepage(driver, internal_url):  # noqa
 @given("I sign in to SSO or am signed into SSO")  # noqa
 def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
+
+#@given("I sign in to SSO or am signed into SSO As LU Senior Manager")  # noqa
+#def sign_into_sso_lu_manager(driver, sso_sign_in_lu_manager):  # noqa
+#    pass
+
+@then("I logout")  # noqa
+def i_logout(driver, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/logout/")
+    settings.MOCK_SSO_USER_EMAIL = None
+
+
+@given(parsers.parse('I sign in as "{email}"'))  # noqa
+def caseworker_sign_in(driver, internal_url, email, context):  # noqa
+    driver.get(internal_url)
+    try:
+        mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+    except NoSuchElementException:
+        mock_sso_login_screen = None
+    
+    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+        MockSigninPage(driver).sign_in(email)
+
+    
 
 
 @then("I go to application previously created")  # noqa
@@ -119,6 +146,7 @@ def create_application(
         "country": country,
         "end_use": end_use,
     }
+
     applications.create_standard_application(api_test_client, context, app_data)
 
 
@@ -381,7 +409,7 @@ def get_my_case_list(driver):  # noqa
 
 
 @when("I click the application previously created")
-def i_click_application_previously_created(driver, context):  # noqa
+def i_click_application_previously_created(driver, context):  # noqa'
     case_list_page = CaseListPage(driver)
     functions.open_case_filters(driver)
     case_list_page.click_clear_filters_button()
