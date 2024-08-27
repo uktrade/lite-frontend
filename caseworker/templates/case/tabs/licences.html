@@ -28,7 +28,7 @@
 						{{ good.usage }} of {{ good.quantity }}<br>
 						{% endfor %}
 					</td>
-					<td class="govuk-table__cell govuk-table__cell--tight">
+					<td id="licence-status-id" class="govuk-table__cell govuk-table__cell--tight">
 						{{ licence.status }}
 					</td>
 					{% test_rule 'can_licence_status_be_changed' request licence as can_licence_status_be_changed %}

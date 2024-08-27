@@ -287,10 +287,7 @@ def click_continue(driver):
 
 @then("I see that licence status shows as suspended")
 def should_see_suspended_under_status(driver, context):
-    element = driver.find_element(
-        By.XPATH,
-        '//td[contains(@class, "govuk-table__cell") and contains(@class, "govuk-table__cell--tight") and text()="Suspended"]',
-    )
+    element = driver.find_element(by=By.ID, value="licence-status-id")
     assert element.text == "Suspended"
 
 
