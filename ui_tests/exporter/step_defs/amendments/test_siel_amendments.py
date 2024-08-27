@@ -213,6 +213,11 @@ def amended_application_under_drafts(driver, context):
     assert driver.find_element(by=By.XPATH, value=f'//a[@href="{task_list_url}"]')
 
 
+@when('I click the "Archived" tab')
+def click_archived_tab(driver, context):
+    driver.find_element(by=By.ID, value="archived_applications").click()
+
+
 @when(parsers.parse("I go to task list of the amended draft application"))
 def amended_application_task_list(driver, context):
     driver.find_element(by=By.CLASS_NAME, value="govuk-header__link--service-name").click()

@@ -3,7 +3,6 @@ Feature: I want to submit SIEL applications and be able to make major amendments
   As a logged in exporter
   I want to submit SIEL applications and be able to make major amendments and resubmit
 
-  @skip
   # Enable this scenario when this flow is enabled by default for all Exporters
   Scenario: Exporter making major amendments to an already submitted application
     Given I signin and go to exporter homepage and choose Test Org
@@ -30,13 +29,14 @@ Feature: I want to submit SIEL applications and be able to make major amendments
     When I go to my list of applications
     And I click on the application previously submitted
     And I proceed to edit this application
-    Then I see confirmation page to open application for editing 
+    Then I see confirmation page to open application for editing
     When I confirm to edit the application
     Then I see task list of amended application
     #
     # Status checks
     #
     When I go to my list of applications
+    And I click the "Archived" tab
     And I click on the application previously submitted
     Then the application cannot be opened for editing
     And the application status is "Superseded by exporter edit"
