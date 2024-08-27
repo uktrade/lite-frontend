@@ -56,10 +56,11 @@ Feature: I want to change the license state of a licence that has been issued.
     And I go to my case list
     And I click the application previously created
     And I click on "Licences" tab
-    # And I click change licence status
+    Then I see that licence status shows as "Issued"
+    # When I click change licence status
     # And I click suspend licence and submit
     # And I confirm the suspension
-    # Then I see that licence status shows as suspended
+    # Then I see that licence status shows as "Suspended"
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |

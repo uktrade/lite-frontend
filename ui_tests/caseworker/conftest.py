@@ -285,10 +285,10 @@ def click_continue(driver):
     Shared(driver).click_submit()
 
 
-@then("I see that licence status shows as suspended")
-def should_see_suspended_under_status(driver, context):
+@then(parsers.parse('I see that licence status shows as "{status}"'))
+def should_see_finalised_under_status(driver, status):
     element = driver.find_element(by=By.ID, value="licence-status-id")
-    assert element.text == "Suspended"
+    assert element.text == status
 
 
 @when(parsers.parse('I select status "{status}" and save'))  # noqa
