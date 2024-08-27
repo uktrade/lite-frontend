@@ -50,8 +50,8 @@ Feature: I want to change the license state of a licence that has been issued.
     When I click continue
     And I click save and publish to exporter
     Then I logout
-    Given I sign in as "lumanager@example.com"
-    When I go to my case list
+    When I sign in again as "lumanager@example.com"
+    And I go to my case list
     And I click the application previously created
     When I click change licence status
 

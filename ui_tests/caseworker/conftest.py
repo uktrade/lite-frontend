@@ -61,7 +61,6 @@ from tests_common.helpers import applications
 from ui_tests.exporter.pages.add_goods_page import AddGoodPage
 from ui_tests.caseworker.pages.ecju_queries_pages import EcjuQueriesPages
 from ui_tests.caseworker.pages.product_assessment import ProductAssessmentPage
-from ui_tests.exporter.pages.govuk_signin_page import GovukSigninPage
 from ui_tests.caseworker.pages.mock_signin_page import MockSigninPage
 
 
@@ -79,28 +78,28 @@ def go_to_internal_homepage(driver, internal_url):  # noqa
 def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
 
-#@given("I sign in to SSO or am signed into SSO As LU Senior Manager")  # noqa
-#def sign_into_sso_lu_manager(driver, sso_sign_in_lu_manager):  # noqa
+
+# @given("I sign in to SSO or am signed into SSO As LU Senior Manager")  # noqa
+# def sign_into_sso_lu_manager(driver, sso_sign_in_lu_manager):  # noqa
 #    pass
 
+
 @then("I logout")  # noqa
-def i_logout(driver, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/logout/")
+def i_logout(driver, internal_url, context):  # noqa
+    driver.get(internal_url.rstrip("/") + "/auth/logout/")
     settings.MOCK_SSO_USER_EMAIL = None
 
 
-@given(parsers.parse('I sign in as "{email}"'))  # noqa
-def caseworker_sign_in(driver, internal_url, email, context):  # noqa
+@when(parsers.parse('I sign in as "{email}"'))
+def caseworker_sign_in_again(driver, internal_url, email):  # noqa
     driver.get(internal_url)
     try:
         mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
     except NoSuchElementException:
         mock_sso_login_screen = None
-    
+
     if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         MockSigninPage(driver).sign_in(email)
-
-    
 
 
 @then("I go to application previously created")  # noqa
@@ -301,6 +300,7 @@ def click_post_note(driver):  # noqa
 def click_change_licence_status(driver):  # noqa
     case_page = CasePage(driver)
     case_page.change_tab(CaseTabs.LICENCES)
+    # Fails below need to fix the link
     case_page.click_change_licence_status()
 
 
