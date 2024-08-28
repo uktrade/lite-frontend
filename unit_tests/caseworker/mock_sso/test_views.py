@@ -47,6 +47,11 @@ def authorize_url():
 
 
 @pytest.fixture
+def authorize_url():
+    return reverse("mock_sso:logout")
+
+
+@pytest.fixture
 def token_url():
     return reverse("mock_sso:token")
 
@@ -199,3 +204,15 @@ def test_mock_api_user_me_default_email(
         "permitted_applications": [],
         "access_profiles": [],
     }
+
+
+def test_mock_logout(client, logout_url):
+    session = client.session
+    session["first_name"] = "first_name"
+    session["MOCK_SSO_EMAIL_SESSION_KEY"] = "session_key"
+    session.save()
+
+    response = client.get(logout_url)
+    response.status_code == 302
+    assert not session["first_name"]
+    assert not session["MOCK_SSO_EMAIL_SESSION_KEY"]
