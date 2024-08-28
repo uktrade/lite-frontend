@@ -60,7 +60,6 @@ commands:
             cp ci.caseworker.env caseworker.env
             cp ci.exporter.env exporter.env
             cp ci.api.env api.env
-            cat ci.api.env
       - run:
           name: << parameters.label >>
           command: make << parameters.target >>
