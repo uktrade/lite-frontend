@@ -23,14 +23,3 @@ def sso_sign_in(driver, internal_url, sso_sign_in_url, internal_info, context, a
     context.org_name = api_test_client.context["org_name"]
     context.gov_user_id = api_test_client.context["gov_user_id"]
     context.exporter_user_id = api_test_client.context["exporter_user_id"]
-
-
-@fixture(scope="session")
-def sso_sign_in_lu_manager(driver, internal_url, sso_sign_in_url, internal_info, context, api_test_client):
-    # Skip visiting the SSO signin page if our app is set to use mock SSO
-    driver.find_element(by=By.NAME, value="email").send_keys("lite-team-lu-lm@digital.trade.gov.uk")
-    driver.find_element(by=By.CSS_SELECTOR, value="[type='submit']").click()
-    context.org_id = api_test_client.context["org_id"]
-    context.org_name = api_test_client.context["org_name"]
-    context.gov_user_id = api_test_client.context["gov_user_id"]
-    context.exporter_user_id = api_test_client.context["exporter_user_id"]

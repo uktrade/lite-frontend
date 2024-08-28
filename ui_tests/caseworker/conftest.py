@@ -78,12 +78,6 @@ def go_to_internal_homepage(driver, internal_url):  # noqa
 def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
 
-
-# @given("I sign in to SSO or am signed into SSO As LU Senior Manager")  # noqa
-# def sign_into_sso_lu_manager(driver, sso_sign_in_lu_manager):  # noqa
-#    pass
-
-
 @then("I logout")  # noqa
 def i_logout(driver, internal_url, context):  # noqa
     driver.get(internal_url.rstrip("/") + "/auth/logout/")
