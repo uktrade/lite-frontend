@@ -373,6 +373,11 @@ def get_my_case_list(driver):  # noqa
     driver.find_element(by=By.LINK_TEXT, value="Cases").click()
 
 
+@when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
+def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
+    CaseListPage(driver).click_on_queue_name(queue_name)
+
+
 @when("I click the application previously created")
 def i_click_application_previously_created(driver, context):  # noqa
     case_list_page = CaseListPage(driver)
@@ -381,7 +386,6 @@ def i_click_application_previously_created(driver, context):  # noqa
     functions.open_case_filters(driver)
     case_list_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
-
     case_list_page.click_on_case(context.case_id)
 
 
