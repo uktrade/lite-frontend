@@ -109,20 +109,6 @@ def test_ecju_respond_query_view_not_editable(authorized_client, mock_applicatio
 
 
 def test_ecju_respond_query_view_editable(
-    authorized_client, mock_application_get, mock_status_properties_can_invoke_major_editable, data_standard_case, url
-):
-    response = authorized_client.get(url)
-    assert response.status_code == 200
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    edit_link = soup.find(class_="application-edit-link")
-    assert edit_link.text == "Edit and submit your application"
-    assert reverse(f"applications:edit_type", kwargs={"pk": data_standard_case["case"]["id"]}) == edit_link["href"]
-
-
-# TODO: After amend by copy is switched on, ensure this test is merged with the above
-def test_ecju_respond_query_view_editable_amend_by_copy_feature(
-    settings,
     authorized_client,
     mock_application_get,
     mock_status_properties_can_invoke_major_editable,
@@ -130,7 +116,6 @@ def test_ecju_respond_query_view_editable_amend_by_copy_feature(
     data_standard_case,
     url,
 ):
-    settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
     response = authorized_client.get(url)
     assert response.status_code == 200
 
