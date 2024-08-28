@@ -15,7 +15,7 @@ def i_logout(driver, internal_url):  # noqa
 
 
 @when(parsers.parse('I sign in as "{email}"'))
-def caseworker_sign_in_again(driver, internal_url, email):  # noqa
+def mock_sso_caseworker_sign_in_again(driver, internal_url, email):  # noqa
     driver.get(internal_url)
     try:
         mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
