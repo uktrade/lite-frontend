@@ -10,6 +10,7 @@ from django.views.generic import (
     FormView,
     View,
 )
+from django.views.generic.base import RedirectView
 
 from requests.models import PreparedRequest
 
@@ -149,3 +150,10 @@ class APIUserMe(View):
             "access_profiles": [],
         }
         return JsonResponse(response_data)
+
+
+class Logout(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        redirect_url = self.request.build_absolute_uri("/")
+        self.request.session.flush()
+        return redirect_url
