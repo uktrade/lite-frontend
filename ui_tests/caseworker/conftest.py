@@ -78,10 +78,10 @@ def go_to_internal_homepage(driver, internal_url):  # noqa
 def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
 
+
 @then("I logout")  # noqa
 def i_logout(driver, internal_url, context):  # noqa
     driver.get(internal_url.rstrip("/") + "/auth/logout/")
-    settings.MOCK_SSO_USER_EMAIL = None
 
 
 @when(parsers.parse('I sign in as "{email}"'))

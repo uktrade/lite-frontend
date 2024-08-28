@@ -155,7 +155,6 @@ class APIUserMe(View):
 
 class Logout(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
-        # We not even logged redirect to home page
         redirect_url = self.request.build_absolute_uri("/")
         self.request.session.flush()
         return redirect_url
