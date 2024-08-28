@@ -91,7 +91,7 @@ def caseworker_sign_in_again(driver, internal_url, email):  # noqa
         mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
     except NoSuchElementException:
         mock_sso_login_screen = None
-
+    
     if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         MockSigninPage(driver).sign_in(email)
 
