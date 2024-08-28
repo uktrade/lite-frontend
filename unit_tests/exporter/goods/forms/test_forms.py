@@ -378,7 +378,7 @@ def test_product_uses_information_security_form(data, valid):
             None,
             False,
             "name",
-            """Invalid character, allowed characters: A-Z a-z 0-9 -()/'+:=?!"_ ."%&*;<>""",
+            """Invalid character, allowed characters: A-Z a-z 0-9 -()/'+:=?!" ."%&*;<>""",
         ),
     ),
 )
