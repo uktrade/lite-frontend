@@ -378,7 +378,7 @@ def test_product_uses_information_security_form(data, valid):
             None,
             False,
             "name",
-            """Invalid character, allowed characters: A-Z a-z 0-9 -()/'+:=?!" ."%&*;<>""",
+            "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes",
         ),
     ),
 )
