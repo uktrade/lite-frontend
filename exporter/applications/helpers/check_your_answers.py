@@ -32,21 +32,20 @@ from core.builtins.custom_tags import (
 )
 from exporter.core.helpers import convert_to_link, convert_control_list_entries
 from exporter.goods.helpers import requires_serial_numbers
+from exporter.applications.constants import ApplicationStatus
 
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_exporter_frontend.strings import Parties
 from lite_forms.helpers import conditional
 
 
-def convert_application_to_check_your_answers(application, editable=False, summary=False, is_application_detail=False):
+def convert_application_to_check_your_answers(application, editable=False, summary=False):
     """
     Returns a correctly formatted check your answers page for the supplied application
     """
     sub_type = application.sub_type
     if sub_type == STANDARD:
-        return _convert_standard_application(
-            application, editable, is_summary=summary, is_application_detail=is_application_detail
-        )
+        return _convert_standard_application(application, editable, is_summary=summary)
     elif sub_type == OPEN:
         return _convert_open_application(application, editable)
     elif sub_type == HMRC:
@@ -102,14 +101,14 @@ def _convert_gifting_clearance(application, editable=False):
     }
 
 
-def _convert_standard_application(application, editable=False, is_summary=False, is_application_detail=False):
+def _convert_standard_application(application, editable=False, is_summary=False):
     strings = applications.ApplicationSummaryPage
     pk = application["id"]
     url = reverse(f"applications:good_detail_summary", kwargs={"pk": pk})
     old_locations = bool(application["goods_locations"])
     converted = {
         convert_to_link(url, strings.GOODS): convert_goods_on_application(
-            application, application["goods"], is_summary=is_summary, is_application_detail=is_application_detail
+            application, application["goods"], is_summary=is_summary
         ),
         strings.END_USE_DETAILS: _get_end_use_details(application),
         strings.END_USER: convert_party(application["end_user"], application, editable),
@@ -240,9 +239,7 @@ def _convert_hmrc_query(application, editable=False):
     }
 
 
-def convert_goods_on_application(
-    application, goods_on_application, is_exhibition=False, is_summary=False, is_application_detail=False
-):
+def convert_goods_on_application(application, goods_on_application, is_exhibition=False, is_summary=False):
     converted = []
 
     def requires_actions(application, good_on_application):
@@ -250,10 +247,11 @@ def convert_goods_on_application(
 
     requires_actions_column = any(requires_actions(application, g) for g in goods_on_application)
     for good_on_application in goods_on_application:
-        if is_application_detail:
-            control_list_entries = convert_control_list_entries(good_on_application["control_list_entries"])
-        else:
+        # When it is in Draft stage it will show all CLEs otherwise it will show the ones assessed by TAU
+        if application["status"].get("key") is ApplicationStatus.DRAFT:
             control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
+        else:
+            control_list_entries = convert_control_list_entries(good_on_application["control_list_entries"])
 
         if good_on_application["good"].get("name"):
             name = good_on_application["good"]["name"]

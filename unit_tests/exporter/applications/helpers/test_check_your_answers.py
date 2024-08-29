@@ -1,6 +1,7 @@
 import pytest
 
 from core.constants import CaseStatusEnum
+from exporter.applications.constants import ApplicationStatus
 from exporter.applications.helpers import check_your_answers
 
 from exporter.core.objects import Application
@@ -14,6 +15,7 @@ def application(data_standard_case):
 def test_convert_goods_on_application_no_answers(application, data_good_on_application):
     # given the canonical good does not have is_good_controlled set
     data_good_on_application["is_good_controlled"] = None
+    data_good_on_application["control_list_entries"] = []
     data_good_on_application["good"]["is_good_controlled"] = None
     data_good_on_application["good"]["control_list_entries"] = []
     actual = check_your_answers.convert_goods_on_application(application, [data_good_on_application])
@@ -24,6 +26,7 @@ def test_convert_goods_on_application_no_answers(application, data_good_on_appli
 
 
 def test_convert_goods_on_application_application_level_control_list_entries(application, data_good_on_application):
+    data_good_on_application["control_list_entries"] = []
     data_good_on_application["good"]["control_list_entries"] = []
 
     # given the canonical good and good in application have different export control characteristics
@@ -54,8 +57,9 @@ def test_convert_goods_on_application_application_level_control_list_entries_sam
 
 
 def test_convert_goods_on_application_good_level_control_list_entries(application, data_good_on_application):
-    # given the good has not been reviewed at application levcle
+    # given the good has not been reviewed at application level
     data_good_on_application["is_good_controlled"] = None
+    data_good_on_application["control_list_entries"] = []
     data_good_on_application["good"]["control_list_entries"] = []
 
     # when the shape is generated
@@ -224,16 +228,28 @@ def test_convert_standard_application_has_security_approvals(application, settin
     assert "Do you have a security approval?" in actual.keys()
 
 
-def test_goods_on_application_when_application_detail(application, data_good_on_application):
-    data_good_on_application["is_good_controlled"] = True
+@pytest.mark.parametrize(
+    "status, is_good_controlled, cle_results",
+    (
+        (
+            {"key": ApplicationStatus.SUBMITTED, "value": "Submitted"},
+            True,
+            "<span data-definition-title='ML1' data-definition-text='Smooth-bore weapons...'>ML1</span>, <span data-definition-title='ML2' data-definition-text='Smooth-bore weapons...'>ML2</span>",
+        ),
+        (
+            {"key": ApplicationStatus.DRAFT, "value": "Draft"},
+            False,
+            "<span data-definition-title='ML4' data-definition-text='Rifle for research and development...'>ML4</span>, <span data-definition-title='ML5' data-definition-text='Smart ammunition...'>ML5</span>",
+        ),
+    ),
+)
+def test_goods_on_application_when_application_detail(
+    application, data_good_on_application, status, is_good_controlled, cle_results
+):
+    data_good_on_application["is_good_controlled"] = is_good_controlled
+    application["status"] = status  # It means its in application detail section
     # Given this is an application detail page
-    actual = check_your_answers.convert_goods_on_application(
-        application, [data_good_on_application], is_application_detail=True
-    )
+    actual = check_your_answers.convert_goods_on_application(application, [data_good_on_application])
 
     assert len(actual) == 1
-    # Shows assessed CLE-s by TAU
-    assert (
-        actual[0]["Control list entries"]
-        == "<span data-definition-title='ML1' data-definition-text='Smooth-bore weapons...'>ML1</span>, <span data-definition-title='ML2' data-definition-text='Smooth-bore weapons...'>ML2</span>"
-    )
+    assert actual[0]["Control list entries"] == cle_results

@@ -299,7 +299,7 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
             "case_id": self.application_id,
             "application": self.application,
             "type": self.view_type,
-            "answers": convert_application_to_check_your_answers(self.application, is_application_detail=True),
+            "answers": convert_application_to_check_your_answers(self.application),
             "status_is_terminal": status_props["is_terminal"],
             "errors": kwargs.get("errors"),
             "text": kwargs.get("text", ""),
