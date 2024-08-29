@@ -90,7 +90,7 @@ start-caseworker:
 	$(docker-e2e-caseworker) $(start-command)
 
 seed_internal_db:
-	docker exec -it api pipenv run ./manage.py seedinternalusers
+	docker exec -it api INTERNAL_USERS='[{"email": "luseniormanager@example.com", "role": "Licencing Unit Senior Manager"}]' pipenv run ./manage.py seedinternalusers
 
 stop-caseworker:
 	$(docker-e2e-caseworker) down --remove-orphans
