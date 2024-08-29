@@ -1,7 +1,11 @@
 import pytest
+import re
 
+from bs4 import BeautifulSoup
+from django.urls import reverse
+
+from core import client
 from core.constants import CaseStatusEnum
-from exporter.applications.constants import ApplicationStatus
 from exporter.applications.helpers import check_your_answers
 
 from exporter.core.objects import Application
@@ -10,6 +14,13 @@ from exporter.core.objects import Application
 @pytest.fixture
 def application(data_standard_case):
     return data_standard_case["case"]["data"]
+
+
+@pytest.fixture
+def mock_application_get(requests_mock, data_standard_case):
+    application = data_standard_case["case"]["data"]
+    url = client._build_absolute_uri(f'/applications/{application["id"]}/')
+    return requests_mock.get(url=url, json=application)
 
 
 def test_convert_goods_on_application_no_answers(application, data_good_on_application):
@@ -228,28 +239,22 @@ def test_convert_standard_application_has_security_approvals(application, settin
     assert "Do you have a security approval?" in actual.keys()
 
 
-@pytest.mark.parametrize(
-    "status, is_good_controlled, cle_results",
-    (
-        (
-            {"key": ApplicationStatus.SUBMITTED, "value": "Submitted"},
-            True,
-            "<span data-definition-title='ML1' data-definition-text='Smooth-bore weapons...'>ML1</span>, <span data-definition-title='ML2' data-definition-text='Smooth-bore weapons...'>ML2</span>",
-        ),
-        (
-            {"key": ApplicationStatus.DRAFT, "value": "Draft"},
-            False,
-            "<span data-definition-title='ML4' data-definition-text='Rifle for research and development...'>ML4</span>, <span data-definition-title='ML5' data-definition-text='Smart ammunition...'>ML5</span>",
-        ),
-    ),
-)
-def test_goods_on_application_when_application_detail(
-    application, data_good_on_application, status, is_good_controlled, cle_results
-):
-    data_good_on_application["is_good_controlled"] = is_good_controlled
-    application["status"] = status  # It means its in application detail section
-    # Given this is an application detail page
-    actual = check_your_answers.convert_goods_on_application(application, [data_good_on_application])
+def test_application_detail_shows_correct_cles(authorized_client, mock_application_get, application):
+    url = reverse("applications:application", kwargs={"pk": application["id"]})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
 
-    assert len(actual) == 1
-    assert actual[0]["Control list entries"] == cle_results
+    products_table = soup.find_all("table", attrs={"class": "govuk-table"})[0]
+    products_cles = []
+    body = products_table.find("tbody")
+    rows = body.find_all("tr")
+
+    for row in rows:
+        product_line = row.text.replace("\t", "").strip()
+        product_line = re.sub(r"([\W_])\1+", r"\1", product_line)
+        lines = product_line.split("\n")
+        products_cles.append(lines[3])
+
+    for index, good_on_application in enumerate(application["goods"]):
+        expected_cles = ", ".join(item["rating"] for item in good_on_application["control_list_entries"])
+        assert expected_cles == products_cles[index]
