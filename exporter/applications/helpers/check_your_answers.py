@@ -248,7 +248,7 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
     requires_actions_column = any(requires_actions(application, g) for g in goods_on_application)
     for good_on_application in goods_on_application:
         # When it is in Draft stage it will show all CLEs otherwise it will show the ones assessed by TAU
-        if application["status"].get("key") is ApplicationStatus.DRAFT:
+        if application["status"].get("key") == ApplicationStatus.DRAFT:
             control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
         else:
             control_list_entries = convert_control_list_entries(good_on_application["control_list_entries"])
