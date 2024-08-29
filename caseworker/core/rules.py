@@ -20,6 +20,15 @@ from caseworker.flags.helpers import has_flag
 from core.constants import CaseStatusEnum, LicenceStatusEnum
 
 
+def get_logged_in_caseworker(request):
+    try:
+        user = request.lite_user
+    except AttributeError:
+        return False
+
+    return user
+
+
 @rules.predicate
 def has_available_sub_statuses(request, case):
     return bool(get_case_sub_statuses(request, case["id"]))
@@ -27,20 +36,20 @@ def has_available_sub_statuses(request, case):
 
 @rules.predicate
 def is_user_case_officer(request, case):
-    try:
-        user = request.lite_user
-    except AttributeError:
+    user = get_logged_in_caseworker(request)
+    if not user:
         return False
+
     case_officer = case["case_officer"]
     return case_officer is not None and user and user["id"] == case_officer.get("id")
 
 
 @rules.predicate
 def is_user_assigned(request, case):
-    try:
-        user = request.lite_user
-    except AttributeError:
+    user = get_logged_in_caseworker(request)
+    if not user:
         return False
+
     if user and case["assigned_users"]:
         # Loop through all queues to check if user is assigned
         for _, assigned_users in case["assigned_users"].items():
@@ -116,10 +125,10 @@ def is_case_finalised_and_licence_editable(request, licence):
 
 @rules.predicate
 def is_case_caseworker_operable(request, case):
-    try:
-        request.lite_user
-    except AttributeError:
+    caseworker = get_logged_in_caseworker(request)
+    if not caseworker:
         return False
+
     return case.status in get_caseworker_operable_case_statuses(request)
 
 
