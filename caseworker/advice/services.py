@@ -4,7 +4,7 @@ from requests.exceptions import HTTPError
 
 from core import client
 from caseworker.advice import constants
-from caseworker.advice.constants import AdviceType
+from caseworker.advice.constants import AdviceLevel, AdviceType
 
 # Queues
 DESNZ_CHEMICAL_CASES_TO_REVIEW = "DESNZ_CHEMICAL_CASES_TO_REVIEW"
@@ -209,6 +209,13 @@ def get_countersign_decision_advice_by_user(case, caseworker):
         result[item["countersigned_user"]["id"]].append(item)
 
     return result
+
+
+def get_final_advisors(case):
+    """Get a set of user ids representing the users that have already
+    given final advice on the Case`.
+    """
+    return {advice["user"]["id"] for advice in filter_advice_by_level(case.get("advice", []), [AdviceLevel.FINAL])}
 
 
 def get_countersigners(advice_to_countersign):
