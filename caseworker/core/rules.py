@@ -7,11 +7,13 @@ from caseworker.advice.services import (
     LICENSING_UNIT_TEAM,
     filter_advice_by_teams,
     filter_advice_by_level,
+    get_final_advisors,
     get_countersigners_decision_advice,
 )
 from caseworker.core.constants import (
     ADMIN_TEAM_ID,
     TAU_TEAM_ID,
+    LICENSING_UNIT_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
 )
 from caseworker.cases.services import get_case_sub_statuses
@@ -74,6 +76,12 @@ def is_user_in_tau_team(request):
 
 
 @rules.predicate
+def is_user_in_lu_team(request):
+    user = getattr(request, "lite_user", None)
+    return user and user.get("team", {}).get("id") == LICENSING_UNIT_TEAM_ID
+
+
+@rules.predicate
 def case_has_ogd_advice(request, case):
     if not case["advice"]:
         return False
@@ -132,10 +140,29 @@ def is_case_caseworker_operable(request, case):
     return case.status in get_caseworker_operable_case_statuses(request)
 
 
+@rules.predicate
+def is_lu_user_allowed_to_countersign(request, case):
+
+    caseworker = get_logged_in_caseworker(request)
+    if not caseworker:
+        return False
+
+    case_officer = set(case.get("case_officer", {}).get("id", {}))
+    final_advisors = get_final_advisors(case)
+    countersigners = get_countersigners_decision_advice(case, caseworker)
+    all_advisors = case_officer | final_advisors | countersigners
+
+    return caseworker["id"] not in all_advisors
+
+
 rules.add_rule("can_user_allocate_case", is_case_caseworker_operable)
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
 rules.add_rule("can_user_review_and_countersign", is_user_allocated)
+rules.add_rule(
+    "can_user_be_allowed_to_lu_countersign",
+    is_user_allocated & is_user_in_lu_team & case_has_ogd_advice & is_lu_user_allowed_to_countersign,
+)
 rules.add_rule("can_user_review_and_combine", is_user_allocated & (case_has_ogd_advice | is_case_nlr))  # noqa
 rules.add_rule("can_user_assess_products", is_user_allocated & (is_user_in_tau_team | is_user_in_admin_team))  # noqa
 rules.add_rule("can_user_add_an_ejcu_query", is_user_allocated)

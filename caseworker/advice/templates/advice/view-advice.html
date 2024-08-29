@@ -36,11 +36,20 @@
 
     {% if not consolidated_advice %}
         {% test_rule 'can_user_review_and_countersign' request case as can_user_review_and_countersign %}
+        {% test_rule 'can_user_be_allowed_to_lu_countersign' request case as can_user_be_allowed_to_lu_countersign %}
         {% test_rule 'can_user_review_and_combine' request case as can_user_review_and_combine %}
         {% test_rule 'can_user_make_recommendation' request case as can_user_make_recommendation %}
         {% if countersign and buttons.review_and_countersign and can_user_review_and_countersign %}
-            {% if is_lu_countersigning %}
+            {% if is_lu_countersigning and can_user_be_allowed_to_lu_countersign %}
                 <a id="review-and-countersign-decision-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_decision_review' queue_pk case.id %}">Review and countersign</a>
+            {% elif is_lu_countersigning and not can_user_be_allowed_to_lu_countersign %}
+                <div id="lu-user_not-allowed_to_countersign" class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                        You have either already given final recommendation or countersigned so not allowed to countersign again.
+                    </strong>
+                </div>
             {% else %}
                 <a id="review-and-countersign-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:countersign_review' queue_pk case.id %}">Review and countersign</a>
             {% endif %}
