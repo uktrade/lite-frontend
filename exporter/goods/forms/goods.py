@@ -24,6 +24,7 @@ from exporter.core.helpers import (
     convert_control_list_entries,
     str_to_bool,
 )
+from exporter.goods.validators import validate_name
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
 from core.common.forms import BaseForm
@@ -794,6 +795,7 @@ class AddGoodsQuestionsForm(forms.Form):
         error_messages={
             "required": "Enter a product name",
         },
+        validators=[validate_name],
     )
 
     description = forms.CharField(required=False, label="Description (optional)", widget=forms.Textarea)

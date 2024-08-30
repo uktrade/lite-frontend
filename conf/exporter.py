@@ -91,7 +91,6 @@ FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING = env.bool("FEATURE_FLAG_ALLOW_CLC_Q
 SPIRE_URL = "https://www.spire.trade.gov.uk/spire/fox/espire/LOGIN/login"
 
 FEATURE_FLAG_FIREARMS_ENABLED = env.bool("FEATURE_FLAG_FIREARMS_ENABLED", False)
-FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = env.list("FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS", default=[])
 
 # session
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
