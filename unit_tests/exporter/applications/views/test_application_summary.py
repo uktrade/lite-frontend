@@ -3,10 +3,12 @@ from django.urls import reverse
 from bs4 import BeautifulSoup
 
 from core import client
+from exporter.applications.constants import ApplicationStatus
 
 
 @pytest.fixture(autouse=True)
 def mock_get_application(requests_mock, data_standard_case):
+    data_standard_case["case"]["data"]["status"] = {"key": ApplicationStatus.DRAFT, "value": "Draft"}
     applications_url = client._build_absolute_uri(f"/applications/{data_standard_case['case']['id']}/")
     requests_mock.get(url=applications_url, json=data_standard_case["case"]["data"])
 
