@@ -87,7 +87,7 @@ secrets:
 .PHONY: manage_caseworker manage_exporter clean run_caseworker run_exporter run_unit_tests_caseworker run_unit_tests_exporter run_unit_tests_core run_ui_tests_caseworker run_ui_tests_exporter run_ui_tests run_all_tests
 
 start-caseworker:
-	INTERNAL_USERS='[{"email": "luseniormanager@example.com", "role": "Licencing Unit Senior Manager"}]' $(docker-e2e-caseworker) $(start-command) && docker exec -it api bash -c '$(wait-for-caseworker)' pipenv run ./manage.py seedinternalusers
+	$(docker-e2e-caseworker) $(start-command)
 
 stop-caseworker:
 	$(docker-e2e-caseworker) down --remove-orphans
@@ -100,7 +100,7 @@ stop-exporter:
 
 caseworker-e2e-selenium-test:
 	@echo "*** Requires starting the caseworker stack, which can be started running: 'make start-caseworker' ***"
-	$(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker)' && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker
+	INTERNAL_USERS='[{"email": "luseniormanager@example.com", "role": "Licencing Unit Senior Manager"}]' $(docker-e2e-caseworker) exec caseworker bash -c '$(wait-for-caseworker)' && docker exec -it api pipenv run ./manage.py seedinternalusers && PIPENV_DOTENV_LOCATION=caseworker.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/caseworker
 
 exporter-e2e-selenium-test:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"

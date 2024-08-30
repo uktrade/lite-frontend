@@ -19,7 +19,9 @@ services:
     ports:
       - 8100:8100
     entrypoint: dockerize -wait tcp://db:5432 -wait tcp://elasticsearch:9200 -wait tcp://redis:6379 -timeout 5m
-    command: /app/start-e2e.sh
+    command: |
+      /app/start-e2e.sh
+      INTERNAL_USERS='[{"email": "luseniormanager@example.com", "role": "Licencing Unit Senior Manager"}]' pipenv run ./manage.py seedinternalusers
     stdin_open: true
     tty: true
 
