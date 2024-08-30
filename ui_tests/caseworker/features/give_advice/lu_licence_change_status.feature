@@ -50,7 +50,7 @@ Feature: I want to change the license state of a licence that has been issued.
     When I click continue
     And I click save and publish to exporter
     And I logout
-    And I sign in as "luseniormanager@example.com"
+    And I sign in as "luseniormanager@example.com" # /PS-IGNORE
     And I click on the "All cases" queue in dropdown
     # And I go to my case list
     And I click the application previously created
@@ -62,5 +62,5 @@ Feature: I want to change the license state of a licence that has been issued.
     Then I see that licence status shows as "Suspended"
 
     Examples:
-    | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
-    | Test    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research Only |
+    | name     | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test2    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
