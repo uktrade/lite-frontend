@@ -77,7 +77,9 @@ def is_user_in_tau_team(request):
 
 @rules.predicate
 def is_user_in_lu_team(request):
-    user = getattr(request, "lite_user", None)
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
     return user and user.get("team", {}).get("id") == LICENSING_UNIT_TEAM_ID
 
 
@@ -95,6 +97,9 @@ def case_has_ogd_advice(request, case):
 @rules.predicate
 def case_has_final_advice(request, case):
     if not case["advice"]:
+        return False
+
+    if not case_has_ogd_advice(request, case):
         return False
 
     if not filter_advice_by_teams(case["advice"], [LICENSING_UNIT_TEAM]):
@@ -141,18 +146,30 @@ def is_case_caseworker_operable(request, case):
 
 
 @rules.predicate
-def is_lu_user_allowed_to_countersign(request, case):
+def user_is_not_final_advisor(request, case):
 
     caseworker = get_logged_in_caseworker(request)
     if not caseworker:
         return False
 
-    case_officer = set(case.get("case_officer", {}).get("id", {}))
+    case_officer = case["case_officer"]
+    case_officer = {case_officer.get("id", {})} if case_officer else set()
     final_advisors = get_final_advisors(case)
-    countersigners = get_countersigners_decision_advice(case, caseworker)
-    all_advisors = case_officer | final_advisors | countersigners
+    all_advisors = case_officer | final_advisors
 
     return caseworker["id"] not in all_advisors
+
+
+@rules.predicate
+def user_not_yet_countersigned(request, case):
+
+    caseworker = get_logged_in_caseworker(request)
+    if not caseworker:
+        return False
+
+    countersigners = get_countersigners_decision_advice(case, caseworker)
+
+    return caseworker["id"] not in countersigners
 
 
 rules.add_rule("can_user_allocate_case", is_case_caseworker_operable)
@@ -161,7 +178,11 @@ rules.add_rule("can_user_move_case_forward", is_user_allocated)
 rules.add_rule("can_user_review_and_countersign", is_user_allocated)
 rules.add_rule(
     "can_user_be_allowed_to_lu_countersign",
-    is_user_allocated & is_user_in_lu_team & case_has_ogd_advice & is_lu_user_allowed_to_countersign,
+    is_user_allocated
+    & is_user_in_lu_team
+    & case_has_final_advice
+    & user_is_not_final_advisor
+    & user_not_yet_countersigned,
 )
 rules.add_rule("can_user_review_and_combine", is_user_allocated & (case_has_ogd_advice | is_case_nlr))  # noqa
 rules.add_rule("can_user_assess_products", is_user_allocated & (is_user_in_tau_team | is_user_in_admin_team))  # noqa
