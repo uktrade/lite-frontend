@@ -100,9 +100,9 @@ class Authorize(FormView):
 
         # If we have an explicit email set in settings then we don't need to
         # show the mock sso login prompt so we can just redirect back.
-        # mock_sso_user_email = getattr(settings, "MOCK_SSO_USER_EMAIL", None)
-        # if mock_sso_user_email:
-        #     return self.redirect_to_redirect_uri(request, mock_sso_user_email)
+        mock_sso_user_email = getattr(settings, "MOCK_SSO_USER_EMAIL", None)
+        if mock_sso_user_email:
+            return self.redirect_to_redirect_uri(request, mock_sso_user_email)
 
         return super().get(request, *args, **kwargs)
 
