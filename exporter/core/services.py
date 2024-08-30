@@ -198,26 +198,20 @@ def put_organisation_user(request, user_pk, json):
     return data.json(), data.status_code
 
 
-def get_control_list_entries(request, convert_to_options=False, converted_control_list_entries_cache=[]):  # noqa
+def get_control_list_entries(request, convert_to_options=False):
+    response = client.get(request, "/static/control-list-entries/exporter-list/")
+
     if convert_to_options:
-        if converted_control_list_entries_cache:
-            return converted_control_list_entries_cache
-        else:
-            data = client.get(request, "/static/control-list-entries/?flatten=True")
-
-        for control_list_entry in data.json().get("control_list_entries", []):
-            converted_control_list_entries_cache.append(
-                Option(
-                    key=control_list_entry["rating"],
-                    value=control_list_entry["rating"],
-                    description=control_list_entry["text"],
-                )
+        return [
+            Option(
+                key=control_list_entry["rating"],
+                value=control_list_entry["rating"],
+                description=control_list_entry["text"],
             )
+            for control_list_entry in response.json()
+        ]
 
-        return converted_control_list_entries_cache
-
-    data = client.get(request, "/static/control-list-entries/")
-    return data.json().get("control_list_entries")
+    return response.json()
 
 
 # F680 clearance types
