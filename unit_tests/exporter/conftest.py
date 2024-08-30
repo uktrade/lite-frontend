@@ -1,5 +1,4 @@
 import os
-import re
 import pytest
 import requests
 
@@ -696,3 +695,25 @@ def mock_get_application(requests_mock, application_pk, application_reference_nu
 def mock_validate_registration_number(requests_mock):
     url = client._build_absolute_uri("/organisations/registration_number")
     return requests_mock.post(url=url, json={}, status_code=200)
+
+
+@pytest.fixture
+def data_control_list_entries():
+    return [
+        {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
+        {"rating": "ML1a", "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns"},
+    ]
+
+
+@pytest.fixture
+def mock_exporter_control_list_entries(requests_mock, data_control_list_entries):
+    url = client._build_absolute_uri("/static/control-list-entries/exporter-list/")
+    yield requests_mock.get(url=url, json=data_control_list_entries)
+
+
+@pytest.fixture
+def mock_exporter_control_list_entries_get(requests_mock):
+    url = client._build_absolute_uri(f"/static/control-list-entries/exporter-list/")
+    return requests_mock.get(
+        url=url, json=[{"rating": "ML1a", "text": "some text"}, {"rating": "ML22b", "text": "some text"}]
+    )

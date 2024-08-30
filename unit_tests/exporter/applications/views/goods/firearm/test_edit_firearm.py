@@ -15,7 +15,7 @@ def setup(
     mock_good_document_post,
     mock_good_document_put,
     mock_good_document_delete,
-    mock_control_list_entries_get,
+    mock_exporter_control_list_entries_get,
     no_op_storage,
 ):
     yield

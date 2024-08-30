@@ -37,9 +37,7 @@ def test_product_form_validation(data, is_valid, errors):
 
 @pytest.fixture
 def control_list_entries(requests_mock):
-    requests_mock.get(
-        "/static/control-list-entries/", json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]}
-    )
+    requests_mock.get("/static/control-list-entries/exporter-list/", json=[{"rating": "ML1"}, {"rating": "ML1a"}])
 
 
 def test_product_control_list_entry_form_init_control_list_entries(request_with_session, control_list_entries):
