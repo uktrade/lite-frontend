@@ -63,4 +63,4 @@ Feature: I want to change the license state of a licence that has been issued.
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
-    | Test    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
+    | Tist    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
