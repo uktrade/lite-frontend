@@ -60,14 +60,12 @@ def test_edit_application_major_edit_change_status_fail(
 
 
 def test_edit_application_form_valid_major_edit_by_copy(
-    settings,
     authorized_client,
     application_id,
     data_organisation,
     application_task_list_url,
     mock_application_status_post,
 ):
-    settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS = [data_organisation["id"]]
     url = reverse("applications:edit_type", kwargs={"pk": application_id})
     response = authorized_client.post(url, {})
 

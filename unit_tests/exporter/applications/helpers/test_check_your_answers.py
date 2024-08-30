@@ -1,5 +1,10 @@
 import pytest
+import re
 
+from bs4 import BeautifulSoup
+from django.urls import reverse
+
+from core import client
 from core.constants import CaseStatusEnum
 from exporter.applications.helpers import check_your_answers
 
@@ -11,9 +16,17 @@ def application(data_standard_case):
     return data_standard_case["case"]["data"]
 
 
+@pytest.fixture
+def mock_application_get(requests_mock, data_standard_case):
+    application = data_standard_case["case"]["data"]
+    url = client._build_absolute_uri(f'/applications/{application["id"]}/')
+    return requests_mock.get(url=url, json=application)
+
+
 def test_convert_goods_on_application_no_answers(application, data_good_on_application):
     # given the canonical good does not have is_good_controlled set
     data_good_on_application["is_good_controlled"] = None
+    data_good_on_application["control_list_entries"] = []
     data_good_on_application["good"]["is_good_controlled"] = None
     data_good_on_application["good"]["control_list_entries"] = []
     actual = check_your_answers.convert_goods_on_application(application, [data_good_on_application])
@@ -24,6 +37,7 @@ def test_convert_goods_on_application_no_answers(application, data_good_on_appli
 
 
 def test_convert_goods_on_application_application_level_control_list_entries(application, data_good_on_application):
+    data_good_on_application["control_list_entries"] = []
     data_good_on_application["good"]["control_list_entries"] = []
 
     # given the canonical good and good in application have different export control characteristics
@@ -54,8 +68,9 @@ def test_convert_goods_on_application_application_level_control_list_entries_sam
 
 
 def test_convert_goods_on_application_good_level_control_list_entries(application, data_good_on_application):
-    # given the good has not been reviewed at application levcle
+    # given the good has not been reviewed at application level
     data_good_on_application["is_good_controlled"] = None
+    data_good_on_application["control_list_entries"] = []
     data_good_on_application["good"]["control_list_entries"] = []
 
     # when the shape is generated
@@ -222,3 +237,24 @@ def test_convert_standard_application_has_security_approvals(application, settin
     test_application = Application(application)
     actual = check_your_answers._convert_standard_application(test_application)
     assert "Do you have a security approval?" in actual.keys()
+
+
+def test_application_detail_shows_correct_cles(authorized_client, mock_application_get, application):
+    url = reverse("applications:application", kwargs={"pk": application["id"]})
+    response = authorized_client.get(url)
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    products_table = soup.find_all("table", attrs={"class": "govuk-table"})[0]
+    products_cles = []
+    body = products_table.find("tbody")
+    rows = body.find_all("tr")
+
+    for row in rows:
+        product_line = row.text.replace("\t", "").strip()
+        product_line = re.sub(r"([\W_])\1+", r"\1", product_line)
+        lines = product_line.split("\n")
+        products_cles.append(lines[3])
+
+    for index, good_on_application in enumerate(application["goods"]):
+        expected_cles = ", ".join(item["rating"] for item in good_on_application["control_list_entries"])
+        assert expected_cles == products_cles[index]

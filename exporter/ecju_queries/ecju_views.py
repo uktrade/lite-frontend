@@ -66,10 +66,7 @@ class ECJURespondQueryView(LoginRequiredMixin, ECJURespondMixin, FormView):
         if not rules.test_rule("can_invoke_major_editable", self.request, self.application):
             return None
 
-        if rules.test_rule("can_amend_by_copy", self.request, self.application):
-            return reverse("applications:major_edit_confirm", kwargs={"pk": self.case_id})
-
-        return reverse("applications:edit_type", kwargs={"pk": self.case_id})
+        return reverse("applications:major_edit_confirm", kwargs={"pk": self.case_id})
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()

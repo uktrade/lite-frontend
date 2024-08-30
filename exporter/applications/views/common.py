@@ -35,7 +35,6 @@ from exporter.applications.helpers.validators import (
     validate_delete_draft,
     validate_surrender_application_and_update_case_status,
 )
-from exporter.applications.rules import can_amend_by_copy
 from exporter.applications.services import (
     get_activity,
     get_applications,
@@ -220,12 +219,6 @@ class ApplicationMajorEditConfirmView(ApplicationMixin, FormView):
     template_name = "core/form.html"
     amended_application_id = None
 
-    def dispatch(self, request, **kwargs):
-        if not can_amend_by_copy(request, self.application):
-            raise Http404()
-
-        return super().dispatch(request, **kwargs)
-
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs["application_reference"] = self.application["name"]
@@ -302,7 +295,6 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
 
     def get(self, request, **kwargs):
         status_props, _ = get_status_properties(request, self.application["status"]["key"])
-
         context = {
             "case_id": self.application_id,
             "application": self.application,
