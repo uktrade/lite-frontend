@@ -53,6 +53,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I see the case is assigned to queues "Licensing Unit Post-circulation Cases to Finalise"
     When I click on the notes and timeline tab
     Then I see "decision" as a case note
+    And I logout
 
 
   Scenario: Move case along in workflow
@@ -77,3 +78,4 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I change my team to "Technical Assessment Unit" and default queue to "Technical Assessment Unit SIELs to Review"
     And I go to my case list
     Then I should see my case in the cases list
+    And I logout

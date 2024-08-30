@@ -43,3 +43,4 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click the application previously created under open queries tab
     And I click the recommendations and decision tab
     Then I see warning that case cannot be finalised due to a query that needs to be closed
+    And I logout

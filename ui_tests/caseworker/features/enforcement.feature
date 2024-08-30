@@ -26,6 +26,7 @@ Feature: I want to export and import XML for enforcement checking
     And the downloaded file should include "END_USER" "PD_SURNAME" as "Automated End user"
     And the downloaded file should include "END_USER" "ADDRESS1" as "1234, High street"
     And I remove the case from "Enforcement Unit Cases to Review" queue
+    And I logout
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
@@ -53,6 +54,7 @@ Feature: I want to export and import XML for enforcement checking
     And I attach the file above
     And I go to application previously created
     Then the application is removed from "Enforcement Unit Cases to Review" queue
+    And I logout
 
     Examples:
     | name    | product    | part_number | clc_rating  | end_user_name | end_user_address| country | consignee_name    | consignee_address | end_use                  |

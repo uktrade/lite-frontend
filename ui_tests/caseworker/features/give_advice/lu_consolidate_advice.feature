@@ -53,3 +53,4 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click on "Details" tab
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
+    And I logout

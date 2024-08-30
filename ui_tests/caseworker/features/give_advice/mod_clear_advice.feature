@@ -34,3 +34,4 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I am asked what my recommendation is
     When I click back
     Then I see there are no recommendations from "MOD-CapProt"
+    And I logout

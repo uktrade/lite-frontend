@@ -82,3 +82,4 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the "under the Military End-Use Control of Article 4(2) of retained Council Regulation (EC) No 428/2009" text on the document preview
     When I click continue
     Then I see "READY TO SEND" inform letter status in decision documents
+    And I logout

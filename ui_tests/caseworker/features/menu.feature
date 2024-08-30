@@ -21,3 +21,4 @@ Feature: Go to each item in the menu
     Then the log out link is displayed
     When I go to letters via menu
     Then the log out link is displayed
+    And I logout

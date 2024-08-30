@@ -91,3 +91,4 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see "licence condition1" as the licence condition
     When I click move case forward
     Then I don't see previously created application
+    And I logout

@@ -19,6 +19,7 @@ Feature: I want standard picklists
     Then I see my picklist page with status as "Active"
     When I edit my picklist to "edit" and "edit"
     Then I see my picklist page with status as "Active"
+    And I logout
 
   @skip @legacy
   Scenario: Deactivate and reactivate a picklist item
@@ -34,3 +35,4 @@ Feature: I want standard picklists
     Then I see my picklist page with status as "Deactivated"
     When I reactivate my picklist
     Then I see my picklist page with status as "Active"
+    And I logout

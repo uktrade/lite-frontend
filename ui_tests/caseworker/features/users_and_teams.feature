@@ -45,3 +45,4 @@ Feature: I want to test users
     When I go to teams
     And I click on the team BlueOcean
     Then I see my teams user list with user "added"
+    And I logout

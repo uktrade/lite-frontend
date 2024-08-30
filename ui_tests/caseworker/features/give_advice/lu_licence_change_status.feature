@@ -60,6 +60,7 @@ Feature: I want to change the license state of a licence that has been issued.
     And I click suspend licence and submit
     And I confirm the suspension
     Then I see that licence status shows as "Suspended"
+    And I logout
 
     Examples:
     | name     | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |

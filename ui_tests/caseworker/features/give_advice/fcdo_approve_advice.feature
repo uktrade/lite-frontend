@@ -39,3 +39,4 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click the recommendations and decision tab
     And I expand the details for "FCDO has approved"
     Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
+    And I logout

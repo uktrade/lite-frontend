@@ -29,3 +29,4 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I expand the details for "MOD-CapProt has refused"
     Then I see "reason for this refusal" as the reasons for refusal
     And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
+    And I logout

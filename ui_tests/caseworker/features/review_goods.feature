@@ -18,6 +18,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I click on Notes and timeline
     And I add a case note "Automated Test_Add a case note" and click Post note
     Then I should see "Automated Test_Add a case note" appear in the timeline
+    And I logout
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |

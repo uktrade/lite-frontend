@@ -13,6 +13,7 @@ Feature: I want to check sanctions matches
     When I select <end_user_name> and press remove sanction match
     Then I am asked to provide a reason
     And the sanction is removed from the case page
+    And I logout
 
     Examples:
     | name    | product         | part_number | clc_rating  | end_user_name | end_user_address                                                               | country | consignee_name | consignee_address                               | end_use                  |

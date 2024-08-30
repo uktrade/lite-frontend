@@ -40,3 +40,4 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see "licence condition1" as the licence condition
     And I see "instruction for exporter1" as the instructions for the exporter
     And I see "reporting footnote1" as the reporting footnote
+    And I logout

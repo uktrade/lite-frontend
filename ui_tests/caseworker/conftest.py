@@ -79,8 +79,8 @@ def sign_into_sso(driver, sso_sign_in):  # noqa
 
 
 @given(parsers.parse('I sign in as "{email}"'))
-def mock_sso_caseworker_sign_in(driver, internal_url, email):  # noqa
-    driver.get(internal_url)
+def mock_sso_caseworker_sign_in(driver, sso_sign_in_url, email):  # noqa
+    driver.get(sso_sign_in_url)
     mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
 
     if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:

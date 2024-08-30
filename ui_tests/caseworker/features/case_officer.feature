@@ -16,3 +16,4 @@ Feature: I want to assign a dedicated case officer / single point of contact to 
     When I click Assign Case Officer Button
     And I click unassign
     Then I see no case officer is assigned
+    And I logout

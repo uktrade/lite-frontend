@@ -10,6 +10,7 @@ Feature: I want to view cases in the queue view
     And the status is set to "submitted"
     When I go to the case list page
     Then I should see my case in the cases list
+    And I logout
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
@@ -21,6 +22,7 @@ Feature: I want to view cases in the queue view
     And the status is set to "submitted"
     When I go to the case list page
     Then I should be able to customise the queue view
+    And I logout
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |

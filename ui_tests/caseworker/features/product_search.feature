@@ -133,3 +133,4 @@ Feature: I want to efficiently search for products created and used by Exporters
         "num_results": 0,
         "hits": []
       }
+    And I logout

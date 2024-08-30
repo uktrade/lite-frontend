@@ -15,6 +15,7 @@ Feature: I want to define new work queues and the teams they belong to
     And I go to the internal homepage
     And I click on the "All cases" queue in dropdown
     Then I see previously created application
+    And I logout
 
 
 @all @internal @queues
@@ -29,3 +30,4 @@ Feature: I want to view all cases ready to review
     Then I see the all cases tab
     And I see the open queries tab
     And I see the my cases tab
+    And I logout

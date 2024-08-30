@@ -55,6 +55,7 @@ Feature: I want to check application with precedents
     And I deselect all checkboxes
     Then I select good called "Rifle" and approve and continue
     Then I assert if "Rifle" has been assessed
+    And I logout
 
     Examples:
       | name    | product        | part_number | clc_rating  | end_user_name | end_user_address| consignee_name    | consignee_address | country | end_use                  |
@@ -88,6 +89,7 @@ Feature: I want to check application with precedents
     Then I click on Product assessment
     And I click on "Edit assessments" button
     Then I edit the fields and checks if they were updated
+    And I logout
 
     Examples:
       | name    | product        | part_number | clc_rating  | end_user_name | end_user_address| consignee_name    | consignee_address | country | end_use                  |

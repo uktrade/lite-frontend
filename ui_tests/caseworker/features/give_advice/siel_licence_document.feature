@@ -156,3 +156,4 @@ Feature: I want process an SIEL application submitted by Exporters and issue lic
     And I click on "Details" tab
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
+    And I logout

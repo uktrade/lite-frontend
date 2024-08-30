@@ -10,3 +10,4 @@ Feature: I want to see that a copied application references the previous applica
     When I go to the case list page
     Then I should see my case in the cases list
     And I should see my case SLA
+    And I logout

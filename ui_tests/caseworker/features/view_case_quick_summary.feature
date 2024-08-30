@@ -7,3 +7,4 @@ Feature: I want to be able to view the quick summary on a case
     When I go to application previously created
     And I click the text "Quick summary"
     Then I see the quick summary
+    And I logout

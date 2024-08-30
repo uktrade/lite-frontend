@@ -7,3 +7,4 @@ Feature: I want to be able to view goods on a case
     When I go to application previously created
     And I click the first good on the case
     Then I see the good details
+    And I logout
