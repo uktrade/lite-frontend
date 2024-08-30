@@ -1,5 +1,7 @@
 from pytest_bdd import scenarios, when, then, parsers
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.mock_signin_page import MockSigninPage
 from django.conf import settings
@@ -28,6 +30,7 @@ def mock_sso_caseworker_sign_in_again(driver, internal_url, email):  # noqa
 
 @when("I click change licence status")
 def click_change_licence_status(driver):
+    WebDriverWait(driver, 10).until(expected_conditions.presence_of_element_located((By.LINK_TEXT, "Change status")))
     driver.find_element(by=By.LINK_TEXT, value="Change status").click()
 
 
