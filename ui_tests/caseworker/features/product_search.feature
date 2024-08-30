@@ -6,7 +6,7 @@ Feature: I want to efficiently search for products created and used by Exporters
 
   @tau_product_search
   Scenario: TAU user searching for historic product details when assessing products
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And I create a standard draft application with "Product search" as reference
     And I add Consignee with details "Consignee", "1234 Export yard", "FR"
     And I add End-user with details "End user", "1234 Industrial Estate", "AU"

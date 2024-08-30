@@ -5,7 +5,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   So that other users can see my decision and know that I have finished assessing this case
 
   Scenario: LU cannot finalise a case if there is an open query
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     When I go to my profile page

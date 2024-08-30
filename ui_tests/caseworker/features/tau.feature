@@ -2,7 +2,7 @@
 Feature: I want to check application with precedents
 
   Scenario: Using previous assessment to assess a good on application
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     Given I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I set the case status to "Submitted"
     # LR
@@ -61,7 +61,7 @@ Feature: I want to check application with precedents
       | Test12  | Rifle, Shotgun | PN-ABC-123  | PL9002      | Joe bloggs    | 123 Main street | Josephine Bloggs  | 123 Main Street   | BL      | Research and development |
 
   Scenario: Multiple edits for asssessed goods
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     Given I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I set the case status to "Submitted"
     # LR

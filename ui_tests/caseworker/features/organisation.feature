@@ -6,7 +6,7 @@ Feature: I want to add a company to LITE
 
 
   Scenario: Review and approve an organisation
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And an anonymous user applies for an organisation
     When I navigate to organisations
     And I click on In review tab
@@ -21,7 +21,7 @@ Feature: I want to add a company to LITE
     Then I should see details of organisation previously created
 
   Scenario: Review and reject an organisation
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And an anonymous user applies for an organisation
     When I navigate to organisations
     And I click on In review tab
@@ -34,7 +34,7 @@ Feature: I want to add a company to LITE
 
   @check_company_details
   Scenario: Check company details
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And an anonymous user creates and organisation for review with <eori_number>,<uk_vat_number>,<primary_site>,<phone_number>,<registration_number>
     When I navigate to organisations
     And I click on In review tab

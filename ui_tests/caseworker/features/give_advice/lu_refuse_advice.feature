@@ -7,7 +7,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   @lu_refuse_advice
   Scenario: LU refuse advice journey
     # Setup
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     # OGD refusal

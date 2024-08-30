@@ -59,6 +59,8 @@ from tests_common.helpers import applications
 from ui_tests.exporter.pages.add_goods_page import AddGoodPage
 from ui_tests.caseworker.pages.ecju_queries_pages import EcjuQueriesPages
 from ui_tests.caseworker.pages.product_assessment import ProductAssessmentPage
+from ui_tests.caseworker.pages.mock_signin_page import MockSigninPage
+from django.conf import settings
 
 
 @when("I go to the internal homepage")  # noqa
@@ -74,6 +76,29 @@ def go_to_internal_homepage(driver, internal_url):  # noqa
 @given("I sign in to SSO or am signed into SSO")  # noqa
 def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
+
+
+@given(parsers.parse('I sign in as "{email}"'))
+def mock_sso_caseworker_sign_in(driver, internal_url, email):  # noqa
+    driver.get(internal_url)
+    mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+
+    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+        MockSigninPage(driver).sign_in(email)
+
+
+@when(parsers.parse('I sign in as "{email}"'))
+def when_igo_to_mock_sso_caseworker_sign_in(driver, internal_url, email):  # noqa
+    driver.get(internal_url)
+    mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+
+    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+        MockSigninPage(driver).sign_in(email)
+
+
+@when("I logout")  # noqa
+def i_logout(driver, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/auth/logout/")
 
 
 @then("I go to application previously created")  # noqa

@@ -7,7 +7,7 @@ Feature: I want standard picklists
 
   @skip @legacy
   Scenario: Add and edit a letter paragraph
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     When I go to My Team
     And I go to picklists tab
     And I go to "letter_paragraph" picklist
@@ -22,7 +22,7 @@ Feature: I want standard picklists
 
   @skip @legacy
   Scenario: Deactivate and reactivate a picklist item
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     When I go to My Team
     And I go to picklists tab
     And I go to "report_summary" picklist

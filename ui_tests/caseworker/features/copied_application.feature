@@ -3,7 +3,7 @@ Feature: I want to see that a copied application references the previous applica
 
   @skip @legacy
   Scenario: View original application link in new application
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And I have an open application from copying
     When I go to application previously created
     Then I can see the original application is linked

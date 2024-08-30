@@ -6,7 +6,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
 
   @e2e_routing
   Scenario: End to end routing rules
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And I create standard application or standard application has been previously created
     And I set the case status to "Submitted"
     # LR
@@ -56,7 +56,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
 
 
   Scenario: Move case along in workflow
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And I create standard application or standard application has been previously created
     When I go to my profile page
     And I change my team to "Licensing Reception" and default queue to "Open cases"

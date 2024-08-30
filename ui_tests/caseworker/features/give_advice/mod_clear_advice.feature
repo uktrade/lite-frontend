@@ -6,7 +6,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @mod_clear_advice
   Scenario: MOD clear advice journey
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
