@@ -88,7 +88,7 @@ def mock_sso_caseworker_sign_in(driver, internal_url, email):  # noqa
 
 
 @when(parsers.parse('I sign in as "{email}"'))
-def when_igo_to_mock_sso_caseworker_sign_in(driver, internal_url, email):  # noqa
+def when_i_go_to_mock_sso_caseworker_sign_in(driver, internal_url, email):  # noqa
     driver.get(internal_url)
     mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
 
@@ -97,6 +97,11 @@ def when_igo_to_mock_sso_caseworker_sign_in(driver, internal_url, email):  # noq
 
 
 @when("I logout")  # noqa
+def when_i_logout(driver, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/auth/logout/")
+
+
+@then("I logout")  # noqa
 def i_logout(driver, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/auth/logout/")
 
