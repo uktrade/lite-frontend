@@ -85,17 +85,6 @@ def test_mock_authorize(
 
 
 @patch("core.mock_sso.views.uuid")
-def test_mock_authorize_default_email(
-    mock_uuid, settings_email, client, redirect_uri, authorize_state, authorize_url, authorize_url_params
-):
-    code = str(uuid.uuid4())
-    mock_uuid.uuid4.return_value = code
-    response = client.get(authorize_url, authorize_url_params)
-    assert response.status_code == 302
-    assert response["Location"] == redirect_uri + f"?code={code}&state={authorize_state}"
-
-
-@patch("core.mock_sso.views.uuid")
 def test_mock_authorize_pulls_from_session_on_multiple_requests(
     mock_uuid, client, redirect_uri, authorize_state, authorize_url, authorize_url_params, login_prompt_email
 ):
@@ -169,33 +158,11 @@ def test_mock_api_user_me(mock_uuid, client, authorize_url_params, authorize_url
     }
 
 
-@patch("core.mock_sso.views.uuid")
-def test_mock_api_user_me_default_email(
-    mock_uuid, settings_email, client, authorize_url_params, authorize_url, token_url
-):
-    code = str(uuid.uuid4())
-    mock_uuid.uuid4.return_value = code
-    client.get(f"{authorize_url}?{parse.urlencode(authorize_url_params)}")
+def test_mock_logout(client):
+    url = reverse("mock_sso:logout")
+    client.session["email_token"] = "example"
 
-    access_token = str(uuid.uuid4())
-    mock_uuid.uuid4.return_value = access_token
-    client.post(token_url, data={"code": code})
-
-    url = reverse("mock_sso:api_user_me")
-    assert parse.urljoin(settings.AUTHBROKER_URL, url) == settings.AUTHBROKER_PROFILE_URL
-
-    response = client.get(url, headers={"Authorization": f"Bearer {access_token}"})
-
-    assert response.status_code == 200
-    assert response.json() == {
-        "email": settings_email,
-        "contact_email": settings_email,
-        "email_user_id": settings_email,
-        "user_id": "20a0353f-a7d1-4851-9af8-1bcaff152b60",
-        "first_name": settings.MOCK_SSO_USER_FIRST_NAME,
-        "last_name": settings.MOCK_SSO_USER_LAST_NAME,
-        "related_emails": [],
-        "groups": [],
-        "permitted_applications": [],
-        "access_profiles": [],
-    }
+    response = client.get(url)
+    assert "email_token" not in client.session
+    assert response.status_code == 302
+    assert response.url == "http://testserver/"
