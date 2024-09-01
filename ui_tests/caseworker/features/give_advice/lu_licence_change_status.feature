@@ -52,7 +52,6 @@ Feature: I want to change the license state of a licence that has been issued.
     And I logout
     And I sign in as "luseniormanager@example.com" # /PS-IGNORE
     And I click on the "All cases" queue in dropdown
-    # And I go to my case list
     And I click the application previously created
     And I click on "Licences" tab
     Then I see that licence status shows as "Issued"

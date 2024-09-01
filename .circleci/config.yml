@@ -214,7 +214,7 @@ commands:
     steps:
       - run_make:
           label: Run caseworker e2e tests
-          target: start-caseworker seed-e2e-db caseworker-e2e-selenium-test
+          target: start-caseworker caseworker-e2e-selenium-test
 
 ###############################################################################
 # Jobs
