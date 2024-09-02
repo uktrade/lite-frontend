@@ -16,7 +16,7 @@ def click_suspend_licence_status_and_submit(driver):
     Shared(driver).click_submit()
 
 
-@when("I confirm the suspension")
+@when("I confirm suspending the licence")
 def click_continue(driver):
     Shared(driver).click_submit()
 

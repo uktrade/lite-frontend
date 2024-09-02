@@ -57,7 +57,7 @@ Feature: I want to change the license state of a licence that has been issued.
     Then I see that licence status shows as "Issued"
     When I click change licence status
     And I click suspend licence and submit
-    And I confirm the suspension
+    And I confirm suspending the licence
     Then I see that licence status shows as "Suspended"
     And I logout
 
