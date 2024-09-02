@@ -5,7 +5,7 @@ Feature: I want to change the license state of a licence that has been issued.
 
   @lu_change_licence_status
   Scenario: LU change licence status
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I prepare the application for final review
     When I go to my profile page
@@ -49,8 +49,7 @@ Feature: I want to change the license state of a licence that has been issued.
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
-    And I logout
-    And I sign in as "luseniormanager@example.com" # /PS-IGNORE
+    And I sign in as Licensing Unit Senior Manager
     And I click on the "All cases" queue in dropdown
     And I click the application previously created
     And I click on "Licences" tab
@@ -59,7 +58,6 @@ Feature: I want to change the license state of a licence that has been issued.
     And I click suspend licence and submit
     And I confirm suspending the licence
     Then I see that licence status shows as "Suspended"
-    And I logout
 
     Examples:
     | name     | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |

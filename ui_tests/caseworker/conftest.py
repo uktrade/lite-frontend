@@ -78,22 +78,19 @@ def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
 
 
-@given("I sign in as Test UAT user")
-def mock_sso_test_uat_user_caseworker_sign_in(driver, internal_url):  # noqa
+@given(parsers.parse("I sign in as {user_type}"))
+def mock_sso_sign_in(driver, internal_url, user_type):
     driver.get(internal_url)
     mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
 
-    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
-        MockSigninPage(driver).sign_in("test-uat-user@digital.trade.gov.uk")
-
-
-@when("I sign in as use with Licensing Unit Senior Manager role")
-def mock_sso_lu_senior_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
-    driver.get(internal_url)
-    mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+    user_to_email_map = {
+        "Test UAT user": "test-uat-user@digital.trade.gov.uk",
+        "Licensing Unit Senior Manager": "luseniormanager@digital.trade.gov.uk",
+    }
 
     if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
-        MockSigninPage(driver).sign_in("luseniormanager@digital.trade.gov.uk")
+        email = user_to_email_map[user_type]
+        MockSigninPage(driver).sign_in(email)
 
 
 @then("I logout")  # noqa
