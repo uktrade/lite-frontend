@@ -80,9 +80,6 @@ def sign_into_sso(driver, sso_sign_in):  # noqa
 
 @given("I sign in as Test UAT user")
 def mock_sso_test_uat_user_caseworker_sign_in(driver, internal_url):  # noqa
-    # Ensure user is logged out before logging in
-    driver.get(internal_url.rstrip("/") + "/auth/logout/")
-
     driver.get(internal_url)
     mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
 
@@ -90,14 +87,19 @@ def mock_sso_test_uat_user_caseworker_sign_in(driver, internal_url):  # noqa
         MockSigninPage(driver).sign_in("test-uat-user@digital.trade.gov.uk")
 
 
-@when("I sign in as use with Licensing Unit Senior Manager role")
+@when("I sign in as user with Licensing Unit Senior Manager role")
 def mock_sso_lu_senior_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/auth/logout/")
     driver.get(internal_url)
     mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
 
     if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
         MockSigninPage(driver).sign_in("luseniormanager@digital.trade.gov.uk")
+
+
+@then("I logout")  # noqa
+@when("I logout")  # noqa
+def i_logout(driver, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/auth/logout/")
 
 
 @then("I go to application previously created")  # noqa

@@ -11,6 +11,6 @@ if os.path.exists(ENV_FILE):
 env = Env()
 
 
-@fixture(scope="session")
+@fixture()
 def environment():
     return env
