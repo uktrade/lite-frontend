@@ -96,12 +96,8 @@ def when_i_go_to_mock_sso_caseworker_sign_in(driver, internal_url, email):  # no
         MockSigninPage(driver).sign_in(email)
 
 
-@when("I logout")  # noqa
-def when_i_logout(driver, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/auth/logout/")
-
-
 @then("I logout")  # noqa
+@when("I logout")  # noqa
 def i_logout(driver, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/auth/logout/")
 
