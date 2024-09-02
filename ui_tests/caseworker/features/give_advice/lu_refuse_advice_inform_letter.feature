@@ -7,7 +7,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
 @lu_refuse_advice_inform_letter
   Scenario: LU inform letter
     # Setup
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     # OGD refusal
@@ -82,4 +82,3 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I see the "under the Military End-Use Control of Article 4(2) of retained Council Regulation (EC) No 428/2009" text on the document preview
     When I click continue
     Then I see "READY TO SEND" inform letter status in decision documents
-    And I logout

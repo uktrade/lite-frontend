@@ -6,7 +6,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @mod_clear_advice
   Scenario: MOD clear advice journey
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
@@ -34,4 +34,3 @@ Feature: I want to record my user advice and any comments and conditions relatin
     Then I am asked what my recommendation is
     When I click back
     Then I see there are no recommendations from "MOD-CapProt"
-    And I logout

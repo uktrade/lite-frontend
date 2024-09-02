@@ -6,7 +6,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @fcdo_approve_advice
   Scenario: FCDO to approve advice journey
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
@@ -39,4 +39,3 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click the recommendations and decision tab
     And I expand the details for "FCDO has approved"
     Then I should see my recommendation for "Great Britain, Ukraine" with "Hello World"
-    And I logout

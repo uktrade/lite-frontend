@@ -7,7 +7,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   @lu_nlr_advice
   Scenario: LU NLR advice journey
     # Setup
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     And I prepare the application for final review NLR
     # Scenario starts
@@ -59,4 +59,3 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click on "Details" tab
     Then I see the case status is now "Finalised"
     And I see the case is not assigned to any queues
-    And I logout

@@ -6,7 +6,7 @@ Feature: I want to have cases be automatically routed to relevant work queues an
 
   @e2e_routing
   Scenario: End to end routing rules
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     And I set the case status to "Submitted"
     # LR
@@ -53,11 +53,10 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I see the case is assigned to queues "Licensing Unit Post-circulation Cases to Finalise"
     When I click on the notes and timeline tab
     Then I see "decision" as a case note
-    And I logout
 
 
   Scenario: Move case along in workflow
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to my profile page
     And I change my team to "Licensing Reception" and default queue to "Open cases"
@@ -78,4 +77,3 @@ Feature: I want to have cases be automatically routed to relevant work queues an
     And I change my team to "Technical Assessment Unit" and default queue to "Technical Assessment Unit SIELs to Review"
     And I go to my case list
     Then I should see my case in the cases list
-    And I logout

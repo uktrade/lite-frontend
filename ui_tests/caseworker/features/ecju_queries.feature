@@ -7,7 +7,7 @@ Feature: I want to create ECJU queries
   @ecju_query
   Scenario: Add an ECJU Query to a case
     # Caseworker creates query
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
@@ -22,11 +22,10 @@ Feature: I want to create ECJU queries
     When I go to application previously created
     And I click the queries tab
     Then I see "Some unique response" as the response under closed queries
-    And I logout
 
   Scenario: Caseworker manually closing query with a response
     # Caseworker creates query
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
@@ -39,4 +38,3 @@ Feature: I want to create ECJU queries
     When I click close query to manually close the query
     And I enter "required details provided by exporter" as the query response and submit
     Then I see "required details provided by exporter" as the response under closed queries
-    And I logout

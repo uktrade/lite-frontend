@@ -7,7 +7,7 @@ Feature: I want to check denial matches
   @skip
   Scenario: Check end-user denial matches against uploaded CSV data
     # Denial upload
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I cleanup any temporary files created
     When I go to the add denial records page
     And I download an example .csv file
@@ -36,7 +36,6 @@ Feature: I want to check denial matches
     When I select "Joe Bloggs" under denial matches
     And I click "Remove denial match"
     Then I should not see "Joe Bloggs" as an exact match
-    And I logout
 
     Examples:
     | name        | product  | part_number | clc_rating | end_user_name | end_user_address | country | consignee_name | consignee_address | address          | notifying_govmt  | final_dest | denial_cle  | item_desc | end_use   |

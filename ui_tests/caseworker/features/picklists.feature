@@ -7,7 +7,7 @@ Feature: I want standard picklists
 
   @skip @legacy
   Scenario: Add and edit a letter paragraph
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     When I go to My Team
     And I go to picklists tab
     And I go to "letter_paragraph" picklist
@@ -19,11 +19,10 @@ Feature: I want standard picklists
     Then I see my picklist page with status as "Active"
     When I edit my picklist to "edit" and "edit"
     Then I see my picklist page with status as "Active"
-    And I logout
 
   @skip @legacy
   Scenario: Deactivate and reactivate a picklist item
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     When I go to My Team
     And I go to picklists tab
     And I go to "report_summary" picklist
@@ -35,4 +34,3 @@ Feature: I want standard picklists
     Then I see my picklist page with status as "Deactivated"
     When I reactivate my picklist
     Then I see my picklist page with status as "Active"
-    And I logout

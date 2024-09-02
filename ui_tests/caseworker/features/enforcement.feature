@@ -6,7 +6,7 @@ Feature: I want to export and import XML for enforcement checking
 
 
   Scenario: Export cases on a work queue that need enforcement check
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to application previously created
@@ -26,14 +26,13 @@ Feature: I want to export and import XML for enforcement checking
     And the downloaded file should include "END_USER" "PD_SURNAME" as "Automated End user"
     And the downloaded file should include "END_USER" "ADDRESS1" as "1234, High street"
     And I remove the case from "Enforcement Unit Cases to Review" queue
-    And I logout
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
     | Test    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
 
   Scenario: Import xml file after enforcement checks
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to application previously created
@@ -54,7 +53,6 @@ Feature: I want to export and import XML for enforcement checking
     And I attach the file above
     And I go to application previously created
     Then the application is removed from "Enforcement Unit Cases to Review" queue
-    And I logout
 
     Examples:
     | name    | product    | part_number | clc_rating  | end_user_name | end_user_address| country | consignee_name    | consignee_address | end_use                  |

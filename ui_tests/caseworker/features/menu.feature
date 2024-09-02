@@ -3,7 +3,7 @@ Feature: Go to each item in the menu
 
   @skip @legacy
   Scenario: Go to each item in the menu
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I go to internal homepage
     When I refresh the page
     Then the log out link is displayed
@@ -21,4 +21,3 @@ Feature: Go to each item in the menu
     Then the log out link is displayed
     When I go to letters via menu
     Then the log out link is displayed
-    And I logout

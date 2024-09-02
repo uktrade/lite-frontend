@@ -5,7 +5,7 @@ Feature: I want to assign a dedicated case officer / single point of contact to 
 
   @skip @legacy
   Scenario: Assign and remove case officer
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create open application or open application has been previously created
     When I go to application previously created
     And I click Assign Case Officer Button
@@ -16,4 +16,3 @@ Feature: I want to assign a dedicated case officer / single point of contact to 
     When I click Assign Case Officer Button
     And I click unassign
     Then I see no case officer is assigned
-    And I logout

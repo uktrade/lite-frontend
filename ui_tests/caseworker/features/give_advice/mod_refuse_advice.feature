@@ -6,7 +6,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @mod_refuse_advice
   Scenario: MOD refuse advice journey
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
@@ -29,4 +29,3 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I expand the details for "MOD-CapProt has refused"
     Then I see "reason for this refusal" as the reasons for refusal
     And I see "1a, 1b, 1c, 1d, 1e, 1f" as the refusal criteria
-    And I logout

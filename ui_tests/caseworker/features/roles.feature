@@ -6,10 +6,9 @@ Feature: I want to create roles
 
   @skip @legacy
   Scenario: Edit a role
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     When I go to users
     And I go to manage roles
     And I add a new role called "Supervisor" with permission to "Manage licence final advice" and set status to "Closed"
     And I edit my role
     Then I see the role in the roles list
-    And I logout

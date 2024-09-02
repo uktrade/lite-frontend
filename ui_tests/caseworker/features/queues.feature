@@ -6,7 +6,7 @@ Feature: I want to define new work queues and the teams they belong to
 
 
   Scenario: Cases that reached terminal status are not on any queue (appear in All cases queue)
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
@@ -15,7 +15,6 @@ Feature: I want to define new work queues and the teams they belong to
     And I go to the internal homepage
     And I click on the "All cases" queue in dropdown
     Then I see previously created application
-    And I logout
 
 
 @all @internal @queues
@@ -25,9 +24,8 @@ Feature: I want to view all cases ready to review
   So that I can quickly make an assessement
 
   Scenario: Go to work queue
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     When I go to the internal homepage
     Then I see the all cases tab
     And I see the open queries tab
     And I see the my cases tab
-    And I logout

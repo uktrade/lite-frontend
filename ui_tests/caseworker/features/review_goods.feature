@@ -5,7 +5,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
   So that I can confirm the goods are correctly described
 
   Scenario: Gov user can add case note
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to my profile page
@@ -18,7 +18,6 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     And I click on Notes and timeline
     And I add a case note "Automated Test_Add a case note" and click Post note
     Then I should see "Automated Test_Add a case note" appear in the timeline
-    And I logout
 
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |

@@ -5,7 +5,7 @@ Feature: I want to check sanctions matches
   For a case is created with a name on it that has a sanction
 
   Scenario: check a sanction match is highlighted
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     When I go to application previously created
     Then I see the section of the case page entitled Sanction matches
@@ -13,7 +13,6 @@ Feature: I want to check sanctions matches
     When I select <end_user_name> and press remove sanction match
     Then I am asked to provide a reason
     And the sanction is removed from the case page
-    And I logout
 
     Examples:
     | name    | product         | part_number | clc_rating  | end_user_name | end_user_address                                                               | country | consignee_name | consignee_address                               | end_use                  |

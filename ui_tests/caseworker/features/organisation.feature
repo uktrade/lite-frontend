@@ -6,7 +6,7 @@ Feature: I want to add a company to LITE
 
 
   Scenario: Review and approve an organisation
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And an anonymous user applies for an organisation
     When I navigate to organisations
     And I click on In review tab
@@ -19,10 +19,9 @@ Feature: I want to add a company to LITE
     When I navigate to organisations
     And I click on Active tab
     Then I should see details of organisation previously created
-    And I logout
 
   Scenario: Review and reject an organisation
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And an anonymous user applies for an organisation
     When I navigate to organisations
     And I click on In review tab
@@ -32,11 +31,10 @@ Feature: I want to add a company to LITE
     When I reject the organisation
     Then the organisation should be set to "Rejected"
     And the "rejected" organisation appears in the audit trail
-    And I logout
 
   @check_company_details
   Scenario: Check company details
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And an anonymous user creates and organisation for review with <eori_number>,<uk_vat_number>,<primary_site>,<phone_number>,<registration_number>
     When I navigate to organisations
     And I click on In review tab
@@ -49,7 +47,6 @@ Feature: I want to add a company to LITE
     When I navigate to organisations
     And I click on Active tab
     Then I should see details of organisation previously created
-    And I logout
 
     Examples:
     |eori_number    | uk_vat_number | primary_site             | phone_number  | registration_number |

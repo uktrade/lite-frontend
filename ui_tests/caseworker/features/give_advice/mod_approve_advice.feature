@@ -7,7 +7,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   @mod_approve_advice
   Scenario: MOD approve advice journey
     ##### MOD to circulate a case #####
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     # LR
     When I switch to "Licensing Reception" with queue "Licensing Reception SIEL applications" and I submit the case
@@ -91,4 +91,3 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see "licence condition1" as the licence condition
     When I click move case forward
     Then I don't see previously created application
-    And I logout

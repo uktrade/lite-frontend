@@ -5,7 +5,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   So that other users can see my decision and know that I have finished assessing this case
 
   Scenario: LU cannot finalise a case if there is an open query
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     When I go to my profile page
@@ -43,4 +43,3 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click the application previously created under open queries tab
     And I click the recommendations and decision tab
     Then I see warning that case cannot be finalised due to a query that needs to be closed
-    And I logout

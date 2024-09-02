@@ -6,7 +6,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @mod_edit_advice
   Scenario: MOD edit advice journey
-    Given I sign in as "test-uat-user@digital.trade.gov.uk" # /PS-IGNORE
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
@@ -40,4 +40,3 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see "licence condition1" as the licence condition
     And I see "instruction for exporter1" as the instructions for the exporter
     And I see "reporting footnote1" as the reporting footnote
-    And I logout
