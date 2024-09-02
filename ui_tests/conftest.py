@@ -79,7 +79,7 @@ def pytest_exception_interact(node, report):
             utils.save_screenshot(driver=driver, name=node.name)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture()
 def tmp_download_path():
     download_path = Path("/tmp/downloads/")
     download_path.mkdir(exist_ok=True)
