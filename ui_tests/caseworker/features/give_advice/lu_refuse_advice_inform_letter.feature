@@ -7,7 +7,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
 @lu_refuse_advice_inform_letter
   Scenario: LU inform letter
     # Setup
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     # OGD refusal

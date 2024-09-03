@@ -5,7 +5,7 @@ Feature: I want to review, amend where required and confirm the goods ratings an
   So that I can confirm the goods are correctly described
 
   Scenario: Gov user can add case note
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to my profile page
@@ -22,4 +22,3 @@ Feature: I want to review, amend where required and confirm the goods ratings an
     Examples:
     | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
     | Test    | Rifle   | SN-XYZ-456  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |
-

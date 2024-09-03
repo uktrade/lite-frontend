@@ -1,11 +1,9 @@
 from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from webdriver_manager.chrome import ChromeDriverManager
 
 from _pytest.fixtures import fixture
 
 
-@fixture(scope="session", autouse=True)
+@fixture(autouse=True)
 def driver(request, api_client, environment, tmp_download_path):
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--no-sandbox")
