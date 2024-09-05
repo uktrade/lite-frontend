@@ -3,7 +3,7 @@ Feature: Go to each item in the menu
 
   @skip @legacy
   Scenario: Go to each item in the menu
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I go to internal homepage
     When I refresh the page
     Then the log out link is displayed

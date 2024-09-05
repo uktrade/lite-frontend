@@ -4,7 +4,7 @@ from ui_tests.exporter.pages.start_page import StartPage
 from ui_tests.exporter.pages.govuk_signin_page import GovukSigninPage
 
 
-@fixture(scope="function")
+@fixture()
 def sso_sign_in(driver, exporter_url, exporter_info, context):
     driver.get(exporter_url)
     StartPage(driver).try_click_sign_in_button()

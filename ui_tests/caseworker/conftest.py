@@ -59,6 +59,8 @@ from tests_common.helpers import applications
 from ui_tests.exporter.pages.add_goods_page import AddGoodPage
 from ui_tests.caseworker.pages.ecju_queries_pages import EcjuQueriesPages
 from ui_tests.caseworker.pages.product_assessment import ProductAssessmentPage
+from ui_tests.caseworker.pages.mock_signin_page import MockSigninPage
+from django.conf import settings
 
 
 @when("I go to the internal homepage")  # noqa
@@ -74,6 +76,30 @@ def go_to_internal_homepage(driver, internal_url):  # noqa
 @given("I sign in to SSO or am signed into SSO")  # noqa
 def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
+
+
+@given("I sign in as Test UAT user")
+def mock_sso_test_uat_user_caseworker_sign_in(driver, internal_url):  # noqa
+    driver.get(internal_url)
+    mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+
+    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+        MockSigninPage(driver).sign_in("test-uat-user@digital.trade.gov.uk")
+
+
+@when("I sign in as user with Licensing Unit Senior Manager role")
+def mock_sso_lu_senior_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
+    driver.get(internal_url)
+    mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+
+    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+        MockSigninPage(driver).sign_in("luseniormanager@digital.trade.gov.uk")
+
+
+@then("I logout")  # noqa
+@when("I logout")  # noqa
+def i_logout(driver, internal_url):  # noqa
+    driver.get(internal_url.rstrip("/") + "/auth/logout/")
 
 
 @then("I go to application previously created")  # noqa
@@ -373,6 +399,11 @@ def get_my_case_list(driver):  # noqa
     driver.find_element(by=By.LINK_TEXT, value="Cases").click()
 
 
+@when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
+def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
+    CaseListPage(driver).click_on_queue_name(queue_name)
+
+
 @when("I click the application previously created")
 def i_click_application_previously_created(driver, context):  # noqa
     case_list_page = CaseListPage(driver)
@@ -381,7 +412,6 @@ def i_click_application_previously_created(driver, context):  # noqa
     functions.open_case_filters(driver)
     case_list_page.filter_by_case_reference(context.reference_code)
     functions.click_apply_filters(driver)
-
     case_list_page.click_on_case(context.case_id)
 
 
@@ -488,11 +518,6 @@ def i_see_the_case_page(driver, context):  # noqa
 @then(parsers.parse('I see the case status is now "{status}"'))
 def should_see_case_status(driver, status):  # noqa
     assert CasePage(driver).get_status() == status
-
-
-@when("I go to users")  # noqa
-def go_to_users(driver, sso_sign_in, internal_url):  # noqa
-    driver.get(internal_url.rstrip("/") + "/users/")
 
 
 @given("an Exhibition Clearance is created")  # noqa

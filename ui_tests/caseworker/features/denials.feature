@@ -7,7 +7,7 @@ Feature: I want to check denial matches
   @skip
   Scenario: Check end-user denial matches against uploaded CSV data
     # Denial upload
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I cleanup any temporary files created
     When I go to the add denial records page
     And I download an example .csv file
