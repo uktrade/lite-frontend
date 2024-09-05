@@ -6,7 +6,7 @@ Feature: I want to add an internal note to a case and view notes
 
   @add_case_note
   Scenario: Add a new valid case note
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I click on the notes and timeline tab
@@ -16,7 +16,7 @@ Feature: I want to add an internal note to a case and view notes
 
 
   Scenario: Case note cancel button
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I click on the notes and timeline tab
