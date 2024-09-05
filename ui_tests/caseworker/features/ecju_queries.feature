@@ -7,7 +7,7 @@ Feature: I want to create ECJU queries
   @ecju_query
   Scenario: Add an ECJU Query to a case
     # Caseworker creates query
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case
@@ -25,7 +25,7 @@ Feature: I want to create ECJU queries
 
   Scenario: Caseworker manually closing query with a response
     # Caseworker creates query
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I assign myself to the case

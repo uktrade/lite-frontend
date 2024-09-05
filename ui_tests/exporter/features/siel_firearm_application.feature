@@ -8,7 +8,6 @@ Feature: I want to be able to submit SIEL firearm applications
     When I create a standard application of a "temporary" export type
     When I am on the application overview page entitled "Standard Individual Export Licence"
     Then I see the application overview
-    And I logout
 
   @skip @current
   Scenario: Open a SIEL application
@@ -16,7 +15,6 @@ Feature: I want to be able to submit SIEL firearm applications
     When I create a standard application of a "temporary" export type
     And I am on the application overview page entitled "Standard Individual Export Licence"
     Then I see the application overview
-    And I logout
 
   @skip @current
   Scenario: Temporary export details
@@ -28,7 +26,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I answer "Yes" for whether the products remain under my direct control
     And I enter the date "01", "01", "2030" when the products will return to the UK
     Then I see the temporary export detail summary
-    And I logout
 
   @skip @current
   Scenario: Enter consignee details in the application
@@ -43,7 +40,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I enter "Test Address" and "Belgium" for consignee address
     And I upload file "file_for_upload.pdf" with description "Test"
     Then I see the consignee summary
-    And I logout
 
   @skip @current
   Scenario: Associate application with existing consignee party
@@ -59,7 +55,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I click continue
     And I click continue
     Then I see Government in the consignee summary
-    And I logout
 
   @skip @current
   Scenario: Enter details for the end user section in the application
@@ -75,7 +70,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I enter "Test signatory" for signatory name
     And I upload file "file_for_upload.pdf" with description "Test"
     Then I see the end user summary
-    And I logout
 
   @skip @current
   Scenario: Add a new Firearm product of type firearms, ammunition, components of ammunition to the application
@@ -102,7 +96,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I upload file "file_for_doc_upload_test_1.txt" with description "File uploaded for firearms product."
     And I enter product details with value "20,000" and deactivated "No" and Save
     Then the product with name "Rifle" is added to the application
-    And I logout
 
   @skip @current
   Scenario: Enter details for the End use details section in the application
@@ -118,7 +111,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I save and continue on the summary page
     Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
     And the section "End use details" is now saved
-    And I logout
 
     @skip @current
   Scenario: Enter details for the Route of goods section in the application
@@ -129,7 +121,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I answer "Yes" for shipping air waybill or lading and Save
     Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
     And the section "Route of goods" is now saved
-    And I logout
 
   @skip @current
   Scenario: Enter details for the Location section in the application
@@ -143,7 +134,6 @@ Feature: I want to be able to submit SIEL firearm applications
     And I click the back link
     Then I should be taken to the application overview page entitled "Standard Individual Export Licence"
     And the section "Locations" is now saved
-    And I logout
 
   @skip @current
   Scenario: Submit Application
@@ -153,7 +143,6 @@ Feature: I want to be able to submit SIEL firearm applications
     Then I see the application summary with <clc_rating>,<end_use>,<end_user_name>,<consignee_name>,<part_number>
     When I agree to the declaration
     Then the application is submitted
-    And I logout
 
     Examples:
      | name    | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
