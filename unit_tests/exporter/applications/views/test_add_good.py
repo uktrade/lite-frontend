@@ -43,7 +43,7 @@ def application_url(requests_mock, data_standard_case):
 
 @pytest.fixture(autouse=True)
 def clc_url(requests_mock):
-    clc_url = client._build_absolute_uri("/static/control-list-entries/exporter-list/")
+    clc_url = client._build_absolute_uri("/exporter/static/control-list-entries/")
     requests_mock.get(url=clc_url, json=[{"rating": "ML1"}, {"rating": "ML1a"}])
 
 

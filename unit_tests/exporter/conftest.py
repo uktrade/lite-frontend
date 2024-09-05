@@ -707,13 +707,13 @@ def data_control_list_entries():
 
 @pytest.fixture
 def mock_exporter_control_list_entries(requests_mock, data_control_list_entries):
-    url = client._build_absolute_uri("/static/control-list-entries/exporter-list/")
+    url = client._build_absolute_uri("/exporter/static/control-list-entries/")
     yield requests_mock.get(url=url, json=data_control_list_entries)
 
 
 @pytest.fixture
 def mock_exporter_control_list_entries_get(requests_mock):
-    url = client._build_absolute_uri(f"/static/control-list-entries/exporter-list/")
+    url = client._build_absolute_uri(f"/exporter/static/control-list-entries/")
     return requests_mock.get(
         url=url, json=[{"rating": "ML1a", "text": "some text"}, {"rating": "ML22b", "text": "some text"}]
     )

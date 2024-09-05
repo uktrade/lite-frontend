@@ -199,7 +199,7 @@ def put_organisation_user(request, user_pk, json):
 
 
 def get_control_list_entries(request, convert_to_options=False):
-    response = client.get(request, "/static/control-list-entries/exporter-list/")
+    response = client.get(request, "/exporter/static/control-list-entries/")
 
     if convert_to_options:
         return [
