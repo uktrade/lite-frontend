@@ -230,13 +230,22 @@ def get_countersigners(advice_to_countersign):
     return countersigned_by
 
 
-def get_countersigners_decision_advice(case, caseworker):
+def get_countersigners_decision_advice(case, caseworker, order=None):
     """Get a set of user ids representing the users that have already
-    countersigned the advice on this case with accept/reject decision.
+    countersigned the advice of the given order on this case with accept/reject decision.
     """
     countersigned_by = set()
+    countersign_orders = [FIRST_COUNTERSIGN, SECOND_COUNTERSIGN]
+
+    if order:
+        countersign_orders = [order]
+
     for advice in case.countersign_advice:
-        if advice["valid"] is True and advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]:
+        if (
+            advice["valid"] is True
+            and advice["order"] in countersign_orders
+            and advice["countersigned_user"]["team"]["id"] == caseworker["team"]["id"]
+        ):
             countersigned_by.add(advice["countersigned_user"]["id"])
     return countersigned_by
 
@@ -600,7 +609,13 @@ def get_advice_tab_context(case, caseworker, queue_id):
 
         if queue_alias in (LU_LICENSING_MANAGER_QUEUE, LU_SR_LICENSING_MANAGER_QUEUE):
             advice_to_countersign = get_advice_to_countersign(case.advice, caseworker)
-            countersigned_by = get_countersigners_decision_advice(case, caseworker)
+
+            order = FIRST_COUNTERSIGN
+            if queue_alias == LU_SR_LICENSING_MANAGER_QUEUE:
+                order = SECOND_COUNTERSIGN
+
+            # Get the countersigners of the current queue
+            countersigned_by = get_countersigners_decision_advice(case, caseworker, order)
 
             if advice_to_countersign:
                 if caseworker["id"] not in countersigned_by:

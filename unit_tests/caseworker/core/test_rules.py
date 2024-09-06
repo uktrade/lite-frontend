@@ -11,6 +11,8 @@ from caseworker.advice.services import (
     GOODS_NOT_LISTED_ID,
     LICENSING_UNIT_TEAM,
     OGD_TEAMS,
+    FIRST_COUNTERSIGN,
+    SECOND_COUNTERSIGN,
 )
 from caseworker.core import rules as caseworker_rules
 from caseworker.core.constants import (
@@ -572,11 +574,14 @@ def test_user_is_not_final_advisor(gov_user, expected_result, request, get_mock_
     (
         ("invalid_user", [], False),
         ("LU_licencing_manager", [], True),
-        ("LU_licencing_manager", [{"user": "LU_licencing_manager"}], False),
-        ("LU_senior_licencing_manager", [{"user": "LU_licencing_manager"}], True),
+        ("LU_licencing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licencing_manager"}], False),
+        ("LU_senior_licencing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licencing_manager"}], True),
         (
             "LU_senior_licencing_manager",
-            [{"user": "LU_licencing_manager"}, {"user": "LU_senior_licencing_manager"}],
+            [
+                {"order": FIRST_COUNTERSIGN, "user": "LU_licencing_manager"},
+                {"order": SECOND_COUNTERSIGN, "user": "LU_senior_licencing_manager"},
+            ],
             False,
         ),
     ),
@@ -587,6 +592,7 @@ def test_user_not_yet_countersigned(
     countersign_advice = [
         {
             "valid": True,
+            "order": item["order"],
             "countersigned_user": request.getfixturevalue(item["user"]),
         }
         for item in countersigners
@@ -613,11 +619,14 @@ def test_user_not_yet_countersigned(
         ("invalid_user", [], False),
         ("LU_case_officer", [], False),
         ("LU_licencing_manager", [], True),
-        ("LU_licencing_manager", [{"user": "LU_licencing_manager"}], False),
-        ("LU_senior_licencing_manager", [{"user": "LU_licencing_manager"}], True),
+        ("LU_licencing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licencing_manager"}], False),
+        ("LU_senior_licencing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licencing_manager"}], True),
         (
             "LU_senior_licencing_manager",
-            [{"user": "LU_licencing_manager"}, {"user": "LU_senior_licencing_manager"}],
+            [
+                {"order": FIRST_COUNTERSIGN, "user": "LU_licencing_manager"},
+                {"order": SECOND_COUNTERSIGN, "user": "LU_senior_licencing_manager"},
+            ],
             False,
         ),
     ),
@@ -628,6 +637,7 @@ def test_can_user_be_allowed_to_lu_countersign(
     countersign_advice = [
         {
             "valid": True,
+            "order": item["order"],
             "countersigned_user": request.getfixturevalue(item["user"]),
         }
         for item in countersigners
