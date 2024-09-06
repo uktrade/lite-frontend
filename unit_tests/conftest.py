@@ -12,6 +12,10 @@ from urllib.parse import urljoin, urlparse
 
 from moto import mock_s3
 
+from django.template import (
+    RequestContext,
+    Template,
+)
 from django.urls import resolve
 from django.utils import timezone
 
@@ -2621,3 +2625,18 @@ def mock_request(rf, authorized_client):
     request.session = authorized_client.session
     request.requests_session = requests.Session()
     yield request
+
+
+@pytest.fixture()
+def render_form(rf):
+    def _render_form(form, request=None):
+        if not request:
+            request = rf.get("/")
+        template = Template("{% load crispy_forms_tags crispy_forms_gds %}{% crispy form %}")
+        context = RequestContext(request, {"form": form})
+        rendered = template.render(context)
+        rendered = [l for l in rendered.split("\n")]
+        rendered = re.sub("\s+", " ", "".join(rendered))
+        return rendered
+
+    return _render_form
