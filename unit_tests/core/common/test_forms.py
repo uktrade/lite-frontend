@@ -1,8 +1,6 @@
 import pytest
-import re
 
 from django import forms
-from django.template import RequestContext, Template
 
 from core.common.forms import BaseForm
 
@@ -25,15 +23,6 @@ class FileFieldForm(BaseForm):
         return ["file"]
 
 
-def render_form(request, form_class):
-    template = Template("{% load crispy_forms_tags crispy_forms_gds %}{% crispy form %}")
-    context = RequestContext(request, {"form": form_class()})
-    rendered = template.render(context)
-    rendered = [l for l in rendered.split("\n")]
-    rendered = re.sub("\s+", " ", "".join(rendered))
-    return rendered
-
-
 @pytest.mark.parametrize(
     "form_class,has_enctype",
     (
@@ -41,12 +30,12 @@ def render_form(request, form_class):
         (FileFieldForm, True),
     ),
 )
-def test_base_form_enctype(form_class, has_enctype, rf):
-    rendered = render_form(rf.get("/"), form_class)
+def test_base_form_enctype(form_class, has_enctype, render_form):
+    rendered = render_form(form_class())
     assert ('enctype="multipart/form-data' in rendered) is has_enctype
 
 
-def test_layout_title(rf):
+def test_layout_title(render_form):
     class TitleForm(BaseForm):
         class Layout:
             TITLE = "title"
@@ -54,11 +43,11 @@ def test_layout_title(rf):
         def get_layout_fields(self):
             return []
 
-    rendered = render_form(rf.get("/"), TitleForm)
+    rendered = render_form(TitleForm())
     assert '<h1 class="govuk-heading-xl">title</h1>' in rendered
 
 
-def test_layout_title_as_legend(rf):
+def test_layout_title_as_legend(render_form):
     class TitleAsLegendForm(BaseForm):
         class Layout:
             TITLE = "title"
@@ -69,11 +58,11 @@ def test_layout_title_as_legend(rf):
         def get_layout_fields(self):
             return []
 
-    rendered = render_form(rf.get("/"), TitleAsLegendForm)
+    rendered = render_form(TitleAsLegendForm())
     assert '<h1 class="govuk-heading-xl"><label for="id_char_field">title</label></h1>' in rendered
 
 
-def test_layout_title_and_subtitle(rf):
+def test_layout_title_and_subtitle(render_form):
     class TitleAndSubtitleForm(BaseForm):
         class Layout:
             TITLE = "title"
@@ -82,12 +71,12 @@ def test_layout_title_and_subtitle(rf):
         def get_layout_fields(self):
             return []
 
-    rendered = render_form(rf.get("/"), TitleAndSubtitleForm)
+    rendered = render_form(TitleAndSubtitleForm())
     assert '<h1 class="govuk-heading-xl govuk-!-margin-bottom-0">title</h1>' in rendered
     assert '<p class="govuk-hint">subtitle</p>' in rendered
 
 
-def test_layout_title_as_legend_and_subtitle(rf):
+def test_layout_title_as_legend_and_subtitle(render_form):
     class TitleAsLegendAndSubtitleForm(BaseForm):
         class Layout:
             TITLE = "title"
@@ -99,7 +88,7 @@ def test_layout_title_as_legend_and_subtitle(rf):
         def get_layout_fields(self):
             return []
 
-    rendered = render_form(rf.get("/"), TitleAsLegendAndSubtitleForm)
+    rendered = render_form(TitleAsLegendAndSubtitleForm())
     assert (
         '<h1 class="govuk-heading-xl govuk-!-margin-bottom-0"><label for="id_char_field">title</label></h1>' in rendered
     )
@@ -130,15 +119,15 @@ class OverriddenSubmitButton(BaseForm):
         (OverriddenSubmitButton, "Overridden"),
     ),
 )
-def test_submit_button(form_class, submit_button_text, rf):
-    rendered = render_form(rf.get("/"), form_class)
+def test_submit_button(form_class, submit_button_text, render_form):
+    rendered = render_form(form_class())
     assert (
         f'<input type="submit" name="submit" value="{submit_button_text}" class="govuk-button" id="submit-id-submit" />'
         in rendered
     )
 
 
-def test_actions_wrapped_in_button_group(rf):
+def test_actions_wrapped_in_button_group(render_form):
     class ButtonGroupForm(BaseForm):
         class Layout:
             TITLE = "Button group form"
@@ -146,17 +135,17 @@ def test_actions_wrapped_in_button_group(rf):
         def get_layout_fields(self):
             return []
 
-    rendered = render_form(rf.get("/"), ButtonGroupForm)
+    rendered = render_form(ButtonGroupForm())
     assert (
         f'<div class="govuk-button-group" > <input type="submit" name="submit" value="Continue" class="govuk-button" id="submit-id-submit" /></div>'
         in rendered
     )
 
 
-def test_no_get_layout_fields(rf):
+def test_no_get_layout_fields(render_form):
     class NoGetLayoutFields(BaseForm):
         class Layout:
             TITLE = "No get layout fields"
 
     with pytest.raises(NotImplementedError):
-        render_form(rf.get("/"), NoGetLayoutFields)
+        render_form(NoGetLayoutFields())
