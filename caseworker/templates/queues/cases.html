@@ -7,7 +7,7 @@
 
 {% block title %}{% if "All cases" in queue.name and selected_tab == "my_cases" %}View all cases in LITE - My cases{% elif "All cases" in queue.name and selected_tab == "open_queries" %}View all cases in LITE - Open queries{% elif "All cases" in queue.name %}View all cases in LITE{% elif selected_tab == "my_cases" %}{{ queue.name }} - My cases{% elif selected_tab == "open_queries" %}{{ queue.name }} - Open queries{% else %}{{ queue.name }}{% endif %}{% endblock %}
 
-{% block messages %}
+{% comment %} {% block messages %}
 	{{ block.super }}
 	{% if queue.id != updated_cases_banner_queue_id and show_updated_cases_banner %}
 		<a id="banner-exporter-amendments" class="app-hidden govuk-width-container app-snackbar app-snackbar--no-animation" href="{% url 'queues:cases' updated_cases_banner_queue_id %}">
@@ -17,7 +17,7 @@
 			</div>
 		</a>
 	{% endif %}
-{% endblock %}
+{% endblock %} {% endcomment %}
 
 {% block body %}
 	<div class="lite-app-bar">
