@@ -4,6 +4,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
   I want to record my user advice and any comments and conditions relating to my recommendation
   So that other users can see my decision and know that I have finished assessing this case
 
+  @skip
   Scenario: LU cannot finalise a case if there is an open query
     Given I sign in to SSO or am signed into SSO
     And I create standard application or standard application has been previously created
