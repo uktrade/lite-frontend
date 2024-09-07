@@ -32,6 +32,7 @@ from core.builtins.custom_tags import (
 )
 from exporter.core.helpers import convert_to_link, convert_control_list_entries
 from exporter.goods.helpers import requires_serial_numbers
+from exporter.applications.constants import ApplicationStatus
 
 from lite_content.lite_exporter_frontend import applications
 from lite_content.lite_exporter_frontend.strings import Parties
@@ -246,7 +247,11 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
 
     requires_actions_column = any(requires_actions(application, g) for g in goods_on_application)
     for good_on_application in goods_on_application:
-        control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
+        # When it is in Draft stage it will show all CLEs otherwise it will show the ones assessed by TAU
+        if application["status"].get("key") == ApplicationStatus.DRAFT:
+            control_list_entries = convert_control_list_entries(good_on_application["good"]["control_list_entries"])
+        else:
+            control_list_entries = convert_control_list_entries(good_on_application["control_list_entries"])
 
         if good_on_application["good"].get("name"):
             name = good_on_application["good"]["name"]

@@ -3,7 +3,7 @@ Feature: I want to test users
 
   @skip @legacy
   Scenario: Add user, deactivate then reactivate
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     # Adds a new user and making sure it shows as active
     When I go to users
     When I add a new user

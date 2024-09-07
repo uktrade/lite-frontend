@@ -5,7 +5,7 @@ Feature: I want to view the case details of a case
   So that I can make review the case before making any decisions
 
   Scenario: Gov user can view product document
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And the status is set to "submitted"
     When I go to the case list page
@@ -22,7 +22,7 @@ Feature: I want to view the case details of a case
 
   @skip @legacy
   Scenario: Gov user can see all parties on the case
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     # Ensure the application is in a submitted state in case workflow has been run
     And the status is set to "submitted"
@@ -40,7 +40,7 @@ Feature: I want to view the case details of a case
 
   @skip @legacy
   Scenario: Gov user can see exporter has made changes to case
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     # Ensure the application is in a submitted state in case workflow has been run
     And the status is set to "submitted"

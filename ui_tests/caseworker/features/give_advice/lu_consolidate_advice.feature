@@ -6,7 +6,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
 
   @skip @lu_consolidate_advice
   Scenario: LU consolidate advice journey
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
     When I go to my profile page
