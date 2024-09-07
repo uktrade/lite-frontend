@@ -5,14 +5,12 @@ Feature: I want to change the license state of a licence that has been issued.
 
   @lu_change_licence_status
   Scenario: LU change licence status
-    Given I sign in as Test UAT user
+    Given I sign in as Licensing Unit Officer
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I prepare the application for final review
-    When I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
-    And I go to my case list
+    When I go to my case list
     And I click the application previously created
-    And I assign myself to the case
+    And I assign myself as case officer to the case
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
@@ -24,19 +22,19 @@ Feature: I want to change the license state of a licence that has been issued.
     And I see "licence condition" as the licence condition
     And I see countersign required warning message
     When I click move case forward
-    And I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
+    And I logout
+    And I sign in as Licensing Unit Manager
     And I go to my case list
     And I click the application previously created
+    And I assign myself as case adviser to the case
     And I click the recommendations and decision tab
     And I click "Review and countersign"
     And I agree with outcome and provide "licensing manager approved" as countersign comments
     And I click submit recommendation
     Then I see "licensing manager approved" as countersign comments
     When I click move case forward
-    And I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
-    And I go to my case list
+    And I logout
+    And I sign in as Licensing Unit Officer
     And I click the application previously created
     And I click the recommendations and decision tab
     And I click "Finalise case"
@@ -50,7 +48,7 @@ Feature: I want to change the license state of a licence that has been issued.
     When I click continue
     And I click save and publish to exporter
     And I logout
-    And I sign in as user with Licensing Unit Senior Manager role
+    And I sign in as Licensing Unit Senior Manager
     And I click on the "All cases" queue in dropdown
     And I click the application previously created
     And I click on "Licences" tab
