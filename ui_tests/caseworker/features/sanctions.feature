@@ -5,7 +5,7 @@ Feature: I want to check sanctions matches
   For a case is created with a name on it that has a sanction
 
   Scenario: check a sanction match is highlighted
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     When I go to application previously created
     Then I see the section of the case page entitled Sanction matches

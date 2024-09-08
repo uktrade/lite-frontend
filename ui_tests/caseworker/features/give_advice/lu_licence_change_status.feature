@@ -1,13 +1,12 @@
-@all @internal @give_advice
-Feature: I want to record my user advice and any comments and conditions relating to my recommendation
-  As a logged in government user working on a specific case that is assigned to me
-  I want to record my user advice and any comments and conditions relating to my recommendation
-  So that other users can see my decision and know that I have finished assessing this case
+@all @internal @change_licence_status
+Feature: I want to change the license state of a licence that has been issued.
+  As a logged in government user as LU Senior Manager I want to revoke a Licence that has been issued.
+  Also Need to ensure that my action has been recorded in Notes and timeline
 
-  @skip @lu_countersign
-  Scenario: LU countersign
+  @lu_change_licence_status
+  Scenario: LU change licence status
     Given I sign in as Test UAT user
-    And I create standard application or standard application has been previously created
+    And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
     And I prepare the application for final review
     When I go to my profile page
     And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
@@ -50,6 +49,17 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see that "16. Control list no" is "ML1a" on the SIEL licence preview
     When I click continue
     And I click save and publish to exporter
-    And I click on "Details" tab
-    Then I see the case status is now "Finalised"
-    And I see the case is not assigned to any queues
+    And I logout
+    And I sign in as user with Licensing Unit Senior Manager role
+    And I click on the "All cases" queue in dropdown
+    And I click the application previously created
+    And I click on "Licences" tab
+    Then I see that licence status shows as "Issued"
+    When I click change licence status
+    And I click suspend licence and submit
+    And I confirm suspending the licence
+    Then I see that licence status shows as "Suspended"
+
+    Examples:
+    | name     | product | part_number | clc_rating  | end_user_name      | end_user_address  | country | consignee_name      | consignee_address   | end_use                  |
+    | Test2    | Rifle   | SN-ABC/123  | PL9002      | Automated End user | 1234, High street | BE      | Automated Consignee | 1234, Trade centre  | Research and development |

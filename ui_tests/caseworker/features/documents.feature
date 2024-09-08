@@ -5,7 +5,7 @@ I want to attach related documents to a case and view attached documents
 So that it is recorded against the case and available for other case workers to view
 
   Scenario: Upload a new document that doesn't contain a virus
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     And I go to the documents tab
@@ -17,7 +17,7 @@ So that it is recorded against the case and available for other case workers to 
     Then I see a file with filename "additional_information.txt" is uploaded
 
   Scenario: Download the good and end user document of a submitted application
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create standard application or standard application has been previously created
     When I go to application previously created
     Then I can click on the consignee document download link

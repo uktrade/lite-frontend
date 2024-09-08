@@ -8,7 +8,7 @@ from ..tools.utils import build_test_helper
 MAX_WORKERS = 3
 
 
-@fixture(scope="session")
+@fixture()
 def context(request):
     class Context(object):
         pass
@@ -16,12 +16,12 @@ def context(request):
     return Context()
 
 
-@fixture(scope="session")
+@fixture()
 def exporter_info(request, environment):
     return create_govuk_sso_user()
 
 
-@fixture(scope="session")
+@fixture()
 def internal_info(request, environment, worker_id):
     # For parallel execution, ensure that a TEST_SSO_EMAIL_n and TEST_SSO_PASSWORD_n
     # pair of environment variables exist for each worker. n is zero-based and is
@@ -47,7 +47,7 @@ def internal_info(request, environment, worker_id):
     }
 
 
-@fixture(scope="session")
+@fixture()
 def api_client(request, exporter_info, internal_info, api_url, context, environment):
     base_url = api_url.rstrip("/")
     request_data = build_request_data(exporter_user=exporter_info, gov_user=internal_info)
@@ -55,6 +55,6 @@ def api_client(request, exporter_info, internal_info, api_url, context, environm
     return api_client
 
 
-@fixture(scope="session")
+@fixture()
 def api_test_client(api_client, context):
     return build_test_helper(api_client)
