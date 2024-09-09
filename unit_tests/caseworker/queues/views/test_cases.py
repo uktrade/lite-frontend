@@ -138,7 +138,6 @@ def test_cases_home_page_view_context(authorized_client):
         "queue",
         "is_all_cases_queue",
         "enforcement_check",
-        "updated_cases_banner_queue_id",
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert isinstance(response.context["form"], CasesFiltersForm)
