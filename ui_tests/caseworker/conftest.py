@@ -960,7 +960,7 @@ def submit_case_as_team_with_decision(driver, team, queue, decision, context, in
     go_to_team_edit_page(driver, team, queue)
     get_my_case_list(driver)
     i_click_application_previously_created(driver, context)
-    i_assign_myself_to_case(driver, internal_info)
+    i_assign_myself_as_case_officer(driver, internal_info)
     im_done_button(driver)
 
     if decision:
@@ -979,7 +979,7 @@ def approve_case_as_team(driver, team, queue, context, internal_url, internal_in
     go_to_team_edit_page(driver, team, queue)
     get_my_case_list(driver)
     i_click_application_previously_created(driver, context)
-    i_assign_myself_to_case(driver, internal_info)
+    i_assign_myself_as_case_officer(driver, internal_info)
     case_page = CasePage(driver)
     case_page.change_tab(CaseTabs.RECOMMENDATIONS_AND_DECISIONS)
     recommendation_and_decisions_page = RecommendationsAndDecisionPage(driver)
@@ -999,7 +999,7 @@ def approve_case_as_team(driver, team, queue, context, internal_url, internal_in
     go_to_team_edit_page(driver, team, queue)
     get_my_case_list(driver)
     i_click_application_previously_created(driver, context)
-    i_assign_myself_to_case(driver, internal_info)
+    i_assign_myself_as_case_officer(driver, internal_info)
     case_page = CasePage(driver)
     case_page.change_tab(CaseTabs.RECOMMENDATIONS_AND_DECISIONS)
     recommendation_and_decisions_page = RecommendationsAndDecisionPage(driver)
@@ -1072,8 +1072,13 @@ def add_cle_value(driver, control_code):  # noqa
     add_goods_page.enter_control_list_entries(control_code)
 
 
-@when("I assign myself to the case")
-def i_assign_myself_to_case(driver, internal_info):  # noqa
+@when("I assign myself as case adviser to the case")
+def allocate_myself_to_the_case(driver):
+    allocate_to_me = driver.find_element(by=By.ID, value="allocate-to-me-button")
+    allocate_to_me.click()
+
+
+def assign_as_case_officer(driver, email):
     case_page = CasePage(driver)
     if case_page.get_assigned_case_officer() != "Not assigned":
         # remove case officer before I assign myself
@@ -1083,10 +1088,20 @@ def i_assign_myself_to_case(driver, internal_info):  # noqa
     case_page.click_assign_case_officer()
     # search for myself
     case_officer_page = CaseOfficerPage(driver)
-    case_officer_page.search(internal_info["email"])
+    case_officer_page.search(email)
     # search for myself
     case_officer_page.select_first_user()
     functions.click_submit(driver)
+
+
+@when("I assign myself as case officer to the case")
+def assign_myself_as_case_officer(driver):  # noqa
+    assign_as_case_officer(driver, "lucaseofficer@digital.trade.gov.uk")
+
+
+@when("I assign myself to the case")
+def i_assign_myself_as_case_officer(driver, internal_info):  # noqa
+    assign_as_case_officer(driver, internal_info["email"])
 
 
 @when("I remove case officer from the case")
