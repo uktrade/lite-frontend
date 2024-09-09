@@ -15,4 +15,11 @@ class DisablingButton {
   }
 }
 
+const initDisablingButton = () => {
+  document
+    .querySelectorAll("[data-module=disabling-button]")
+    .forEach(($el) => new DisablingButton($el).init());
+};
+
 export default DisablingButton;
+export { initDisablingButton };
