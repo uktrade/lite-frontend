@@ -12,7 +12,6 @@ from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_
 from caseworker.core.constants import (
     ALL_CASES_QUEUE_ID,
     Permission,
-    # UPDATED_CASES_QUEUE_ID,
     SLA_CIRCUMFERENCE,
     SLA_RADIUS,
 )
@@ -327,14 +326,6 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
 
-        # try:
-        #     updated_queue = [
-        #         queue for queue in self.data["results"]["queues"] if queue["id"] == UPDATED_CASES_QUEUE_ID
-        #     ][0]
-        #     show_updated_cases_banner = updated_queue["case_count"]
-        # except IndexError:
-        #     show_updated_cases_banner = False
-
         for case in self.data["results"]["cases"]:
             self.transform_case(case)
 
@@ -353,8 +344,6 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
                 "is_filters_visible": self.is_filters_visible(),
                 "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
                 "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
-                # "updated_cases_banner_queue_id": UPDATED_CASES_QUEUE_ID,
-                # "show_updated_cases_banner": show_updated_cases_banner,
                 "selected_tab": self.get_selected_tab(),
                 "tab_data": self._tab_data(),
                 "bookmarks": bookmarks,
