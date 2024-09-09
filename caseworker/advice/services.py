@@ -211,7 +211,7 @@ def get_countersign_decision_advice_by_user(case, caseworker):
     return result
 
 
-def get_final_advisors(case):
+def get_final_advisers(case):
     """Get a set of user ids representing the users that have already
     given final advice on the Case`.
     """

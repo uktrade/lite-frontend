@@ -507,10 +507,19 @@ def test_is_user_in_lu_team(gov_user, get_mock_request, expected_result, request
     "advice_data, expected_result",
     (
         ([], False),
-        ([{"type": "approve", "team": {"name": "FCDO", "alias": "FCO"}}], False),
-        ([{"type": "approve", "team": {"name": "MOD_DI", "alias": "MOD_DI"}}], False),
-        ([{"type": "approve", "team": {"name": "MOD_DSR", "alias": "MOD_DSR"}}], False),
-        ([{"type": "approve", "team": {"name": "LICENSING_UNIT", "alias": "LICENSING_UNIT"}}], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "FCDO", "alias": "FCO"}}], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "MOD_DI", "alias": "MOD_DI"}}], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "MOD_DSR", "alias": "MOD_DSR"}}], False),
+        (
+            [
+                {
+                    "type": "approve",
+                    "level": AdviceLevel.USER,
+                    "team": {"name": "LICENSING_UNIT", "alias": "LICENSING_UNIT"},
+                }
+            ],
+            False,
+        ),
         (
             [
                 {"type": "approve", "level": AdviceLevel.USER, "team": {"name": "FCDO", "alias": "FCO"}},
@@ -555,7 +564,7 @@ def invalid_user():
         ("LU_senior_licensing_manager", True),
     ),
 )
-def test_user_is_not_final_advisor(gov_user, expected_result, request, get_mock_request, LU_case_officer):
+def test_user_is_not_final_adviser(gov_user, expected_result, request, get_mock_request, LU_case_officer):
     case = {
         "case_officer": LU_case_officer,
         "advice": [
@@ -566,7 +575,7 @@ def test_user_is_not_final_advisor(gov_user, expected_result, request, get_mock_
         ],
     }
     user = request.getfixturevalue(gov_user)
-    assert caseworker_rules.user_is_not_final_advisor(get_mock_request(user), case) == expected_result
+    assert caseworker_rules.user_is_not_final_adviser(get_mock_request(user), case) == expected_result
 
 
 @pytest.mark.parametrize(

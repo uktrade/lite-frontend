@@ -653,7 +653,7 @@ def mock_gov_lu_case_officer(requests_mock, LU_case_officer):
     requests_mock.get(url=f"{url}me/", json=data)
     requests_mock.get(url=re.compile(f"{url}{LU_case_officer['id']}/"), json=data)
 
-    yield data
+    return data
 
 
 @pytest.fixture
@@ -664,7 +664,7 @@ def mock_gov_lu_licensing_manager(requests_mock, LU_licensing_manager):
     requests_mock.get(url=f"{url}me/", json=data)
     requests_mock.get(url=re.compile(f"{url}{LU_licensing_manager['id']}/"), json=data)
 
-    yield data
+    return data
 
 
 @pytest.fixture
@@ -675,7 +675,7 @@ def mock_gov_lu_senior_licensing_manager(requests_mock, LU_senior_licensing_mana
     requests_mock.get(url=f"{url}me/", json=data)
     requests_mock.get(url=re.compile(f"{url}{LU_senior_licensing_manager['id']}/"), json=data)
 
-    yield data
+    return data
 
 
 @pytest.fixture

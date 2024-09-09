@@ -7,7 +7,7 @@ from caseworker.advice.services import (
     LICENSING_UNIT_TEAM,
     filter_advice_by_teams,
     filter_advice_by_level,
-    get_final_advisors,
+    get_final_advisers,
     get_countersigners_decision_advice,
 )
 from caseworker.core.constants import (
@@ -102,13 +102,9 @@ def case_has_final_advice(request, case):
     if not case_has_ogd_advice(request, case):
         return False
 
-    if not filter_advice_by_teams(case["advice"], [LICENSING_UNIT_TEAM]):
-        return False
-
-    if not filter_advice_by_level(case["advice"], [AdviceLevel.FINAL]):
-        return False
-
-    return True
+    final_advice = filter_advice_by_level(case["advice"], [AdviceLevel.FINAL])
+    final_advice_from_lu = [advice for advice in final_advice if advice["team"]["alias"] == LICENSING_UNIT_TEAM]
+    return len(final_advice_from_lu) > 0
 
 
 @rules.predicate
@@ -146,7 +142,7 @@ def is_case_caseworker_operable(request, case):
 
 
 @rules.predicate
-def user_is_not_final_advisor(request, case):
+def user_is_not_final_adviser(request, case):
 
     caseworker = get_logged_in_caseworker(request)
     if not caseworker:
@@ -154,10 +150,10 @@ def user_is_not_final_advisor(request, case):
 
     case_officer = case["case_officer"]
     case_officer = {case_officer.get("id", {})} if case_officer else set()
-    final_advisors = get_final_advisors(case)
-    all_advisors = case_officer | final_advisors
+    final_advisers = get_final_advisers(case)
+    all_advisers = case_officer | final_advisers
 
-    return caseworker["id"] not in all_advisors
+    return caseworker["id"] not in all_advisers
 
 
 @rules.predicate
@@ -181,7 +177,7 @@ rules.add_rule(
     is_user_allocated
     & is_user_in_lu_team
     & case_has_final_advice
-    & user_is_not_final_advisor
+    & user_is_not_final_adviser
     & user_not_yet_countersigned,
 )
 rules.add_rule("can_user_review_and_combine", is_user_allocated & (case_has_ogd_advice | is_case_nlr))  # noqa
