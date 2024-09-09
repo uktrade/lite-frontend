@@ -198,19 +198,23 @@ def put_organisation_user(request, user_pk, json):
     return data.json(), data.status_code
 
 
-def get_control_list_entries(request, convert_to_options=False):
-    response = client.get(request, "/exporter/static/control-list-entries/")
-
+def get_control_list_entries(request, convert_to_options=False, converted_control_list_entries_cache=[]):  # noqa
     if convert_to_options:
-        return [
-            Option(
-                key=control_list_entry["rating"],
-                value=control_list_entry["rating"],
-                description=control_list_entry["text"],
-            )
-            for control_list_entry in response.json()
-        ]
+        if converted_control_list_entries_cache:
+            return converted_control_list_entries_cache
+        else:
+            response = client.get(request, "/exporter/static/control-list-entries/")
+            for control_list_entry in response.json():
+                converted_control_list_entries_cache.append(
+                    Option(
+                        key=control_list_entry["rating"],
+                        value=control_list_entry["rating"],
+                        description=control_list_entry["text"],
+                    )
+                )
+            return converted_control_list_entries_cache
 
+    response = client.get(request, "/exporter/static/control-list-entries/")
     return response.json()
 
 
