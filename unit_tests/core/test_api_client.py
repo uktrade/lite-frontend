@@ -28,12 +28,11 @@ def test_zipkin_headers(settings):
     client.get(request, "/foo/")
     request.requests_session.request.assert_called_once_with(
         headers={
-            "content-type": "application/json",
             "ORGANISATION-ID": "None",
             "x-b3-traceid": "123",
             "x-b3-spanid": "456",
         },
-        json={},
+        json=None,
         method="GET",
         url=f"{settings.LITE_API_URL}/foo/",
         stream=False,
@@ -57,7 +56,7 @@ def test_verify_hawk_response():
     sender = Sender(
         {"id": "HAWK_ID", "key": "HAWK_KEY", "algorithm": "sha256"},
         "http://example.com/request/",
-        "GET",
+        "POST",
         content_type="application/json",
         content='{"request": "test"}',
     )
@@ -66,7 +65,7 @@ def test_verify_hawk_response():
         lambda x: {"id": "HAWK_ID", "key": "HAWK_KEY", "algorithm": "sha256"},
         sender.request_header,
         "http://example.com/request/",
-        "GET",
+        "POST",
         content_type="application/json",
         content='{"request": "test"}',
     )
@@ -79,6 +78,36 @@ def test_verify_hawk_response():
     response.headers["content-type"] = "application/json"
     response.status_code = 200
     response._content = '{"response": "test"}'
+
+    assert verify_hawk_response(response, sender) is None
+
+
+def test_verify_hawk_response_empty_get():
+    sender = Sender(
+        {"id": "HAWK_ID", "key": "HAWK_KEY", "algorithm": "sha256"},
+        "http://example.com/request/",
+        "GET",
+        content_type="",
+        content="",
+    )
+
+    receiver = Receiver(
+        lambda x: {"id": "HAWK_ID", "key": "HAWK_KEY", "algorithm": "sha256"},
+        sender.request_header,
+        "http://example.com/request/",
+        "GET",
+        content_type="",
+        content="",
+    )
+
+    response = Response()
+    response.headers["server-authorization"] = receiver.respond(
+        "",
+        content_type="",
+    )
+    response.headers["content-type"] = ""
+    response.status_code = 200
+    response._content = ""
 
     assert verify_hawk_response(response, sender) is None
 

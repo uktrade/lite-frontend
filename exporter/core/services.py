@@ -203,21 +203,19 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
         if converted_control_list_entries_cache:
             return converted_control_list_entries_cache
         else:
-            data = client.get(request, "/static/control-list-entries/?flatten=True")
-
-        for control_list_entry in data.json().get("control_list_entries", []):
-            converted_control_list_entries_cache.append(
-                Option(
-                    key=control_list_entry["rating"],
-                    value=control_list_entry["rating"],
-                    description=control_list_entry["text"],
+            response = client.get(request, "/exporter/static/control-list-entries/")
+            for control_list_entry in response.json():
+                converted_control_list_entries_cache.append(
+                    Option(
+                        key=control_list_entry["rating"],
+                        value=control_list_entry["rating"],
+                        description=control_list_entry["text"],
+                    )
                 )
-            )
+            return converted_control_list_entries_cache
 
-        return converted_control_list_entries_cache
-
-    data = client.get(request, "/static/control-list-entries/")
-    return data.json().get("control_list_entries")
+    response = client.get(request, "/exporter/static/control-list-entries/")
+    return response.json()
 
 
 # F680 clearance types

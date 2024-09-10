@@ -83,15 +83,24 @@ def verify_hawk_response(response, sender, stream=False):
 
 
 def perform_request(method, request, appended_address, data=None, stream=False):
-    data = data or {}
     session = request.requests_session  # provided by RequestsSessionMiddleware
     url = _build_absolute_uri(appended_address.replace(" ", "%20"))
 
+    if method in ["GET", "HEAD"]:
+        # If we not sending any data then the hawk header should be defined with no content and no header
+        content_type = ""
+        content = None
+        data = None
+    else:
+        data = data or {}
+        content_type = "application/json"
+        content = json.dumps(data)
+
     if settings.HAWK_AUTHENTICATION_ENABLED:
-        sender = _get_hawk_sender(url, method, "application/json", json.dumps(data))
+        sender = _get_hawk_sender(url, method, content_type, content)
         headers = _get_headers(request, sender)
     else:
-        headers = _get_headers(request, content_type="application/json")
+        headers = _get_headers(request, content_type=content_type)
 
     logger.debug("API request: %s %s %s %s", method, url, headers, data)
 

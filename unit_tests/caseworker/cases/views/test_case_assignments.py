@@ -96,6 +96,7 @@ def test_case_assignments_POST_remove_user_success(
     case = data_standard_case
     url = reverse("cases:remove-case-assignment", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
     response = authorized_client.post(url, data={"assignment_id": str(data_assignment["id"])}, follow=True)
+
     assert response.status_code == 200
     assert (
         response.redirect_chain[-1][0]

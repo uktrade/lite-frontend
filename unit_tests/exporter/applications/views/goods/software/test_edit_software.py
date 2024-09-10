@@ -10,7 +10,7 @@ def setup(
     mock_application_get,
     mock_good_get,
     mock_good_put,
-    mock_control_list_entries_get,
+    mock_exporter_control_list_entries_get,
 ):
     yield
 
