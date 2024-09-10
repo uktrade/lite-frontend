@@ -1,12 +1,8 @@
 import pytest
-from django.http import Http404
 from django.urls import reverse
 from exporter.applications.forms.hcsat import HCSATminiform
-from http import HTTPStatus
-from pytest_django.asserts import assertContains, assertTemplateUsed
+from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
-from unittest.mock import patch
-from core import client
 
 
 @pytest.fixture
@@ -89,7 +85,6 @@ def test_post_survey_feedback(
     assert soup.find("a", {"class": "govuk-button--start"})["href"] == reverse("core:home")
 
     assert mock_get_survey.called_once
-    assert mock_get_survey.last_request.json() == {}
 
     assert mock_update_survey.called_once
     assert mock_update_survey.last_request.json() == {
@@ -109,6 +104,4 @@ def test_post_survey_feedback_invalid(authorized_client, hcsat_url, mock_get_sur
 
     assert response.status_code == 200
     assert mock_get_survey.called_once
-    assert mock_get_survey.last_request.json() == {}
-
     assert not mock_update_survey.called

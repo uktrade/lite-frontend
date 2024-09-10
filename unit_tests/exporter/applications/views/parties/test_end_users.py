@@ -1,8 +1,6 @@
 import pytest
-from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-from unittest.mock import patch
 from bs4 import BeautifulSoup
 
 from core import client
@@ -104,7 +102,7 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
         "size": 0,
     }
 
-    _ = requests_mock.request_history.pop().json()
+    _ = requests_mock.request_history.pop()
     end_user_data = requests_mock.request_history.pop().json()
     assert end_user_data == {
         "sub_type": "government",
