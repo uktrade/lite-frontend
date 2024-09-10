@@ -91,15 +91,12 @@ class ApplicationMajorEditConfirmationForm(BaseForm):
         ]
 
     def get_layout_actions(self):
-        layout_actions = super().get_layout_actions()
-
-        layout_actions.append(
+        return [
+            Submit("submit", "Continue", data_module="disabling-button"),
             HTML(
                 f'<a class="govuk-button govuk-button--secondary" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
             ),
-        )
-
-        return layout_actions
+        ]
 
 
 class ApplicationsListSortForm(BaseForm):

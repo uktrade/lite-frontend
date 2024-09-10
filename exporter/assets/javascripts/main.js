@@ -13,6 +13,7 @@ import initMultiSelects from "./multi-select";
 import initAutoCompleteSelects from "./autocomplete-select";
 import initStarRating from "../../../core/assets/javascripts/star-rating.js";
 import initSortBy from "./sort_by.js";
+import { initDisablingButton } from "../../../core/assets/javascripts/disabling-button.js";
 // our styles
 import "../scss/styles.scss";
 // init govuk
@@ -25,4 +26,5 @@ $(document).ready(function () {
   gaPushUserID();
   initStarRating();
   initSortBy();
+  initDisablingButton();
 });
