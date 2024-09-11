@@ -1,5 +1,6 @@
 from functools import partial
 import json
+import logging
 
 from django.core.cache import cache
 from mohawk import Sender
@@ -7,6 +8,9 @@ from mohawk.exc import AlreadyProcessed
 import sentry_sdk
 
 from django.conf import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 def _build_absolute_uri(appended_address):
@@ -62,7 +66,6 @@ def _seen_nonce(access_key_id, nonce, timestamp):
 
 
 def verify_hawk_response(response, sender, stream=False):
-
     if "server-authorization" not in response.headers:
         sentry_sdk.set_context("response", {"content": response.content})
         raise RuntimeError("Missing server_authorization header. Probable API HAWK auth failure")
@@ -99,8 +102,7 @@ def perform_request(method, request, appended_address, data=None, stream=False):
     else:
         headers = _get_headers(request, content_type=content_type)
 
-    if method == "GET" and headers.get("Content-Length"):
-        del headers["Content-Length"]
+    logger.debug("API request: %s %s %s %s", method, url, headers, data)
 
     response = session.request(method=method, url=url, headers=headers, json=data, stream=stream)
 
