@@ -1,6 +1,6 @@
 import pytest
 from exporter.organisation.members.users import forms
-from exporter.core.enums import Roles
+from core.constants import ExporterRoles
 
 
 @pytest.mark.parametrize(
@@ -43,7 +43,10 @@ def test_select_role_form_validation(data, valid):
 )
 def test_select_role_form_validation(data, valid, error, mock_sites, mock_organisation_users_list):
     form = forms.AddUserForm(
-        data=data, organisation_users=mock_organisation_users_list, role_id=Roles.agent.id, sites=mock_sites["sites"]
+        data=data,
+        organisation_users=mock_organisation_users_list,
+        role_id=ExporterRoles.agent.id,
+        sites=mock_sites["sites"],
     )
     assert form.is_valid() == valid
 
@@ -56,7 +59,7 @@ def test_select_role_form(mock_sites, mock_organisation_users_list):
     form = forms.AddUserForm(
         data=data,
         organisation_users=mock_organisation_users_list,
-        role_id=Roles.administrator.id,
+        role_id=ExporterRoles.administrator.id,
         sites=mock_sites["sites"],
     )
     assert form.is_valid()
@@ -66,7 +69,7 @@ def test_select_role_form(mock_sites, mock_organisation_users_list):
         form.fields["sites"].choices[0].hint
         == "\n    42 Question Road<br />\n\n    London<br />\n\n    Islington<br />\n\n    United Kingdom<br />\n\n"
     )
-    assert Roles.administrator.name in form.Layout.TITLE
+    assert ExporterRoles.administrator.name in form.Layout.TITLE
 
 
 def test_select_role_validate_email(mock_sites, mock_organisation_users_list):
@@ -77,7 +80,7 @@ def test_select_role_validate_email(mock_sites, mock_organisation_users_list):
     form = forms.AddUserForm(
         data=data,
         organisation_users=mock_organisation_users_list,
-        role_id=Roles.administrator.id,
+        role_id=ExporterRoles.administrator.id,
         sites=mock_sites["sites"],
     )
     assert not form.is_valid()
