@@ -12,7 +12,7 @@ from lite_content.lite_exporter_frontend.goods import CreateGoodForm
 
 @pytest.fixture(autouse=True)
 def setup(
-    mock_control_list_entries,
+    mock_exporter_control_list_entries,
     mock_pv_gradings,
 ):
     yield
@@ -379,6 +379,48 @@ def test_product_uses_information_security_form(data, valid):
             False,
             "name",
             "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes",
+        ),
+        (
+            {
+                "name": "test_name",
+                "description": "test desc",
+                "part_number": "part_no",
+                "is_good_controlled": "True",
+                "control_list_entries": ["ML1", "ML1a"],
+                "is_pv_graded": "",
+            },
+            None,
+            False,
+            "name",
+            "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes",
+        ),
+        (
+            {
+                "name": "test $@name",
+                "description": "test desc",
+                "part_number": "part_no",
+                "is_good_controlled": "True",
+                "control_list_entries": ["ML1", "ML1a"],
+                "is_pv_graded": "",
+            },
+            None,
+            False,
+            "name",
+            "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes",
+        ),
+        (
+            {
+                "name": "test-!.<>/%&*;+'(),.namename",
+                "description": "test desc",
+                "part_number": "part_no",
+                "is_good_controlled": "True",
+                "control_list_entries": ["ML1", "ML1a"],
+                "is_pv_graded": "yes",
+            },
+            "12345",
+            True,
+            None,
+            None,
         ),
     ),
 )

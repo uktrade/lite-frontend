@@ -86,6 +86,26 @@ def test_party_website_form(data, valid, errors):
     (
         ({"address": "1 somewhere", "country": "aus"}, True, None),
         ({"address": "", "country": ""}, False, {"address": ["Enter an address"], "country": ["Select the country"]}),
+        ({"address": "This-is-a-valid-address", "country": "aus"}, True, None),
+        ({"address": "this\r\nis\r\ninvalid", "country": "aus"}, True, None),
+        (
+            {"address": "this_is_not", "country": "aus"},
+            False,
+            {
+                "address": [
+                    "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
+        (
+            {"address": "this\w\ais\a\ainvalid", "country": "aus"},
+            False,
+            {
+                "address": [
+                    "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
     ),
 )
 @patch("exporter.applications.forms.parties.get_countries")
