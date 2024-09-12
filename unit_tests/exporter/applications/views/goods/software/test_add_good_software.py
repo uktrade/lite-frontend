@@ -241,7 +241,7 @@ def test_add_good_technology_no_pv(
 
     response = post_to_step(
         AddGoodTechnologySteps.NAME,
-        {"name": "product_1"},
+        {"name": "product-1"},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], ProductControlListEntryForm)
@@ -317,7 +317,7 @@ def test_add_good_technology_no_pv(
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
         "item_category": "group3_software",
-        "name": "product_1",
+        "name": "product-1",
         "is_good_controlled": False,
         "control_list_entries": [],
         "is_pv_graded": "no",
