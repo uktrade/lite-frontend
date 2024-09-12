@@ -1,19 +1,34 @@
 import rules
 
+from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import (
-    filter_advice_by_teams,
     GOODS_NOT_LISTED_ID,
     OGD_TEAMS,
+    LICENSING_UNIT_TEAM,
+    filter_advice_by_teams,
+    filter_advice_by_level,
+    get_final_advisers,
+    get_countersigners_decision_advice,
 )
 from caseworker.core.constants import (
     ADMIN_TEAM_ID,
     TAU_TEAM_ID,
+    LICENSING_UNIT_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
 )
 from caseworker.cases.services import get_case_sub_statuses
 from caseworker.core.services import get_caseworker_operable_case_statuses
 from caseworker.flags.helpers import has_flag
 from core.constants import CaseStatusEnum, LicenceStatusEnum
+
+
+def get_logged_in_caseworker(request):
+    try:
+        user = request.lite_user
+    except AttributeError:
+        return False
+
+    return user
 
 
 @rules.predicate
@@ -23,20 +38,20 @@ def has_available_sub_statuses(request, case):
 
 @rules.predicate
 def is_user_case_officer(request, case):
-    try:
-        user = request.lite_user
-    except AttributeError:
+    user = get_logged_in_caseworker(request)
+    if not user:
         return False
+
     case_officer = case["case_officer"]
     return case_officer is not None and user and user["id"] == case_officer.get("id")
 
 
 @rules.predicate
 def is_user_assigned(request, case):
-    try:
-        user = request.lite_user
-    except AttributeError:
+    user = get_logged_in_caseworker(request)
+    if not user:
         return False
+
     if user and case["assigned_users"]:
         # Loop through all queues to check if user is assigned
         for _, assigned_users in case["assigned_users"].items():
@@ -61,6 +76,14 @@ def is_user_in_tau_team(request):
 
 
 @rules.predicate
+def is_user_in_lu_team(request):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+    return user and user.get("team", {}).get("id") == LICENSING_UNIT_TEAM_ID
+
+
+@rules.predicate
 def case_has_ogd_advice(request, case):
     if not case["advice"]:
         return False
@@ -69,6 +92,19 @@ def case_has_ogd_advice(request, case):
         return False
 
     return True
+
+
+@rules.predicate
+def case_has_final_advice(request, case):
+    if not case["advice"]:
+        return False
+
+    if not case_has_ogd_advice(request, case):
+        return False
+
+    final_advice = filter_advice_by_level(case["advice"], [AdviceLevel.FINAL])
+    final_advice_from_lu = [advice for advice in final_advice if advice["team"]["alias"] == LICENSING_UNIT_TEAM]
+    return len(final_advice_from_lu) > 0
 
 
 @rules.predicate
@@ -98,17 +134,52 @@ def is_case_finalised_and_licence_editable(request, licence):
 
 @rules.predicate
 def is_case_caseworker_operable(request, case):
-    try:
-        request.lite_user
-    except AttributeError:
+    caseworker = get_logged_in_caseworker(request)
+    if not caseworker:
         return False
+
     return case.status in get_caseworker_operable_case_statuses(request)
+
+
+@rules.predicate
+def user_is_not_final_adviser(request, case):
+
+    caseworker = get_logged_in_caseworker(request)
+    if not caseworker:
+        return False
+
+    case_officer = case["case_officer"]
+    case_officer = {case_officer.get("id", {})} if case_officer else set()
+    final_advisers = get_final_advisers(case)
+    all_advisers = case_officer | final_advisers
+
+    return caseworker["id"] not in all_advisers
+
+
+@rules.predicate
+def user_not_yet_countersigned(request, case):
+
+    caseworker = get_logged_in_caseworker(request)
+    if not caseworker:
+        return False
+
+    countersigners = get_countersigners_decision_advice(case, caseworker)
+
+    return caseworker["id"] not in countersigners
 
 
 rules.add_rule("can_user_allocate_case", is_case_caseworker_operable)
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
 rules.add_rule("can_user_review_and_countersign", is_user_allocated)
+rules.add_rule(
+    "can_user_be_allowed_to_lu_countersign",
+    is_user_allocated
+    & is_user_in_lu_team
+    & case_has_final_advice
+    & user_is_not_final_adviser
+    & user_not_yet_countersigned,
+)
 rules.add_rule("can_user_review_and_combine", is_user_allocated & (case_has_ogd_advice | is_case_nlr))  # noqa
 rules.add_rule("can_user_assess_products", is_user_allocated & (is_user_in_tau_team | is_user_in_admin_team))  # noqa
 rules.add_rule("can_user_add_an_ejcu_query", is_user_allocated)
