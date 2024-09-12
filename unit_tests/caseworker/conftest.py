@@ -653,36 +653,36 @@ def mock_gov_lu_case_officer(requests_mock, LU_case_officer):
     requests_mock.get(url=f"{url}me/", json=data)
     requests_mock.get(url=re.compile(f"{url}{LU_case_officer['id']}/"), json=data)
 
-    yield data
+    return data
 
 
 @pytest.fixture
-def mock_gov_lu_licencing_manager(requests_mock, LU_licencing_manager):
+def mock_gov_lu_licensing_manager(requests_mock, LU_licensing_manager):
     url = client._build_absolute_uri("/gov-users/")
-    data = {"user": LU_licencing_manager}
+    data = {"user": LU_licensing_manager}
 
     requests_mock.get(url=f"{url}me/", json=data)
-    requests_mock.get(url=re.compile(f"{url}{LU_licencing_manager['id']}/"), json=data)
+    requests_mock.get(url=re.compile(f"{url}{LU_licensing_manager['id']}/"), json=data)
 
-    yield data
+    return data
 
 
 @pytest.fixture
-def mock_gov_lu_senior_licencing_manager(requests_mock, LU_senior_licencing_manager):
+def mock_gov_lu_senior_licensing_manager(requests_mock, LU_senior_licensing_manager):
     url = client._build_absolute_uri("/gov-users/")
-    data = {"user": LU_senior_licencing_manager}
+    data = {"user": LU_senior_licensing_manager}
 
     requests_mock.get(url=f"{url}me/", json=data)
-    requests_mock.get(url=re.compile(f"{url}{LU_senior_licencing_manager['id']}/"), json=data)
+    requests_mock.get(url=re.compile(f"{url}{LU_senior_licensing_manager['id']}/"), json=data)
 
-    yield data
+    return data
 
 
 @pytest.fixture
 def mock_gov_lu_super_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, gov_uk_user_id):
     mock_gov_user["user"]["team"] = {
         "id": "521154de-f39e-45bf-9922-baaaaaa",
-        "name": "Licencing Unit",
+        "name": "Licensing Unit",
         "alias": "LICENSING_UNIT",
     }
     mock_gov_user["user"]["role"]["statuses"].extend(
@@ -1040,34 +1040,34 @@ def LU_case_officer(lu_team):
 
 
 @pytest.fixture
-def LU_licencing_manager(lu_team):
+def LU_licensing_manager(lu_team):
     return {
         "email": "licensing.manager@example.com",
         "first_name": "LU Team",
         "id": "b0df812f-3a0f-4759-8f7d-10ccc18319bf",
-        "last_name": "Licencing manager",
+        "last_name": "Licensing manager",
         "status": "Active",
         "team": lu_team,
         "role": {
             "id": "00000000-0000-0000-0000-000000000002",
-            "name": "Licencing Unit Manager",
+            "name": "Licensing Unit Manager",
             "permissions": ["MANAGE_LICENCE_FINAL_ADVICE"],
         },
     }
 
 
 @pytest.fixture
-def LU_senior_licencing_manager(lu_team):
+def LU_senior_licensing_manager(lu_team):
     return {
         "email": "licensing.manager@example.com",
         "first_name": "LU Team",
         "id": "7d741df1-c2f7-4095-896a-47038d7b7b28",
-        "last_name": "Senior Licencing manager",
+        "last_name": "Senior Licensing manager",
         "status": "Active",
         "team": lu_team,
         "role": {
             "id": "00000000-0000-0000-0000-000000000002",
-            "name": "Senior Licencing Unit Manager",
+            "name": "Senior Licensing Unit Manager",
             "permissions": ["MANAGE_LICENCE_FINAL_ADVICE"],
         },
     }

@@ -19,8 +19,8 @@ def setup(
     mock_denial_reasons,
     mock_case,
     mock_gov_lu_case_officer,
-    mock_gov_lu_licencing_manager,
-    mock_gov_lu_senior_licencing_manager,
+    mock_gov_lu_licensing_manager,
+    mock_gov_lu_senior_licensing_manager,
 ):
     yield
 
@@ -106,14 +106,14 @@ def final_level_advice(LU_case_officer):
 
 
 @pytest.fixture
-def licencing_manager_countersignature(LU_licencing_manager, final_level_advice):
+def licensing_manager_countersignature(LU_licensing_manager, final_level_advice):
     return [
         {
             "order": services.FIRST_COUNTERSIGN,
             "valid": True,
             "outcome_accepted": True,
             "reasons": "Agree with the decision to issue",
-            "countersigned_user": LU_licencing_manager,
+            "countersigned_user": LU_licensing_manager,
             "advice": advice,
         }
         for advice in final_level_advice
@@ -121,120 +121,120 @@ def licencing_manager_countersignature(LU_licencing_manager, final_level_advice)
 
 
 @pytest.fixture
-def licencing_manager_queue():
+def licensing_manager_queue():
     return {
         "id": "f458094c-1fed-4222-ac70-ff5fa20ff649",
-        "name": "Licencing manager countersigning",
+        "name": "Licensing manager countersigning",
         "alias": services.LU_LICENSING_MANAGER_QUEUE,
     }
 
 
 @pytest.fixture
-def senior_licencing_manager_queue():
+def senior_licensing_manager_queue():
     return {
         "id": "a8078cbc-d94f-40b3-9adf-8a9f93f88d4e",
-        "name": "Senior Licencing manager countersigning",
+        "name": "Senior Licensing manager countersigning",
         "alias": services.LU_SR_LICENSING_MANAGER_QUEUE,
     }
 
 
 @pytest.fixture
-def case_licencing_manager_countersign_queue_url(data_standard_case, licencing_manager_queue):
+def case_licensing_manager_countersign_queue_url(data_standard_case, licensing_manager_queue):
     return reverse(
         f"cases:countersign_advice_view",
         kwargs={
-            "queue_pk": licencing_manager_queue["id"],
+            "queue_pk": licensing_manager_queue["id"],
             "pk": data_standard_case["case"]["id"],
         },
     )
 
 
 @pytest.fixture
-def case_licencing_manager_countersign_decision_url(data_standard_case, licencing_manager_queue):
+def case_licensing_manager_countersign_decision_url(data_standard_case, licensing_manager_queue):
     return reverse(
         f"cases:countersign_decision_review",
         kwargs={
-            "queue_pk": licencing_manager_queue["id"],
+            "queue_pk": licensing_manager_queue["id"],
             "pk": data_standard_case["case"]["id"],
         },
     )
 
 
 @pytest.fixture
-def case_senior_licencing_manager_countersign_queue_url(data_standard_case, senior_licencing_manager_queue):
+def case_senior_licensing_manager_countersign_queue_url(data_standard_case, senior_licensing_manager_queue):
     return reverse(
         f"cases:countersign_advice_view",
         kwargs={
-            "queue_pk": senior_licencing_manager_queue["id"],
+            "queue_pk": senior_licensing_manager_queue["id"],
             "pk": data_standard_case["case"]["id"],
         },
     )
 
 
 @pytest.fixture
-def case_senior_licencing_manager_countersign_decision_url(data_standard_case, senior_licencing_manager_queue):
+def case_senior_licensing_manager_countersign_decision_url(data_standard_case, senior_licensing_manager_queue):
     return reverse(
         f"cases:countersign_decision_review",
         kwargs={
-            "queue_pk": senior_licencing_manager_queue["id"],
+            "queue_pk": senior_licensing_manager_queue["id"],
             "pk": data_standard_case["case"]["id"],
         },
     )
 
 
 @pytest.fixture
-def licencing_manager_countersigning_case(
-    data_standard_case, licencing_manager_queue, ogd_advice, final_level_advice, LU_case_officer
+def licensing_manager_countersigning_case(
+    data_standard_case, licensing_manager_queue, ogd_advice, final_level_advice, LU_case_officer
 ):
     data_standard_case["case"]["advice"] = ogd_advice
     data_standard_case["case"]["advice"].extend(final_level_advice)
-    data_standard_case["case"]["queue_details"] = [licencing_manager_queue]
+    data_standard_case["case"]["queue_details"] = [licensing_manager_queue]
     data_standard_case["case"]["case_officer"] = LU_case_officer
 
     return data_standard_case
 
 
 @pytest.fixture
-def licencing_manager_countersigning_case_assigned_to_user(licencing_manager_countersigning_case, LU_licencing_manager):
-    licencing_manager_countersigning_case["case"]["assigned_users"] = {
-        "LU countersigning": [LU_licencing_manager],
+def licensing_manager_countersigning_case_assigned_to_user(licensing_manager_countersigning_case, LU_licensing_manager):
+    licensing_manager_countersigning_case["case"]["assigned_users"] = {
+        "LU countersigning": [LU_licensing_manager],
     }
 
-    return licencing_manager_countersigning_case
+    return licensing_manager_countersigning_case
 
 
 @pytest.fixture
-def senior_licencing_manager_countersigning_case(
-    senior_licencing_manager_queue,
-    licencing_manager_countersignature,
-    licencing_manager_countersigning_case,
+def senior_licensing_manager_countersigning_case(
+    senior_licensing_manager_queue,
+    licensing_manager_countersignature,
+    licensing_manager_countersigning_case,
 ):
-    licencing_manager_countersigning_case["case"]["countersign_advice"] = licencing_manager_countersignature
-    licencing_manager_countersigning_case["case"]["queue_details"] = [senior_licencing_manager_queue]
+    licensing_manager_countersigning_case["case"]["countersign_advice"] = licensing_manager_countersignature
+    licensing_manager_countersigning_case["case"]["queue_details"] = [senior_licensing_manager_queue]
 
-    return licencing_manager_countersigning_case
+    return licensing_manager_countersigning_case
 
 
 @pytest.fixture
-def senior_licencing_manager_countersigning_case_assigned_to_licencing_manager(
-    senior_licencing_manager_countersigning_case, LU_licencing_manager
+def senior_licensing_manager_countersigning_case_assigned_to_licensing_manager(
+    senior_licensing_manager_countersigning_case, LU_licensing_manager
 ):
-    senior_licencing_manager_countersigning_case["case"]["assigned_users"] = {
-        "LU senior manager countersigning": [LU_licencing_manager],
+    senior_licensing_manager_countersigning_case["case"]["assigned_users"] = {
+        "LU senior manager countersigning": [LU_licensing_manager],
     }
 
-    return senior_licencing_manager_countersigning_case
+    return senior_licensing_manager_countersigning_case
 
 
 @pytest.fixture
-def senior_licencing_manager_countersigning_case_assigned_to_user(
-    senior_licencing_manager_countersigning_case, LU_senior_licencing_manager
+def senior_licensing_manager_countersigning_case_assigned_to_user(
+    senior_licensing_manager_countersigning_case, LU_senior_licensing_manager
 ):
-    senior_licencing_manager_countersigning_case["case"]["assigned_users"] = {
-        "LU countersigning": [LU_senior_licencing_manager],
+    senior_licensing_manager_countersigning_case["case"]["assigned_users"] = {
+        "LU countersigning": [LU_senior_licensing_manager],
     }
 
-    return senior_licencing_manager_countersigning_case
+    return senior_licensing_manager_countersigning_case
 
 
 def test_countersign_approve_all_put(
@@ -511,7 +511,7 @@ def test_lu_countersign_get_shows_previous_countersignature(
     assert counter_sigs[0].find(class_="govuk-body").text == "I concur"
 
 
-# Licencing manager tests
+# Licensing manager tests
 def user_not_allowed_to_countersign(response):
     soup = BeautifulSoup(response.content, "html.parser")
     countersign_button = soup.find("a", {"id": "review-and-countersign-decision-button"})
@@ -525,22 +525,22 @@ def user_not_allowed_to_countersign(response):
 
 @patch("caseworker.advice.views.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
-def test_case_officer_cannot_countersign_as_licencing_manager(
+def test_case_officer_cannot_countersign_as_licensing_manager(
     mock_caseworker,
     mock_get_gov_user,
-    case_licencing_manager_countersign_queue_url,
+    case_licensing_manager_countersign_queue_url,
     authorized_client,
     LU_case_officer,
-    licencing_manager_countersigning_case,
+    licensing_manager_countersigning_case,
 ):
     """
-    Licencing unit case officer is the one that gives final advice so
-    test that the same user cannot countersign as licencing manager
+    Licensing unit case officer is the one that gives final advice so
+    test that the same user cannot countersign as licensing manager
     """
     mock_get_gov_user.return_value = ({"user": LU_case_officer}, None)
     mock_caseworker.return_value = LU_case_officer
 
-    response = authorized_client.get(case_licencing_manager_countersign_queue_url)
+    response = authorized_client.get(case_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
 
     assert user_not_allowed_to_countersign(response)
@@ -548,51 +548,51 @@ def test_case_officer_cannot_countersign_as_licencing_manager(
 
 @patch("caseworker.advice.views.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
-def test_licencing_manager_countersigner_not_same_as_case_officer(
+def test_licensing_manager_countersigner_not_same_as_case_officer(
     mock_caseworker,
     mock_get_gov_user,
     authorized_client,
-    case_licencing_manager_countersign_queue_url,
-    case_licencing_manager_countersign_decision_url,
-    LU_licencing_manager,
-    licencing_manager_countersigning_case_assigned_to_user,
+    case_licensing_manager_countersign_queue_url,
+    case_licensing_manager_countersign_decision_url,
+    LU_licensing_manager,
+    licensing_manager_countersigning_case_assigned_to_user,
 ):
     """
-    Licencing manager countersigner should not be the same as case officer
+    Licensing manager countersigner should not be the same as case officer
     who gives final recommendation, this test ensures they are not the same users
     """
-    mock_get_gov_user.return_value = ({"user": LU_licencing_manager}, None)
-    mock_caseworker.return_value = LU_licencing_manager
+    mock_get_gov_user.return_value = ({"user": LU_licensing_manager}, None)
+    mock_caseworker.return_value = LU_licensing_manager
 
-    response = authorized_client.get(case_licencing_manager_countersign_queue_url)
+    response = authorized_client.get(case_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
     countersign_button = soup.find("a", {"id": "review-and-countersign-decision-button"})
     assert countersign_button
     assert countersign_button.text == "Review and countersign"
-    assert countersign_button["href"] == case_licencing_manager_countersign_decision_url
+    assert countersign_button["href"] == case_licensing_manager_countersign_decision_url
 
 
-# Senior Licencing manager tests
+# Senior Licensing manager tests
 @patch("caseworker.advice.views.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
-def test_case_officer_cannot_countersign_as_senior_licencing_manager(
+def test_case_officer_cannot_countersign_as_senior_licensing_manager(
     mock_caseworker,
     mock_get_gov_user,
-    case_senior_licencing_manager_countersign_queue_url,
+    case_senior_licensing_manager_countersign_queue_url,
     authorized_client,
     LU_case_officer,
-    senior_licencing_manager_countersigning_case,
+    senior_licensing_manager_countersigning_case,
 ):
     """
-    Licencing unit case officer is the one that gives final advice so
-    test that the same user cannot countersign as senior licencing manager
+    Licensing unit case officer is the one that gives final advice so
+    test that the same user cannot countersign as senior licensing manager
     """
     mock_get_gov_user.return_value = ({"user": LU_case_officer}, None)
     mock_caseworker.return_value = LU_case_officer
 
-    response = authorized_client.get(case_senior_licencing_manager_countersign_queue_url)
+    response = authorized_client.get(case_senior_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
 
     assert user_not_allowed_to_countersign(response)
@@ -600,22 +600,22 @@ def test_case_officer_cannot_countersign_as_senior_licencing_manager(
 
 @patch("caseworker.advice.views.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
-def test_licencing_manager_cannot_countersign_as_senior_licencing_manager(
+def test_licensing_manager_cannot_countersign_as_senior_licensing_manager(
     mock_caseworker,
     mock_get_gov_user,
-    case_senior_licencing_manager_countersign_queue_url,
+    case_senior_licensing_manager_countersign_queue_url,
     authorized_client,
-    LU_licencing_manager,
-    senior_licencing_manager_countersigning_case_assigned_to_licencing_manager,
+    LU_licensing_manager,
+    senior_licensing_manager_countersigning_case_assigned_to_licensing_manager,
 ):
     """
-    Licencing unit case officer is the one that gives final advice so
-    test that the same user cannot countersign as senior licencing manager
+    Licensing unit case officer is the one that gives final advice so
+    test that the same user cannot countersign as senior licensing manager
     """
-    mock_get_gov_user.return_value = ({"user": LU_licencing_manager}, None)
-    mock_caseworker.return_value = LU_licencing_manager
+    mock_get_gov_user.return_value = ({"user": LU_licensing_manager}, None)
+    mock_caseworker.return_value = LU_licensing_manager
 
-    response = authorized_client.get(case_senior_licencing_manager_countersign_queue_url)
+    response = authorized_client.get(case_senior_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
 
     assert user_not_allowed_to_countersign(response)
@@ -627,24 +627,24 @@ def test_senior_manager_countersigner_not_same_as_case_officer_or_countersigner(
     mock_caseworker,
     mock_get_gov_user,
     authorized_client,
-    case_senior_licencing_manager_countersign_queue_url,
-    case_senior_licencing_manager_countersign_decision_url,
-    LU_senior_licencing_manager,
-    senior_licencing_manager_countersigning_case_assigned_to_user,
+    case_senior_licensing_manager_countersign_queue_url,
+    case_senior_licensing_manager_countersign_decision_url,
+    LU_senior_licensing_manager,
+    senior_licensing_manager_countersigning_case_assigned_to_user,
 ):
     """
-    Licencing manager countersigner should not be the same as case officer
-    who gives final recommendation or the licencing manager countersigner,
+    Licensing manager countersigner should not be the same as case officer
+    who gives final recommendation or the licensing manager countersigner,
     this test ensures they are not the same users
     """
-    mock_get_gov_user.return_value = ({"user": LU_senior_licencing_manager}, None)
-    mock_caseworker.return_value = LU_senior_licencing_manager
+    mock_get_gov_user.return_value = ({"user": LU_senior_licensing_manager}, None)
+    mock_caseworker.return_value = LU_senior_licensing_manager
 
-    response = authorized_client.get(case_senior_licencing_manager_countersign_queue_url)
+    response = authorized_client.get(case_senior_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
     countersign_button = soup.find("a", {"id": "review-and-countersign-decision-button"})
     assert countersign_button
     assert countersign_button.text == "Review and countersign"
-    assert countersign_button["href"] == case_senior_licencing_manager_countersign_decision_url
+    assert countersign_button["href"] == case_senior_licensing_manager_countersign_decision_url
