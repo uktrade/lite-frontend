@@ -23,7 +23,7 @@ from exporter.core.services import (
     get_pv_gradings_v2,
     get_units,
 )
-from exporter.core.validators import PastDateValidator
+from exporter.core.validators import GoodNameValidator, PastDateValidator
 from exporter.core.constants import ProductSecurityFeatures, FileUploadFileTypes
 
 
@@ -36,6 +36,7 @@ class ProductNameForm(BaseForm):
         error_messages={
             "required": "Enter a descriptive name",
         },
+        validators=[GoodNameValidator()],
     )
 
     def get_layout_fields(self):

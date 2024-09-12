@@ -84,7 +84,7 @@ def test_add_good_component_accessory_end_to_end(
     authorized_client.get(new_good_component_accessory_url)
     response = post_to_step(
         AddGoodComponentSteps.NAME,
-        {"name": "product_1"},
+        {"name": "product-1"},
     )
 
     assert response.status_code == 200
@@ -188,7 +188,6 @@ def test_add_good_component_accessory_end_to_end(
         AddGoodComponentSteps.PRODUCT_MILITARY_USE,
         {"is_military_use": "yes_modified", "modified_military_use_details": "extra power"},
     )
-
     assert response.status_code == 302
     assert response.url == reverse(
         "applications:component_accessory_product_summary",
@@ -201,7 +200,7 @@ def test_add_good_component_accessory_end_to_end(
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
-        "name": "product_1",
+        "name": "product-1",
         "is_good_controlled": True,
         "control_list_entries": ["ML1", "ML1a"],
         "is_pv_graded": "yes",
@@ -246,7 +245,7 @@ def test_add_good_component_accessory_short_end_to_end(
 
     post_to_step(
         AddGoodComponentSteps.NAME,
-        {"name": "product_1"},
+        {"name": "product-1"},
     )
 
     post_to_step(
@@ -306,7 +305,7 @@ def test_add_good_component_accessory_short_end_to_end(
     assert post_goods_matcher.called_once
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
-        "name": "product_1",
+        "name": "product-1",
         "is_good_controlled": False,
         "control_list_entries": [],
         "part_number": "",
