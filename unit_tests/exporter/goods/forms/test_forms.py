@@ -380,6 +380,48 @@ def test_product_uses_information_security_form(data, valid):
             "name",
             "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes",
         ),
+        (
+            {
+                "name": "test_name",
+                "description": "test desc",
+                "part_number": "part_no",
+                "is_good_controlled": "True",
+                "control_list_entries": ["ML1", "ML1a"],
+                "is_pv_graded": "",
+            },
+            None,
+            False,
+            "name",
+            "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes",
+        ),
+        (
+            {
+                "name": "test $@name",
+                "description": "test desc",
+                "part_number": "part_no",
+                "is_good_controlled": "True",
+                "control_list_entries": ["ML1", "ML1a"],
+                "is_pv_graded": "",
+            },
+            None,
+            False,
+            "name",
+            "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes",
+        ),
+        (
+            {
+                "name": "test-!.<>/%&*;+'(),.namename",
+                "description": "test desc",
+                "part_number": "part_no",
+                "is_good_controlled": "True",
+                "control_list_entries": ["ML1", "ML1a"],
+                "is_pv_graded": "yes",
+            },
+            "12345",
+            True,
+            None,
+            None,
+        ),
     ),
 )
 def test_add_goods_questions_form(rf, client, data, application_pk, valid, error_field, error_message):
