@@ -7,6 +7,7 @@ from urllib import parse
 
 import pytest
 from dotenv import load_dotenv
+from django.core.cache import cache
 from django.conf import settings
 from django.test import Client
 from django.utils import timezone
@@ -36,6 +37,18 @@ def pytest_configure(config):
     # Force mock_sso django application to be activated for test environments;
     # must be activated up front for mock_sso django app urls to be added
     settings.MOCK_SSO_ACTIVATE_ENDPOINTS = True
+
+
+@pytest.fixture(autouse=True)
+def delete_caseworker_control_list_entries_cache():
+    caseworker_control_list_entries_cache_keys = [
+        "caseworker_converted_control_list_entries_cache",
+        "caseworker_control_list_entries_cache__include_parent",
+        "caseworker_control_list_entries_cache__group",
+    ]
+    for key in caseworker_control_list_entries_cache_keys:
+        if cache.get(key):
+            cache.delete(key)
 
 
 @pytest.fixture
