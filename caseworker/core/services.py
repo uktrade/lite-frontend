@@ -1,5 +1,7 @@
 from collections import defaultdict
 
+from django.core.cache import cache
+
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 from caseworker.cases.constants import CaseType
 from caseworker.users.services import get_gov_user
@@ -131,40 +133,44 @@ def get_user_role_name(request):
     return user["user"]["role"]["name"]
 
 
-CLC_ENTRIES_CACHE = []
-
-
 # Control List Entries
-def get_control_list_entries(  # noqa
-    request, convert_to_options=False, include_parent=False, clc_entries_cache=CLC_ENTRIES_CACHE  # noqa
-):  # noqa
-    """
-    Preliminary caching mechanism, requires service restart to repopulate control list entries
-    """
+def get_control_list_entries(request, convert_to_options=False, include_parent=False):
     if convert_to_options:
-        if clc_entries_cache:
-            return clc_entries_cache
-        else:
-            data = client.get(request, "/static/control-list-entries/")
-
-        for control_list_entry in data.json().get("control_list_entries"):
-            clc_entries_cache.append(
-                Option(
-                    key=control_list_entry["rating"],
-                    value=control_list_entry["rating"],
-                    description=control_list_entry["text"],
-                )
+        if cache.get("caseworker_converted_control_list_entries_cache"):
+            return cache.get("caseworker_converted_control_list_entries_cache")
+        response = client.get(request, "/static/control-list-entries/")
+        response.raise_for_status()
+        caseworker_converted_control_list_entries_cache = [
+            Option(
+                key=control_list_entry["rating"],
+                value=control_list_entry["rating"],
+                description=control_list_entry["text"],
             )
-
-        return clc_entries_cache
+            for control_list_entry in response.json().get("control_list_entries")
+        ]
+        cache.set("caseworker_converted_control_list_entries_cache", caseworker_converted_control_list_entries_cache)
+        return caseworker_converted_control_list_entries_cache
 
     if include_parent:
+        if cache.get("caseworker_control_list_entries_cache__include_parent"):
+            return cache.get("caseworker_control_list_entries_cache__include_parent")
         response = client.get(request, "/static/control-list-entries/?include_parent=True")
-    else:
-        response = client.get(request, "/static/control-list-entries/?group=True")
+        response.raise_for_status()
+        caseworker_control_list_entries_cache__include_parent = response.json().get("control_list_entries")
+        cache.set(
+            "caseworker_control_list_entries_cache__include_parent",
+            caseworker_control_list_entries_cache__include_parent,
+        )
+        return caseworker_control_list_entries_cache__include_parent
 
+    if cache.get("caseworker_control_list_entries_cache__group"):
+        return cache.get("caseworker_control_list_entries_cache__group")
+
+    response = client.get(request, "/static/control-list-entries/?group=True")
     response.raise_for_status()
-    return response.json().get("control_list_entries")
+    caseworker_control_list_entries_cache__group = response.json().get("control_list_entries")
+    cache.set("caseworker_control_list_entries_cache__group", caseworker_control_list_entries_cache__group)
+    return caseworker_control_list_entries_cache__group
 
 
 # Regime Entries
