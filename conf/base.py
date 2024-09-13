@@ -67,6 +67,9 @@ INSTALLED_APPS = [
     "extra_views",
 ]
 
+if not IS_ENV_DBT_PLATFORM:
+    INSTALLED_APPS += ["health_check.storage"]
+
 MIDDLEWARE = [
     "allow_cidr.middleware.AllowCIDRMiddleware",
     "django.middleware.security.SecurityMiddleware",
