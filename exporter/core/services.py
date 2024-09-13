@@ -2,6 +2,7 @@ import logging
 from http import HTTPStatus
 from urllib.parse import urlencode
 
+from django.core.cache import cache
 from django.http import HttpResponse
 
 from core import client
@@ -198,24 +199,31 @@ def put_organisation_user(request, user_pk, json):
     return data.json(), data.status_code
 
 
-def get_control_list_entries(request, convert_to_options=False, converted_control_list_entries_cache=[]):  # noqa
+def get_control_list_entries(request, convert_to_options=False):
     if convert_to_options:
-        if converted_control_list_entries_cache:
-            return converted_control_list_entries_cache
+        if cache.get("exporter_converted_control_list_entries_cache"):
+            return cache.get("exporter_converted_control_list_entries_cache")
         else:
             response = client.get(request, "/exporter/static/control-list-entries/")
-            for control_list_entry in response.json():
-                converted_control_list_entries_cache.append(
-                    Option(
-                        key=control_list_entry["rating"],
-                        value=control_list_entry["rating"],
-                        description=control_list_entry["text"],
-                    )
+            response.raise_for_status()
+            converted_control_list_entries_cache = [
+                Option(
+                    key=control_list_entry["rating"],
+                    value=control_list_entry["rating"],
+                    description=control_list_entry["text"],
                 )
+                for control_list_entry in response.json()
+            ]
+            cache.set("exporter_converted_control_list_entries_cache", converted_control_list_entries_cache)
             return converted_control_list_entries_cache
-
-    response = client.get(request, "/exporter/static/control-list-entries/")
-    return response.json()
+    if cache.get("exporter_control_list_entries_cache"):
+        return cache.get("exporter_control_list_entries_cache")
+    else:
+        response = client.get(request, "/exporter/static/control-list-entries/")
+        response.raise_for_status()
+        exporter_control_list_entries_cache = response.json()
+        cache.set("exporter_control_list_entries_cache", exporter_control_list_entries_cache)
+        return exporter_control_list_entries_cache
 
 
 # F680 clearance types
