@@ -434,7 +434,7 @@ def switch_to_queue(driver, queue_name):  # noqa
         for item in driver.find_elements(by=By.CLASS_NAME, value="app-menu__item--subtitle")
         if item.text.split("\n")[0] == queue_name
     ]
-    assert len(elements) == 1
+    assert len(elements) == 1, f"More than one queue found for the given search text {queue_name}"
     elements[0].click()
 
 
