@@ -12,7 +12,7 @@ from lite_content.lite_exporter_frontend.goods import CreateGoodForm
 
 @pytest.fixture(autouse=True)
 def setup(
-    mock_control_list_entries,
+    mock_exporter_control_list_entries,
     mock_pv_gradings,
 ):
     yield
