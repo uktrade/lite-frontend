@@ -4,8 +4,8 @@
   "description": "Combined repo for LITE exporter and caseworker frontends",
   "private": true,
   "scripts": {
-    "build_exporter": "parcel build ./exporter/assets/javascripts/main.js ./exporter/assets/javascripts/cookie-policy-form.js --dist-dir exporter/assets/built --public-url /assets/",
-    "build_caseworker": "parcel build ./caseworker/assets/javascripts/{main,head,bookmarks,cookie-policy-form,desnz,tau,tau-edit,tau-multiple-assessment-edit,case-filters,refusal-review-consolidate,search-products}.js --dist-dir caseworker/assets/built --public-url /assets/",
+    "build_exporter": "NODE_OPTIONS='' parcel build ./exporter/assets/javascripts/main.js ./exporter/assets/javascripts/cookie-policy-form.js --dist-dir exporter/assets/built --public-url /assets/",
+    "build_caseworker": "NODE_OPTIONS='' parcel build ./caseworker/assets/javascripts/{main,head,bookmarks,cookie-policy-form,desnz,tau,tau-edit,tau-multiple-assessment-edit,case-filters,refusal-review-consolidate,search-products}.js --dist-dir caseworker/assets/built --public-url /assets/",
     "watch_exporter": "PARCEL_WORKERS=0 parcel watch --port 8400 ./exporter/assets/javascripts/{main,head}.js ./exporter/assets/javascripts/cookie-policy-form.js --dist-dir exporter/assets/built --public-url /assets/",
     "watch_caseworker": "PARCEL_WORKERS=0 parcel watch --port 8401 ./caseworker/assets/javascripts/{main,head,bookmarks,cookie-policy-form,search-cases,desnz,tau,tau-edit,tau-multiple-assessment-edit,case-filters,refusal-review-consolidate,search-products}.js --dist-dir caseworker/assets/built --public-url /assets/",
     "watch": "rm -rf .parcel-cache && npm run build_exporter && npm run build_caseworker && concurrently 'npm run watch_exporter' 'npm run watch_caseworker'",
