@@ -167,7 +167,7 @@ countersign_advice_tab_test_data = [
     (True, "final", False, LICENSING_UNIT_TEAM, LU_LICENSING_MANAGER_QUEUE, "cases:countersign_advice_view", {"review_and_countersign": True},),
     (True, "final", False, LICENSING_UNIT_TEAM, LU_SR_LICENSING_MANAGER_QUEUE, "cases:countersign_advice_view", {"review_and_countersign": True},),
     (True, "final", True, LICENSING_UNIT_TEAM, LU_LICENSING_MANAGER_QUEUE, "cases:countersign_view", {"move_case_forward": True, "edit_recommendation": True},),
-    (True, "final", True, LICENSING_UNIT_TEAM, LU_SR_LICENSING_MANAGER_QUEUE, "cases:countersign_view", {"move_case_forward": True, "edit_recommendation": True},),
+    (True, "final", True, LICENSING_UNIT_TEAM, LU_SR_LICENSING_MANAGER_QUEUE, "cases:countersign_advice_view", {"review_and_countersign": True},),
 ]
 # fmt: on
 
