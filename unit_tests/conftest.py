@@ -21,7 +21,6 @@ from django.utils import timezone
 
 from formtools.wizard.views import normalize_name
 
-from caseworker.core.services import CLC_ENTRIES_CACHE
 from core import client
 from core.constants import OrganisationDocumentType
 
@@ -96,10 +95,6 @@ def data_control_list_entries():
 
 @pytest.fixture
 def mock_control_list_entries(requests_mock, data_control_list_entries):
-    # We must clear app-level CLE cache used by core.services.get_control_list_entrie
-    # so that tests remain isolated from eachother
-    # TODO: Remove this when we have a better way of caching CLEs
-    CLC_ENTRIES_CACHE.clear()
     url = client._build_absolute_uri("/static/control-list-entries/")
     yield requests_mock.get(url=url, json=data_control_list_entries)
 
