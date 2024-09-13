@@ -5,6 +5,7 @@ import requests
 from dotenv import load_dotenv
 
 from django.conf import settings
+from django.core.cache import cache
 from django.core.files.storage import Storage
 from django.test import Client
 
@@ -34,6 +35,15 @@ def pytest_configure(config):
 @pytest.fixture(autouse=True)
 def upload_handler():
     settings.FILE_UPLOAD_HANDLERS = ["django.core.files.uploadhandler.MemoryFileUploadHandler"]
+
+
+@pytest.fixture(autouse=True)
+def delete_exporter_control_list_entries_cache():
+    # This keeps tests isolated
+    if cache.get("exporter_converted_control_list_entries_cache"):
+        cache.delete("exporter_converted_control_list_entries_cache")
+    if cache.get("exporter_control_list_entries_cache"):
+        cache.delete("exporter_control_list_entries_cache")
 
 
 @pytest.fixture
