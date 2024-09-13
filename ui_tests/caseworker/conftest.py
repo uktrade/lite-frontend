@@ -424,6 +424,20 @@ def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
     CaseListPage(driver).click_on_queue_name(queue_name)
 
 
+@when(parsers.parse('I switch to "{queue_name}" queue'))  # noqa
+def switch_to_queue(driver, queue_name):  # noqa
+    driver.find_element(by=By.ID, value="link-queue").click()
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "filter-queues")))
+    driver.find_element(by=By.ID, value="filter-queues").send_keys(queue_name)
+    elements = [
+        item
+        for item in driver.find_elements(by=By.CLASS_NAME, value="app-menu__item--subtitle")
+        if item.text.split("\n")[0] == queue_name
+    ]
+    assert len(elements) == 1
+    elements[0].click()
+
+
 @when("I click the application previously created")
 def i_click_application_previously_created(driver, context):  # noqa
     case_list_page = CaseListPage(driver)

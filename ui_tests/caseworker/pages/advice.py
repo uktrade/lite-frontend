@@ -212,3 +212,7 @@ class RecommendationsAndDecisionPage(BasePage):
         countersign_div = self.driver.find_element(by=By.CLASS_NAME, value="countersignatures")
         comments = countersign_div.find_element(by=By.CLASS_NAME, value="govuk-body")
         return comments.text
+
+    def get_lu_countersign_not_allowed_warning_message(self):
+        element = self.driver.find_element(by=By.ID, value="lu-user-not-allowed-to-countersign")
+        return element.text
