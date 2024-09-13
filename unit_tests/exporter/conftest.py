@@ -39,11 +39,13 @@ def upload_handler():
 
 @pytest.fixture(autouse=True)
 def delete_exporter_control_list_entries_cache():
-    # This keeps tests isolated
-    if cache.get("exporter_converted_control_list_entries_cache"):
-        cache.delete("exporter_converted_control_list_entries_cache")
-    if cache.get("exporter_control_list_entries_cache"):
-        cache.delete("exporter_control_list_entries_cache")
+    exporter_control_list_entries_cache_keys = [
+        "exporter_converted_control_list_entries_cache",
+        "exporter_control_list_entries_cache",
+    ]
+    for key in exporter_control_list_entries_cache_keys:
+        if cache.get(key):
+            cache.delete(key)
 
 
 @pytest.fixture
