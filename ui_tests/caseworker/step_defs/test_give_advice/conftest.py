@@ -314,3 +314,12 @@ def i_see_warning_about_open_query(driver):
 
     action_items = [item.text for item in driver.find_elements(by=By.CLASS_NAME, value="govuk-button")]
     assert "Finalise case" not in action_items
+
+
+@then("I see countersign not allowed warning message")
+def lu_countersign_not_allowed_warning_message(driver):  # noqa
+    countersign_warning_message = "You cannot countersign this case because you were the officer that assessed it."
+    assert (
+        countersign_warning_message
+        in RecommendationsAndDecisionPage(driver).get_lu_countersign_not_allowed_warning_message()
+    )
