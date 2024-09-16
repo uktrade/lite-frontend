@@ -162,7 +162,7 @@ class EditCommercialOrganisationPage(EditOrganisationPage):
 
 class EditIndividualOrganisationPage(EditOrganisationPage):
     class Name:
-        TITLE = "First and last name"
+        TITLE = "Name"
         DESCRIPTION = ""
 
     class EORINumber:
