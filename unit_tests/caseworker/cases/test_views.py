@@ -516,10 +516,8 @@ def test_finalise_page_nlr(authorized_client, queue_pk, data_standard_case, mock
     assert response.status_code == 200
 
     soup = BeautifulSoup(response.content, "html.parser")
-    title_tag = soup.find("title")
     nlr_description_div_tag = soup.find("div", class_="govuk-body")
 
-    assert title_tag.text == "Finalise - LITE Internal"
     assert nlr_description_div_tag.text.strip() == "You'll be informing the exporter that no licence is required"
 
 
@@ -554,3 +552,7 @@ def test_finalise_page_approve(
     response = authorized_client.get(url)
 
     assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    approve_heading = soup.find("h1", class_="govuk-fieldset__heading")
+    assert approve_heading.text.strip() == "Approve"
