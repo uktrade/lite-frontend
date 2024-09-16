@@ -4,16 +4,15 @@ Feature: I want to record my user advice and any comments and conditions relatin
   I want to record my user advice and any comments and conditions relating to my recommendation
   So that other users can see my decision and know that I have finished assessing this case
 
-  @skip @lu_consolidate_advice
+  @lu_consolidate_advice
   Scenario: LU consolidate advice journey
-    Given I sign in as Test UAT user
+    Given I sign in as Licensing Unit Officer
     And I create standard application or standard application has been previously created
     And I prepare the application for final review
-    When I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
+    When I go to my case list
     And I go to my case list
     And I click the application previously created
-    And I assign myself to the case
+    And I assign myself as case officer to the case
     And I go to my case list
     And I click the application previously created
     And I click the recommendations and decision tab
@@ -25,19 +24,19 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I see "licence condition" as the licence condition
     And I see countersign required warning message
     When I click move case forward
-    And I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing manager countersigning"
+    And I logout
+    And I sign in as Licensing Unit Manager
     And I go to my case list
     And I click the application previously created
+    And I assign myself as case adviser to the case
     And I click the recommendations and decision tab
     And I click "Review and countersign"
     And I agree with outcome and provide "licensing manager approved" as countersign comments
     And I click submit recommendation
     Then I see "licensing manager approved" as countersign comments
     When I click move case forward
-    And I go to my profile page
-    And I change my team to "Licensing Unit" and default queue to "Licensing Unit Post-circulation Cases to Finalise"
-    And I go to my case list
+    And I logout
+    And I sign in as Licensing Unit Officer
     And I click the application previously created
     And I click the recommendations and decision tab
     And I click "Finalise case"

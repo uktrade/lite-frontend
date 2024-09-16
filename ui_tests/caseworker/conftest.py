@@ -78,22 +78,42 @@ def sign_into_sso(driver, sso_sign_in):  # noqa
     pass
 
 
+def mock_sso_signin_with_email(driver, internal_url, email):
+    driver.get(internal_url)
+    mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
+
+    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
+        MockSigninPage(driver).sign_in(email)
+
+
 @given("I sign in as Test UAT user")
 def mock_sso_test_uat_user_caseworker_sign_in(driver, internal_url):  # noqa
-    driver.get(internal_url)
-    mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
-
-    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
-        MockSigninPage(driver).sign_in("test-uat-user@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "test-uat-user@digital.trade.gov.uk")
 
 
-@when("I sign in as user with Licensing Unit Senior Manager role")
+@when("I sign in as Test UAT user")
+def test_uat_user_signin(driver, internal_url):
+    mock_sso_signin_with_email(driver, internal_url, "test-uat-user@digital.trade.gov.uk")
+
+
+@given("I sign in as Licensing Unit Officer")
+def mock_sso_lu_officer_signin_given(driver, internal_url):
+    mock_sso_signin_with_email(driver, internal_url, "lucaseofficer@digital.trade.gov.uk")
+
+
+@when("I sign in as Licensing Unit Officer")
+def mock_sso_lu_officer_signin(driver, internal_url):
+    mock_sso_signin_with_email(driver, internal_url, "lucaseofficer@digital.trade.gov.uk")
+
+
+@when("I sign in as Licensing Unit Manager")
+def mock_sso_lu_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
+    mock_sso_signin_with_email(driver, internal_url, "lumanager@digital.trade.gov.uk")
+
+
+@when("I sign in as Licensing Unit Senior Manager")
 def mock_sso_lu_senior_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
-    driver.get(internal_url)
-    mock_sso_login_screen = driver.find_element(By.XPATH, "//*[contains(text(), 'Mock SSO Login')]")
-
-    if mock_sso_login_screen and settings.MOCK_SSO_ACTIVATE_ENDPOINTS:
-        MockSigninPage(driver).sign_in("luseniormanager@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "luseniormanager@digital.trade.gov.uk")
 
 
 @then("I logout")  # noqa
@@ -402,6 +422,20 @@ def get_my_case_list(driver):  # noqa
 @when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
 def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
     CaseListPage(driver).click_on_queue_name(queue_name)
+
+
+@when(parsers.parse('I switch to "{queue_name}" queue'))  # noqa
+def switch_to_queue(driver, queue_name):  # noqa
+    driver.find_element(by=By.ID, value="link-queue").click()
+    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "filter-queues")))
+    driver.find_element(by=By.ID, value="filter-queues").send_keys(queue_name)
+    elements = [
+        item
+        for item in driver.find_elements(by=By.CLASS_NAME, value="app-menu__item--subtitle")
+        if item.text.split("\n")[0] == queue_name
+    ]
+    assert len(elements) == 1, f"More than one queue found for the given search text {queue_name}"
+    elements[0].click()
 
 
 @when("I click the application previously created")
@@ -940,7 +974,7 @@ def submit_case_as_team_with_decision(driver, team, queue, decision, context, in
     go_to_team_edit_page(driver, team, queue)
     get_my_case_list(driver)
     i_click_application_previously_created(driver, context)
-    i_assign_myself_to_case(driver, internal_info)
+    i_assign_myself_as_case_officer(driver, internal_info)
     im_done_button(driver)
 
     if decision:
@@ -959,7 +993,7 @@ def approve_case_as_team(driver, team, queue, context, internal_url, internal_in
     go_to_team_edit_page(driver, team, queue)
     get_my_case_list(driver)
     i_click_application_previously_created(driver, context)
-    i_assign_myself_to_case(driver, internal_info)
+    i_assign_myself_as_case_officer(driver, internal_info)
     case_page = CasePage(driver)
     case_page.change_tab(CaseTabs.RECOMMENDATIONS_AND_DECISIONS)
     recommendation_and_decisions_page = RecommendationsAndDecisionPage(driver)
@@ -979,7 +1013,7 @@ def approve_case_as_team(driver, team, queue, context, internal_url, internal_in
     go_to_team_edit_page(driver, team, queue)
     get_my_case_list(driver)
     i_click_application_previously_created(driver, context)
-    i_assign_myself_to_case(driver, internal_info)
+    i_assign_myself_as_case_officer(driver, internal_info)
     case_page = CasePage(driver)
     case_page.change_tab(CaseTabs.RECOMMENDATIONS_AND_DECISIONS)
     recommendation_and_decisions_page = RecommendationsAndDecisionPage(driver)
@@ -1052,8 +1086,13 @@ def add_cle_value(driver, control_code):  # noqa
     add_goods_page.enter_control_list_entries(control_code)
 
 
-@when("I assign myself to the case")
-def i_assign_myself_to_case(driver, internal_info):  # noqa
+@when("I assign myself as case adviser to the case")
+def allocate_myself_to_the_case(driver):
+    allocate_to_me = driver.find_element(by=By.ID, value="allocate-to-me-button")
+    allocate_to_me.click()
+
+
+def assign_as_case_officer(driver, email):
     case_page = CasePage(driver)
     if case_page.get_assigned_case_officer() != "Not assigned":
         # remove case officer before I assign myself
@@ -1063,10 +1102,20 @@ def i_assign_myself_to_case(driver, internal_info):  # noqa
     case_page.click_assign_case_officer()
     # search for myself
     case_officer_page = CaseOfficerPage(driver)
-    case_officer_page.search(internal_info["email"])
+    case_officer_page.search(email)
     # search for myself
     case_officer_page.select_first_user()
     functions.click_submit(driver)
+
+
+@when("I assign myself as case officer to the case")
+def assign_myself_as_case_officer(driver):  # noqa
+    assign_as_case_officer(driver, "lucaseofficer@digital.trade.gov.uk")
+
+
+@when("I assign myself to the case")
+def i_assign_myself_as_case_officer(driver, internal_info):  # noqa
+    assign_as_case_officer(driver, internal_info["email"])
 
 
 @when("I remove case officer from the case")
