@@ -6,10 +6,13 @@ import uuid
 from django.http import HttpRequest
 
 from core import client
+from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import (
     GOODS_NOT_LISTED_ID,
     LICENSING_UNIT_TEAM,
     OGD_TEAMS,
+    FIRST_COUNTERSIGN,
+    SECOND_COUNTERSIGN,
 )
 from caseworker.core import rules as caseworker_rules
 from caseworker.core.constants import (
@@ -483,3 +486,191 @@ def test_can_licence_status_be_changed(
     request = get_mock_request(user)
 
     assert rules.test_rule("can_licence_status_be_changed", request, licence) is expected
+
+
+@pytest.mark.parametrize(
+    "gov_user, expected_result",
+    (
+        ("invalid_user", False),
+        ("LU_case_officer", True),
+        ("LU_licensing_manager", True),
+        ("LU_senior_licensing_manager", True),
+        ("FCDO_team_user", False),
+    ),
+)
+def test_is_user_in_lu_team(gov_user, get_mock_request, expected_result, request):
+    user = request.getfixturevalue(gov_user)
+    assert caseworker_rules.is_user_in_lu_team(get_mock_request(user)) == expected_result
+
+
+@pytest.mark.parametrize(
+    "advice_data, expected_result",
+    (
+        ([], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "FCDO", "alias": "FCO"}}], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "MOD_DI", "alias": "MOD_DI"}}], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "MOD_DSR", "alias": "MOD_DSR"}}], False),
+        (
+            [
+                {
+                    "type": "approve",
+                    "level": AdviceLevel.USER,
+                    "team": {"name": "LICENSING_UNIT", "alias": "LICENSING_UNIT"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {"type": "approve", "level": AdviceLevel.USER, "team": {"name": "FCDO", "alias": "FCO"}},
+                {
+                    "type": "approve",
+                    "level": AdviceLevel.TEAM,
+                    "team": {"name": "LICENSING_UNIT", "alias": "LICENSING_UNIT"},
+                },
+            ],
+            False,
+        ),
+        (
+            [
+                {"type": "approve", "level": AdviceLevel.USER, "team": {"name": "FCDO", "alias": "FCO"}},
+                {
+                    "type": "approve",
+                    "level": AdviceLevel.FINAL,
+                    "team": {"name": "LICENSING_UNIT", "alias": "LICENSING_UNIT"},
+                },
+            ],
+            True,
+        ),
+    ),
+)
+def test_case_has_final_advice(advice_data, mock_gov_user, get_mock_request, expected_result):
+    request = get_mock_request(mock_gov_user["user"])
+    case = {"advice": advice_data}
+    assert caseworker_rules.case_has_final_advice(request, case) is expected_result
+
+
+@pytest.fixture
+def invalid_user():
+    return {}
+
+
+@pytest.mark.parametrize(
+    "gov_user, expected_result",
+    (
+        ("invalid_user", False),
+        ("LU_case_officer", False),
+        ("LU_licensing_manager", True),
+        ("LU_senior_licensing_manager", True),
+    ),
+)
+def test_user_is_not_final_adviser(gov_user, expected_result, request, get_mock_request, LU_case_officer):
+    case = {
+        "case_officer": LU_case_officer,
+        "advice": [
+            {
+                "level": AdviceLevel.FINAL,
+                "user": LU_case_officer,
+            },
+        ],
+    }
+    user = request.getfixturevalue(gov_user)
+    assert caseworker_rules.user_is_not_final_adviser(get_mock_request(user), case) == expected_result
+
+
+@pytest.mark.parametrize(
+    "gov_user, countersigners, expected_result",
+    (
+        ("invalid_user", [], False),
+        ("LU_licensing_manager", [], True),
+        ("LU_licensing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"}], False),
+        ("LU_senior_licensing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"}], True),
+        (
+            "LU_senior_licensing_manager",
+            [
+                {"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"},
+                {"order": SECOND_COUNTERSIGN, "user": "LU_senior_licensing_manager"},
+            ],
+            False,
+        ),
+    ),
+)
+def test_user_not_yet_countersigned(
+    gov_user, countersigners, expected_result, request, get_mock_request, LU_case_officer
+):
+    countersign_advice = [
+        {
+            "valid": True,
+            "order": item["order"],
+            "countersigned_user": request.getfixturevalue(item["user"]),
+        }
+        for item in countersigners
+    ]
+    case = Case(
+        {
+            "case_officer": LU_case_officer,
+            "advice": [
+                {
+                    "level": AdviceLevel.FINAL,
+                    "user": LU_case_officer,
+                },
+            ],
+            "countersign_advice": countersign_advice,
+        }
+    )
+    user = request.getfixturevalue(gov_user)
+    assert caseworker_rules.user_not_yet_countersigned(get_mock_request(user), case) == expected_result
+
+
+@pytest.mark.parametrize(
+    "gov_user, countersigners, expected_result",
+    (
+        ("invalid_user", [], False),
+        ("LU_case_officer", [], False),
+        ("LU_licensing_manager", [], True),
+        ("LU_licensing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"}], False),
+        ("LU_senior_licensing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"}], True),
+        (
+            "LU_senior_licensing_manager",
+            [
+                {"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"},
+                {"order": SECOND_COUNTERSIGN, "user": "LU_senior_licensing_manager"},
+            ],
+            False,
+        ),
+    ),
+)
+def test_can_user_be_allowed_to_lu_countersign(
+    gov_user, countersigners, expected_result, request, get_mock_request, FCDO_team_user, LU_case_officer
+):
+    countersign_advice = [
+        {
+            "valid": True,
+            "order": item["order"],
+            "countersigned_user": request.getfixturevalue(item["user"]),
+        }
+        for item in countersigners
+    ]
+
+    user = request.getfixturevalue(gov_user)
+    case = Case(
+        {
+            "case_officer": LU_case_officer,
+            "assigned_users": {"fake queue": [user]},
+            "advice": [
+                {
+                    "level": AdviceLevel.USER,
+                    "user": FCDO_team_user,
+                    "team": FCDO_team_user["team"],
+                },
+                {
+                    "level": AdviceLevel.FINAL,
+                    "user": LU_case_officer,
+                    "team": LU_case_officer["team"],
+                },
+            ],
+            "countersign_advice": countersign_advice,
+        }
+    )
+
+    assert rules.test_rule("can_user_be_allowed_to_lu_countersign", get_mock_request(user), case) is expected_result

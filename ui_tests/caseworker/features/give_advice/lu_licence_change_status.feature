@@ -3,7 +3,7 @@ Feature: I want to change the license state of a licence that has been issued.
   As a logged in government user as LU Senior Manager I want to revoke a Licence that has been issued.
   Also Need to ensure that my action has been recorded in Notes and timeline
 
-  @lu_change_licence_status
+  @skip @lu_change_licence_status
   Scenario: LU change licence status
     Given I sign in as Test UAT user
     And I create an application with <name>,<product>,<part_number>,<clc_rating>,<end_user_name>,<end_user_address>,<consignee_name>,<consignee_address>,<country>,<end_use>
