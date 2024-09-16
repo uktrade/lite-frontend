@@ -1,4 +1,3 @@
-from unittest import mock
 import pytest
 import re
 import uuid
@@ -334,6 +333,27 @@ def mock_get_queries(requests_mock, standard_case_pk, data_ecju_queries_gov_seri
     )
 
 
+@pytest.fixture
+def mock_get_licences(requests_mock, standard_case_pk):
+    requests_mock.get(client._build_absolute_uri(f"/cases/{standard_case_pk}/licences/"), json={"key": "value"})
+
+
+@pytest.fixture
+def mock_get_final_decision(requests_mock, standard_case_pk):
+    requests_mock.get(
+        client._build_absolute_uri(f"/applications/{standard_case_pk}/final-decision/"),
+        json={"goods": {"good_id": "good id"}},
+    )
+
+
+@pytest.fixture
+def mock_get_duration(requests_mock, standard_case_pk):
+    requests_mock.get(
+        client._build_absolute_uri(f"/applications/{standard_case_pk}/duration/"),
+        json={"licence_duration": 24},
+    )
+
+
 def test_close_query_view_post_success(
     authorized_client,
     requests_mock,
@@ -476,3 +496,61 @@ def test_im_done_page_submit(
     assert response.url == reverse("queues:cases", kwargs={"queue_pk": queue_pk})
 
     assert put_matcher.last_request.json() == {}
+
+
+def test_finalise_page_nlr(authorized_client, queue_pk, data_standard_case, mock_good_on_appplication):
+    advice = [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "no_licence_required"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        }
+    ]
+    data_standard_case["case"]["advice"] = advice
+    url = reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    title_tag = soup.find("title")
+    nlr_description_div_tag = soup.find("div", class_="govuk-body")
+
+    assert title_tag.text == "Finalise - LITE Internal"
+    assert nlr_description_div_tag.text.strip() == "You'll be informing the exporter that no licence is required"
+
+
+def test_finalise_page_approve(
+    authorized_client,
+    queue_pk,
+    data_standard_case,
+    mock_get_licences,
+    mock_get_final_decision,
+    mock_get_duration,
+):
+    advice = [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "no_licence_required"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+    ]
+
+    data_standard_case["case"]["advice"] = advice
+    url = reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200

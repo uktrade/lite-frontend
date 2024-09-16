@@ -159,12 +159,9 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
             # Only advice with an associated good can be part of advice_items
             advice_items = []
-            advice_item_good_ids = []
             for advice_item in advice:
                 if advice_item["good"]:
                     advice_items.append(advice_item["type"]["key"])
-                    advice_item_good_ids.append(advice_item["good"])
-
             approve = any([item == "approve" or item == "proviso" for item in advice_items])
             all_nlr = not approve and "refuse" not in advice_items
 
