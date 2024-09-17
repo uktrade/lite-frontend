@@ -15,7 +15,6 @@ urlpatterns = [
     path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("caseworker.cases.urls")),
     path("flags/", include("caseworker.flags.urls")),
     path("document-templates/", include("caseworker.letter_templates.urls")),
-    path("open-general-licences/", include("caseworker.open_general_licences.urls")),
     path("organisations/", include("caseworker.organisations.urls")),
     path("queues/", include("caseworker.queues.urls")),
     path("team/picklists/", include("caseworker.picklists.urls")),

@@ -9,7 +9,7 @@ from caseworker.core.services import (
     get_new_mention_count,
     get_user_role_name,
 )
-from lite_content.lite_internal_frontend import strings, open_general_licences
+from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.flags import FlagsList
 from lite_content.lite_internal_frontend.organisations import OrganisationsPage
 from lite_content.lite_internal_frontend.queues import QueuesList
@@ -76,14 +76,6 @@ def lite_menu(request):
             {"title": QueuesList.TITLE, "url": reverse_lazy("queues:manage"), "icon": "menu/queues"},
             {"title": UsersPage.TITLE, "url": reverse_lazy("users:users"), "icon": "menu/users"},
             {"title": FlagsList.TITLE, "url": reverse_lazy("flags:flags"), "icon": "menu/flags"},
-            conditional(
-                Permission.MAINTAIN_OGL.value in permissions,
-                {
-                    "title": open_general_licences.List.TITLE,
-                    "url": reverse_lazy("open_general_licences:open_general_licences"),
-                    "icon": "menu/open-general-licences",
-                },
-            ),
             conditional(
                 Permission.CONFIGURE_TEMPLATES.value in permissions,
                 {
