@@ -149,10 +149,8 @@ class RegisterDetailsBaseForm(BaseForm):
 
 class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
     def __init__(self, *args, **kwargs):
-        self.Layout.TITLE = "Register a private individual"
+        self.Layout.TITLE = "Enter organisation details"
         super().__init__(*args, **kwargs)
-
-        self.fields["name"].label = "First and last name"
         self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
         self.fields["registration_number"].required = False
 
