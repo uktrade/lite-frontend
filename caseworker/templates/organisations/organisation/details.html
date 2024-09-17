@@ -4,11 +4,7 @@
 	<dl class="govuk-summary-list govuk-summary-list--no-border govuk-!-width-two-thirds">
 		<div class="govuk-summary-list__row">
 			<dt class="govuk-summary-list__key">
-				{% if organisation.type.key == 'individual' %}
-					{% lcs 'organisations.OrganisationPage.Details.SummaryList.FIRST_AND_LAST_NAME' %}
-				{% else %}
-					{% lcs 'organisations.OrganisationPage.Details.SummaryList.NAME' %}
-				{% endif %}
+				Name
 			</dt>
 			<dd class="govuk-summary-list__value">
 				{{ organisation.name }}
@@ -134,7 +130,11 @@
 				{% lcs 'organisations.OrganisationPage.Details.SummaryList.TYPE' %}
 			</dt>
 			<dd class="govuk-summary-list__value">
-				{{ organisation.type.value }}
+				{% if organisation.type.key == 'individual' %}
+					Other
+				{% else %}
+					{{ organisation.type.value }}
+				{% endif %}
 			</dd>
 			<dd class="govuk-summary-list__actions"></dd>
 		</div>
