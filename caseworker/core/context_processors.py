@@ -85,10 +85,6 @@ def lite_menu(request):
                 },
             ),
             conditional(
-                Permission.MANAGE_FLAGGING_RULES.value in permissions,
-                {"title": "Flagging rules", "url": reverse_lazy("flags:flagging_rules"), "icon": "menu/flags"},
-            ),
-            conditional(
                 Permission.MANAGE_TEAM_ROUTING_RULES.value in permissions
                 or Permission.MANAGE_ALL_ROUTING_RULES.value in permissions,
                 {"title": "Routing rules", "url": reverse_lazy("routing_rules:list"), "icon": "menu/routing-rules"},
