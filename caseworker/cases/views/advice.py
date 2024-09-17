@@ -157,7 +157,10 @@ class Finalise(LoginRequiredMixin, TemplateView):
         else:
             advice = filter_advice_by_level(case["advice"], "final")
 
-            # Only advice with an associated good can be part of advice_items
+            # We get all advice on the application and then filter out the advice with
+            # no good associated with it as we can assume that the good has been removed
+            # from the application.
+
             advice_items = []
             for advice_item in advice:
                 if advice_item["good"]:
