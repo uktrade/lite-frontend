@@ -612,6 +612,8 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             self.caseworker["team"]["alias"] if self.caseworker["team"]["alias"] else self.caseworker["team"]["id"]
         )
         advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice, team_alias)
+        context["nlr_products"] = services.filter_nlr_products(self.case["data"]["goods"])
+        context["display advice"] = advice_to_consolidate
         context["advice_to_consolidate"] = advice_to_consolidate.values()
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display

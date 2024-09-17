@@ -12,6 +12,7 @@
         {% if team %} Refused by {{ user.team.name }} {% else %} Refused by {{ user|full_name }} {% endif %}
     </h2>
     {% endif %}
+    {% if not nlr_products %}
     <thead class="govuk-table__head">
         <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">Country</th>
@@ -81,6 +82,8 @@
             {% endif %}
         {% endfor %}
     </tbody>
+    <br><br>
+    {% endif %}
 </table>
 <div class="govuk-grid-row govuk-details">
     <div class="govuk-grid-column-full">
@@ -159,9 +162,9 @@
               </div>
             </div>
         </div>
+        <br><br>
         {% endif %}
         {% if nlr_products %}
-        <br><br>
         <table id="table-nlr-products" class="govuk-table">
             <caption class="app-bg-colour--grey govuk-!-padding-2 govuk-table__caption govuk-table__caption--m">No licence required products</caption>
             <thead class="govuk-table__head">

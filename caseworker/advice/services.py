@@ -40,6 +40,7 @@ DESNZ_TEAMS = [
 FCDO_TEAM = "FCO"
 LICENSING_UNIT_TEAM = "LICENSING_UNIT"
 MOD_ECJU_TEAM = "MOD_ECJU"
+MOD_DI = "MOD_DI"
 MOD_CONSOLIDATE_TEAMS = [
     "MOD_DI",
     "MOD_DSR",
@@ -47,7 +48,7 @@ MOD_CONSOLIDATE_TEAMS = [
     "MOD_CAPPROT",
 ]
 MOD_TEAMS = [MOD_ECJU_TEAM, *MOD_CONSOLIDATE_TEAMS]
-LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
+LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM, MOD_DI]
 NCSC_TEAM = "NCSC"
 OGD_TEAMS = [
     *DESNZ_TEAMS,
@@ -133,7 +134,7 @@ def filter_advice_by_users_team(all_advice, caseworker):
 
 
 def filter_advice_by_team(all_advice, team_alias):
-    return [advice for advice in all_advice if advice["team"]["alias"] == team_alias]
+    return [advice for advice in all_advice if advice["team"]["alias"] == team_alias and advice["good"] is not None]
 
 
 def filter_advice_by_teams(all_advice, teams_list):
@@ -175,6 +176,7 @@ def group_advice_by_user(advice):
     from the same user separately i.e. group-by user & decision.
     """
     result = defaultdict(list)
+
     for item in advice:
         result[item["user"]["id"]].append(item)
     return result

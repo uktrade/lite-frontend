@@ -30,6 +30,8 @@
             <div class="govuk-grid-column-two-thirds">
                 <h2 class="govuk-heading-xl">{{ subtitle|default:"Review and combine" }}</h2>
                     {% for advice in advice_to_consolidate %}
+                    Recommendation by {{ advice.0.user.first_name }} {{ advice.0.user.last_name }} of {{ advice.0.team.name }}
+                    on {{ advice.0.created_at|to_datetime|date:"d F Y"  }}
                     {% include "advice/advice_details.html" with team=True %}
                     <br>
                     {% endfor %}
