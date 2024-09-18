@@ -21,6 +21,7 @@ from caseworker.core.constants import (
     LICENSING_UNIT_TEAM_ID,
     TAU_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
+    Permission,
 )
 from core.constants import CaseStatusEnum, LicenceStatusEnum
 from caseworker.cases.objects import Case
@@ -674,3 +675,26 @@ def test_can_user_be_allowed_to_lu_countersign(
     )
 
     assert rules.test_rule("can_user_be_allowed_to_lu_countersign", get_mock_request(user), case) is expected_result
+
+
+@pytest.mark.parametrize(
+    ("user_permission", "organisation_status", "expected"),
+    (
+        ([Permission.MANAGE_ORGANISATIONS.value], "active", True),
+        ([Permission.MANAGE_ORGANISATIONS.value, Permission.ADMINISTER_ROLES.value], "active", True),
+        ([Permission.ADMINISTER_ROLES.value], "active", False),
+        ([], "active", False),
+        ([Permission.MANAGE_ORGANISATIONS.value], "in-review", False),
+        ([Permission.ADMINISTER_ROLES.value], "in-review", False),
+        ([], "in-review", False),
+    ),
+)
+def test_can_user_manage_organisation(
+    mock_gov_user, get_mock_request, user_permission, organisation_status, expected, data_organisation
+):
+
+    user = mock_gov_user["user"]
+    user["role"]["permissions"] = user_permission
+    request = get_mock_request(user)
+    data_organisation["status"]["key"] = organisation_status
+    assert rules.test_rule("can_user_manage_organisation", request, data_organisation) is expected

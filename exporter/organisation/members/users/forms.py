@@ -5,7 +5,7 @@ from django.db import models
 from django.template.loader import render_to_string
 
 from core.common.forms import BaseForm, TextChoice
-from exporter.core.enums import Roles
+from core.constants import ExporterRoles
 
 
 class SelectRoleForm(BaseForm):
@@ -13,9 +13,9 @@ class SelectRoleForm(BaseForm):
         TITLE = "Who do you want to add?"
 
     class RoleChoices(models.TextChoices):
-        AGENT_ROLE = Roles.agent.id, "An agent"
-        EXPORTER_ROLE = Roles.exporter.id, "An exporter"
-        ADMIN_ROLE = Roles.administrator.id, "An administrator"
+        AGENT_ROLE = ExporterRoles.agent.id, "An agent"
+        EXPORTER_ROLE = ExporterRoles.exporter.id, "An exporter"
+        ADMIN_ROLE = ExporterRoles.administrator.id, "An administrator"
 
     ROLE_CHOICES = (
         TextChoice(RoleChoices.AGENT_ROLE),
@@ -64,7 +64,7 @@ class AddUserForm(BaseForm):
 
     def __init__(self, organisation_users, role_id, sites, *args, **kwargs):
         self.organisation_users = organisation_users
-        role_name = [role.name for role in Roles.immutable_roles if role.id == role_id]
+        role_name = [role.name for role in ExporterRoles.immutable_roles if role.id == role_id]
         self.Layout.TITLE = f"Add an {role_name[0]}"
         site_choices = [Choice(x["id"], x["name"], hint=self.format_address(x.get("address", {}))) for x in sites]
         self.declared_fields["sites"].choices = site_choices
