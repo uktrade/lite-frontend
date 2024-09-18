@@ -2536,6 +2536,60 @@ def mock_control_list_entries_get(requests_mock):
     )
 
 
+@pytest.fixture
+def mock_control_list_entries_grouped_get(requests_mock):
+    url = client._build_absolute_uri(f"/static/control-list-entries/?group=True")
+    return requests_mock.get(
+        url=url,
+        json={
+            "control_list_entries": [
+                {
+                    "id": "3fc955d3-1b0e-406f-96ee-b2a3c237f9bd",
+                    "rating": "ML1",
+                    "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms and automatic weapons with a calibre of 12.7mm or less, and accessories and specially designed components",
+                    "parent_id": None,
+                    "category": "UK Military List",
+                    "controlled": True,
+                    "selectable_for_assessment": True,
+                    "children": [
+                        {
+                            "id": "0b9116c2-3aa0-49fb-a590-944b4738b208",
+                            "rating": "ML1a",
+                            "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns",
+                            "parent_id": "3fc955d3-1b0e-406f-96ee-b2a3c237f9bd",
+                            "category": "UK Military List",
+                            "controlled": True,
+                            "selectable_for_assessment": True,
+                        }
+                    ],
+                }
+            ],
+        },
+    )
+
+
+@pytest.fixture
+def mock_control_list_entries_including_parent_get(requests_mock):
+    url = client._build_absolute_uri(f"/static/control-list-entries/?include_parent=True")
+    return requests_mock.get(
+        url=url,
+        json={
+            "control_list_entries": [
+                {
+                    "rating": "ML1",
+                    "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms and automatic weapons with a calibre of 12.7mm or less, and accessories and specially designed components",
+                    "parent": None,
+                },
+                {
+                    "rating": "ML1a",
+                    "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns",
+                    "parent": "3fc955d3-1b0e-406f-96ee-b2a3c237f9bd",
+                },
+            ]
+        },
+    )
+
+
 class WizardStepPoster:
     def __init__(self, authorized_client, url):
         self.authorized_client = authorized_client
