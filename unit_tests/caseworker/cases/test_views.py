@@ -498,7 +498,9 @@ def test_im_done_page_submit(
     assert put_matcher.last_request.json() == {}
 
 
-def test_finalise_page_nlr(authorized_client, queue_pk, data_standard_case, mock_good_on_appplication):
+def test_finalise_page_no_licence_required_goods_only(
+    authorized_client, queue_pk, data_standard_case, mock_good_on_appplication
+):
     advice = [
         {
             "level": "final",
@@ -518,10 +520,50 @@ def test_finalise_page_nlr(authorized_client, queue_pk, data_standard_case, mock
     soup = BeautifulSoup(response.content, "html.parser")
     nlr_description_div_tag = soup.find("div", class_="govuk-body")
 
+    # In cases with only no licence required goods we expect the finalise page
+
     assert nlr_description_div_tag.text.strip() == "You'll be informing the exporter that no licence is required"
 
 
-def test_finalise_page_approve(
+def test_finalise_page_approve_with_goods_that_require_licence(
+    authorized_client,
+    queue_pk,
+    data_standard_case,
+    mock_get_licences,
+    mock_get_final_decision,
+    mock_get_duration,
+):
+    advice = [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+    ]
+
+    data_standard_case["case"]["advice"] = advice
+    url = reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
+
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    approve_heading = soup.find("h1", class_="govuk-fieldset__heading")
+
+    assert approve_heading.text.strip() == "Approve"
+
+
+def test_finalise_page_approve_with_no_licence_required_and_goods_that_require_licence(
     authorized_client,
     queue_pk,
     data_standard_case,
@@ -550,9 +592,13 @@ def test_finalise_page_approve(
     url = reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
 
     response = authorized_client.get(url)
-
     assert response.status_code == 200
 
+    # we want to the system to regonise that there are no licence required goods also
+    assert response.context["any_nlr"]
+
+    # In cases with some no licence required goods and some approved goods we still expect the licence approve page
     soup = BeautifulSoup(response.content, "html.parser")
     approve_heading = soup.find("h1", class_="govuk-fieldset__heading")
+
     assert approve_heading.text.strip() == "Approve"
