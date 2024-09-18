@@ -157,7 +157,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
         else:
             advice = filter_advice_by_level(case["advice"], "final")
 
-            # For and no licence required advice items we have recorded their decision as ‘approve’
+            # For no licence required advice items we have recorded their decision as ‘approve’
             # but their ‘good_id’ has been set to ‘None’ so it is best to filter out
             # these advice items.
 
