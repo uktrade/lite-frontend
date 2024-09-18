@@ -499,18 +499,9 @@ def test_im_done_page_submit(
 
 
 def test_finalise_page_no_licence_required_goods_only(
-    authorized_client, queue_pk, data_standard_case, mock_good_on_appplication
+    authorized_client, queue_pk, data_standard_case, final_advice_no_licence_required
 ):
-    advice = [
-        {
-            "level": "final",
-            "note": "note",
-            "type": {"key": "no_licence_required"},
-            "good": {"id": "good_id"},
-            "text": "text",
-        }
-    ]
-    data_standard_case["case"]["advice"] = advice
+    data_standard_case["case"]["advice"] = final_advice_no_licence_required
     url = reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
 
     response = authorized_client.get(url)
@@ -532,25 +523,10 @@ def test_finalise_page_approve_with_goods_that_require_licence(
     mock_get_licences,
     mock_get_final_decision,
     mock_get_duration,
+    final_advice_licence_required,
 ):
-    advice = [
-        {
-            "level": "final",
-            "note": "note",
-            "type": {"key": "approve"},
-            "good": {"id": "good_id"},
-            "text": "text",
-        },
-        {
-            "level": "final",
-            "note": "note",
-            "type": {"key": "approve"},
-            "good": {"id": "good_id"},
-            "text": "text",
-        },
-    ]
 
-    data_standard_case["case"]["advice"] = advice
+    data_standard_case["case"]["advice"] = final_advice_licence_required
     url = reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
 
     response = authorized_client.get(url)
@@ -570,25 +546,9 @@ def test_finalise_page_approve_with_no_licence_required_and_goods_that_require_l
     mock_get_licences,
     mock_get_final_decision,
     mock_get_duration,
+    final_advice_no_licence_required_and_licence_required_goods,
 ):
-    advice = [
-        {
-            "level": "final",
-            "note": "note",
-            "type": {"key": "approve"},
-            "good": {"id": "good_id"},
-            "text": "text",
-        },
-        {
-            "level": "final",
-            "note": "note",
-            "type": {"key": "no_licence_required"},
-            "good": {"id": "good_id"},
-            "text": "text",
-        },
-    ]
-
-    data_standard_case["case"]["advice"] = advice
+    data_standard_case["case"]["advice"] = final_advice_no_licence_required_and_licence_required_goods
     url = reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
 
     response = authorized_client.get(url)
