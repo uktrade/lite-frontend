@@ -42,8 +42,9 @@ def pytest_configure(config):
 @pytest.fixture(autouse=True)
 def delete_caseworker_control_list_entries_cache():
     caseworker_control_list_entries_cache_keys = [
-        "caseworker_control_list_entries_cache__include_parent",
-        "caseworker_control_list_entries_cache__group",
+        "caseworker_control_list_entries_cache",
+        "caseworker_control_list_entries_including_parent_cache",
+        "caseworker_control_list_entries_grouped_cache",
     ]
     for key in caseworker_control_list_entries_cache_keys:
         if cache.get(key):

@@ -136,41 +136,43 @@ def get_user_role_name(request):
 # Control List Entries
 def get_control_list_entries(request, convert_to_options=False, include_parent=False):
     if convert_to_options:
-        if cache.get("caseworker_converted_control_list_entries_cache"):
-            return cache.get("caseworker_converted_control_list_entries_cache")
-        response = client.get(request, "/static/control-list-entries/")
-        response.raise_for_status()
-        caseworker_converted_control_list_entries_cache = [
+        if cache.get("caseworker_control_list_entries_cache"):
+            caseworker_control_list_entries = cache.get("caseworker_control_list_entries_cache")
+        else:
+            response = client.get(request, "/static/control-list-entries/")
+            response.raise_for_status()
+            caseworker_control_list_entries = response.json().get("control_list_entries")
+            cache.set("caseworker_control_list_entries_cache", caseworker_control_list_entries)
+
+        converted_control_list_entries = [
             Option(
                 key=control_list_entry["rating"],
                 value=control_list_entry["rating"],
                 description=control_list_entry["text"],
             )
-            for control_list_entry in response.json().get("control_list_entries")
+            for control_list_entry in caseworker_control_list_entries
         ]
-        cache.set("caseworker_converted_control_list_entries_cache", caseworker_converted_control_list_entries_cache)
-        return caseworker_converted_control_list_entries_cache
+        return converted_control_list_entries
 
     if include_parent:
-        if cache.get("caseworker_control_list_entries_cache__include_parent"):
-            return cache.get("caseworker_control_list_entries_cache__include_parent")
+        if cache.get("caseworker_control_list_entries_including_parent_cache"):
+            return cache.get("caseworker_control_list_entries_including_parent_cache")
         response = client.get(request, "/static/control-list-entries/?include_parent=True")
         response.raise_for_status()
-        caseworker_control_list_entries_cache__include_parent = response.json().get("control_list_entries")
+        control_list_entries_including_parent = response.json().get("control_list_entries")
         cache.set(
-            "caseworker_control_list_entries_cache__include_parent",
-            caseworker_control_list_entries_cache__include_parent,
+            "caseworker_control_list_entries_including_parent_cache",
+            control_list_entries_including_parent,
         )
-        return caseworker_control_list_entries_cache__include_parent
+        return control_list_entries_including_parent
 
-    if cache.get("caseworker_control_list_entries_cache__group"):
-        return cache.get("caseworker_control_list_entries_cache__group")
-
+    if cache.get("caseworker_control_list_entries_grouped_cache"):
+        return cache.get("caseworker_control_list_entries_grouped_cache")
     response = client.get(request, "/static/control-list-entries/?group=True")
     response.raise_for_status()
-    caseworker_control_list_entries_cache__group = response.json().get("control_list_entries")
-    cache.set("caseworker_control_list_entries_cache__group", caseworker_control_list_entries_cache__group)
-    return caseworker_control_list_entries_cache__group
+    control_list_entries_grouped = response.json().get("control_list_entries")
+    cache.set("caseworker_control_list_entries_grouped_cache", control_list_entries_grouped)
+    return control_list_entries_grouped
 
 
 # Regime Entries
