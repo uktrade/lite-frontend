@@ -15,6 +15,7 @@ from caseworker.core.constants import (
     TAU_TEAM_ID,
     LICENSING_UNIT_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
+    Permission,
 )
 from caseworker.cases.services import get_case_sub_statuses
 from caseworker.core.services import get_caseworker_operable_case_statuses
@@ -168,6 +169,17 @@ def user_not_yet_countersigned(request, case):
     return caseworker["id"] not in countersigners
 
 
+@rules.predicate
+def is_user_manage_organisations_role(request, organisation):
+    user = getattr(request, "lite_user", None)
+    return user and Permission.MANAGE_ORGANISATIONS.value in user["role"]["permissions"]
+
+
+@rules.predicate
+def is_organisation_active(request, organisation):
+    return organisation["status"]["key"] == "active"
+
+
 rules.add_rule("can_user_allocate_case", is_case_caseworker_operable)
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
@@ -192,3 +204,4 @@ rules.add_rule("can_user_rerun_routing_rules", rules.always_deny)
 rules.add_rule(
     "can_licence_status_be_changed", is_user_licencing_unit_senior_manager & is_case_finalised_and_licence_editable
 )
+rules.add_rule("can_user_manage_organisation", is_user_manage_organisations_role & is_organisation_active)

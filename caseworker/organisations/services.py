@@ -46,8 +46,9 @@ def put_organisation_status(request, pk, json):
 
 
 def get_organisation(request, pk):
-    data = client.get(request, f"/organisations/{pk}")
-    return data.json()
+    response = client.get(request, f"/organisations/{pk}")
+    response.raise_for_status()
+    return response.json()
 
 
 def get_organisation_sites(request, pk):
