@@ -28,21 +28,22 @@ class RegistrationConfirmation(BaseForm):
 
 class RegistrationTypeForm(BaseForm):
     class Layout:
-        TITLE = "Commercial organisation or private individual"
+        TITLE = "Select the type of organisation"
 
     class RegistrationTypeChoices(models.TextChoices):
-        COMMERCIAL = ("commercial", "Commercial organisation")
-        INDIVIDUAL = ("individual", "Private individual")
+        COMMERCIAL = ("commercial", "Commercial company")
+        INDIVIDUAL = (
+            "individual",
+            "Other (such as individual, partnership, government, charity or educational institution)",
+        )
 
     type = forms.ChoiceField(
         choices=[
             TextChoice(
                 RegistrationTypeChoices.COMMERCIAL,
-                hint="Select this if you want to register an organisation that will be exporting",
             ),
             TextChoice(
                 RegistrationTypeChoices.INDIVIDUAL,
-                hint="Select this if you're a private individual that will be exporting alone",
             ),
         ],
         label="",
@@ -84,10 +85,10 @@ class RegisterDetailsBaseForm(BaseForm):
     REGISTRATION_LABEL = "Companies House registration number (CRN)"
 
     class Layout:
-        TITLE = "Register a private individual"
+        TITLE = "Enter organisation details"
 
     name = forms.CharField(
-        label="First and last name",
+        label="Name",
         error_messages={
             "required": "Enter a name",
         },
@@ -148,10 +149,8 @@ class RegisterDetailsBaseForm(BaseForm):
 
 class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
     def __init__(self, *args, **kwargs):
-        self.Layout.TITLE = "Register a private individual"
+        self.Layout.TITLE = "Enter organisation details"
         super().__init__(*args, **kwargs)
-
-        self.fields["name"].label = "First and last name"
         self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
         self.fields["registration_number"].required = False
 
