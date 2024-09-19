@@ -155,16 +155,13 @@ class Finalise(LoginRequiredMixin, TemplateView):
             approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
             all_nlr = False
         else:
-            advice = filter_advice_by_level(case["advice"], "final")
+            final_advice = filter_advice_by_level(case["advice"], "final")
 
             # For no licence required advice items we have recorded their decision as ‘approve’
             # but their ‘good_id’ has been set to ‘None’ so it is best to filter out
             # these advice items.
 
-            advice_items = []
-            for advice_item in advice:
-                if advice_item["good"]:
-                    advice_items.append(advice_item["type"]["key"])
+            advice_items = [item["type"]["key"] for item in final_advice if item["good"]]
             approve = any([item == "approve" or item == "proviso" for item in advice_items])
             all_nlr = not approve and "refuse" not in advice_items
 
