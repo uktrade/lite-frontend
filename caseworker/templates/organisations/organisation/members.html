@@ -1,6 +1,13 @@
 {% extends 'organisations/organisation/base.html' %}
-
+{% load rules %}
 {% block contents %}
+{% test_rule 'can_user_manage_organisation' request organisation  as can_user_manage_organisation %}
+{% if can_user_manage_organisation %}
+	<a href="{% url 'organisations:add-exporter-admin' organisation.id %}" class="govuk-button govuk-button--primary">
+		Add Administrator
+	</a>
+{% endif %}
+
 	{% if members %}
 		<table class="govuk-table">
 			<thead class="govuk-table__head">

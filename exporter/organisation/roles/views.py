@@ -1,4 +1,4 @@
-from exporter.core.enums import Roles as Rolestuple
+from core.constants import ExporterRoles as Rolestuple
 from exporter.organisation.members.services import get_user
 from exporter.organisation.roles.services import get_roles, get_permissions
 from exporter.organisation.views import OrganisationView
