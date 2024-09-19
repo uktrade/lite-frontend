@@ -149,21 +149,26 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
-        case_type = case.data["case_type"]["sub_type"]["key"]
-
-        if case_type == CaseType.OPEN.value:
-            approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
-            all_nlr = False
-        else:
-            advice = filter_advice_by_level(case["advice"], "final")
-            items = [item["type"]["key"] for item in advice]
-            approve = any([item == "approve" or item == "proviso" for item in items])
-            all_nlr = not approve and "refuse" not in items
-
         case_id = case["id"]
+        case_type = case.data["case_type"]["sub_type"]["key"]
+        final_advice = filter_advice_by_level(case["advice"], "final")
+
+        # For no licence required advice items we have recorded their decision as ‘approve’
+        # but their ‘good_id’ has been set to ‘None’ so it is best to filter out
+        # these advice items.
+        advice_items = [item["type"]["key"] for item in final_advice if item["good"]]
+        approve = False
+        all_nlr = False
+        is_case_open = case_type == CaseType.OPEN.value
+
+        if is_case_open:
+            approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
+        else:
+            approve = any([item == "approve" or item == "proviso" for item in advice_items])
+            all_nlr = not approve and "refuse" not in advice_items
 
         if approve:
-            any_nlr = any([item == "no_licence_required" for item in items])
+            any_nlr = any([item == "no_licence_required" for item in advice_items])
             licence_data, _ = get_licence(request, str(kwargs["pk"]))
             licence = licence_data.get("licence")
             # If there are licenced goods, we want to use the reissue goods flow.
@@ -179,7 +184,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 extra_data={
                     "any_nlr": any_nlr,
                     "case": case,
-                    "has_proviso": any([item == "proviso" for item in items]),
+                    "has_proviso": any([item == "proviso" for item in advice_items]),
                 },
             )
         else:
@@ -188,7 +193,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 deny_licence_form(
                     kwargs["queue_pk"],
                     case_id,
-                    case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value,
+                    is_case_open,
                     all_nlr,
                 ),
             )
