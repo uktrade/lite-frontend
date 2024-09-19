@@ -31,6 +31,7 @@
 					<th scope="col" class="govuk-table__header">#</th>
 					<th scope="col" class="govuk-table__header">Name</th>
 					<th scope="col" class="govuk-table__header">Quantity</th>
+					<th scope="col" class="govuk-table__header">Part number</th>
 					{% if case.goods.0.item_type %}
 						<th scope="col" class="govuk-table__header">Type</th>
 					{% endif %}
@@ -40,6 +41,7 @@
 						<th scope="col" class="govuk-table__header">Report summary</th>
 					{% endif %}
 					<th scope="col" class="govuk-table__header">Flags</th>
+
 				</tr>
 			</thead>
 			<tbody class="govuk-table__body">
@@ -65,6 +67,10 @@
 						<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Quantity</span>
 							<span id="quantity-value" data-max-length="200">{{ good|pluralise_quantity }}</span>
+						</td>
+						<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
+							<span class="govuk-table__header" aria-hidden="false">Part number</span>
+							{{ good.good.part_number|default_if_none:'Not added' }}
 						</td>
 						{% if case.goods.0.item_type %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">
