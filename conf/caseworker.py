@@ -1,5 +1,3 @@
-from django_log_formatter_asim import ASIMFormatter
-
 import os
 from urllib.parse import urljoin
 
@@ -134,24 +132,3 @@ if env.str("ELASTIC_APM_SERVER_URL", ""):
 
 LITE_FEEDBACK_EMAIL = env.str("LITE_FEEDBACK_EMAIL", "")
 CONFIG_ADMIN_USERS_LIST = env.list("CONFIG_ADMIN_USERS_LIST", default=[])
-
-# Logging formatting
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "asim_formatter": {
-            "()": ASIMFormatter,
-        },
-    },
-    "handlers": {
-        "asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"},
-    },
-    "root": {
-        "handlers": ["asim"],
-    },
-    "loggers": {
-        "django": {"handlers": ["asim"], "propagate": False},
-    },
-}
