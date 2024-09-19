@@ -149,6 +149,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
+        case_id = case["id"]
         case_type = case.data["case_type"]["sub_type"]["key"]
         final_advice = filter_advice_by_level(case["advice"], "final")
 
@@ -158,14 +159,13 @@ class Finalise(LoginRequiredMixin, TemplateView):
         advice_items = [item["type"]["key"] for item in final_advice if item["good"]]
         approve = False
         all_nlr = False
+        is_case_open = case_type == CaseType.OPEN.value
 
-        if case_type == CaseType.OPEN.value:
+        if is_case_open:
             approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
         else:
             approve = any([item == "approve" or item == "proviso" for item in advice_items])
             all_nlr = not approve and "refuse" not in advice_items
-
-        case_id = case["id"]
 
         if approve:
             any_nlr = any([item == "no_licence_required" for item in advice_items])
@@ -193,7 +193,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 deny_licence_form(
                     kwargs["queue_pk"],
                     case_id,
-                    case_type == CaseType.OPEN.value,
+                    is_case_open,
                     all_nlr,
                 ),
             )
