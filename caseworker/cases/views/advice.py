@@ -156,10 +156,11 @@ class Finalise(LoginRequiredMixin, TemplateView):
         # but their ‘good_id’ has been set to ‘None’ so it is best to filter out
         # these advice items.
         advice_items = [item["type"]["key"] for item in final_advice if item["good"]]
+        approve = False
+        all_nlr = False
 
         if case_type == CaseType.OPEN.value:
             approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
-            all_nlr = False
         else:
             approve = any([item == "approve" or item == "proviso" for item in advice_items])
             all_nlr = not approve and "refuse" not in advice_items
@@ -192,7 +193,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 deny_licence_form(
                     kwargs["queue_pk"],
                     case_id,
-                    case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value,
+                    case_type == CaseType.OPEN.value,
                     all_nlr,
                 ),
             )
