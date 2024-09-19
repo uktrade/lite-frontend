@@ -65,6 +65,10 @@ class PartyAddressValidator(EdifactStringValidator):
     message = "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
 
 
+class PartyNameValidator(EdifactStringValidator):
+    message = "Party name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+
+
 class FutureDateValidator:
     def __init__(self, message):
         self.message = message
