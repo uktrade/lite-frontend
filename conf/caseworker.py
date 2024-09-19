@@ -1,4 +1,3 @@
-import logging
 from django_log_formatter_asim import ASIMFormatter
 
 import os
