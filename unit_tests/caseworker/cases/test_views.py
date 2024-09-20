@@ -562,3 +562,25 @@ def test_finalise_page_approve_with_no_licence_required_and_goods_that_require_l
     approve_heading = soup.find("h1", class_="govuk-fieldset__heading")
 
     assert approve_heading.text.strip() == "Approve"
+
+
+def test_finalise_page_approve_with_refuse_and_nlr(
+    authorized_client,
+    queue_pk,
+    data_standard_case,
+    mock_get_licences,
+    mock_get_final_decision,
+    mock_get_duration,
+    final_advice_no_licence_required_and_refuse,
+):
+    data_standard_case["case"]["advice"] = final_advice_no_licence_required_and_refuse
+    url = reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": data_standard_case["case"]["id"]})
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    # In cases with some no licence required goods and some refused we expect the refuse page
+    soup = BeautifulSoup(response.content, "html.parser")
+    refuse_text = soup.find("div", class_="govuk-body")
+
+    assert refuse_text.text.strip() == "You'll be denying the case"
