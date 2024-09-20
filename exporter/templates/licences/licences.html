@@ -56,12 +56,12 @@
 							<span class="govuk-table__header" aria-hidden="true">
 								{% lcs "licences.LicencesList.Table.GOODS_COLUMN" %}
 							</span>
-							{% for good in licence.goods|slice:":3" %}
+							{% for good_on_application in licence.goods|slice:":3" %}
 								<div class="app-expanded-row__item--invert">
-									{% if good.good %}
-										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description }}
+									{% if good_on_application.good %}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.good.control_list_entries %}: {{ good_on_application.good.description }}
 									{% else %}
-										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description }}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.control_list_entries %}: {{ good_on_application.description }}
 									{% endif %}
 									{% if licence.goods|length > row_limit and forloop.counter == row_limit %}
 										<br>
@@ -71,12 +71,12 @@
 									{% endif %}
 								</div>
 							{% endfor %}
-							{% for good in licence.goods %}
+							{% for good_on_application in licence.goods %}
 								<div class="app-expanded-row__item">
-									{% if good.good %}
-										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}: {{ good.good.description|abbreviate_string:50 }}
+									{% if good_on_application.good %}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.good.control_list_entries %}: {{ good_on_application.good.description|abbreviate_string:50 }}
 									{% else %}
-										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}: {{ good.description|abbreviate_string:50 }}
+										{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.control_list_entries %}: {{ good_on_application.description|abbreviate_string:50 }}
 									{% endif %}
 								</div>
 							{% endfor %}
