@@ -58,7 +58,7 @@
 							</span>
 							{% for good_on_application in licence.goods|slice:":3" %}
 								<div class="app-expanded-row__item--invert">
-									{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.control_list_entries %}: {{ good_on_application.description }}
+									{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.assessed_control_list_entries %}: {{ good_on_application.description }}
 									{% if licence.goods|length > row_limit and forloop.counter == row_limit %}
 										<br>
 										<span class="govuk-hint govuk-!-margin-0">
@@ -69,7 +69,7 @@
 							{% endfor %}
 							{% for good_on_application in licence.goods %}
 								<div class="app-expanded-row__item">
-									{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.control_list_entries %}: {{ good_on_application.description|abbreviate_string:50 }}
+									{{ forloop.counter }}. {% include 'includes/control-list-entries.html' with control_list_entries=good_on_application.assessed_control_list_entries %}: {{ good_on_application.description|abbreviate_string:50 }}
 								</div>
 							{% endfor %}
 						</td>
