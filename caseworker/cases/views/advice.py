@@ -158,11 +158,10 @@ class Finalise(LoginRequiredMixin, TemplateView):
         # these advice items.
 
         advice_items_with_goods = [item["type"]["key"] for item in final_advice if item["good"]]
-        all_advice_items = [item["type"]["key"] for item in final_advice]
 
         # Reuse advice has no good associated with it so we need to find tout if there is
         # any on the application to decide whether to use the refuse or nlr flow
-        refuse_advice = any([item == "refuse" for item in all_advice_items])
+        refuse_advice = any([item["type"]["key"] == "refuse" for item in final_advice])
 
         approve = False
         all_nlr = False
