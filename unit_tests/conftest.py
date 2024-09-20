@@ -7,6 +7,8 @@ import re
 
 import requests
 
+from bs4 import BeautifulSoup
+
 from datetime import timedelta
 from urllib.parse import urljoin, urlparse
 
@@ -2616,3 +2618,11 @@ def render_form(rf):
         return rendered
 
     return _render_form
+
+
+@pytest.fixture()
+def beautiful_soup():
+    def _beautiful_soup(html):
+        return BeautifulSoup(html, "html.parser")
+
+    return _beautiful_soup
