@@ -156,8 +156,14 @@ class Finalise(LoginRequiredMixin, TemplateView):
         # For no licence required advice items we have recorded their decision as ‘approve’
         # but their ‘good_id’ has been set to ‘None’ so it is best to filter out
         # these advice items.
-        all_advice_items = [item["type"]["key"] for item in final_advice]
+
         advice_items_with_goods = [item["type"]["key"] for item in final_advice if item["good"]]
+        final_advice_items = [item["type"]["key"] for item in final_advice]
+
+        # Reuse advice has no good associated with it so we need to find tout if there is
+        # any on the application to decide whether to use the refuse or nlr flow
+        refuse_advice = any([item == "refuse" for item in final_advice_items])
+
         approve = False
         all_nlr = False
         is_case_open = case_type == CaseType.OPEN.value
@@ -166,7 +172,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
             approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
         else:
             approve = any([item == "approve" or item == "proviso" for item in advice_items_with_goods])
-            all_nlr = all(item == "no_licence_required" for item in all_advice_items)
+            all_nlr = all(item == "no_licence_required" for item in advice_items_with_goods)
 
         if approve:
             any_nlr = any([item == "no_licence_required" for item in advice_items_with_goods])
@@ -189,6 +195,8 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 },
             )
         else:
+            if refuse_advice:
+                all_nlr = False
             return form_page(
                 request,
                 deny_licence_form(
