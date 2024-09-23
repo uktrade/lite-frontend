@@ -15,6 +15,7 @@ from exporter.core import constants
 from exporter.core.constants import AddGoodFormSteps, SetPartyFormSteps
 from core.builtins.custom_tags import default_na
 from exporter.organisation.roles.services import get_user_permissions
+from lite_forms.components import Option
 
 
 class Section:
@@ -281,3 +282,16 @@ def get_organisation_rfd_certificate(organisation):
 def has_valid_organisation_rfd_certificate(organisation):
     document = get_organisation_rfd_certificate(organisation)
     return bool(document) and not document["is_expired"]
+
+
+def convert_control_list_entries_to_options(control_list_entries):
+    converted_control_list_entries = []
+    for control_list_entry in control_list_entries:
+        converted_control_list_entries.append(
+            Option(
+                key=control_list_entry["rating"],
+                value=control_list_entry["rating"],
+                description=control_list_entry["text"],
+            )
+        )
+    return converted_control_list_entries
