@@ -1,5 +1,3 @@
-from time import sleep
-
 from django.contrib.humanize.templatetags.humanize import intcomma
 from pytest_bdd import (
     given,
@@ -21,28 +19,6 @@ def licences_page(driver, exporter_url):
     driver.get(exporter_url.rstrip("/") + "/licences/")
 
 
-@then("an email is sent to HMRC")
-def is_email_sent_to_hmrc(context, driver, api_client):
-
-    # Force the task manager on LITE-HMRC to send any queued
-    # emails. This is required so our test doesn't have to
-    # wait 10mins until the task manager runs the task.
-    url = f"/licences/hmrc-integration/force-mail-push/"
-    response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
-    assert response.status_code == 200
-
-    sleep(5)
-
-    # Check email is sent by probing the lite-api endpoint (which in turn cascades to LITE-HMRC)
-    url = f"/licences/hmrc-integration/{context.licence}/"
-    response = api_client.make_request(method="GET", url=url, headers=api_client.exporter_headers)
-    assert response.status_code == 200
-
-    # Check mail status
-    hmrc_mail_status = response.json()["hmrc_mail_status"]
-    assert hmrc_mail_status == "reply_pending", f"HMRC mail status is {hmrc_mail_status}"
-
-
 @then("I see my standard licence")
 def standard_licence_row(context, driver, assessed_control_list_entries):
     Shared(driver).filter_by_reference_number(context.reference_code)
@@ -52,44 +28,6 @@ def standard_licence_row(context, driver, assessed_control_list_entries):
     assert context.goods[0]["good"]["name"] in row
     assert context.end_user["country"]["name"] in row
     assert context.end_user["name"] in row
-    assert "Issued" in row
-
-
-@then("I see my open licence")
-def open_licence_row(context, driver):
-    Shared(driver).filter_by_reference_number(context.reference_code)
-    row = LicencesPage(driver).licence_row_properties(context.licence)
-    assert context.reference_code in row
-    assert ", ".join(x["rating"] for x in context.goods_type["control_list_entries"]) in row
-    assert context.goods_type["description"] in row
-    assert context.country["name"] in row
-    assert "Issued" in row
-
-
-@when("I click on the clearances tab")
-def clearances_tab(driver):
-    LicencesPage(driver).click_clearances_tab()
-
-
-@when("I click on the NLR tab")
-def nlrs_tab(driver):
-    LicencesPage(driver).click_nlr_tab()
-
-
-@then("I see my nlr document")
-def nlr_document_visible(context, driver):
-    Shared(driver).filter_by_reference_number(context.reference_code)
-    row = LicencesPage(driver).licence_row_properties(context.generated_document)
-    assert context.reference_code in row
-
-
-@then("I see my exhibition licence")
-def exhibition_licence_row(context, driver):
-    Shared(driver).filter_by_reference_number(context.reference_code)
-    row = LicencesPage(driver).licence_row_properties(context.licence)
-    assert context.reference_code in row
-    assert ", ".join(x["rating"] for x in context.goods[0]["good"]["control_list_entries"]) in row
-    assert context.goods[0]["good"]["description"] in row
     assert "Issued" in row
 
 
@@ -117,28 +55,6 @@ def standard_licence_details(driver, context, assessed_control_list_entries):
     assert formatted_licenced_quantity in good_row
     assert formatted_licenced_value in good_row
     assert "0" in page.get_usage()
-
-
-@then("I see my open application licence details")
-def open_licence_details(driver, context):
-    page = LicencePage(driver)
-    assert context.country["name"] in page.get_destination()
-    good_row = page.get_good_row()
-    assert ", ".join(x["rating"] for x in context.goods_type["control_list_entries"]) in good_row
-    assert "0" in page.get_usage()
-
-
-@then("I see my exhibition application licence details")
-def exhibition_licence_details(driver, context):
-    assert (
-        ", ".join(x["rating"] for x in context.goods[0]["good"]["control_list_entries"])
-        in LicencePage(driver).get_good_row()
-    )
-
-
-@given("an Exhibition Clearance is created")  # noqa
-def an_exhibition_clearance_is_created(driver, apply_for_exhibition_clearance):  # noqa
-    pass
 
 
 @given(parsers.parse('I assess the goods with "{cle_entries}"'), target_fixture="assessed_control_list_entries")
