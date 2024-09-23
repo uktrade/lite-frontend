@@ -100,6 +100,7 @@ def mock_exporter_user_me(requests_mock, lite_api_user_id):
                 "status": {"key": "active", "value": "Active"},
             }
         ],
+        "id": 123,
     }
 
     requests_mock.get(url=url, json=data)

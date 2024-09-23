@@ -1305,6 +1305,79 @@ def final_advice(current_user, lu_team):
     }
 
 
+@pytest.fixture
+def final_advice_licence_required():
+    return [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+    ]
+
+
+@pytest.fixture
+def final_advice_no_licence_required():
+    return [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "no_licence_required"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        }
+    ]
+
+
+@pytest.fixture
+def final_advice_no_licence_required_and_licence_required_goods():
+    return [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "no_licence_required"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+    ]
+
+
+@pytest.fixture
+def final_advice_no_licence_required_and_refuse():
+    return [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "refuse"},
+            "good": None,
+            "text": "text",
+        },
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "no_licence_required"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+    ]
+
+
 def countersignatures_for_advice(all_advice, data):
     """
     Generate countersignatures for the required order, decision specified in `data`

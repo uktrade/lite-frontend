@@ -50,6 +50,15 @@ def test_party_subtype_select_form(data, valid, errors):
             False,
             {"name": [f"End user name should be 80 characters or less"]},
         ),
+        (
+            {"name": "test_name"},
+            False,
+            {
+                "name": [
+                    "Party name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
     ),
 )
 def test_party_name_form(data, valid, errors):
