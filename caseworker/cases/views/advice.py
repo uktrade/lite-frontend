@@ -156,7 +156,13 @@ class Finalise(LoginRequiredMixin, TemplateView):
         # For no licence required advice items we have recorded their decision as ‘approve’
         # but their ‘good_id’ has been set to ‘None’ so it is best to filter out
         # these advice items.
-        advice_items = [item["type"]["key"] for item in final_advice if item["good"]]
+
+        advice_items_with_goods = [item["type"]["key"] for item in final_advice if item["good"]]
+
+        # Reuse advice has no good associated with it so we need to find tout if there is
+        # any on the application to decide whether to use the refuse or nlr flow
+        refuse_advice = any([item["type"]["key"] == "refuse" for item in final_advice])
+
         approve = False
         all_nlr = False
         is_case_open = case_type == CaseType.OPEN.value
@@ -164,11 +170,11 @@ class Finalise(LoginRequiredMixin, TemplateView):
         if is_case_open:
             approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
         else:
-            approve = any([item == "approve" or item == "proviso" for item in advice_items])
-            all_nlr = not approve and "refuse" not in advice_items
+            approve = any([item == "approve" or item == "proviso" for item in advice_items_with_goods])
+            all_nlr = all(item == "no_licence_required" for item in advice_items_with_goods)
 
         if approve:
-            any_nlr = any([item == "no_licence_required" for item in advice_items])
+            any_nlr = any([item == "no_licence_required" for item in advice_items_with_goods])
             licence_data, _ = get_licence(request, str(kwargs["pk"]))
             licence = licence_data.get("licence")
             # If there are licenced goods, we want to use the reissue goods flow.
@@ -184,10 +190,12 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 extra_data={
                     "any_nlr": any_nlr,
                     "case": case,
-                    "has_proviso": any([item == "proviso" for item in advice_items]),
+                    "has_proviso": any([item == "proviso" for item in advice_items_with_goods]),
                 },
             )
         else:
+            if refuse_advice:
+                all_nlr = False
             return form_page(
                 request,
                 deny_licence_form(
