@@ -83,7 +83,7 @@ django = "~=4.2.15"
 django-log-formatter-asim = "~=0.0.5"
 dbt-copilot-python = "~=0.2.1"
 cryptography = "~=43.0.1"
-django-cacheops = "*"
+django-cacheops = "~=7.0.2"
 
 [requires]
 python_version = "3.9"
