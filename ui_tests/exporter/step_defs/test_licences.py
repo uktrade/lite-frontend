@@ -14,6 +14,35 @@ from ui_tests.exporter.pages.licences_page import LicencesPage
 scenarios("../features/licences.feature", strict_gherkin=False)
 
 
+@given("I put the test user in the admin team")
+def put_test_user_in_admin_team(api_test_client):
+    api_test_client.gov_users.put_test_user_in_team("Admin")
+
+
+@given(parsers.parse('I assess the goods with "{cle_entries}"'), target_fixture="assessed_control_list_entries")
+def assess_goods(api_test_client, cle_entries):
+    cle_entries = [cle.strip() for cle in cle_entries.split(",")]
+    api_test_client.goods.update_good_clc(
+        good_id=api_test_client.context["good_id"],
+        good_on_application_id=api_test_client.context["good_on_application_id"],
+        case_id=api_test_client.context["case_id"],
+        control_list_entries=cle_entries,
+        is_good_controlled=True,
+        report_summary="ARS",
+    )
+    return cle_entries
+
+
+@given(parsers.parse('I put the test user in the "{team_name}" team'))
+def put_test_user_in_specified_team(api_test_client, team_name):
+    api_test_client.gov_users.put_test_user_in_team(team_name)
+
+
+@given("I countersign the advice")
+def countersign_advice(context, decision, api_test_client):  # noqa
+    api_test_client.cases.countersign_advice(context.case_id, context.final_advice)
+
+
 @when("I go to the licences page")
 def licences_page(driver, exporter_url):
     driver.get(exporter_url.rstrip("/") + "/licences/")
@@ -55,17 +84,3 @@ def standard_licence_details(driver, context, assessed_control_list_entries):
     assert formatted_licenced_quantity in good_row
     assert formatted_licenced_value in good_row
     assert "0" in page.get_usage()
-
-
-@given(parsers.parse('I assess the goods with "{cle_entries}"'), target_fixture="assessed_control_list_entries")
-def assess_goods(api_test_client, cle_entries):
-    cle_entries = [cle.strip() for cle in cle_entries.split(",")]
-    api_test_client.goods.update_good_clc(
-        good_id=api_test_client.context["good_id"],
-        good_on_application_id=api_test_client.context["good_on_application_id"],
-        case_id=api_test_client.context["case_id"],
-        control_list_entries=cle_entries,
-        is_good_controlled=True,
-        report_summary="ARS",
-    )
-    return cle_entries
