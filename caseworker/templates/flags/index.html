@@ -14,11 +14,6 @@
 				{% lcs 'flags.FlagsList.DESCRIPTION' %}
 			</p>
 		</div>
-		{% if can_change_config %}
-			<div class="lite-app-bar__controls">
-				{% govuk_link_button id='add-a-flag' text='flags.FlagsList.CREATE_BUTTON' url='flags:add' %}
-			</div>
-		{% endif %}
 	</div>
 
 	{% include "filters.html" %}
