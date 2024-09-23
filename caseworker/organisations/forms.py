@@ -290,7 +290,7 @@ def edit_individual_form(organisation, can_edit_name, are_fields_optional):
 def review_organisation_form(request, pk):
     organisation = get_organisation(request, str(pk))
     matching_organisation_details = get_organisation_matching_details(request, str(pk))
-
+    organisation_type = "Other" if organisation["type"]["value"] == "Individual" else organisation["type"]["value"]
     return Form(
         title=ReviewOrganisationPage.TITLE,
         questions=[
@@ -304,7 +304,7 @@ def review_organisation_form(request, pk):
             Summary(
                 values={
                     ReviewOrganisationPage.Summary.NAME: organisation["name"],
-                    ReviewOrganisationPage.Summary.TYPE: organisation["type"]["value"],
+                    ReviewOrganisationPage.Summary.TYPE: organisation_type,
                     ReviewOrganisationPage.Summary.EORI: organisation["eori_number"],
                     ReviewOrganisationPage.Summary.SIC: organisation["sic_number"],
                     ReviewOrganisationPage.Summary.VAT: organisation["vat_number"],
