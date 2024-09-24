@@ -42,7 +42,7 @@ def test_add_bookmark_ok(
     mock_cases_with_filter_data,
     requests_mock,
     gov_uk_user_id,
-    mock_all_control_list_entries,
+    mock_control_list_entries,
     mock_regime_entries,
 ):
     mock_post = mock_post_bookmark(requests_mock)
@@ -80,7 +80,7 @@ def test_add_bookmark_fail(
     requests_mock,
     gov_uk_user_id,
     return_code,
-    mock_all_control_list_entries,
+    mock_control_list_entries,
     mock_regime_entries,
 ):
     mock_post_bookmark(requests_mock, return_code)
