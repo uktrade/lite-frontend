@@ -103,6 +103,7 @@ def data_list_licences():
                         "good_on_application_id": "3bcfd636-da6b-4458-a812-f78af77cc8ba",
                         "usage": 0.0,
                         "description": "Example product",
+                        "name": "Example product name",
                         "units": {"key": "MTR", "value": "Metre(s)"},
                         "applied_for_quantity": 1.0,
                         "applied_for_value": 1.0,
@@ -110,7 +111,14 @@ def data_list_licences():
                         "licenced_value": 1.0,
                         "applied_for_value_per_item": 1.0,
                         "licenced_value_per_item": 1.0,
-                        "control_list_entries": [],
+                        "control_list_entries": [
+                            {"rating": "N1"},
+                            {"rating": "N2"},
+                        ],
+                        "assessed_control_list_entries": [
+                            {"rating": "R1a"},
+                            {"rating": "MJ1"},
+                        ],
                         "advice": {"type": {"key": "approve", "value": "Approve"}, "text": "", "proviso": None},
                     }
                 ],
@@ -161,6 +169,53 @@ def test_open_and_standard_licences(client, data_list_licences, list_open_standa
     assert mock_list_licences.last_request.qs == {"licence_type": ["licence"]}
     assert response.context_data["data"] == data_list_licences
     assert [item.name for item in response.context_data["filters"].filters] == expected_filters
+
+
+def test_standard_licences_details(
+    client, data_list_licences, list_open_standard_licences_url, mock_list_licences, beautiful_soup
+):
+    response = client.get(list_open_standard_licences_url)
+    assert response.status_code == 200
+
+    soup = beautiful_soup(response.content)
+
+    licence_details_table = soup.find(id="licence-details-table")
+    assert licence_details_table
+    licence_rows = licence_details_table.select(".licence-details-table__licence_row")
+    assert len(licence_rows) == len(data_list_licences["results"])
+    for licence_row, licence_data in zip(licence_rows, data_list_licences["results"]):
+        assert licence_row.attrs["id"] == f"licence-{licence_data['id']}"
+        assert (
+            licence_row.select_one(".licence-details-table__licence_reference_code").text
+            == licence_data["reference_code"]
+        )
+        assert (
+            licence_row.select_one(".licence-details-table__licence_application_name").text
+            == licence_data["application"]["name"]
+        )
+
+        goods = licence_row.select(".licence-details-table__goods .app-expanded-row__item")
+        for line_number, (good, good_data) in enumerate(zip(goods, licence_data["goods"]), start=1):
+            assert good.select_one(".licence-details-table__good_line_number").text == f"{line_number}."
+            assert [cle.text.replace(",", "").strip() for cle in good.select(".lite-inline-list li")] == [
+                cle["rating"] for cle in good_data["assessed_control_list_entries"]
+            ]
+            assert good.select_one(".licence-details-table__good_name").text == good_data["name"]
+
+        destinations = licence_row.select(".licence-details-table__destinations .app-expanded-row__item")
+        for destination, destination_data in zip(destinations, licence_data["application"]["destinations"]):
+            assert destination.text.strip() == f"{destination_data['name']} - {destination_data['country']['name']}"
+
+        assert licence_row.select_one(".licence-details-table__licence-status").text == "Issued"
+
+        documents = licence_row.select(".licence-details-table__application-documents")
+        for document, document_data in zip(documents, licence_data["application"]["documents"]):
+            document_link = document.select_one("#document-download")
+            assert document_link.text == f"{document_data['advice_type']['value']}.pdf"
+            assert document_link.attrs["href"] == reverse(
+                "applications:download_generated_document",
+                kwargs={"document_pk": document_data["id"], "case_pk": licence_data["application"]["id"]},
+            )
 
 
 def test_open_and_standard_licences_paging(client, list_open_standard_licences_url, mock_list_licences):
