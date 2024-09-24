@@ -121,7 +121,7 @@ def test_warning_renders_when_expected(
     data_queue,
     mock_gov_user,
     mock_denial_reasons,
-    mock_control_list_entries_get,
+    mock_control_list_entries,
     mock_regime_entries_get,
     mock_precedents_api,
     data_standard_case,

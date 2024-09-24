@@ -733,27 +733,12 @@ def final_advice(context, decision, api_test_client):  # noqa
     context.final_advice = advice
 
 
-@given(parsers.parse("I countersign the advice"))  # noqa
-def countersign_advice(context, decision, api_test_client):  # noqa
-    api_test_client.cases.countersign_advice(context.case_id, context.final_advice)
-
-
 @given("I remove the flags to finalise the licence")  # noqa
 def i_remove_all_flags(context, api_test_client):  # noqa
     api_test_client.flags.assign_case_flags(context.case_id, [])
     api_test_client.gov_users.put_test_user_in_team("Licensing Unit")
     api_test_client.flags.assign_destination_flags(context.third_party["id"], [])
     api_test_client.gov_users.put_test_user_in_team("Admin")
-
-
-@given("I put the test user in the admin team")
-def put_test_user_in_admin_team(api_test_client):  # noqa
-    api_test_client.gov_users.put_test_user_in_team("Admin")
-
-
-@given(parsers.parse('I put the test user in the "{team_name}" team'))
-def put_test_user_in_specified_team(api_test_client, team_name):  # noqa
-    api_test_client.gov_users.put_test_user_in_team(team_name)
 
 
 @given(parsers.parse('I create a licence for my application with "{decision}" decision document'))  # noqa
@@ -837,11 +822,6 @@ def assert_ref_num(driver):  # noqa
 @when("I change my reference number")
 def change_ref_num(driver, context):  # noqa
     enter_export_licence(driver, "yes", "12345678", context)
-
-
-@when("I go to the licences page")
-def licences_page(driver, exporter_url):  # noqa
-    driver.get(exporter_url.rstrip("/") + "/licences/")
 
 
 @given(parsers.parse('I create "{decision}" final advice for open application'))  # noqa

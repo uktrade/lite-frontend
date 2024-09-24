@@ -199,11 +199,13 @@ def put_organisation_user(request, user_pk, json):
 
 
 def get_control_list_entries(request, convert_to_options=False, converted_control_list_entries_cache=[]):  # noqa
+    get_cles_url = "/exporter/static/control-list-entries/?include_non_selectable_for_assessment=True"
+
     if convert_to_options:
         if converted_control_list_entries_cache:
             return converted_control_list_entries_cache
         else:
-            response = client.get(request, "/exporter/static/control-list-entries/")
+            response = client.get(request, get_cles_url)
             for control_list_entry in response.json():
                 converted_control_list_entries_cache.append(
                     Option(
@@ -214,7 +216,7 @@ def get_control_list_entries(request, convert_to_options=False, converted_contro
                 )
             return converted_control_list_entries_cache
 
-    response = client.get(request, "/exporter/static/control-list-entries/")
+    response = client.get(request, get_cles_url)
     return response.json()
 
 

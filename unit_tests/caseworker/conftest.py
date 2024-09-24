@@ -2848,10 +2848,10 @@ def mock_flags(requests_mock, flags):
     return requests_mock.get(url=url, json=flags)
 
 
-@pytest.fixture()
-def mock_all_control_list_entries(requests_mock, all_cles):
-    url = client._build_absolute_uri("/static/control-list-entries/")
-    return requests_mock.get(url=url, json={"control_list_entries": all_cles})
+@pytest.fixture
+def mock_control_list_entries(requests_mock, data_control_list_entries):
+    url = client._build_absolute_uri("/caseworker/static/control-list-entries/")
+    return requests_mock.get(url=url, json=data_control_list_entries)
 
 
 @pytest.fixture()

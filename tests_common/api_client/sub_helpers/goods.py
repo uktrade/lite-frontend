@@ -1,3 +1,5 @@
+import random
+
 from faker import Faker
 
 fake = Faker()
@@ -89,6 +91,15 @@ class Goods:
         )
 
     def update_good_clc(self, *, good_id, good_on_application_id, case_id, **kwargs):
+        report_summary_subject = kwargs.get("report_summary_subject")
+        if not report_summary_subject:
+            response = self.api_client.make_request(
+                method="GET",
+                url=f"/static/report_summary/subjects/",
+                headers=self.api_client.gov_headers,
+            )
+            report_summary_ids = [subject["id"] for subject in response.json()["report_summary_subjects"]]
+            report_summary_subject = random.choice(report_summary_ids)
         self.api_client.make_request(
             method="PUT",
             url=f"/assessments/make-assessments/{case_id}/",
@@ -98,7 +109,10 @@ class Goods:
                     "control_list_entries": kwargs.get("control_list_entries", []),
                     "is_good_controlled": kwargs.get("is_good_controlled", True),
                     "report_summary": kwargs.get("report_summary", ""),
+                    "report_summary_prefix": kwargs.get("report_summary_prefix", ""),
+                    "report_summary_subject": report_summary_subject,
                     "comment": kwargs.get("comment", ""),
+                    "regime_entries": kwargs.get("regime_entries", []),
                     "id": good_on_application_id,
                 }
             ],

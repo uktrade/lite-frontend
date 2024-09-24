@@ -7,6 +7,8 @@ import re
 
 import requests
 
+from bs4 import BeautifulSoup
+
 from datetime import timedelta
 from urllib.parse import urljoin, urlparse
 
@@ -21,7 +23,6 @@ from django.utils import timezone
 
 from formtools.wizard.views import normalize_name
 
-from caseworker.core.services import CLC_ENTRIES_CACHE
 from core import client
 from core.constants import OrganisationDocumentType
 
@@ -86,22 +87,10 @@ def set_aws_s3_settings(settings, s3_settings, mocker):
 @pytest.fixture
 def data_control_list_entries():
     # in reality there are around 3000 CLCs
-    return {
-        "control_list_entries": [
-            {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
-            {"rating": "ML1a", "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns"},
-        ]
-    }
-
-
-@pytest.fixture
-def mock_control_list_entries(requests_mock, data_control_list_entries):
-    # We must clear app-level CLE cache used by core.services.get_control_list_entrie
-    # so that tests remain isolated from eachother
-    # TODO: Remove this when we have a better way of caching CLEs
-    CLC_ENTRIES_CACHE.clear()
-    url = client._build_absolute_uri("/static/control-list-entries/")
-    yield requests_mock.get(url=url, json=data_control_list_entries)
+    return [
+        {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
+        {"rating": "ML1a", "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns"},
+    ]
 
 
 @pytest.fixture
@@ -2530,17 +2519,6 @@ def data_ecju_queries():
     }
 
 
-@pytest.fixture
-def mock_control_list_entries_get(requests_mock):
-    url = client._build_absolute_uri(f"/static/control-list-entries/")
-    return requests_mock.get(
-        url=url,
-        json={
-            "control_list_entries": [{"rating": "ML1a", "text": "some text"}, {"rating": "ML22b", "text": "some text"}]
-        },
-    )
-
-
 class WizardStepPoster:
     def __init__(self, authorized_client, url):
         self.authorized_client = authorized_client
@@ -2640,3 +2618,11 @@ def render_form(rf):
         return rendered
 
     return _render_form
+
+
+@pytest.fixture()
+def beautiful_soup():
+    def _beautiful_soup(html):
+        return BeautifulSoup(html, "html.parser")
+
+    return _beautiful_soup

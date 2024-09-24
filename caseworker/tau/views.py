@@ -116,8 +116,8 @@ class TAUMixin(CaseTabsMixin):
 
     @cached_property
     def control_list_entries(self):
-        control_list_entries = get_control_list_entries(self.request, convert_to_options=True)
-        return [(item.value, item.key) for item in control_list_entries]
+        control_list_entries = get_control_list_entries(self.request, include_non_selectable_for_assessment=False)
+        return [(item["rating"], item["rating"]) for item in control_list_entries]
 
     @expect_status(
         HTTPStatus.OK,
