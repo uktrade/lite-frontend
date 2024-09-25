@@ -1,5 +1,7 @@
 from functools import wraps
 
+from http import HTTPStatus
+
 from requests.exceptions import HTTPError
 
 from django.http import Http404
@@ -22,7 +24,7 @@ def expect_status(expected_status, logger_message, error_message, reraise_404=Fa
                     error_message,
                 ) from e
 
-            if reraise_404 and status_code == 404:
+            if reraise_404 and status_code == HTTPStatus.NOT_FOUND:
                 raise Http404()
 
             if status_code != expected_status:
