@@ -6,7 +6,7 @@ Feature: I want process an SIEL application submitted by Exporters and issue lic
 
   @siel_pdf
   Scenario: LU user giving final recommendation and generating licence pdf document
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     And I create a standard draft application with "SIEL Licence PDF check" as reference
     And I add Consignee with details "Consignee", "1234 Export yard", "FR"
     And I add End-user with details "End user", "1234 Industrial Estate", "AU"

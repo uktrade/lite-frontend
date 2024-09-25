@@ -12,6 +12,12 @@ Feature: I want to be able to edit and update an active application
     When I go to the application detail page
     Then I see the edit button
 
+  Scenario: See edit button for initial_checks application
+    Given I signin and go to exporter homepage and choose Test Org
+    And I create a standard application via api
+    And the status is set to "initial_checks"
+    When I go to the application detail page
+    Then I see the edit button
 
   Scenario: See edit button for under_review application
     Given I signin and go to exporter homepage and choose Test Org
@@ -20,6 +26,12 @@ Feature: I want to be able to edit and update an active application
     When I go to the application detail page
     Then I see the edit button
 
+  Scenario: See edit button for reopened_for_changes application
+    Given I signin and go to exporter homepage and choose Test Org
+    And I create a standard application via api
+    And the status is set to "reopened_for_changes"
+    When I go to the application detail page
+    Then I see the edit button
 
   @skip @legacy
   Scenario: Edit a standard application

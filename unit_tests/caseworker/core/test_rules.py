@@ -1,17 +1,30 @@
 import pytest
 import requests
 import rules
+import uuid
 
 from django.http import HttpRequest
 
 from core import client
+from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import (
     GOODS_NOT_LISTED_ID,
     LICENSING_UNIT_TEAM,
     OGD_TEAMS,
+    FIRST_COUNTERSIGN,
+    SECOND_COUNTERSIGN,
 )
 from caseworker.core import rules as caseworker_rules
-from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
+from caseworker.core.constants import (
+    ADMIN_TEAM_ID,
+    FCDO_TEAM_ID,
+    LICENSING_UNIT_TEAM_ID,
+    TAU_TEAM_ID,
+    LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
+    Permission,
+)
+from core.constants import CaseStatusEnum, LicenceStatusEnum
+from caseworker.cases.objects import Case
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
@@ -67,7 +80,7 @@ def get_mock_request(client):
 )
 def test_is_user_assigned(data, mock_gov_user, get_mock_request, expected_result):
     assigned_users = {"assigned_users": data}
-    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) == expected_result
+    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) is expected_result
 
 
 def test_is_user_assigned_request_missing_attribute():
@@ -97,7 +110,7 @@ def test_is_user_case_officer_none(get_mock_request):
     ),
 )
 def test_is_user_case_officer(data, mock_gov_user, get_mock_request, expected_result):
-    assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) == expected_result
+    assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) is expected_result
 
 
 def test_is_user_case_officer_request_missing_attribute():
@@ -167,7 +180,7 @@ def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expe
         "can_user_add_contact",
         "can_user_change_sub_status",
     ):
-        assert rules.test_rule(rule_name, get_mock_request(mock_gov_user["user"]), data) == expected_result
+        assert rules.test_rule(rule_name, get_mock_request(mock_gov_user["user"]), data) is expected_result
 
 
 @pytest.mark.parametrize(
@@ -270,7 +283,7 @@ def test_can_user_search_products(mock_gov_user, get_mock_request, mock_gov_user
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_search_products", request) == expected
+    assert rules.test_rule("can_user_search_products", request) is expected
 
 
 @pytest.mark.parametrize(
@@ -297,7 +310,7 @@ def test_can_assigned_user_assess_products(mock_gov_user, get_mock_request, mock
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_assess_products", request, case) == expected
+    assert rules.test_rule("can_user_assess_products", request, case) is expected
 
 
 @pytest.mark.parametrize(
@@ -324,7 +337,7 @@ def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request, mo
 
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_assess_products", request, case) == expected
+    assert rules.test_rule("can_user_assess_products", request, case) is expected
 
 
 @pytest.mark.parametrize(
@@ -391,7 +404,7 @@ def test_can_user_review_and_combine_based_on_allocation(mock_gov_user, get_mock
     user = mock_gov_user["user"]
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_review_and_combine", request, case) == expected_result
+    assert rules.test_rule("can_user_review_and_combine", request, case) is expected_result
 
 
 @pytest.mark.parametrize(
@@ -427,7 +440,7 @@ def test_can_user_review_and_combine_based_on_advice(mock_gov_user, get_mock_req
     user = mock_gov_user["user"]
     request = get_mock_request(user)
 
-    assert rules.test_rule("can_user_review_and_combine", request, case) == expected
+    assert rules.test_rule("can_user_review_and_combine", request, case) is expected
 
 
 def test_can_user_rerun_routing_rules(get_mock_request):
@@ -435,3 +448,253 @@ def test_can_user_rerun_routing_rules(get_mock_request):
     user = {}
     request = get_mock_request(user)
     assert not rules.test_rule("can_user_rerun_routing_rules", request, case)
+
+
+@pytest.mark.parametrize(
+    ("user_role_id", "licence_status", "case_status", "expected"),
+    (
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.REINSTATED, CaseStatusEnum.FINALISED, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.FINALISED, True),
+        (str(uuid.uuid4()), LicenceStatusEnum.ISSUED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXPIRED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.EXHAUSTED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.CANCELLED, CaseStatusEnum.FINALISED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.SUSPENDED, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.ISSUED, CaseStatusEnum.WITHDRAWN, False),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, LicenceStatusEnum.SUSPENDED, CaseStatusEnum.SUSPENDED, False),
+    ),
+)
+def test_can_licence_status_be_changed(
+    mock_gov_user, get_mock_request, user_role_id, licence_status, case_status, expected, data_standard_case
+):
+    case = Case(data_standard_case["case"])
+
+    case.licences = [
+        {
+            "id": str(uuid.uuid4()),
+            "reference_code": "GBSIEL/2000/0000001/P",
+            "status": licence_status,
+            "case_status": case_status,
+            "goods": [],
+        },
+    ]
+
+    licence = case.licences[0]
+
+    user = mock_gov_user["user"]
+    user["role"]["id"] = user_role_id
+    request = get_mock_request(user)
+
+    assert rules.test_rule("can_licence_status_be_changed", request, licence) is expected
+
+
+@pytest.mark.parametrize(
+    "gov_user, expected_result",
+    (
+        ("invalid_user", False),
+        ("LU_case_officer", True),
+        ("LU_licensing_manager", True),
+        ("LU_senior_licensing_manager", True),
+        ("FCDO_team_user", False),
+    ),
+)
+def test_is_user_in_lu_team(gov_user, get_mock_request, expected_result, request):
+    user = request.getfixturevalue(gov_user)
+    assert caseworker_rules.is_user_in_lu_team(get_mock_request(user)) == expected_result
+
+
+@pytest.mark.parametrize(
+    "advice_data, expected_result",
+    (
+        ([], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "FCDO", "alias": "FCO"}}], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "MOD_DI", "alias": "MOD_DI"}}], False),
+        ([{"type": "approve", "level": AdviceLevel.USER, "team": {"name": "MOD_DSR", "alias": "MOD_DSR"}}], False),
+        (
+            [
+                {
+                    "type": "approve",
+                    "level": AdviceLevel.USER,
+                    "team": {"name": "LICENSING_UNIT", "alias": "LICENSING_UNIT"},
+                }
+            ],
+            False,
+        ),
+        (
+            [
+                {"type": "approve", "level": AdviceLevel.USER, "team": {"name": "FCDO", "alias": "FCO"}},
+                {
+                    "type": "approve",
+                    "level": AdviceLevel.TEAM,
+                    "team": {"name": "LICENSING_UNIT", "alias": "LICENSING_UNIT"},
+                },
+            ],
+            False,
+        ),
+        (
+            [
+                {"type": "approve", "level": AdviceLevel.USER, "team": {"name": "FCDO", "alias": "FCO"}},
+                {
+                    "type": "approve",
+                    "level": AdviceLevel.FINAL,
+                    "team": {"name": "LICENSING_UNIT", "alias": "LICENSING_UNIT"},
+                },
+            ],
+            True,
+        ),
+    ),
+)
+def test_case_has_final_advice(advice_data, mock_gov_user, get_mock_request, expected_result):
+    request = get_mock_request(mock_gov_user["user"])
+    case = {"advice": advice_data}
+    assert caseworker_rules.case_has_final_advice(request, case) is expected_result
+
+
+@pytest.fixture
+def invalid_user():
+    return {}
+
+
+@pytest.mark.parametrize(
+    "gov_user, expected_result",
+    (
+        ("invalid_user", False),
+        ("LU_case_officer", False),
+        ("LU_licensing_manager", True),
+        ("LU_senior_licensing_manager", True),
+    ),
+)
+def test_user_is_not_final_adviser(gov_user, expected_result, request, get_mock_request, LU_case_officer):
+    case = {
+        "case_officer": LU_case_officer,
+        "advice": [
+            {
+                "level": AdviceLevel.FINAL,
+                "user": LU_case_officer,
+            },
+        ],
+    }
+    user = request.getfixturevalue(gov_user)
+    assert caseworker_rules.user_is_not_final_adviser(get_mock_request(user), case) == expected_result
+
+
+@pytest.mark.parametrize(
+    "gov_user, countersigners, expected_result",
+    (
+        ("invalid_user", [], False),
+        ("LU_licensing_manager", [], True),
+        ("LU_licensing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"}], False),
+        ("LU_senior_licensing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"}], True),
+        (
+            "LU_senior_licensing_manager",
+            [
+                {"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"},
+                {"order": SECOND_COUNTERSIGN, "user": "LU_senior_licensing_manager"},
+            ],
+            False,
+        ),
+    ),
+)
+def test_user_not_yet_countersigned(
+    gov_user, countersigners, expected_result, request, get_mock_request, LU_case_officer
+):
+    countersign_advice = [
+        {
+            "valid": True,
+            "order": item["order"],
+            "countersigned_user": request.getfixturevalue(item["user"]),
+        }
+        for item in countersigners
+    ]
+    case = Case(
+        {
+            "case_officer": LU_case_officer,
+            "advice": [
+                {
+                    "level": AdviceLevel.FINAL,
+                    "user": LU_case_officer,
+                },
+            ],
+            "countersign_advice": countersign_advice,
+        }
+    )
+    user = request.getfixturevalue(gov_user)
+    assert caseworker_rules.user_not_yet_countersigned(get_mock_request(user), case) == expected_result
+
+
+@pytest.mark.parametrize(
+    "gov_user, countersigners, expected_result",
+    (
+        ("invalid_user", [], False),
+        ("LU_case_officer", [], False),
+        ("LU_licensing_manager", [], True),
+        ("LU_licensing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"}], False),
+        ("LU_senior_licensing_manager", [{"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"}], True),
+        (
+            "LU_senior_licensing_manager",
+            [
+                {"order": FIRST_COUNTERSIGN, "user": "LU_licensing_manager"},
+                {"order": SECOND_COUNTERSIGN, "user": "LU_senior_licensing_manager"},
+            ],
+            False,
+        ),
+    ),
+)
+def test_can_user_be_allowed_to_lu_countersign(
+    gov_user, countersigners, expected_result, request, get_mock_request, FCDO_team_user, LU_case_officer
+):
+    countersign_advice = [
+        {
+            "valid": True,
+            "order": item["order"],
+            "countersigned_user": request.getfixturevalue(item["user"]),
+        }
+        for item in countersigners
+    ]
+
+    user = request.getfixturevalue(gov_user)
+    case = Case(
+        {
+            "case_officer": LU_case_officer,
+            "assigned_users": {"fake queue": [user]},
+            "advice": [
+                {
+                    "level": AdviceLevel.USER,
+                    "user": FCDO_team_user,
+                    "team": FCDO_team_user["team"],
+                },
+                {
+                    "level": AdviceLevel.FINAL,
+                    "user": LU_case_officer,
+                    "team": LU_case_officer["team"],
+                },
+            ],
+            "countersign_advice": countersign_advice,
+        }
+    )
+
+    assert rules.test_rule("can_user_be_allowed_to_lu_countersign", get_mock_request(user), case) is expected_result
+
+
+@pytest.mark.parametrize(
+    ("user_permission", "organisation_status", "expected"),
+    (
+        ([Permission.MANAGE_ORGANISATIONS.value], "active", True),
+        ([Permission.MANAGE_ORGANISATIONS.value, Permission.ADMINISTER_ROLES.value], "active", True),
+        ([Permission.ADMINISTER_ROLES.value], "active", False),
+        ([], "active", False),
+        ([Permission.MANAGE_ORGANISATIONS.value], "in-review", False),
+        ([Permission.ADMINISTER_ROLES.value], "in-review", False),
+        ([], "in-review", False),
+    ),
+)
+def test_can_user_manage_organisation(
+    mock_gov_user, get_mock_request, user_permission, organisation_status, expected, data_organisation
+):
+
+    user = mock_gov_user["user"]
+    user["role"]["permissions"] = user_permission
+    request = get_mock_request(user)
+    data_organisation["status"]["key"] = organisation_status
+    assert rules.test_rule("can_user_manage_organisation", request, data_organisation) is expected

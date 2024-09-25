@@ -1,8 +1,6 @@
 import pytest
-from django.core.files.storage import Storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
-from unittest.mock import patch
 from bs4 import BeautifulSoup
 
 from core import client
@@ -104,12 +102,12 @@ def test_set_end_user_view(url, authorized_client, requests_mock, data_standard_
         "size": 0,
     }
 
-    _ = requests_mock.request_history.pop().json()
+    _ = requests_mock.request_history.pop()
     end_user_data = requests_mock.request_history.pop().json()
     assert end_user_data == {
         "sub_type": "government",
         "sub_type_other": "",
-        "name": "test_name",
+        "name": "test-name",
         "website": "https://www.example.com",
         "address": "1 somewhere",
         "country": "US",
@@ -141,7 +139,7 @@ def set_end_user(url, authorized_client):
         url,
         data={
             f"{current_step_key}": SetPartyFormSteps.PARTY_NAME,
-            f"{SetPartyFormSteps.PARTY_NAME}-name": "test_name",
+            f"{SetPartyFormSteps.PARTY_NAME}-name": "test-name",
         },
     )
     assert not response.context["form"].errors

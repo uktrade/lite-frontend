@@ -1,7 +1,6 @@
 from core import client
+from core.constants import ExporterRoles
 from core.helpers import convert_dict_to_query_params
-
-from exporter.core.enums import Roles
 
 
 def get_user(request, pk=None, params=None):
@@ -25,4 +24,4 @@ def update_user(request, pk, json):
 
 
 def is_super_user(user):
-    return user["role"]["id"] == Roles.administrator.id
+    return user["role"]["id"] == ExporterRoles.administrator.id

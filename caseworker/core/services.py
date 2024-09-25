@@ -1,7 +1,9 @@
+from cacheops import cached
 from collections import defaultdict
 
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 from caseworker.cases.constants import CaseType
+from caseworker.core.constants import CONTROL_LIST_ENTRIES_CACHE_TIMEOUT
 from caseworker.users.services import get_gov_user
 from core import client
 from core.constants import CaseStatusEnum
@@ -64,15 +66,28 @@ def get_statuses(request, convert_to_options=False):
     return data.json()["statuses"], data.status_code
 
 
+def get_caseworker_operable_case_statuses(request):
+    """
+    Get list of case statuses which are operable - that is cases which can be
+    assigned/worked upon by caseworkers.
+    """
+    response = client.get(request, "/static/statuses/")
+    response.raise_for_status()
+    operable_statuses = [status["status"] for status in response.json()["statuses"] if status["is_caseworker_operable"]]
+
+    return operable_statuses
+
+
 def get_permissible_statuses(request, case):
     """Get a list of case statuses permissible for the user's role."""
-
     user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
     user_permissible_statuses = user["user"]["role"]["statuses"]
     statuses, _ = get_statuses(request)
     case_type = case["case_type"]["type"]["key"]
     case_type_applicable_statuses = []
 
+    # TODO: Make this list of dis-allowed caseworker-settable statuses driven
+    # by the API
     if case_type == CaseType.APPLICATION.value:
         case_type_applicable_statuses = [
             status
@@ -81,10 +96,13 @@ def get_permissible_statuses(request, case):
             not in [
                 CaseStatusEnum.APPLICANT_EDITING,
                 CaseStatusEnum.FINALISED,
+                CaseStatusEnum.SUPERSEDED_BY_EXPORTER_EDIT,
                 CaseStatusEnum.REGISTERED,
                 CaseStatusEnum.CLC,
                 CaseStatusEnum.PV,
                 CaseStatusEnum.SURRENDERED,
+                CaseStatusEnum.REVOKED,
+                CaseStatusEnum.SUSPENDED,
             ]
         ]
 
@@ -115,40 +133,15 @@ def get_user_role_name(request):
     return user["user"]["role"]["name"]
 
 
-CLC_ENTRIES_CACHE = []
+@cached(timeout=CONTROL_LIST_ENTRIES_CACHE_TIMEOUT)
+def get_control_list_entries(request, include_non_selectable_for_assessment=False):
+    url = "/caseworker/static/control-list-entries/"
+    if include_non_selectable_for_assessment:
+        url = f"{url}?include_non_selectable_for_assessment=True"
 
-
-# Control List Entries
-def get_control_list_entries(  # noqa
-    request, convert_to_options=False, include_parent=False, clc_entries_cache=CLC_ENTRIES_CACHE  # noqa
-):  # noqa
-    """
-    Preliminary caching mechanism, requires service restart to repopulate control list entries
-    """
-    if convert_to_options:
-        if clc_entries_cache:
-            return clc_entries_cache
-        else:
-            data = client.get(request, "/static/control-list-entries/")
-
-        for control_list_entry in data.json().get("control_list_entries"):
-            clc_entries_cache.append(
-                Option(
-                    key=control_list_entry["rating"],
-                    value=control_list_entry["rating"],
-                    description=control_list_entry["text"],
-                )
-            )
-
-        return clc_entries_cache
-
-    if include_parent:
-        response = client.get(request, "/static/control-list-entries/?include_parent=True")
-    else:
-        response = client.get(request, "/static/control-list-entries/?group=True")
-
+    response = client.get(request, url)
     response.raise_for_status()
-    return response.json().get("control_list_entries")
+    return response.json()
 
 
 # Regime Entries

@@ -1,8 +1,9 @@
 import pytest
+import uuid
 from exporter.organisation.members.users.constants import AddUserSteps
 from exporter.organisation.members.users import forms
 from django.urls import reverse
-from exporter.core.enums import Roles
+from core.constants import ExporterRoles
 
 
 @pytest.fixture()
@@ -32,7 +33,7 @@ def test_select_role_add_non_agent(
 
     response = post_to_step(
         AddUserSteps.SELECT_ROLE,
-        {"role": Roles.administrator.id},
+        {"role": ExporterRoles.administrator.id},
     )
 
     assert response.status_code == 200
@@ -47,7 +48,7 @@ def test_select_role_add_non_agent(
     assert response.status_code == 302
     assert mock_post_users.last_request.json() == {
         "email": "test@test.com",
-        "role": Roles.administrator.id,
+        "role": ExporterRoles.administrator.id,
         "sites": [site_id],
     }
     assert response.url == "/organisation/members/"
@@ -60,7 +61,7 @@ def test_select_role_add_agent(
 
     response = post_to_step(
         AddUserSteps.SELECT_ROLE,
-        {"role": Roles.agent.id},
+        {"role": ExporterRoles.agent.id},
     )
 
     assert response.status_code == 200
@@ -85,8 +86,29 @@ def test_select_role_add_agent(
     assert response.status_code == 302
     assert mock_post_users.last_request.json() == {
         "email": "test@test.com",
-        "role": Roles.agent.id,
+        "role": ExporterRoles.agent.id,
         "sites": [site_id],
     }
 
     assert response.url == "/organisation/members/"
+
+
+def test_view_user(authorized_client, requests_mock, mock_exporter_user_me, mock_get_organisation):
+
+    user_id = mock_exporter_user_me["user"]["lite_api_user_id"]
+    uuid_user_id = uuid.UUID(user_id)
+    org_id = mock_exporter_user_me["organisations"][0]["id"]
+
+    requests_mock.get(
+        url=f"/organisations/{org_id}/users/{uuid_user_id}/",
+        json=mock_exporter_user_me,
+    )
+
+    url = reverse("organisation:members:user", kwargs={"pk": user_id})
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert response.context["signed_in_user"] == mock_exporter_user_me
+    assert response.context["profile"] == mock_exporter_user_me
+    assert response.context["show_change_status"] is False
+    assert response.context["show_change_role"] is False
+    assert response.context["show_assign_sites"] is False

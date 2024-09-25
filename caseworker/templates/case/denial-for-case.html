@@ -30,8 +30,8 @@
                 <tbody class="govuk-table__body">
                     {% for party in parties %}
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">{{ party.name|safe }}</td>
-                            <td class="govuk-table__cell">{{ party.address|safe }}</td>
+                            <td class="govuk-table__cell">{{ party.name }}</td>
+                            <td class="govuk-table__cell">{{ party.address }}</td>
                             <td class="govuk-table__cell">{{ party.country.name }}</td>
                             <td class="govuk-table__cell">{{ party.type_display_value }}</td>
                         </tr>

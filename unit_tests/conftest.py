@@ -4,20 +4,25 @@ import datetime
 import pytest
 import os
 import re
-
+import cacheops
 import requests
+
+from bs4 import BeautifulSoup
 
 from datetime import timedelta
 from urllib.parse import urljoin, urlparse
 
 from moto import mock_s3
 
+from django.template import (
+    RequestContext,
+    Template,
+)
 from django.urls import resolve
 from django.utils import timezone
 
 from formtools.wizard.views import normalize_name
 
-from caseworker.core.services import CLC_ENTRIES_CACHE
 from core import client
 from core.constants import OrganisationDocumentType
 
@@ -31,6 +36,11 @@ def disable_hawk(settings):
 def add_test_template_dirs(settings):
     template_dir = os.path.join(settings.BASE_DIR, "unit_tests", "core", "summaries", "templates")
     settings.TEMPLATES[0]["DIRS"].append(template_dir)
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    cacheops.invalidate_all()  # flush redis cache database
 
 
 @pytest.fixture(scope="session")
@@ -82,22 +92,10 @@ def set_aws_s3_settings(settings, s3_settings, mocker):
 @pytest.fixture
 def data_control_list_entries():
     # in reality there are around 3000 CLCs
-    return {
-        "control_list_entries": [
-            {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
-            {"rating": "ML1a", "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns"},
-        ]
-    }
-
-
-@pytest.fixture
-def mock_control_list_entries(requests_mock, data_control_list_entries):
-    # We must clear app-level CLE cache used by core.services.get_control_list_entrie
-    # so that tests remain isolated from eachother
-    # TODO: Remove this when we have a better way of caching CLEs
-    CLC_ENTRIES_CACHE.clear()
-    url = client._build_absolute_uri("/static/control-list-entries/")
-    yield requests_mock.get(url=url, json=data_control_list_entries)
+    return [
+        {"rating": "ML1", "text": "Smooth-bore weapons with a calibre of less than 20mm, other firearms..."},
+        {"rating": "ML1a", "text": "Rifles and combination guns, handguns, machine, sub-machine and volley guns"},
+    ]
 
 
 @pytest.fixture
@@ -559,6 +557,7 @@ def data_open_case():
 
 @pytest.fixture
 def data_standard_case(
+    data_organisation,
     wassenaar_regime_entry,
     mtcr_regime_entry,
     nsg_regime_entry,
@@ -659,11 +658,11 @@ def data_standard_case(
                 "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",
                 "name": "444",
                 "organisation": {
-                    "id": "b7175103-d0ae-4b59-9c6a-190a2ed7f5e7",
+                    "id": data_organisation["id"],
                     "documents": [],
                     "primary_site": {
                         "id": "c86d3df2-5f48-40cd-a720-e76322df71a9",
-                        "name": "Rich org",
+                        "name": "Systems Ltd",
                         "address": {
                             "id": "8d8a7631-32fc-4873-9a1f-d5e9afeecc0e",
                             "address_line_1": "jim",
@@ -903,6 +902,8 @@ def data_standard_case(
                                 "is_covered_by_firearm_act_section_one_two_or_five": "Don't know",
                                 "is_covered_by_firearm_act_section_one_two_or_five_explanation": "Not covered by firearm act sections",
                             },
+                            "is_archived": None,
+                            "archive_history": [],
                         },
                         "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
                         "quantity": 444.0,
@@ -981,6 +982,8 @@ def data_standard_case(
                             },
                             "software_or_technology_details": None,
                             "firearm_details": None,
+                            "is_archived": None,
+                            "archive_history": [],
                         },
                         "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
                         "quantity": 444.0,
@@ -1060,6 +1063,7 @@ def data_standard_case(
                 "non_waybill_or_lading_route_details": "44",
                 "is_mod_security_approved": None,
                 "security_approvals": ["F680"],
+                "subject_to_itar_controls": None,
                 "f680_reference_number": None,
                 "f1686_contracting_authority": None,
                 "f1686_reference_number": None,
@@ -1090,8 +1094,9 @@ def data_standard_case(
                             "is_revoked": "",
                             "is_revoked_comment": "",
                             "reference": "ref1",
+                            "regime_reg_ref": "RGR1",
                         },
-                        "category": "Partial",
+                        "category": "partial",
                     },
                     {
                         "id": "c8175133-d0ae-4c59-9c6a-190a2ed7f5e7",
@@ -1111,8 +1116,9 @@ def data_standard_case(
                             "data": "",
                             "is_revoked": "",
                             "is_revoked_comment": "",
+                            "regime_reg_ref": "RGR2",
                         },
-                        "category": "Exact",
+                        "category": "exact",
                     },
                 ],
                 "sanction_matches": [],
@@ -1123,7 +1129,15 @@ def data_standard_case(
                 "sub_status": None,
             },
             "next_review_date": None,
-            "licences": [],
+            "licences": [
+                {
+                    "id": "2d001261-4369-49ba-7928-7ada66aa5cee",
+                    "reference_code": "GBSIEL/2024/0001234/T",
+                    "status": "draft",
+                    "case_status": "draft",
+                    "created_at": "2020-10-07T15:26:36.976341+01:00",
+                }
+            ],
         }
     }
 
@@ -1647,9 +1661,27 @@ def mock_get_countries(requests_mock, data_countries):
 @pytest.fixture(autouse=True)
 def mock_status_properties(requests_mock):
     url = client._build_absolute_uri("/static/statuses/properties/")
-    data = {"is_read_only": False, "is_terminal": False}
+    data = {
+        "is_read_only": False,
+        "is_terminal": False,
+        "is_major_editable": False,
+        "can_invoke_major_editable": False,
+    }
     requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
-    yield data
+    return data
+
+
+@pytest.fixture
+def mock_status_properties_can_invoke_major_editable(requests_mock):
+    url = client._build_absolute_uri("/static/statuses/properties/")
+    data = {
+        "is_read_only": False,
+        "is_terminal": False,
+        "is_major_editable": False,
+        "can_invoke_major_editable": True,
+    }
+    requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
+    return data
 
 
 @pytest.fixture
@@ -2492,17 +2524,6 @@ def data_ecju_queries():
     }
 
 
-@pytest.fixture
-def mock_control_list_entries_get(requests_mock):
-    url = client._build_absolute_uri(f"/static/control-list-entries/")
-    return requests_mock.get(
-        url=url,
-        json={
-            "control_list_entries": [{"rating": "ML1a", "text": "some text"}, {"rating": "ML22b", "text": "some text"}]
-        },
-    )
-
-
 class WizardStepPoster:
     def __init__(self, authorized_client, url):
         self.authorized_client = authorized_client
@@ -2587,3 +2608,26 @@ def mock_request(rf, authorized_client):
     request.session = authorized_client.session
     request.requests_session = requests.Session()
     yield request
+
+
+@pytest.fixture()
+def render_form(rf):
+    def _render_form(form, request=None):
+        if not request:
+            request = rf.get("/")
+        template = Template("{% load crispy_forms_tags crispy_forms_gds %}{% crispy form %}")
+        context = RequestContext(request, {"form": form})
+        rendered = template.render(context)
+        rendered = [l for l in rendered.split("\n")]
+        rendered = re.sub("\s+", " ", "".join(rendered))
+        return rendered
+
+    return _render_form
+
+
+@pytest.fixture()
+def beautiful_soup():
+    def _beautiful_soup(html):
+        return BeautifulSoup(html, "html.parser")
+
+    return _beautiful_soup

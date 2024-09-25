@@ -37,6 +37,7 @@ from exporter.core.helpers import (
     has_valid_rfd_certificate,
     str_to_bool,
 )
+from exporter.goods.common.base import product_detail_breadcrumbs
 from exporter.goods.forms import (
     FirearmsActConfirmationForm,
     FirearmsCalibreDetailsForm,
@@ -79,6 +80,7 @@ from exporter.goods.services import (
     get_good_documents,
     get_good_on_application,
     get_goods,
+    get_archived_goods,
     post_good_document_availability,
     post_good_document_sensitivity,
     post_good_documents,
@@ -128,23 +130,20 @@ class GoodCommonMixin:
 class Goods(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         name = request.GET.get("name", "").strip()
-        description = request.GET.get("description", "").strip()
         part_number = request.GET.get("part_number", "").strip()
         control_list_entry = request.GET.get("control_list_entry", "").strip()
 
         filters = FiltersBar(
             [
                 TextInput(title="name", name="name"),
-                TextInput(title="description", name="description"),
-                TextInput(title="control list entry", name="control_list_entry"),
                 TextInput(title="part number", name="part_number"),
+                TextInput(title="control list entry", name="control_list_entry"),
             ]
         )
 
         params = {
             "page": int(request.GET.get("page", 1)),
             "name": name,
-            "description": description,
             "part_number": part_number,
             "control_list_entry": control_list_entry,
         }
@@ -152,12 +151,44 @@ class Goods(LoginRequiredMixin, TemplateView):
         context = {
             "goods": get_goods(request, **params),
             "name": name,
-            "description": description,
             "part_number": part_number,
             "control_list_entry": control_list_entry,
             "filters": filters,
         }
         return render(request, "goods/goods.html", context)
+
+
+class ArchivedGoods(LoginRequiredMixin, TemplateView):
+
+    def get(self, request, **kwargs):
+        name = request.GET.get("name", "").strip()
+        part_number = request.GET.get("part_number", "").strip()
+        control_list_entry = request.GET.get("control_list_entry", "").strip()
+
+        filters = FiltersBar(
+            [
+                TextInput(title="name", name="name"),
+                TextInput(title="part number", name="part_number"),
+                TextInput(title="control list entry", name="control_list_entry"),
+            ]
+        )
+
+        params = {
+            "page": int(request.GET.get("page", 1)),
+            "name": name,
+            "part_number": part_number,
+            "control_list_entry": control_list_entry,
+        }
+
+        context = {
+            "goods": get_archived_goods(request, **params),
+            "name": name,
+            "part_number": part_number,
+            "control_list_entry": control_list_entry,
+            "filters": filters,
+            "breadcrumbs": product_detail_breadcrumbs(),
+        }
+        return render(request, "goods/archived_goods.html", context)
 
 
 class GoodsDetailEmpty(LoginRequiredMixin, TemplateView):
@@ -211,7 +242,6 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
         if self.good["query"]:
             context["case_id"] = self.good["query"]["id"]
             status_props, _ = get_status_properties(request, self.good["case_status"]["key"])
-            context["status_is_read_only"] = status_props["is_read_only"]
             context["status_is_terminal"] = status_props["is_terminal"]
 
             if self.view_type == "ecju-generated-documents":

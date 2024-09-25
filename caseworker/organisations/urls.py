@@ -3,6 +3,8 @@ from django.urls import path
 from caseworker.flags.views import AssignFlags
 from caseworker.organisations import views
 
+from caseworker.organisations.members.users.views import AddExporterAdminView
+
 app_name = "organisations"
 
 urlpatterns = [
@@ -16,4 +18,5 @@ urlpatterns = [
     path("<uuid:pk>/edit/", views.EditOrganisation.as_view(), name="edit"),
     path("<uuid:pk>/edit-address/", views.EditOrganisationAddress.as_view(), name="edit-address"),
     path("register-hmrc/", views.RegisterHMRC.as_view(), name="register_hmrc"),
+    path("<uuid:pk>/add-exporter-admin/", AddExporterAdminView.as_view(), name="add-exporter-admin"),
 ]

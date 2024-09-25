@@ -50,6 +50,15 @@ def test_party_subtype_select_form(data, valid, errors):
             False,
             {"name": [f"End user name should be 80 characters or less"]},
         ),
+        (
+            {"name": "test_name"},
+            False,
+            {
+                "name": [
+                    "Party name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
     ),
 )
 def test_party_name_form(data, valid, errors):
@@ -64,7 +73,10 @@ def test_party_name_form(data, valid, errors):
 @pytest.mark.parametrize(
     "data, valid, errors",
     (
-        ({"website": "test"}, True, None),
+        ({"website": "test"}, False, {"website": ["Enter a valid URL."]}),
+        ({"website": "https://www.example.com"}, True, None),
+        ({"website": "www.example.com"}, True, None),
+        ({"website": "example.com"}, True, None),
         ({"website": ""}, True, None),
         ({}, True, None),
     ),
@@ -83,6 +95,26 @@ def test_party_website_form(data, valid, errors):
     (
         ({"address": "1 somewhere", "country": "aus"}, True, None),
         ({"address": "", "country": ""}, False, {"address": ["Enter an address"], "country": ["Select the country"]}),
+        ({"address": "This-is-a-valid-address", "country": "aus"}, True, None),
+        ({"address": "this\r\nis\r\ninvalid", "country": "aus"}, True, None),
+        (
+            {"address": "this_is_not", "country": "aus"},
+            False,
+            {
+                "address": [
+                    "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
+        (
+            {"address": "this\w\ais\a\ainvalid", "country": "aus"},
+            False,
+            {
+                "address": [
+                    "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
     ),
 )
 @patch("exporter.applications.forms.parties.get_countries")

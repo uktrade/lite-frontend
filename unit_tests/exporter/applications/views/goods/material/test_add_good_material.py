@@ -7,7 +7,6 @@ from exporter.applications.views.goods.material.views.constants import AddGoodMa
 
 from exporter.goods.forms.common import (
     ProductControlListEntryForm,
-    ProductDescriptionForm,
     ProductDocumentAvailabilityForm,
     ProductDocumentSensitivityForm,
     ProductDocumentUploadForm,
@@ -83,7 +82,7 @@ def test_add_good_material_end_to_end(
 
     response = post_to_step(
         AddGoodMaterialSteps.NAME,
-        {"name": "product_1"},
+        {"name": "product-1"},
     )
 
     assert response.status_code == 200
@@ -177,7 +176,7 @@ def test_add_good_material_end_to_end(
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
         "item_category": "group1_materials",
-        "name": "product_1",
+        "name": "product-1",
         "is_good_controlled": True,
         "control_list_entries": ["ML1", "ML1a"],
         "is_pv_graded": "yes",
@@ -218,7 +217,7 @@ def test_add_good_material_no_pv(
 
     post_to_step(
         AddGoodMaterialSteps.NAME,
-        {"name": "product_1"},
+        {"name": "product-1"},
     )
 
     post_to_step(
@@ -264,7 +263,7 @@ def test_add_good_material_no_pv(
     last_request = post_goods_matcher.last_request
     assert last_request.json() == {
         "item_category": "group1_materials",
-        "name": "product_1",
+        "name": "product-1",
         "is_good_controlled": False,
         "control_list_entries": [],
         "is_pv_graded": "no",

@@ -1,3 +1,4 @@
+import rules
 from dateutil.parser import parse
 from decimal import Decimal
 
@@ -7,6 +8,7 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views.generic import TemplateView
 
+from caseworker.cases.helpers.licence import get_latest_licence_status
 from caseworker.queues.forms import CaseAssignmentsAllocateToMeForm
 from core.constants import CaseStatusEnum, SecurityClassifiedApprovalsType
 
@@ -190,6 +192,11 @@ class CaseView(CaseworkerMixin, TemplateView):
         context = super().get_context_data()
         default_tab = "quick-summary"
         current_tab = default_tab if self.kwargs["tab"] == "default" else self.kwargs["tab"]
+        show_actions_column = False
+        for licence in self.case.licences:
+            if rules.test_rule("can_licence_status_be_changed", self.request, licence):
+                show_actions_column = True
+                break
 
         return {
             **context,
@@ -216,9 +223,10 @@ class CaseView(CaseworkerMixin, TemplateView):
             "permissible_statuses": get_permissible_statuses(self.request, self.case),
             "filters": generate_activity_filters(get_activity_filters(self.request, self.case_id), ApplicationPage),
             "is_terminal": status_props["is_terminal"],
-            "is_read_only": status_props["is_read_only"],
             "security_classified_approvals_types": SecurityClassifiedApprovalsType,
             "user": self.caseworker,
+            "show_actions_column": show_actions_column,
+            "licence_status": get_latest_licence_status(self.case),
             **self.additional_context,
         }
 

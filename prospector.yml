@@ -16,3 +16,4 @@ pyflakes:
   disable:
     - F541
     - F811
+    - F401

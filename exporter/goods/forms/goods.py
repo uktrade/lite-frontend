@@ -20,10 +20,8 @@ from exporter.core.constants import (
     FIREARM_AMMUNITION_COMPONENT_TYPES,
     FileUploadFileTypes,
 )
-from exporter.core.helpers import (
-    convert_control_list_entries,
-    str_to_bool,
-)
+from exporter.core.helpers import convert_control_list_entries, str_to_bool, convert_control_list_entries_to_options
+from exporter.core.validators import GoodNameValidator
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
 from core.common.forms import BaseForm
@@ -135,7 +133,9 @@ def edit_good_detail_form(request, good_id):
                         value=EditGoodForm.IsControlled.YES,
                         components=[
                             control_list_entries_question(
-                                control_list_entries=get_control_list_entries(request, convert_to_options=True),
+                                control_list_entries=convert_control_list_entries_to_options(
+                                    get_control_list_entries(request)
+                                ),
                                 title=EditGoodForm.ControlListEntry.TITLE,
                                 description=EditGoodForm.ControlListEntry.DESCRIPTION,
                             ),
@@ -794,6 +794,8 @@ class AddGoodsQuestionsForm(forms.Form):
         error_messages={
             "required": "Enter a product name",
         },
+        required=True,
+        validators=[GoodNameValidator()],
     )
 
     description = forms.CharField(required=False, label="Description (optional)", widget=forms.Textarea)
@@ -1995,3 +1997,59 @@ class ProductComponentDetailsForm(BaseForm):
             )
 
         return cleaned_data
+
+
+class GoodArchiveForm(BaseForm):
+    class Layout:
+        TITLE = "Are you sure you want to archive this product?"
+        SUBMIT_BUTTON_TEXT = "Archive product"
+
+    def __init__(self, *args, cancel_url, **kwargs):
+        self.cancel_url = cancel_url
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return [
+            HTML.p(
+                "If you move this product to the archive you will not be able to use it on any applications and it will be "
+                "hidden from your default product list."
+            ),
+            HTML.p("You can remove it from the archive and restore it to your product list at any time."),
+        ]
+
+    def get_layout_actions(self):
+        layout_actions = super().get_layout_actions()
+
+        layout_actions.append(
+            HTML(
+                f'<a class="govuk-button govuk-button--secondary" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
+            ),
+        )
+
+        return layout_actions
+
+
+class GoodRestoreForm(BaseForm):
+    class Layout:
+        TITLE = "Are you sure you want to restore this product?"
+        SUBMIT_BUTTON_TEXT = "Restore product"
+
+    def __init__(self, *args, cancel_url, **kwargs):
+        self.cancel_url = cancel_url
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return [
+            HTML.p("This product will show in your product list and you will be able to add it to applications."),
+        ]
+
+    def get_layout_actions(self):
+        layout_actions = super().get_layout_actions()
+
+        layout_actions.append(
+            HTML(
+                f'<a class="govuk-button govuk-button--secondary" href="{self.cancel_url}" id="cancel-id-cancel">Cancel</a>'
+            ),
+        )
+
+        return layout_actions

@@ -225,6 +225,17 @@ def default_na(value):
 
 
 @register.filter()
+def get_agreed_to_foi_display_value(value):
+    """
+    Returns 'No' if the boolean value is True, else 'Yes'.
+    This is needed as long as the agreed_to_foi model field has yet to be
+    updated in lite-api. For more context see the agreed_to_foi question in
+    exporter: exporter/applications/forms/declaration.py
+    """
+    return "No" if value is True else "Yes"
+
+
+@register.filter()
 def get_address(data):
     """
     Returns a correctly formatted address

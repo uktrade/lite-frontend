@@ -10,6 +10,7 @@ from django.views.generic import (
     FormView,
     View,
 )
+from django.views.generic.base import RedirectView
 
 from requests.models import PreparedRequest
 
@@ -97,12 +98,6 @@ class Authorize(FormView):
         if session_user_email:
             return self.redirect_to_redirect_uri(request, session_user_email)
 
-        # If we have an explicit email set in settings then we don't need to
-        # show the mock sso login prompt so we can just redirect back.
-        mock_sso_user_email = getattr(settings, "MOCK_SSO_USER_EMAIL", None)
-        if mock_sso_user_email:
-            return self.redirect_to_redirect_uri(request, mock_sso_user_email)
-
         return super().get(request, *args, **kwargs)
 
 
@@ -149,3 +144,13 @@ class APIUserMe(View):
             "access_profiles": [],
         }
         return JsonResponse(response_data)
+
+
+class Logout(RedirectView):
+    def get_redirect_url(self):
+        redirect_url = self.request.build_absolute_uri("/")
+        return redirect_url
+
+    def get(self, request, *args, **kwargs):
+        self.request.session.flush()
+        return super().get(request, *args, **kwargs)

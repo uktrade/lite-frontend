@@ -13,6 +13,11 @@ from core.constants import (
 
 
 @pytest.fixture
+def application_id(data_standard_case):
+    return data_standard_case["case"]["data"]["id"]
+
+
+@pytest.fixture
 def application(data_standard_case):
     return data_standard_case["case"]["data"]
 
@@ -42,6 +47,18 @@ def mock_application_put(requests_mock, data_standard_case):
     application = data_standard_case["case"]["data"]
     url = client._build_absolute_uri(f'/applications/{application["id"]}/')
     return requests_mock.put(url=url, json=application)
+
+
+@pytest.fixture
+def mock_application_status_post(requests_mock, application_id):
+    url = client._build_absolute_uri(f"/exporter/applications/{application_id}/status/")
+    return requests_mock.post(url=url, json={})
+
+
+@pytest.fixture
+def mock_application_status_post_failure(requests_mock, application_id):
+    url = client._build_absolute_uri(f"/exporter/applications/{application_id}/status/")
+    return requests_mock.post(url=url, json={"error": "unexpected error"}, status_code=500)
 
 
 @pytest.fixture
@@ -488,8 +505,8 @@ def application_with_rfd_and_section_5_document(data_standard_case, requests_moc
 
 @pytest.fixture
 def control_list_entries(requests_mock):
-    clc_url = client._build_absolute_uri("/static/control-list-entries/")
-    matcher = requests_mock.get(url=clc_url, json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]})
+    clc_url = client._build_absolute_uri("/exporter/static/control-list-entries/")
+    matcher = requests_mock.get(url=clc_url, json=[{"rating": "ML1"}, {"rating": "ML1a"}])
     return matcher
 
 
@@ -571,3 +588,23 @@ def technology_on_application_summary_url_factory(application, good_on_applicati
 @pytest.fixture
 def technology_on_application_summary_url(technology_on_application_summary_url_factory):
     return technology_on_application_summary_url_factory("technology-on-application-summary")
+
+
+@pytest.fixture
+def application_edit_type_url(application_id):
+    return reverse(f"applications:edit_type", kwargs={"pk": application_id})
+
+
+@pytest.fixture
+def application_task_list_url(application_id):
+    return reverse("applications:task_list", kwargs={"pk": application_id})
+
+
+@pytest.fixture
+def application_major_edit_existing_confirm_url(application_id):
+    return reverse(f"applications:edit_type", kwargs={"pk": application_id})
+
+
+@pytest.fixture
+def application_major_edit_confirm_url(application_id):
+    return reverse(f"applications:major_edit_confirm", kwargs={"pk": application_id})

@@ -1,5 +1,6 @@
 from functools import cached_property
 
+import rules
 from django.shortcuts import redirect
 from core.auth.views import LoginRequiredMixin
 from exporter.ecju_queries.ecju_forms import ECJUQueryRespondForm, ECJUQueryRespondConfirmForm
@@ -7,6 +8,7 @@ from exporter.ecju_queries.ecju_forms import ECJUQueryRespondForm, ECJUQueryResp
 from django.views.generic import FormView
 from django.urls import reverse_lazy, reverse
 
+from exporter.applications.services import get_application
 from exporter.ecju_queries.services import get_ecju_query, get_ecju_query_documents, put_ecju_query
 
 
@@ -14,6 +16,10 @@ class ECJURespondMixin:
     @cached_property
     def case_id(self):
         return str(self.kwargs["case_pk"])
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.case_id)
 
     @cached_property
     def ecju_query_id(self):
@@ -56,12 +62,19 @@ class ECJURespondQueryView(LoginRequiredMixin, ECJURespondMixin, FormView):
     # This is required because of some legacy code that depends on object_type when adding a document
     OBJECT_TYPE = "application"
 
+    def get_edit_url(self):
+        if not rules.test_rule("can_invoke_major_editable", self.request, self.application):
+            return None
+
+        return reverse("applications:major_edit_confirm", kwargs={"pk": self.case_id})
+
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["ecju_query"] = self.ecju_query
         form_kwargs["documents"] = self.ecju_query_documents
         form_kwargs["case_id"] = self.case_id
         form_kwargs["ecju_response"] = self.session_ecju_response
+        form_kwargs["edit_url"] = self.get_edit_url()
         return form_kwargs
 
     def get_success_url(self):

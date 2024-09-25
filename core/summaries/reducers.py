@@ -269,6 +269,144 @@ def firearm_reducer(good, is_user_rfd, organisation_documents):
     return summary
 
 
+def components_for_firearms_reducer(good, is_user_rfd, organisation_documents):
+    firearm_details = good["firearm_details"]
+
+    summary = (
+        (
+            "firearm-type",
+            firearm_details["type"],
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+        (
+            "calibre",
+            firearm_details["calibre"],
+        ),
+        (
+            "is-registered-firearms-dealer",
+            is_user_rfd,
+        ),
+    )
+
+    summary += part_number_reducer(good)
+    summary += rfd_reducer(is_user_rfd, organisation_documents)
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += is_replica_reducer(firearm_details)
+    summary += firearms_act_reducer(firearm_details, is_user_rfd, organisation_documents)
+    summary += has_product_document_reducer(good)
+
+    return summary
+
+
+def firearms_accessory_reducer(good):
+    firearm_details = good["firearm_details"]
+
+    summary = (
+        (
+            "firearm-type",
+            firearm_details["type"],
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+    )
+
+    summary += part_number_reducer(good)
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += product_component_reducer(good)
+    summary += uses_information_security_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+    summary += has_product_document_reducer(good)
+
+    return summary
+
+
+def software_related_to_firearms_reducer(good):
+    firearm_details = good["firearm_details"]
+
+    summary = (
+        (
+            "firearm-type",
+            firearm_details["type"],
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+    )
+
+    summary += part_number_reducer(good)
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += uses_information_security_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+    summary += has_product_document_reducer(good)
+
+    return summary
+
+
+def technology_related_to_firearms_reducer(good):
+    firearm_details = good["firearm_details"]
+
+    summary = (
+        (
+            "firearm-type",
+            firearm_details["type"],
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+    )
+
+    summary += part_number_reducer(good)
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += uses_information_security_reducer(good)
+    summary += designed_for_military_use_reducer(good)
+    summary += has_product_document_reducer(good)
+
+    return summary
+
+
+def firearm_ammunition_reducer(good, is_user_rfd, organisation_documents):
+    firearm_details = good["firearm_details"]
+
+    summary = (
+        (
+            "firearm-type",
+            firearm_details["type"],
+        ),
+        (
+            "name",
+            good["name"],
+        ),
+        (
+            "calibre",
+            firearm_details["calibre"],
+        ),
+        (
+            "is-registered-firearms-dealer",
+            is_user_rfd,
+        ),
+    )
+
+    summary += rfd_reducer(is_user_rfd, organisation_documents)
+    summary += is_good_controlled_reducer(good)
+    summary += is_pv_graded_reducer(good)
+    summary += is_replica_reducer(firearm_details)
+    summary += firearms_act_reducer(firearm_details, is_user_rfd, organisation_documents)
+    summary += has_product_document_reducer(good)
+
+    return summary
+
+
 def rfd_reducer(is_user_rfd, organisation_documents):
     if not is_user_rfd or not organisation_documents.get(OrganisationDocumentType.RFD_CERTIFICATE):
         return ()
@@ -434,6 +572,10 @@ def part_number_reducer(good):
             ("no-part-number-comments", no_part_number_comments),
         )
     return (("part-number", good["part_number"]),)
+
+
+def product_component_reducer(good):
+    return (("product-component", good["is_component"]["value"]),)
 
 
 def complete_item_reducer(good):

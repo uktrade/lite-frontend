@@ -1,17 +1,25 @@
 from datetime import datetime
+from http import HTTPStatus
 
 from django.views.generic import FormView
 from django.urls import reverse
 from django.shortcuts import redirect
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 from exporter.applications.views.goods.common.payloads import get_cleaned_data
 from exporter.applications.services import put_application
 from core.wizard.views import BaseSessionWizardView
 
-from .forms import SecurityClassifiedDetailsForm, F680ReferenceNumberForm, SecurityOtherDetailsForm, F1686DetailsForm
+from .forms import (
+    F1686DetailsForm,
+    F680ReferenceNumberForm,
+    SecurityClassifiedDetailsForm,
+    SecurityOtherDetailsForm,
+    SubjectToITARControlsForm,
+)
 from .conditionals import (
     is_f680_approval_changed_and_selected,
     is_f1686_approval_changed_and_selected,
@@ -24,6 +32,7 @@ from .initial import (
     get_initial_f680_reference_number,
     get_initial_other_security_approval_details,
     get_initial_f1686_details,
+    get_initial_subject_to_itar_controls,
 )
 
 
@@ -46,8 +55,13 @@ class BaseApplicationEditView(
             kwargs={"pk": self.application["id"]},
         )
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
     def edit_object(self, request, application_id, payload):
-        put_application(request, application_id, payload)
+        return put_application(request, application_id, payload)
 
     def form_valid(self, form):
         self.edit_object(self.request, self.application["id"], self.get_edit_payload(form))
@@ -87,8 +101,13 @@ class BaseApplicationEditWizardView(
         export_details_payload = SecurityApprovalStepsPayloadBuilder().build(form_dict)
         return export_details_payload
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
     def edit_object(self, request, application_id, payload):
-        put_application(request, application_id, payload)
+        return put_application(request, application_id, payload)
 
     def process_forms(self, form_list, form_dict, **kwargs):
         self.edit_object(self.request, self.application["id"], self.get_payload(form_dict))
@@ -104,6 +123,16 @@ class EditF680ReferenceNumber(BaseApplicationEditView):
 
     def get_initial(self):
         return {"f680_reference_number": self.application["f680_reference_number"]}
+
+    def get_edit_payload(self, form):
+        return get_cleaned_data(form)
+
+
+class EditSubjectToITARControls(BaseApplicationEditView):
+    form_class = SubjectToITARControlsForm
+
+    def get_initial(self):
+        return {"subject_to_itar_controls": self.application["subject_to_itar_controls"]}
 
     def get_edit_payload(self, form):
         return get_cleaned_data(form)
@@ -141,12 +170,14 @@ class EditSecurityApprovalDetails(
 ):
     form_list = [
         (SecurityApprovalSteps.SECURITY_CLASSIFIED, SecurityClassifiedDetailsForm),
+        (SecurityApprovalSteps.SUBJECT_TO_ITAR_CONTROLS, SubjectToITARControlsForm),
         (SecurityApprovalSteps.F680_REFERENCE_NUMBER, F680ReferenceNumberForm),
         (SecurityApprovalSteps.F1686_DETAILS, F1686DetailsForm),
         (SecurityApprovalSteps.SECURITY_OTHER_DETAILS, SecurityOtherDetailsForm),
     ]
 
     condition_dict = {
+        SecurityApprovalSteps.SUBJECT_TO_ITAR_CONTROLS: is_f680_approval_changed_and_selected,
         SecurityApprovalSteps.F680_REFERENCE_NUMBER: is_f680_approval_changed_and_selected,
         SecurityApprovalSteps.F1686_DETAILS: is_f1686_approval_changed_and_selected,
         SecurityApprovalSteps.SECURITY_OTHER_DETAILS: is_other_approval_changed_and_selected,
@@ -156,6 +187,8 @@ class EditSecurityApprovalDetails(
         initial = super().get_form_initial(step)
         if step == SecurityApprovalSteps.SECURITY_CLASSIFIED:
             initial.update(get_initial_security_classified_details(self.application))
+        if step == SecurityApprovalSteps.SUBJECT_TO_ITAR_CONTROLS:
+            initial.update(get_initial_subject_to_itar_controls(self.application))
         if step == SecurityApprovalSteps.F680_REFERENCE_NUMBER:
             initial.update(get_initial_f680_reference_number(self.application))
         if step == SecurityApprovalSteps.F1686_DETAILS:

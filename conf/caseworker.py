@@ -100,11 +100,6 @@ LITE_HAWK_KEY = env.str("LITE_INTERNAL_HAWK_KEY")
 
 LITE_API_AUTH_HEADER_NAME = "GOV-USER-TOKEN"
 
-if "redis" in VCAP_SERVICES:
-    REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
-else:
-    REDIS_URL = env.str("REDIS_URL", "")
-
 # session
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 
@@ -118,6 +113,8 @@ CACHES = {
         },
     }
 }
+
+CACHEOPS_REDIS = REDIS_URL
 
 FEATURE_FLAG_PRODUCT_SEARCH = env.bool("FEATURE_FLAG_PRODUCT_SEARCH", False)
 FEATURE_FLAG_DENIALS_SEARCH_SCORE = env.bool("FEATURE_FLAG_DENIALS_SEARCH_SCORE", False)

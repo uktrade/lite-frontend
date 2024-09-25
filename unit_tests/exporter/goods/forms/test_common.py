@@ -26,7 +26,37 @@ from exporter.goods.forms.common import (
     "data, is_valid, errors",
     (
         ({}, False, {"name": ["Enter a descriptive name"]}),
-        ({"name": ["TEST NAME"]}, True, {}),
+        ({"name": "TEST NAME"}, True, {}),
+        ({"name": "good-!.<>/%&*;+'(),.name"}, True, {}),
+        ({"name": "good!name"}, True, {}),
+        ({"name": "good-name"}, True, {}),
+        (
+            {"name": "test\r\nname"},
+            False,
+            {
+                "name": [
+                    "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
+        (
+            {"name": "good_name"},
+            False,
+            {
+                "name": [
+                    "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
+        (
+            {"name": "good$name"},
+            False,
+            {
+                "name": [
+                    "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
+                ]
+            },
+        ),
     ),
 )
 def test_product_form_validation(data, is_valid, errors):
@@ -37,9 +67,7 @@ def test_product_form_validation(data, is_valid, errors):
 
 @pytest.fixture
 def control_list_entries(requests_mock):
-    requests_mock.get(
-        "/static/control-list-entries/", json={"control_list_entries": [{"rating": "ML1"}, {"rating": "ML1a"}]}
-    )
+    requests_mock.get("/exporter/static/control-list-entries/", json=[{"rating": "ML1"}, {"rating": "ML1a"}])
 
 
 def test_product_control_list_entry_form_init_control_list_entries(request_with_session, control_list_entries):

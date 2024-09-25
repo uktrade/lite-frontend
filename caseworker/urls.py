@@ -2,18 +2,19 @@ from django.conf import settings
 from django.urls import include, path
 
 import caseworker.core.views
+from core.health_check.views import HealthCheckPingdomView
 
 from core.accessibility.views import CaseworkerAccessibilityStatementView
 
 
 urlpatterns = [
     path("healthcheck/", include("health_check.urls")),
+    path("pingdom/ping.xml", HealthCheckPingdomView.as_view(), name="healthcheck-pingdom"),
     path("", include("caseworker.core.urls")),
     path("auth/", include("caseworker.auth.urls")),
     path("queues/<uuid:queue_pk>/cases/<uuid:pk>/", include("caseworker.cases.urls")),
     path("flags/", include("caseworker.flags.urls")),
     path("document-templates/", include("caseworker.letter_templates.urls")),
-    path("open-general-licences/", include("caseworker.open_general_licences.urls")),
     path("organisations/", include("caseworker.organisations.urls")),
     path("queues/", include("caseworker.queues.urls")),
     path("team/picklists/", include("caseworker.picklists.urls")),

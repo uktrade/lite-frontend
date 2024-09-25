@@ -1,6 +1,7 @@
-import re
-
 from django.db import models
+from collections import namedtuple
+
+RoleTuple = namedtuple("Role", "name id")
 
 
 class GoodsTypeCategory:
@@ -43,27 +44,15 @@ class CaseStatusEnum:
     UNDER_FINAL_REVIEW = "under_final_review"
     UNDER_REVIEW = "under_review"
     WITHDRAWN = "withdrawn"
+    SUPERSEDED_BY_EXPORTER_EDIT = "superseded_by_exporter_edit"
 
     @classmethod
     def base_query_statuses(cls):
         return [cls.SUBMITTED, cls.CLOSED, cls.WITHDRAWN]
 
     @classmethod
-    def is_terminal(cls, status):
-        return status in [
-            cls.CLOSED,
-            cls.DEREGISTERED,
-            cls.FINALISED,
-            cls.REGISTERED,
-            cls.REVOKED,
-            cls.SURRENDERED,
-            cls.WITHDRAWN,
-        ]
-
-    @classmethod
     def all(cls):
-        is_all_upper = re.compile(r"^[A-Z_]+$")
-        return [getattr(cls, param) for param in dir(cls) if is_all_upper.match(param)]
+        return [getattr(cls, param) for param in dir(cls) if param.isupper()]
 
 
 class OrganisationDocumentType:
@@ -131,3 +120,48 @@ class SecurityClassifiedApprovalsType:
         (F1686, "F1686"),
         (OTHER, "Other written approval"),
     )
+
+
+class LicenceStatusEnum:
+    ISSUED = "issued"
+    REINSTATED = "reinstated"
+    REVOKED = "revoked"
+    SURRENDERED = "surrendered"
+    SUSPENDED = "suspended"
+    EXHAUSTED = "exhausted"
+    EXPIRED = "expired"
+    DRAFT = "draft"
+    CANCELLED = "cancelled"
+
+    issued_choice = (ISSUED, "Issued")
+    suspended_choice = (
+        SUSPENDED,
+        "Suspended",
+    )
+    revoked_choice = (
+        REVOKED,
+        "Revoked",
+    )
+    reinstated_choice = (
+        REINSTATED,
+        "Reinstated",
+    )
+
+    choices = [
+        (ISSUED, "Issued"),
+        (REINSTATED, "Reinstated"),
+        (REVOKED, "Revoked"),
+        (SURRENDERED, "Surrendered"),
+        (SUSPENDED, "Suspended"),
+        (EXHAUSTED, "Exhausted"),
+        (EXPIRED, "Expired"),
+        (CANCELLED, "Cancelled"),
+        (DRAFT, "Draft"),
+    ]
+
+
+class ExporterRoles:
+    administrator = RoleTuple("administrator", "00000000-0000-0000-0000-000000000003")
+    exporter = RoleTuple("exporter", "00000000-0000-0000-0000-000000000004")
+    agent = RoleTuple("agent", "00000000-0000-0000-0000-000000000005")
+    immutable_roles = [administrator, exporter, agent]

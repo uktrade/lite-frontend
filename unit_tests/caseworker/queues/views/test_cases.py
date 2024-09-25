@@ -138,7 +138,6 @@ def test_cases_home_page_view_context(authorized_client):
         "queue",
         "is_all_cases_queue",
         "enforcement_check",
-        "updated_cases_banner_queue_id",
     ]
     response = authorized_client.get(reverse("queues:cases"))
     assert isinstance(response.context["form"], CasesFiltersForm)
@@ -166,6 +165,7 @@ def test_cases_home_page_view_context(authorized_client):
         "sub_status",
         "case_officer",
         "assigned_user",
+        "licence_status",
         "flags",
         "countries",
         "assigned_queues",
@@ -503,6 +503,23 @@ def test_cases_home_page_countries_search(authorized_client, mock_cases_search):
     assert mock_cases_search.last_request.qs == {
         **default_params,
         "countries": ["gb", "fr"],
+    }
+
+
+def test_cases_home_page_licence_status_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases") + "?licence_status=issued"
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+
+    html = BeautifulSoup(response.content, "html.parser")
+
+    licence_status_input = str(html.find(id="id_licence_status"))
+    assert '<option selected="" value="issued">Issued</option>' in licence_status_input
+
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "licence_status": ["issued"],
     }
 
 

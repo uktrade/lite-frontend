@@ -14,7 +14,7 @@ def organisation():
     return {
         "form_pk": 1,
         "name": "regional site",
-        "type": "commercial",
+        "type": {"value": "commercial"},
         "location": "united_kingdom",
         "eori_number": "123456789AA",
         "sic_number": "2345",
@@ -136,3 +136,28 @@ def test_organisations_html_title_on_changed_tab(authorized_client, requests_moc
     actual_title = soup.title.string.strip()
     actual_title = actual_title.replace("\n", "").replace("\t", "")
     assert actual_title == expected_title
+
+
+@pytest.mark.parametrize(
+    ("org_type", "expected_value"),
+    [
+        ("Commercial Organisation", "Commercial Organisation"),
+        ("Individual", "Other"),
+    ],
+)
+def test_review_organisation(authorized_client, requests_mock, retrieved_organisation, org_type, expected_value):
+    organisation_id = UUID(retrieved_organisation["id"])
+    retrieved_organisation["type"]["value"] = org_type
+    requests_mock.get(client._build_absolute_uri(f"/organisations/{organisation_id}"), json=retrieved_organisation)
+    requests_mock.get(
+        client._build_absolute_uri(f"/organisations/{organisation_id}/matching_details/"),
+        json={"matching_properties": []},
+    )
+    url = reverse("organisations:organisation_review", kwargs={"pk": organisation_id})
+    response = authorized_client.get(url)
+
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    soup.find_all("govuk-summary-list__row")
+    org_details = soup.find_all(class_="govuk-summary-list__row")
+    assert org_details[1].span.text == expected_value

@@ -1,7 +1,6 @@
 import pytest
 import re
 import uuid
-from unittest import mock
 
 from bs4 import BeautifulSoup
 
@@ -17,6 +16,7 @@ from django.utils import timezone
 
 from core import client
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS
+from core.constants import SecurityClassifiedApprovalsType
 
 
 @pytest.fixture(autouse=True)
@@ -291,15 +291,180 @@ def test_case_details_sub_status_change_displayed(
 
 
 @pytest.mark.parametrize(
+    "licence_details, role_id, column_expected",
+    [
+        (
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "issued",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": True,
+                    "created_at": "2021-11-16",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "issued",
+                    "case_status": "withdrawn",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                    "created_at": "2021-11-17",
+                },
+            ],
+            "3ae08e0c-47b3-47ba-965f-48318129c147",
+            True,
+        ),
+        (
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "reinstated",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": True,
+                    "created_at": "2021-11-17",
+                },
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "revoked",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                    "created_at": "2021-11-19",
+                },
+            ],
+            "3ae08e0c-47b3-47ba-965f-48318129c147",
+            True,
+        ),
+        (
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "suspended",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": True,
+                    "created_at": "2021-11-16",
+                }
+            ],
+            "3ae08e0c-47b3-47ba-965f-48318129c147",
+            True,
+        ),
+        (
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "issued",
+                    "case_status": "submitted",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                    "created_at": "2021-11-16",
+                }
+            ],
+            "3ae08e0c-47b3-47ba-965f-48318129c147",
+            False,
+        ),
+        (
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "revoked",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                    "created_at": "2021-11-16",
+                }
+            ],
+            "3ae08e0c-47b3-47ba-965f-48318129c147",
+            False,
+        ),
+        (
+            [
+                {
+                    "id": str(uuid.uuid4()),
+                    "status": "issued",
+                    "case_status": "finalised",
+                    "reference_code": "12345AB",
+                    "link_expected": False,
+                    "created_at": "2021-11-16",
+                }
+            ],
+            str(uuid.uuid4()),
+            False,
+        ),
+    ],
+)
+def test_licence_details_actions_column_and_licence_status_change_link_display(
+    data_standard_case,
+    data_queue,
+    authorized_client,
+    mock_gov_user,
+    licence_details,
+    role_id,
+    column_expected,
+):
+    mock_gov_user["user"]["role"]["id"] = role_id
+    data_standard_case["case"]["licences"] = licence_details
+
+    case_url = reverse(
+        "cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"], "tab": "licences"}
+    )
+
+    response = authorized_client.get(case_url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    show_actions_column = bool(html.find(id="actions_column_header"))
+
+    assert show_actions_column is column_expected
+
+    for licence in licence_details:
+        show_licence_status_change_link = bool(html.find(id=f"link-change-licence-status-{licence['id']}"))
+        assert show_licence_status_change_link is licence["link_expected"]
+
+
+@pytest.mark.parametrize(
+    "licence_data, expected_status, expected_text",
+    (
+        ([], None, "No licence status set"),
+        ([{"created_at": "2023-08-08", "status": "Issued"}], "Issued", "Issued"),
+        (
+            [{"created_at": "2023-08-11", "status": "Cancelled"}, {"created_at": "2023-08-09", "status": "Revoked"}],
+            "Cancelled",
+            "Cancelled",
+        ),
+    ),
+)
+def test_case_details_licence_status_displayed(
+    data_standard_case,
+    requests_mock,
+    data_queue,
+    authorized_client,
+    mock_gov_user,
+    licence_data,
+    expected_status,
+    expected_text,
+):
+
+    data_standard_case["case"]["licences"] = licence_data
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+    assert response.context["licence_status"] == expected_status
+    html = BeautifulSoup(response.content, "html.parser")
+
+    assert html.find(id="case-licence-status").span.text.strip() == expected_text
+
+
+@pytest.mark.parametrize(
     "reference_code,expected_banner_msg",
     (
         (
-            "GBSIEL/Blah",
-            "The amendment case is GBSIEL/Blah.",
+            "GBSIEL/2024/0000010/P",
+            "The exporter edited this application and the case has been superseded by GBSIEL/2024/0000010/P.",
         ),
         (
             None,
-            "The exporter is still working on their amendments and will submit the amended case when they are finished.",
+            "The exporter is editing their application. A new case will be created when they resubmit.",
         ),
     ),
 )
@@ -320,7 +485,6 @@ def test_case_superseded_warning(
     superseded_banner = html.find(id="superseded-warning")
     superseded_message = superseded_banner.find("span", attrs={"class": "app-case-warning-banner__text"})
 
-    assert "This case has been amended by the exporter and is now superseded." in superseded_message.text
     assert expected_banner_msg in superseded_message.text
 
 
@@ -331,7 +495,10 @@ def test_case_amendment_warning(
     mock_gov_user,
 ):
     synthetic_superseded_id = str(uuid.uuid4())
-    data_standard_case["case"]["amendment_of"] = {"id": synthetic_superseded_id, "reference_code": "GBSIEL/OLD"}
+    data_standard_case["case"]["amendment_of"] = {
+        "id": synthetic_superseded_id,
+        "reference_code": "GBSIEL/2024/0000002/P",
+    }
     case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
     response = authorized_client.get(case_url)
 
@@ -339,5 +506,40 @@ def test_case_amendment_warning(
     amendment_banner = html.find(id="amendment-warning")
     amendment_message = amendment_banner.find("span", attrs={"class": "app-case-warning-banner__text"})
 
-    assert "This case is an amendment." in amendment_message.text
-    assert "The original case is GBSIEL/OLD." in amendment_message.text
+    assert (
+        "This case was created when the exporter edited the original application at GBSIEL/2024/0000002/P."
+        in amendment_message.text
+    )
+
+
+@pytest.mark.parametrize(
+    "itar_controls_status,expected",
+    (
+        (False, "No"),
+        (True, "Yes"),
+    ),
+)
+def test_case_details_security_approvals(
+    data_standard_case, data_queue, authorized_client, itar_controls_status, expected
+):
+    data_standard_case["case"]["data"]["is_mod_security_approved"] = True
+    data_standard_case["case"]["data"]["security_approvals"] = [SecurityClassifiedApprovalsType.F680]
+    data_standard_case["case"]["data"]["subject_to_itar_controls"] = itar_controls_status
+
+    case_url = reverse("cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    response = authorized_client.get(case_url)
+
+    assertTemplateUsed(response, "components/security-approvals.html")
+
+    html = BeautifulSoup(response.content, "html.parser")
+    dt = html.find("dt", string=re.compile("Do you have an MOD security approval, such as F680 or F1686?"))
+    assert dt
+    assert dt.find_next().string == "Yes"
+
+    dt = html.find("dt", string=re.compile("What type of approval do you have?"))
+    assert dt
+    assert dt.find_next().string == "F680"
+
+    dt = html.find("dt", string=re.compile("Are any products on this application subject to ITAR controls?"))
+    assert dt
+    assert dt.find_next().string == expected

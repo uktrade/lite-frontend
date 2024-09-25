@@ -63,7 +63,7 @@ def mock_ecju_query_get_document(data_standard_case, data_ecju_queries, requests
     data = {
         "documents": [
             {
-                "id": "fa7fe703-a976-4b8f-8683-8676c1f5fe0a",
+                "id": "fa7fe703-a976-4b8f-8683-8676c1f5fe0a",  # /PS-IGNORE
                 "name": "sample.pdf",
                 "user": {"first_name": "Joe", "last_name": "bloggs"},
                 "description": "test sample",
@@ -85,13 +85,14 @@ def test_ecju_form(data_standard_case, data_ecju_queries):
         ecju_response="Test Response",
         documents={},
         data={},
+        edit_url=None,
     )
 
     assert ecju_respond_form.fields["response"].initial is "Test Response"
     assert ecju_respond_form.is_valid() == True
 
 
-def test_ecju_respond_query_view(authorized_client, data_standard_case, url):
+def test_ecju_respond_query_view_not_editable(authorized_client, mock_application_get, data_standard_case, url):
     response = authorized_client.get(url)
     assert response.status_code == 200
 
@@ -99,12 +100,37 @@ def test_ecju_respond_query_view(authorized_client, data_standard_case, url):
     assert response.context["back_link_url"] == f'/applications/{data_standard_case["case"]["id"]}/ecju-queries/'
     assert response.context["back_link_text"] == "back to ecju queries"
 
-    document_details = BeautifulSoup(response.content, "html.parser").find(class_="app-documents__item-details")
+    soup = BeautifulSoup(response.content, "html.parser")
+    document_details = soup.find(class_="app-documents__item-details")
     assert document_details.find(class_="govuk-link--no-visited-state").text == "sample.pdf"
     assert "Uploaded by Joe bloggs" in document_details.find(class_="govuk-hint").text
+    edit_link = soup.find(class_="application-edit-link")
+    assert edit_link == None
 
 
-def test_ecju_respond_query_view_add_document(authorized_client, data_standard_case_pk, data_ecju_query_pk, url):
+def test_ecju_respond_query_view_editable(
+    authorized_client,
+    mock_application_get,
+    mock_status_properties_can_invoke_major_editable,
+    data_organisation,
+    data_standard_case,
+    url,
+):
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    edit_link = soup.find(class_="application-edit-link")
+    assert edit_link.text == "Edit and submit your application"
+    assert (
+        reverse(f"applications:major_edit_confirm", kwargs={"pk": data_standard_case["case"]["id"]})
+        == edit_link["href"]
+    )
+
+
+def test_ecju_respond_query_view_add_document(
+    authorized_client, mock_application_get, data_standard_case_pk, data_ecju_query_pk, url
+):
     data = {"response": "session response", "add_document": ""}
     response_session_key = f"{data_ecju_query_pk}_response"
     response = authorized_client.post(url, data)
@@ -123,7 +149,7 @@ def test_ecju_respond_query_view_add_document(authorized_client, data_standard_c
 
 
 def test_ecju_respond_query_view_post_sucess(
-    authorized_client, data_standard_case_pk, data_ecju_query_pk, confirm_url, url
+    authorized_client, mock_application_get, data_standard_case_pk, data_ecju_query_pk, confirm_url, url
 ):
     data = {"response": "session response"}
     response_session_key = f"{data_ecju_query_pk}_response"
@@ -140,7 +166,12 @@ def test_ecju_respond_query_view_post_sucess(
 
 
 def test_ecju_respond_query_view_delete_document(
-    authorized_client, data_standard_case_pk, data_ecju_query_pk, mock_ecju_query_get_document, url
+    authorized_client,
+    mock_application_get,
+    data_standard_case_pk,
+    data_ecju_query_pk,
+    mock_ecju_query_get_document,
+    url,
 ):
     document_id = mock_ecju_query_get_document["documents"][0]["id"]
     response_session_key = f"{data_ecju_query_pk}_response"
@@ -162,7 +193,9 @@ def test_ecju_respond_query_view_delete_document(
     assert response_session_key in authorized_client.session.keys()
 
 
-def test_ecju_respond_query_view_cancel(authorized_client, data_standard_case_pk, data_ecju_query_pk, url):
+def test_ecju_respond_query_view_cancel(
+    authorized_client, mock_application_get, data_standard_case_pk, data_ecju_query_pk, url
+):
 
     data = {"response": "session response", "cancel": ""}
     response_session_key = f"{data_ecju_query_pk}_response"
@@ -193,7 +226,7 @@ def test_ecju_respond_query_confirm_view(authorized_client, confirm_url, url):
 
 
 def test_ecju_respond_query_confirm_view_cancel(
-    authorized_client, data_standard_case_pk, confirm_url, data_ecju_query_pk, url
+    authorized_client, mock_application_get, data_standard_case_pk, confirm_url, data_ecju_query_pk, url
 ):
 
     data = {"cancel": ""}
@@ -215,7 +248,7 @@ def test_ecju_respond_query_confirm_view_cancel(
 
 
 def test_ecju_respond_query_confirm_view_save_response(
-    authorized_client, data_standard_case_pk, confirm_url, data_ecju_query_pk, mock_put_ecju_query
+    authorized_client, mock_application_get, data_standard_case_pk, confirm_url, data_ecju_query_pk, mock_put_ecju_query
 ):
     response_session_key = f"{data_ecju_query_pk}_response"
 
@@ -233,7 +266,7 @@ def test_ecju_respond_query_confirm_view_save_response(
 
 
 def test_ecju_respond_query_confirm_view_save_with_no_response(
-    authorized_client, data_standard_case_pk, confirm_url, mock_put_ecju_query
+    authorized_client, mock_application_get, data_standard_case_pk, confirm_url, mock_put_ecju_query
 ):
 
     response = authorized_client.post(confirm_url, {})

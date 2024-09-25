@@ -14,8 +14,8 @@ from django.utils import timezone
 from caseworker.advice import services
 from core import client
 from core.helpers import convert_value_to_query_param
-from caseworker.advice.services import LICENSING_UNIT_TEAM, FIRST_COUNTERSIGN, SECOND_COUNTERSIGN
-from caseworker.core.constants import SUPER_USER_ROLE_ID
+from caseworker.advice.services import LICENSING_UNIT_TEAM, SECOND_COUNTERSIGN
+from caseworker.core.constants import LICENSING_UNIT_TEAM_ID, SUPER_USER_ROLE_ID
 
 application_id = "094eed9a-23cc-478a-92ad-9a05ac17fad0"
 second_application_id = "08e69b60-8fbd-4111-b6ae-096b565fe4ea"
@@ -637,12 +637,8 @@ def mock_gov_tau_user(requests_mock, mock_notifications, mock_case_statuses, moc
 
 
 @pytest.fixture
-def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, gov_uk_user_id):
-    mock_gov_user["user"]["team"] = {
-        "id": "521154de-f39e-45bf-9922-baaaaaa",
-        "name": "Licencing Unit",
-        "alias": "LICENSING_UNIT",
-    }
+def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, gov_uk_user_id, lu_team):
+    mock_gov_user["user"]["team"] = lu_team
 
     url = client._build_absolute_uri("/gov-users/")
     requests_mock.get(url=f"{url}me/", json=mock_gov_user)
@@ -650,14 +646,60 @@ def mock_gov_lu_user(requests_mock, mock_notifications, mock_case_statuses, mock
 
 
 @pytest.fixture
+def mock_gov_lu_case_officer(requests_mock, LU_case_officer):
+    url = client._build_absolute_uri("/gov-users/")
+    data = {"user": LU_case_officer}
+
+    requests_mock.get(url=f"{url}me/", json=data)
+    requests_mock.get(url=re.compile(f"{url}{LU_case_officer['id']}/"), json=data)
+
+    return data
+
+
+@pytest.fixture
+def mock_gov_lu_licensing_manager(requests_mock, LU_licensing_manager):
+    url = client._build_absolute_uri("/gov-users/")
+    data = {"user": LU_licensing_manager}
+
+    requests_mock.get(url=f"{url}me/", json=data)
+    requests_mock.get(url=re.compile(f"{url}{LU_licensing_manager['id']}/"), json=data)
+
+    return data
+
+
+@pytest.fixture
+def mock_gov_lu_senior_licensing_manager(requests_mock, LU_senior_licensing_manager):
+    url = client._build_absolute_uri("/gov-users/")
+    data = {"user": LU_senior_licensing_manager}
+
+    requests_mock.get(url=f"{url}me/", json=data)
+    requests_mock.get(url=re.compile(f"{url}{LU_senior_licensing_manager['id']}/"), json=data)
+
+    return data
+
+
+@pytest.fixture
 def mock_gov_lu_super_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, gov_uk_user_id):
     mock_gov_user["user"]["team"] = {
         "id": "521154de-f39e-45bf-9922-baaaaaa",
-        "name": "Licencing Unit",
+        "name": "Licensing Unit",
         "alias": "LICENSING_UNIT",
     }
     mock_gov_user["user"]["role"]["statuses"].extend(
-        [{"id": "00000000-0000-0000-0000-000000000009", "key": "closed", "value": "Closed", "priority": 16}]
+        [
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000009",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": True,
+                "key": "closed",
+                "priority": 19,
+                "status": "closed",
+                "value": "Closed",
+            },
+        ],
     )
 
     url = client._build_absolute_uri("/gov-users/")
@@ -959,7 +1001,7 @@ def FCDO_team_user(fcdo_team):
 @pytest.fixture
 def lu_team():
     return {
-        "id": "809eba0f-f197-4f0f-949b-9af309a844fb",
+        "id": LICENSING_UNIT_TEAM_ID,
         "name": "LU Team",
         "alias": LICENSING_UNIT_TEAM,
         "part_of_ecju": False,
@@ -977,6 +1019,57 @@ def LU_team_user(lu_team):
         "role_name": "Super User",
         "status": "Active",
         "team": lu_team,
+    }
+
+
+@pytest.fixture
+def LU_case_officer(lu_team):
+    return {
+        "email": "lu.final.advisor@example.com",
+        "first_name": "LU Team",
+        "id": "fad1db47-c5e1-4788-af3d-aea87523826b",
+        "last_name": "Final advisor",
+        "status": "Active",
+        "team": lu_team,
+        "role": {
+            "id": "00000000-0000-0000-0000-000000000002",
+            "name": "Licensing Unit Officer",
+            "permissions": ["MANAGE_LICENCE_FINAL_ADVICE"],
+        },
+    }
+
+
+@pytest.fixture
+def LU_licensing_manager(lu_team):
+    return {
+        "email": "licensing.manager@example.com",
+        "first_name": "LU Team",
+        "id": "b0df812f-3a0f-4759-8f7d-10ccc18319bf",
+        "last_name": "Licensing manager",
+        "status": "Active",
+        "team": lu_team,
+        "role": {
+            "id": "00000000-0000-0000-0000-000000000002",
+            "name": "Licensing Unit Manager",
+            "permissions": ["MANAGE_LICENCE_FINAL_ADVICE"],
+        },
+    }
+
+
+@pytest.fixture
+def LU_senior_licensing_manager(lu_team):
+    return {
+        "email": "licensing.manager@example.com",
+        "first_name": "LU Team",
+        "id": "7d741df1-c2f7-4095-896a-47038d7b7b28",
+        "last_name": "Senior Licensing manager",
+        "status": "Active",
+        "team": lu_team,
+        "role": {
+            "id": "00000000-0000-0000-0000-000000000002",
+            "name": "Senior Licensing Unit Manager",
+            "permissions": ["MANAGE_LICENCE_FINAL_ADVICE"],
+        },
     }
 
 
@@ -1210,6 +1303,79 @@ def final_advice(current_user, lu_team):
         },
         "team": lu_team,
     }
+
+
+@pytest.fixture
+def final_advice_licence_required():
+    return [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+    ]
+
+
+@pytest.fixture
+def final_advice_no_licence_required():
+    return [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "no_licence_required"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        }
+    ]
+
+
+@pytest.fixture
+def final_advice_no_licence_required_and_licence_required_goods():
+    return [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "approve"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "no_licence_required"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+    ]
+
+
+@pytest.fixture
+def final_advice_no_licence_required_and_refuse():
+    return [
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "refuse"},
+            "good": None,
+            "text": "text",
+        },
+        {
+            "level": "final",
+            "note": "note",
+            "type": {"key": "no_licence_required"},
+            "good": {"id": "good_id"},
+            "text": "text",
+        },
+    ]
 
 
 def countersignatures_for_advice(all_advice, data):
@@ -1611,129 +1777,401 @@ def mock_case_statuses(requests_mock):
     url = client._build_absolute_uri("/static/statuses/")
     data = {
         "statuses": [
-            {"id": "00000000-0000-0000-0000-000000000001", "key": "submitted", "value": "Submitted", "priority": 1},
             {
+                "can_invoke_major_editable": True,
+                "id": "00000000-0000-0000-0000-000000000001",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "submitted",
+                "priority": 1,
+                "status": "submitted",
+                "value": "Submitted",
+            },
+            {
+                "can_invoke_major_editable": False,
                 "id": "00000000-0000-0000-0000-000000000002",
+                "is_caseworker_operable": True,
+                "is_major_editable": True,
+                "is_read_only": False,
+                "is_terminal": False,
                 "key": "applicant_editing",
-                "value": "Applicant editing",
                 "priority": 2,
+                "status": "applicant_editing",
+                "value": "Applicant editing",
             },
-            {"id": "00000000-0000-0000-0000-000000000003", "key": "resubmitted", "value": "Resubmitted", "priority": 3},
             {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000003",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "resubmitted",
+                "priority": 3,
+                "status": "resubmitted",
+                "value": "Resubmitted",
+            },
+            {
+                "can_invoke_major_editable": True,
                 "id": "00000000-0000-0000-0000-000000000004",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
                 "key": "initial_checks",
-                "value": "Initial checks",
                 "priority": 4,
+                "status": "initial_checks",
+                "value": "Initial checks",
             },
             {
+                "can_invoke_major_editable": True,
                 "id": "00000000-0000-0000-0000-000000000005",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
                 "key": "under_review",
-                "value": "Under review",
                 "priority": 5,
+                "status": "under_review",
+                "value": "Under review",
             },
-            {"id": "00000000-0000-0000-0000-000000000026", "key": "ogd_advice", "value": "OGD Advice", "priority": 6},
             {
-                "id": "00000000-0000-0000-0000-000000000006",
-                "key": "under_final_review",
-                "value": "Under final review",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000026",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "ogd_advice",
+                "priority": 6,
+                "status": "ogd_advice",
+                "value": "OGD Advice",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000031",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "ogd_consolidation",
                 "priority": 7,
+                "status": "ogd_consolidation",
+                "value": "OGD Consolidation",
             },
-            {"id": "00000000-0000-0000-0000-000000000007", "key": "finalised", "value": "Finalised", "priority": 8},
-            {"id": "00000000-0000-0000-0000-000000000023", "key": "clc_review", "value": "CLC review", "priority": 9},
             {
-                "id": "00000000-0000-0000-0000-000000000024",
-                "key": "pv_review",
-                "value": "PV grading review",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000006",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "under_final_review",
+                "priority": 9,
+                "status": "under_final_review",
+                "value": "Under final review",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000032",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "final_review_countersign",
+                "priority": 9,
+                "status": "final_review_countersign",
+                "value": "Final review countersign",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000033",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "final_review_second_countersign",
                 "priority": 10,
+                "status": "final_review_second_countersign",
+                "value": "Final review second countersign",
             },
-            {"id": "00000000-0000-0000-0000-000000000027", "key": "open", "value": "Open", "priority": 11},
             {
-                "id": "00000000-0000-0000-0000-000000000028",
-                "key": "under_internal_review",
-                "value": "Under internal review",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000023",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "clc_review",
                 "priority": 12,
+                "status": "clc_review",
+                "value": "CLC review",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000029",
-                "key": "return_to_inspector",
-                "value": "Return to inspector",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000007",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": True,
+                "key": "finalised",
                 "priority": 13,
+                "status": "finalised",
+                "value": "Finalised",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000030",
-                "key": "awaiting_exporter_response",
-                "value": "Awaiting exporter response",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000024",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "pv_review",
+                "priority": 13,
+                "status": "pv_review",
+                "value": "PV grading review",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000027",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "open",
                 "priority": 14,
+                "status": "open",
+                "value": "Open",
             },
-            {"id": "00000000-0000-0000-0000-000000000008", "key": "withdrawn", "value": "Withdrawn", "priority": 15},
-            {"id": "00000000-0000-0000-0000-000000000010", "key": "registered", "value": "Registered", "priority": 17},
             {
-                "id": "00000000-0000-0000-0000-000000000011",
-                "key": "under_appeal",
-                "value": "Under appeal",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000028",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "under_internal_review",
+                "priority": 15,
+                "status": "under_internal_review",
+                "value": "Under internal review",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000029",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "return_to_inspector",
+                "priority": 16,
+                "status": "return_to_inspector",
+                "value": "Return to inspector",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000030",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "awaiting_exporter_response",
+                "priority": 17,
+                "status": "awaiting_exporter_response",
+                "value": "Awaiting exporter response",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000008",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": True,
+                "key": "withdrawn",
                 "priority": 18,
+                "status": "withdrawn",
+                "value": "Withdrawn",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000012",
-                "key": "appeal_review",
-                "value": "Appeal review",
-                "priority": 19,
-            },
-            {
-                "id": "00000000-0000-0000-0000-000000000013",
-                "key": "appeal_final_review",
-                "value": "Appeal final review",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000010",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": True,
+                "key": "registered",
                 "priority": 20,
+                "status": "registered",
+                "value": "Registered",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000014",
-                "key": "reopened_for_changes",
-                "value": "Re-opened for changes",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000011",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "under_appeal",
                 "priority": 21,
+                "status": "under_appeal",
+                "value": "Under appeal",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000025",
-                "key": "reopened_due_to_org_changes",
-                "value": "Re-opened due to org changes",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000012",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "appeal_review",
                 "priority": 22,
+                "status": "appeal_review",
+                "value": "Appeal review",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000015",
-                "key": "change_initial_review",
-                "value": "Change initial review",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000013",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "appeal_final_review",
                 "priority": 23,
+                "status": "appeal_final_review",
+                "value": "Appeal final review",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000016",
-                "key": "change_under_review",
-                "value": "Change under review",
+                "can_invoke_major_editable": True,
+                "id": "00000000-0000-0000-0000-000000000014",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "reopened_for_changes",
                 "priority": 24,
+                "status": "reopened_for_changes",
+                "value": "Re-opened for changes",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000017",
-                "key": "change_under_final_review",
-                "value": "Change under final review",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000025",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "reopened_due_to_org_changes",
                 "priority": 25,
+                "status": "reopened_due_to_org_changes",
+                "value": "Re-opened due to org changes",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000018",
-                "key": "under_ECJU_review",
-                "value": "Under ECJU appeal",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000015",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "change_initial_review",
                 "priority": 26,
+                "status": "change_initial_review",
+                "value": "Change initial review",
             },
-            {"id": "00000000-0000-0000-0000-000000000019", "key": "revoked", "value": "Revoked", "priority": 27},
-            {"id": "00000000-0000-0000-0000-000000000020", "key": "suspended", "value": "Suspended", "priority": 28},
             {
-                "id": "00000000-0000-0000-0000-000000000021",
-                "key": "surrendered",
-                "value": "Surrendered",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000016",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "change_under_review",
+                "priority": 27,
+                "status": "change_under_review",
+                "value": "Change under review",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000017",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "change_under_final_review",
+                "priority": 28,
+                "status": "change_under_final_review",
+                "value": "Change under final review",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000018",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "under_ECJU_review",
                 "priority": 29,
+                "status": "under_ECJU_review",
+                "value": "Under ECJU appeal",
             },
             {
-                "id": "00000000-0000-0000-0000-000000000022",
-                "key": "deregistered",
-                "value": "De-registered",
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000019",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": True,
+                "key": "revoked",
                 "priority": 30,
+                "status": "revoked",
+                "value": "Revoked",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000020",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": False,
+                "key": "suspended",
+                "priority": 31,
+                "status": "suspended",
+                "value": "Suspended",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000021",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": True,
+                "key": "surrendered",
+                "priority": 32,
+                "status": "surrendered",
+                "value": "Surrendered",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000022",
+                "is_caseworker_operable": True,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": True,
+                "key": "deregistered",
+                "priority": 33,
+                "status": "deregistered",
+                "value": "De-registered",
+            },
+            {
+                "can_invoke_major_editable": False,
+                "id": "00000000-0000-0000-0000-000000000034",
+                "is_caseworker_operable": False,
+                "is_major_editable": False,
+                "is_read_only": True,
+                "is_terminal": True,
+                "key": "superseded_by_exporter_edit",
+                "priority": 34,
+                "status": "superseded_by_exporter_edit",
+                "value": "Superseded by exporter edit",
             },
         ]
     }
@@ -2410,10 +2848,10 @@ def mock_flags(requests_mock, flags):
     return requests_mock.get(url=url, json=flags)
 
 
-@pytest.fixture()
-def mock_all_control_list_entries(requests_mock, all_cles):
-    url = client._build_absolute_uri("/static/control-list-entries/")
-    return requests_mock.get(url=url, json={"control_list_entries": all_cles})
+@pytest.fixture
+def mock_control_list_entries(requests_mock, data_control_list_entries):
+    url = client._build_absolute_uri("/caseworker/static/control-list-entries/")
+    return requests_mock.get(url=url, json=data_control_list_entries)
 
 
 @pytest.fixture()

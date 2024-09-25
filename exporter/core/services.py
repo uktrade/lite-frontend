@@ -2,6 +2,7 @@ import logging
 from http import HTTPStatus
 from urllib.parse import urlencode
 
+from cacheops import cached
 from django.http import HttpResponse
 
 from core import client
@@ -10,6 +11,7 @@ from core.helpers import convert_parameters_to_query_params, convert_value_to_qu
 from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions
 from lite_forms.components import Option, TextArea
 from core.ip_filter import get_client_ip
+from exporter.core.constants import CONTROL_LIST_ENTRIES_CACHE_TIMEOUT
 
 log = logging.getLogger(__name__)
 
@@ -198,26 +200,11 @@ def put_organisation_user(request, user_pk, json):
     return data.json(), data.status_code
 
 
-def get_control_list_entries(request, convert_to_options=False, converted_control_list_entries_cache=[]):  # noqa
-    if convert_to_options:
-        if converted_control_list_entries_cache:
-            return converted_control_list_entries_cache
-        else:
-            data = client.get(request, "/static/control-list-entries/?flatten=True")
-
-        for control_list_entry in data.json().get("control_list_entries", []):
-            converted_control_list_entries_cache.append(
-                Option(
-                    key=control_list_entry["rating"],
-                    value=control_list_entry["rating"],
-                    description=control_list_entry["text"],
-                )
-            )
-
-        return converted_control_list_entries_cache
-
-    data = client.get(request, "/static/control-list-entries/")
-    return data.json().get("control_list_entries")
+@cached(timeout=CONTROL_LIST_ENTRIES_CACHE_TIMEOUT)
+def get_control_list_entries(request):
+    response = client.get(request, "/exporter/static/control-list-entries/?include_non_selectable_for_assessment=True")
+    response.raise_for_status()
+    return response.json()
 
 
 # F680 clearance types

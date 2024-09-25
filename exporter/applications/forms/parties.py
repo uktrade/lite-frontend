@@ -2,7 +2,8 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
-from django.core.validators import MaxLengthValidator
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxLengthValidator, URLValidator
 from django.urls import reverse_lazy
 
 from core.common.forms import BaseForm
@@ -10,18 +11,11 @@ from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
 from exporter.core.constants import CaseTypes, FileUploadFileTypes
 from exporter.core.services import get_countries
+from exporter.core.validators import PartyAddressValidator, PartyNameValidator
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.applications import PartyForm, PartyTypeForm
 from lite_forms.common import country_question
-from lite_forms.components import (
-    BackLink,
-    RadioButtons,
-    Form,
-    Option,
-    TextArea,
-    TextInput,
-    FormGroup,
-)
+from lite_forms.components import BackLink, RadioButtons, Form, Option, TextArea, TextInput, FormGroup, Label
 from lite_forms.generators import confirm_form
 
 
@@ -65,7 +59,7 @@ def party_name_form(title, button):
 def party_website_form(title, button):
     return Form(
         title=title,
-        questions=[TextInput("website")],
+        questions=[Label("Use the format https://www.example.com", classes=["govuk-hint"]), TextInput("website")],
         default_button_name=button,
     )
 
@@ -222,7 +216,8 @@ class PartyNameForm(BaseForm):
             MaxLengthValidator(
                 80,
                 f"End user name should be 80 characters or less",
-            )
+            ),
+            PartyNameValidator(),
         ],
     )
 
@@ -235,7 +230,28 @@ class PartyWebsiteForm(BaseForm):
         TITLE = "End user website address (optional)"
         TITLE_AS_LABEL_FOR = "website"
 
-    website = forms.CharField(required=False, label="")
+    website = forms.CharField(required=False, label="", help_text="Use the format https://www.example.com")
+
+    def clean_website(self):
+        website = self.cleaned_data.get("website")
+
+        validator = URLValidator()
+
+        if website:
+            try:
+                validator(website)
+            except ValidationError:
+                website = "https://" + website
+                try:
+                    validator(website)
+                except ValidationError:
+                    raise ValidationError("Enter a valid URL.")
+                else:
+                    return website
+            else:
+                return website
+
+        return website
 
     def get_layout_fields(self):
         return ("website",)
@@ -246,7 +262,9 @@ class PartyAddressForm(BaseForm):
         TITLE = "End user address"
 
     address = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "10"}), error_messages={"required": "Enter an address"}
+        widget=forms.Textarea(attrs={"rows": "10"}),
+        error_messages={"required": "Enter an address"},
+        validators=[PartyAddressValidator()],
     )
     country = forms.ChoiceField(
         choices=[("", "Select a country")], error_messages={"required": "Select the country"}

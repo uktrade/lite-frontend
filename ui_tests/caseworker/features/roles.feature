@@ -6,7 +6,7 @@ Feature: I want to create roles
 
   @skip @legacy
   Scenario: Edit a role
-    Given I sign in to SSO or am signed into SSO
+    Given I sign in as Test UAT user
     When I go to users
     And I go to manage roles
     And I add a new role called "Supervisor" with permission to "Manage licence final advice" and set status to "Closed"

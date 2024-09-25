@@ -16,6 +16,7 @@ from exporter.applications.views import (
     end_use_details,
     route_of_goods,
     export_details,
+    declaration,
 )
 from exporter.applications.views.security_approvals.views import (
     SecurityApprovals,
@@ -27,8 +28,8 @@ from exporter.applications.views.security_approvals.edit_views import (
     EditSecurityOtherDetails,
     EditF1686Details,
     EditSecurityApprovalDetails,
+    EditSubjectToITARControls,
 )
-
 
 from exporter.applications.views.goods import AddGoodsSummary, GoodsDetailSummaryCheckYourAnswers
 from exporter.applications.views.parties import consignees, end_users, third_parties, ultimate_end_users
@@ -64,6 +65,7 @@ urlpatterns = [
     path("<uuid:pk>/submit-success/", common.ApplicationSubmitSuccessPage.as_view(), name="success_page"),
     path("<uuid:pk>/hcsat/<uuid:sid>/", HCSATApplicationPage.as_view(), name="application-hcsat"),
     path("<uuid:pk>/edit-type/", common.ApplicationEditType.as_view(), name="edit_type"),
+    path("<uuid:pk>/major-edit-confirm/", common.ApplicationMajorEditConfirmView.as_view(), name="major_edit_confirm"),
     path("<uuid:pk>/check-your-answers/", common.CheckYourAnswers.as_view(), name="check_your_answers"),
     path("<uuid:pk>/submit/", common.Submit.as_view(), name="submit"),
     path("<uuid:pk>/copy/", common.ApplicationCopy.as_view(), name="copy"),
@@ -168,7 +170,7 @@ urlpatterns = [
     path("<uuid:pk>/goods/add-preexisting/", goods.ExistingGoodsList.as_view(), name="preexisting_good"),
     path("<uuid:pk>/goods/<uuid:good_pk>/add/", goods.AddGoodToApplication.as_view(), name="add_good_to_application"),
     path(
-        "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/edit/",
+        "<uuid:pk>/good-on-application/<uuid:good_on_application_pk>/edit-quantity-value/",
         goods.EditQuantityValueExistingGood.as_view(),
         name="edit_preexisting_good",
     ),
@@ -393,6 +395,11 @@ urlpatterns = [
         name="edit_security_approvals_details",
     ),
     path(
+        "<uuid:pk>/edit-security-approvals-itar-controls-status/",
+        EditSubjectToITARControls.as_view(),
+        name="edit_security_approvals_subject_to_itar_controls",
+    ),
+    path(
         "<uuid:pk>/edit-security-approvals-f680-reference-number/",
         EditF680ReferenceNumber.as_view(),
         name="edit_security_approvals_f680_reference_number",
@@ -527,6 +534,6 @@ urlpatterns = [
     # This HAS to be at the bottom, otherwise it will swallow other url calls
     path("<uuid:pk>/", common.ApplicationDetail.as_view(), name="application"),
     path("<uuid:pk>/exhibition-details/", common.ExhibitionDetail.as_view(), name="exhibition_details"),
-    path("<uuid:pk>/declaration/", common.ApplicationDeclaration.as_view(), name="declaration"),
+    path("<uuid:pk>/declaration/", declaration.ApplicationDeclarationView.as_view(), name="declaration"),
     path("<uuid:pk>/<str:type>/", common.ApplicationDetail.as_view(), name="application"),
 ]

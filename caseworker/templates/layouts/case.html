@@ -116,8 +116,9 @@
 				</div>
 			{% endif %}
 		</div>
+		{% test_rule 'can_user_allocate_case' request case as can_user_allocate_case %}
 		{% test_rule 'can_user_change_case' request case as can_user_change_case %}
-		{% if not can_user_change_case %}
+		{% if not can_user_change_case and can_user_allocate_case %}
 			<div id="allocation-warning" class="app-case-warning-banner">
 				<div class="app-case-warning-banner__warning">
 					<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
@@ -148,11 +149,10 @@
 				<div class="app-case-warning-banner__warning">
 					<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
 					<span class="app-case-warning-banner__text">
-                        This case has been amended by the exporter and is now superseded.<br/>
                         {% if case.superseded_by.reference_code %}
-                        The amendment case is <a class="govuk-link govuk-link--inverse" href="{% url 'cases:case' all_cases_queue_id case.superseded_by.id %}">{{case.superseded_by.reference_code}}</a>.
+                        The exporter edited this application and the case has been superseded by <a class="govuk-link govuk-link--inverse" href="{% url 'cases:case' all_cases_queue_id case.superseded_by.id %}">{{case.superseded_by.reference_code}}</a>.
                         {% else %}
-                        The exporter is still working on their amendments and will submit the amended case when they are finished.
+                        The exporter is editing their application. A new case will be created when they resubmit.
                         {% endif %}
 					</span>
 				</div>
@@ -163,8 +163,7 @@
 				<div class="app-case-warning-banner__warning">
 					<span class="app-case-warning-banner__icon" aria-hidden="true">!</span>
 					<span class="app-case-warning-banner__text">
-                        This case is an amendment.<br/>
-                        The original case is <a class="govuk-link govuk-link--inverse" href="{% url 'cases:case' "00000000-0000-0000-0000-000000000001" case.amendment_of.id %}">{{case.amendment_of.reference_code}}</a>.
+                        This case was created when the exporter edited the original application at <a class="govuk-link govuk-link--inverse" href="{% url 'cases:case' "00000000-0000-0000-0000-000000000001" case.amendment_of.id %}">{{case.amendment_of.reference_code}}</a>.
 					</span>
 				</div>
 			</div>

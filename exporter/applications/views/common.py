@@ -2,14 +2,15 @@ import rules
 
 from http import HTTPStatus
 
-from django.conf import settings
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView, TemplateView
 
 from requests.exceptions import HTTPError
+from urllib.parse import urlencode
 
+from exporter.applications.constants import ApplicationStatus
 from exporter.applications.forms.appeal import AppealForm
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -19,7 +20,8 @@ from exporter.applications.forms.common import (
     EditApplicationForm,
     application_copy_form,
     exhibition_details_form,
-    declaration_form,
+    ApplicationMajorEditConfirmationForm,
+    ApplicationsListSortForm,
 )
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
@@ -54,8 +56,7 @@ from exporter.applications.services import (
 )
 from exporter.organisation.members.services import get_user
 
-from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType, STANDARD
-from exporter.core.helpers import str_to_bool
+from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import confirm_form
@@ -63,26 +64,93 @@ from lite_forms.views import SingleFormView, MultiFormView
 from exporter.applications.forms.hcsat import HCSATminiform
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
-from core.helpers import convert_dict_to_query_params, get_document_data
+from core.helpers import get_document_data
 
 
-class ApplicationsList(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        params = {"page": int(request.GET.get("page", 1)), "submitted": str_to_bool(request.GET.get("submitted", True))}
-        organisation = get_organisation(request, request.session["organisation"])
-        applications = get_applications(request, **params)
+class ApplicationMixin(LoginRequiredMixin):
+
+    @property
+    def application_id(self):
+        return str(self.kwargs["pk"])
+
+    @property
+    def application(self):
+        return get_application(self.request, self.application_id)
+
+    def get_application_detail_url(self):
+        return reverse("applications:application", kwargs={"pk": self.application_id})
+
+    def get_application_task_list_url(self, pk):
+        return reverse("applications:task_list", kwargs={"pk": pk})
+
+
+class ApplicationsList(LoginRequiredMixin, FormView):
+    template_name = "applications/applications.html"
+    form_class = ApplicationsListSortForm
+    filters = [
+        {
+            "name": "Submitted",
+            "filter": "submitted_applications",
+        },
+        {
+            "name": "Finalised",
+            "filter": "finalised_applications",
+        },
+        {
+            "name": "Drafts",
+            "filter": "draft_applications",
+            "sort_by": "-created_at",
+        },
+        {
+            "name": "Archived",
+            "filter": "archived_applications",
+        },
+    ]
+
+    def get_initial(self):
+        return {
+            "sort_by": self.request.GET.get("sort_by", "-submitted_at"),
+        }
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["action"] = reverse("applications:applications")
+        return kwargs
+
+    def get_tabs(self):
+        tabs = []
+        for tab in self.filters:
+            sort_by = tab.get("sort_by", "-submitted_at")
+            query_params = {"selected_filter": tab["filter"], "sort_by": sort_by}
+            tab["url"] = f"/applications/?{urlencode(query_params, doseq=True)}"
+            tabs.append(tab)
+
+        return tabs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        selected_filter = self.request.GET.get("selected_filter", "submitted_applications")
+        params = {
+            "page": int(self.request.GET.get("page", 1)),
+            "selected_filter": selected_filter,
+            "sort_by": self.request.GET.get("sort_by", "-submitted_at"),
+        }
+
+        organisation = get_organisation(self.request, self.request.session["organisation"])
+        applications = get_applications(self.request, **params)
         is_user_multiple_organisations = len(get_user(self.request)["organisations"]) > 1
-        context = {
+
+        return {
+            **context,
             "applications": applications,
             "organisation": organisation,
-            "params": params,
+            "tabs": self.get_tabs(),
+            "selected_filter": selected_filter,
             "page": params.pop("page"),
-            "params_str": convert_dict_to_query_params(params),
             "is_user_multiple_organisations": is_user_multiple_organisations,
+            "show_sort_options": selected_filter != "draft_applications",
         }
-        return render(
-            request, "applications/applications.html" if params["submitted"] else "applications/drafts.html", context
-        )
 
 
 class DeleteApplication(LoginRequiredMixin, SingleFormView):
@@ -109,23 +177,63 @@ class DeleteApplication(LoginRequiredMixin, SingleFormView):
             return self.request.GET.get("return_to")
 
 
-class ApplicationEditType(LoginRequiredMixin, FormView):
+class ApplicationEditType(ApplicationMixin, FormView):
+    """This is essentially now a temporary confirmation view before making a major edit"""
+
     form_class = EditApplicationForm
     template_name = "edit_application_form.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "application_id": self.application_id,
+            "data": self.application,
+        }
 
-        self.application_id = str(self.kwargs["pk"])
-        self.data = get_application(self.request, self.application_id)
+    def get_success_url(self):
+        return self.get_application_task_list_url(self.application_id)
 
-        context.update(
-            {
-                "application_id": self.application_id,
-                "data": self.data,
-            }
-        )
-        return context
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating status",
+        "Unexpected error changing application status to APPLICANT_EDITING",
+    )
+    def handle_major_edit(self):
+        return set_application_status(self.request, self.application_id, APPLICANT_EDITING)
+
+    def form_valid(self, form):
+
+        self.handle_major_edit()
+
+        return super().form_valid(form)
+
+
+class ApplicationMajorEditConfirmView(ApplicationMixin, FormView):
+    """
+    This is the confirmation page for whitelisted organisation before amending
+    an application by copy
+    """
+
+    form_class = ApplicationMajorEditConfirmationForm
+    template_name = "core/form.html"
+    amended_application_id = None
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["application_reference"] = self.application["name"]
+        kwargs["cancel_url"] = self.get_application_detail_url()
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "back_link_url": self.get_application_detail_url(),
+        }
+
+    def get_success_url(self):
+        return self.get_application_task_list_url(self.amended_application_id)
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -133,29 +241,25 @@ class ApplicationEditType(LoginRequiredMixin, FormView):
         "Unexpected error creating amendment",
     )
     def create_amendment(self):
-        return create_application_amendment(self.request, str(self.kwargs["pk"]))
+        return create_application_amendment(self.request, self.application_id)
 
     def handle_major_edit(self):
-        organisation = get_organisation(self.request, self.request.session["organisation"])
-        if organisation["id"] in settings.FEATURE_AMENDMENT_BY_COPY_EXPORTER_IDS:
-            data, _ = self.create_amendment()
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": data["id"]}))
-        else:
-            set_application_status(self.request, self.application_id, APPLICANT_EDITING)
-            return redirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+
+        data, _ = self.create_amendment()
+        self.amended_application_id = data["id"]
 
     def form_valid(self, form):
 
-        self.application_id = str(self.kwargs["pk"])
-        if form.cleaned_data.get("edit_type") == "major":
-            return self.handle_major_edit()
+        self.handle_major_edit()
 
-        return HttpResponseRedirect(reverse_lazy("applications:task_list", kwargs={"pk": self.application_id}))
+        return super().form_valid(form)
 
 
 class ApplicationTaskList(LoginRequiredMixin, TemplateView):
     def get(self, request, **kwargs):
         application = get_application(request, kwargs["pk"])
+        if application["status"]["key"] not in [ApplicationStatus.DRAFT, ApplicationStatus.APPLICANT_EDITING]:
+            return redirect(reverse("applications:application", kwargs={"pk": kwargs["pk"]}))
         return get_application_task_list(request, application)
 
     def post(self, request, **kwargs):
@@ -191,13 +295,11 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
 
     def get(self, request, **kwargs):
         status_props, _ = get_status_properties(request, self.application["status"]["key"])
-
         context = {
             "case_id": self.application_id,
             "application": self.application,
             "type": self.view_type,
             "answers": convert_application_to_check_your_answers(self.application),
-            "status_is_read_only": status_props["is_read_only"],
             "status_is_terminal": status_props["is_terminal"],
             "errors": kwargs.get("errors"),
             "text": kwargs.get("text", ""),
@@ -232,46 +334,31 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
 
 
 class ApplicationSummary(LoginRequiredMixin, TemplateView):
-    application_id = None
-    application = None
-    case_id = None
-    view_type = None
+    template_name = "applications/application.html"
 
     def dispatch(self, request, *args, **kwargs):
         self.application_id = str(kwargs["pk"])
         self.application = get_application(request, self.application_id)
         self.case_id = self.application["case"]
-
         return super(ApplicationSummary, self).dispatch(request, *args, **kwargs)
 
-    def get(self, request, **kwargs):
-
-        context = {
-            "case_id": self.application_id,
-            "application": self.application,
-            "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
-            "summary_page": True,
-            "application_type": get_application_type_string(self.application),
-        }
-
-        if self.application.sub_type != HMRC:
-            context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
-            if self.application.sub_type == STANDARD:
-                context["reference_code"] = get_reference_number_description(self.application)
-
-        return render(request, "applications/application.html", context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(
+            {
+                "case_id": self.application_id,
+                "application": self.application,
+                "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
+                "summary_page": True,
+                "application_type": get_application_type_string(self.application),
+                "notes": get_case_notes(self.request, self.case_id)["case_notes"],
+                "reference_code": get_reference_number_description(self.application),
+            }
+        )
+        return context
 
     def post(self, request, **kwargs):
-        # As it's the summary page, either attempt to submit the application (if of type HMRC)
-        # or proceed to the declaration page
-        if self.application.sub_type == HMRC:
-            data, status_code = submit_application(request, self.application_id, json={"submit_hmrc": True})
-            if status_code != HTTPStatus.OK:
-                return get_application_task_list(request, self.application, errors=data.get("errors"))
-
-            return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": self.application_id}))
-        else:
-            return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
+        return HttpResponseRedirect(reverse_lazy("applications:declaration", kwargs={"pk": self.application_id}))
 
 
 class WithdrawApplication(LoginRequiredMixin, SingleFormView):
@@ -423,16 +510,6 @@ class ExhibitionDetail(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
-
-
-class ApplicationDeclaration(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.form = declaration_form(self.object_pk)
-        self.action = submit_application
-
-    def get_success_url(self):
-        return reverse_lazy("applications:success_page", kwargs={"pk": self.object_pk})
 
 
 class AppealApplication(LoginRequiredMixin, FormView):

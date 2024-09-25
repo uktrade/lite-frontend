@@ -1,5 +1,5 @@
 import pytest
-
+from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
 from urllib import parse
 
@@ -21,6 +21,8 @@ def setup(
 @pytest.mark.parametrize(
     "filters_data",
     [
+        ({"params": {"case_type": "siel", "licence_status": "issued"}}),
+        ({"params": {"licence_status": "suspended"}}),
         ({"params": {"case_type": "siel", "status": "finalised"}}),
         ({"params": {"case_reference": "GBSIEL/2022", "status": "finalised"}}),
         ({"params": {"case_reference": "GBSIEL/2022", "flags": ["1", "2"]}}),
@@ -87,3 +89,32 @@ def test_regime_entries_get(authorized_client):
     url = reverse("api:regime-entries")
     response = authorized_client.get(url)
     assert response.status_code == 200
+
+
+def test_case_filters_licence(
+    authorized_client,
+    requests_mock,
+    mock_queues_list,
+    mock_cases,
+    mock_cases_head,
+    mock_no_bookmarks,
+):
+
+    url = reverse("core:index", kwargs={"disable_queue_lookup": True})
+    response = authorized_client.get(url)
+
+    html = BeautifulSoup(response.content, "html.parser")
+    id_licence_status = html.find(id="id_licence_status")
+    status_options = [item["value"] for item in id_licence_status.find_all("option")]
+    assert status_options == [
+        "",
+        "issued",
+        "reinstated",
+        "revoked",
+        "surrendered",
+        "suspended",
+        "exhausted",
+        "expired",
+        "cancelled",
+        "draft",
+    ]

@@ -142,8 +142,13 @@ class BaseEditView(BaseProductEditView):
     def get_success_url(self):
         return reverse("applications:firearm_product_summary", kwargs=self.kwargs)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
     def edit_object(self, request, good_id, payload):
-        edit_firearm(request, good_id, payload)
+        return edit_firearm(request, good_id, payload)
 
 
 class BaseGoodEditView(BaseEditView):
@@ -232,6 +237,11 @@ class BaseFirearmEditWizardView(BaseProductEditWizardView):
     def get_success_url(self):
         return reverse("applications:firearm_product_summary", kwargs=self.kwargs)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating product",
+        "Unexpected error updating product",
+    )
     def edit_object(self, request, good_pk, payload):
         return edit_firearm(request, good_pk, payload)
 
