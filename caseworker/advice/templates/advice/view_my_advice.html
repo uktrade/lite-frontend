@@ -31,7 +31,13 @@
         <div class="govuk-grid-row">
           <br>
             <div class="govuk-grid-column-three-quarters">
-              <h1 class="govuk-heading-xl">View recommendation</h1>
+              <h1 class="govuk-heading-xl">View recommendation
+                {% if case_basic.circulation_details.is_case_sent_back %}
+                <strong class="govuk-tag govuk-tag--red">
+                  Re-circulated
+                </strong>
+                {% endif %}
+              </h1>
               {% if my_advice %}
                   {% if buttons.edit_recommendation %}
                     <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice' queue_pk case.id %}">
