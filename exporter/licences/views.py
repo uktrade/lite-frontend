@@ -142,7 +142,7 @@ class Licence(LoginRequiredMixin, TemplateView):
     def get(self, request, pk):
         licence, status_code = get_licence(request, pk)
         if status_code == HTTPStatus.NOT_FOUND:
-            return Http404
+            raise Http404()
         elif status_code != HTTPStatus.OK:
             return error_page(request, LicencePage.ERROR)
         return render(request, "licences/licence.html", {"licence": licence})
