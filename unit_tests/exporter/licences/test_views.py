@@ -121,7 +121,6 @@ def standard_licence():
                     {"rating": "R1a"},
                     {"rating": "MJ1"},
                 ],
-                "advice": {"type": {"key": "approve", "value": "Approve"}, "text": "", "proviso": None},
             }
         ],
     }
