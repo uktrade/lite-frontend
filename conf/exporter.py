@@ -106,6 +106,8 @@ CACHES = {
     }
 }
 
+CACHEOPS_REDIS = REDIS_URL
+
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):
     ELASTIC_APM = {

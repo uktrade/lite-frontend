@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
+from exporter.core.helpers import convert_control_list_entries_to_options
 from exporter.core.objects import Tab
 from exporter.core.services import get_open_general_licences, get_control_list_entries, get_countries
 from exporter.licences import filters
@@ -67,7 +68,7 @@ class AbstractListView(LoginRequiredMixin, TemplateView):
 
     @property
     def control_list(self):
-        return get_control_list_entries(self.request, convert_to_options=True)
+        return convert_control_list_entries_to_options(get_control_list_entries(self.request))
 
     @property
     def countries(self):

@@ -20,10 +20,7 @@ from exporter.core.constants import (
     FIREARM_AMMUNITION_COMPONENT_TYPES,
     FileUploadFileTypes,
 )
-from exporter.core.helpers import (
-    convert_control_list_entries,
-    str_to_bool,
-)
+from exporter.core.helpers import convert_control_list_entries, str_to_bool, convert_control_list_entries_to_options
 from exporter.core.validators import GoodNameValidator
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
@@ -136,7 +133,9 @@ def edit_good_detail_form(request, good_id):
                         value=EditGoodForm.IsControlled.YES,
                         components=[
                             control_list_entries_question(
-                                control_list_entries=get_control_list_entries(request, convert_to_options=True),
+                                control_list_entries=convert_control_list_entries_to_options(
+                                    get_control_list_entries(request)
+                                ),
                                 title=EditGoodForm.ControlListEntry.TITLE,
                                 description=EditGoodForm.ControlListEntry.DESCRIPTION,
                             ),
