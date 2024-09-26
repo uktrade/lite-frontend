@@ -1,4 +1,5 @@
 from unittest import mock
+from bs4 import BeautifulSoup
 
 import pytest
 from django.conf import settings
@@ -12,6 +13,16 @@ def test_feedback_get_success(url, authorized_client):
     url = reverse(url)
     response = authorized_client.get(url)
     assert response.status_code == 200
+
+
+def test_feedback_contains_support_link(authorized_client):
+    url = reverse("feedback")
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    links = soup.find_all(class_="govuk-link")
+    support_link = [l["href"] for l in links if l["href"] == "/help-support/"]
+    assert support_link
 
 
 @mock.patch("core.feedback.notify.client")
