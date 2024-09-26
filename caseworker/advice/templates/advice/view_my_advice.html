@@ -31,6 +31,7 @@
         <div class="govuk-grid-row">
           <br>
             <div class="govuk-grid-column-three-quarters">
+              {% test_rule 'can_user_make_recommendation' request case as can_user_make_recommendation %}
               <h1 class="govuk-heading-xl">View recommendation
                 {% if case_basic.circulation_details.is_case_sent_back %}
                 <strong class="govuk-tag govuk-tag--red">
@@ -49,6 +50,10 @@
                         Clear recommendation
                     </a>
                   {% endif %}
+                  {% if can_user_make_recommendation %}
+                    <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:select_advice' queue_pk case.id %}">Make new recommendation</a>
+                  {% endif %}
+
                 {% for advice in my_advice %}
                   {% include "advice/advice_details.html" %}
                 {% endfor %}
