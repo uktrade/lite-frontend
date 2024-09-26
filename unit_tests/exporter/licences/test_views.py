@@ -1,4 +1,7 @@
 import pytest
+import uuid
+
+from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
@@ -72,65 +75,100 @@ def data_list_open_general_licences():
 
 
 @pytest.fixture
-def data_list_licences():
+def standard_licence():
     return {
-        "count": 1,
-        "total_pages": 1,
-        "results": [
+        "id": "8379b6ba-06eb-4e0a-9331-c3adc650d4d0",
+        "duration": 24,
+        "reference_code": "GBSIEL/2020/0002409/T",
+        "start_date": "2024-09-19",
+        "status": {"key": "issued", "value": "Issued"},
+        "application": {
+            "id": "02e181f4-a35c-441e-afee-cd9fe5fde26b",
+            "name": "25/09 - application 2",
+            "destinations": [
+                {
+                    "name": "Jim",
+                    "address": "Jim",
+                    "country": {"id": "TN", "name": "Tunisia", "type": "gov.uk Country", "is_eu": False},
+                }
+            ],
+            "documents": [
+                {
+                    "advice_type": {"key": "approve", "value": "Approve"},
+                    "id": "be7d9a9a-c66c-4dec-88dc-462ec836d538",
+                }
+            ],
+        },
+        "document": {"id": "e9a09168-dca7-4d40-b06a-4e949a7f455c"},
+        "goods": [
             {
-                "id": "8379b6ba-06eb-4e0a-9331-c3adc650d4d0",
-                "reference_code": "GBSIEL/2020/0002409/T",
-                "status": {"key": "issued", "value": "Issued"},
-                "application": {
-                    "id": "02e181f4-a35c-441e-afee-cd9fe5fde26b",
-                    "name": "25/09 - application 2",
-                    "destinations": [
-                        {
-                            "name": "Jim",
-                            "address": "Jim",
-                            "country": {"id": "TN", "name": "Tunisia", "type": "gov.uk Country", "is_eu": False},
-                        }
-                    ],
-                    "documents": [
-                        {
-                            "advice_type": {"key": "approve", "value": "Approve"},
-                            "id": "be7d9a9a-c66c-4dec-88dc-462ec836d538",
-                        }
-                    ],
-                },
-                "goods": [
-                    {
-                        "good_on_application_id": "3bcfd636-da6b-4458-a812-f78af77cc8ba",
-                        "usage": 0.0,
-                        "description": "Example product",
-                        "name": "Example product name",
-                        "units": {"key": "MTR", "value": "Metre(s)"},
-                        "applied_for_quantity": 1.0,
-                        "applied_for_value": 1.0,
-                        "licenced_quantity": 1.0,
-                        "licenced_value": 1.0,
-                        "applied_for_value_per_item": 1.0,
-                        "licenced_value_per_item": 1.0,
-                        "control_list_entries": [
-                            {"rating": "N1"},
-                            {"rating": "N2"},
-                        ],
-                        "assessed_control_list_entries": [
-                            {"rating": "R1a"},
-                            {"rating": "MJ1"},
-                        ],
-                        "advice": {"type": {"key": "approve", "value": "Approve"}, "text": "", "proviso": None},
-                    }
+                "good_on_application_id": "3bcfd636-da6b-4458-a812-f78af77cc8ba",
+                "usage": 0.0,
+                "description": "Example product",
+                "name": "Example product name",
+                "units": {"key": "MTR", "value": "Metre(s)"},
+                "applied_for_quantity": 1.0,
+                "applied_for_value": 1.0,
+                "licenced_quantity": 1.0,
+                "licenced_value": 1.0,
+                "applied_for_value_per_item": 1.0,
+                "licenced_value_per_item": 1.0,
+                "control_list_entries": [
+                    {"rating": "N1"},
+                    {"rating": "N2"},
+                ],
+                "assessed_control_list_entries": [
+                    {"rating": "R1a"},
+                    {"rating": "MJ1"},
                 ],
             }
         ],
     }
 
 
+@pytest.fixture
+def data_list_licences(standard_licence):
+    return {
+        "count": 1,
+        "total_pages": 1,
+        "results": [
+            standard_licence,
+        ],
+    }
+
+
+@pytest.fixture
+def not_found_standard_licence_id():
+    return uuid.uuid4()
+
+
+@pytest.fixture
+def other_error_standard_licence_id():
+    return uuid.uuid4()
+
+
 @pytest.fixture(autouse=True)
 def mock_list_licences(requests_mock, data_list_licences):
     url = _build_absolute_uri("/licences/")
     return requests_mock.get(url=url, json=data_list_licences)
+
+
+@pytest.fixture(autouse=True)
+def mock_licence_detail(requests_mock, standard_licence):
+    url = _build_absolute_uri(f"/licences/{standard_licence['id']}")
+    return requests_mock.get(url=url, json=standard_licence)
+
+
+@pytest.fixture(autouse=True)
+def mock_not_found_licence_detail(requests_mock, not_found_standard_licence_id):
+    url = _build_absolute_uri(f"/licences/{not_found_standard_licence_id}")
+    return requests_mock.get(url=url, json={}, status_code=404)
+
+
+@pytest.fixture(autouse=True)
+def mock_other_error_licence_detail(requests_mock, other_error_standard_licence_id):
+    url = _build_absolute_uri(f"/licences/{other_error_standard_licence_id}")
+    return requests_mock.get(url=url, json={}, status_code=500)
 
 
 @pytest.fixture(autouse=True)
@@ -155,6 +193,21 @@ def client(authorized_client, mock_exporter_control_list_entries, mock_countries
 @pytest.fixture
 def list_open_standard_licences_url():
     return reverse("licences:list-open-and-standard-licences")
+
+
+@pytest.fixture
+def standard_licence_url(standard_licence):
+    return reverse("licences:licence", kwargs={"pk": standard_licence["id"]})
+
+
+@pytest.fixture
+def not_found_standard_licence_url(not_found_standard_licence_id):
+    return reverse("licences:licence", kwargs={"pk": not_found_standard_licence_id})
+
+
+@pytest.fixture
+def other_error_standard_licence_url(other_error_standard_licence_id):
+    return reverse("licences:licence", kwargs={"pk": other_error_standard_licence_id})
 
 
 def test_open_and_standard_licences(client, data_list_licences, list_open_standard_licences_url, mock_list_licences):
@@ -230,6 +283,23 @@ def test_open_and_standard_licences_paging(client, list_open_standard_licences_u
         "licence_type": ["licence"],
         "page": ["2"],
     }
+
+
+def test_standard_licence_page(client, standard_licence_url):
+    response = client.get(standard_licence_url)
+    assert response.status_code == 200
+    assertTemplateUsed("licences/licence.html")
+
+
+def test_standard_licence_page_not_found(client, not_found_standard_licence_url):
+    response = client.get(not_found_standard_licence_url)
+    assert response.status_code == 404
+
+
+def test_standard_licence_page_other_error(client, other_error_standard_licence_url):
+    response = client.get(other_error_standard_licence_url)
+    assert response.status_code == 200
+    assertTemplateUsed("error.html")
 
 
 def test_open_general_licences(client, data_list_open_general_licences, mock_list_open_general_licences):
