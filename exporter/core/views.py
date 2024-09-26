@@ -1,4 +1,5 @@
 from json import JSONDecodeError
+from requests.exceptions import HTTPError
 
 from django.conf import settings
 from django.http import Http404
@@ -194,11 +195,17 @@ class RegisterName(LoginRequiredMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         if self.request.session.get("first_name") and self.request.session.get("last_name"):
             return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
+        try:
+            self.profile = get_profile(self.request.authbroker_client)
+        except HTTPError:
+            # We failed to get profile. Most likily cause is timeout of the short token to get profile.
+            # Use the login screen to refresh the token.
+            return HttpResponseRedirect(resolve_url(settings.LOGIN_URL))
+
         return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
-        profile = get_profile(self.request.authbroker_client)
-        profile.update(
+        self.profile.update(
             {
                 "user_profile": {
                     "first_name": form.cleaned_data["first_name"],
@@ -207,11 +214,11 @@ class RegisterName(LoginRequiredMixin, FormView):
             },
         )
         # attempt to update user
-        authenticate_exporter_user(self.request, profile)
+        authenticate_exporter_user(self.request, self.profile)
         # Hold in session
         self.request.session["first_name"] = form.cleaned_data["first_name"]
         self.request.session["last_name"] = form.cleaned_data["last_name"]
-        self.request.session["email"] = profile["email"]
+        self.request.session["email"] = self.profile["email"]
 
         return super().form_valid(form)
 

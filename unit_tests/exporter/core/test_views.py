@@ -1,13 +1,20 @@
 from bs4 import BeautifulSoup
 from django.urls import reverse
 from django.conf import settings
+from conf import exporter
 from pytest_django.asserts import assertTemplateUsed
 import pytest
 
 from core import client
 
 
-def test_register_name(authorized_client):
+@pytest.fixture()
+def mock_get_profile_error(requests_mock):
+    url = exporter.AUTHBROKER_PROFILE_URL
+    yield requests_mock.get(url=url, status_code=502, json={})
+
+
+def test_register_name(authorized_client, mock_get_profile):
     session = authorized_client.session
     session["first_name"] = None
     session["last_name"] = None
@@ -36,6 +43,18 @@ def test_register_name_save(authorized_client, requests_mock, mock_get_profile):
         "user_profile": {"first_name": "Joe", "last_name": "Blogs"},
         "sub": "123456789xyzqpr",
     }
+
+    assert response.status_code == 302
+    assert response.url == settings.LOGIN_URL
+
+
+def test_register_name_save_get_profile_error(authorized_client, requests_mock, mock_get_profile_error):
+    session = authorized_client.session
+    session["first_name"] = None
+    session["last_name"] = None
+    session.save()
+    url = reverse("core:register_name")
+    response = authorized_client.post(url, data={"first_name": "Joe", "last_name": "Blogs"})
 
     assert response.status_code == 302
     assert response.url == settings.LOGIN_URL

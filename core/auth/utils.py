@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.urls import reverse
 from authlib.integrations.requests_client import OAuth2Session
+from requests.exceptions import HTTPError
 
 
 def get_client(request, **kwargs):
@@ -16,5 +17,9 @@ def get_client(request, **kwargs):
 
 
 def get_profile(client):
-    response = client.get(settings.AUTHBROKER_PROFILE_URL)  # .json()
+    try:
+        response = client.get(settings.AUTHBROKER_PROFILE_URL)
+        response.raise_for_status()
+    except HTTPError as ex:
+        raise ex
     return response.json()
