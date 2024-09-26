@@ -60,7 +60,7 @@ class CaseDataMixin:
 
     @cached_property
     def all_cles(self):
-        return get_control_list_entries(self.request, include_parent=True)
+        return get_control_list_entries(self.request, include_non_selectable_for_assessment=True)
 
     @cached_property
     def all_regimes(self):

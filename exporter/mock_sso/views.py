@@ -1,12 +1,6 @@
-from django.views.generic import RedirectView
+from core.mock_sso.views import Logout as CoreLogout
 
 
-class Logout(RedirectView):
-    """This logout view replicates how an openid logout endpoint would work.
-
-    This purposefully doesn't need to provide any additional functionality
-    beyond just redirecting back to the provided value.
-    """
-
+class Logout(CoreLogout):
     def get_redirect_url(self):
         return self.request.GET["post_logout_redirect_uri"]

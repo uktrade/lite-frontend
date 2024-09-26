@@ -131,40 +131,14 @@ def get_user_role_name(request):
     return user["user"]["role"]["name"]
 
 
-CLC_ENTRIES_CACHE = []
+def get_control_list_entries(request, include_non_selectable_for_assessment=False):
+    url = "/caseworker/static/control-list-entries/"
+    if include_non_selectable_for_assessment:
+        url = f"{url}?include_non_selectable_for_assessment=True"
 
-
-# Control List Entries
-def get_control_list_entries(  # noqa
-    request, convert_to_options=False, include_parent=False, clc_entries_cache=CLC_ENTRIES_CACHE  # noqa
-):  # noqa
-    """
-    Preliminary caching mechanism, requires service restart to repopulate control list entries
-    """
-    if convert_to_options:
-        if clc_entries_cache:
-            return clc_entries_cache
-        else:
-            data = client.get(request, "/static/control-list-entries/")
-
-        for control_list_entry in data.json().get("control_list_entries"):
-            clc_entries_cache.append(
-                Option(
-                    key=control_list_entry["rating"],
-                    value=control_list_entry["rating"],
-                    description=control_list_entry["text"],
-                )
-            )
-
-        return clc_entries_cache
-
-    if include_parent:
-        response = client.get(request, "/static/control-list-entries/?include_parent=True")
-    else:
-        response = client.get(request, "/static/control-list-entries/?group=True")
-
+    response = client.get(request, url)
     response.raise_for_status()
-    return response.json().get("control_list_entries")
+    return response.json()
 
 
 # Regime Entries

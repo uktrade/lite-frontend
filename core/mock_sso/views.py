@@ -147,7 +147,10 @@ class APIUserMe(View):
 
 
 class Logout(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
+    def get_redirect_url(self):
         redirect_url = self.request.build_absolute_uri("/")
-        self.request.session.flush()
         return redirect_url
+
+    def get(self, request, *args, **kwargs):
+        self.request.session.flush()
+        return super().get(request, *args, **kwargs)

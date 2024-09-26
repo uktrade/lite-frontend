@@ -16,7 +16,7 @@ def test_no_bookmarks_present(
     mock_queues_list,
     mock_countries,
     mock_no_bookmarks,
-    mock_all_control_list_entries,
+    mock_control_list_entries,
     mock_regime_entries,
 ):
     url = reverse("core:index")
@@ -31,7 +31,7 @@ def test_failed_bookmarks_displays_no_bookmarks(
     mock_queues_list,
     mock_countries,
     mock_failed_bookmarks_call,
-    mock_all_control_list_entries,
+    mock_control_list_entries,
     mock_regime_entries,
 ):
     url = reverse("core:index")
@@ -48,7 +48,7 @@ def test_bookmarks_present(
     mock_queues_list,
     mock_countries,
     gov_uk_user_id,
-    mock_all_control_list_entries,
+    mock_control_list_entries,
     mock_regime_entries,
 ):
     url = reverse("core:index")
