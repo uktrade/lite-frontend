@@ -6,7 +6,7 @@ from core.common.forms import BaseForm
 
 class FeedbackForm(BaseForm):
     class Layout:
-        TITLE = "Leave Feedback"
+        TITLE = "Leave feedback"
         SUBMIT_BUTTON_TEXT = "Submit"
 
     feedback = forms.CharField(label="", widget=forms.Textarea)
