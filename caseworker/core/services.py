@@ -1,7 +1,9 @@
+from cacheops import cached
 from collections import defaultdict
 
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 from caseworker.cases.constants import CaseType
+from caseworker.core.constants import CONTROL_LIST_ENTRIES_CACHE_TIMEOUT
 from caseworker.users.services import get_gov_user
 from core import client
 from core.constants import CaseStatusEnum
@@ -131,6 +133,7 @@ def get_user_role_name(request):
     return user["user"]["role"]["name"]
 
 
+@cached(timeout=CONTROL_LIST_ENTRIES_CACHE_TIMEOUT)
 def get_control_list_entries(request, include_non_selectable_for_assessment=False):
     url = "/caseworker/static/control-list-entries/"
     if include_non_selectable_for_assessment:
