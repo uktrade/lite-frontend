@@ -1,14 +1,43 @@
+import logging
+
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
+from django.http import HttpResponseRedirect
+from django.utils.functional import cached_property
+
+from core.common.forms import BaseForm
+from core.auth.views import LoginRequiredMixin
+from core.wizard.views import BaseSessionWizardView
 
 from exporter.applications.forms.parties import new_party_form_group
 from exporter.applications.helpers.check_your_answers import convert_party
 from exporter.applications.services import get_application, post_party, delete_party, validate_party
-from exporter.applications.views.parties.base import AddParty, CopyParties, SetParty, DeleteParty, CopyAndSetParty
-from lite_content.lite_exporter_frontend.applications import ConsigneeForm, ConsigneePage
+from exporter.applications.views.parties.base import CopyParties, DeleteParty, CopyAndSetParty
+from exporter.applications.forms.parties import (
+    PartyReuseForm,
+    PartySubTypeSelectForm,
+    PartyNameForm,
+    PartyWebsiteForm,
+    PartyAddressForm,
+)
+from exporter.applications.services import (
+    get_application,
+    post_party,
+    delete_party,
+)
+from exporter.core.helpers import (
+    str_to_bool,
+)
+from exporter.core.constants import (
+    SetPartyFormSteps,
+)
 
-from core.auth.views import LoginRequiredMixin
+from http import HTTPStatus
+from lite_content.lite_exporter_frontend.applications import ConsigneeForm, ConsigneePage
+from lite_forms.generators import error_page
+
+log = logging.getLogger(__name__)
 
 
 class Consignee(LoginRequiredMixin, TemplateView):
@@ -32,26 +61,78 @@ class Consignee(LoginRequiredMixin, TemplateView):
             return redirect(reverse("applications:add_consignee", kwargs={"pk": application_id}))
 
 
-class AddConsignee(LoginRequiredMixin, AddParty):
-    def __init__(self):
-        super().__init__(new_url="applications:set_consignee", copy_url="applications:consignees_copy")
+class AddConsignee(LoginRequiredMixin, FormView):
+    form_class = PartyReuseForm
+    template_name = "core/form.html"
 
-    @property
-    def back_url(self):
-        return reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]}) + "#consignee"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form_title"] = self.form_class.title
+        return context
+
+    def form_valid(self, form):
+        reuse_party = str_to_bool(form.cleaned_data.get("reuse_party"))
+        if reuse_party:
+            success_url = reverse("applications:consignees_copy", kwargs=self.kwargs)
+        else:
+            success_url = reverse("applications:set_consignee", kwargs=self.kwargs)
+
+        return HttpResponseRedirect(success_url)
 
 
-class SetConsignee(LoginRequiredMixin, SetParty):
-    def __init__(self):
-        super().__init__(
-            url="applications:consignee_attach_document",
-            party_type="consignee",
-            form=new_party_form_group,
-            back_url="applications:consignee",
-            strings=ConsigneeForm,
-            post_action=post_party,
-            validate_action=validate_party,
-        )
+class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
+    party_type = "consignee"
+    PartySubTypeSelectForm.title = "Select the type of consignee"
+    PartyNameForm.Layout.TITLE = "Consignee name"
+    PartyWebsiteForm.Layout.TITLE = "Consignee website address (optional)"
+    PartyAddressForm.Layout.TITLE = "Consignee address"
+    form_list = [
+        (SetPartyFormSteps.PARTY_SUB_TYPE, PartySubTypeSelectForm),
+        (SetPartyFormSteps.PARTY_NAME, PartyNameForm),
+        (SetPartyFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
+        (SetPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
+    ]
+
+    @cached_property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        if isinstance(form, BaseForm):
+            context["title"] = form.Layout.TITLE
+        else:
+            context["title"] = form.title
+        return context
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == SetPartyFormSteps.PARTY_ADDRESS:
+            kwargs["request"] = self.request
+
+        return kwargs
+
+    def get_success_url(self, party_id):
+        return reverse("applications:consignee_attach_document", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
+
+    def done(self, form_list, **kwargs):
+        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
+        all_data["type"] = self.party_type
+
+        response, status_code = post_party(self.request, self.kwargs["pk"], dict(all_data))
+        if status_code != HTTPStatus.CREATED:
+            log.error(
+                "Error creating party - response was: %s - %s",
+                status_code,
+                response,
+                exc_info=True,
+            )
+            return error_page(self.request, "Unexpected error creating party")
+
+        party_id = response[self.party_type]["id"]
+
+        return redirect(self.get_success_url(party_id))
 
 
 class RemoveConsignee(LoginRequiredMixin, DeleteParty):

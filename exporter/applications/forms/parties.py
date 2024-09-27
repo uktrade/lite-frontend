@@ -230,7 +230,12 @@ class PartyWebsiteForm(BaseForm):
         TITLE = "End user website address (optional)"
         TITLE_AS_LABEL_FOR = "website"
 
-    website = forms.CharField(required=False, label="", help_text="Use the format https://www.example.com")
+    website = forms.CharField(
+        required=False,
+        label="",
+        help_text="Use the format https://www.example.com",
+        validators=[MaxLengthValidator(200, f"Website address should be 200 characters or less")],
+    )
 
     def clean_website(self):
         website = self.cleaned_data.get("website")
