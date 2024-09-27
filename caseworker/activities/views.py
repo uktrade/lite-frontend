@@ -93,6 +93,7 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        activities = get_activity(self.request, self.case_id, activity_filters=self.request.GET)
         return {
             **context,
             "case": self.case,
@@ -101,7 +102,12 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
             "team_filters": self.get_team_filters(),
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
-            "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
+            "activities": activities,
+            "queue_movements": [
+                {**item, "text": item["text"][18:]}
+                for item in reversed(activities)
+                if item["verb"] == "move_case"
+            ],
         }
 
     def form_valid(self, form):
