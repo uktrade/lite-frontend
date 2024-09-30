@@ -46,7 +46,7 @@ def can_user_make_recommendation(request, case):
 
     # Existing advice, so this must be edited
     if existing_advice:
-        return False
+        return True
 
     if team == services.FCDO_TEAM:
         return can_fcdo_make_recommendation(user, case, queue_alias)

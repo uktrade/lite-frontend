@@ -55,6 +55,22 @@
             </nav>
         </div>
         <div class="govuk-grid-column-two-thirds">
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Queue movement
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                    {% for item in queue_movements %}
+                        <p class="govuk-body">
+                            {{ item.created_at|to_datetime|date:"d F Y" }}: {{ item.text }}
+                        </p>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        &#8595;
+                    {% endfor %}
+                </div>
+            </details>
             <div class="govuk-grid-row">
                 <div class="notes-and-timeline-case-note">
                     {% crispy form %}

@@ -121,7 +121,7 @@ def filter_advice_by_type(all_advice, advice_types):
 
 
 def filter_advice_by_level(all_advice, advice_levels):
-    return [advice for advice in all_advice if advice["level"] in advice_levels]
+    return [advice for advice in all_advice if advice["level"] in advice_levels and advice["valid"] is True]
 
 
 def filter_advice_by_user(all_advice, caseworker):

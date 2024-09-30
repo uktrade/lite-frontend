@@ -10,7 +10,7 @@ from requests.exceptions import HTTPError
 from caseworker.advice import forms, services, constants
 from caseworker.advice.forms import DESNZTriggerListAssessmentForm, DESNZTriggerListAssessmentEditForm
 from caseworker.cases.helpers.case import CaseworkerMixin
-from caseworker.cases.services import get_case, get_final_decision_documents
+from caseworker.cases.services import get_case, get_case_basic_details, get_final_decision_documents
 from caseworker.cases.helpers.ecju_queries import has_open_queries
 from caseworker.cases.views.main import CaseTabsMixin
 from caseworker.core.helpers import get_organisation_documents
@@ -39,6 +39,10 @@ class CaseContextMixin:
     @cached_property
     def case(self):
         return get_case(self.request, self.case_id)
+
+    @cached_property
+    def case_basic(self):
+        return get_case_basic_details(self.request, self.case_id)
 
     @cached_property
     def denial_reasons_display(self):
@@ -259,6 +263,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESN
             "current_tab": "cases:view_my_advice",
             "security_approvals_classified_display": self.security_approvals_classified_display,
             "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
+            "case_basic": self.case_basic,
             **services.get_advice_tab_context(self.case, self.caseworker, str(self.kwargs["queue_pk"])),
         }
 
@@ -805,6 +810,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
             "queue_id": self.queue_id,
             "refusal_note": refusal_note,
             "has_open_queries": has_open_queries(self.request, self.case_id),
+            "case_basic": self.case_basic,
         }
 
     def form_valid(self, form):

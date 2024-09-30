@@ -97,6 +97,13 @@
                         </div>
                     {% endif %}
 
+                    {% if case_basic.circulation_details.is_case_sent_back %}
+                    <strong class="govuk-tag govuk-tag--red">
+                      Re-circulated
+                    </strong>
+                    {% endif %}
+                    <br><br>
+
                     {% if finalise_case %}
                         {% if has_open_queries %}
                             <div id="case-has-open-queries" class="govuk-warning-text">
@@ -117,6 +124,11 @@
                         <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:consolidate_edit' queue_pk case.id %}">
                             Edit recommendation
                         </a>
+                    {% endif %}
+
+                    {% test_rule 'can_user_review_and_combine' request case as can_user_review_and_combine %}
+                    {% if can_user_review_and_combine %}
+                        <a id="review-and-combine-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:consolidate_review' queue_pk case.id %}">Re-review and combine</a>
                     {% endif %}
 
                     <br><br>
