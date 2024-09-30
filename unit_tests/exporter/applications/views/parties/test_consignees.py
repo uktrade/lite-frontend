@@ -1,9 +1,11 @@
 import pytest
+
 from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
 from core import client
+from exporter.core.constants import SetPartyFormSteps
 
 
 @pytest.fixture(autouse=True)
@@ -18,8 +20,103 @@ def application_pk(data_standard_case):
 
 
 @pytest.fixture
+def mock_party_create(requests_mock, data_standard_case):
+    party_id = data_standard_case["case"]["data"]["consignee"]["id"]
+    url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/parties/')
+    yield requests_mock.post(url=url, status_code=201, json={"consignee": {"id": party_id}})
+
+
+@pytest.fixture
+def mock_party_get(requests_mock, data_standard_case):
+    consignee = data_standard_case["case"]["data"]["consignee"]
+    url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/parties/{consignee["id"]}/')
+    yield requests_mock.get(url=url, json={"data": consignee})
+
+
+@pytest.fixture
+def mock_party_put(requests_mock, data_standard_case):
+    consignee = data_standard_case["case"]["data"]["consignee"]
+    url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/parties/{consignee["id"]}/')
+    yield requests_mock.put(url=url, json={})
+
+
+@pytest.fixture
+def set_consignee_url(application_pk):
+    return reverse("applications:set_consignee", kwargs={"pk": application_pk})
+
+
+@pytest.fixture
 def application_parties_consignee_summary_url(application_pk):
     return reverse("applications:consignee", kwargs={"pk": application_pk})
+
+
+@pytest.fixture(autouse=True)
+def setup(
+    mock_countries,
+    mock_get_application,
+    mock_party_create,
+    mock_party_get,
+    mock_party_put,
+):
+    yield
+
+
+def test_set_consignee_view(set_consignee_url, authorized_client, requests_mock, data_standard_case, application_pk):
+    party_id = data_standard_case["case"]["data"]["consignee"]["id"]
+    response = test_set_consignee_steps(set_consignee_url, authorized_client)
+
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:consignee_attach_document", kwargs={"pk": application_pk, "obj_pk": party_id}
+    )
+
+
+def test_set_consignee_steps(set_consignee_url, authorized_client):
+    current_step_key = "set_consignee-current_step"
+    response = authorized_client.get(set_consignee_url)
+
+    assert response.context["form"].title == "Select the type of consignee"
+
+    response = authorized_client.post(
+        set_consignee_url,
+        data={
+            f"{current_step_key}": SetPartyFormSteps.PARTY_SUB_TYPE,
+            f"{SetPartyFormSteps.PARTY_SUB_TYPE}-sub_type": "government",
+        },
+    )
+    assert not response.context["form"].errors
+    assert response.context["form"].Layout.TITLE == "Consignee name"
+
+    response = authorized_client.post(
+        set_consignee_url,
+        data={
+            f"{current_step_key}": SetPartyFormSteps.PARTY_NAME,
+            f"{SetPartyFormSteps.PARTY_NAME}-name": "test-name",
+        },
+    )
+    assert not response.context["form"].errors
+    assert response.context["form"].Layout.TITLE == "Consignee website address (optional)"
+
+    response = authorized_client.post(
+        set_consignee_url,
+        data={
+            f"{current_step_key}": SetPartyFormSteps.PARTY_WEBSITE,
+            f"{SetPartyFormSteps.PARTY_WEBSITE}-website": "https://www.example.com",
+        },
+    )
+    assert not response.context["form"].errors
+    assert response.context["form"].Layout.TITLE == "Consignee address"
+
+    response = authorized_client.post(
+        set_consignee_url,
+        data={
+            f"{current_step_key}": SetPartyFormSteps.PARTY_ADDRESS,
+            f"{SetPartyFormSteps.PARTY_ADDRESS}-address": "1 somewhere",
+            f"{SetPartyFormSteps.PARTY_ADDRESS}-country": "US",
+        },
+    )
+
+    return response
 
 
 def test_application_parties_consignee_summary(authorized_client, application_parties_consignee_summary_url):
