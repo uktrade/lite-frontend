@@ -1,8 +1,8 @@
 import logging
-
 from django.urls import reverse
 from django.shortcuts import render
 from django.views.generic import FormView
+
 
 from core.auth.views import LoginRequiredMixin
 from core.feedback.forms import FeedbackForm
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class FeedbackView(LoginRequiredMixin, FormView):
-    template_name = "feedback/form.html"
+    template_name = "core/form.html"
     form_class = FeedbackForm
 
     def get_success_url(self):

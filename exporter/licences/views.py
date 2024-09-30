@@ -1,11 +1,10 @@
 from http import HTTPStatus
 
 from django.conf import settings
-from django.http import Http404
-from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 
+from exporter.core.helpers import convert_control_list_entries_to_options
 from exporter.core.objects import Tab
 from exporter.core.services import get_open_general_licences, get_control_list_entries, get_countries
 from exporter.licences import filters
@@ -17,10 +16,10 @@ from exporter.licences.helpers import (
 from exporter.licences.services import get_licences, get_licence, get_nlr_letters
 from exporter.organisation.members.services import get_user
 
-from lite_content.lite_exporter_frontend.licences import LicencesList, LicencePage
-from lite_forms.generators import error_page
+from lite_content.lite_exporter_frontend.licences import LicencesList
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
 
 
 tabs = [
@@ -67,7 +66,7 @@ class AbstractListView(LoginRequiredMixin, TemplateView):
 
     @property
     def control_list(self):
-        return get_control_list_entries(self.request, convert_to_options=True)
+        return convert_control_list_entries_to_options(get_control_list_entries(self.request))
 
     @property
     def countries(self):
@@ -138,10 +137,21 @@ class ListOpenGeneralLicences(AbstractListView):
 
 
 class Licence(LoginRequiredMixin, TemplateView):
-    def get(self, request, pk):
-        licence, status_code = get_licence(request, pk)
-        if status_code == HTTPStatus.NOT_FOUND:
-            return Http404
-        elif status_code != HTTPStatus.OK:
-            return error_page(request, LicencePage.ERROR)
-        return render(request, "licences/licence.html", {"licence": licence})
+    template_name = "licences/licence.html"
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error loading licence",
+        "Unexpected error loading licence",
+        reraise_404=True,
+    )
+    def get_licence(self, request, licence_pk):
+        return get_licence(request, licence_pk)
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        licence, _ = self.get_licence(self.request, self.kwargs["pk"])
+        ctx["licence"] = licence
+
+        return ctx

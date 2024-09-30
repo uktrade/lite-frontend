@@ -1,5 +1,6 @@
 from exporter.core.constants import HMRC
 from exporter.core.services import get_control_list_entries
+from exporter.core.helpers import convert_control_list_entries_to_options
 from lite_content.lite_exporter_frontend.goods_types import CreateGoodsTypeForm
 from lite_forms.common import control_list_entries_question
 from lite_forms.components import TextArea, RadioButtons, Option, Form
@@ -31,7 +32,9 @@ def goods_type_form(request, application_type: str):
                                 value=CreateGoodsTypeForm.IsControlled.YES,
                                 components=[
                                     control_list_entries_question(
-                                        control_list_entries=get_control_list_entries(request, convert_to_options=True),
+                                        control_list_entries=convert_control_list_entries_to_options(
+                                            get_control_list_entries(request)
+                                        ),
                                     ),
                                 ],
                             ),

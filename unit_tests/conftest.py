@@ -4,7 +4,7 @@ import datetime
 import pytest
 import os
 import re
-
+import cacheops
 import requests
 
 from bs4 import BeautifulSoup
@@ -36,6 +36,11 @@ def disable_hawk(settings):
 def add_test_template_dirs(settings):
     template_dir = os.path.join(settings.BASE_DIR, "unit_tests", "core", "summaries", "templates")
     settings.TEMPLATES[0]["DIRS"].append(template_dir)
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    cacheops.invalidate_all()  # flush redis cache database
 
 
 @pytest.fixture(scope="session")
