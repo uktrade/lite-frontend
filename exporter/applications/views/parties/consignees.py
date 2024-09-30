@@ -4,7 +4,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, FormView
 from django.http import HttpResponseRedirect
-from django.utils.functional import cached_property
 
 from core.common.forms import BaseForm
 from core.auth.views import LoginRequiredMixin
@@ -88,10 +87,6 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
         (SetPartyFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
         (SetPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
     ]
-
-    @cached_property
-    def application(self):
-        return get_application(self.request, self.kwargs["pk"])
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
