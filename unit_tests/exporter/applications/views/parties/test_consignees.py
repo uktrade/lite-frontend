@@ -66,11 +66,24 @@ def setup(
     yield
 
 
-def test_add_consignee_view(add_consignee_url, authorized_client):
+@pytest.mark.parametrize("reuse_party_response, expected_url", ((True, "consignees_copy"), (False, "set_consignee")))
+def test_add_consignee_view(
+    application_pk, data_standard_case, add_consignee_url, authorized_client, reuse_party_response, expected_url
+):
     response = authorized_client.get(add_consignee_url)
 
     assert response.status_code == 200
     assert response.context["form_title"] == "Do you want to reuse an existing party?"
+
+    response = authorized_client.post(
+        add_consignee_url,
+        data={
+            "reuse_party": reuse_party_response,
+        },
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse(f"applications:{expected_url}", kwargs={"pk": application_pk})
 
 
 def test_set_consignee_view(set_consignee_url, authorized_client, requests_mock, data_standard_case, application_pk):
