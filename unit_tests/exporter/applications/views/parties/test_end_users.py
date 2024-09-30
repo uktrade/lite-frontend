@@ -125,6 +125,7 @@ def set_end_user(url, authorized_client):
     current_step_key = "set_end_user_view-current_step"
     response = authorized_client.get(url)
     assert not response.context["form"].errors
+    assert response.context["form"].title == "Select the type of end user"
 
     response = authorized_client.post(
         url,
@@ -134,6 +135,7 @@ def set_end_user(url, authorized_client):
         },
     )
     assert not response.context["form"].errors
+    assert response.context["form"].Layout.TITLE == "End user name"
 
     response = authorized_client.post(
         url,
@@ -143,6 +145,7 @@ def set_end_user(url, authorized_client):
         },
     )
     assert not response.context["form"].errors
+    assert response.context["form"].Layout.TITLE == "End user website address (optional)"
 
     response = authorized_client.post(
         url,
@@ -152,6 +155,7 @@ def set_end_user(url, authorized_client):
         },
     )
     assert not response.context["form"].errors
+    assert response.context["form"].Layout.TITLE == "End user address"
 
     response = authorized_client.post(
         url,

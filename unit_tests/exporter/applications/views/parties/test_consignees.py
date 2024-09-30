@@ -46,6 +46,11 @@ def set_consignee_url(application_pk):
 
 
 @pytest.fixture
+def add_consignee_url(application_pk):
+    return reverse("applications:add_consignee", kwargs={"pk": application_pk})
+
+
+@pytest.fixture
 def application_parties_consignee_summary_url(application_pk):
     return reverse("applications:consignee", kwargs={"pk": application_pk})
 
@@ -59,6 +64,13 @@ def setup(
     mock_party_put,
 ):
     yield
+
+
+def test_add_consignee_view(add_consignee_url, authorized_client):
+    response = authorized_client.get(add_consignee_url)
+
+    assert response.status_code == 200
+    assert response.context["form_title"] == "Do you want to reuse an existing party?"
 
 
 def test_set_consignee_view(set_consignee_url, authorized_client, requests_mock, data_standard_case, application_pk):
