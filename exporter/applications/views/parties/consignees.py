@@ -82,10 +82,6 @@ class AddConsignee(LoginRequiredMixin, FormView):
 
 class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
     party_type = "consignee"
-    PartySubTypeSelectForm.title = "Select the type of consignee"
-    PartyNameForm.Layout.TITLE = "Consignee name"
-    PartyWebsiteForm.Layout.TITLE = "Consignee website address (optional)"
-    PartyAddressForm.Layout.TITLE = "Consignee address"
     form_list = [
         (SetPartyFormSteps.PARTY_SUB_TYPE, PartySubTypeSelectForm),
         (SetPartyFormSteps.PARTY_NAME, PartyNameForm),
@@ -106,6 +102,10 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
         return context
 
     def get_form_kwargs(self, step=None):
+        PartySubTypeSelectForm.title = "Select the type of consignee"
+        PartyNameForm.Layout.TITLE = "Consignee name"
+        PartyWebsiteForm.Layout.TITLE = "Consignee website address (optional)"
+        PartyAddressForm.Layout.TITLE = "Consignee address"
         kwargs = super().get_form_kwargs(step)
 
         if step == SetPartyFormSteps.PARTY_ADDRESS:
