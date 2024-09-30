@@ -95,6 +95,17 @@ def test_set_consignee_view(set_consignee_url, authorized_client, requests_mock,
         "applications:consignee_attach_document", kwargs={"pk": application_pk, "obj_pk": party_id}
     )
 
+    consignee_data = requests_mock.request_history.pop().json()
+    assert consignee_data == {
+        "sub_type": "government",
+        "sub_type_other": "",
+        "name": "test-name",
+        "website": "https://www.example.com",
+        "address": "1 somewhere",
+        "country": "US",
+        "type": "consignee",
+    }
+
 
 def test_set_consignee_steps(set_consignee_url, authorized_client):
     current_step_key = "set_consignee-current_step"
