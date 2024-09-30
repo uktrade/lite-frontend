@@ -121,7 +121,7 @@ def filter_advice_by_type(all_advice, advice_types):
 
 
 def filter_advice_by_level(all_advice, advice_levels):
-    return [advice for advice in all_advice if advice["level"] in advice_levels]
+    return [advice for advice in all_advice if advice["level"] in advice_levels and advice["valid"] is True]
 
 
 def filter_advice_by_user(all_advice, caseworker):
@@ -291,22 +291,11 @@ def order_by_party_type(all_advice):
 
     return ordered_advice
 
-def group_advice_by_date(all_advice):
-    grouped = defaultdict(list)
-    for item in all_advice:
-        created = item['created_at'][:19]  # TODO parse and extract date
-        grouped[created].append(item)
-
-    return grouped
-
 
 def get_consolidated_advice(advice, team_alias):
     level = "final" if team_alias == LICENSING_UNIT_TEAM else "team"
     team_advice = filter_advice_by_level(advice, [level])
     consolidated_advice = filter_advice_by_team(team_advice, team_alias)
-    grouped_by_date = group_advice_by_date(consolidated_advice)
-    recent_date = sorted(grouped_by_date.keys())[-1]
-    consolidated_advice = grouped_by_date[recent_date]
     return order_by_party_type(consolidated_advice)
 
 

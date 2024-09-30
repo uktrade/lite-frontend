@@ -543,7 +543,7 @@ def values(dictionary):
 
 @register.filter()
 def filter_advice_by_level(advice, level):
-    return [advice for advice in advice if advice["level"] == level]
+    return [advice for advice in advice if advice["level"] == level and advice["valid"] == True]
 
 
 @register.filter()
