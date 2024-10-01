@@ -34,9 +34,12 @@ from exporter.core.constants import (
 
 from http import HTTPStatus
 from lite_content.lite_exporter_frontend.applications import ConsigneeForm, ConsigneePage
-from lite_forms.generators import error_page
+
+from .payloads import SetConsigneePayloadBuilder
 
 log = logging.getLogger(__name__)
+
+from core.decorators import expect_status
 
 
 class Consignee(LoginRequiredMixin, TemplateView):
@@ -88,14 +91,6 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
         (SetPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
     ]
 
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form, **kwargs)
-        if isinstance(form, BaseForm):
-            context["title"] = form.Layout.TITLE
-        else:
-            context["title"] = form.title
-        return context
-
     def get_form_kwargs(self, step=None):
         PartySubTypeSelectForm.title = "Select the type of consignee"
         PartyNameForm.Layout.TITLE = "Consignee name"
@@ -108,26 +103,35 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
 
         return kwargs
 
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        if isinstance(form, BaseForm):
+            context["title"] = form.Layout.TITLE
+        else:
+            context["title"] = form.title
+        return context
+
+    def get_payload(self, form_dict):
+        return SetConsigneePayloadBuilder().build(form_dict)
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding consignee to application",
+        "Unexpected error adding consignee to application",
+    )
+    def post_party_with_payload(self, pk, form_dict):
+        payload = self.get_payload(form_dict)
+        payload.update({"type": self.party_type})
+
+        return post_party(self.request, pk, payload)
+
     def get_success_url(self, party_id):
         return reverse("applications:consignee_attach_document", kwargs={"pk": self.kwargs["pk"], "obj_pk": party_id})
 
-    def done(self, form_list, **kwargs):
-        all_data = {k: v for form in form_list for k, v in form.cleaned_data.items()}
-        all_data["type"] = self.party_type
+    def done(self, form_list, form_dict, **kwargs):
+        response, _ = self.post_party_with_payload(self.kwargs["pk"], form_dict)
 
-        response, status_code = post_party(self.request, self.kwargs["pk"], dict(all_data))
-        if status_code != HTTPStatus.CREATED:
-            log.error(
-                "Error creating party - response was: %s - %s",
-                status_code,
-                response,
-                exc_info=True,
-            )
-            return error_page(self.request, "Unexpected error creating party")
-
-        party_id = response[self.party_type]["id"]
-
-        return redirect(self.get_success_url(party_id))
+        return redirect(self.get_success_url(response[self.party_type]["id"]))
 
 
 class RemoveConsignee(LoginRequiredMixin, DeleteParty):

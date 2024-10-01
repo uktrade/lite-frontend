@@ -127,11 +127,12 @@ def test_set_consignee_view_fail(
 
     assert len(caplog.records) == 1
     log = caplog.records[0]
-    assert log.message == "Error creating party - response was: 500 - {}"
+
+    assert log.message == "Error adding consignee to application - response was: 500 - {}"
 
     soup = BeautifulSoup(response.content, "html.parser")
     error_message = soup.find("p", class_="govuk-body").get_text().strip()
-    assert "Unexpected error creating party" == error_message
+    assert "Unexpected error adding consignee to application" == error_message
 
 
 def test_set_consignee_steps(set_consignee_url, authorized_client):
