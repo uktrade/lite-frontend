@@ -1,4 +1,5 @@
 import pytest
+from bs4 import BeautifulSoup
 
 from pytest_django.asserts import assertTemplateUsed
 
@@ -24,6 +25,12 @@ def mock_party_create(requests_mock, data_standard_case):
     party_id = data_standard_case["case"]["data"]["consignee"]["id"]
     url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/parties/')
     yield requests_mock.post(url=url, status_code=201, json={"consignee": {"id": party_id}})
+
+
+@pytest.fixture
+def mock_party_create_fail(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/parties/')
+    yield requests_mock.post(url=url, status_code=500, json={})
 
 
 @pytest.fixture
@@ -105,6 +112,17 @@ def test_set_consignee_view(set_consignee_url, authorized_client, requests_mock,
         "country": "US",
         "type": "consignee",
     }
+
+
+def test_set_consignee_view_fail(
+    set_consignee_url, authorized_client, requests_mock, data_standard_case, application_pk, mock_party_create_fail
+):
+    response = test_set_consignee_steps(set_consignee_url, authorized_client)
+
+    content = response.content
+    soup = BeautifulSoup(content, "html.parser")
+    error_message = soup.find("p", class_="govuk-body").get_text().strip()
+    assert "Unexpected error creating party" == error_message
 
 
 def test_set_consignee_steps(set_consignee_url, authorized_client):
