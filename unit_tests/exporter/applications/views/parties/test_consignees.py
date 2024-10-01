@@ -115,12 +115,21 @@ def test_set_consignee_view(set_consignee_url, authorized_client, requests_mock,
 
 
 def test_set_consignee_view_fail(
-    set_consignee_url, authorized_client, requests_mock, data_standard_case, application_pk, mock_party_create_fail
+    set_consignee_url,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    application_pk,
+    mock_party_create_fail,
+    caplog,
 ):
     response = test_set_consignee_steps(set_consignee_url, authorized_client)
 
-    content = response.content
-    soup = BeautifulSoup(content, "html.parser")
+    assert len(caplog.records) == 1
+    log = caplog.records[0]
+    assert log.message == "Error creating party - response was: 500 - {}"
+
+    soup = BeautifulSoup(response.content, "html.parser")
     error_message = soup.find("p", class_="govuk-body").get_text().strip()
     assert "Unexpected error creating party" == error_message
 
