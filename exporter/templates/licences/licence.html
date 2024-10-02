@@ -2,6 +2,8 @@
 
 {% load humanize %}
 
+{% block back_link_url %}{% url "licences:list-open-and-standard-licences" %}{% endblock %}
+
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">

@@ -5,6 +5,7 @@ import exporter.core.views
 
 from core.accessibility.views import ExporterAccessibilityStatementView
 from core.health_check.views import HealthCheckPingdomView
+from exporter.core.feedback.views import ExporterFeedbackView
 
 urlpatterns = [
     path("healthcheck/", include("health_check.urls")),
@@ -27,6 +28,11 @@ urlpatterns += [
     path("organisation/", include("exporter.organisation.urls")),
     path("ecju-queries/", include("exporter.ecju_queries.urls"), name="ecju-queries"),
     path("", include("exporter.hmrc.urls")),
+    path(
+        "feedback/",
+        ExporterFeedbackView.as_view(),
+        name="feedback",
+    ),
     path("feedback/", include("core.feedback.urls")),
     path("cookies/", include("core.cookies.urls")),
     path(

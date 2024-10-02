@@ -15,6 +15,8 @@ EXHIBITION = "exhibition_clearance"
 GIFTING = "gifting_clearance"
 F680 = "f680_clearance"
 
+CONTROL_LIST_ENTRIES_CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours
+
 
 class CaseTypes:
     OIEL = "oiel"
