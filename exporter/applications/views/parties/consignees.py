@@ -5,7 +5,6 @@ from django.urls import reverse
 from django.views.generic import TemplateView, FormView
 from django.http import HttpResponseRedirect
 
-from core.common.forms import BaseForm
 from core.auth.views import LoginRequiredMixin
 from core.wizard.views import BaseSessionWizardView
 
@@ -92,7 +91,7 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
     ]
 
     def get_form_kwargs(self, step=None):
-        PartySubTypeSelectForm.title = "Select the type of consignee"
+        PartySubTypeSelectForm.Layout.TITLE = "Select the type of consignee"
         PartyNameForm.Layout.TITLE = "Consignee name"
         PartyWebsiteForm.Layout.TITLE = "Consignee website address (optional)"
         PartyAddressForm.Layout.TITLE = "Consignee address"
@@ -105,10 +104,6 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
-        if isinstance(form, BaseForm):
-            context["title"] = form.Layout.TITLE
-        else:
-            context["title"] = form.title
         return context
 
     def get_payload(self, form_dict):

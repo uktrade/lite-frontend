@@ -159,8 +159,10 @@ class PartyReuseForm(forms.Form):
         )
 
 
-class PartySubTypeSelectForm(forms.Form):
-    title = "Select the type of end user"
+class PartySubTypeSelectForm(BaseForm):
+    class Layout:
+        TITLE = "Select the type of end user"
+        TITLE_AS_LABEL_FOR = "sub_type"
 
     CHOICES = (
         Choice("government", PartyForm.Options.GOVERNMENT),
@@ -182,9 +184,8 @@ class PartySubTypeSelectForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1(self.title),
+            HTML.h1(self.Layout.TITLE),
             ConditionalRadios(
                 "sub_type",
                 PartyForm.Options.GOVERNMENT,
@@ -194,6 +195,9 @@ class PartySubTypeSelectForm(forms.Form):
             ),
             Submit("submit", "Continue"),
         )
+
+    def get_layout_fields(self):
+        return ("sub_type",)
 
     def clean(self):
         cleaned_data = super().clean()
