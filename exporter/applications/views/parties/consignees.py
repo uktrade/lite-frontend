@@ -3,7 +3,6 @@ import logging
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, FormView
-from django.http import HttpResponseRedirect
 
 from core.auth.views import LoginRequiredMixin
 from core.wizard.views import BaseSessionWizardView
@@ -72,13 +71,15 @@ class AddConsignee(LoginRequiredMixin, FormView):
         return context
 
     def form_valid(self, form):
-        reuse_party = str_to_bool(form.cleaned_data.get("reuse_party"))
-        if reuse_party:
-            success_url = reverse("applications:consignees_copy", kwargs=self.kwargs)
-        else:
-            success_url = reverse("applications:set_consignee", kwargs=self.kwargs)
+        self.kwargs["reuse_party"] = str_to_bool(form.cleaned_data.get("reuse_party"))
+        return super().form_valid(form)
 
-        return HttpResponseRedirect(success_url)
+    def get_success_url(self):
+        reuse_party = self.kwargs.pop("reuse_party")
+        if reuse_party:
+            return reverse("applications:consignees_copy", kwargs=self.kwargs)
+
+        return reverse("applications:set_consignee", kwargs=self.kwargs)
 
 
 class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
@@ -101,10 +102,6 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
             kwargs["request"] = self.request
 
         return kwargs
-
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form, **kwargs)
-        return context
 
     def get_payload(self, form_dict):
         return SetConsigneePayloadBuilder().build(form_dict)
