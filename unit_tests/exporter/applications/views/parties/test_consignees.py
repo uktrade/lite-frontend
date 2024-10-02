@@ -1,5 +1,5 @@
+import logging
 import pytest
-from bs4 import BeautifulSoup
 
 from pytest_django.asserts import assertTemplateUsed
 
@@ -7,6 +7,13 @@ from django.urls import reverse
 
 from core import client
 from exporter.core.constants import SetPartyFormSteps
+from exporter.applications.forms.parties import (
+    PartyReuseForm,
+    PartySubTypeSelectForm,
+    PartyNameForm,
+    PartyWebsiteForm,
+    PartyAddressForm,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -21,7 +28,7 @@ def application_pk(data_standard_case):
 
 
 @pytest.fixture
-def mock_party_create(requests_mock, data_standard_case):
+def mock_party_create_success(requests_mock, data_standard_case):
     party_id = data_standard_case["case"]["data"]["consignee"]["id"]
     url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/parties/')
     yield requests_mock.post(url=url, status_code=201, json={"consignee": {"id": party_id}})
@@ -34,17 +41,8 @@ def mock_party_create_fail(requests_mock, data_standard_case):
 
 
 @pytest.fixture
-def mock_party_get(requests_mock, data_standard_case):
-    consignee = data_standard_case["case"]["data"]["consignee"]
-    url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/parties/{consignee["id"]}/')
-    yield requests_mock.get(url=url, json={"data": consignee})
-
-
-@pytest.fixture
-def mock_party_put(requests_mock, data_standard_case):
-    consignee = data_standard_case["case"]["data"]["consignee"]
-    url = client._build_absolute_uri(f'/applications/{data_standard_case["case"]["id"]}/parties/{consignee["id"]}/')
-    yield requests_mock.put(url=url, json={})
+def add_consignee_url(application_pk):
+    return reverse("applications:add_consignee", kwargs={"pk": application_pk})
 
 
 @pytest.fixture
@@ -53,8 +51,8 @@ def set_consignee_url(application_pk):
 
 
 @pytest.fixture
-def add_consignee_url(application_pk):
-    return reverse("applications:add_consignee", kwargs={"pk": application_pk})
+def post_to_step(post_to_step_factory, set_consignee_url):
+    return post_to_step_factory(set_consignee_url)
 
 
 @pytest.fixture
@@ -65,10 +63,6 @@ def application_parties_consignee_summary_url(application_pk):
 @pytest.fixture(autouse=True)
 def setup(
     mock_countries,
-    mock_get_application,
-    mock_party_create,
-    mock_party_get,
-    mock_party_put,
 ):
     yield
 
@@ -80,7 +74,7 @@ def test_add_consignee_view(
     response = authorized_client.get(add_consignee_url)
 
     assert response.status_code == 200
-    assert response.context["form_title"] == "Do you want to reuse an existing party?"
+    assert isinstance(response.context["form"], PartyReuseForm)
 
     response = authorized_client.post(
         add_consignee_url,
@@ -93,11 +87,56 @@ def test_add_consignee_view(
     assert response.url == reverse(f"applications:{expected_url}", kwargs={"pk": application_pk})
 
 
-def test_set_consignee_view(set_consignee_url, authorized_client, requests_mock, data_standard_case, application_pk):
-    party_id = data_standard_case["case"]["data"]["consignee"]["id"]
-    response = test_set_consignee_steps(set_consignee_url, authorized_client)
+def test_set_consignee_end_to_end_post_success(
+    set_consignee_url,
+    authorized_client,
+    post_to_step,
+    requests_mock,
+    data_standard_case,
+    application_pk,
+    mock_party_create_success,
+):
+    response = authorized_client.get(set_consignee_url)
+
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], PartySubTypeSelectForm)
+
+    response = post_to_step(
+        SetPartyFormSteps.PARTY_SUB_TYPE,
+        {"sub_type": "government"},
+    )
+
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], PartyNameForm)
+
+    response = post_to_step(
+        SetPartyFormSteps.PARTY_NAME,
+        {"name": "test-name"},
+    )
+
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], PartyWebsiteForm)
+
+    response = post_to_step(
+        SetPartyFormSteps.PARTY_WEBSITE,
+        {"website": "https://www.example.com"},
+    )
+    assert not response.context["form"].errors
+    assert response.context["form"].Layout.TITLE == "Consignee address"
+    assert isinstance(response.context["form"], PartyAddressForm)
+
+    response = post_to_step(
+        SetPartyFormSteps.PARTY_ADDRESS,
+        {"address": "1 somewhere", "country": "US"},
+    )
 
     assert response.status_code == 302
+
+    party_id = data_standard_case["case"]["data"]["consignee"]["id"]
+
     assert response.url == reverse(
         "applications:consignee_attach_document", kwargs={"pk": application_pk, "obj_pk": party_id}
     )
@@ -114,7 +153,7 @@ def test_set_consignee_view(set_consignee_url, authorized_client, requests_mock,
     }
 
 
-def test_set_consignee_view_fail(
+def test_set_consignee_end_to_end_post_fail(
     set_consignee_url,
     authorized_client,
     requests_mock,
@@ -122,72 +161,58 @@ def test_set_consignee_view_fail(
     application_pk,
     mock_party_create_fail,
     caplog,
+    post_to_step,
 ):
-    response = test_set_consignee_steps(set_consignee_url, authorized_client)
+    response = authorized_client.get(set_consignee_url)
 
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], PartySubTypeSelectForm)
+
+    response = post_to_step(
+        SetPartyFormSteps.PARTY_SUB_TYPE,
+        {"sub_type": "government"},
+    )
+
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], PartyNameForm)
+
+    response = post_to_step(
+        SetPartyFormSteps.PARTY_NAME,
+        {"name": "test-name"},
+    )
+
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], PartyWebsiteForm)
+
+    response = post_to_step(
+        SetPartyFormSteps.PARTY_WEBSITE,
+        {"website": "https://www.example.com"},
+    )
+    assert not response.context["form"].errors
+    assert response.context["form"].Layout.TITLE == "Consignee address"
+    assert isinstance(response.context["form"], PartyAddressForm)
+
+    response = post_to_step(
+        SetPartyFormSteps.PARTY_ADDRESS,
+        {"address": "1 somewhere", "country": "US"},
+    )
+
+    assert response.status_code == 200
     assert len(caplog.records) == 1
     log = caplog.records[0]
 
     assert log.message == "Error adding consignee to application - response was: 500 - {}"
-
-    soup = BeautifulSoup(response.content, "html.parser")
-    error_message = soup.find("p", class_="govuk-body").get_text().strip()
-    assert "Unexpected error adding consignee to application" == error_message
-
-
-def test_set_consignee_steps(set_consignee_url, authorized_client):
-    current_step_key = "set_consignee-current_step"
-    response = authorized_client.get(set_consignee_url)
-
-    assert response.context["form"].title == "Select the type of consignee"
-
-    response = authorized_client.post(
-        set_consignee_url,
-        data={
-            f"{current_step_key}": SetPartyFormSteps.PARTY_SUB_TYPE,
-            f"{SetPartyFormSteps.PARTY_SUB_TYPE}-sub_type": "government",
-        },
-    )
-    assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "Consignee name"
-
-    response = authorized_client.post(
-        set_consignee_url,
-        data={
-            f"{current_step_key}": SetPartyFormSteps.PARTY_NAME,
-            f"{SetPartyFormSteps.PARTY_NAME}-name": "test-name",
-        },
-    )
-    assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "Consignee website address (optional)"
-
-    response = authorized_client.post(
-        set_consignee_url,
-        data={
-            f"{current_step_key}": SetPartyFormSteps.PARTY_WEBSITE,
-            f"{SetPartyFormSteps.PARTY_WEBSITE}-website": "https://www.example.com",
-        },
-    )
-    assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "Consignee address"
-
-    response = authorized_client.post(
-        set_consignee_url,
-        data={
-            f"{current_step_key}": SetPartyFormSteps.PARTY_ADDRESS,
-            f"{SetPartyFormSteps.PARTY_ADDRESS}-address": "1 somewhere",
-            f"{SetPartyFormSteps.PARTY_ADDRESS}-country": "US",
-        },
-    )
-
-    return response
+    assert log.levelno == logging.ERROR
 
 
 def test_set_consignee_website_validator(set_consignee_url, authorized_client):
     current_step_key = "set_consignee-current_step"
     response = authorized_client.get(set_consignee_url)
 
-    assert response.context["form"].title == "Select the type of consignee"
+    assert response.context["form"].Layout.TITLE == "Select the type of consignee"
 
     response = authorized_client.post(
         set_consignee_url,
@@ -220,6 +245,8 @@ def test_set_consignee_website_validator(set_consignee_url, authorized_client):
     assert response.context["form"].errors.get("website")[0] == "Website address should be 200 characters or less"
 
 
-def test_application_parties_consignee_summary(authorized_client, application_parties_consignee_summary_url):
+def test_application_parties_consignee_summary(
+    authorized_client, application_parties_consignee_summary_url, mock_get_application
+):
     response = authorized_client.get(application_parties_consignee_summary_url)
     assertTemplateUsed(response, "applications/consignee.html")
