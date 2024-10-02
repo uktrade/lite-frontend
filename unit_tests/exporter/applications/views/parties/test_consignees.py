@@ -208,43 +208,6 @@ def test_set_consignee_end_to_end_post_fail(
     assert log.levelno == logging.ERROR
 
 
-def test_set_consignee_website_validator(set_consignee_url, authorized_client):
-    current_step_key = "set_consignee-current_step"
-    response = authorized_client.get(set_consignee_url)
-
-    assert response.context["form"].Layout.TITLE == "Select the type of consignee"
-
-    response = authorized_client.post(
-        set_consignee_url,
-        data={
-            f"{current_step_key}": SetPartyFormSteps.PARTY_SUB_TYPE,
-            f"{SetPartyFormSteps.PARTY_SUB_TYPE}-sub_type": "government",
-        },
-    )
-    assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "Consignee name"
-
-    response = authorized_client.post(
-        set_consignee_url,
-        data={
-            f"{current_step_key}": SetPartyFormSteps.PARTY_NAME,
-            f"{SetPartyFormSteps.PARTY_NAME}-name": "test-name",
-        },
-    )
-    assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "Consignee website address (optional)"
-
-    response = authorized_client.post(
-        set_consignee_url,
-        data={
-            f"{current_step_key}": SetPartyFormSteps.PARTY_WEBSITE,
-            f"{SetPartyFormSteps.PARTY_WEBSITE}-website": "https://www.example.com/asfhadjksfhadsklfhalskfhjsakfhsdfkshfskfhsdkfhskfjhfkdshfksfhdksfhsdkjfhksfhsakadfshdsmnfbdsfbdsfsbdfdmsbfdfsngdfsbgdfsgdfsbgdfsgbdfsgbdfsgmnbdfsgmnbdfsgmdfsbgdfsgbdfsgbdfsbgdfsbg/",
-        },
-    )
-
-    assert response.context["form"].errors.get("website")[0] == "Website address should be 200 characters or less"
-
-
 def test_application_parties_consignee_summary(
     authorized_client, application_parties_consignee_summary_url, mock_get_application
 ):

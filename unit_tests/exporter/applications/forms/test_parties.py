@@ -78,6 +78,13 @@ def test_party_name_form(data, valid, errors):
         ({"website": "www.example.com"}, True, None),
         ({"website": "example.com"}, True, None),
         ({"website": ""}, True, None),
+        (
+            {
+                "website": "https://www.example.com/asfhadjksfhadsklfhalskfhjsakfhsdfkshfskfhsdkfhskfjhfkdshfksfhdksfhsdkjfhksfhsakadfshdsmnfbdsfbdsfsbdfdmsbfdfsngdfsbgdfsgdfsbgdfsgbdfsgbdfsgmnbdfsgmnbdfsgmdfsbgdfsgbdfsgbdfsbgdfsbg/"
+            },
+            False,
+            {"website": ["Website address should be 200 characters or less"]},
+        ),
         ({}, True, None),
     ),
 )
