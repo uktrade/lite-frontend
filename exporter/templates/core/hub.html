@@ -74,14 +74,7 @@
 						{% lcs 'hub.Tiles.APPLY_FOR_LICENCE' %}
 					</a>
 				</h2>
-				<p class="app-tile__body">{% lcs 'hub.Tiles.Apply.APPLY_FOR' %}</p>
-				<ul class="govuk-list govuk-list--bullet govuk-!-font-size-16">
-					<li>{% lcs 'hub.Tiles.Apply.EXPORT_LICENCES' %}</li>
-					<li>{% lcs 'hub.Tiles.Apply.TRANSHIPMENT_LICENCES' %}</li>
-					<li>{% lcs 'hub.Tiles.Apply.TRADE_CONTROL_LICENCES' %}</li>
-					<li>{% lcs 'hub.Tiles.Apply.MOD_CLEARANCES' %}</li>
-				</ul>
-				<p class="app-tile__body">{% lcs 'hub.Tiles.Apply.REGISTER_OGEL' %}</p>
+				<p class="app-tile__body">"Start a new application for a standard individual export licence (SIEL)."</p>
 			</div>
 
 			{# Applications tile #}
@@ -92,8 +85,7 @@
 							<p>{% lcs 'hub.Tiles.APPLICATIONS' %}</p>{% if notifications.notifications.application %}<span id="applications-notifications" class="lite-notification-bubble"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.application }} <span class="govuk-visually-hidden">notifications)</span></span>{% endif %}
 						</a>
 					</h2>
-					<p class="app-tile__body">{% lcs 'hub.Tiles.Applications.CHECK_PROGRESS' %}</p>
-					<p class="app-tile__body">{% lcs 'hub.Tiles.Applications.EDIT_APPLICATIONS' %}</p>
+					<p class="app-tile__body">Find drafts, make edits and view the status of submitted applications.</p>
 				</div>
 			{% endif %}
 
@@ -108,7 +100,7 @@
 					<p class="app-tile__body">View and manage your SIELs, including NLRs and unsuccessful applications.</p>
 					<div class="app-tile__body">
 						Use <a href="https://www.spire.trade.gov.uk">SPIRE – the online export licensing system</a>
-						 to view and manage all other licences and clearances.</div>
+						to view and manage all other licences and clearances.</div>
 				{% else %}
 					<p class="app-tile__body">View and manage your licences and clearances, including NLRs and unsuccessful applications.</p>
 				{% endif %}
