@@ -128,7 +128,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
         token = request.authbroker_client.token.get("access_token")
         try:
             logger.info(
-                "Introspecting SSO decoding checking token: %s client_ip: %s",
+                "Authentication:Service: Introspecting SSO decoding checking token: %s client_ip: %s",
                 request.session.get("lite_api_user_id"),
                 get_client_ip(request),
             )
@@ -138,14 +138,14 @@ class AuthBrokerTokenIntrospectionMiddleware:
             # We making a big assumption here assuming client uses openid PrivateJWT auth method
             try:
                 logger.info(
-                    "Introspecting SSO decoding checking refresh token: %s client_ip: %s",
+                    "Authentication:Service: Introspecting SSO decoding checking refresh token: %s client_ip: %s",
                     request.session.get("lite_api_user_id"),
                     get_client_ip(request),
                 )
                 refresh_token = request.authbroker_client.token.get("refresh_token")
                 jwt.decode(refresh_token, options={"verify_signature": False, "verify_exp": True})
                 logger.info(
-                    "Introspecting SSO attempt token refresh: %s client_ip: %s",
+                    "Authentication:Service: Introspecting SSO attempt token refresh: %s client_ip: %s",
                     request.session.get("lite_api_user_id"),
                     get_client_ip(request),
                 )
@@ -164,7 +164,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
                 is_new_token = True
             except jwt.ExpiredSignatureError:
                 logger.info(
-                    "Introspecting SSO refresh token expired: %s client_ip: %s",
+                    "Authentication:Service: Introspecting SSO refresh token expired: %s client_ip: %s",
                     request.session.get("lite_api_user_id"),
                     get_client_ip(request),
                 )
@@ -176,7 +176,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
 
     def client_introspect_call(self, request):
         logger.info(
-            "Introspecting with SSO: %s client_ip: %s",
+            "Authentication:Service: Introspecting with SSO: %s client_ip: %s",
             request.session.get("lite_api_user_id"),
             get_client_ip(request),
         )
@@ -196,7 +196,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
             self.client_introspect_call(request)
 
         logger.info(
-            "Introspecting SSO set new cache key: %s client_ip: %s",
+            "Authentication:Service: Introspecting SSO set new cache key: %s client_ip: %s",
             request.session.get("lite_api_user_id"),
             get_client_ip(request),
         )
@@ -212,7 +212,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
             self.introspect(request)
         except (OAuth2Error, OAuthError, RequestException) as e:
             logger.warning(
-                "Introspecting with SSO failed for user %s: :%s : %s",
+                "Authentication:Service: Introspecting with SSO failed for user %s: :%s : %s",
                 request.session.get("lite_api_user_id"),
                 get_client_ip(request),
                 str(e),

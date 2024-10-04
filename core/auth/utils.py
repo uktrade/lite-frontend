@@ -24,6 +24,6 @@ def get_profile(client):
         response = client.get(settings.AUTHBROKER_PROFILE_URL)
         response.raise_for_status()
     except HTTPError:
-        logger.info("Error with SSO get_profile", exc_info=True)
+        logger.info("Authentication:Service: Error with SSO get_profile", exc_info=True)
         raise
     return response.json()
