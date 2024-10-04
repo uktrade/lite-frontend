@@ -1,6 +1,7 @@
 import logging
 import pytest
 
+from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
@@ -109,6 +110,11 @@ def test_set_consignee_end_to_end_post_success(
 
     assert response.status_code == 200
     assert not response.context["form"].errors
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-xl")
+
+    assert heading_element.string == "Consignee name"
+
     assert isinstance(response.context["form"], PartyNameForm)
 
     response = post_to_step(
@@ -118,6 +124,12 @@ def test_set_consignee_end_to_end_post_success(
 
     assert response.status_code == 200
     assert not response.context["form"].errors
+
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-xl")
+
+    assert heading_element.string == "Consignee website address (optional)"
+
     assert isinstance(response.context["form"], PartyWebsiteForm)
 
     response = post_to_step(
@@ -125,7 +137,11 @@ def test_set_consignee_end_to_end_post_success(
         {"website": "https://www.example.com"},
     )
     assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "Consignee address"
+
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-xl")
+
+    assert heading_element.string == "Consignee address"
     assert isinstance(response.context["form"], PartyAddressForm)
 
     response = post_to_step(
@@ -192,7 +208,6 @@ def test_set_consignee_end_to_end_post_fail(
         {"website": "https://www.example.com"},
     )
     assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "Consignee address"
     assert isinstance(response.context["form"], PartyAddressForm)
 
     response = post_to_step(

@@ -125,7 +125,11 @@ def set_end_user(url, authorized_client):
     current_step_key = "set_end_user_view-current_step"
     response = authorized_client.get(url)
     assert not response.context["form"].errors
-    assert response.context["form"].title == "Select the type of end user"
+
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-xl")
+
+    assert heading_element.string == "Select the type of end user"
 
     response = authorized_client.post(
         url,
@@ -135,7 +139,11 @@ def set_end_user(url, authorized_client):
         },
     )
     assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "End user name"
+
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-xl")
+
+    assert heading_element.string == "End user name"
 
     response = authorized_client.post(
         url,
@@ -145,7 +153,11 @@ def set_end_user(url, authorized_client):
         },
     )
     assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "End user website address (optional)"
+
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-xl")
+
+    assert heading_element.string == "End user website address (optional)"
 
     response = authorized_client.post(
         url,
@@ -155,7 +167,10 @@ def set_end_user(url, authorized_client):
         },
     )
     assert not response.context["form"].errors
-    assert response.context["form"].Layout.TITLE == "End user address"
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-xl")
+
+    assert heading_element.string == "End user address"
 
     response = authorized_client.post(
         url,
