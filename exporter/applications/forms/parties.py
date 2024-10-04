@@ -1,6 +1,6 @@
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit, HTML
+from crispy_forms_gds.layout import Fieldset, Layout, Submit, HTML
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator, URLValidator
@@ -161,7 +161,7 @@ class PartyReuseForm(forms.Form):
 
 class PartySubTypeSelectForm(BaseForm):
     class Layout:
-        TITLE = "Select the type of end user"
+        TITLE = "Select the type of party"
         TITLE_AS_LABEL_FOR = "sub_type"
 
     CHOICES = (
@@ -181,11 +181,12 @@ class PartySubTypeSelectForm(BaseForm):
     )
     sub_type_other = forms.CharField(required=False, label="")
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        if not title:
+            title = self.Layout.TITLE
         self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+            HTML.h1(title),
             ConditionalRadios(
                 "sub_type",
                 PartyForm.Options.GOVERNMENT,
@@ -210,7 +211,7 @@ class PartySubTypeSelectForm(BaseForm):
 
 class PartyNameForm(BaseForm):
     class Layout:
-        TITLE = "End user name"
+        TITLE = "Party name"
         TITLE_AS_LABEL_FOR = "name"
 
     name = forms.CharField(
@@ -225,13 +226,23 @@ class PartyNameForm(BaseForm):
         ],
     )
 
+    def __init__(self, title, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            HTML.h1(title),
+            Fieldset(
+                "name",
+            ),
+            Submit("submit", "Continue"),
+        )
+
     def get_layout_fields(self):
         return ("name",)
 
 
 class PartyWebsiteForm(BaseForm):
     class Layout:
-        TITLE = "End user website address (optional)"
+        TITLE = "Party website address (optional)"
         TITLE_AS_LABEL_FOR = "website"
 
     website = forms.CharField(
@@ -262,13 +273,23 @@ class PartyWebsiteForm(BaseForm):
 
         return website
 
+    def __init__(self, title, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.layout = Layout(
+            HTML.h1(title),
+            Fieldset(
+                "website",
+            ),
+            Submit("submit", "Continue"),
+        )
+
     def get_layout_fields(self):
         return ("website",)
 
 
 class PartyAddressForm(BaseForm):
     class Layout:
-        TITLE = "End user address"
+        TITLE = "Party address"
 
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}),
@@ -279,7 +300,7 @@ class PartyAddressForm(BaseForm):
         choices=[("", "Select a country")], error_messages={"required": "Select the country"}
     )  # populated in __init__
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title, *args, **kwargs):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
@@ -288,6 +309,14 @@ class PartyAddressForm(BaseForm):
         countries = get_countries(request)
         country_choices = [(country["id"], country["name"]) for country in countries]
         self.fields["country"].choices += country_choices
+        self.helper.layout = Layout(
+            HTML.h1(title),
+            Fieldset(
+                "address",
+                "country",
+            ),
+            Submit("submit", "Continue"),
+        )
 
     def get_layout_fields(self):
         return (

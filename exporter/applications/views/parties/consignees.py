@@ -92,12 +92,10 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
     ]
 
     def get_form_kwargs(self, step=None):
-        PartySubTypeSelectForm.Layout.TITLE = "Select the type of consignee"
-        PartyNameForm.Layout.TITLE = "Consignee name"
-        PartyWebsiteForm.Layout.TITLE = "Consignee website address (optional)"
-        PartyAddressForm.Layout.TITLE = "Consignee address"
         kwargs = super().get_form_kwargs(step)
-
+        for consignee_step, title in SetPartyFormSteps.CONSIGNEE_STEP_TITLES:
+            if step == consignee_step:
+                kwargs["title"] = title
         if step == SetPartyFormSteps.PARTY_ADDRESS:
             kwargs["request"] = self.request
 

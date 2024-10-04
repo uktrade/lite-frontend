@@ -146,12 +146,11 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
         return context
 
     def get_form_kwargs(self, step=None):
-        PartySubTypeSelectForm.title = "Select the type of end user"
-        PartyNameForm.Layout.TITLE = "End user name"
-        PartyWebsiteForm.Layout.TITLE = "End user website address (optional)"
-        PartyAddressForm.Layout.TITLE = "End user address"
-
         kwargs = super().get_form_kwargs(step)
+        for consignee_step, title in SetPartyFormSteps.END_USER_STEP_TITLES:
+            if step == consignee_step:
+                kwargs["title"] = title
+
         if step == SetPartyFormSteps.PARTY_ADDRESS:
             kwargs["request"] = self.request
         if step in (
