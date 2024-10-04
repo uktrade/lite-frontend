@@ -422,6 +422,7 @@ class PartyUndertakingDocumentEditView(LoginRequiredMixin, PartyContextMixin, Ba
         if step == SetPartyFormSteps.PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD:
             kwargs["edit"] = self.company_letterhead_document_exists
 
+        kwargs["title"] = None
         return kwargs
 
     def get_form_initial(self, step):
