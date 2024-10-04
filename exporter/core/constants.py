@@ -228,6 +228,11 @@ class SetPartyFormSteps:
         (PARTY_NAME, "End user name"),
         (PARTY_WEBSITE, "End user website address (optional)"),
         (PARTY_ADDRESS, "End user address"),
+        (PARTY_SIGNATORY_NAME, "Signatory name"),
+        (PARTY_DOCUMENTS, "Do you have an end-user document?"),
+        (PARTY_DOCUMENT_UPLOAD, "Upload an end-user document"),
+        (PARTY_ENGLISH_TRANSLATION_UPLOAD, "Upload an English translation"),
+        (PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, "Upload a document on company letterhead"),
     ]
 
 

@@ -148,9 +148,11 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        for consignee_step, title in SetPartyFormSteps.END_USER_STEP_TITLES:
-            if step == consignee_step:
+        for end_user_step, title in SetPartyFormSteps.END_USER_STEP_TITLES:
+            if step == end_user_step:
                 kwargs["title"] = title
+            else:
+                kwargs["title"] = None
 
         if step == SetPartyFormSteps.PARTY_ADDRESS:
             kwargs["request"] = self.request
@@ -533,9 +535,9 @@ class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
         if self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION:
-            return PartyEnglishTranslationDocumentUploadForm(edit=True, **form_kwargs)
+            return PartyEnglishTranslationDocumentUploadForm(edit=True, title=None, **form_kwargs)
         elif self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD:
-            return PartyCompanyLetterheadDocumentUploadForm(edit=True, **form_kwargs)
+            return PartyCompanyLetterheadDocumentUploadForm(edit=True, title=None, **form_kwargs)
         else:
             raise ValueError("Invalid document type encountered")
 

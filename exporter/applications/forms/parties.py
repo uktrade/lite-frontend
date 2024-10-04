@@ -161,7 +161,7 @@ class PartyReuseForm(forms.Form):
 
 class PartySubTypeSelectForm(BaseForm):
     class Layout:
-        TITLE = "Select the type of party"
+        TITLE = "Select the type of end user"
         TITLE_AS_LABEL_FOR = "sub_type"
 
     CHOICES = (
@@ -183,6 +183,9 @@ class PartySubTypeSelectForm(BaseForm):
 
     def __init__(self, title, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if not title:
+            title = self.Layout.TITLE
+
         self.helper.layout = Layout(
             HTML.h1(title),
             ConditionalRadios(
@@ -209,7 +212,7 @@ class PartySubTypeSelectForm(BaseForm):
 
 class PartyNameForm(BaseForm):
     class Layout:
-        TITLE = "Party name"
+        TITLE = "End user name"
         TITLE_AS_LABEL_FOR = "name"
 
     name = forms.CharField(
@@ -226,6 +229,8 @@ class PartyNameForm(BaseForm):
 
     def __init__(self, title, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if not title:
+            title = self.Layout.TITLE
         self.helper.layout = Layout(
             HTML.h1(title),
             Fieldset(
@@ -240,7 +245,7 @@ class PartyNameForm(BaseForm):
 
 class PartyWebsiteForm(BaseForm):
     class Layout:
-        TITLE = "Party website address (optional)"
+        TITLE = "End user website address (optional)"
         TITLE_AS_LABEL_FOR = "website"
 
     website = forms.CharField(
@@ -273,6 +278,8 @@ class PartyWebsiteForm(BaseForm):
 
     def __init__(self, title, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if not title:
+            title = self.Layout.TITLE
         self.helper.layout = Layout(
             HTML.h1(title),
             Fieldset(
@@ -287,7 +294,7 @@ class PartyWebsiteForm(BaseForm):
 
 class PartyAddressForm(BaseForm):
     class Layout:
-        TITLE = "Party address"
+        TITLE = "End user address"
 
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}),
@@ -307,6 +314,8 @@ class PartyAddressForm(BaseForm):
         countries = get_countries(request)
         country_choices = [(country["id"], country["name"]) for country in countries]
         self.fields["country"].choices += country_choices
+        if not title:
+            title = self.Layout.TITLE
         self.helper.layout = Layout(
             HTML.h1(title),
             Fieldset(
@@ -336,8 +345,6 @@ class PartySignatoryNameForm(BaseForm):
 
     def __init__(self, title, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not title:
-            title = self.Layout.TITLE
         self.helper.layout = Layout(
             HTML.h1(title),
             Fieldset(
@@ -354,10 +361,10 @@ class PartyDocumentsForm(forms.Form):
     title = "Do you have an end-user document?"
     text_p1 = """
         You will be asked to upload either an
-         <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form">
-         end-user undertaking (opens in new tab)</a> or
-         <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/stockist-undertaking-su-form">
-         stockist undertaking (opens in new tab)</a> completed by the end-user or stockist.
+        <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form">
+        end-user undertaking (opens in new tab)</a> or
+        <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/stockist-undertaking-su-form">
+        stockist undertaking (opens in new tab)</a> completed by the end-user or stockist.
     """
     text_p2 = "You must include at least one page on company letterhead. This can either be within the end-user document or on a separate document."
     text_p3 = (
@@ -450,7 +457,7 @@ class PartyDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, edit, *args, **kwargs):
+    def __init__(self, title, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # when edit user may choose not to replace the existing document
@@ -479,7 +486,7 @@ class PartyEnglishTranslationDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, edit, *args, **kwargs):
+    def __init__(self, title, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if edit:
@@ -504,7 +511,7 @@ class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, edit, *args, **kwargs):
+    def __init__(self, title, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if edit:
