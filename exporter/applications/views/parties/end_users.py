@@ -143,6 +143,7 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
             context["title"] = form.Layout.TITLE
         else:
             context["title"] = form.title
+
         return context
 
     def get_form_kwargs(self, step=None):
@@ -290,6 +291,13 @@ class RemoveEndUserView(LoginRequiredMixin, PartyContextMixin, TemplateView):
 
 
 class PartyEditView(LoginRequiredMixin, PartyContextMixin, FormView):
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["title"] = None
+
+        return kwargs
+
     def form_valid(self, form):
         update_party(self.request, self.application_id, self.party_id, form.cleaned_data)
         return super().form_valid(form)

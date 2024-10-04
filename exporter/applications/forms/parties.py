@@ -183,8 +183,6 @@ class PartySubTypeSelectForm(BaseForm):
 
     def __init__(self, title, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not title:
-            title = self.Layout.TITLE
         self.helper.layout = Layout(
             HTML.h1(title),
             ConditionalRadios(
@@ -336,6 +334,18 @@ class PartySignatoryNameForm(BaseForm):
         error_messages={"required": "Enter a name"},
     )
 
+    def __init__(self, title, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not title:
+            title = self.Layout.TITLE
+        self.helper.layout = Layout(
+            HTML.h1(title),
+            Fieldset(
+                "signatory_name_euu",
+            ),
+            Submit("submit", "Continue"),
+        )
+
     def get_layout_fields(self):
         return ("signatory_name_euu",)
 
@@ -372,7 +382,7 @@ class PartyDocumentsForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
