@@ -1,6 +1,6 @@
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Fieldset, Layout, Submit, HTML
+from crispy_forms_gds.layout import Layout, Submit, HTML
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator, URLValidator
@@ -160,9 +160,6 @@ class PartyReuseForm(forms.Form):
 
 
 class PartySubTypeSelectForm(BaseForm):
-    class Layout:
-        TITLE = "Select the type of end user"
-        TITLE_AS_LABEL_FOR = "sub_type"
 
     CHOICES = (
         Choice("government", PartyForm.Options.GOVERNMENT),
@@ -181,13 +178,10 @@ class PartySubTypeSelectForm(BaseForm):
     )
     sub_type_other = forms.CharField(required=False, label="")
 
-    def __init__(self, title, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not title:
-            title = self.Layout.TITLE
-
         self.helper.layout = Layout(
-            HTML.h1(title),
+            HTML.h1(self.title),
             ConditionalRadios(
                 "sub_type",
                 PartyForm.Options.GOVERNMENT,
@@ -210,6 +204,22 @@ class PartySubTypeSelectForm(BaseForm):
         return cleaned_data
 
 
+class EndUserSubTypeSelectForm(PartySubTypeSelectForm):
+    title = "Select the type of end user"
+
+    class Layout:
+        TITLE = "Select the type of end user"
+        TITLE_AS_LABEL_FOR = "sub_type"
+
+
+class ConsigneeSubTypeSelectForm(PartySubTypeSelectForm):
+    title = "Select the type of consignee"
+
+    class Layout:
+        TITLE = "Select the type of consignee"
+        TITLE_AS_LABEL_FOR = "sub_type"
+
+
 class PartyNameForm(BaseForm):
     class Layout:
         TITLE = "End user name"
@@ -227,26 +237,23 @@ class PartyNameForm(BaseForm):
         ],
     )
 
-    def __init__(self, title, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not title:
-            title = self.Layout.TITLE
-        self.helper.layout = Layout(
-            HTML.h1(title),
-            Fieldset(
-                "name",
-            ),
-            Submit("submit", "Continue"),
-        )
-
     def get_layout_fields(self):
         return ("name",)
 
 
-class PartyWebsiteForm(BaseForm):
+class EndUserNameForm(PartyNameForm):
     class Layout:
-        TITLE = "End user website address (optional)"
-        TITLE_AS_LABEL_FOR = "website"
+        TITLE = "End user name"
+        TITLE_AS_LABEL_FOR = "name"
+
+
+class ConsigneeNameForm(PartyNameForm):
+    class Layout:
+        TITLE = "Consignee name"
+        TITLE_AS_LABEL_FOR = "name"
+
+
+class PartyWebsiteForm(BaseForm):
 
     website = forms.CharField(
         required=False,
@@ -276,20 +283,20 @@ class PartyWebsiteForm(BaseForm):
 
         return website
 
-    def __init__(self, title, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if not title:
-            title = self.Layout.TITLE
-        self.helper.layout = Layout(
-            HTML.h1(title),
-            Fieldset(
-                "website",
-            ),
-            Submit("submit", "Continue"),
-        )
-
     def get_layout_fields(self):
         return ("website",)
+
+
+class EndUserWebsiteForm(PartyWebsiteForm):
+    class Layout:
+        TITLE = "End user website address (optional)"
+        TITLE_AS_LABEL_FOR = "website"
+
+
+class ConsigneeWebsiteForm(PartyWebsiteForm):
+    class Layout:
+        TITLE = "Consignee website address (optional)"
+        TITLE_AS_LABEL_FOR = "website"
 
 
 class PartyAddressForm(BaseForm):
@@ -305,7 +312,7 @@ class PartyAddressForm(BaseForm):
         choices=[("", "Select a country")], error_messages={"required": "Select the country"}
     )  # populated in __init__
 
-    def __init__(self, title, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
@@ -314,22 +321,22 @@ class PartyAddressForm(BaseForm):
         countries = get_countries(request)
         country_choices = [(country["id"], country["name"]) for country in countries]
         self.fields["country"].choices += country_choices
-        if not title:
-            title = self.Layout.TITLE
-        self.helper.layout = Layout(
-            HTML.h1(title),
-            Fieldset(
-                "address",
-                "country",
-            ),
-            Submit("submit", "Continue"),
-        )
 
     def get_layout_fields(self):
         return (
             "address",
             "country",
         )
+
+
+class EndUserAddressForm(PartyAddressForm):
+    class Layout:
+        TITLE = "End user address"
+
+
+class ConsigneeAddressForm(PartyAddressForm):
+    class Layout:
+        TITLE = "Consignee address"
 
 
 class PartySignatoryNameForm(BaseForm):
@@ -342,16 +349,6 @@ class PartySignatoryNameForm(BaseForm):
         help_text="This is the name of the person who signed the end user undertaking or stockist undertaking",
         error_messages={"required": "Enter a name"},
     )
-
-    def __init__(self, title, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper.layout = Layout(
-            HTML.h1(title),
-            Fieldset(
-                "signatory_name_euu",
-            ),
-            Submit("submit", "Continue"),
-        )
 
     def get_layout_fields(self):
         return ("signatory_name_euu",)
@@ -389,7 +386,7 @@ class PartyDocumentsForm(forms.Form):
         required=False,
     )
 
-    def __init__(self, title, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.helper = FormHelper()
@@ -457,7 +454,7 @@ class PartyDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, title, edit, *args, **kwargs):
+    def __init__(self, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # when edit user may choose not to replace the existing document
@@ -486,7 +483,7 @@ class PartyEnglishTranslationDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, title, edit, *args, **kwargs):
+    def __init__(self, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if edit:
@@ -511,7 +508,7 @@ class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
         },
     )
 
-    def __init__(self, title, edit, *args, **kwargs):
+    def __init__(self, edit, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if edit:

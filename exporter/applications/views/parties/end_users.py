@@ -13,10 +13,10 @@ from core.helpers import get_document_data
 
 from exporter.applications.forms.parties import (
     PartyReuseForm,
-    PartySubTypeSelectForm,
-    PartyNameForm,
-    PartyWebsiteForm,
-    PartyAddressForm,
+    EndUserSubTypeSelectForm,
+    EndUserNameForm,
+    EndUserWebsiteForm,
+    EndUserAddressForm,
     PartySignatoryNameForm,
     PartyDocumentsForm,
     PartyDocumentUploadForm,
@@ -112,10 +112,10 @@ def _post_party_document(request, application_id, party_id, document_type, docum
 
 class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
-        (SetPartyFormSteps.PARTY_SUB_TYPE, PartySubTypeSelectForm),
-        (SetPartyFormSteps.PARTY_NAME, PartyNameForm),
-        (SetPartyFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
-        (SetPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
+        (SetPartyFormSteps.PARTY_SUB_TYPE, EndUserSubTypeSelectForm),
+        (SetPartyFormSteps.PARTY_NAME, EndUserNameForm),
+        (SetPartyFormSteps.PARTY_WEBSITE, EndUserWebsiteForm),
+        (SetPartyFormSteps.PARTY_ADDRESS, EndUserAddressForm),
         (SetPartyFormSteps.PARTY_SIGNATORY_NAME, PartySignatoryNameForm),
         (SetPartyFormSteps.PARTY_DOCUMENTS, PartyDocumentsForm),
         (SetPartyFormSteps.PARTY_DOCUMENT_UPLOAD, PartyDocumentUploadForm),
@@ -148,11 +148,6 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        for end_user_step, title in SetPartyFormSteps.END_USER_STEP_TITLES:
-            if step == end_user_step:
-                kwargs["title"] = title
-            else:
-                kwargs["title"] = None
 
         if step == SetPartyFormSteps.PARTY_ADDRESS:
             kwargs["request"] = self.request
@@ -296,7 +291,6 @@ class PartyEditView(LoginRequiredMixin, PartyContextMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs["title"] = None
 
         return kwargs
 
@@ -309,28 +303,28 @@ class PartyEditView(LoginRequiredMixin, PartyContextMixin, FormView):
 
 
 class PartySubTypeEditView(PartyEditView):
-    form_class = PartySubTypeSelectForm
+    form_class = EndUserSubTypeSelectForm
 
     def get_initial(self):
         return {"sub_type": self.party["sub_type"]["key"], "sub_type_other": self.party["sub_type_other"]}
 
 
 class PartyNameEditView(PartyEditView):
-    form_class = PartyNameForm
+    form_class = EndUserNameForm
 
     def get_initial(self):
         return {"name": self.party["name"]}
 
 
 class PartyWebsiteEditView(PartyEditView):
-    form_class = PartyWebsiteForm
+    form_class = EndUserWebsiteForm
 
     def get_initial(self):
         return {"website": self.party["website"]}
 
 
 class PartyAddressEditView(PartyEditView):
-    form_class = PartyAddressForm
+    form_class = EndUserAddressForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -534,9 +528,9 @@ class PartyDocumentEditView(LoginRequiredMixin, PartyContextMixin, FormView):
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
         if self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION:
-            return PartyEnglishTranslationDocumentUploadForm(edit=True, title=None, **form_kwargs)
+            return PartyEnglishTranslationDocumentUploadForm(edit=True, **form_kwargs)
         elif self.kwargs.get("document_type") == DOCUMENT_TYPE_PARAM_COMPANY_LETTERHEAD:
-            return PartyCompanyLetterheadDocumentUploadForm(edit=True, title=None, **form_kwargs)
+            return PartyCompanyLetterheadDocumentUploadForm(edit=True, **form_kwargs)
         else:
             raise ValueError("Invalid document type encountered")
 

@@ -32,7 +32,7 @@ def test_party_reuse_form(data, valid, errors):
     ),
 )
 def test_party_subtype_select_form(data, valid, errors):
-    form = parties.PartySubTypeSelectForm(title=None, data=data)
+    form = parties.PartySubTypeSelectForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -62,7 +62,7 @@ def test_party_subtype_select_form(data, valid, errors):
     ),
 )
 def test_party_name_form(data, valid, errors):
-    form = parties.PartyNameForm(title=None, data=data)
+    form = parties.PartyNameForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -89,7 +89,7 @@ def test_party_name_form(data, valid, errors):
     ),
 )
 def test_party_website_form(data, valid, errors):
-    form = parties.PartyWebsiteForm(title=None, data=data)
+    form = parties.PartyWebsiteForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -131,7 +131,7 @@ def test_party_address_form(mock_get_countries, data, valid, errors):
 
     request = Request()
     mock_get_countries.return_value = [{"id": "aus", "name": "Austria"}, {"id": "fr", "name": "France"}]
-    form = parties.PartyAddressForm(title=None, request=request, data=data)
+    form = parties.PartyAddressForm(request=request, data=data)
 
     assert form.is_valid() == valid
     mock_get_countries.assert_called_once_with(request)
@@ -148,7 +148,7 @@ def test_party_address_form(mock_get_countries, data, valid, errors):
     ),
 )
 def test_party_signatory_name_form(data, valid, errors):
-    form = parties.PartySignatoryNameForm(title=None, data=data)
+    form = parties.PartySignatoryNameForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -178,7 +178,7 @@ def test_party_signatory_name_form(data, valid, errors):
     ),
 )
 def test_party_documents_form(data, valid, errors):
-    form = parties.PartyDocumentsForm(title=None, data=data)
+    form = parties.PartyDocumentsForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -232,7 +232,7 @@ def test_party_documents_form(data, valid, errors):
     ),
 )
 def test_party_document_upload_form(data, files, edit, valid, errors):
-    form = parties.PartyDocumentUploadForm(title=None, edit=edit, data=data, files=files)
+    form = parties.PartyDocumentUploadForm(edit=edit, data=data, files=files)
 
     assert form.is_valid() == valid
 
@@ -269,7 +269,7 @@ def test_party_document_upload_form(data, files, edit, valid, errors):
     ),
 )
 def test_party_english_translation_document_upload_form(data, files, edit, valid, errors):
-    form = parties.PartyEnglishTranslationDocumentUploadForm(title=None, edit=edit, data=data, files=files)
+    form = parties.PartyEnglishTranslationDocumentUploadForm(edit=edit, data=data, files=files)
 
     assert form.is_valid() == valid
 
@@ -306,7 +306,7 @@ def test_party_english_translation_document_upload_form(data, files, edit, valid
     ),
 )
 def test_party_company_letterhead_document_upload_form(data, files, edit, valid, errors):
-    form = parties.PartyCompanyLetterheadDocumentUploadForm(title=None, edit=edit, data=data, files=files)
+    form = parties.PartyCompanyLetterheadDocumentUploadForm(edit=edit, data=data, files=files)
 
     assert form.is_valid() == valid
 

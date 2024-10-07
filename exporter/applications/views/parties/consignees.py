@@ -13,10 +13,10 @@ from exporter.applications.services import validate_party
 from exporter.applications.views.parties.base import CopyParties, DeleteParty, CopyAndSetParty
 from exporter.applications.forms.parties import (
     PartyReuseForm,
-    PartySubTypeSelectForm,
-    PartyNameForm,
-    PartyWebsiteForm,
-    PartyAddressForm,
+    ConsigneeSubTypeSelectForm,
+    ConsigneeNameForm,
+    ConsigneeWebsiteForm,
+    ConsigneeAddressForm,
 )
 from exporter.applications.services import (
     get_application,
@@ -85,17 +85,14 @@ class AddConsignee(LoginRequiredMixin, FormView):
 class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
     party_type = "consignee"
     form_list = [
-        (SetPartyFormSteps.PARTY_SUB_TYPE, PartySubTypeSelectForm),
-        (SetPartyFormSteps.PARTY_NAME, PartyNameForm),
-        (SetPartyFormSteps.PARTY_WEBSITE, PartyWebsiteForm),
-        (SetPartyFormSteps.PARTY_ADDRESS, PartyAddressForm),
+        (SetPartyFormSteps.PARTY_SUB_TYPE, ConsigneeSubTypeSelectForm),
+        (SetPartyFormSteps.PARTY_NAME, ConsigneeNameForm),
+        (SetPartyFormSteps.PARTY_WEBSITE, ConsigneeWebsiteForm),
+        (SetPartyFormSteps.PARTY_ADDRESS, ConsigneeAddressForm),
     ]
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        for consignee_step, title in SetPartyFormSteps.CONSIGNEE_STEP_TITLES:
-            if step == consignee_step:
-                kwargs["title"] = title
         if step == SetPartyFormSteps.PARTY_ADDRESS:
             kwargs["request"] = self.request
 
