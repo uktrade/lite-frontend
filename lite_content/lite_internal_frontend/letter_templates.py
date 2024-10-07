@@ -71,7 +71,7 @@ class VariableHelpPageTables(Enum):
         Region|{{ organisation.primary_site.region }}|
         Country|{{ organisation.primary_site.country.name }}|United Kingdom
         Country code|{{ organisation.primary_site.country.code }}|
-    """
+    """  # noqa
 
     Case_and_licence_details = """
         Reference|{{ case_reference }}|GBSIEL/2020/0000001/P

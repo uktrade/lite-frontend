@@ -58,6 +58,7 @@ def retrieved_organisation():
                 "id": "9a2223b3-1a58-4cf1-a97d-d5a3f5a99b2e",
                 "address_line_1": "42 Question Road",
                 "address_line_2": "",
+                "address_line_3": "",
                 "city": "London",
                 "region": "London",
                 "postcode": "Islington",
