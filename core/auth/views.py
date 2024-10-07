@@ -104,12 +104,12 @@ class AbstractAuthCallbackView(abc.ABC, View):
 
         state = self.request.session.get(f"{settings.TOKEN_SESSION_KEY}_oauth_state", None)
         if not state:
-            logger.error("No state found in session")
+            logger.error("Authentication:Service: No state found in session")
             raise SuspiciousOperation("No state found in session")
 
         auth_service_state = self.request.GET.get("state")
         if state != auth_service_state:
-            logger.error("Session state and passed back state differ")
+            logger.error("Authentication:Service: Session state and passed back state differ")
             raise SuspiciousOperation("Session state and passed back state differ")
 
         token = self.fetch_token(request, auth_code)

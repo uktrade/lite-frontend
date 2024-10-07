@@ -12,6 +12,9 @@ def authenticate_exporter_user(request, json):
         response.raise_for_status()
     except HTTPError as ex:
         logger.warning(
-            "Authenticating user failed profile : %s client_ip: %s : %s", json, get_client_ip(request), str(ex)
+            "Authentication:Service: Authenticating user failed profile : %s client_ip: %s : %s",
+            json,
+            get_client_ip(request),
+            str(ex),
         )
     return response.json(), response.status_code
