@@ -19,17 +19,6 @@ class Tiles:
     HELP_AND_SUPPORT = "<!--View--> Help and support"
 
     # Standard dashboard
-    class Apply:
-        APPLY_FOR = "Apply for:"
-        EXPORT_LICENCES = "export licences"
-        TRADE_CONTROL_LICENCES = "trade control licences"
-        TRANSHIPMENT_LICENCES = "transhipment licences"
-        MOD_CLEARANCES = "MOD clearances"
-        REGISTER_OGEL = "Register for open general licences (OGLs)."
-
-    class Applications:
-        CHECK_PROGRESS = "View the status of submitted applications and registrations."
-        EDIT_APPLICATIONS = "Edit, withdraw or copy applications."
 
     class ProductList:
         MANAGE_PRODUCTS = "View and manage your organisation's product database."
