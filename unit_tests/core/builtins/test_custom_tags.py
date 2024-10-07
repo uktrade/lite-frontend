@@ -240,7 +240,7 @@ def test_subtract(num1, num2, expected):
                     "postcode": "42551",
                 }
             },
-            "42, Bakers street, San Jose, California, 42551, US",
+            "42, Bakers street, San jose county, San Jose, California, 42551, US",
         ),
         (
             {"address": "54, Bakers street, San Diego, California, 42551", "country": {"name": "United States"}},
