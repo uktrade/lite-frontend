@@ -216,25 +216,6 @@ class SetPartyFormSteps:
     PARTY_ENGLISH_TRANSLATION_UPLOAD = "PARTY_ENGLISH_TRANSLATION_UPLOAD"
     PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD = "PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD"
 
-    CONSIGNEE_STEP_TITLES = [
-        (PARTY_SUB_TYPE, "Select the type of consignee"),
-        (PARTY_NAME, "Consignee name"),
-        (PARTY_WEBSITE, "Consignee website address (optional)"),
-        (PARTY_ADDRESS, "Consignee address"),
-    ]
-
-    END_USER_STEP_TITLES = [
-        (PARTY_SUB_TYPE, "Select the type of end user"),
-        (PARTY_NAME, "End user name"),
-        (PARTY_WEBSITE, "End user website address (optional)"),
-        (PARTY_ADDRESS, "End user address"),
-        (PARTY_SIGNATORY_NAME, "Signatory name"),
-        (PARTY_DOCUMENTS, "Do you have an end-user document?"),
-        (PARTY_DOCUMENT_UPLOAD, "Upload an end-user document"),
-        (PARTY_ENGLISH_TRANSLATION_UPLOAD, "Upload an English translation"),
-        (PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD, "Upload a document on company letterhead"),
-    ]
-
 
 class PartyDocumentType:
     SUPPORTING_DOCUMENT = "supporting_document"
