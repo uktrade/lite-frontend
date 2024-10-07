@@ -207,29 +207,30 @@ AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
 AWS_DEFAULT_ACL = env.str("AWS_DEFAULT_ACL", None)
 AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
 
+LOG_LEVEL = env.str("LOG_LEVEL", "INFO").upper()
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
 }
-
 
 if IS_ENV_DBT_PLATFORM:
     ALLOWED_HOSTS = setup_allowed_hosts(ALLOWED_HOSTS)
     REDIS_URL = env.str("REDIS_URL", "")
     LOGGING.update({"formatters": {"asim_formatter": {"()": ASIMFormatter}}})
     LOGGING.update({"handlers": {"asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"}}})
-    LOGGING.update({"root": {"handlers": ["asim"]}})
+    LOGGING.update({"root": {"handlers": ["asim"], "level": LOG_LEVEL}})
 elif IS_ENV_GOV_PAAS:
     REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
     LOGGING.update({"formatters": {"ecs_formatter": {"()": ECSFormatter}}})
     LOGGING.update({"handlers": {"ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"}}})
-    LOGGING.update({"root": {"handlers": ["ecs"]}})
+    LOGGING.update({"root": {"handlers": ["ecs"], "level": LOG_LEVEL}})
 else:
     # Local configurations and CircleCI
     REDIS_URL = env.str("REDIS_URL", "")
     LOGGING.update({"formatters": {"simple": {"format": "{asctime} {levelname} {message}", "style": "{"}}})
     LOGGING.update({"handlers": {"stdout": {"class": "logging.StreamHandler", "formatter": "simple"}}})
-    LOGGING.update({"root": {"handlers": ["stdout"]}})
+    LOGGING.update({"root": {"handlers": ["stdout"], "level": LOG_LEVEL}})
 
 additional_logger_config = env.json("ADDITIONAL_LOGGER_CONFIG", default=None)
 if additional_logger_config:

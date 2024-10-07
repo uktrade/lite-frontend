@@ -1,6 +1,10 @@
+import logging
 from django.conf import settings
 from django.urls import reverse
 from authlib.integrations.requests_client import OAuth2Session
+from requests.exceptions import HTTPError
+
+logger = logging.getLogger(__name__)
 
 
 def get_client(request, **kwargs):
@@ -16,5 +20,10 @@ def get_client(request, **kwargs):
 
 
 def get_profile(client):
-    response = client.get(settings.AUTHBROKER_PROFILE_URL)  # .json()
+    try:
+        response = client.get(settings.AUTHBROKER_PROFILE_URL)
+        response.raise_for_status()
+    except HTTPError:
+        logger.info("Authentication:Service: Error with SSO get_profile", exc_info=True)
+        raise
     return response.json()
