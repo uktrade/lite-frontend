@@ -168,6 +168,7 @@ def test_new_site_form_uk_address(mock_request, mock_exporter_user_me, mock_post
         "address": "",
         "address_line_1": "HQ building",
         "address_line_2": "1 Test street",
+        "address_line_3": "place",
         "city": "London",
         "region": "Greater London",
         "postcode": "SW1 6FG",
@@ -180,6 +181,7 @@ def test_new_site_form_uk_address(mock_request, mock_exporter_user_me, mock_post
         "address": {
             "address_line_1": "HQ building",
             "address_line_2": "1 Test street",
+            "address_line_3": "place",
             "city": "London",
             "postcode": "SW1 6FG",
             "region": "Greater London",
