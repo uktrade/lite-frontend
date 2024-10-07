@@ -131,6 +131,14 @@ class RegisterAnOrganisation(SummaryListFormView):
             data["site.address.address_line_1"] = (
                 data["site.address.address_line_1"] + "\n" + data["site.address.address_line_2"]
             )
+        if "site.address.address_line_3" in data and data["site.address.address_line_3"]:
+            data["site.address.address_line_1"] = (
+                data["site.address.address_line_1"]
+                + "\n"
+                + data["site.address.address_line_2"]
+                + "\n"
+                + data["site.address.address_line_3"]
+            )
         return data
 
     def get_success_url(self):

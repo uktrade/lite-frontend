@@ -80,6 +80,7 @@ class NewSiteUKAddressForm(SiteFormMixin, forms.Form):
     name = forms.CharField(label=AddSiteForm.Details.NAME, required=False)
     address_line_1 = forms.CharField(label="Building and street", required=False)
     address_line_2 = forms.CharField(label="", required=False)
+    address_line_3 = forms.CharField(label="", required=False)
     city = forms.CharField(label="Town or city", required=False)
     region = forms.CharField(label="County or state", required=False)
     postcode = forms.CharField(label="Postcode", required=False)
@@ -102,6 +103,7 @@ class NewSiteUKAddressForm(SiteFormMixin, forms.Form):
             "address": {
                 "address_line_1": data.get("address_line_1"),
                 "address_line_2": data.get("address_line_2"),
+                "address_line_3": data.get("address_line_3"),
                 "city": data.get("city"),
                 "region": data.get("region"),
                 "postcode": data.get("postcode"),

@@ -77,6 +77,7 @@ class AddUserForm(BaseForm):
                 address.get("address"),
                 address.get("address_line_1"),
                 address.get("address_line_2"),
+                address.get("address_line_3"),
                 address.get("city"),
                 address.get("postcode"),
                 address.get("country").get("name"),
