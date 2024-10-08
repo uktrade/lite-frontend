@@ -150,7 +150,6 @@ class PartyReuseForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
         self.helper.layout = Layout(
             HTML.h1(self.title),
@@ -181,7 +180,7 @@ class PartySubTypeSelectForm(BaseForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper.layout = Layout(
-            HTML.h1(self.title),
+            HTML.h1(self.Layout.TITLE),
             ConditionalRadios(
                 "sub_type",
                 PartyForm.Options.GOVERNMENT,
@@ -205,16 +204,12 @@ class PartySubTypeSelectForm(BaseForm):
 
 
 class EndUserSubTypeSelectForm(PartySubTypeSelectForm):
-    title = "Select the type of end user"
-
     class Layout:
         TITLE = "Select the type of end user"
         TITLE_AS_LABEL_FOR = "sub_type"
 
 
 class ConsigneeSubTypeSelectForm(PartySubTypeSelectForm):
-    title = "Select the type of consignee"
-
     class Layout:
         TITLE = "Select the type of consignee"
         TITLE_AS_LABEL_FOR = "sub_type"
