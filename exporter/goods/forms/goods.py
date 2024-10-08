@@ -21,7 +21,6 @@ from exporter.core.constants import (
     FileUploadFileTypes,
 )
 from exporter.core.helpers import convert_control_list_entries, str_to_bool, convert_control_list_entries_to_options
-from exporter.core.validators import GoodNameValidator
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
 from exporter.goods.helpers import get_category_display_string, good_summary
 from core.common.forms import BaseForm
@@ -795,7 +794,6 @@ class AddGoodsQuestionsForm(forms.Form):
             "required": "Enter a product name",
         },
         required=True,
-        validators=[GoodNameValidator()],
     )
 
     description = forms.CharField(required=False, label="Description (optional)", widget=forms.Textarea)
