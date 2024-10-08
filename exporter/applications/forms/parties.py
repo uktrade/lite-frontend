@@ -159,6 +159,10 @@ class PartyReuseForm(forms.Form):
 
 
 class PartySubTypeSelectForm(BaseForm):
+    """
+    This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
+    as per the BaseForm.
+    """
 
     CHOICES = (
         Choice("government", PartyForm.Options.GOVERNMENT),
@@ -216,9 +220,10 @@ class ConsigneeSubTypeSelectForm(PartySubTypeSelectForm):
 
 
 class PartyNameForm(BaseForm):
-    class Layout:
-        TITLE = "End user name"
-        TITLE_AS_LABEL_FOR = "name"
+    """
+    This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
+    as per the BaseForm.
+    """
 
     name = forms.CharField(
         label="",
@@ -249,6 +254,10 @@ class ConsigneeNameForm(PartyNameForm):
 
 
 class PartyWebsiteForm(BaseForm):
+    """
+    This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
+    as per the BaseForm.
+    """
 
     website = forms.CharField(
         required=False,
@@ -295,8 +304,10 @@ class ConsigneeWebsiteForm(PartyWebsiteForm):
 
 
 class PartyAddressForm(BaseForm):
-    class Layout:
-        TITLE = "End user address"
+    """
+    This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
+    as per the BaseForm.
+    """
 
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}),
@@ -327,11 +338,13 @@ class PartyAddressForm(BaseForm):
 class EndUserAddressForm(PartyAddressForm):
     class Layout:
         TITLE = "End user address"
+        TITLE_AS_LABEL_FOR = "address"
 
 
 class ConsigneeAddressForm(PartyAddressForm):
     class Layout:
         TITLE = "Consignee address"
+        TITLE_AS_LABEL_FOR = "address"
 
 
 class PartySignatoryNameForm(BaseForm):
