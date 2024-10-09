@@ -135,7 +135,7 @@ def new_party_form_group(request, application, strings, back_url, clearance_opti
 
 class PartyReuseForm(BaseForm):
     class Layout:
-        TITLE = "Do you want to reuse an existing party?"
+        TITLE = "Do you want to reuse an existing party? - LITE - GOV.UK"
         TITLE_AS_LABEL_FOR = "reuse_party"
 
     reuse_party = forms.ChoiceField(
