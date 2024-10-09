@@ -77,11 +77,6 @@ class AddEndUserView(LoginRequiredMixin, FormView):
     form_class = PartyReuseForm
     template_name = "core/form.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form_title"] = self.form_class.title
-        return context
-
     def form_valid(self, form):
         reuse_party = str_to_bool(form.cleaned_data.get("reuse_party"))
         if reuse_party:

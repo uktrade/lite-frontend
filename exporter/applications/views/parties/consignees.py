@@ -1,5 +1,6 @@
 import logging
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import TemplateView, FormView
@@ -65,21 +66,14 @@ class AddConsignee(LoginRequiredMixin, FormView):
     form_class = PartyReuseForm
     template_name = "core/form.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form_title"] = self.form_class.title
-        return context
-
     def form_valid(self, form):
-        self.kwargs["reuse_party"] = str_to_bool(form.cleaned_data.get("reuse_party"))
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        reuse_party = self.kwargs.pop("reuse_party")
+        reuse_party = str_to_bool(form.cleaned_data.get("reuse_party"))
         if reuse_party:
-            return reverse("applications:consignees_copy", kwargs=self.kwargs)
+            success_url = reverse("applications:consignees_copy", kwargs=self.kwargs)
+        else:
+            success_url = reverse("applications:set_consignee", kwargs=self.kwargs)
 
-        return reverse("applications:set_consignee", kwargs=self.kwargs)
+        return HttpResponseRedirect(success_url)
 
 
 class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):

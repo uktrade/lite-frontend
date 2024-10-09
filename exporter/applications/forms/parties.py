@@ -133,8 +133,10 @@ def new_party_form_group(request, application, strings, back_url, clearance_opti
     return FormGroup(forms)
 
 
-class PartyReuseForm(forms.Form):
-    title = "Do you want to reuse an existing party?"
+class PartyReuseForm(BaseForm):
+    class Layout:
+        TITLE = "Do you want to reuse an existing party?"
+        TITLE_AS_LABEL_FOR = "reuse_party"
 
     reuse_party = forms.ChoiceField(
         choices=(
@@ -148,14 +150,8 @@ class PartyReuseForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "reuse_party",
-            Submit("submit", "Continue"),
-        )
+    def get_layout_fields(self):
+        return ("reuse_party",)
 
 
 class PartySubTypeSelectForm(BaseForm):
@@ -181,10 +177,8 @@ class PartySubTypeSelectForm(BaseForm):
     )
     sub_type_other = forms.CharField(required=False, label="")
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper.layout = Layout(
-            HTML.h1(self.Layout.TITLE),
+    def get_layout_fields(self):
+        return (
             ConditionalRadios(
                 "sub_type",
                 PartyForm.Options.GOVERNMENT,
@@ -192,11 +186,7 @@ class PartySubTypeSelectForm(BaseForm):
                 PartyForm.Options.INDIVIDUAL,
                 ConditionalRadiosQuestion(PartyForm.Options.OTHER, "sub_type_other"),
             ),
-            Submit("submit", "Continue"),
         )
-
-    def get_layout_fields(self):
-        return ("sub_type",)
 
     def clean(self):
         cleaned_data = super().clean()
