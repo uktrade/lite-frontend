@@ -133,7 +133,7 @@ commands:
           command: |
             git clone git@github.com:uktrade/lite-api.git
             cd lite-api
-            git checkout $(python ../which_branch.py <<parameters.api_branch>>)
+            git checkout LTD-5490-add-validation-to-exporter-address-to-match-HMRC-limits
       - run:
           name: Git Submodule Checkout
           command: |
