@@ -459,4 +459,4 @@ def test_add_end_user_view(authorized_client, data_standard_case):
     soup = BeautifulSoup(response.content, "html.parser")
     heading_element = soup.find("h1", class_="govuk-heading-xl")
 
-    assert heading_element.string == "Do you want to reuse an existing party? - LITE - GOV.UK"
+    assert heading_element.string == "Do you want to reuse an existing party?"
