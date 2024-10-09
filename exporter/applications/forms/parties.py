@@ -11,7 +11,6 @@ from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
 from exporter.core.constants import CaseTypes, FileUploadFileTypes
 from exporter.core.services import get_countries
-from exporter.core.validators import PartyAddressValidator, PartyNameValidator
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.applications import PartyForm, PartyTypeForm
 from lite_forms.common import country_question
@@ -223,7 +222,6 @@ class PartyNameForm(BaseForm):
                 80,
                 f"End user name should be 80 characters or less",
             ),
-            PartyNameValidator(),
         ],
     )
 
@@ -302,7 +300,6 @@ class PartyAddressForm(BaseForm):
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}),
         error_messages={"required": "Enter an address"},
-        validators=[PartyAddressValidator()],
     )
     country = forms.ChoiceField(
         choices=[("", "Select a country")], error_messages={"required": "Select the country"}

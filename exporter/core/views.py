@@ -3,7 +3,7 @@ from json import JSONDecodeError
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render, redirect, resolve_url
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView
 from django.http import HttpResponseRedirect
 
@@ -13,27 +13,19 @@ from exporter.applications.services import (
 )
 from exporter.auth.services import authenticate_exporter_user
 
-from exporter.core.forms import (
-    register_a_commercial_organisation_group,
-    register_triage,
-    register_an_individual_group,
-    RegisterNameForm,
-)
+from exporter.core.forms import RegisterNameForm
+
 from exporter.core.services import (
     get_notifications,
     get_organisation,
-    get_country,
-    register_commercial_organisation,
-    register_private_individual,
     get_signature_certificate,
 )
-from exporter.core.validators import validate_register_organisation_triage
+
 from core.auth.utils import get_profile
 from lite_content.lite_exporter_frontend import generic
 from lite_forms.components import BackLink
 from lite_forms.generators import success_page
 from lite_forms.helpers import conditional
-from lite_forms.views import SummaryListFormView, MultiFormView
 from exporter.organisation.members.services import get_user
 from lite_forms.generators import error_page
 
@@ -73,82 +65,6 @@ class Home(TemplateView):
         }
 
         return render(request, "core/hub.html", context)
-
-
-class RegisterAnOrganisationTriage(MultiFormView):
-    # This view is "odd" - all other views require the user to have a LITE API user. This one does not. Therefore the
-    # view is not using the LoginRequiredMixin. However, this view does require the user to be logged in.
-    class Locations:
-        UNITED_KINGDOM = "united_kingdom"
-        ABROAD = "abroad"
-
-    def init(self, request, **kwargs):
-        self.forms = register_triage()
-        self.action = validate_register_organisation_triage
-        self.additional_context = {"user_in_limbo": True}
-        if not request.authbroker_client.token:
-            raise Http404
-        else:
-            profile = get_profile(request.authbroker_client)
-            request.session["email"] = profile["email"]
-        if "user_token" in request.session and get_user(request)["organisations"]:
-            raise Http404
-
-    def get_success_url(self):
-        return reverse(
-            "core:register_an_organisation",
-            kwargs={"type": self.get_validated_data()["type"], "location": self.get_validated_data()["location"]},
-        )
-
-
-class RegisterAnOrganisation(SummaryListFormView):
-    def init(self, request, **kwargs):
-        _type = self.kwargs["type"]
-        location = self.kwargs["location"]
-
-        self.forms = (
-            register_a_commercial_organisation_group(request, location)
-            if _type == "commercial"
-            else register_an_individual_group(request, location)
-        )
-        self.action = register_commercial_organisation if _type == "commercial" else register_private_individual
-        self.hide_components = ["site.address.address_line_2"]
-        self.additional_context = {"user_in_limbo": True}
-
-        if not request.authbroker_client.token:
-            raise Http404
-        if "user_token" in request.session and get_user(request)["organisations"]:
-            raise Http404
-
-    def prettify_data(self, data):
-        if "site.address.country" in data and data["site.address.country"]:
-            data["site.address.country"] = get_country(self.request, data["site.address.country"])["name"]
-        if "site.foreign_address.country" in data and data["site.foreign_address.country"]:
-            data["site.foreign_address.country"] = get_country(self.request, data["site.foreign_address.country"])[
-                "name"
-            ]
-        if "site.address.address_line_2" in data and data["site.address.address_line_2"]:
-            data["site.address.address_line_1"] = (
-                data["site.address.address_line_1"] + "\n" + data["site.address.address_line_2"]
-            )
-        return data
-
-    def get_success_url(self):
-        # Update the signed in user's details so they can make validated API calls
-        profile = get_profile(self.request.authbroker_client)
-        profile.update(
-            {
-                "user_profile": {
-                    "first_name": self.request.session["first_name"],
-                    "last_name": self.request.session["last_name"],
-                }
-            },
-        )
-        # attempt to update user
-        response, _ = authenticate_exporter_user(self.request, profile)
-        self.request.session["user_token"] = response["token"]
-        self.request.session["lite_api_user_id"] = response["lite_api_user_id"]
-        return reverse("core:register_an_organisation_confirm") + "?animate=True"
 
 
 class RegisterAnOrganisationConfirmation(TemplateView):
