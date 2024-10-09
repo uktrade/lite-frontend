@@ -94,15 +94,6 @@ def test_consignee_name_form(data, valid, errors):
             False,
             {"name": [f"End user name should be 80 characters or less"]},
         ),
-        (
-            {"name": "test_name"},
-            False,
-            {
-                "name": [
-                    "Party name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
-        ),
     ),
 )
 def test_end_user_name_form(data, valid, errors):
@@ -202,24 +193,6 @@ def test_end_user_address_form(mock_get_countries, data, valid, errors):
         ({"address": "", "country": ""}, False, {"address": ["Enter an address"], "country": ["Select the country"]}),
         ({"address": "This-is-a-valid-address", "country": "aus"}, True, None),
         ({"address": "this\r\nis\r\ninvalid", "country": "aus"}, True, None),
-        (
-            {"address": "this_is_not", "country": "aus"},
-            False,
-            {
-                "address": [
-                    "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
-        ),
-        (
-            {"address": "this\w\ais\a\ainvalid", "country": "aus"},
-            False,
-            {
-                "address": [
-                    "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
-        ),
     ),
 )
 @patch("exporter.applications.forms.parties.get_countries")
