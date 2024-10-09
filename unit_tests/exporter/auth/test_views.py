@@ -42,6 +42,11 @@ def logout_url():
     return reverse("auth:logout")
 
 
+@pytest.fixture()
+def mock_authenticate_exporter_user_error(requests_mock):
+    yield requests_mock.post(url="/users/authenticate/", status_code=401, json={})
+
+
 def test_callback_no_auth_code(authorized_client, callback_url, login_url, caplog):
     response = authorized_client.get(callback_url)
     assert response.status_code == 302
@@ -98,15 +103,13 @@ def test_callback_no_user_in_db_no_name_set(
     settings,
     mocker,
     mock_get_authbroker_client,
+    mock_authenticate_exporter_user_error,
     register_name_url,
 ):
     session = authorized_client.session
     session[f"{settings.TOKEN_SESSION_KEY}_oauth_state"] = "state_key"
     del session["first_name"]
     session.save()
-
-    mock_authenticate_user = mocker.patch("exporter.auth.views.AuthCallbackView.authenticate_user")
-    mock_authenticate_user.return_value = {}, 401
 
     mock_user_profile = mocker.patch(
         "exporter.auth.views.AuthCallbackView.user_profile",

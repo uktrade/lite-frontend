@@ -1,13 +1,26 @@
 from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError
 from django.urls import reverse
 from django.conf import settings
+from conf import exporter
 from pytest_django.asserts import assertTemplateUsed
 import pytest
 
 from core import client
 
 
-def test_register_name(authorized_client):
+@pytest.fixture
+def home_url():
+    return reverse("core:home")
+
+
+@pytest.fixture()
+def mock_get_profile_error(requests_mock):
+    url = exporter.AUTHBROKER_PROFILE_URL
+    yield requests_mock.get(url=url, status_code=401, json={})
+
+
+def test_register_name(authorized_client, mock_get_profile):
     session = authorized_client.session
     session["first_name"] = None
     session["last_name"] = None
@@ -41,6 +54,16 @@ def test_register_name_save(authorized_client, requests_mock, mock_get_profile):
     assert response.url == settings.LOGIN_URL
 
 
+def test_register_name_save_get_profile_error(authorized_client, requests_mock, mock_get_profile_error):
+    session = authorized_client.session
+    session["first_name"] = None
+    session["last_name"] = None
+    session.save()
+    url = reverse("core:register_name")
+    with pytest.raises(HTTPError):
+        authorized_client.post(url, data={"first_name": "Joe", "last_name": "Blogs"})
+
+
 def test_register_name_redirects_name_known(authorized_client):
     session = authorized_client.session
     url = reverse("core:register_name")
@@ -49,11 +72,6 @@ def test_register_name_redirects_name_known(authorized_client):
     assert session["first_name"]
     assert session["last_name"]
     assert response.url == settings.LOGIN_URL
-
-
-@pytest.fixture
-def home_url():
-    return reverse("core:home")
 
 
 def test_home_no_logged_in_go_uk_user_start_page_template_used(client, home_url):
