@@ -334,3 +334,5 @@ NOTIFY_FEEDBACK_EMAIL = env.str("NOTIFY_FEEDBACK_EMAIL")
 
 # GA/GTM KEY
 GTM_ID = env.str("GTM_ID", default="")
+
+GIT_COMMIT = env.str("GIT_COMMIT", default="")
