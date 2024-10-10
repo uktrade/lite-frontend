@@ -15,6 +15,16 @@ class BaseSessionWizardView(SessionWizardView):
             return {}
         return cleaned_data
 
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+
+        try:
+            context["title"] = form.get_title()
+        except AttributeError:
+            pass
+
+        return context
+
 
 class StepEditView(FormView):
     template_name = "core/form.html"
