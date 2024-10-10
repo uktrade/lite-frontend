@@ -32,9 +32,9 @@ class BaseSessionWizardView(SessionWizardView):
 
     def render_to_response(self, context):
         if "title" not in context:
-            logger.warning("No title set for %s", context["form"])
+            logger.warning("No title set for `%s`", context["form"].__class__.__name__)
         elif not context["title"]:
-            logger.warning("Title set but blank for %s", context["form"])
+            logger.warning("Title set but blank for `%s`", context["form"].__class__.__name__)
         return super().render_to_response(context)
 
 
