@@ -71,6 +71,14 @@
 					</dd>
 				</div>
 			{% endif %}
+			{% if site.address.address_line_3 %}
+				<div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key"></dt>
+					<dd class="govuk-summary-list__value">
+						{{ site.address.address_line_3 }}
+					</dd>
+				</div>
+			{% endif %}
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
 					{% lcs "generic.Address.TOWN" %}

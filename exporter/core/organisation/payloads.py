@@ -10,6 +10,7 @@ def get_address_details_payload(form):
         address = {
             "address_line_1": form.cleaned_data["address_line_1"],
             "address_line_2": form.cleaned_data["address_line_2"],
+            "address_line_3": form.cleaned_data["address_line_3"],
             "city": form.cleaned_data["city"],
             "region": form.cleaned_data["region"],
             "postcode": form.cleaned_data["postcode"],
