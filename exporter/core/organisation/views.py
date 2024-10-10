@@ -110,7 +110,6 @@ class Registration(
         if location != "united_kingdom":
             form_class = RegisterAddressDetailsOverseasForm
             kwargs["request"] = self.request
-
         kwargs.update({"prefix": self.get_form_prefix(RegistrationSteps.ADDRESS_DETAILS, form_class), "data": data})
         return form_class(**kwargs)
 
