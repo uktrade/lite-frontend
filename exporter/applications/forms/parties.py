@@ -412,6 +412,9 @@ class PartyDocumentsForm(forms.Form):
 
         return cleaned_data
 
+    def get_title(self):
+        return self.title
+
 
 class PartyDocumentUploadForm(forms.Form):
     title = "Upload an end-user document"
@@ -468,6 +471,9 @@ class PartyDocumentUploadForm(forms.Form):
             Submit("submit", "Continue"),
         )
 
+    def get_title(self):
+        return self.title
+
 
 class PartyEnglishTranslationDocumentUploadForm(forms.Form):
     title = "Upload an English translation"
@@ -493,6 +499,9 @@ class PartyEnglishTranslationDocumentUploadForm(forms.Form):
             Submit("submit", "Continue"),
         )
 
+    def get_title(self):
+        return self.title
+
 
 class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
     title = "Upload a document on company letterhead"
@@ -517,6 +526,9 @@ class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
             "party_letterhead_document",
             Submit("submit", "Continue"),
         )
+
+    def get_title(self):
+        return self.title
 
 
 class PartyEC3DocumentUploadForm(forms.Form):
