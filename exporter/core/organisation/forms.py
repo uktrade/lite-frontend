@@ -97,8 +97,9 @@ class RegisterDetailsBaseForm(BaseForm):
     eori_number = forms.CharField(
         label=EORI_LABEL,
         help_text=(
-            "<a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state'"
-            "target='_blank'>Get an EORI number </a> if you don't have one."
+            """The first two letters are the country code, like GB or XI. This is followed by 12 or 15 numbers, like GB123456123456.
+            <a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state'"
+            "target='_blank'>Get an EORI number </a> if you don't have one."""
         ),
         error_messages={
             "required": "Enter a EORI number",
@@ -121,7 +122,8 @@ class RegisterDetailsBaseForm(BaseForm):
 
     vat_number = forms.CharField(
         label=VAT_LABEL,
-        help_text="9 digits long, with the first 2 letters indicating the country code of the registered business.",
+        help_text="""This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
+        You can find it on your VAT registration certificate.""",
         validators=[validate_vat],
     )
     registration_number = forms.CharField(
