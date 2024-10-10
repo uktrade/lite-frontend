@@ -7,6 +7,7 @@ from django.utils.functional import cached_property
 from django.views.generic import TemplateView, FormView
 from http import HTTPStatus
 
+from core.common.forms import BaseForm
 from core.file_handler import download_document_from_s3
 from core.helpers import get_document_data
 
@@ -135,6 +136,15 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
     @cached_property
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        if isinstance(form, BaseForm):
+            context["title"] = form.Layout.TITLE
+        else:
+            context["title"] = form.title
+
+        return context
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)

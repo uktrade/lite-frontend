@@ -1,5 +1,4 @@
 from django.views.generic import FormView
-from core.common.forms import BaseForm
 
 from formtools.wizard.views import SessionWizardView
 
@@ -9,15 +8,6 @@ from .storage import NoSaveStorage
 class BaseSessionWizardView(SessionWizardView):
     file_storage = NoSaveStorage()
     template_name = "core/form-wizard.html"
-
-    def get_context_data(self, form, **kwargs):
-        context = super().get_context_data(form, **kwargs)
-        if isinstance(form, BaseForm):
-            context["title"] = form.Layout.TITLE
-        else:
-            context["title"] = form.title
-
-        return context
 
     def get_cleaned_data_for_step(self, step):
         cleaned_data = super().get_cleaned_data_for_step(step)
