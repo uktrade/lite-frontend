@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "django_chunk_upload_handlers",
     "rules.apps.AutodiscoverRulesConfig",
     "extra_views",
+    "cacheops",
 ]
 
 MIDDLEWARE = [
