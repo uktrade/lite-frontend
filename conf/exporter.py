@@ -104,7 +104,8 @@ CACHES = {
     }
 }
 
-CACHEOPS_REDIS = REDIS_URL
+# Ensure cache on separate redis DB
+CACHEOPS_REDIS = f"{REDIS_URL}/2"
 
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):
