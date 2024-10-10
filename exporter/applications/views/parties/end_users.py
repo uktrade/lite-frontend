@@ -9,7 +9,6 @@ from http import HTTPStatus
 
 from core.file_handler import download_document_from_s3
 from core.helpers import get_document_data
-from core.common.forms import BaseForm
 
 from exporter.applications.forms.parties import (
     PartyReuseForm,
@@ -284,15 +283,6 @@ class PartyEditView(LoginRequiredMixin, PartyContextMixin, FormView):
         kwargs = super().get_form_kwargs()
 
         return kwargs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        if issubclass(self.form_class, BaseForm):
-            context["form_title"] = self.form_class.Layout.TITLE
-        else:
-            context["form_title"] = self.form_class.title
-
-        return context
 
     def form_valid(self, form):
         update_party(self.request, self.application_id, self.party_id, form.cleaned_data)
