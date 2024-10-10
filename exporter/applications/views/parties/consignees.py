@@ -90,6 +90,12 @@ class SetConsignee(LoginRequiredMixin, BaseSessionWizardView):
         (SetPartyFormSteps.PARTY_ADDRESS, ConsigneeAddressForm),
     ]
 
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        context["title"] = form.Layout.TITLE
+
+        return context
+
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
         if step == SetPartyFormSteps.PARTY_ADDRESS:
