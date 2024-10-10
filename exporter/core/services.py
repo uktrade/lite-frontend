@@ -3,6 +3,7 @@ from http import HTTPStatus
 from urllib.parse import urlencode
 
 from cacheops import cached
+from django.conf import settings
 from django.http import HttpResponse
 
 from core import client
@@ -199,7 +200,8 @@ def put_organisation_user(request, user_pk, json):
     return data.json(), data.status_code
 
 
-@cached(timeout=CONTROL_LIST_ENTRIES_CACHE_TIMEOUT)
+# Vary the cache by GIT_COMMIT sha - to invalidate the cache on release
+@cached(timeout=CONTROL_LIST_ENTRIES_CACHE_TIMEOUT, extra=settings.GIT_COMMIT)
 def get_control_list_entries(request):
     response = client.get(request, "/exporter/static/control-list-entries/?include_non_selectable_for_assessment=True")
     response.raise_for_status()
