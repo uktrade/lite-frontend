@@ -1,8 +1,13 @@
+import logging
+
 from django.views.generic import FormView
 
 from formtools.wizard.views import SessionWizardView
 
 from .storage import NoSaveStorage
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseSessionWizardView(SessionWizardView):
@@ -24,6 +29,13 @@ class BaseSessionWizardView(SessionWizardView):
             pass
 
         return context
+
+    def render_to_response(self, context):
+        if "title" not in context:
+            logger.warning("No title set for %s", context["form"])
+        elif not context["title"]:
+            logger.warning("Title set but blank for %s", context["form"])
+        return super().render_to_response(context)
 
 
 class StepEditView(FormView):
