@@ -97,11 +97,12 @@ class RegisterDetailsBaseForm(BaseForm):
     eori_number = forms.CharField(
         label=EORI_LABEL,
         help_text=(
-            "<a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state'"
-            "target='_blank'>Get an EORI number </a> if you don't have one."
+            """The first two letters are the country code, like GB or XI. This is followed by 12 or 15 numbers, like GB123456123456.
+            <a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state'"
+            "target='_blank'>Get an EORI number </a> if you don't have one."""
         ),
         error_messages={
-            "required": "Enter a EORI number",
+            "required": "Enter an EORI number",
         },
         validators=[validate_eori],
     )
@@ -121,7 +122,8 @@ class RegisterDetailsBaseForm(BaseForm):
 
     vat_number = forms.CharField(
         label=VAT_LABEL,
-        help_text="9 digits long, with the first 2 letters indicating the country code of the registered business.",
+        help_text="""This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
+        You can find it on your VAT registration certificate.""",
         validators=[validate_vat],
     )
     registration_number = forms.CharField(
@@ -148,8 +150,8 @@ class RegisterDetailsBaseForm(BaseForm):
 
 
 class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
+
     def __init__(self, *args, **kwargs):
-        self.Layout.TITLE = "Enter organisation details"
         super().__init__(*args, **kwargs)
         self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
         self.fields["registration_number"].required = False
@@ -174,8 +176,10 @@ class RegisterDetailsIndividualOverseasForm(RegisterDetailsIndividualUKForm):
 
 
 class RegisterDetailsCommercialUKForm(RegisterDetailsBaseForm):
+    class Layout:
+        TITLE = "Register a commercial organisation"
+
     def __init__(self, *args, **kwargs):
-        self.Layout.TITLE = "Register a commercial organisation"
         super().__init__(*args, **kwargs)
         self.fields["name"].label = "Name of organisation"
 
@@ -197,8 +201,6 @@ class RegisterDetailsCommercialOverseasForm(RegisterDetailsCommercialUKForm):
 
 
 class RegisterAddressDetailsBaseForm(BaseForm):
-    class Layout:
-        TITLE = "What is your registered office address?"
 
     name = forms.CharField(
         label="Name of headquarters",
@@ -239,41 +241,21 @@ class RegisterAddressDetailsBaseForm(BaseForm):
 
         return website
 
-
-class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
-
-    title = "What is your registered office address?"
-    address_help_text = {
-        "title": "Help with your registered office address",
-        "content": """<p>This is usually the office address registered with Companies House. Or HM Revenue and Customs if you're not on Companies House.</p>
-        <p>Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>""",
-    }
-
-    name_help_text = ""
-
-    def __init__(self, is_individual, *args, **kwargs):
-        if is_individual:
-            self.title = "Where in the United Kingdom are you based?"
-            self.name_help_text = "Use the name 'Home' if you are providing the address where you live"
-            self.address_help_text["title"] = "Help with providing your address"
-            self.address_help_text[
-                "content"
-            ] = """<p>Provide your organisation's registered address if you have one.
-            This is usually the office address registered with Companies House or HMRC. Your organisation might have multiple sites or business addresses,
-            but there will only be one registered office.</p>"""
-
-        self.set_address_help_text()
-        self.set_name_help_text()
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("request"):
+            self.request = kwargs.pop("request")
         super().__init__(*args, **kwargs)
 
-    def get_title(self):
-        return self.title
 
-    def set_address_help_text(self):
-        self.p1_address_help = HTML.details(**self.address_help_text)
+class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
+    class Layout:
+        TITLE = "What is your registered office address?"
 
-    def set_name_help_text(self):
-        self.base_fields["name"].help_text = self.name_help_text
+    p1_address_help = HTML.details(
+        "Help with your registered office address",
+        "<p>This is usually the office address registered with Companies House. Or HM Revenue and Customs if you're not on Companies House.</p>"
+        "<p>Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>",
+    )
 
     address_line_1 = forms.CharField(
         label="Building and street",
@@ -320,7 +302,30 @@ class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
         )
 
 
-class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
+class RegisterAddressDetailsUKIndividualForm(RegisterAddressDetailsUKCommercialForm):
+
+    class Layout:
+        TITLE = "Where in the United Kingdom are you based?"
+
+    name = forms.CharField(
+        label="Name of headquarters",
+        error_messages={
+            "required": "Enter a name for your site",
+        },
+        help_text="Use the name 'Home' if you are providing the address where you live",
+    )
+
+    p1_address_help = HTML.details(
+        "Help with providing your address",
+        """<p>Provide your organisation's registered address if you have one. This is usually the office address registered with Companies House or HMRC.
+        Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>""",
+    )
+
+
+class RegisterAddressDetailsOverseasCommercialForm(RegisterAddressDetailsBaseForm):
+    class Layout:
+        TITLE = "Where is your organisation based?"
+
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),
         label="Address",
@@ -328,7 +333,6 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
             "required": "Enter an address",
         },
     )
-
     country = forms.ChoiceField(
         choices=[],
         widget=forms.widgets.Select(attrs={"data-module": "autocomplete-select"}),
@@ -337,14 +341,7 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
         },
     )
 
-    class Layout:
-        TITLE = "Where is your organisation based?"
-
-    def __init__(self, is_individual, request, *args, **kwargs):
-        self.request = request
-        if is_individual:
-            self.Layout.TITLE = "What is your registered office address?"
-
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         countries = get_countries(self.request, False, ["GB"])
         country_choices = [("", "")] + [(country["id"], country["name"]) for country in countries]
@@ -352,6 +349,11 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
 
     def get_layout_fields(self):
         return ("name", "address", "phone_number", "website", "country")
+
+
+class RegisterAddressDetailsOverseasIndividualForm(RegisterAddressDetailsOverseasCommercialForm):
+    class Layout:
+        TITLE = "What is your registered office address?"
 
 
 class SelectOrganisationForm(BaseForm):

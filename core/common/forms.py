@@ -24,7 +24,7 @@ class BaseForm(forms.Form):
                 self.helper.attrs = {"enctype": "multipart/form-data"}
                 break
 
-        title = self.get_title()
+        title = self.Layout.TITLE
         if hasattr(self.Layout, "TITLE_AS_LABEL_FOR"):
             id_for_label = self[self.Layout.TITLE_AS_LABEL_FOR].id_for_label
             title = f'<label for="{id_for_label}">{title}</label>'
@@ -45,9 +45,6 @@ class BaseForm(forms.Form):
                 css_class="govuk-button-group",
             ),
         )
-
-    def get_title(self):
-        return self.Layout.TITLE
 
     def get_layout_fields(self):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
