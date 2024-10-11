@@ -10,7 +10,6 @@ from core import client
 from core.helpers import convert_parameters_to_query_params, convert_value_to_query_param
 from lite_content.lite_exporter_frontend.applications import OpenGeneralLicenceQuestions
 from lite_forms.components import Option, TextArea
-from core.ip_filter import get_client_ip
 from exporter.core.constants import CONTROL_LIST_ENTRIES_CACHE_TIMEOUT
 
 log = logging.getLogger(__name__)
@@ -254,28 +253,6 @@ def get_pv_gradings_v2(request):
 def get_control_list_entry(request, rating):
     data = client.get(request, f"/static/control-list-entries/{rating}")
     return data.json().get("control_list_entry")
-
-
-def _register_organisation(request, json, _type):
-    log.info(
-        "Register_organisation: user:%s  client_ip: %s",
-        request.session["email"],
-        get_client_ip(request),
-    )
-    data = {
-        "type": _type,
-        "user": {"email": request.session["email"]},
-    }
-    response = client.post(request, "/organisations/", {**json, **data})
-    return response.json(), response.status_code
-
-
-def register_commercial_organisation(request, json):
-    return _register_organisation(request, json, "commercial")
-
-
-def register_private_individual(request, json):
-    return _register_organisation(request, json, "individual")
 
 
 def get_open_general_licences(

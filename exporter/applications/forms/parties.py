@@ -11,7 +11,6 @@ from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
 from exporter.core.constants import CaseTypes, FileUploadFileTypes
 from exporter.core.services import get_countries
-from exporter.core.validators import PartyAddressValidator, PartyNameValidator
 from lite_content.lite_exporter_frontend import strings
 from lite_content.lite_exporter_frontend.applications import PartyForm, PartyTypeForm
 from lite_forms.common import country_question
@@ -133,8 +132,10 @@ def new_party_form_group(request, application, strings, back_url, clearance_opti
     return FormGroup(forms)
 
 
-class PartyReuseForm(forms.Form):
-    title = "Do you want to reuse an existing party?"
+class PartyReuseForm(BaseForm):
+    class Layout:
+        TITLE = "Do you want to reuse an existing party?"
+        TITLE_AS_LABEL_FOR = "reuse_party"
 
     reuse_party = forms.ChoiceField(
         choices=(
@@ -148,19 +149,15 @@ class PartyReuseForm(forms.Form):
         },
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "reuse_party",
-            Submit("submit", "Continue"),
-        )
+    def get_layout_fields(self):
+        return ("reuse_party",)
 
 
-class PartySubTypeSelectForm(forms.Form):
-    title = "Select the type of end user"
+class PartySubTypeSelectForm(BaseForm):
+    """
+    This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
+    as per the BaseForm.
+    """
 
     CHOICES = (
         Choice("government", PartyForm.Options.GOVERNMENT),
@@ -179,12 +176,8 @@ class PartySubTypeSelectForm(forms.Form):
     )
     sub_type_other = forms.CharField(required=False, label="")
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
+    def get_layout_fields(self):
+        return (
             ConditionalRadios(
                 "sub_type",
                 PartyForm.Options.GOVERNMENT,
@@ -192,7 +185,6 @@ class PartySubTypeSelectForm(forms.Form):
                 PartyForm.Options.INDIVIDUAL,
                 ConditionalRadiosQuestion(PartyForm.Options.OTHER, "sub_type_other"),
             ),
-            Submit("submit", "Continue"),
         )
 
     def clean(self):
@@ -204,10 +196,23 @@ class PartySubTypeSelectForm(forms.Form):
         return cleaned_data
 
 
-class PartyNameForm(BaseForm):
+class EndUserSubTypeSelectForm(PartySubTypeSelectForm):
     class Layout:
-        TITLE = "End user name"
-        TITLE_AS_LABEL_FOR = "name"
+        TITLE = "Select the type of end user"
+        TITLE_AS_LABEL_FOR = "sub_type"
+
+
+class ConsigneeSubTypeSelectForm(PartySubTypeSelectForm):
+    class Layout:
+        TITLE = "Select the type of consignee"
+        TITLE_AS_LABEL_FOR = "sub_type"
+
+
+class PartyNameForm(BaseForm):
+    """
+    This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
+    as per the BaseForm.
+    """
 
     name = forms.CharField(
         label="",
@@ -217,7 +222,6 @@ class PartyNameForm(BaseForm):
                 80,
                 f"End user name should be 80 characters or less",
             ),
-            PartyNameValidator(),
         ],
     )
 
@@ -225,12 +229,30 @@ class PartyNameForm(BaseForm):
         return ("name",)
 
 
-class PartyWebsiteForm(BaseForm):
+class EndUserNameForm(PartyNameForm):
     class Layout:
-        TITLE = "End user website address (optional)"
-        TITLE_AS_LABEL_FOR = "website"
+        TITLE = "End user name"
+        TITLE_AS_LABEL_FOR = "name"
 
-    website = forms.CharField(required=False, label="", help_text="Use the format https://www.example.com")
+
+class ConsigneeNameForm(PartyNameForm):
+    class Layout:
+        TITLE = "Consignee name"
+        TITLE_AS_LABEL_FOR = "name"
+
+
+class PartyWebsiteForm(BaseForm):
+    """
+    This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
+    as per the BaseForm.
+    """
+
+    website = forms.CharField(
+        required=False,
+        label="",
+        help_text="Use the format https://www.example.com",
+        validators=[MaxLengthValidator(200, f"Website address should be 200 characters or less")],
+    )
 
     def clean_website(self):
         website = self.cleaned_data.get("website")
@@ -257,14 +279,27 @@ class PartyWebsiteForm(BaseForm):
         return ("website",)
 
 
-class PartyAddressForm(BaseForm):
+class EndUserWebsiteForm(PartyWebsiteForm):
     class Layout:
-        TITLE = "End user address"
+        TITLE = "End user website address (optional)"
+        TITLE_AS_LABEL_FOR = "website"
+
+
+class ConsigneeWebsiteForm(PartyWebsiteForm):
+    class Layout:
+        TITLE = "Consignee website address (optional)"
+        TITLE_AS_LABEL_FOR = "website"
+
+
+class PartyAddressForm(BaseForm):
+    """
+    This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
+    as per the BaseForm.
+    """
 
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "10"}),
         error_messages={"required": "Enter an address"},
-        validators=[PartyAddressValidator()],
     )
     country = forms.ChoiceField(
         choices=[("", "Select a country")], error_messages={"required": "Select the country"}
@@ -287,6 +322,18 @@ class PartyAddressForm(BaseForm):
         )
 
 
+class EndUserAddressForm(PartyAddressForm):
+    class Layout:
+        TITLE = "End user address"
+        TITLE_AS_LABEL_FOR = "address"
+
+
+class ConsigneeAddressForm(PartyAddressForm):
+    class Layout:
+        TITLE = "Consignee address"
+        TITLE_AS_LABEL_FOR = "address"
+
+
 class PartySignatoryNameForm(BaseForm):
     class Layout:
         TITLE = "Signatory name"
@@ -306,10 +353,10 @@ class PartyDocumentsForm(forms.Form):
     title = "Do you have an end-user document?"
     text_p1 = """
         You will be asked to upload either an
-         <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form">
-         end-user undertaking (opens in new tab)</a> or
-         <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/stockist-undertaking-su-form">
-         stockist undertaking (opens in new tab)</a> completed by the end-user or stockist.
+        <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/end-user-undertaking-euu-form">
+        end-user undertaking (opens in new tab)</a> or
+        <a class="govuk-link" target="_blank" href="https://www.gov.uk/government/publications/stockist-undertaking-su-form">
+        stockist undertaking (opens in new tab)</a> completed by the end-user or stockist.
     """
     text_p2 = "You must include at least one page on company letterhead. This can either be within the end-user document or on a separate document."
     text_p3 = (

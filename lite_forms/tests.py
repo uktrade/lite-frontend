@@ -1,10 +1,8 @@
-from unittest import TestCase, mock
+from unittest import TestCase
 
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
 
-from exporter.core.forms import site_form
-from exporter.core.views import RegisterAnOrganisationTriage
 from lite_forms.components import (
     Form,
     DetailComponent,
@@ -187,16 +185,6 @@ class FormTests(TestCase):
         )
         insert_hidden_fields({"matt": "berninger"}, form)
         self.assertEqual(len(form.questions), 1)
-
-    @mock.patch("django.http.request")
-    def test_site_form_help_success_present(self, request):
-        uk_org_form = site_form(request, False, RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM)
-        self.assertIsNotNone(uk_org_form.form_help)
-
-    @mock.patch("django.http.request")
-    def test_site_form_help_not_present(self, request):
-        uk_individual_form = site_form(request, True, RegisterAnOrganisationTriage.Locations.UNITED_KINGDOM)
-        self.assertIsNone(uk_individual_form.form_help)
 
 
 class TemplateTagsTestCase(TestCase):

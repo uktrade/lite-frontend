@@ -1,28 +1,10 @@
-from http import HTTPStatus
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
-import re
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 from exporter.applications.helpers.date_fields import format_date
-from lite_content.lite_exporter_frontend.core import RegisterAnOrganisation
-
-
-def validate_register_organisation_triage(_, json):
-    errors = {}
-
-    if not json.get("type"):
-        errors["type"] = [RegisterAnOrganisation.CommercialOrIndividual.ERROR]
-
-    if not json.get("location"):
-        errors["location"] = [RegisterAnOrganisation.WhereIsYourOrganisationBased.ERROR]
-
-    if errors:
-        return {"errors": errors}, HTTPStatus.BAD_REQUEST
-
-    return json, HTTPStatus.OK
 
 
 def validate_expiry_date(request, field_name):
@@ -42,31 +24,6 @@ def validate_expiry_date(request, field_name):
     else:
         if relativedelta(expiry_date, today).years >= 5:
             return ["Expiry date is too far in the future"]
-
-
-class EdifactStringValidator:
-    message = "Undefined Error"
-    regex_string = r"^[a-zA-Z0-9 .,\-\)\(\/'+:=\?\!\"%&\*;\<\>]+$"
-
-    def __call__(self, value):
-        if value:
-            match_regex = re.compile(self.regex_string)
-            is_value_valid = bool(match_regex.match(value))
-            if not is_value_valid:
-                raise ValidationError(self.message)
-
-
-class GoodNameValidator(EdifactStringValidator):
-    message = "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-
-
-class PartyAddressValidator(EdifactStringValidator):
-    regex_string = re.compile(r"^[a-zA-Z0-9 .,\-\)\(\/'+:=\?\!\"%&\*;\<\>\r\n]+$")
-    message = "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-
-
-class PartyNameValidator(EdifactStringValidator):
-    message = "Party name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
 
 
 class FutureDateValidator:
