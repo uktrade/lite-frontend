@@ -1,8 +1,13 @@
+import logging
+
 from django.views.generic import FormView
 
 from formtools.wizard.views import SessionWizardView
 
 from .storage import NoSaveStorage
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseSessionWizardView(SessionWizardView):
@@ -14,6 +19,23 @@ class BaseSessionWizardView(SessionWizardView):
         if cleaned_data is None:
             return {}
         return cleaned_data
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+
+        try:
+            context["title"] = form.get_title()
+        except AttributeError:
+            pass
+
+        return context
+
+    def render_to_response(self, context):
+        if "title" not in context:
+            logger.warning("No title set for `%s`", context["form"].__class__.__name__)
+        elif not context["title"]:
+            logger.warning("Title set but blank for `%s`", context["form"].__class__.__name__)
+        return super().render_to_response(context)
 
 
 class StepEditView(FormView):
