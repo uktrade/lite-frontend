@@ -124,6 +124,9 @@ class RegisterDetailsBaseForm(BaseForm):
         label=VAT_LABEL,
         help_text="""This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
         You can find it on your VAT registration certificate.""",
+        error_messages={
+            "required": "Enter a UK VAT number",
+        },
         validators=[validate_vat],
     )
     registration_number = forms.CharField(
