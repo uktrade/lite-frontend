@@ -245,6 +245,48 @@ def test_register_details_form_required_fields(
             },
             forms.RegisterDetailsCommercialUKForm,
         ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789£$%@£",
+                "sic_number": "xyz",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": [
+                    "SIC code can only include numbers",
+                    "Enter a SIC code that is 5 numbers long, like 12345",
+                ],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+                "vat_number": ["UK VAT number can only include numbers and letters"],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB1£$%@£",
+                "sic_number": "xyz",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": [
+                    "SIC code can only include numbers",
+                    "Enter a SIC code that is 5 numbers long, like 12345",
+                ],
+                "vat_number": [
+                    "UK VAT number can only include numbers and letters",
+                    "UK VAT number is too short",
+                    "Enter a UK VAT number in the correct format",
+                ],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
     ),
 )
 def test_register_details_form_field_validation(

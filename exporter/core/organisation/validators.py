@@ -19,6 +19,9 @@ def validate_vat(value):
         if not re.match(Validation.UK_VAT_VALIDATION_REGEX, stripped_vat):
             errors.append("Enter a UK VAT number in the correct format")
 
+        if errors:
+            raise ValidationError(errors)
+
 
 def validate_eori(value):
     errors = []
