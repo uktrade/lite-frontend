@@ -14,6 +14,22 @@ def mock_registration_number_fail(requests_mock):
     )
 
 
+@pytest.fixture
+def address_form_classes_overseas():
+    return [
+        forms.RegisterAddressDetailsOverseasCommercialForm,
+        forms.RegisterAddressDetailsOverseasIndividualForm,
+    ]
+
+
+@pytest.fixture
+def address_form_classes_uk():
+    return [
+        forms.RegisterAddressDetailsUKCommercialForm,
+        forms.RegisterAddressDetailsUKIndividualForm,
+    ]
+
+
 @pytest.mark.parametrize(
     "data, valid",
     (
@@ -41,7 +57,6 @@ def test_registration_type_form(data, valid):
 )
 def test_registration_uk_based_form(data, valid):
     form = forms.RegistrationUKBasedForm(data=data)
-
     assert form.is_valid() == valid
 
     if not valid:
@@ -54,7 +69,7 @@ def test_registration_uk_based_form(data, valid):
         (
             {},
             False,
-            {"name": ["Enter a name"], "eori_number": ["Enter a EORI number"]},
+            {"name": ["Enter a name"], "eori_number": ["Enter an EORI number"]},
             forms.RegisterDetailsIndividualUKForm,
             False,
         ),
@@ -66,7 +81,7 @@ def test_registration_uk_based_form(data, valid):
             False,
             {
                 "name": ["Enter a name"],
-                "eori_number": ["Enter a EORI number"],
+                "eori_number": ["Enter an EORI number"],
                 "sic_number": ["Enter a SIC code"],
                 "vat_number": ["This field is required."],
                 "registration_number": ["Enter a registration number"],
@@ -224,7 +239,7 @@ def test_registration_number_validation_error(
 
 
 @pytest.mark.parametrize(
-    "data, valid, error",
+    "data, valid, error, form_class",
     (
         (
             {
@@ -238,18 +253,33 @@ def test_registration_number_validation_error(
             },
             True,
             {},
+            forms.RegisterAddressDetailsUKCommercialForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "address_line_1": "xyz",
+                "region": "r",
+                "city": "c1",
+                "postcode": "pc",
+                "phone_number": "+441234567890",
+                "website": "http://www.notreal.com",
+            },
+            True,
+            {},
+            forms.RegisterAddressDetailsUKIndividualForm,
         ),
     ),
 )
-def test_register_address_details_validate_fields(data, valid, error):
-    form = forms.RegisterAddressDetailsUKForm(is_individual=True, data=data)
+def test_register_address_details_validate_fields(data, valid, error, form_class):
+    form = form_class(data=data)
     assert form.is_valid() == valid
     if not valid:
         assert form.errors == error
 
 
 @pytest.mark.parametrize(
-    "data, valid, error",
+    "data, valid, error, form_classes",
     (
         (
             {},
@@ -260,6 +290,7 @@ def test_register_address_details_validate_fields(data, valid, error):
                 "address": ["Enter an address"],
                 "country": ["Enter a country"],
             },
+            [forms.RegisterAddressDetailsOverseasCommercialForm, forms.RegisterAddressDetailsOverseasIndividualForm],
         ),
         (
             {
@@ -270,6 +301,7 @@ def test_register_address_details_validate_fields(data, valid, error):
             },
             True,
             {},
+            [forms.RegisterAddressDetailsOverseasCommercialForm, forms.RegisterAddressDetailsOverseasIndividualForm],
         ),
         (
             {
@@ -280,14 +312,16 @@ def test_register_address_details_validate_fields(data, valid, error):
             },
             True,
             {},
+            [forms.RegisterAddressDetailsOverseasCommercialForm, forms.RegisterAddressDetailsOverseasIndividualForm],
         ),
     ),
 )
-def test_register_non_uk_address_details_form(data, valid, error, mock_request, mock_get_countries):
-    form = forms.RegisterAddressDetailsOverseasForm(is_individual=False, data=data, request=mock_request)
-    assert form.is_valid() == valid
-    if not valid:
-        assert form.errors == error
+def test_register_non_uk_address_details_form(data, valid, error, mock_request, form_classes, mock_get_countries):
+    for form_class in form_classes:
+        form = form_class(data=data, request=mock_request)
+        assert form.is_valid() == valid
+        if not valid:
+            assert form.errors == error
 
 
 def test_select_organisation_form_invalid(data_organisations):
@@ -321,7 +355,9 @@ register_address_details_website_test_cases = [
     ("website", "is_valid", "errors"),
     register_address_details_website_test_cases,
 )
-def test_register_address_details_website_uk(website, is_valid, errors):
+def test_register_address_details_website_uk(
+    website, is_valid, errors, mock_request, address_form_classes_uk, mock_get_countries
+):
     data = {
         "name": "Tokugawa Building",
         "address_line_1": "1 Example Street",
@@ -331,17 +367,19 @@ def test_register_address_details_website_uk(website, is_valid, errors):
         "phone_number": "07890123456",
     }
     data["website"] = website
-
-    form = forms.RegisterAddressDetailsUKForm(is_individual=False, data=data)
-    assert form.is_valid() == is_valid
-    assert form.errors == errors
+    for form_class in address_form_classes_uk:
+        form = form_class(data=data, request=mock_request)
+        assert form.is_valid() == is_valid
+        assert form.errors == errors
 
 
 @pytest.mark.parametrize(
     ("website", "is_valid", "errors"),
     register_address_details_website_test_cases,
 )
-def test_register_address_details_website_overseas(website, is_valid, errors, mock_request, mock_get_countries):
+def test_register_address_details_website_overseas(
+    website, is_valid, errors, mock_request, address_form_classes_overseas, mock_get_countries
+):
     data = {
         "name": "Tokugawa Building",
         "address": "1 Example Street, Example City",
@@ -349,7 +387,7 @@ def test_register_address_details_website_overseas(website, is_valid, errors, mo
         "phone_number": "+447890123456",
     }
     data["website"] = website
-
-    form = forms.RegisterAddressDetailsOverseasForm(is_individual=False, data=data, request=mock_request)
-    assert form.is_valid() == is_valid
-    assert form.errors == errors
+    for form_class in address_form_classes_overseas:
+        form = form_class(data=data, request=mock_request)
+        assert form.is_valid() == is_valid
+        assert form.errors == errors

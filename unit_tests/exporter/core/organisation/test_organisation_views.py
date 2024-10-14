@@ -7,8 +7,10 @@ from exporter.core.organisation.forms import (
     RegisterDetailsIndividualUKForm,
     RegistrationUKBasedForm,
     RegisterDetailsCommercialUKForm,
-    RegisterAddressDetailsUKForm,
-    RegisterAddressDetailsOverseasForm,
+    RegisterAddressDetailsOverseasIndividualForm,
+    RegisterAddressDetailsOverseasCommercialForm,
+    RegisterAddressDetailsUKIndividualForm,
+    RegisterAddressDetailsUKCommercialForm,
     RegistrationConfirmation,
 )
 from unit_tests.helpers import reload_urlconf
@@ -86,26 +88,60 @@ def test_registration_uk_based_step(goto_step, post_to_step):
     assert isinstance(response.context["form"], RegisterDetailsCommercialUKForm)
 
 
-def test_registration_individual_details_step(goto_step, post_to_step):
+@pytest.mark.parametrize(
+    "reg_type, location, expected_form_class",
+    (
+        (
+            "individual",
+            "united_kingdom",
+            RegisterAddressDetailsUKIndividualForm,
+        ),
+        (
+            "commercial",
+            "united_kingdom",
+            RegisterAddressDetailsUKCommercialForm,
+        ),
+        (
+            "individual",
+            "abroad",
+            RegisterAddressDetailsOverseasIndividualForm,
+        ),
+        (
+            "commercial",
+            "abroad",
+            RegisterAddressDetailsOverseasCommercialForm,
+        ),
+    ),
+)
+def test_registration_address_details(
+    reg_type, location, expected_form_class, goto_step, post_to_step, mock_get_countries
+):
     goto_step(RegistrationSteps.REGISTRATION_TYPE)
     post_to_step(
         RegistrationSteps.REGISTRATION_TYPE,
-        {"type": "individual"},
+        {"type": reg_type},
     )
     goto_step(RegistrationSteps.UK_BASED)
     post_to_step(
         RegistrationSteps.UK_BASED,
-        {"location": "united_kingdom"},
+        {"location": location},
     )
 
     goto_step(RegistrationSteps.REGISTRATION_DETAILS)
-
     response = post_to_step(
         RegistrationSteps.REGISTRATION_DETAILS,
-        {"name": "joe", "eori_number": "GB205672212000", "vat_number": "GB123456789"},
+        {
+            "name": "joe",
+            "eori_number": "GB205672212000",
+            "sic_number": "12345",
+            "vat_number": "GB123456789",
+            "registration_number": "GB123456",
+        },
     )
+
     assert response.status_code == 200
-    assert isinstance(response.context["form"], RegisterAddressDetailsUKForm)
+
+    assert isinstance(response.context["form"], expected_form_class)
 
 
 def test_registration_individual_end_to_end_uk_based(
@@ -140,7 +176,10 @@ def test_registration_individual_end_to_end_uk_based(
 
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], RegisterAddressDetailsUKForm)
+    assert isinstance(
+        response.context["form"],
+        RegisterAddressDetailsUKIndividualForm,
+    )
 
     goto_step(RegistrationSteps.ADDRESS_DETAILS)
     response = post_to_step(
@@ -299,7 +338,7 @@ def test_registration_commercial_end_to_end(
 
     assert response.status_code == 200
     assert not response.context["form"].errors
-    assert isinstance(response.context["form"], RegisterAddressDetailsOverseasForm)
+    assert isinstance(response.context["form"], RegisterAddressDetailsOverseasCommercialForm)
 
     goto_step(RegistrationSteps.ADDRESS_DETAILS)
     response = post_to_step(
