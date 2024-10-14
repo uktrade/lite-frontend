@@ -1,5 +1,6 @@
 from cacheops import cached
 from collections import defaultdict
+from django.conf import settings
 
 from caseworker.advice.services import LICENSING_UNIT_TEAM
 from caseworker.cases.constants import CaseType
@@ -133,7 +134,8 @@ def get_user_role_name(request):
     return user["user"]["role"]["name"]
 
 
-@cached(timeout=CONTROL_LIST_ENTRIES_CACHE_TIMEOUT)
+# Vary the cache by GIT_COMMIT sha - to invalidate the cache on release
+@cached(timeout=CONTROL_LIST_ENTRIES_CACHE_TIMEOUT, extra=settings.GIT_COMMIT)
 def get_control_list_entries(request, include_non_selectable_for_assessment=False):
     url = "/caseworker/static/control-list-entries/"
     if include_non_selectable_for_assessment:
