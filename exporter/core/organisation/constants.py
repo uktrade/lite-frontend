@@ -1,6 +1,3 @@
-import re
-
-
 class RegistrationSteps:
     REGISTRATION_TYPE = "REGISTRATION_TYPE"
     UK_BASED = "UK_BASED"
@@ -20,28 +17,3 @@ class Validation:
     UK_VAT_MIN_LENGTH = 9
     SIC_LENGTH = 5
     LENGTH_REGISTRATION_NUMBER = "Registration numbers are 8 numbers long"
-
-    validate_eori_number_functions = {
-        "EORI number can only include numbers and letters": lambda v: not re.match(
-            Validation.LETTERS_AND_NUMBERS_ONLY, v
-        ),
-        "EORI number is too long": lambda v: len(re.sub(r"[^A-Z0-9]", "", v)) > Validation.UK_EORI_MAX_LENGTH,
-        "EORI number is too short": lambda v: len(re.sub(r"[^A-Z0-9]", "", v)) < Validation.UK_EORI_MIN_LENGTH,
-        "Country code can only be GB or XI": lambda v: not (
-            re.sub(r"[^A-Z0-9]", "", v).startswith("GB") or re.sub(r"[^A-Z0-9]", "", v).startswith("XI")
-        ),
-        "Enter an EORI number in the correct format": lambda v: not re.match(
-            Validation.UK_EORI_VALIDATION_REGEX, re.sub(r"[^A-Z0-9]", "", v)
-        ),
-    }
-
-    validate_vat_number_functions = {
-        "UK VAT number can only include numbers and letters": lambda v: not re.match(
-            Validation.LETTERS_AND_NUMBERS_ONLY, v
-        ),
-        "UK VAT number is too short": lambda v: len(re.sub(r"[^A-Z0-9]", "", v)) < Validation.UK_VAT_MIN_LENGTH,
-        "UK VAT number is too long": lambda v: len(re.sub(r"[^A-Z0-9]", "", v)) > Validation.UK_VAT_MAX_LENGTH,
-        "Enter a UK VAT number in the correct format": lambda v: not re.match(
-            Validation.UK_VAT_VALIDATION_REGEX, re.sub(r"[^A-Z0-9]", "", v)
-        ),
-    }
