@@ -211,7 +211,7 @@ class AuthBrokerTokenIntrospectionMiddleware:
             return self.get_response(request)
         try:
             self.introspect(request)
-        except (OAuth2Error, OAuthError, RequestException) as e:
+        except (OAuth2Error, OAuthError, RequestException, jwt.ExpiredSignatureError) as e:
             logger.warning(
                 "Authentication:Service: Introspecting with SSO failed for user %s: :%s : %s",
                 request.session.get("lite_api_user_id"),
