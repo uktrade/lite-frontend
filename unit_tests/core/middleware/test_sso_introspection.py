@@ -3,6 +3,9 @@ import pytest
 from unittest import mock
 
 from authlib.oauth2 import OAuth2Error
+from authlib.integrations.base_client.errors import OAuthError
+from jwt import ExpiredSignatureError
+from requests.exceptions import RequestException
 
 from rest_framework import status
 from rest_framework.response import Response
@@ -77,8 +80,17 @@ def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf)
     assert response.status_code == status.HTTP_302_FOUND
 
 
+@pytest.mark.parametrize(
+    "exception_class",
+    (
+        OAuth2Error,
+        OAuthError,
+        RequestException,
+        ExpiredSignatureError,
+    ),
+)
 @mock.patch("core.middleware.cache")
-def test_sso_introspection_middleware_oauth_error(mock_cache, rf):
+def test_sso_introspection_middleware_oauth_error(mock_cache, rf, exception_class):
     # Set up mock request and response
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
@@ -86,7 +98,7 @@ def test_sso_introspection_middleware_oauth_error(mock_cache, rf):
     request.session = mock.Mock()
     get_response = mock.Mock(return_value=Response())
     # Set up mock SSO response
-    request.authbroker_client.get = mock.Mock(side_effect=OAuth2Error())
+    request.authbroker_client.get = mock.Mock(side_effect=exception_class())
     # Mock cache
     mock_cache.get = mock.Mock(return_value=None)
     # Call the middleware
