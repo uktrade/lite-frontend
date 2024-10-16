@@ -163,12 +163,13 @@ class AuthBrokerTokenIntrospectionMiddleware:
                 request.session[settings.TOKEN_SESSION_KEY] = dict(new_jwt_token)
                 is_new_token = True
             except jwt.ExpiredSignatureError:
-                logger.info(
+                logger.warning(
                     "Authentication:Service: Introspecting SSO refresh token expired: %s client_ip: %s",
                     request.session.get("lite_api_user_id"),
                     get_client_ip(request),
+                    exc_info=True,
                 )
-                raise jwt.ExpiredSignatureError
+                raise
         except jwt.DecodeError:
             # The client doesn't have the correct support for full JWT we will return the original token
             pass
