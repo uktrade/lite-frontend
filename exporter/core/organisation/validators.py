@@ -35,8 +35,6 @@ def validate_eori(value):
             errors.append("EORI number is too short")
         if not (stripped_eori.startswith("GB") or stripped_eori.startswith("XI")):
             errors.append("Country code can only be GB or XI")
-        if not re.match(Validation.LETTERS_AND_NUMBERS_ONLY, stripped_eori):
-            errors.append("EORI number can only include numbers and letters")
         if not re.match(Validation.UK_EORI_VALIDATION_REGEX, stripped_eori):
             errors.append("Enter an EORI number in the correct format")
 

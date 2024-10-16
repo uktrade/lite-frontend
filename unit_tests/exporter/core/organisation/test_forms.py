@@ -287,6 +287,23 @@ def test_register_details_form_required_fields(
             },
             forms.RegisterDetailsCommercialUKForm,
         ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB1456464654",
+                "sic_number": "12345",
+                "registration_number": "12345678",
+            },
+            False,
+            {
+                "vat_number": [
+                    "UK VAT number is too long",
+                    "Enter a UK VAT number in the correct format",
+                ],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
     ),
 )
 def test_register_details_form_field_validation(
