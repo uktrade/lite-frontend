@@ -206,7 +206,14 @@ def test_registration_individual_end_to_end_uk_based(
         "registration_number": "GB123456",
         "site": {
             "name": "joe",
-            "address": {"address_line_1": "xyz", "address_line_2": "", "city": "c1", "region": "r", "postcode": "pc"},
+            "address": {
+                "address_line_1": "xyz",
+                "address_line_2": "",
+                "address_line_3": "",
+                "city": "c1",
+                "region": "r",
+                "postcode": "pc",
+            },
         },
         "phone_number": "+441234567890",
         "website": "http://www.notreal.com",

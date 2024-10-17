@@ -65,13 +65,13 @@ class VariableHelpPageTables(Enum):
         VAT registration number|{{ organisation.vat_number }}|
         Company registration number|{{ organisation.registration_number }}|
         Primary site name|{{ organisation.primary_site.name }}|
-        Address|{{ organisation.primary_site.address_line_1 }} \\n {{ organisation.primary_site.address_line_2 }}|
+        Address|{{ organisation.primary_site.address_line_1 }} \\n {{ organisation.primary_site.address_line_2 }} \\n {{ organisation.primary_site.address_line_3 }}|
         Postcode|{{ organisation.primary_site.postcode }}|
         City|{{ organisation.primary_site.city }}|
         Region|{{ organisation.primary_site.region }}|
         Country|{{ organisation.primary_site.country.name }}|United Kingdom
         Country code|{{ organisation.primary_site.country.code }}|
-    """
+    """  # noqa
 
     Case_and_licence_details = """
         Reference|{{ case_reference }}|GBSIEL/2020/0000001/P

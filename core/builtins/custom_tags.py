@@ -260,6 +260,7 @@ def get_address(data):
             address = [
                 address["address_line_1"],
                 address["address_line_2"],
+                address["address_line_3"],
                 address["city"],
                 address["region"],
                 address["postcode"],

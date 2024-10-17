@@ -1,4 +1,5 @@
 import json
+import time
 
 from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
@@ -126,6 +127,7 @@ def i_logout(driver, internal_url):  # noqa
 @when("I go to application previously created")  # noqa
 def click_on_created_application(driver, context, internal_url):  # noqa
     driver.get(internal_url.rstrip("/") + "/queues/00000000-0000-0000-0000-000000000001/cases/" + context.case_id + "/")
+    time.sleep(5)
     driver.find_element(by=By.ID, value="tab-details").click()
 
 

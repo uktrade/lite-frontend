@@ -14,7 +14,7 @@ class AddAdminExporterUserForm(BaseForm):
     email = forms.EmailField(
         label="Email",
         error_messages={
-            "required": "Enter an email address in the correct format, like name@example.com",
+            "required": "Enter an email address in the correct format, like name@example.com",  # /PS-IGNORE
         },
     )
 
@@ -42,6 +42,7 @@ class AddAdminExporterUserForm(BaseForm):
                 address.get("address"),
                 address.get("address_line_1"),
                 address.get("address_line_2"),
+                address.get("address_line_3"),
                 address.get("city"),
                 address.get("postcode"),
                 address.get("country").get("name"),

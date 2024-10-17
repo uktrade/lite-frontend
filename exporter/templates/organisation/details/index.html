@@ -70,6 +70,9 @@
                         {% if organisation.primary_site.address.address_line_2 %}
                             {{ organisation.primary_site.address.address_line_2 }}<br/>
                         {% endif %}
+                        {% if organisation.primary_site.address.address_line_3 %}
+                            {{ organisation.primary_site.address.address_line_3 }}<br/>
+                        {% endif %}
                         {{ organisation.primary_site.address.city }}<br/>
                         {{ organisation.primary_site.address.postcode }}<br/>
                         {{ organisation.primary_site.address.country.name }}

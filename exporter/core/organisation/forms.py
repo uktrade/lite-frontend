@@ -1,6 +1,6 @@
 from django import forms
 from django.db import models
-from django.core.validators import URLValidator
+from django.core.validators import URLValidator, MaxLengthValidator
 from django.core.exceptions import ValidationError
 
 from crispy_forms_gds.layout import HTML
@@ -207,6 +207,7 @@ class RegisterAddressDetailsBaseForm(BaseForm):
         error_messages={
             "required": "Enter a name for your site",
         },
+        validators=[MaxLengthValidator(80, f"Name should be 80 characters or less")],
     )
 
     phone_number = forms.CharField(
@@ -218,7 +219,12 @@ class RegisterAddressDetailsBaseForm(BaseForm):
         validators=[validate_phone],
     )
 
-    website = forms.CharField(label="Website", help_text="Use the format https://www.example.com", required=False)
+    website = forms.CharField(
+        label="Website",
+        help_text="Use the format https://www.example.com",
+        required=False,
+        validators=[MaxLengthValidator(200, f"Website address should be 200 characters or less")],
+    )
 
     def clean_website(self):
         website = self.cleaned_data.get("website")
@@ -262,10 +268,17 @@ class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
         error_messages={
             "required": "Enter a real building and street name",
         },
+        validators=[MaxLengthValidator(35, f"Address line 1 should be 35 characters or less")],
     )
     address_line_2 = forms.CharField(
         label="",
         required=False,
+        validators=[MaxLengthValidator(35, f"Address line 2 should be 35 characters or less")],
+    )
+    address_line_3 = forms.CharField(
+        label="",
+        required=False,
+        validators=[MaxLengthValidator(35, f"Address line 3 should be 35 characters or less")],
     )
 
     city = forms.CharField(
@@ -273,12 +286,14 @@ class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
         error_messages={
             "required": "Enter a real city",
         },
+        validators=[MaxLengthValidator(35, f"Town or city should be 35 characters or less")],
     )
     region = forms.CharField(
         label="County or state",
         error_messages={
             "required": "Enter a county or state",
         },
+        validators=[MaxLengthValidator(35, f"County or state should be 35 characters or less")],
     )
 
     postcode = forms.CharField(
@@ -286,6 +301,7 @@ class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
         error_messages={
             "required": "Enter a real postcode",
         },
+        validators=[MaxLengthValidator(8, f"Postcode should be 8 characters or less")],
     )
 
     def get_layout_fields(self):
@@ -293,6 +309,7 @@ class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
             "name",
             "address_line_1",
             "address_line_2",
+            "address_line_3",
             "city",
             "region",
             "postcode",
@@ -332,6 +349,7 @@ class RegisterAddressDetailsOverseasCommercialForm(RegisterAddressDetailsBaseFor
         error_messages={
             "required": "Enter an address",
         },
+        validators=[MaxLengthValidator(256, f"Address should be 256 characters or less")],
     )
     country = forms.ChoiceField(
         choices=[],
