@@ -7,6 +7,7 @@ from .constants import Validation
 
 
 def validate_vat(value):
+
     validate_vat_function_list = [
         (
             Validation.UK_VAT_LETTERS_AND_NUMBERS_ERROR_MESSAGE,
@@ -79,13 +80,20 @@ def validate_phone(value):
 
 def validate_sic_number(value):
 
-    validate_sic_number_functions = {
-        Validation.SIC_NUMBERS_ONLY_ERROR_MESSAGE: lambda v: not v.isdigit(),
-        Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE: lambda v: len(v) != Validation.SIC_LENGTH,
-    }
+    validate_sic_function_list = [
+        (
+            Validation.SIC_NUMBERS_ONLY_ERROR_MESSAGE,
+            lambda v: not v.isdigit(),
+        ),
+        (
+            Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE,
+            lambda v: len(v) != Validation.SIC_LENGTH,
+        ),
+    ]
+
     errors = []
     if value:
-        errors.extend(error_message for error_message, func in validate_sic_number_functions.items() if func(value))
+        errors.extend(error_message for error_message, func in validate_sic_function_list if func(value))
         if errors:
             raise ValidationError(errors)
 
