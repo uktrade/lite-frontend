@@ -54,22 +54,23 @@ def validate_phone(value):
     try:
         phone_number = phonenumbers.parse(value, "GB")
         if not phonenumbers.is_valid_number(phone_number):
-            errors.extend("Invalid telephone number")
+            raise ValidationError(errors)
     except phonenumbers.phonenumberutil.NumberParseException:
-        errors.extend("Invalid telephone number")
+        raise ValidationError(errors)
 
     if errors:
         raise ValidationError(errors)
 
 
 def validate_sic_number(value):
-    errors = []
 
+    validate_sic_number_functions = {
+        "SIC code can only include numbers": lambda v: not v.isdigit(),
+        "Enter a SIC code that is 5 numbers long, like 12345": lambda v: len(v) != Validation.SIC_LENGTH,
+    }
+    errors = []
     if value:
-        if not value.isdigit():
-            errors.append("SIC code can only include numbers")
-        if len(value) != Validation.SIC_LENGTH:
-            errors.append("Enter a SIC code that is 5 numbers long, like 12345")
+        errors.extend(error_message for error_message, func in validate_sic_number_functions.items() if func(value))
         if errors:
             raise ValidationError(errors)
 
