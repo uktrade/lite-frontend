@@ -2,11 +2,13 @@ from exporter.applications.views.goods.common.payloads import get_cleaned_data
 from core.wizard.payloads import MergingPayloadBuilder
 
 from .constants import RegistrationSteps
-from .forms import RegisterAddressDetailsUKForm
+from .forms import RegisterAddressDetailsUKIndividualForm, RegisterAddressDetailsUKCommercialForm
 
 
 def get_address_details_payload(form):
-    if isinstance(form, RegisterAddressDetailsUKForm):
+    if isinstance(form, RegisterAddressDetailsUKIndividualForm) or isinstance(
+        form, RegisterAddressDetailsUKCommercialForm
+    ):
         address = {
             "address_line_1": form.cleaned_data["address_line_1"],
             "address_line_2": form.cleaned_data["address_line_2"],

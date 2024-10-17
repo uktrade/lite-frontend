@@ -31,8 +31,26 @@ def test_party_reuse_form(data, valid, errors):
         ({"sub_type": "other"}, False, {"sub_type_other": ["Enter the type of the party you're adding"]}),
     ),
 )
-def test_party_subtype_select_form(data, valid, errors):
-    form = parties.PartySubTypeSelectForm(data=data)
+def test_end_user_subtype_select_form(data, valid, errors):
+    form = parties.EndUserSubTypeSelectForm(data=data)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        ({"sub_type": "government"}, True, None),
+        ({"sub_type": "other", "sub_type_other": "test_sub_type"}, True, None),
+        ({"sub_type": ""}, False, {"sub_type": ["Select what type of party you're creating"]}),
+        ({"sub_type": "other"}, False, {"sub_type_other": ["Enter the type of the party you're adding"]}),
+    ),
+)
+def test_consignee_subtype_select_form(data, valid, errors):
+    form = parties.ConsigneeSubTypeSelectForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -52,17 +70,34 @@ def test_party_subtype_select_form(data, valid, errors):
         ),
         (
             {"name": "test_name"},
-            False,
-            {
-                "name": [
-                    "Party name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
+            True,
+            None,
         ),
     ),
 )
-def test_party_name_form(data, valid, errors):
-    form = parties.PartyNameForm(data=data)
+def test_consignee_name_form(data, valid, errors):
+    form = parties.ConsigneeNameForm(data=data)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        ({"name": "test"}, True, None),
+        ({"name": ""}, False, {"name": ["Enter a name"]}),
+        (
+            {"name": "department of internation trade in collaboration with the department of national trade"},
+            False,
+            {"name": [f"End user name should be 80 characters or less"]},
+        ),
+    ),
+)
+def test_end_user_name_form(data, valid, errors):
+    form = parties.EndUserNameForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -78,11 +113,45 @@ def test_party_name_form(data, valid, errors):
         ({"website": "www.example.com"}, True, None),
         ({"website": "example.com"}, True, None),
         ({"website": ""}, True, None),
+        (
+            {
+                "website": "https://www.example.com/asfhadjksfhadsklfhalskfhjsakfhsdfkshfskfhsdkfhskfjhfkdshfksfhdksfhsdkjfhksfhsakadfshdsmnfbdsfbdsfsbdfdmsbfdfsngdfsbgdfsgdfsbgdfsgbdfsgbdfsgmnbdfsgmnbdfsgmdfsbgdfsgbdfsgbdfsbgdfsbg/"
+            },
+            False,
+            {"website": ["Website address should be 200 characters or less"]},
+        ),
         ({}, True, None),
     ),
 )
-def test_party_website_form(data, valid, errors):
-    form = parties.PartyWebsiteForm(data=data)
+def test_end_user_website_form(data, valid, errors):
+    form = parties.EndUserWebsiteForm(data=data)
+
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        ({"website": "test"}, False, {"website": ["Enter a valid URL."]}),
+        ({"website": "https://www.example.com"}, True, None),
+        ({"website": "www.example.com"}, True, None),
+        ({"website": "example.com"}, True, None),
+        ({"website": ""}, True, None),
+        (
+            {
+                "website": "https://www.example.com/asfhadjksfhadsklfhalskfhjsakfhsdfkshfskfhsdkfhskfjhfkdshfksfhdksfhsdkjfhksfhsakadfshdsmnfbdsfbdsfsbdfdmsbfdfsngdfsbgdfsgdfsbgdfsgbdfsgbdfsgmnbdfsgmnbdfsgmdfsbgdfsgbdfsgbdfsbgdfsbg/"
+            },
+            False,
+            {"website": ["Website address should be 200 characters or less"]},
+        ),
+        ({}, True, None),
+    ),
+)
+def test_consignee_website_form(data, valid, errors):
+    form = parties.ConsigneeWebsiteForm(data=data)
 
     assert form.is_valid() == valid
 
@@ -97,34 +166,43 @@ def test_party_website_form(data, valid, errors):
         ({"address": "", "country": ""}, False, {"address": ["Enter an address"], "country": ["Select the country"]}),
         ({"address": "This-is-a-valid-address", "country": "aus"}, True, None),
         ({"address": "this\r\nis\r\ninvalid", "country": "aus"}, True, None),
-        (
-            {"address": "this_is_not", "country": "aus"},
-            False,
-            {
-                "address": [
-                    "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
-        ),
-        (
-            {"address": "this\w\ais\a\ainvalid", "country": "aus"},
-            False,
-            {
-                "address": [
-                    "Address must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
-        ),
+        ({"address": "this_is_not", "country": "aus"}, True, None),
+        ({"address": "this\w\ais\a\ainvalid", "country": "aus"}, True, None),
     ),
 )
 @patch("exporter.applications.forms.parties.get_countries")
-def test_party_address_form(mock_get_countries, data, valid, errors):
+def test_end_user_address_form(mock_get_countries, data, valid, errors):
     class Request:
         csp_nonce = "test"
 
     request = Request()
     mock_get_countries.return_value = [{"id": "aus", "name": "Austria"}, {"id": "fr", "name": "France"}]
-    form = parties.PartyAddressForm(request=request, data=data)
+    form = parties.EndUserAddressForm(request=request, data=data)
+
+    assert form.is_valid() == valid
+    mock_get_countries.assert_called_once_with(request)
+
+    if not valid:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid, errors",
+    (
+        ({"address": "1 somewhere", "country": "aus"}, True, None),
+        ({"address": "", "country": ""}, False, {"address": ["Enter an address"], "country": ["Select the country"]}),
+        ({"address": "This-is-a-valid-address", "country": "aus"}, True, None),
+        ({"address": "this\r\nis\r\ninvalid", "country": "aus"}, True, None),
+    ),
+)
+@patch("exporter.applications.forms.parties.get_countries")
+def test_consignee_address_form(mock_get_countries, data, valid, errors):
+    class Request:
+        csp_nonce = "test"
+
+    request = Request()
+    mock_get_countries.return_value = [{"id": "aus", "name": "Austria"}, {"id": "fr", "name": "France"}]
+    form = parties.ConsigneeAddressForm(request=request, data=data)
 
     assert form.is_valid() == valid
     mock_get_countries.assert_called_once_with(request)

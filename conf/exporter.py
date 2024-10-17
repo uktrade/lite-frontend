@@ -48,8 +48,6 @@ TEMPLATES = [
 
 LOGIN_REDIRECT_URL = reverse_lazy("core:home")
 
-FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED = env.bool("FEATURE_FLAG_DJANGO_FORMS_REGISTRATION_ENABLED", True)
-
 LOGOUT_URL = urljoin(AUTHBROKER_URL, "logout")
 AUTHBROKER_SCOPE = "openid,email,offline_access"
 AUTHBROKER_AUTHORIZATION_URL = urljoin(AUTHBROKER_URL, "authorize")
@@ -106,7 +104,8 @@ CACHES = {
     }
 }
 
-CACHEOPS_REDIS = REDIS_URL
+# Ensure cache on separate redis DB
+CACHEOPS_REDIS = f"{REDIS_URL}/2"
 
 # Application Performance Monitoring
 if env.str("ELASTIC_APM_SERVER_URL", ""):
