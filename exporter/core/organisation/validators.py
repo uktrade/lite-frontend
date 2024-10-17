@@ -9,13 +9,15 @@ from .constants import Validation
 def validate_vat(value):
 
     validate_vat_number_functions = {
-        "UK VAT number can only include numbers and letters": lambda v: not re.match(
+        Validation.UK_VAT_LETTERS_AND_NUMBERS_ERROR_MESSAGE: lambda v: not re.match(
             Validation.LETTERS_AND_NUMBERS_ONLY, v
         ),
-        "UK VAT number is too short": lambda v: len(re.sub(r"[^A-Z0-9]", "", v)) < Validation.UK_VAT_MIN_LENGTH,
-        "UK VAT number is too long": lambda v: len(re.sub(r"[^A-Z0-9]", "", v)) > Validation.UK_VAT_MAX_LENGTH,
-        "Enter a UK VAT number in the correct format": lambda v: not re.match(
-            Validation.UK_VAT_VALIDATION_REGEX, re.sub(r"[^A-Z0-9]", "", v)
+        Validation.UK_VAT_MIN_LENGTH_ERROR_MESSAGE: lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v))
+        < Validation.UK_VAT_MIN_LENGTH,
+        Validation.UK_VAT_MAX_LENGTH_ERROR_MESSAGE: lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v))
+        > Validation.UK_VAT_MAX_LENGTH,
+        Validation.UK_VAT_VALIDATION_ERROR_MESSAGE: lambda v: not re.match(
+            Validation.UK_VAT_VALIDATION_REGEX, re.sub(Validation.STRIPPED_VALUE, "", v)
         ),
     }
 
@@ -29,16 +31,19 @@ def validate_vat(value):
 def validate_eori(value):
 
     validate_eori_number_functions = {
-        "EORI number can only include numbers and letters": lambda v: not re.match(
+        Validation.UK_EORI_LETTERS_AND_NUMBERS_ERROR_MESSAGE: lambda v: not re.match(
             Validation.LETTERS_AND_NUMBERS_ONLY, v
         ),
-        "EORI number is too long": lambda v: len(re.sub(r"[^A-Z0-9]", "", v)) > Validation.UK_EORI_MAX_LENGTH,
-        "EORI number is too short": lambda v: len(re.sub(r"[^A-Z0-9]", "", v)) < Validation.UK_EORI_MIN_LENGTH,
-        "Country code can only be GB or XI": lambda v: not (
-            re.sub(r"[^A-Z0-9]", "", v).startswith("GB") or re.sub(r"[^A-Z0-9]", "", v).startswith("XI")
+        Validation.UK_EORI_MAX_LENGTH_ERROR_MESSAGE: lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v))
+        > Validation.UK_EORI_MAX_LENGTH,
+        Validation.UK_EORI_MIN_LENGTH_ERROR_MESSAGE: lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v))
+        < Validation.UK_EORI_MIN_LENGTH,
+        Validation.UK_EORI_STARTING_LETTERS_ERROR_MESSAGE: lambda v: not (
+            re.sub(Validation.STRIPPED_VALUE, "", v).startswith("GB")
+            or re.sub(Validation.STRIPPED_VALUE, "", v).startswith("XI")
         ),
-        "Enter an EORI number in the correct format": lambda v: not re.match(
-            Validation.UK_EORI_VALIDATION_REGEX, re.sub(r"[^A-Z0-9]", "", v)
+        Validation.UK_EORI_VALIDATION_ERROR_MESSAGE: lambda v: not re.match(
+            Validation.UK_EORI_VALIDATION_REGEX, re.sub(Validation.STRIPPED_VALUE, "", v)
         ),
     }
 
@@ -65,8 +70,8 @@ def validate_phone(value):
 def validate_sic_number(value):
 
     validate_sic_number_functions = {
-        "SIC code can only include numbers": lambda v: not v.isdigit(),
-        "Enter a SIC code that is 5 numbers long, like 12345": lambda v: len(v) != Validation.SIC_LENGTH,
+        Validation.SIC_NUMBERS_ONLY_ERROR_MESSAGE: lambda v: not v.isdigit(),
+        Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE: lambda v: len(v) != Validation.SIC_LENGTH,
     }
     errors = []
     if value:
