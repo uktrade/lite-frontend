@@ -1,5 +1,5 @@
-import re
 import phonenumbers
+import re
 
 from django.core.exceptions import ValidationError
 
@@ -7,45 +7,95 @@ from .constants import Validation
 
 
 def validate_vat(value):
+
+    validate_vat_function_list = [
+        (
+            Validation.UK_VAT_LETTERS_AND_NUMBERS_ERROR_MESSAGE,
+            lambda v: not re.match(Validation.LETTERS_AND_NUMBERS_ONLY, v),
+        ),
+        (
+            Validation.UK_VAT_MIN_LENGTH_ERROR_MESSAGE,
+            lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v)) < Validation.UK_VAT_MIN_LENGTH,
+        ),
+        (
+            Validation.UK_VAT_MAX_LENGTH_ERROR_MESSAGE,
+            lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v)) > Validation.UK_VAT_MAX_LENGTH,
+        ),
+        (
+            Validation.UK_VAT_VALIDATION_ERROR_MESSAGE,
+            lambda v: not re.match(Validation.UK_VAT_VALIDATION_REGEX, re.sub(Validation.STRIPPED_VALUE, "", v)),
+        ),
+    ]
+
+    errors = []
     if value:
-        stripped_vat = re.sub(r"[^A-Z0-9]", "", value)
-        if len(stripped_vat) < Validation.UK_VAT_MIN_LENGTH:
-            raise ValidationError("Standard UK VAT numbers are 9 digits long")
-        elif len(stripped_vat) > Validation.UK_VAT_MAX_LENGTH:
-            raise ValidationError("Standard UK VAT numbers are 9 digits long")
-        elif not re.match(Validation.UK_VAT_VALIDATION_REGEX, stripped_vat):
-            raise ValidationError("Invalid UK VAT number")
-        return stripped_vat
+        errors.extend(error_message.strip() for error_message, func in validate_vat_function_list if func(value))
+        if errors:
+            raise ValidationError(errors)
 
 
 def validate_eori(value):
+
+    validate_vat_function_list = [
+        (
+            Validation.UK_EORI_LETTERS_AND_NUMBERS_ERROR_MESSAGE,
+            lambda v: not re.match(Validation.LETTERS_AND_NUMBERS_ONLY, v),
+        ),
+        (
+            Validation.UK_EORI_MAX_LENGTH_ERROR_MESSAGE,
+            lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v)) > Validation.UK_EORI_MAX_LENGTH,
+        ),
+        (
+            Validation.UK_EORI_MIN_LENGTH_ERROR_MESSAGE,
+            lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v)) < Validation.UK_EORI_MIN_LENGTH,
+        ),
+        (
+            Validation.UK_EORI_STARTING_LETTERS_ERROR_MESSAGE,
+            lambda v: not (
+                re.sub(Validation.STRIPPED_VALUE, "", v).startswith("GB")
+                or re.sub(Validation.STRIPPED_VALUE, "", v).startswith("XI")
+            ),
+        ),
+        (
+            Validation.UK_EORI_VALIDATION_ERROR_MESSAGE,
+            lambda v: not re.match(Validation.UK_EORI_VALIDATION_REGEX, re.sub(Validation.STRIPPED_VALUE, "", v)),
+        ),
+    ]
+
+    errors = []
     if value:
-        eori = re.sub(r"[^A-Z0-9]", "", value)
-        if len(eori) > Validation.UK_EORI_MAX_LENGTH:
-            raise ValidationError("EORI numbers are 17 characters or less")
-        elif not re.match(Validation.UK_EORI_VALIDATION_REGEX, eori):
-            raise ValidationError("Invalid UK EORI number")
+        errors.extend(error_message for error_message, func in validate_vat_function_list if func(value))
+        if errors:
+            raise ValidationError(errors)
 
 
 def validate_phone(value):
     try:
         phone_number = phonenumbers.parse(value, "GB")
         if not phonenumbers.is_valid_number(phone_number):
-            raise ValidationError("Invalid telephone number")
+            raise ValidationError(Validation.INVALID_PHONE_NUMBERS_ERROR_MESSAGE)
     except phonenumbers.phonenumberutil.NumberParseException:
-        raise ValidationError("Invalid telephone number")
+        raise ValidationError(Validation.INVALID_PHONE_NUMBERS_ERROR_MESSAGE)
 
 
 def validate_sic_number(value):
+
+    validate_sic_function_list = [
+        (
+            Validation.SIC_NUMBERS_ONLY_ERROR_MESSAGE,
+            lambda v: not v.isdigit(),
+        ),
+        (
+            Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE,
+            lambda v: len(v) != Validation.SIC_LENGTH,
+        ),
+    ]
+
+    errors = []
     if value:
-        if not value.isdigit():
-            raise ValidationError(Validation.ONLY_ENTER_NUMBERS)
-        int_value = int(value)
-        if int_value < 1110 or int_value > 99999:
-            raise ValidationError(Validation.INVALID_SIC)
-        if len(value) != 5:
-            raise ValidationError(Validation.LENGTH_SIC)
-    return value
+        errors.extend(error_message for error_message, func in validate_sic_function_list if func(value))
+        if errors:
+            raise ValidationError(errors)
 
 
 def validate_registration(value):
