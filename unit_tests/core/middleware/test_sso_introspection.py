@@ -1,3 +1,4 @@
+import jwt
 import pytest
 
 from unittest import mock
@@ -13,6 +14,12 @@ from rest_framework.response import Response
 from requests.models import Response as RResponse
 
 from core.middleware import AuthBrokerTokenIntrospectionMiddleware
+
+
+@pytest.fixture()
+def login_url(settings):
+    settings.LOGIN_URL = "/login-url/"
+    return settings.LOGIN_URL
 
 
 @mock.patch("core.middleware.cache")
@@ -61,7 +68,7 @@ def test_sso_introspection_middleware_success(
     ),
 )
 @mock.patch("core.middleware.cache")
-def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf):
+def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf, login_url):
     # Set up mock request and response
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
@@ -78,6 +85,7 @@ def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf)
     instance = AuthBrokerTokenIntrospectionMiddleware(get_response)
     response = instance(request)
     assert response.status_code == status.HTTP_302_FOUND
+    assert response.url == login_url
 
 
 @pytest.mark.parametrize(
@@ -90,7 +98,7 @@ def test_sso_introspection_middleware_request_error(mock_cache, status_code, rf)
     ),
 )
 @mock.patch("core.middleware.cache")
-def test_sso_introspection_middleware_oauth_error(mock_cache, rf, exception_class):
+def test_sso_introspection_middleware_oauth_error(mock_cache, rf, login_url, exception_class):
     # Set up mock request and response
     request = rf.get("/")
     request.authbroker_client = mock.Mock()
@@ -105,3 +113,42 @@ def test_sso_introspection_middleware_oauth_error(mock_cache, rf, exception_clas
     instance = AuthBrokerTokenIntrospectionMiddleware(get_response)
     response = instance(request)
     assert response.status_code == status.HTTP_302_FOUND
+    assert response.url == login_url
+    request.session.flush.assert_called()
+
+
+@mock.patch("core.middleware.jwt.decode")
+def test_sso_introspection_middleware_expired_refresh_token(mock_decode, rf, login_url):
+    access_token = "test_access_token"
+    refresh_token = "test_refresh_token"
+
+    mock_decode.side_effect = jwt.ExpiredSignatureError()
+
+    request = rf.get("/")
+    request.authbroker_client = mock.Mock()
+    request.authbroker_client.token = {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+    }
+    request.session = mock.Mock()
+
+    get_response = mock.Mock(return_value=Response())
+    instance = AuthBrokerTokenIntrospectionMiddleware(get_response)
+    response = instance(request)
+
+    mock_decode.assert_has_calls(
+        [
+            mock.call(
+                access_token,
+                options={"verify_signature": False, "verify_exp": True},
+            ),
+            mock.call(
+                refresh_token,
+                options={"verify_signature": False, "verify_exp": True},
+            ),
+        ]
+    )
+
+    assert response.status_code == status.HTTP_302_FOUND
+    assert response.url == login_url
+    request.session.flush.assert_called()
