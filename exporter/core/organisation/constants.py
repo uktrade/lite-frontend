@@ -33,4 +33,6 @@ class Validation:
     SIC_NUMBERS_ONLY_ERROR_MESSAGE = "SIC code can only include numbers"
     SIC_NUMBER_LENGTH_ERROR_MESSAGE = "Enter a SIC code that is 5 numbers long, like 12345"
 
+    INVALID_PHONE_NUMBERS_ERROR_MESSAGE = "Invalid telephone number"
+
     LENGTH_REGISTRATION_NUMBER = "Registration numbers are 8 numbers long"

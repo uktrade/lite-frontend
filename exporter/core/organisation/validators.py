@@ -55,16 +55,12 @@ def validate_eori(value):
 
 
 def validate_phone(value):
-    errors = []
     try:
         phone_number = phonenumbers.parse(value, "GB")
         if not phonenumbers.is_valid_number(phone_number):
-            raise ValidationError(errors)
+            raise ValidationError(Validation.INVALID_PHONE_NUMBERS_ERROR_MESSAGE)
     except phonenumbers.phonenumberutil.NumberParseException:
-        raise ValidationError(errors)
-
-    if errors:
-        raise ValidationError(errors)
+        raise ValidationError(Validation.INVALID_PHONE_NUMBERS_ERROR_MESSAGE)
 
 
 def validate_sic_number(value):
