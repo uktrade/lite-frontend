@@ -12,6 +12,8 @@ class Validation:
     LETTERS_AND_NUMBERS_ONLY = r"^[a-zA-Z0-9]+$"
     # Matches GB followed by 9/12 digits or GB followed by GD/HA and 3 digits
     UK_VAT_VALIDATION_REGEX = r"^(GB|XI)?([0-9]{9}([0-9]{3})?|(GD|HA)[0-9]{3})$"
+    UK_EORI_STARTING_LETTERS_REGEX = r"^(GB|XI)"
+    SIC_NUMBERs_ONLY_REGEX = r"^\d+$"
 
     UK_EORI_MAX_LENGTH = 17
     UK_EORI_MIN_LENGTH = 14

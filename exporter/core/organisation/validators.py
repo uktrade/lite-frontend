@@ -1,44 +1,8 @@
 import phonenumbers
-import re
 
 from django.core.exceptions import ValidationError
 
 from .constants import Validation
-
-
-def validate_eori(value):
-
-    validate_vat_function_list = [
-        (
-            Validation.UK_EORI_LETTERS_AND_NUMBERS_ERROR_MESSAGE,
-            lambda v: not re.match(Validation.LETTERS_AND_NUMBERS_ONLY, v),
-        ),
-        (
-            Validation.UK_EORI_MAX_LENGTH_ERROR_MESSAGE,
-            lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v)) > Validation.UK_EORI_MAX_LENGTH,
-        ),
-        (
-            Validation.UK_EORI_MIN_LENGTH_ERROR_MESSAGE,
-            lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v)) < Validation.UK_EORI_MIN_LENGTH,
-        ),
-        (
-            Validation.UK_EORI_STARTING_LETTERS_ERROR_MESSAGE,
-            lambda v: not (
-                re.sub(Validation.STRIPPED_VALUE, "", v).startswith("GB")
-                or re.sub(Validation.STRIPPED_VALUE, "", v).startswith("XI")
-            ),
-        ),
-        (
-            Validation.UK_EORI_VALIDATION_ERROR_MESSAGE,
-            lambda v: not re.match(Validation.UK_EORI_VALIDATION_REGEX, re.sub(Validation.STRIPPED_VALUE, "", v)),
-        ),
-    ]
-
-    errors = []
-    if value:
-        errors.extend(error_message for error_message, func in validate_vat_function_list if func(value))
-        if errors:
-            raise ValidationError(errors)
 
 
 def validate_phone(value):
@@ -48,26 +12,6 @@ def validate_phone(value):
             raise ValidationError(Validation.INVALID_PHONE_NUMBERS_ERROR_MESSAGE)
     except phonenumbers.phonenumberutil.NumberParseException:
         raise ValidationError(Validation.INVALID_PHONE_NUMBERS_ERROR_MESSAGE)
-
-
-def validate_sic_number(value):
-
-    validate_sic_function_list = [
-        (
-            Validation.SIC_NUMBERS_ONLY_ERROR_MESSAGE,
-            lambda v: not v.isdigit(),
-        ),
-        (
-            Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE,
-            lambda v: len(v) != Validation.SIC_LENGTH,
-        ),
-    ]
-
-    errors = []
-    if value:
-        errors.extend(error_message for error_message, func in validate_sic_function_list if func(value))
-        if errors:
-            raise ValidationError(errors)
 
 
 def validate_registration(value):
