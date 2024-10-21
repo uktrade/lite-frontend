@@ -1,6 +1,6 @@
 from django import forms
 from django.db import models
-from django.core.validators import URLValidator
+from django.core.validators import URLValidator, MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.core.exceptions import ValidationError
 
 from crispy_forms_gds.layout import HTML
@@ -8,13 +8,13 @@ from crispy_forms_gds.layout import HTML
 from core.common.forms import BaseForm, TextChoice
 from exporter.core.services import get_countries
 from .validators import (
-    validate_vat,
     validate_eori,
     validate_phone,
     validate_registration,
     validate_sic_number,
 )
 from exporter.core.organisation.services import validate_registration_number
+from .constants import Validation
 
 
 class RegistrationConfirmation(BaseForm):
@@ -77,6 +77,15 @@ class RegistrationUKBasedForm(BaseForm):
         return ("location",)
 
 
+class VatField(forms.CharField):
+    default_validators = [
+        MinLengthValidator(Validation.UK_VAT_MIN_LENGTH, Validation.UK_VAT_MIN_LENGTH_ERROR_MESSAGE),
+        MaxLengthValidator(Validation.UK_VAT_MAX_LENGTH, Validation.UK_VAT_MAX_LENGTH_ERROR_MESSAGE),
+        RegexValidator(Validation.LETTERS_AND_NUMBERS_ONLY, Validation.UK_VAT_LETTERS_AND_NUMBERS_ERROR_MESSAGE),
+        RegexValidator(Validation.UK_VAT_VALIDATION_REGEX, Validation.UK_VAT_VALIDATION_ERROR_MESSAGE),
+    ]
+
+
 class RegisterDetailsBaseForm(BaseForm):
 
     VAT_LABEL = "UK VAT number"
@@ -120,15 +129,15 @@ class RegisterDetailsBaseForm(BaseForm):
         validators=[validate_sic_number],
     )
 
-    vat_number = forms.CharField(
+    vat_number = VatField(
         label=VAT_LABEL,
         help_text="""This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
-        You can find it on your VAT registration certificate.""",
+            You can find it on your VAT registration certificate.""",
         error_messages={
             "required": "Enter a UK VAT number",
         },
-        validators=[validate_vat],
     )
+
     registration_number = forms.CharField(
         label=REGISTRATION_LABEL,
         help_text="8 numbers, or 2 letters followed by 6 numbers.",

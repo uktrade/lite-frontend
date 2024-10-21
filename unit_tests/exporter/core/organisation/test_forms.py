@@ -137,6 +137,68 @@ def test_register_details_form_required_fields(
     "data, valid, error, form_class",
     (
         (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789dsfgsdf",
+                "sic_number": "123",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": ["Enter a SIC code that is 5 numbers long, like 12345"],
+                "vat_number": ["UK VAT number is too long", "Enter a UK VAT number in the correct format"],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789£$%@£",
+                "sic_number": "xyz",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": [
+                    "SIC code can only include numbers",
+                    "Enter a SIC code that is 5 numbers long, like 12345",
+                ],
+                "vat_number": [
+                    "UK VAT number is too long",
+                    "UK VAT number can only include numbers and letters",
+                    "Enter a UK VAT number in the correct format",
+                ],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB1£$%@£",
+                "sic_number": "xyz",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": [
+                    "SIC code can only include numbers",
+                    "Enter a SIC code that is 5 numbers long, like 12345",
+                ],
+                "vat_number": [
+                    "UK VAT number is too short",
+                    "UK VAT number can only include numbers and letters",
+                    "Enter a UK VAT number in the correct format",
+                ],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+        (
             {"name": "joe", "eori_number": "123"},
             False,
             {
@@ -229,63 +291,6 @@ def test_register_details_form_required_fields(
                 "registration_number": ["Registration numbers are 8 numbers long"],
             },
             forms.RegisterDetailsCommercialOverseasForm,
-        ),
-        (
-            {
-                "name": "joe",
-                "eori_number": "GB205672212000",
-                "vat_number": "GB123456789dsfgsdf",
-                "sic_number": "123",
-                "registration_number": "1234567x",
-            },
-            False,
-            {
-                "sic_number": ["Enter a SIC code that is 5 numbers long, like 12345"],
-                "registration_number": ["Registration numbers are 8 numbers long"],
-            },
-            forms.RegisterDetailsCommercialUKForm,
-        ),
-        (
-            {
-                "name": "joe",
-                "eori_number": "GB205672212000",
-                "vat_number": "GB123456789£$%@£",
-                "sic_number": "xyz",
-                "registration_number": "1234567x",
-            },
-            False,
-            {
-                "sic_number": [
-                    "SIC code can only include numbers",
-                    "Enter a SIC code that is 5 numbers long, like 12345",
-                ],
-                "registration_number": ["Registration numbers are 8 numbers long"],
-                "vat_number": ["UK VAT number can only include numbers and letters"],
-            },
-            forms.RegisterDetailsCommercialUKForm,
-        ),
-        (
-            {
-                "name": "joe",
-                "eori_number": "GB205672212000",
-                "vat_number": "GB1£$%@£",
-                "sic_number": "xyz",
-                "registration_number": "1234567x",
-            },
-            False,
-            {
-                "sic_number": [
-                    "SIC code can only include numbers",
-                    "Enter a SIC code that is 5 numbers long, like 12345",
-                ],
-                "vat_number": [
-                    "UK VAT number can only include numbers and letters",
-                    "UK VAT number is too short",
-                    "Enter a UK VAT number in the correct format",
-                ],
-                "registration_number": ["Registration numbers are 8 numbers long"],
-            },
-            forms.RegisterDetailsCommercialUKForm,
         ),
         (
             {

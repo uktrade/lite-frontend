@@ -6,34 +6,6 @@ from django.core.exceptions import ValidationError
 from .constants import Validation
 
 
-def validate_vat(value):
-
-    validate_vat_function_list = [
-        (
-            Validation.UK_VAT_LETTERS_AND_NUMBERS_ERROR_MESSAGE,
-            lambda v: not re.match(Validation.LETTERS_AND_NUMBERS_ONLY, v),
-        ),
-        (
-            Validation.UK_VAT_MIN_LENGTH_ERROR_MESSAGE,
-            lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v)) < Validation.UK_VAT_MIN_LENGTH,
-        ),
-        (
-            Validation.UK_VAT_MAX_LENGTH_ERROR_MESSAGE,
-            lambda v: len(re.sub(Validation.STRIPPED_VALUE, "", v)) > Validation.UK_VAT_MAX_LENGTH,
-        ),
-        (
-            Validation.UK_VAT_VALIDATION_ERROR_MESSAGE,
-            lambda v: not re.match(Validation.UK_VAT_VALIDATION_REGEX, re.sub(Validation.STRIPPED_VALUE, "", v)),
-        ),
-    ]
-
-    errors = []
-    if value:
-        errors.extend(error_message.strip() for error_message, func in validate_vat_function_list if func(value))
-        if errors:
-            raise ValidationError(errors)
-
-
 def validate_eori(value):
 
     validate_vat_function_list = [
