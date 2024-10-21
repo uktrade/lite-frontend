@@ -83,7 +83,7 @@ def test_registration_uk_based_form(data, valid):
                 "name": ["Enter a name"],
                 "eori_number": ["Enter an EORI number"],
                 "sic_number": ["Enter a SIC code"],
-                "vat_number": ["This field is required."],
+                "vat_number": ["Enter a UK VAT number"],
                 "registration_number": ["Enter a registration number"],
             },
             forms.RegisterDetailsCommercialUKForm,
@@ -137,21 +137,114 @@ def test_register_details_form_required_fields(
     "data, valid, error, form_class",
     (
         (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789",
+                "sic_number": "xyz",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": [
+                    "Enter a SIC code that is 5 numbers long, like 12345",
+                    "SIC code can only include numbers",
+                ],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+            forms.RegisterDetailsCommercialOverseasForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789dsfgsdf",
+                "sic_number": "123",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": ["Enter a SIC code that is 5 numbers long, like 12345"],
+                "vat_number": ["UK VAT number is too long", "Enter a UK VAT number in the correct format"],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB123456789£$%@£",
+                "sic_number": "xyz",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": [
+                    "Enter a SIC code that is 5 numbers long, like 12345",
+                    "SIC code can only include numbers",
+                ],
+                "vat_number": [
+                    "UK VAT number is too long",
+                    "UK VAT number can only include numbers and letters",
+                    "Enter a UK VAT number in the correct format",
+                ],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB1£$%@£",
+                "sic_number": "xyz",
+                "registration_number": "1234567x",
+            },
+            False,
+            {
+                "sic_number": [
+                    "Enter a SIC code that is 5 numbers long, like 12345",
+                    "SIC code can only include numbers",
+                ],
+                "vat_number": [
+                    "UK VAT number is too short",
+                    "UK VAT number can only include numbers and letters",
+                    "Enter a UK VAT number in the correct format",
+                ],
+                "registration_number": ["Registration numbers are 8 numbers long"],
+            },
+            forms.RegisterDetailsCommercialUKForm,
+        ),
+        (
             {"name": "joe", "eori_number": "123"},
             False,
-            {"eori_number": ["Invalid UK EORI number"]},
+            {
+                "eori_number": [
+                    "EORI number is too short",
+                    "Country code can only be GB or XI",
+                    "Enter an EORI number in the correct format",
+                ]
+            },
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
-            {"name": "joe", "eori_number": "123456789101112131"},
+            {"name": "joe", "eori_number": "123456789101112131$"},
             False,
-            {"eori_number": ["EORI numbers are 17 characters or less"]},
+            {
+                "eori_number": [
+                    "EORI number is too long",
+                    "EORI number can only include numbers and letters",
+                    "Country code can only be GB or XI",
+                    "Enter an EORI number in the correct format",
+                ]
+            },
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
             {"name": "joe", "eori_number": "GX205672212000"},
             False,
-            {"eori_number": ["Invalid UK EORI number"]},
+            {"eori_number": ["Country code can only be GB or XI", "Enter an EORI number in the correct format"]},
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
@@ -173,16 +266,16 @@ def test_register_details_form_required_fields(
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
-            {
-                "name": "joe",
-                "eori_number": "GB205672212000",
-                "vat_number": "GB123456789",
-                "sic_number": "xyz",
-                "registration_number": "1234567x",
-            },
+            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "1234567FS"},
             False,
-            {"sic_number": ["Only enter numbers"], "registration_number": ["Registration numbers are 8 numbers long"]},
-            forms.RegisterDetailsCommercialOverseasForm,
+            {"registration_number": ["Registration numbers are 8 numbers long"]},
+            forms.RegisterDetailsIndividualUKForm,
+        ),
+        (
+            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "1234567FS"},
+            False,
+            {"registration_number": ["Registration numbers are 8 numbers long"]},
+            forms.RegisterDetailsIndividualUKForm,
         ),
         (
             {
@@ -194,10 +287,27 @@ def test_register_details_form_required_fields(
             },
             False,
             {
-                "sic_number": ["Enter a valid SIC code"],
+                "sic_number": ["Enter a SIC code that is 5 numbers long, like 12345"],
                 "registration_number": ["Registration numbers are 8 numbers long"],
             },
             forms.RegisterDetailsCommercialOverseasForm,
+        ),
+        (
+            {
+                "name": "joe",
+                "eori_number": "GB205672212000",
+                "vat_number": "GB1456464654",
+                "sic_number": "12345",
+                "registration_number": "12345678",
+            },
+            False,
+            {
+                "vat_number": [
+                    "UK VAT number is too long",
+                    "Enter a UK VAT number in the correct format",
+                ],
+            },
+            forms.RegisterDetailsCommercialUKForm,
         ),
     ),
 )

@@ -1,6 +1,6 @@
 from django import forms
 from django.db import models
-from django.core.validators import URLValidator
+from django.core.validators import URLValidator, MinLengthValidator, MaxLengthValidator, RegexValidator
 from django.core.exceptions import ValidationError
 
 from crispy_forms_gds.layout import HTML
@@ -8,13 +8,11 @@ from crispy_forms_gds.layout import HTML
 from core.common.forms import BaseForm, TextChoice
 from exporter.core.services import get_countries
 from .validators import (
-    validate_vat,
-    validate_eori,
     validate_phone,
     validate_registration,
-    validate_sic_number,
 )
 from exporter.core.organisation.services import validate_registration_number
+from .constants import Validation
 
 
 class RegistrationConfirmation(BaseForm):
@@ -77,6 +75,33 @@ class RegistrationUKBasedForm(BaseForm):
         return ("location",)
 
 
+class VatField(forms.CharField):
+    default_validators = [
+        MinLengthValidator(Validation.UK_VAT_MIN_LENGTH, Validation.UK_VAT_MIN_LENGTH_ERROR_MESSAGE),
+        MaxLengthValidator(Validation.UK_VAT_MAX_LENGTH, Validation.UK_VAT_MAX_LENGTH_ERROR_MESSAGE),
+        RegexValidator(Validation.LETTERS_AND_NUMBERS_ONLY, Validation.UK_VAT_LETTERS_AND_NUMBERS_ERROR_MESSAGE),
+        RegexValidator(Validation.UK_VAT_VALIDATION_REGEX, Validation.UK_VAT_VALIDATION_ERROR_MESSAGE),
+    ]
+
+
+class EoriField(forms.CharField):
+    default_validators = [
+        MinLengthValidator(Validation.UK_EORI_MIN_LENGTH, Validation.UK_EORI_MIN_LENGTH_ERROR_MESSAGE),
+        MaxLengthValidator(Validation.UK_EORI_MAX_LENGTH, Validation.UK_EORI_MAX_LENGTH_ERROR_MESSAGE),
+        RegexValidator(Validation.LETTERS_AND_NUMBERS_ONLY, Validation.UK_EORI_LETTERS_AND_NUMBERS_ERROR_MESSAGE),
+        RegexValidator(Validation.UK_EORI_STARTING_LETTERS_REGEX, Validation.UK_EORI_STARTING_LETTERS_ERROR_MESSAGE),
+        RegexValidator(Validation.UK_EORI_VALIDATION_REGEX, Validation.UK_EORI_VALIDATION_ERROR_MESSAGE),
+    ]
+
+
+class SicField(forms.CharField):
+    default_validators = [
+        MinLengthValidator(Validation.SIC_LENGTH, Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE),
+        MaxLengthValidator(Validation.SIC_LENGTH, Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE),
+        RegexValidator(Validation.SIC_NUMBERs_ONLY_REGEX, Validation.SIC_NUMBERS_ONLY_ERROR_MESSAGE),
+    ]
+
+
 class RegisterDetailsBaseForm(BaseForm):
 
     VAT_LABEL = "UK VAT number"
@@ -94,7 +119,7 @@ class RegisterDetailsBaseForm(BaseForm):
         },
     )
 
-    eori_number = forms.CharField(
+    eori_number = EoriField(
         label=EORI_LABEL,
         help_text=(
             """The first two letters are the country code, like GB or XI. This is followed by 12 or 15 numbers, like GB123456123456.
@@ -104,10 +129,9 @@ class RegisterDetailsBaseForm(BaseForm):
         error_messages={
             "required": "Enter an EORI number",
         },
-        validators=[validate_eori],
     )
 
-    sic_number = forms.CharField(
+    sic_number = SicField(
         label=SIC_CODE_LABEL,
         help_text=(
             "<a href='https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic'"
@@ -117,15 +141,17 @@ class RegisterDetailsBaseForm(BaseForm):
         error_messages={
             "required": "Enter a SIC code",
         },
-        validators=[validate_sic_number],
     )
 
-    vat_number = forms.CharField(
+    vat_number = VatField(
         label=VAT_LABEL,
         help_text="""This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
-        You can find it on your VAT registration certificate.""",
-        validators=[validate_vat],
+            You can find it on your VAT registration certificate.""",
+        error_messages={
+            "required": "Enter a UK VAT number",
+        },
     )
+
     registration_number = forms.CharField(
         label=REGISTRATION_LABEL,
         help_text="8 numbers, or 2 letters followed by 6 numbers.",
