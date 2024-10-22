@@ -14,7 +14,7 @@ Feature: I want to register an organisation
     And I enter company EORI number
     And I enter company SIC number
     And I enter company VAT number
-    And I enter company registration number and continue
+    And I enter registration number and continue
     And I enter random site details and finish submitting
     Then the organisation is registered successfully
     Then I logout
@@ -27,7 +27,7 @@ Feature: I want to register an organisation
     Then I choose the option In the United Kingdom and submit
     When I enter company name
     And I enter company EORI number
-    And I enter company registration number and continue
+    And I enter registration number and continue
     And I enter random site details and finish submitting
     Then the organisation is registered successfully
     Then I logout

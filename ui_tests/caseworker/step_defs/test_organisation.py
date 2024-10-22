@@ -269,7 +269,7 @@ def organisation(driver, context, internal_url):
 @then("I should be warned that this organisation matches an existing one")
 def organisation_warning(driver):
     warning = OrganisationPage(driver).get_warning()
-    matching_fields = ["Name", "EORI Number", "Registration Number", "Address"]
+    matching_fields = ["Name", "EORI Number", "Registered Number", "Address"]
     for field in matching_fields:
         assert field in warning, "Missing field in organisation review warning"
 
