@@ -12,7 +12,12 @@ from .validators import (
     validate_registration,
 )
 from exporter.core.organisation.services import validate_registration_number
-from .fields import *
+from .fields import (
+    AddressLineField,
+    VatField,
+    EoriField,
+    SicField,
+)
 
 
 class RegistrationConfirmation(BaseForm):
