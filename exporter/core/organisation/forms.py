@@ -8,13 +8,16 @@ from crispy_forms_gds.layout import HTML
 from core.common.forms import BaseForm, TextChoice
 from exporter.core.services import get_countries
 from .validators import (
-    validate_vat,
-    validate_eori,
     validate_phone,
     validate_registration,
-    validate_sic_number,
 )
 from exporter.core.organisation.services import validate_registration_number
+from .fields import (
+    AddressLineField,
+    VatField,
+    EoriField,
+    SicField,
+)
 
 
 class RegistrationConfirmation(BaseForm):
@@ -94,7 +97,7 @@ class RegisterDetailsBaseForm(BaseForm):
         },
     )
 
-    eori_number = forms.CharField(
+    eori_number = EoriField(
         label=EORI_LABEL,
         help_text=(
             """The first two letters are the country code, like GB or XI. This is followed by 12 or 15 numbers, like GB123456123456.
@@ -104,10 +107,9 @@ class RegisterDetailsBaseForm(BaseForm):
         error_messages={
             "required": "Enter an EORI number",
         },
-        validators=[validate_eori],
     )
 
-    sic_number = forms.CharField(
+    sic_number = SicField(
         label=SIC_CODE_LABEL,
         help_text=(
             "<a href='https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic'"
@@ -117,15 +119,17 @@ class RegisterDetailsBaseForm(BaseForm):
         error_messages={
             "required": "Enter a SIC code",
         },
-        validators=[validate_sic_number],
     )
 
-    vat_number = forms.CharField(
+    vat_number = VatField(
         label=VAT_LABEL,
         help_text="""This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
-        You can find it on your VAT registration certificate.""",
-        validators=[validate_vat],
+            You can find it on your VAT registration certificate.""",
+        error_messages={
+            "required": "Enter a UK VAT number",
+        },
     )
+
     registration_number = forms.CharField(
         label=REGISTRATION_LABEL,
         help_text="8 numbers, or 2 letters followed by 6 numbers.",
@@ -202,7 +206,7 @@ class RegisterDetailsCommercialOverseasForm(RegisterDetailsCommercialUKForm):
 
 class RegisterAddressDetailsBaseForm(BaseForm):
 
-    name = forms.CharField(
+    name = AddressLineField(
         label="Name of headquarters",
         error_messages={
             "required": "Enter a name for your site",
@@ -257,24 +261,24 @@ class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
         "<p>Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>",
     )
 
-    address_line_1 = forms.CharField(
+    address_line_1 = AddressLineField(
         label="Building and street",
         error_messages={
             "required": "Enter a real building and street name",
         },
     )
-    address_line_2 = forms.CharField(
+    address_line_2 = AddressLineField(
         label="",
         required=False,
     )
 
-    city = forms.CharField(
+    city = AddressLineField(
         label="Town or city",
         error_messages={
             "required": "Enter a real city",
         },
     )
-    region = forms.CharField(
+    region = AddressLineField(
         label="County or state",
         error_messages={
             "required": "Enter a county or state",
@@ -307,7 +311,7 @@ class RegisterAddressDetailsUKIndividualForm(RegisterAddressDetailsUKCommercialF
     class Layout:
         TITLE = "Where in the United Kingdom are you based?"
 
-    name = forms.CharField(
+    name = AddressLineField(
         label="Name of headquarters",
         error_messages={
             "required": "Enter a name for your site",
