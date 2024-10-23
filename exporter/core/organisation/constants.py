@@ -15,12 +15,14 @@ class Validation:
     UK_EORI_STARTING_LETTERS_REGEX = r"^(GB|XI)"
     SIC_NUMBERs_ONLY_REGEX = r"^\d+$"
 
+    ADDRESS_LINE_MAX_LENGTH = 35
     UK_EORI_MAX_LENGTH = 17
     UK_EORI_MIN_LENGTH = 14
     UK_VAT_MAX_LENGTH = 11
     UK_VAT_MIN_LENGTH = 9
     SIC_LENGTH = 5
 
+    ADDRESS_LINE_MAX_LENGTH_ERROR_MESSAGE = "This field has a maximum length of 35 characters"
     UK_EORI_STARTING_LETTERS_ERROR_MESSAGE = "Country code can only be GB or XI"
     UK_EORI_VALIDATION_ERROR_MESSAGE = "Enter an EORI number in the correct format"
     UK_EORI_MAX_LENGTH_ERROR_MESSAGE = "EORI number is too long"
