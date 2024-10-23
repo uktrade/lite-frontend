@@ -379,10 +379,53 @@ def test_registration_number_validation_error(
             {},
             forms.RegisterAddressDetailsUKIndividualForm,
         ),
+        (
+            {
+                "name": "Supercalifragilisticexpiallidodiousness",
+                "address_line_1": "supercalifragilisticexpiallidodiousness",
+                "address_line_2": "supercalifragilisticexpiallidodiousness",
+                "region": "Supercalifragilisticexpiallidodiousness",
+                "city": "Supercalifragilisticexpiallidodiousness",
+                "postcode": "BT5 8HQ",
+                "phone_number": "+441234567890",
+                "website": "http://www.notreal.com",
+            },
+            False,
+            {
+                "name": ["This field has a maximum length of 35 characters"],
+                "address_line_1": ["This field has a maximum length of 35 characters"],
+                "address_line_2": ["This field has a maximum length of 35 characters"],
+                "city": ["This field has a maximum length of 35 characters"],
+                "region": ["This field has a maximum length of 35 characters"],
+            },
+            forms.RegisterAddressDetailsUKCommercialForm,
+        ),
+        (
+            {
+                "name": "Supercalifragilisticexpiallidodiousness",
+                "address_line_1": "supercalifragilisticexpiallidodiousness",
+                "address_line_2": "supercalifragilisticexpiallidodiousness",
+                "region": "Supercalifragilisticexpiallidodiousness",
+                "city": "Supercalifragilisticexpiallidodiousness",
+                "postcode": "BT5 8HQ",
+                "phone_number": "+441234567890",
+                "website": "http://www.notreal.com",
+            },
+            False,
+            {
+                "name": ["This field has a maximum length of 35 characters"],
+                "address_line_1": ["This field has a maximum length of 35 characters"],
+                "address_line_2": ["This field has a maximum length of 35 characters"],
+                "city": ["This field has a maximum length of 35 characters"],
+                "region": ["This field has a maximum length of 35 characters"],
+            },
+            forms.RegisterAddressDetailsUKIndividualForm,
+        ),
     ),
 )
 def test_register_address_details_validate_fields(data, valid, error, form_class):
     form = form_class(data=data)
+
     assert form.is_valid() == valid
     if not valid:
         assert form.errors == error
