@@ -10,7 +10,7 @@ class Details:
     EORI_NUMBER = "EORI number"
     SIC_NUMBER = "SIC code"
     VAT_NUMBER = "VAT number"
-    REGISTRATION_NUMBER = "Registration number"
+    REGISTRATION_NUMBER = "Registered number"
     CREATED_AT = "Created at"
     PRIMARY_SITE = "Registered office address"
     TYPE = "Type"
