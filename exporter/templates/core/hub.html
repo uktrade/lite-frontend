@@ -55,10 +55,8 @@
 		{% if 'ADMINISTER_USERS' in user_permissions %}
 			<a href="{% url 'organisation:members:members' %}" class="govuk-link govuk-link--no-visited-state" id="link-profile">{% lcs 'hub.Navigation.YOUR_ACCOUNT' %}</a>
 		{% endif %}
-		{% if 'ADMINISTER_USERS' in user_permissions or user_data.organisations|length > 1 %}
-			<span class="govuk-!-margin-left-1 govuk-!-margin-right-1">–</span>
-		{% endif %}
 		{% if user_data.organisations|length > 1 %}
+			<span class="govuk-!-margin-left-1 govuk-!-margin-right-1">–</span>
 			<a class="govuk-link govuk-link--no-visited-state" href="{% url 'core:select_organisation' %}" id="switch-link">
 				{% lcs 'hub.SWITCH_ORG' %} <span class="govuk-visually-hidden">{{ organisation.name }}</span>
 			</a>
