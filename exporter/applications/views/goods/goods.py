@@ -215,32 +215,6 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
         return render(request, "applications/goods/preexisting.html", context)
 
 
-class RegisteredFirearmDealersMixin:
-    SESSION_KEY_RFD_CERTIFICATE = "rfd_certificate_details"
-
-    def cache_rfd_certificate_details(self):
-        file = self.request.FILES.get("file")
-        if not file:
-            return
-        self.request.session[self.SESSION_KEY_RFD_CERTIFICATE] = {
-            "document_on_organisation": {
-                "expiry_date": format_date(self.request.POST, "expiry_date_"),
-                "reference_code": self.request.POST["reference_code"],
-                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
-            },
-            **get_document_data(file),
-        }
-
-    def post_success_step(self):
-        data = self.request.session.pop(self.SESSION_KEY_RFD_CERTIFICATE, None)
-        if data:
-            post_additional_document(
-                request=self.request,
-                pk=str(self.kwargs["pk"]),
-                json=data,
-            )
-
-
 class SkipResetSessionStorage(SessionStorage):
     """This gives clients the ability to skip the reset (deletion) of
     data that has been collected by the wizard.
