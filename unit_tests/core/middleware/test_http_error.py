@@ -3,7 +3,6 @@ from requests.models import Response
 from unittest import mock
 from core.middleware import HttpErrorHandlerMiddleware
 import pytest
-from json import JSONDecodeError
 
 import logging
 

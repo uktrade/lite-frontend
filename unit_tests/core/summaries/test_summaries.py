@@ -1,5 +1,4 @@
 import pytest
-import uuid
 from core.constants import FirearmsProductType, ProductCategories
 
 from core.summaries.summaries import (

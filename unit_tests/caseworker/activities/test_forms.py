@@ -3,7 +3,6 @@ import pytest
 from caseworker.activities import forms
 import requests
 from core import client
-from django.conf import settings
 
 
 @pytest.fixture

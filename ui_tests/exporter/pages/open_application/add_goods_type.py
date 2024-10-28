@@ -7,7 +7,7 @@ from ui_tests.exporter.pages.BasePage import BasePage
 class OpenApplicationAddGoodsType(BasePage):
 
     INPUT_DESCRIPTION_ID = "description"
-    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#pane_control_list_entries .tokenfield-input"
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#pane_control_list_entries .tokenfield-input"  # noqa: S105
     RADIO_IS_GOOD_CONTROLLED_ID = "is_good_controlled-"
     RADIO_IS_GOOD_INCORPORATED_ID = "is_good_incorporated-"
 

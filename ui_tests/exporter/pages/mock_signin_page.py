@@ -1,5 +1,3 @@
-import os
-
 from selenium.webdriver.common.by import By
 
 from ui_tests.exporter.pages.BasePage import BasePage

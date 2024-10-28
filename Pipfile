@@ -6,7 +6,6 @@ verify_ssl = true
 [dev-packages]
 allure-pytest = "~=2.6"
 allure-python-commons = "~=2.6"
-bandit = "==1.7.5"
 black = "~=24.3.0"
 envparse = "~=0.2"
 faker = "~=4.0"

@@ -28,10 +28,10 @@ clean:
 	-find . -type d -name "__pycache__" -delete
 
 lint:
-	-pipenv run bandit -r . --skip=B101 --exclude=/ui_tests,/unit_tests,/tests_common
 	-pipenv run prospector exporter
 	-pipenv run prospector caseworker
 	-pipenv run black .
+	-pipenv run pre-commit run ruff -a
 
 autoformat:
 	-pipenv run black .

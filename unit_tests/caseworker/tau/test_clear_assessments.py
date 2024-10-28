@@ -1,8 +1,5 @@
-from bs4 import BeautifulSoup
 from django.urls import reverse
 import pytest
-from http import HTTPStatus
-from core import client
 
 
 @pytest.fixture(autouse=True)

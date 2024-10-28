@@ -4,7 +4,6 @@ import pytest
 from bs4 import BeautifulSoup
 
 from caseworker.advice import services
-from copy import deepcopy
 from django.urls import reverse
 
 from core import client

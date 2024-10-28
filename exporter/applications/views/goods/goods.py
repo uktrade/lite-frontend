@@ -234,12 +234,11 @@ class RegisteredFirearmDealersMixin:
     def post_success_step(self):
         data = self.request.session.pop(self.SESSION_KEY_RFD_CERTIFICATE, None)
         if data:
-            _, status_code = post_additional_document(
+            post_additional_document(
                 request=self.request,
                 pk=str(self.kwargs["pk"]),
                 json=data,
             )
-            assert status_code == HTTPStatus.CREATED
 
 
 class SkipResetSessionStorage(SessionStorage):
@@ -460,7 +459,6 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
                 pk=str(self.kwargs["pk"]),
                 json=rfd_cert,
             )
-            assert status_code == HTTPStatus.CREATED
 
         if str_to_bool(all_data.get("is_covered_by_firearm_act_section_one_two_or_five")):
             if is_firearm_certificate_needed(
@@ -956,7 +954,6 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
             }
 
             _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=rfd_cert)
-            assert status_code == HTTPStatus.CREATED
 
         selected_section = self.get_selected_section(all_data)
         if self.should_show_section_upload_form(all_data, selected_section):

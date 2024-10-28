@@ -261,7 +261,7 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
         item = {
             "Name": name,
             "Part number": default_na(good_on_application["good"]["part_number"]),
-            "Control list entries": mark_safe(control_list_entries),  # nosec
+            "Control list entries": mark_safe(control_list_entries),  # noqa: S308
         }
         if is_exhibition:
             item["Product type"] = good_on_application["other_item_type"] or good_on_application["item_type"]
@@ -276,11 +276,11 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
                     "good_on_application_pk": good_on_application["id"],
                 },
             )
-            item[mark_safe('<span class="govuk-visually-hidden">Actions</a>')] = mark_safe(  # nosec
+            item[mark_safe('<span class="govuk-visually-hidden">Actions</a>')] = mark_safe(  # noqa: S308
                 f'<a class="govuk-link" href="{update_serial_numbers_url}">Add serial numbers</a>'
             )
         elif requires_actions_column:
-            item[mark_safe('<span class="govuk-visually-hidden">Actions</a>')] = (  # nosec
+            item[mark_safe('<span class="govuk-visually-hidden">Actions</a>')] = (  # noqa: S308
                 " "  # Not just an empty string or it will get converted into N/A
             )
         converted.append(item)

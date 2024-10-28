@@ -1,4 +1,3 @@
-import pytest
 from caseworker.teams.forms import EditTeamForm
 
 

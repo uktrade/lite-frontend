@@ -156,7 +156,7 @@ def test_callback_success_no_name_set(
     assert response.url == register_name_url
 
     session = authorized_client.session
-    assert session["user_token"] == "token_12345"
+    assert session["user_token"] == "token_12345"  # noqa: S105
     assert session["lite_api_user_id"] == "lite_api_user_id_12345"
     assert session["email"] == "email@example.com"
 
@@ -194,7 +194,7 @@ def test_callback_success(
     assert response.url == home_url
 
     session = authorized_client.session
-    assert session["user_token"] == "token_12345"
+    assert session["user_token"] == "token_12345"  # noqa: S105
     assert session["lite_api_user_id"] == "lite_api_user_id_12345"
     assert session["email"] == "email@example.com"
     assert session["first_name"] == "Firstname"

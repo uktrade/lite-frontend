@@ -108,7 +108,7 @@ def get_const_string(value):
         if len(nested_properties_list) == 1:
             # We have reached the end of the path and now have the string
             if isinstance(object, str):
-                object = mark_safe(  # nosec
+                object = mark_safe(  # noqa: S308
                     object.replace("<!--", "<span class='govuk-visually-hidden'>").replace("-->", "</span>")
                 )
 
@@ -221,7 +221,7 @@ def default_na(value):
     if value:
         return value
     else:
-        return mark_safe(f'<span class="govuk-hint govuk-!-margin-0">N/A</span>')  # nosec
+        return mark_safe(f'<span class="govuk-hint govuk-!-margin-0">N/A</span>')  # noqa: S308
 
 
 @register.filter()
