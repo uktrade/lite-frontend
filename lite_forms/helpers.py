@@ -157,7 +157,9 @@ def heading_used_as_label(components):
 
 def convert_to_markdown(text):
     if text:
-        text = "<br>".join([markdown(item.strip(), extensions=["nl2br"]) for item in text.split("\n\n")])
+        text = "<br>".join(
+            [markdown(item.strip(), safe_mode="escape", extensions=["nl2br"]) for item in text.split("\n\n")]
+        )
         # Replace leading (<p>) & trailing (</p>) p tags as they are not needed
         text = text.replace("<p>", "")
         text = text.replace("</p>", "")
