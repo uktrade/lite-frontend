@@ -160,4 +160,4 @@ def test_review_organisation(authorized_client, requests_mock, retrieved_organis
     soup = BeautifulSoup(response.content, "html.parser")
     soup.find_all("govuk-summary-list__row")
     org_details = soup.find_all(class_="govuk-summary-list__row")
-    assert org_details[1].span.text == expected_value
+    assert org_details[1].select_one(".govuk-summary-list__value").text.strip() == expected_value

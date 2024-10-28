@@ -1,18 +1,21 @@
 from django import forms
 from django.db import models
-from django.core.validators import URLValidator, MinLengthValidator, MaxLengthValidator, RegexValidator
+from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 
 from crispy_forms_gds.layout import HTML
 
 from core.common.forms import BaseForm, TextChoice
 from exporter.core.services import get_countries
-from .validators import (
-    validate_phone,
-    validate_registration,
-)
+from .validators import validate_phone
 from exporter.core.organisation.services import validate_registration_number
-from .constants import Validation
+from .fields import (
+    AddressLineField,
+    VatField,
+    EoriField,
+    SicField,
+    RegistrationNumberField,
+)
 
 
 class RegistrationConfirmation(BaseForm):
@@ -75,39 +78,12 @@ class RegistrationUKBasedForm(BaseForm):
         return ("location",)
 
 
-class VatField(forms.CharField):
-    default_validators = [
-        MinLengthValidator(Validation.UK_VAT_MIN_LENGTH, Validation.UK_VAT_MIN_LENGTH_ERROR_MESSAGE),
-        MaxLengthValidator(Validation.UK_VAT_MAX_LENGTH, Validation.UK_VAT_MAX_LENGTH_ERROR_MESSAGE),
-        RegexValidator(Validation.LETTERS_AND_NUMBERS_ONLY, Validation.UK_VAT_LETTERS_AND_NUMBERS_ERROR_MESSAGE),
-        RegexValidator(Validation.UK_VAT_VALIDATION_REGEX, Validation.UK_VAT_VALIDATION_ERROR_MESSAGE),
-    ]
-
-
-class EoriField(forms.CharField):
-    default_validators = [
-        MinLengthValidator(Validation.UK_EORI_MIN_LENGTH, Validation.UK_EORI_MIN_LENGTH_ERROR_MESSAGE),
-        MaxLengthValidator(Validation.UK_EORI_MAX_LENGTH, Validation.UK_EORI_MAX_LENGTH_ERROR_MESSAGE),
-        RegexValidator(Validation.LETTERS_AND_NUMBERS_ONLY, Validation.UK_EORI_LETTERS_AND_NUMBERS_ERROR_MESSAGE),
-        RegexValidator(Validation.UK_EORI_STARTING_LETTERS_REGEX, Validation.UK_EORI_STARTING_LETTERS_ERROR_MESSAGE),
-        RegexValidator(Validation.UK_EORI_VALIDATION_REGEX, Validation.UK_EORI_VALIDATION_ERROR_MESSAGE),
-    ]
-
-
-class SicField(forms.CharField):
-    default_validators = [
-        MinLengthValidator(Validation.SIC_LENGTH, Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE),
-        MaxLengthValidator(Validation.SIC_LENGTH, Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE),
-        RegexValidator(Validation.SIC_NUMBERs_ONLY_REGEX, Validation.SIC_NUMBERS_ONLY_ERROR_MESSAGE),
-    ]
-
-
 class RegisterDetailsBaseForm(BaseForm):
 
     VAT_LABEL = "UK VAT number"
     EORI_LABEL = "European Union registration and identification number (EORI)"
     SIC_CODE_LABEL = "Standard industrial classification (SIC code)"
-    REGISTRATION_LABEL = "Companies House registration number (CRN)"
+    REGISTRATION_LABEL = "Company House registration number (CRN) or Royal Charter (RC) number"
 
     class Layout:
         TITLE = "Enter organisation details"
@@ -123,8 +99,8 @@ class RegisterDetailsBaseForm(BaseForm):
         label=EORI_LABEL,
         help_text=(
             """The first two letters are the country code, like GB or XI. This is followed by 12 or 15 numbers, like GB123456123456.
-            <a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state' target='_blank'>Get an EORI number </a>
-            if you don't have one."""
+            <br/> <a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state' target='_blank'>Get an EORI number</a>
+             if you don't have one."""
         ),
         error_messages={
             "required": "Enter an EORI number",
@@ -152,13 +128,14 @@ class RegisterDetailsBaseForm(BaseForm):
         },
     )
 
-    registration_number = forms.CharField(
+    registration_number = RegistrationNumberField(
         label=REGISTRATION_LABEL,
-        help_text="8 numbers, or 2 letters followed by 6 numbers.",
+        help_text="""Only provide a RC number if you do not have a CRN. <br/>
+            The number will be 2 letters following by 6 numbers, or 8 numbers.
+        """,
         error_messages={
             "required": "Enter a registration number",
         },
-        validators=[validate_registration],
     )
 
     def __init__(self, *args, **kwargs):
@@ -228,7 +205,7 @@ class RegisterDetailsCommercialOverseasForm(RegisterDetailsCommercialUKForm):
 
 class RegisterAddressDetailsBaseForm(BaseForm):
 
-    name = forms.CharField(
+    name = AddressLineField(
         label="Name of headquarters",
         error_messages={
             "required": "Enter a name for your site",
@@ -283,24 +260,24 @@ class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
         "<p>Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>",
     )
 
-    address_line_1 = forms.CharField(
+    address_line_1 = AddressLineField(
         label="Building and street",
         error_messages={
             "required": "Enter a real building and street name",
         },
     )
-    address_line_2 = forms.CharField(
+    address_line_2 = AddressLineField(
         label="",
         required=False,
     )
 
-    city = forms.CharField(
+    city = AddressLineField(
         label="Town or city",
         error_messages={
             "required": "Enter a real city",
         },
     )
-    region = forms.CharField(
+    region = AddressLineField(
         label="County or state",
         error_messages={
             "required": "Enter a county or state",
@@ -333,7 +310,7 @@ class RegisterAddressDetailsUKIndividualForm(RegisterAddressDetailsUKCommercialF
     class Layout:
         TITLE = "Where in the United Kingdom are you based?"
 
-    name = forms.CharField(
+    name = AddressLineField(
         label="Name of headquarters",
         error_messages={
             "required": "Enter a name for your site",

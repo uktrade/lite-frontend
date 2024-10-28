@@ -30,6 +30,17 @@ def address_form_classes_uk():
     ]
 
 
+@pytest.fixture
+def valid_registration_details_data():
+    return {
+        "name": "joe",
+        "eori_number": "GB205672212000",
+        "vat_number": "GB123456789",
+        "sic_number": "12345",
+        "registration_number": "12345678",
+    }
+
+
 @pytest.mark.parametrize(
     "data, valid",
     (
@@ -142,7 +153,7 @@ def test_register_details_form_required_fields(
                 "eori_number": "GB205672212000",
                 "vat_number": "GB123456789",
                 "sic_number": "xyz",
-                "registration_number": "1234567x",
+                "registration_number": "123456789",
             },
             False,
             {
@@ -150,7 +161,7 @@ def test_register_details_form_required_fields(
                     "Enter a SIC code that is 5 numbers long, like 12345",
                     "SIC code can only include numbers",
                 ],
-                "registration_number": ["Registration numbers are 8 numbers long"],
+                "registration_number": ["The CRN or RC number is too long"],
             },
             forms.RegisterDetailsCommercialOverseasForm,
         ),
@@ -160,13 +171,13 @@ def test_register_details_form_required_fields(
                 "eori_number": "GB205672212000",
                 "vat_number": "GB123456789dsfgsdf",
                 "sic_number": "123",
-                "registration_number": "1234567x",
+                "registration_number": "123456789",
             },
             False,
             {
                 "sic_number": ["Enter a SIC code that is 5 numbers long, like 12345"],
                 "vat_number": ["UK VAT number is too long", "Enter a UK VAT number in the correct format"],
-                "registration_number": ["Registration numbers are 8 numbers long"],
+                "registration_number": ["The CRN or RC number is too long"],
             },
             forms.RegisterDetailsCommercialUKForm,
         ),
@@ -176,7 +187,7 @@ def test_register_details_form_required_fields(
                 "eori_number": "GB205672212000",
                 "vat_number": "GB123456789£$%@£",
                 "sic_number": "xyz",
-                "registration_number": "1234567x",
+                "registration_number": "123456789",
             },
             False,
             {
@@ -189,7 +200,7 @@ def test_register_details_form_required_fields(
                     "UK VAT number can only include numbers and letters",
                     "Enter a UK VAT number in the correct format",
                 ],
-                "registration_number": ["Registration numbers are 8 numbers long"],
+                "registration_number": ["The CRN or RC number is too long"],
             },
             forms.RegisterDetailsCommercialUKForm,
         ),
@@ -199,7 +210,7 @@ def test_register_details_form_required_fields(
                 "eori_number": "GB205672212000",
                 "vat_number": "GB1£$%@£",
                 "sic_number": "xyz",
-                "registration_number": "1234567x",
+                "registration_number": "123456789",
             },
             False,
             {
@@ -212,7 +223,7 @@ def test_register_details_form_required_fields(
                     "UK VAT number can only include numbers and letters",
                     "Enter a UK VAT number in the correct format",
                 ],
-                "registration_number": ["Registration numbers are 8 numbers long"],
+                "registration_number": ["The CRN or RC number is too long"],
             },
             forms.RegisterDetailsCommercialUKForm,
         ),
@@ -248,36 +259,6 @@ def test_register_details_form_required_fields(
             forms.RegisterDetailsIndividualUKForm,
         ),
         (
-            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "123"},
-            False,
-            {"registration_number": ["Registration numbers are 8 numbers long"]},
-            forms.RegisterDetailsIndividualUKForm,
-        ),
-        (
-            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "123456789101112131"},
-            False,
-            {"registration_number": ["Registration numbers are 8 numbers long"]},
-            forms.RegisterDetailsIndividualUKForm,
-        ),
-        (
-            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "1234567FS"},
-            False,
-            {"registration_number": ["Registration numbers are 8 numbers long"]},
-            forms.RegisterDetailsIndividualUKForm,
-        ),
-        (
-            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "1234567FS"},
-            False,
-            {"registration_number": ["Registration numbers are 8 numbers long"]},
-            forms.RegisterDetailsIndividualUKForm,
-        ),
-        (
-            {"name": "joe", "eori_number": "GB205672212000", "registration_number": "1234567FS"},
-            False,
-            {"registration_number": ["Registration numbers are 8 numbers long"]},
-            forms.RegisterDetailsIndividualUKForm,
-        ),
-        (
             {
                 "name": "joe",
                 "eori_number": "GB205672212000",
@@ -288,7 +269,7 @@ def test_register_details_form_required_fields(
             False,
             {
                 "sic_number": ["Enter a SIC code that is 5 numbers long, like 12345"],
-                "registration_number": ["Registration numbers are 8 numbers long"],
+                "registration_number": ["Enter a CRN or RC number in the correct format"],
             },
             forms.RegisterDetailsCommercialOverseasForm,
         ),
@@ -322,6 +303,97 @@ def test_register_details_form_field_validation(
 
 
 @pytest.mark.parametrize(
+    "data, valid, error",
+    (
+        (
+            {
+                "registration_number": "123456781",
+            },
+            False,
+            {
+                "registration_number": ["The CRN or RC number is too long"],
+            },
+        ),
+        (
+            {
+                "registration_number": "1234567",
+            },
+            False,
+            {
+                "registration_number": ["The CRN or RC number is too short"],
+            },
+        ),
+        (
+            {
+                "registration_number": "1234567@",
+            },
+            False,
+            {
+                "registration_number": [
+                    "CRN and RC numbers can only include numbers and letters",
+                    "Enter a CRN or RC number in the correct format",
+                ],
+            },
+        ),
+        (
+            {
+                "registration_number": "123456@",
+            },
+            False,
+            {
+                "registration_number": [
+                    "The CRN or RC number is too short",
+                    "CRN and RC numbers can only include numbers and letters",
+                    "Enter a CRN or RC number in the correct format",
+                ],
+            },
+        ),
+        (
+            {
+                "registration_number": "FF123456",
+            },
+            False,
+            {
+                "registration_number": ["Enter a CRN or RC number in the correct format"],
+            },
+        ),
+        (
+            {
+                "registration_number": "123456RC",
+            },
+            False,
+            {
+                "registration_number": ["Enter a CRN or RC number in the correct format"],
+            },
+        ),
+        (
+            {
+                "registration_number": "RC123456",
+            },
+            True,
+            None,
+        ),
+        (
+            {
+                "registration_number": "12345678",
+            },
+            True,
+            None,
+        ),
+    ),
+)
+def test_register_number_form_field_validation(
+    data, valid, error, mock_request, valid_registration_details_data, mock_validate_registration_number
+):
+    valid_registration_details_data.update(data)
+    form = forms.RegisterDetailsIndividualUKForm(data=valid_registration_details_data, request=mock_request)
+    assert form.is_valid() == valid
+
+    if not valid:
+        assert form.errors == error
+
+
+@pytest.mark.parametrize(
     "data, valid, error, form_class",
     (
         (
@@ -338,7 +410,7 @@ def test_register_details_form_field_validation(
         ),
     ),
 )
-def test_registration_number_validation_error(
+def test_registration_number_duplicate_validation_error(
     data, valid, error, form_class, mock_request, mock_registration_number_fail
 ):
     form = form_class(data=data, request=mock_request)
@@ -379,10 +451,53 @@ def test_registration_number_validation_error(
             {},
             forms.RegisterAddressDetailsUKIndividualForm,
         ),
+        (
+            {
+                "name": "Supercalifragilisticexpiallidodiousness",
+                "address_line_1": "supercalifragilisticexpiallidodiousness",
+                "address_line_2": "supercalifragilisticexpiallidodiousness",
+                "region": "Supercalifragilisticexpiallidodiousness",
+                "city": "Supercalifragilisticexpiallidodiousness",
+                "postcode": "BT5 8HQ",
+                "phone_number": "+441234567890",
+                "website": "http://www.notreal.com",
+            },
+            False,
+            {
+                "name": ["This field has a maximum length of 35 characters"],
+                "address_line_1": ["This field has a maximum length of 35 characters"],
+                "address_line_2": ["This field has a maximum length of 35 characters"],
+                "city": ["This field has a maximum length of 35 characters"],
+                "region": ["This field has a maximum length of 35 characters"],
+            },
+            forms.RegisterAddressDetailsUKCommercialForm,
+        ),
+        (
+            {
+                "name": "Supercalifragilisticexpiallidodiousness",
+                "address_line_1": "supercalifragilisticexpiallidodiousness",
+                "address_line_2": "supercalifragilisticexpiallidodiousness",
+                "region": "Supercalifragilisticexpiallidodiousness",
+                "city": "Supercalifragilisticexpiallidodiousness",
+                "postcode": "BT5 8HQ",
+                "phone_number": "+441234567890",
+                "website": "http://www.notreal.com",
+            },
+            False,
+            {
+                "name": ["This field has a maximum length of 35 characters"],
+                "address_line_1": ["This field has a maximum length of 35 characters"],
+                "address_line_2": ["This field has a maximum length of 35 characters"],
+                "city": ["This field has a maximum length of 35 characters"],
+                "region": ["This field has a maximum length of 35 characters"],
+            },
+            forms.RegisterAddressDetailsUKIndividualForm,
+        ),
     ),
 )
 def test_register_address_details_validate_fields(data, valid, error, form_class):
     form = form_class(data=data)
+
     assert form.is_valid() == valid
     if not valid:
         assert form.errors == error

@@ -14,13 +14,17 @@ class Validation:
     UK_VAT_VALIDATION_REGEX = r"^(GB|XI)?([0-9]{9}([0-9]{3})?|(GD|HA)[0-9]{3})$"
     UK_EORI_STARTING_LETTERS_REGEX = r"^(GB|XI)"
     SIC_NUMBERs_ONLY_REGEX = r"^\d+$"
+    REGISTRATION_NUM_VALIDATION_REGEX = r"^(RC\d+|\d+)$"
 
+    ADDRESS_LINE_MAX_LENGTH = 35
     UK_EORI_MAX_LENGTH = 17
     UK_EORI_MIN_LENGTH = 14
     UK_VAT_MAX_LENGTH = 11
     UK_VAT_MIN_LENGTH = 9
     SIC_LENGTH = 5
+    REGISTRATION_NUMBER_LENGTH = 8
 
+    ADDRESS_LINE_MAX_LENGTH_ERROR_MESSAGE = "This field has a maximum length of 35 characters"
     UK_EORI_STARTING_LETTERS_ERROR_MESSAGE = "Country code can only be GB or XI"
     UK_EORI_VALIDATION_ERROR_MESSAGE = "Enter an EORI number in the correct format"
     UK_EORI_MAX_LENGTH_ERROR_MESSAGE = "EORI number is too long"
@@ -37,4 +41,7 @@ class Validation:
 
     INVALID_PHONE_NUMBERS_ERROR_MESSAGE = "Invalid telephone number"
 
-    LENGTH_REGISTRATION_NUMBER = "Registration numbers are 8 numbers long"
+    REGISTRATION_NUM_MIN_LENGTH_ERROR_MESSAGE = "The CRN or RC number is too short"
+    REGISTRATION_NUM_MAX_LENGTH_ERROR_MESSAGE = "The CRN or RC number is too long"
+    REGISTRATION_NUM_SPECIAL_CHARS_ERROR_MESSAGE = "CRN and RC numbers can only include numbers and letters"
+    REGISTRATION_NUM_VALIDATION_ERROR_MESSAGE = "Enter a CRN or RC number in the correct format"
