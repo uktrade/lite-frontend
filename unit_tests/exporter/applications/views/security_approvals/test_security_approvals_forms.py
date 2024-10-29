@@ -118,7 +118,6 @@ def test_security_other_details(data, is_valid, errors):
             {
                 "f1686_contracting_authority": ["Enter the contracting authority (or signatory and job role)"],
                 "f1686_approval_date": ["Enter the approval date"],
-                "f1686_reference_number": ["Enter a reference number"],
             },
         ),
         (
