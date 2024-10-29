@@ -183,7 +183,7 @@ def create_admin_user_form():
             TextInput(title="Contact telephone number", name="user.phone_number", optional=True),
         ],
         default_button_name="Submit",
-        helpers=[HelpSection("Help", RegisterAnOrganisation.DEFAULT_USER)],
+        helpers=[HelpSection("Help", "This will be the default user for this organisation.")],
     )
 
 

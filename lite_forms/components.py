@@ -212,10 +212,8 @@ class HiddenField:
 
 class HelpSection:
     def __init__(self, title, description, includes=None):
-        from lite_forms.helpers import convert_to_markdown
-
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.includes = includes
 
 

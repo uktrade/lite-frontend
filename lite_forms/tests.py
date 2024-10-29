@@ -10,7 +10,6 @@ from lite_forms.components import (
     FormGroup,
     _Component,
     Label,
-    HelpSection,
     Option,
     BackLink,
     HiddenField,
@@ -218,10 +217,6 @@ class MarkdownTest(TestCase):
 
     def test_detail_component(self):
         detail = DetailComponent(title="abc", description=self.markdown_description)
-        self.assertEqual(detail.description, self.html_description)
-
-    def test_help_section(self):
-        detail = HelpSection(title="abc", description=self.markdown_description)
         self.assertEqual(detail.description, self.html_description)
 
 

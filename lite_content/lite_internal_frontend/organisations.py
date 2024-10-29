@@ -74,7 +74,6 @@ class RegisterAnOrganisation:
     COMMERCIAL_TITLE = "Register an organisation"
     INDIVIDUAL_TITLE = "Register a private individual"
     CREATE_DEFAULT_SITE = "Create a default site for this exporter"
-    DEFAULT_USER = "This will be the default user for this organisation."
     EMAIL = "Email"
     NAME_OF_SITE = "Name of site"
 
