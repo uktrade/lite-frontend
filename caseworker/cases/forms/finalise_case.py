@@ -10,7 +10,7 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, 
         title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.APPROVE_TITLE,
         questions=[
             DateInput(
-                description=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.DATE_DESCRIPTION,
+                description="For example, 27 3 2019",
                 title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.DATE_TITLE,
                 prefix="",
             ),

@@ -273,8 +273,8 @@ def upload_firearms_act_certificate_form(section, filename, back_link):
                 optional=False,
             ),
             DateInput(
-                title=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE,
-                description=CreateGoodForm.FirearmGood.FirearmsActCertificate.EXPIRY_DATE_HINT,
+                title="Expiry date",
+                description="For example, 12 11 2022",
                 prefix="section_certificate_date_of_expiry",
                 name="section_certificate_date_of_expiry",
             ),

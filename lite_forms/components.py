@@ -552,11 +552,9 @@ class DateInput:
         extras: Optional[List] = None,
         suffix: str = "",
     ):
-        from lite_forms.helpers import convert_to_markdown
-
         self.prefix = prefix
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.name = name
         self.optional = optional
         self.classes = classes
@@ -626,11 +624,10 @@ class TokenBar:
         such as an entity (person, place, or thing) or text. They enable user input and
         verify that input by converting text into chips.
         """
-        from lite_forms.helpers import convert_to_markdown
 
         self.name = name
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.options = options
         self.optional = optional
         self.classes = classes if classes else ["tokenfield-container"]
