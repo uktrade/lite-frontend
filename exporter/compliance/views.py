@@ -124,7 +124,7 @@ class AddAnnualReturnSuccess(LoginRequiredMixin, TemplateView):
         return success_page(
             request=request,
             title=OpenReturnsForm.Success.TITLE,
-            secondary_title=OpenReturnsForm.Success.SECONDARY_TITLE,
+            secondary_title="",
             description=OpenReturnsForm.Success.DESCRIPTION,
             what_happens_next="",
             links={

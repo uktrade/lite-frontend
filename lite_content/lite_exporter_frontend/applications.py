@@ -268,15 +268,6 @@ class OpenGeneralLicenceQuestions:
             "This {} doesn't require registration, however make sure you still meet the requirements."
         )
 
-        class Points:
-            FIRST_POINT = "Ensure this open general licence is appropriate for your needs"
-            SECOND_POINT = "Read the full text of the open general licence"
-            THIRD_POINT = "Check that this open general licence is appropriate for your sites"
-            THIRD_POINT_NOTICE = (
-                "If a site isn't listed, you can [add a site](/organisation/sites/new/) from your account home. Adding a site now means "
-                "you'll have to start from the beginning to register this open general licence."
-            )
-
         class Summary:
             DESCRIPTION = "Description"
             CONTROL_LIST_ENTRIES = "Control list entries"

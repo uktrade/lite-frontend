@@ -189,7 +189,7 @@ def open_general_licence_submit_success_page(request, **kwargs):
     return success_page(
         request=request,
         title=OpenGeneralLicenceRegistration.TITLE,
-        secondary_title=OpenGeneralLicenceRegistration.SECONDARY_TITLE.format(
+        secondary_title="You've successfully registered for **{} ({})**".format(
             open_general_licence["case_type"]["reference"]["value"], open_general_licence["name"]
         ),
         description="",

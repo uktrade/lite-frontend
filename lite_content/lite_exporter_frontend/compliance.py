@@ -73,7 +73,6 @@ class OpenReturnsForm:
 
     class Success:
         TITLE = "Open licence return submitted"
-        SECONDARY_TITLE = ""
         DESCRIPTION = ""
         OPEN_LICENCE_RETURNS_LINK = "View open licence returns"
         HOME_LINK = "Return to your export control account dashboard"
