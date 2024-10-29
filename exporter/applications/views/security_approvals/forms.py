@@ -128,7 +128,7 @@ class F1686DetailsForm(BaseForm):
     f1686_reference_number = forms.CharField(
         required=False,
         widget=forms.TextInput,
-        label="Reference number",
+        label="Reference number (optional)",
     )
 
     f1686_approval_date = CustomErrorDateInputField(
