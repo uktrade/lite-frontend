@@ -31,7 +31,7 @@ def new_queue_form(request):
             ),
             Select(
                 title=AddQueueForm.CountersigningQueue.TITLE,
-                description=AddQueueForm.CountersigningQueue.DESCRIPTION,
+                description="",
                 options=get_queues(
                     request=request, disable_pagination=True, convert_to_options=True, users_team_first=True
                 ),
@@ -64,7 +64,7 @@ def edit_queue_form(request, queue_id):
             ),
             Select(
                 title=EditQueueForm.CountersigningQueue.TITLE,
-                description=EditQueueForm.CountersigningQueue.DESCRIPTION,
+                description="",
                 options=remove_current_queue_id(
                     get_queues(
                         request=request, disable_pagination=True, convert_to_options=True, users_team_first=True

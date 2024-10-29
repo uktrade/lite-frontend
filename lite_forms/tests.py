@@ -8,7 +8,6 @@ from lite_forms.components import (
     DetailComponent,
     TextInput,
     FormGroup,
-    _Component,
     Label,
     Option,
     BackLink,
@@ -192,20 +191,6 @@ class TemplateTagsTestCase(TestCase):
         self.assertEqual(r"enddot\\.", prefix_dots("enddot."))
         self.assertEqual(r"mid\\.dot", prefix_dots("mid.dot"))
         self.assertEqual(r"\\.all\\.the\\.dots\\.", prefix_dots(".all.the.dots."))
-
-
-class MarkdownTest(TestCase):
-    def setUp(self):
-        super().setUp()
-        self.markdown_description = "Please **Click** this [link](https://www.gov.uk/)"
-        self.html_description = (
-            'Please <strong>Click</strong> this <a class="govuk-link govuk-link--no-visited-state" '
-            'rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/">link</a>'
-        )
-
-    def test_generic_component(self):
-        component = _Component(name="a", description=self.markdown_description)
-        self.assertEqual(component.description, self.html_description)
 
 
 class SingleQuestionFormAccessibilityTest(TestCase):

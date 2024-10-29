@@ -22,11 +22,9 @@ class _Component:
         classes: Optional[List] = None,
         extras=None,
     ):
-        from lite_forms.helpers import convert_to_markdown
-
         self.name = name
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.short_title = short_title or title
         self.accessible_description = accessible_description
         self.optional = optional
@@ -128,21 +126,6 @@ class EmptyLabel:
         self.text = ""
         self.classes = classes
         self.input_type = "label"
-
-
-class GroupWithLabel(_Component):
-    def __init__(
-        self,
-        text: str = None,
-        id: str = None,
-        components: Optional[List] = None,
-        classes: Optional[List] = None,
-    ):
-        super().__init__(text, classes)
-        self.id = id
-        self.components = [EmptyLabel()] + components
-        self.classes = classes
-        self.input_type = "group"
 
 
 class Form:
@@ -253,34 +236,6 @@ class EmailInput(_Component):
     ):
         super().__init__(name, title, description, short_title, accessible_description, optional, classes)
         self.input_type = "email_input"
-
-
-class NumberInput(_Component):
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-    ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
-        self.input_type = "number_input"
-
-
-class QuantityInput(_Component):
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-    ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
-        self.input_type = "quantity_input"
 
 
 class CurrencyInput(_Component):

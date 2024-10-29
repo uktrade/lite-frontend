@@ -15,19 +15,19 @@ def add_user_form(request):
             TextInput(title=AddUserForm.Email.TITLE, description=AddUserForm.Email.DESCRIPTION, name="email"),
             Select(
                 title=AddUserForm.Team.TITLE,
-                description=AddUserForm.Team.DESCRIPTION,
+                description="",
                 name="team",
                 options=get_teams(request, True),
             ),
             Select(
                 title=AddUserForm.Role.TITLE,
-                description=AddUserForm.Role.DESCRIPTION,
+                description="",
                 name="role",
                 options=get_roles(request, True),
             ),
             Select(
                 title=AddUserForm.DefaultQueue.TITLE,
-                description=AddUserForm.DefaultQueue.DESCRIPTION,
+                description="",
                 name="default_queue",
                 options=get_queues(request, include_system=True, convert_to_options=True),
             ),
@@ -46,7 +46,7 @@ def edit_user_form(request, user, can_edit_role: bool, can_edit_team: bool):
                 can_edit_team,
                 Select(
                     title=EditUserForm.Team.TITLE,
-                    description=EditUserForm.Team.DESCRIPTION,
+                    description="",
                     name="team",
                     options=get_teams(request, True),
                 ),
@@ -55,14 +55,14 @@ def edit_user_form(request, user, can_edit_role: bool, can_edit_team: bool):
                 can_edit_role,
                 Select(
                     title=EditUserForm.Role.TITLE,
-                    description=EditUserForm.Role.DESCRIPTION,
+                    description="",
                     name="role",
                     options=get_roles(request, True),
                 ),
             ),
             Select(
                 title=EditUserForm.DefaultQueue.TITLE,
-                description=EditUserForm.DefaultQueue.DESCRIPTION,
+                description="",
                 name="default_queue",
                 options=get_queues(request, include_system=True, convert_to_options=True),
             ),

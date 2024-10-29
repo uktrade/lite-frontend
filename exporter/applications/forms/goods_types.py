@@ -43,7 +43,7 @@ def goods_type_form(request, application_type: str):
                     ),
                     RadioButtons(
                         title=CreateGoodsTypeForm.IsIncorporated.TITLE,
-                        description=CreateGoodsTypeForm.IsIncorporated.DESCRIPTION,
+                        description="",
                         name="is_good_incorporated",
                         options=[
                             Option(key=True, value=CreateGoodsTypeForm.IsIncorporated.YES),

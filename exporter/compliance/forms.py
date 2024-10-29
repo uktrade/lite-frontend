@@ -48,7 +48,7 @@ def open_licence_return_form_group():
                 questions=[
                     Select(
                         title=OpenReturnsForm.Year.FIELD_TITLE,
-                        description=OpenReturnsForm.Year.FIELD_DESCRIPTION,
+                        description="",
                         name="year",
                         options=get_years(),
                     )

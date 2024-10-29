@@ -141,25 +141,25 @@ def edit_letter_template(request, letter_template, case_type_options, decision_o
         title=strings.LetterTemplates.EditLetterTemplate.TITLE % letter_template["name"],
         questions=[
             TextInput(
-                title=strings.LetterTemplates.EditLetterTemplate.Name.TITLE,
+                title="Give your template a name",
                 description=EDIT_LETTER_TEMPLATE_HINT,
                 name="name",
             ),
             Checkboxes(
-                title=strings.LetterTemplates.EditLetterTemplate.CaseTypes.TITLE,
+                title="When should someone use this template?",
                 name="case_types[]",
                 options=case_type_options,
                 classes=["govuk-checkboxes--small"],
             ),
             Checkboxes(
-                title=strings.LetterTemplates.EditLetterTemplate.Decisions.TITLE,
-                description=strings.LetterTemplates.EditLetterTemplate.Decisions.DESCRIPTION,
+                title="Decisions (optional)",
+                description="Select the decisions that apply to your template",
                 name="decisions[]",
                 options=decision_options,
                 classes=["govuk-checkboxes--small"],
             ),
             RadioButtonsImage(
-                title=strings.LetterTemplates.EditLetterTemplate.Layout.TITLE,
+                title="Choose a layout",
                 name="layout",
                 options=_letter_layout_options(request),
             ),
