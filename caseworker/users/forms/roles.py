@@ -10,7 +10,7 @@ from caseworker.users.services import get_permissions
 def add_role(request: HttpRequest):
     return Form(
         title=AddRoleForm.TITLE,
-        description=AddRoleForm.DESCRIPTION,
+        description="",
         questions=[
             TextInput(title=AddRoleForm.ROLE_NAME, name="name"),
             Checkboxes(
@@ -38,7 +38,7 @@ def add_role(request: HttpRequest):
 def edit_role(request: HttpRequest):
     return Form(
         title=EditRoleForm.TITLE,
-        description=EditRoleForm.DESCRIPTION,
+        description="",
         questions=[
             TextInput(title=EditRoleForm.ROLE_NAME, name="name"),
             Checkboxes(

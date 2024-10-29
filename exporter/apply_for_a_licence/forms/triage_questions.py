@@ -218,7 +218,7 @@ def transhipment_questions(request):
         [
             Form(
                 title=TranshipmentQuestions.TranshipmentLicenceQuestion.TITLE,
-                description=TranshipmentQuestions.TranshipmentLicenceQuestion.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="application_type",
@@ -256,7 +256,7 @@ def MOD_questions(application_type=None):
         [
             Form(
                 title=MODQuestions.WhatAreYouApplyingFor.TITLE,
-                description=MODQuestions.WhatAreYouApplyingFor.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="application_type",

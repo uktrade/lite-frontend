@@ -165,10 +165,10 @@ class Form:
         container: str = "two-pane",
         form_help=None,
     ):
-        from lite_forms.helpers import convert_to_markdown, heading_used_as_label
+        from lite_forms.helpers import heading_used_as_label
 
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.questions = questions
         self.caption = caption
         self.helpers = helpers

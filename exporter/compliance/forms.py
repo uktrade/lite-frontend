@@ -44,7 +44,7 @@ def open_licence_return_form_group():
             ),
             Form(
                 title=OpenReturnsForm.Year.TITLE,
-                description=OpenReturnsForm.Year.DESCRIPTION,
+                description="",
                 questions=[
                     Select(
                         title=OpenReturnsForm.Year.FIELD_TITLE,
@@ -57,7 +57,7 @@ def open_licence_return_form_group():
             ),
             Form(
                 title=OpenReturnsForm.Upload.TITLE,
-                description=OpenReturnsForm.Upload.DESCRIPTION,
+                description="The file must be smaller than 1MB",
                 questions=[
                     FileUpload(),
                     Label(OpenReturnsForm.Upload.ExampleTable.HEADING),

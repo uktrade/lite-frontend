@@ -248,7 +248,7 @@ def site_records_location(request, in_uk=True, is_editing=False):
             if in_uk
             else strings.sites.AddSiteForm.SiteRecords.SiteNotInUK.TITLE
         ),
-        description=strings.sites.AddSiteForm.SiteRecords.DESCRIPTION,
+        description="ECJU uses this for compliance visits.",
         questions=[
             *conditional(
                 in_uk,

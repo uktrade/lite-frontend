@@ -43,7 +43,7 @@ def query_explanation_form(application_id):
 def reference_name_form():
     return Form(
         title=applications.HMRCQuery.InitialQuestions.REFERENCE_NAME_TITLE,
-        description=applications.HMRCQuery.InitialQuestions.REFERENCE_NAME_DESCRIPTION,
+        description="Give the query a reference name so you can refer back to it when needed.",
         questions=[
             TextInput(name="name"),
         ],

@@ -37,7 +37,7 @@ def no_open_general_licence_form(open_general_licence_type, selected_entry, sele
         title=OpenGeneralLicenceQuestions.NoOpenGeneralLicencesAvailable.TITLE.format(
             open_general_licence_type.name.lower()
         ),
-        description=OpenGeneralLicenceQuestions.NoOpenGeneralLicencesAvailable.DESCRIPTION,
+        description="",
         questions=[
             *[
                 Label(x.format(open_general_licence_type.name.lower(), selected_entry, selected_country))
@@ -88,14 +88,14 @@ def open_general_licence_forms(request, **kwargs):
         [
             Form(
                 title=OpenGeneralLicenceQuestions.ControlListEntry.TITLE,
-                description=OpenGeneralLicenceQuestions.ControlListEntry.DESCRIPTION,
+                description="",
                 questions=[AutocompleteInput(name="control_list_entry", options=control_list_entries)],
                 default_button_name=generic.CONTINUE,
                 back_link=BackLink(url=back_link_url),
             ),
             Form(
                 title=OpenGeneralLicenceQuestions.Country.TITLE,
-                description=OpenGeneralLicenceQuestions.Country.DESCRIPTION,
+                description="",
                 questions=[AutocompleteInput(name="country", options=countries)],
                 default_button_name=generic.CONTINUE,
             ),

@@ -223,7 +223,7 @@ class InitialApplicationQuestionsForms:
 class ExportLicenceQuestions:
     class HaveYouBeenInformedQuestion:
         TITLE = "Have you received a letter or email from Border Force or HMRC informing you to apply for a licence?"
-        DESCRIPTION = "You may know this as an 'end use control'."
+        DESCRIPTION = "Give the application a reference name so you can refer back to it when needed."
         WHAT_WAS_THE_REFERENCE_CODE_TITLE = "Reference number"
         WHAT_WAS_THE_REFERENCE_CODE_DESCRIPTION = (
             "For example, CRE/2020/1234567. The reference number is on the letter or email."

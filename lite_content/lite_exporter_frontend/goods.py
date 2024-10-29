@@ -1,8 +1,6 @@
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
-from exporter.core.constants import FileUploadFileTypes
-
 
 class GoodsList:
     TITLE = "Product list"
@@ -335,13 +333,6 @@ class EditGoodForm:
 
 class AttachDocumentForm:
     TITLE = "Attach a document"
-    DESCRIPTION = (
-        FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT
-        + "\n\nDocumentation could be specifications, datasheets, sales brochures, drawings "
-        "or anything else that fully details what the product is and what it's designed to do."
-        "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "
-        "\n\nThe file must be smaller than 50MB."
-    )
     BUTTON = "Save and continue"
     BACK_FORM_LINK = "Back"
     BACK_GOOD_LINK = "Back to product"

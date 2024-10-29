@@ -22,7 +22,7 @@ from caseworker.users.services import get_gov_users
 def new_queue_form(request):
     return Form(
         title=AddQueueForm.TITLE,
-        description=AddQueueForm.DESCRIPTION,
+        description="",
         questions=[
             TextInput(
                 title=AddQueueForm.Name.TITLE,
@@ -55,7 +55,7 @@ def remove_current_queue_id(options, queue_id):
 def edit_queue_form(request, queue_id):
     return Form(
         title=EditQueueForm.TITLE,
-        description=EditQueueForm.DESCRIPTION,
+        description="",
         questions=[
             TextInput(
                 title=EditQueueForm.Name.TITLE,

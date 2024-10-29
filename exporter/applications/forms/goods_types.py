@@ -10,7 +10,7 @@ from lite_forms.helpers import conditional
 def goods_type_form(request, application_type: str):
     return Form(
         title=CreateGoodsTypeForm.TITLE,
-        description=CreateGoodsTypeForm.DESCRIPTION,
+        description="Start with the product name to make it easier to find the product when needed. Include the commodity code if you know it.",
         questions=[
             TextArea(
                 title=CreateGoodsTypeForm.Description.TITLE,

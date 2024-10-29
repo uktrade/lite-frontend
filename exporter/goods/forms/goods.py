@@ -76,7 +76,7 @@ def edit_grading_form(request, good_id):
 def pv_details_form(request):
     return Form(
         title=GoodGradingForm.TITLE,
-        description=GoodGradingForm.DESCRIPTION,
+        description="",
         questions=[
             Heading("PV grading", HeadingStyle.M),
             Group(
@@ -107,7 +107,7 @@ def pv_details_form(request):
 def edit_good_detail_form(request, good_id):
     return Form(
         title=EditGoodForm.TITLE,
-        description=EditGoodForm.DESCRIPTION,
+        description="",
         questions=[
             TextInput(
                 title="Name",
@@ -149,9 +149,11 @@ def edit_good_detail_form(request, good_id):
 
 
 def check_document_available_form(back_url):
+    DESCRIPTION = """For example, a technical specification, datasheet, sales brochure or something else that fully describes the product details.<br /> This is required in order to process the application."""
+
     return Form(
         title=DocumentAvailabilityForm.TITLE,
-        description=DocumentAvailabilityForm.DESCRIPTION,
+        description=DESCRIPTION,
         questions=[
             RadioButtons(
                 name="is_document_available",
@@ -202,9 +204,11 @@ def document_grading_form(back_url):
 
 
 def attach_documents_form(back_link):
+    DESCRIPTION = """Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file.<br>Documentation could be specifications, datasheets, sales brochures, drawings or anything else that fully details what the product is and what it's designed to do.<br>Do not attach a document that’s above OFFICIAL-SENSITIVE.<br>The file must be smaller than 50MB."""
+
     return Form(
         title=AttachDocumentForm.TITLE,
-        description=AttachDocumentForm.DESCRIPTION,
+        description=DESCRIPTION,
         questions=[
             FileUpload(),
             TextArea(
@@ -261,7 +265,7 @@ def format_list_item(link, name, description):
 def upload_firearms_act_certificate_form(section, filename, back_link):
     return Form(
         title=f"Attach your Firearms Act 1968 {section} certificate",
-        description=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT + "\n\nThe file must be smaller than 50MB.",
+        description=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT + "<br><br>The file must be smaller than 50MB.",
         questions=[
             HiddenField("firearms_certificate_uploaded", False),
             FileUpload(),

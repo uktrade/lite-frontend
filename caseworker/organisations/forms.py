@@ -42,7 +42,7 @@ def register_organisation_forms(request):
         [
             Form(
                 title=RegisterAnOrganisation.CommercialOrIndividual.TITLE,
-                description=RegisterAnOrganisation.CommercialOrIndividual.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="type",
@@ -63,7 +63,7 @@ def register_organisation_forms(request):
             ),
             Form(
                 title=RegisterAnOrganisation.WhereIsTheExporterBased.TITLE,
-                description=RegisterAnOrganisation.WhereIsTheExporterBased.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="location",

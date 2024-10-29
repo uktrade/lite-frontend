@@ -10,7 +10,7 @@ from lite_forms.components import Form, RadioButtons, Option, BackLink, TextArea
 def application_type_form():
     return Form(
         title=TradeControlLicenceQuestions.TradeControlLicenceQuestion.TITLE,
-        description=TradeControlLicenceQuestions.TradeControlLicenceQuestion.DESCRIPTION,
+        description="",
         questions=[
             RadioButtons(
                 name="application_type",
@@ -64,7 +64,7 @@ def activity_form(request):
 
     return Form(
         title=TradeControlLicenceQuestions.ControlActivity.TITLE,
-        description=TradeControlLicenceQuestions.ControlActivity.DESCRIPTION,
+        description="",
         questions=[RadioButtons(name="trade_control_activity", options=options)],
         default_button_name=generic.CONTINUE,
     )
@@ -77,15 +77,15 @@ def product_category_form(request):
         "category_b": TradeControlLicenceQuestions.ProductCategory.CATEGORY_B_HINT,
         "category_c": TradeControlLicenceQuestions.ProductCategory.CATEGORY_C_HINT,
     }
+    PRODUCT_CATEGORY_DESCRIPTION = """Find out about <a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology#trade-controls-and-arranging-sales-or-movements">trade control product categories</a>."""
 
     options = [
         Option(product_category["key"], product_category["value"], hint_text_map.get(product_category["key"]))
         for product_category in product_categories
     ]
-
     return Form(
         title=TradeControlLicenceQuestions.ProductCategory.TITLE,
-        description=TradeControlLicenceQuestions.ProductCategory.DESCRIPTION,
+        description=PRODUCT_CATEGORY_DESCRIPTION,
         questions=[Checkboxes(name="trade_control_product_categories[]", options=options)],
         default_button_name=generic.SAVE_AND_CONTINUE,
     )
