@@ -13,4 +13,6 @@ def back_to_task_list(application_id):
 
 def footer_label(application_id):
     url = reverse("applications:task_list", kwargs={"pk": str(application_id)})
-    return Label(f'Or <a class="govuk-link" href="{url}">return to application overview</a>')
+    return Label(
+        f'Or <a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank" href="{url}">return to application overview</a>'
+    )

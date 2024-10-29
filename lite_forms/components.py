@@ -111,10 +111,8 @@ class Label:
         id: str = None,
         classes: Optional[List] = None,
     ):
-        from lite_forms.helpers import convert_to_markdown
-
         self.id = id
-        self.text = convert_to_markdown(text)
+        self.text = text
         self.classes = classes
         self.input_type = "label"
 

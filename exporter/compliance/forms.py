@@ -60,7 +60,7 @@ def open_licence_return_form_group():
                 description="The file must be smaller than 1MB",
                 questions=[
                     FileUpload(),
-                    Label(OpenReturnsForm.Upload.ExampleTable.HEADING),
+                    Label("<h2>Your file needs to look like the following example</h2>Save your file as a CSV"),
                     Custom("components/spreadsheet.html"),
                 ],
                 default_button_name=OpenReturnsForm.Upload.BUTTON,

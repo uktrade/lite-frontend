@@ -108,11 +108,11 @@ def open_general_licence_forms(request, **kwargs):
                         ),
                         questions=[
                             Label(
-                                OpenGeneralLicenceQuestions.OpenGeneralLicences.DESCRIPTION.format(
+                                "These are the {}s described by **{}** being exported to **{}**.".format(
                                     open_general_licence_type.name.lower(), selected_entry, selected_country
                                 )
                             ),
-                            Label(OpenGeneralLicenceQuestions.OpenGeneralLicences.HELP_TEXT),
+                            Label("Select the option which best matches your product and requirements."),
                             RadioButtons(
                                 name="open_general_licence",
                                 options=[

@@ -115,12 +115,9 @@ class DocumentAvailabilityForm:
 
 class DocumentSensitivityForm:
     TITLE = "Is the document rated above OFFICIAL-SENSITIVE?"
-    ECJU_HELPLINE = (
-        "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
-        "this document.\n\n You can continue with the application "
-        "without attaching a document.\n\n**ECJU helpline**\n 020 7215 4594\n "
-        "[Find out about call charges (opens in new tab)](https://www.gov.uk/call-charges)"
-    )
+    ECJU_HELPLINE = """<strong><noscript>If the answer is No;</noscript></strong><br>Contact ECJU to arrange a more secure way to send this document.<br>You can continue with the application without attaching a document.<br><strong>ECJU helpline</strong><br />
+ 020 7215 4594<br /> <a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/call-charges">Find out about call charges (opens in new tab)</a>
+"""
     SUBMIT_BUTTON = "Save and continue"
 
     class Options:
