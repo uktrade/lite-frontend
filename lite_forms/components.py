@@ -195,10 +195,8 @@ class Form:
 
 class DetailComponent:
     def __init__(self, title, description="", components=None):
-        from lite_forms.helpers import convert_to_markdown
-
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.components = components
         self.input_type = "detail"
 

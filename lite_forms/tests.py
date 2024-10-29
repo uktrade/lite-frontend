@@ -215,10 +215,6 @@ class MarkdownTest(TestCase):
         form = Form(description=self.markdown_description)
         self.assertEqual(form.description, self.html_description)
 
-    def test_detail_component(self):
-        detail = DetailComponent(title="abc", description=self.markdown_description)
-        self.assertEqual(detail.description, self.html_description)
-
 
 class SingleQuestionFormAccessibilityTest(TestCase):
     def test_no_questions_no_title_label(self):
