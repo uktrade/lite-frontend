@@ -113,7 +113,7 @@ def replace_spaces(text):
 
 
 @register.simple_tag
-@mark_safe
+@mark_safe  # noqa: S308
 def dict_hidden_field(key, value):
     """
     Generates a hidden field from the given key and value
@@ -160,7 +160,7 @@ def get(value, arg):
 
 
 @register.filter
-@mark_safe
+@mark_safe  # noqa: S308
 def markdown(text):
     return convert_to_markdown(text)
 
@@ -206,7 +206,7 @@ def item_with_rating_exists(items, rating):
 
 
 @register.simple_tag
-@mark_safe
+@mark_safe  # noqa: S308
 def govuk_link_button(text, url, url_param=None, id="", classes="", query_params="", show_chevron=False, hidden=False):
     text = get_const_string(text)
     if isinstance(url_param, str):

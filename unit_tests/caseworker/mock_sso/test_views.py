@@ -160,7 +160,7 @@ def test_mock_api_user_me(mock_uuid, client, authorize_url_params, authorize_url
 
 def test_mock_logout(client):
     url = reverse("mock_sso:logout")
-    client.session["email_token"] = "example"
+    client.session["email_token"] = "example"  # noqa: S105
     client.session.save()
 
     response = client.get(url)

@@ -1,5 +1,4 @@
 import copy
-from copy import deepcopy
 
 import pytest
 from unittest.mock import patch

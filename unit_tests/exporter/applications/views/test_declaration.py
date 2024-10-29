@@ -2,7 +2,6 @@ import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
-from requests.exceptions import HTTPError
 
 from core import client
 

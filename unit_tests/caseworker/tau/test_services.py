@@ -1,7 +1,6 @@
 import pytest
 import requests
 
-from core import client
 from caseworker.cases.services import get_case
 from caseworker.tau.services import get_first_precedents, group_gonas_by_good, get_latest_precedents
 

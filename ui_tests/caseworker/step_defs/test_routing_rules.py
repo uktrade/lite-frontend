@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from pytest_bdd import given, when, then, scenarios, parsers
+from pytest_bdd import when, then, scenarios, parsers
 from selenium.webdriver.common.by import By
 
 from caseworker.core.constants import SystemTeamsID

@@ -1,12 +1,8 @@
 import pytest
-from django.http import Http404
 from django.urls import reverse
 from exporter.applications.forms.hcsat import HCSATminiform
-from http import HTTPStatus
-from pytest_django.asserts import assertContains, assertTemplateUsed
+from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
-from unittest.mock import patch
-from core import client
 
 
 @pytest.fixture

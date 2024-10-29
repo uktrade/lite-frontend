@@ -456,7 +456,7 @@ def document_formatter(document, url, link_text=None):
 
     name = link_text or escape(document["name"])
 
-    return mark_safe(  # nosec
+    return mark_safe(  # noqa: S308
         f'<a class="govuk-link govuk-link--no-visited-state" href="{url}" target="_blank">{name}</a>'
     )
 

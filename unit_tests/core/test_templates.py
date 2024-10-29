@@ -1,4 +1,3 @@
-import pytest
 from bs4 import BeautifulSoup
 from django.template.loader import render_to_string
 

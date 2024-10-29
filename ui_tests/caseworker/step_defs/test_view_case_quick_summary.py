@@ -1,5 +1,3 @@
-import pytest
-
 from pytest_bdd import scenarios, then
 
 from selenium.webdriver.common.by import By

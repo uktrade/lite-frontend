@@ -8,7 +8,6 @@ import re
 
 import urllib.parse as urlparse
 
-from collections import Counter, OrderedDict
 from decimal import Decimal
 from importlib import import_module
 
@@ -108,7 +107,7 @@ def get_const_string(value):
         if len(nested_properties_list) == 1:
             # We have reached the end of the path and now have the string
             if isinstance(object, str):
-                object = mark_safe(  # nosec
+                object = mark_safe(  # noqa: S308
                     object.replace("<!--", "<span class='govuk-visually-hidden'>").replace("-->", "</span>")
                 )
 
@@ -179,17 +178,8 @@ def str_date_only(value):
         return localtime(parse(value)).strftime("%-d %B %Y")
 
 
-@register.filter
-@mark_safe
-def pretty_json(value):
-    """
-    Pretty print JSON - for development purposes only.
-    """
-    return "<pre>" + json.dumps(value, indent=4) + "</pre>"
-
-
 @register.simple_tag
-@mark_safe
+@mark_safe  # noqa: S308
 def hidden_field(key, value):
     """
     Generates a hidden field from the given key and value
@@ -221,7 +211,7 @@ def default_na(value):
     if value:
         return value
     else:
-        return mark_safe(f'<span class="govuk-hint govuk-!-margin-0">N/A</span>')  # nosec
+        return mark_safe(f'<span class="govuk-hint govuk-!-margin-0">N/A</span>')  # noqa: S308
 
 
 @register.filter()
@@ -357,7 +347,7 @@ def is_system_team(id: str):
 
 
 @register.simple_tag
-@mark_safe
+@mark_safe  # noqa: S308
 def missing_title():
     """
     Adds a missing title banner to the page
@@ -393,46 +383,6 @@ def join_key_value_list(_list, _join=", "):
 @register.filter()
 def not_equals(ob1, ob2):
     return ob1 != ob2
-
-
-@register.filter()
-@mark_safe
-def aurora(flags):
-    """
-    Generates a radial gradient background from a list of flags
-    """
-    colours = {
-        "default": "#626a6e",
-        "red": "#d4351c",
-        "orange": "#f47738",
-        "blue": "#1d70b8",
-        "yellow": "#FED90C",
-        "green": "#00703c",
-        "pink": "#d53880",
-        "purple": "#4c2c92",
-        "brown": "#b58840",
-        "turquoise": "#28a197",
-    }
-
-    bucket = [colours[flag["colour"]] for flag in flags]
-
-    if len(set(bucket)) != len(bucket):
-        bucket = list(OrderedDict.fromkeys(item for items, c in Counter(bucket).most_common() for item in [items] * c))
-
-    if not bucket:
-        return
-
-    while len(bucket) < 4:
-        bucket.extend(bucket)
-
-    gradients = [
-        f"radial-gradient(ellipse at top left, {bucket[0]}, transparent)",
-        f"radial-gradient(ellipse at top right, {bucket[1]}, transparent)",
-        f"radial-gradient(ellipse at bottom left, {bucket[2]}, transparent)",
-        f"radial-gradient(ellipse at bottom right, {bucket[3]}, transparent)",
-    ]
-
-    return 'style="background: ' + ",".join(gradients) + '"'
 
 
 @register.filter()
