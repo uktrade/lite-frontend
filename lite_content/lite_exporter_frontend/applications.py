@@ -299,18 +299,8 @@ class TradeControlLicenceQuestions:
         DESCRIPTION = ""
         BACK = "Back"
         OPEN_GENERAL_TRADE_CONTROL_LICENCE = "Open General Trade Control Licence (OGTCL)"
-        OPEN_GENERAL_TRADE_CONTROL_LICENCE_DESCRIPTION = (
-            "Select to register a pre-published licence with set terms "
-            "and conditions. Being an OGTCL holder can benefit your "
-            "business by saving time and money."
-        )
         STANDARD_LICENCE = "Standard licence"
-        STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
         OPEN_LICENCE = "Open licence"
-        OPEN_LICENCE_DESCRIPTION = (
-            "Select an open licence for multiple shipments of specific products to specific destinations. "
-            "Open licences cover long term projects and repeat business."
-        )
 
     class ControlActivity:
         TITLE = "Select the type of trade control activity you're providing"
@@ -357,20 +347,8 @@ class TranshipmentQuestions:
         DESCRIPTION = ""
         BACK = "Back"
         OPEN_GENERAL_TRANSHIPMENT_LICENCE = "Open General Transhipment Licence (OGTL)"
-        OPEN_GENERAL_TRANSHIPMENT_LICENCE_DESCRIPTION = (
-            "Select to register a pre-published licence with set terms "
-            "and conditions. Being an OGTL holder can benefit your "
-            "business by saving time and money."
-        )
         STANDARD_LICENCE = "Standard Transhipment Licence"
-        STANDARD_LICENCE_DESCRIPTION = (
-            "Select a standard transhipment licence for a set quantity and set value of products."
-        )
         OPEN_LICENCE = "Open licence"
-        OPEN_LICENCE_DESCRIPTION = (
-            "Select an open licence for multiple shipments of specific products to specific destinations. "
-            "Open licences cover long term projects and repeat business."
-        )
 
     class ExportType:
         TITLE = "Select an export type"

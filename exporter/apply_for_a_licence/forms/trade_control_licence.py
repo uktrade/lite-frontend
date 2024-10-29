@@ -18,17 +18,19 @@ def application_type_form():
                     Option(
                         key=CaseTypes.OGTCL,
                         value=TradeControlLicenceQuestions.TradeControlLicenceQuestion.OPEN_GENERAL_TRADE_CONTROL_LICENCE,
-                        description=TradeControlLicenceQuestions.TradeControlLicenceQuestion.OPEN_GENERAL_TRADE_CONTROL_LICENCE_DESCRIPTION,
+                        description="""Select to register a pre-published licence with set terms and conditions. Being an OGTCL holder can benefit your
+        business by saving time and money.""",
                     ),
                     Option(
                         key=CaseTypes.SICL,
                         value=TradeControlLicenceQuestions.TradeControlLicenceQuestion.STANDARD_LICENCE,
-                        description=TradeControlLicenceQuestions.TradeControlLicenceQuestion.STANDARD_LICENCE_DESCRIPTION,
+                        description="Select a standard licence for a set quantity and set value of products.",
                     ),
                     Option(
                         key=CaseTypes.OICL,
                         value=TradeControlLicenceQuestions.TradeControlLicenceQuestion.OPEN_LICENCE,
-                        description=TradeControlLicenceQuestions.TradeControlLicenceQuestion.OPEN_LICENCE_DESCRIPTION,
+                        description="""Select an open licence for multiple shipments of specific products to specific destinations.
+            Open licences cover long term projects and repeat business.""",
                     ),
                 ],
             )

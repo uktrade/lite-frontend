@@ -12,7 +12,6 @@ from lite_forms.components import (
     Label,
     HelpSection,
     Option,
-    DateInput,
     BackLink,
     HiddenField,
     NumberInput,
@@ -224,14 +223,6 @@ class MarkdownTest(TestCase):
     def test_help_section(self):
         detail = HelpSection(title="abc", description=self.markdown_description)
         self.assertEqual(detail.description, self.html_description)
-
-    def test_option(self):
-        option = Option(key="a", value="A", description=self.markdown_description)
-        self.assertEqual(option.description, self.html_description)
-
-    def test_date_input(self):
-        date = DateInput(prefix="Date", description=self.markdown_description)
-        self.assertEqual(date.description, self.html_description)
 
 
 class SingleQuestionFormAccessibilityTest(TestCase):

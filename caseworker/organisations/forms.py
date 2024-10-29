@@ -50,12 +50,10 @@ def register_organisation_forms(request):
                             Option(
                                 key="commercial",
                                 value=RegisterAnOrganisation.CommercialOrIndividual.COMMERCIAL_TITLE,
-                                description=RegisterAnOrganisation.CommercialOrIndividual.COMMERCIAL_DESCRIPTION,
                             ),
                             Option(
                                 key="individual",
                                 value=RegisterAnOrganisation.CommercialOrIndividual.INDIVIDUAL_TITLE,
-                                description=RegisterAnOrganisation.CommercialOrIndividual.INDIVIDUAL_DESCRIPTION,
                             ),
                         ],
                     )

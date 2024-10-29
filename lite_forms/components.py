@@ -436,12 +436,11 @@ class Option:
         cannot_remove: bool = False,
         id=None,
     ):
-        from lite_forms.helpers import convert_to_markdown
 
         self.auto_check = auto_check
         self.key = key
         self.value = value
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.show_or = show_or
         self.img_url = img_url
         self.components = [component for component in components if component] if components else []

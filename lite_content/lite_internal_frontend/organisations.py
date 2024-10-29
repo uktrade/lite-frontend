@@ -84,7 +84,6 @@ class RegisterAnOrganisation:
         COMMERCIAL_TITLE = "Commercial"
         COMMERCIAL_DESCRIPTION = ""
         INDIVIDUAL_TITLE = "Individual"
-        INDIVIDUAL_DESCRIPTION = ""
         ERROR = "Select the type of organisation you're registering for"
 
     class WhereIsTheExporterBased:
