@@ -18,8 +18,10 @@ def application_type_form():
                     Option(
                         key=CaseTypes.OGTCL,
                         value=TradeControlLicenceQuestions.TradeControlLicenceQuestion.OPEN_GENERAL_TRADE_CONTROL_LICENCE,
-                        description="""Select to register a pre-published licence with set terms and conditions. Being an OGTCL holder can benefit your
-        business by saving time and money.""",
+                        description=(
+                            "Select to register a pre-published licence with set terms and conditions. "
+                            "Being an OGTCL holder can benefit your business by saving time and money."
+                        ),
                     ),
                     Option(
                         key=CaseTypes.SICL,
@@ -29,8 +31,10 @@ def application_type_form():
                     Option(
                         key=CaseTypes.OICL,
                         value=TradeControlLicenceQuestions.TradeControlLicenceQuestion.OPEN_LICENCE,
-                        description="""Select an open licence for multiple shipments of specific products to specific destinations.
-            Open licences cover long term projects and repeat business.""",
+                        description=(
+                            "Select an open licence for multiple shipments of specific products to specific destinations. "
+                            "Open licences cover long term projects and repeat business."
+                        ),
                     ),
                 ],
             )
@@ -77,7 +81,12 @@ def product_category_form(request):
         "category_b": TradeControlLicenceQuestions.ProductCategory.CATEGORY_B_HINT,
         "category_c": TradeControlLicenceQuestions.ProductCategory.CATEGORY_C_HINT,
     }
-    PRODUCT_CATEGORY_DESCRIPTION = """Find out about <a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology#trade-controls-and-arranging-sales-or-movements">trade control product categories</a>."""
+    guidence_url = "https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology#trade-controls-and-arranging-sales-or-movements"
+    PRODUCT_CATEGORY_DESCRIPTION = (
+        'Find out about <a class="govuk-link govuk-link--no-visited-state" '
+        f'rel="noreferrer noopener" target="_blank" href="{guidence_url}">'
+        "trade control product categories</a>."
+    )
 
     options = [
         Option(product_category["key"], product_category["value"], hint_text_map.get(product_category["key"]))

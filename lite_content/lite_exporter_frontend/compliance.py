@@ -1,10 +1,12 @@
 class OpenReturnsHelpPage:
     TITLE = "Before you start"
     BACK = "Back to hub"
-    DESCRIPTION = """Submit open licence returns using a CSV file that follows this [template and guidance](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/385687/14-1290-open-licence-returns.pdf).<br>
-     You must submit open licence returns for:<br>
-     - Open Individual Export Licences (OIELs)<br> - Open Individual Trade Control Licences (OITCLs)<br> - Open General Export Licences (OGELs)\n - Open General Trade Control Licences (OGTCLs)
-     """  # noqa
+    DESCRIPTION = (
+        "Submit open licence returns using a CSV file that follows this [template and guidance]"
+        "(https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/385687/14-1290-open-licence-returns.pdf).<br>"
+        " You must submit open licence returns for:<br> - Open Individual Export Licences (OIELs)<br>"
+        "- Open Individual Trade Control Licences (OITCLs)<br> - Open General Export Licences (OGELs)<br> - Open General Trade Control Licences (OGTCLs)"
+    )
     BUTTON = "Next"
 
 

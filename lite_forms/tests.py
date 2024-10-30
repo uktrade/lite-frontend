@@ -12,7 +12,6 @@ from lite_forms.components import (
     Option,
     BackLink,
     HiddenField,
-    NumberInput,
     RadioButtons,
     FileUpload,
 )
@@ -233,7 +232,7 @@ class SingleQuestionFormAccessibilityTest(TestCase):
         form = Form(
             questions=[
                 TextInput("abc"),
-                NumberInput("def"),
+                TextInput("def"),
             ]
         )
         self.assertIsNone(form.single_form_element)

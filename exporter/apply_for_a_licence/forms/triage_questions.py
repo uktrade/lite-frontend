@@ -226,8 +226,10 @@ def transhipment_questions(request):
                             Option(
                                 key=CaseTypes.OGTL,
                                 value=TranshipmentQuestions.TranshipmentLicenceQuestion.OPEN_GENERAL_TRANSHIPMENT_LICENCE,
-                                description="""Select to register a pre-published licence with set terms and conditions. Being an OGTL holder can benefit your
-                                            business by saving time and money. """,
+                                description=(
+                                    "Select to register a pre-published licence with set terms and conditions. Being an OGTL holder can benefit your "
+                                    "business by saving time and money."
+                                ),
                             ),
                             Option(
                                 key=CaseTypes.SITL,

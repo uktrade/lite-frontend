@@ -130,8 +130,10 @@ def electronic_warfare_form():
                         value="Yes",
                         components=[
                             Label(
-                                text="""You need to complete part A of the MOD EW Data Release Capture Form
-            and attach it to the application in the supporting documents section."""
+                                text=(
+                                    "You need to complete part A of the MOD EW Data Release Capture"
+                                    " Form and attach it to the application in the supporting documents section."
+                                )
                             )
                         ],
                     ),

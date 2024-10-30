@@ -52,7 +52,6 @@ from lite_forms.components import (
     TextArea,
     TextInput,
 )
-from lite_forms.helpers import convert_to_markdown
 from lite_forms.styles import ButtonStyle, HeadingStyle
 
 
@@ -149,7 +148,11 @@ def edit_good_detail_form(request, good_id):
 
 
 def check_document_available_form(back_url):
-    DESCRIPTION = """For example, a technical specification, datasheet, sales brochure or something else that fully describes the product details.<br /> This is required in order to process the application."""
+    DESCRIPTION = (
+        "For example, a technical specification, datasheet, "
+        "sales brochure or something else that fully describes the product details."
+        "<br /> This is required in order to process the application."
+    )
 
     return Form(
         title=DocumentAvailabilityForm.TITLE,
@@ -204,7 +207,11 @@ def document_grading_form(back_url):
 
 
 def attach_documents_form(back_link):
-    DESCRIPTION = """Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file.<br>Documentation could be specifications, datasheets, sales brochures, drawings or anything else that fully details what the product is and what it's designed to do.<br>Do not attach a document that’s above OFFICIAL-SENSITIVE.<br>The file must be smaller than 50MB."""
+    DESCRIPTION = (
+        "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file.<br>Documentation could be specifications, datasheets, "
+        "sales brochures, drawings or anything else that fully details what the product is and what it's designed to do."
+        "<br>Do not attach a document that’s above OFFICIAL-SENSITIVE.<br>The file must be smaller than 50MB."
+    )
 
     return Form(
         title=AttachDocumentForm.TITLE,
@@ -810,7 +817,7 @@ class AddGoodsQuestionsForm(forms.Form):
             (False, CreateGoodForm.IsControlled.NO),
         ),
         label=CreateGoodForm.IsControlled.TITLE,
-        help_text=convert_to_markdown(CreateGoodForm.IsControlled.DESCRIPTION),
+        help_text=CreateGoodForm.IsControlled.DESCRIPTION,
     )
 
     control_list_entries = forms.MultipleChoiceField(
