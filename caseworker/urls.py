@@ -54,7 +54,7 @@ if settings.FEATURE_DEBUG_TOOLBAR_ON:
 
 if settings.FEATURE_CSP_MIDDLEWARE_ENABLED:
     urlpatterns = [
-        path("csp-report/", CspReportView.as_view(), name="csp_report"),
+        path("csp-report/", CspReportView.csp_report, name="csp_report"),
     ] + urlpatterns
 
 
