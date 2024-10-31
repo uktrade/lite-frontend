@@ -264,7 +264,7 @@ CSP_INCLUDE_NONCE_IN = env.tuple("CSP_INCLUDE_NONCE_IN", default=("script-src",)
 # Content Security Policy reporting.  CSP_REPORT_URI has been deprecated but
 # using it here as some browsers still don't support CSP_REPORT_TO which replaces it
 
-CSP_REPORT_TO = {"group": "default", "max_age": 10886400, "endpoints": [{"url": "/csp-report/"}]}
+CSP_REPORT_TO = '{"endpoints": [{"url": "/csp-report/"}]}'
 CSP_REPORT_URI = env.tuple("CSP_REPORT_URI", default=("/csp-report/",))
 
 
