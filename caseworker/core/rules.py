@@ -12,6 +12,7 @@ from caseworker.advice.services import (
 )
 from caseworker.core.constants import (
     ADMIN_TEAM_ID,
+    SUPER_USER_ROLE_ID,
     TAU_TEAM_ID,
     LICENSING_UNIT_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
@@ -180,6 +181,19 @@ def is_organisation_active(request, organisation):
     return organisation["status"]["key"] == "active"
 
 
+@rules.predicate
+def is_super_user(request):
+    user = get_logged_in_caseworker(request)
+    return user.get("role", {}).get("id") == SUPER_USER_ROLE_ID
+
+
+@rules.predicate
+def user_is_not_logged_in_user(request, user):
+    caseworker = get_logged_in_caseworker(request)
+    caseworker_user_id = caseworker["id"]
+    return True if not user else user.get("user", {}).get("id") != caseworker_user_id
+
+
 rules.add_rule("can_user_allocate_case", is_case_caseworker_operable)
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
@@ -205,3 +219,8 @@ rules.add_rule(
     "can_licence_status_be_changed", is_user_licencing_unit_senior_manager & is_case_finalised_and_licence_editable
 )
 rules.add_rule("can_user_manage_organisation", is_user_manage_organisations_role & is_organisation_active)
+rules.add_rule("can_caseworker_edit_role", is_super_user | is_user_in_admin_team)  # noqa
+rules.add_rule("can_caseworker_edit_team", is_super_user | is_user_in_admin_team)  # noqa
+rules.add_rule(
+    "can_caseworker_deactivate", (is_super_user | is_user_in_admin_team) & user_is_not_logged_in_user  # noqa
+)
