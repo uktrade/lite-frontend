@@ -7,16 +7,14 @@ from crispy_forms_gds.layout import HTML
 
 from core.common.forms import BaseForm, TextChoice
 from exporter.core.services import get_countries
-from .validators import (
-    validate_phone,
-    validate_registration,
-)
+from .validators import validate_phone
 from exporter.core.organisation.services import validate_registration_number
 from .fields import (
     AddressLineField,
     VatField,
     EoriField,
     SicField,
+    RegistrationNumberField,
 )
 
 
@@ -85,7 +83,7 @@ class RegisterDetailsBaseForm(BaseForm):
     VAT_LABEL = "UK VAT number"
     EORI_LABEL = "European Union registration and identification number (EORI)"
     SIC_CODE_LABEL = "Standard industrial classification (SIC code)"
-    REGISTRATION_LABEL = "Companies House registration number (CRN)"
+    REGISTRATION_LABEL = "Company House registration number (CRN) or Royal Charter (RC) number"
 
     class Layout:
         TITLE = "Enter organisation details"
@@ -101,8 +99,8 @@ class RegisterDetailsBaseForm(BaseForm):
         label=EORI_LABEL,
         help_text=(
             """The first two letters are the country code, like GB or XI. This is followed by 12 or 15 numbers, like GB123456123456.
-            <a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state' target='_blank'>Get an EORI number </a>
-            if you don't have one."""
+            <br/> <a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state' target='_blank'>Get an EORI number</a>
+             if you don't have one."""
         ),
         error_messages={
             "required": "Enter an EORI number",
@@ -130,13 +128,14 @@ class RegisterDetailsBaseForm(BaseForm):
         },
     )
 
-    registration_number = forms.CharField(
+    registration_number = RegistrationNumberField(
         label=REGISTRATION_LABEL,
-        help_text="8 numbers, or 2 letters followed by 6 numbers.",
+        help_text="""Only provide a RC number if you do not have a CRN. <br/>
+            The number will be 2 letters following by 6 numbers, or 8 numbers.
+        """,
         error_messages={
             "required": "Enter a registration number",
         },
-        validators=[validate_registration],
     )
 
     def __init__(self, *args, **kwargs):

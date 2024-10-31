@@ -34,3 +34,14 @@ class SicField(forms.CharField):
         MaxLengthValidator(Validation.SIC_LENGTH, Validation.SIC_NUMBER_LENGTH_ERROR_MESSAGE),
         RegexValidator(Validation.SIC_NUMBERs_ONLY_REGEX, Validation.SIC_NUMBERS_ONLY_ERROR_MESSAGE),
     ]
+
+
+class RegistrationNumberField(forms.CharField):
+    default_validators = [
+        MinLengthValidator(Validation.REGISTRATION_NUMBER_LENGTH, Validation.REGISTRATION_NUM_MIN_LENGTH_ERROR_MESSAGE),
+        MaxLengthValidator(Validation.REGISTRATION_NUMBER_LENGTH, Validation.REGISTRATION_NUM_MAX_LENGTH_ERROR_MESSAGE),
+        RegexValidator(Validation.LETTERS_AND_NUMBERS_ONLY, Validation.REGISTRATION_NUM_SPECIAL_CHARS_ERROR_MESSAGE),
+        RegexValidator(
+            Validation.REGISTRATION_NUM_VALIDATION_REGEX, Validation.REGISTRATION_NUM_VALIDATION_ERROR_MESSAGE
+        ),
+    ]
