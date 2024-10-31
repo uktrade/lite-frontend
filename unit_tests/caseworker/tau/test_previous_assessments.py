@@ -1,15 +1,12 @@
 import pytest
-import re
 from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
-import rules
 
 from django.urls import reverse
 
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from core import client
-from caseworker.tau import views
 from core.exceptions import ServiceError
 
 

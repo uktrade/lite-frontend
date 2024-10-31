@@ -1,5 +1,4 @@
 from django.urls import reverse
-from django.conf import settings
 from urllib.parse import urlsplit, parse_qs
 import pytest
 

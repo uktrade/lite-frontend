@@ -215,33 +215,6 @@ class ExistingGoodsList(LoginRequiredMixin, TemplateView):
         return render(request, "applications/goods/preexisting.html", context)
 
 
-class RegisteredFirearmDealersMixin:
-    SESSION_KEY_RFD_CERTIFICATE = "rfd_certificate_details"
-
-    def cache_rfd_certificate_details(self):
-        file = self.request.FILES.get("file")
-        if not file:
-            return
-        self.request.session[self.SESSION_KEY_RFD_CERTIFICATE] = {
-            "document_on_organisation": {
-                "expiry_date": format_date(self.request.POST, "expiry_date_"),
-                "reference_code": self.request.POST["reference_code"],
-                "document_type": OrganisationDocumentType.RFD_CERTIFICATE,
-            },
-            **get_document_data(file),
-        }
-
-    def post_success_step(self):
-        data = self.request.session.pop(self.SESSION_KEY_RFD_CERTIFICATE, None)
-        if data:
-            _, status_code = post_additional_document(
-                request=self.request,
-                pk=str(self.kwargs["pk"]),
-                json=data,
-            )
-            assert status_code == HTTPStatus.CREATED
-
-
 class SkipResetSessionStorage(SessionStorage):
     """This gives clients the ability to skip the reset (deletion) of
     data that has been collected by the wizard.
@@ -460,7 +433,6 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
                 pk=str(self.kwargs["pk"]),
                 json=rfd_cert,
             )
-            assert status_code == HTTPStatus.CREATED
 
         if str_to_bool(all_data.get("is_covered_by_firearm_act_section_one_two_or_five")):
             if is_firearm_certificate_needed(
@@ -956,7 +928,6 @@ class AddGoodToApplication(SectionDocumentMixin, LoginRequiredMixin, BaseSession
             }
 
             _, status_code = post_additional_document(request=self.request, pk=str(self.kwargs["pk"]), json=rfd_cert)
-            assert status_code == HTTPStatus.CREATED
 
         selected_section = self.get_selected_section(all_data)
         if self.should_show_section_upload_form(all_data, selected_section):

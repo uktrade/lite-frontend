@@ -1,17 +1,10 @@
-import re
 from decimal import Decimal
 import pytest
 from bs4 import BeautifulSoup
-from datetime import timedelta
 
-from pytest_django.asserts import assertTemplateUsed, assertTemplateNotUsed
+from pytest_django.asserts import assertTemplateUsed
 
-from copy import deepcopy
-from dateutil.parser import parse
 from django.urls import reverse
-from django.utils import timezone
-
-from core import client
 
 
 @pytest.fixture(autouse=True)

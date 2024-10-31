@@ -119,8 +119,8 @@ def test_sso_introspection_middleware_oauth_error(mock_cache, rf, login_url, exc
 
 @mock.patch("core.middleware.jwt.decode")
 def test_sso_introspection_middleware_expired_refresh_token(mock_decode, rf, login_url):
-    access_token = "test_access_token"
-    refresh_token = "test_refresh_token"
+    access_token = "test_access_token"  # noqa: S105
+    refresh_token = "test_refresh_token"  # noqa: S105
 
     mock_decode.side_effect = jwt.ExpiredSignatureError()
 

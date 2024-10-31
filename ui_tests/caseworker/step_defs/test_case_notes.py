@@ -1,4 +1,3 @@
-import time
 from pytest_bdd import when, then, parsers, scenarios
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 import tests_common.tools.helpers as utils

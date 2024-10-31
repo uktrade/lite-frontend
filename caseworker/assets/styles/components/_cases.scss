@@ -584,25 +584,6 @@ $case-header-text-colour: govuk-colour('white');
   }
 }
 
-.app-case-header__aurora {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  opacity: 0.2;
-  pointer-events: none;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-}
-
 .app-case__finalised-case-banner {
   @extend .govuk-width-container;
   @include govuk-font($size: 19, $weight: bold);

@@ -1,7 +1,6 @@
 from unittest import mock
 
 from django.http import HttpRequest
-from requests.exceptions import HTTPError
 
 from caseworker.queues.middleware import RequestQueueMiddleware
 
