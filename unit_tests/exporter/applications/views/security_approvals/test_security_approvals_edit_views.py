@@ -83,6 +83,20 @@ def post_to_edit_security_approvals(post_to_step_factory, edit_security_approval
                 "f1686_approval_date": "2020-02-02",
             },
         ),
+        (
+            "edit_security_approvals_f1686_details",
+            {
+                "f1686_contracting_authority": "some text",
+                "f1686_approval_date_0": "01",
+                "f1686_approval_date_1": "01",
+                "f1686_approval_date_2": "2022",
+            },
+            {
+                "f1686_contracting_authority": "some text",
+                "f1686_reference_number": "",
+                "f1686_approval_date": "2022-01-01",
+            },
+        ),
     ),
 )
 def test_edit_export_details_post(
