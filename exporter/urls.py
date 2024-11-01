@@ -6,7 +6,6 @@ import exporter.core.views
 from core.accessibility.views import ExporterAccessibilityStatementView
 from core.health_check.views import HealthCheckPingdomView
 from exporter.core.feedback.views import ExporterFeedbackView
-from core.csp_reporting.views import CspReportView
 
 urlpatterns = [
     path("healthcheck/", include("health_check.urls")),
@@ -60,9 +59,4 @@ if settings.FEATURE_DEBUG_TOOLBAR_ON:
 
     urlpatterns = [
         path("__debug__/", include(debug_toolbar.urls)),
-    ] + urlpatterns
-
-if settings.FEATURE_CSP_MIDDLEWARE_ENABLED:
-    urlpatterns = [
-        path("csp-report/", CspReportView.csp_report, name="csp_report"),
     ] + urlpatterns

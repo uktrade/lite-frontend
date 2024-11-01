@@ -5,7 +5,6 @@ import caseworker.core.views
 from core.health_check.views import HealthCheckPingdomView
 
 from core.accessibility.views import CaseworkerAccessibilityStatementView
-from core.csp_reporting.views import CspReportView
 
 
 urlpatterns = [
@@ -50,11 +49,6 @@ if settings.FEATURE_DEBUG_TOOLBAR_ON:
 
     urlpatterns = [
         path("__debug__/", include(debug_toolbar.urls)),
-    ] + urlpatterns
-
-if settings.FEATURE_CSP_MIDDLEWARE_ENABLED:
-    urlpatterns = [
-        path("csp-report/", CspReportView.csp_report, name="csp_report"),
     ] + urlpatterns
 
 
