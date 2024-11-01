@@ -1,6 +1,7 @@
 from http import HTTPStatus
 from requests.exceptions import HTTPError
-from caseworker.users.services import put_gov_user
+from caseworker.teams.services import get_all_teams
+from caseworker.users.services import get_gov_user, put_gov_user
 
 from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
@@ -22,7 +23,7 @@ class EditCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def dispatch(self, *args, **kwargs):
         try:
             self.user_id = kwargs["pk"]
-            self.user, _ = get_gov_user(request, self.object_pk)
+            self.user, _ = get_gov_user(self.request, self.user_id)
         except HTTPError:
             raise Http404()
 
@@ -32,8 +33,7 @@ class EditCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        # users = get_organisation_members(self.request, self.organisation_id)
-        # organisation_users = set(user["email"] for user in users)
+        form_kwargs["teams"] = get_all_teams(self.request)
         return form_kwargs
 
     def form_valid(self, form):

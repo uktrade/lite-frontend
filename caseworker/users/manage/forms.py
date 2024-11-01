@@ -1,6 +1,7 @@
 from django import forms
 
 from core.common.forms import BaseForm
+from crispy_forms_gds.choices import Choice
 
 
 class EditCaseworkerUser(BaseForm):
@@ -27,9 +28,8 @@ class EditCaseworkerUser(BaseForm):
         label="Default Queue",
     )
 
-    def __init__(self, *args, **kwargs):
-        # site_choices = [Choice(x["id"], x["name"], hint=self.format_address(x.get("address", {}))) for x in sites]
-        # self.declared_fields["sites"].choices = site_choices
+    def __init__(self, teams, *args, **kwargs):
+        self.declared_fields["team"].choices = [Choice(t["id"], t["name"]) for t in teams]
         super().__init__(*args, **kwargs)
 
     def clean_email(self):

@@ -17,6 +17,12 @@ def get_teams(request, converted_to_options=False):
     return data.json()["teams"]
 
 
+def get_all_teams(request):
+    response = client.get(request, "/teams/")
+    response.raise_for_status()
+    return response.json()["teams"]
+
+
 def get_users_team_queues(request, user, convert_to_options=True):
     data = client.get(request, f"/users/{user}/team-queues/")
     if convert_to_options:
