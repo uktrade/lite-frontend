@@ -19,6 +19,7 @@ from caseworker.core.constants import (
     ADMIN_TEAM_ID,
     FCDO_TEAM_ID,
     LICENSING_UNIT_TEAM_ID,
+    SUPER_USER_ROLE_ID,
     TAU_TEAM_ID,
     LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
     Permission,
@@ -698,3 +699,74 @@ def test_can_user_manage_organisation(
     request = get_mock_request(user)
     data_organisation["status"]["key"] = organisation_status
     assert rules.test_rule("can_user_manage_organisation", request, data_organisation) is expected
+
+
+@pytest.mark.parametrize(
+    ("user_role", "user_team", "expected"),
+    (
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, True),
+        (SUPER_USER_ROLE_ID, TAU_TEAM_ID, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, ADMIN_TEAM_ID, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, TAU_TEAM_ID, False),
+        (None, None, False),
+    ),
+)
+def test_can_caseworker_edit_role(mock_gov_user, get_mock_request, user_team, user_role, expected):
+    user = mock_gov_user["user"]
+    user["role"]["id"] = user_role
+    user["team"]["id"] = user_team
+    request = get_mock_request(user)
+    assert rules.test_rule("can_caseworker_edit_role", request) is expected
+
+
+@pytest.mark.parametrize(
+    ("user_role", "user_team", "expected"),
+    (
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, True),
+        (SUPER_USER_ROLE_ID, TAU_TEAM_ID, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, ADMIN_TEAM_ID, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, TAU_TEAM_ID, False),
+        (None, None, False),
+    ),
+)
+def test_can_caseworker_edit_team(mock_gov_user, get_mock_request, user_team, user_role, expected):
+
+    user = mock_gov_user["user"]
+    user["role"]["id"] = user_role
+    user["team"]["id"] = user_team
+
+    request = get_mock_request(user)
+    assert rules.test_rule("can_caseworker_edit_team", request) is expected
+
+
+@pytest.mark.parametrize(
+    ("user_role", "user_team", "user_data", "expected"),
+    (
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, {"user": {"id": "123"}}, True),
+        (SUPER_USER_ROLE_ID, TAU_TEAM_ID, {"user": {"id": "123"}}, True),
+        (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, ADMIN_TEAM_ID, {"user": {"id": "123"}}, True),
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}}, False),
+        (SUPER_USER_ROLE_ID, TAU_TEAM_ID, {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}}, False),
+        (
+            LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
+            ADMIN_TEAM_ID,
+            {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}},
+            False,
+        ),
+        (
+            LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID,
+            TAU_TEAM_ID,
+            {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}},
+            False,
+        ),
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, None, True),
+        (None, None, None, False),
+    ),
+)
+def test_can_caseworker_deactivate(mock_gov_user, get_mock_request, user_team, user_role, user_data, expected):
+
+    user = mock_gov_user["user"]
+    user["role"]["id"] = user_role
+    user["team"]["id"] = user_team
+    request = get_mock_request(user)
+    assert rules.test_rule("can_caseworker_deactivate", request, user_data) is expected
