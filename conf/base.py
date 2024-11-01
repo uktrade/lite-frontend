@@ -261,12 +261,6 @@ CSP_FONT_SRC = env.tuple("CSP_FONT_SRC", default=("'self'",))
 CSP_REPORT_ONLY = env.bool("CSP_REPORT_ONLY", False)
 CSP_INCLUDE_NONCE_IN = env.tuple("CSP_INCLUDE_NONCE_IN", default=("script-src",))
 
-# Content Security Policy reporting.  CSP_REPORT_URI has been deprecated but
-# using it here as some browsers still don't support CSP_REPORT_TO which replaces it
-
-CSP_REPORT_TO = '{"endpoints": [{"url": "/csp-report/"}]}'
-CSP_REPORT_URI = env.tuple("CSP_REPORT_URI", default=("/csp-report/",))
-
 
 if DEBUG:
     import pkg_resources
