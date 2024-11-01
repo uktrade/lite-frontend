@@ -1,19 +1,15 @@
 from http import HTTPStatus
 from requests.exceptions import HTTPError
 from caseworker.users.services import put_gov_user
-import rules
 
 from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views.generic import FormView
 
-from core.constants import ExporterRoles
 from core.decorators import expect_status
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.organisations.members.services import create_exporter_user
-from caseworker.organisations.services import get_organisation, get_organisation_members, get_organisation_sites
 
 from .forms import EditCaseworkerUser
 
@@ -30,20 +26,20 @@ class EditCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         except HTTPError:
             raise Http404()
 
-        #if not rules.test_rule("can_user_manage_organisation", self.request, self.organisation):
+        # if not rules.test_rule("can_user_manage_organisation", self.request, self.organisation):
         #    raise Http404()
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        #users = get_organisation_members(self.request, self.organisation_id)
-        #organisation_users = set(user["email"] for user in users)
+        # users = get_organisation_members(self.request, self.organisation_id)
+        # organisation_users = set(user["email"] for user in users)
         return form_kwargs
 
     def form_valid(self, form):
         data = form.cleaned_data
         # This is currently limited to Administrator
-        #data["role"] = ExporterRoles.administrator.id
+        # data["role"] = ExporterRoles.administrator.id
         self.edit_user(data)
         return super().form_valid(form)
 
@@ -59,7 +55,7 @@ class EditCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def edit_user(self, data):
         pass
         # If user is updating their own default_queue, update the local user instance
-        #if self.user_id == self.request.session["lite_api_user_id"]:
+        # if self.user_id == self.request.session["lite_api_user_id"]:
         #    self.request.session["default_queue"] = self.get_validated_data().get("gov_user").get("default_queue")
         return put_gov_user(self.request, self.user_id, data)
 
