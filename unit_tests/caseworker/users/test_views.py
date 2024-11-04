@@ -201,6 +201,121 @@ def test_view_user_edit_team_permissions(
 
 
 @pytest.mark.parametrize(
+    "role_id, team_id, can_edit_role",
+    (
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, True),
+        (NON_SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, False),
+        (SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, True),
+        (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, True),
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, True),
+    ),
+)
+def test_view_user_edit_role_permissions(
+    authorized_client,
+    requests_mock,
+    mock_gov_user,
+    role_id,
+    team_id,
+    can_edit_role,
+):
+    user_id = str(uuid.uuid4())
+
+    mock_gov_user["user"] = {
+        "id": user_id,
+        "role": {
+            "id": role_id,
+            "permissions": {},
+            "name": "Test Role",
+        },
+        "team": {
+            "id": team_id,
+        },
+    }
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/{user_id}/"),
+        json={
+            "user": {
+                "id": user_id,
+                "role": {
+                    "id": role_id,
+                },
+                "team": {
+                    "id": team_id,
+                },
+            },
+        },
+    )
+
+    url = reverse("users:user", kwargs={"pk": user_id})
+    response = authorized_client.get(url)
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (soup.find("a", {"id": "link-edit-role"}) is not None) == can_edit_role
+
+
+@pytest.mark.parametrize(
+    "role_id, team_id, edit_user_id ,can_deactivate",
+    (
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),
+        (SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),
+        (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),
+        (NON_SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", False),  ##£``
+        (SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),
+        (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),
+    ),
+)
+def test_view_user_deactivate_permissions(
+    authorized_client,
+    requests_mock,
+    mock_gov_user,
+    role_id,
+    team_id,
+    edit_user_id,
+    can_deactivate,
+):
+
+    gov_user_id = mock_gov_user["user"]["id"]
+
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/{gov_user_id}/"),
+        json={
+            "user": {
+                "id": gov_user_id,
+                "role": {
+                    "id": role_id,
+                },
+                "team": {
+                    "id": team_id,
+                },
+            },
+        },
+    )
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/{edit_user_id}/"),
+        json={
+            "user": {
+                "id": edit_user_id,
+                "role": {
+                    "id": role_id,
+                },
+                "team": {
+                    "id": team_id,
+                },
+                "status": "Active",
+            },
+        },
+    )
+
+    url = reverse("users:user", kwargs={"pk": edit_user_id})
+    response = authorized_client.get(url)
+
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert (soup.find("a", {"id": "button-deactivate-user"}) is not None) == can_deactivate
+
+
+@pytest.mark.parametrize(
     "role_id, team_id, can_edit_team, team_payload",
     (
         (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, True, {"team": "00000000-0000-0000-0000-000000000001"}),
