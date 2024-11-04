@@ -14,14 +14,6 @@ urlpatterns = [
     path("applications/", include("exporter.applications.urls")),
     path("apply-for-a-licence/", include("exporter.apply_for_a_licence.urls")),
     path("auth/", include("exporter.auth.urls")),
-]
-
-if not settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
-    urlpatterns += [
-        path("compliance/", include("exporter.compliance.urls")),
-    ]
-
-urlpatterns += [
     path("end-users/", include("exporter.end_users.urls")),
     path("product-list/", include("exporter.goods.urls")),
     path("licences/", include("exporter.licences.urls")),
