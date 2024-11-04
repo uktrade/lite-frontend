@@ -257,12 +257,9 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 CSP_DEFAULT_SRC = env.tuple("CSP_DEFAULT_SRC", default=("'self'",))
 CSP_STYLE_SRC = env.tuple("CSP_STYLE_SRC", default=("'self'",))
 CSP_SCRIPT_SRC = env.tuple("CSP_SCRIPT_SRC", default=("'self'",))
-CSP_IMG_SRC = env.tuple("CSP_IMG_SRC", default=("'self'",))
 CSP_FONT_SRC = env.tuple("CSP_FONT_SRC", default=("'self'",))
-CSP_FRAME_ANCESTORS = env.tuple("CSP_FRAME_ANCESTORS", default=("'none'",))
-CSP_INCLUDE_NONCE_IN = env.tuple("CSP_INCLUDE_NONCE_IN", default=("'script-src'",))
-
 CSP_REPORT_ONLY = env.bool("CSP_REPORT_ONLY", False)
+CSP_INCLUDE_NONCE_IN = env.tuple("CSP_INCLUDE_NONCE_IN", default=("script-src",))
 
 if DEBUG:
     import pkg_resources
