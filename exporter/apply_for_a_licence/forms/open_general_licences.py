@@ -81,8 +81,6 @@ def open_general_licence_forms(request, **kwargs):
         back_link_url = reverse("apply_for_a_licence:export_licence_questions")
     elif open_general_licence_type.acronym == OpenGeneralExportLicenceTypes.open_general_transhipment_licence.acronym:
         back_link_url = reverse("apply_for_a_licence:transhipment_questions")
-    else:
-        back_link_url = reverse("apply_for_a_licence:trade_control_licence_questions")
 
     return FormGroup(
         [
