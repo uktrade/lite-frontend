@@ -22,8 +22,10 @@ from .forms import (
     RegisterDetailsIndividualOverseasForm,
     RegisterDetailsCommercialUKForm,
     RegisterDetailsCommercialOverseasForm,
-    RegisterAddressDetailsUKForm,
-    RegisterAddressDetailsOverseasForm,
+    RegisterAddressDetailsUKCommercialForm,
+    RegisterAddressDetailsUKIndividualForm,
+    RegisterAddressDetailsOverseasCommercialForm,
+    RegisterAddressDetailsOverseasIndividualForm,
     SelectOrganisationForm,
     RegistrationConfirmation,
 )
@@ -41,7 +43,7 @@ class Registration(
         (RegistrationSteps.REGISTRATION_TYPE, RegistrationTypeForm),
         (RegistrationSteps.UK_BASED, RegistrationUKBasedForm),
         (RegistrationSteps.REGISTRATION_DETAILS, RegisterDetailsIndividualUKForm),
-        (RegistrationSteps.ADDRESS_DETAILS, RegisterAddressDetailsUKForm),
+        (RegistrationSteps.ADDRESS_DETAILS, RegisterAddressDetailsUKIndividualForm),
         (RegistrationSteps.REGISTRATION_CONFIRMATION, RegistrationConfirmation),
     ]
 
@@ -57,12 +59,6 @@ class Registration(
             },
         }
     }
-
-    def get_form_kwargs(self, step=None):
-        kwargs = super().get_form_kwargs(step)
-        if step in (RegistrationSteps.ADDRESS_DETAILS):
-            kwargs["is_individual"] = self.is_individual
-        return kwargs
 
     def get_form(self, step=None, data=None, files=None):
         form = super().get_form(step, data, files)
@@ -99,18 +95,25 @@ class Registration(
         return form_class(**kwargs)
 
     def render_next_step(self, form, **kwargs):
-        if self.steps.current == RegistrationSteps.UK_BASED:
+        if self.steps.current in (RegistrationSteps.UK_BASED, RegistrationSteps.ADDRESS_DETAILS):
             kwargs["request"] = self.request
         return super().render_next_step(form, **kwargs)
 
     def get_registration_address_form(self, data):
-        location = self.get_cleaned_data_for_step(RegistrationSteps.UK_BASED)["location"]
-        form_class = RegisterAddressDetailsUKForm
+        registration_address_form_classes = {
+            "united_kingdom": {
+                "individual": RegisterAddressDetailsUKIndividualForm,
+                "commercial": RegisterAddressDetailsUKCommercialForm,
+            },
+            "abroad": {
+                "individual": RegisterAddressDetailsOverseasIndividualForm,
+                "commercial": RegisterAddressDetailsOverseasCommercialForm,
+            },
+        }
+        location, registration_type = self.location_registration_type
+        form_class = registration_address_form_classes[location][registration_type]
         kwargs = self.get_form_kwargs(RegistrationSteps.ADDRESS_DETAILS)
-        if location != "united_kingdom":
-            form_class = RegisterAddressDetailsOverseasForm
-            kwargs["request"] = self.request
-
+        kwargs["request"] = self.request
         kwargs.update({"prefix": self.get_form_prefix(RegistrationSteps.ADDRESS_DETAILS, form_class), "data": data})
         return form_class(**kwargs)
 

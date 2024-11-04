@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "django_chunk_upload_handlers",
     "rules.apps.AutodiscoverRulesConfig",
     "extra_views",
+    "cacheops",
 ]
 
 if not IS_ENV_DBT_PLATFORM:
@@ -336,3 +337,5 @@ NOTIFY_FEEDBACK_EMAIL = env.str("NOTIFY_FEEDBACK_EMAIL")
 
 # GA/GTM KEY
 GTM_ID = env.str("GTM_ID", default="")
+
+GIT_COMMIT = env.str("GIT_COMMIT", default="")

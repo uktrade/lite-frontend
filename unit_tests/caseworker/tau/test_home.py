@@ -1,8 +1,6 @@
 import pytest
-import re
 
 from bs4 import BeautifulSoup
-import rules
 
 from django.urls import reverse
 

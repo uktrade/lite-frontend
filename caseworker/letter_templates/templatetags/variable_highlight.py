@@ -14,7 +14,7 @@ CLOSE_TAG = "</span>"
 
 @register.filter
 @stringfilter
-@mark_safe
+@mark_safe  # noqa: S308
 def variable_highlight(value):
     """
     Template tag to highlight variables ({{}} and {%%}) in strings

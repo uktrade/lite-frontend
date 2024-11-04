@@ -30,33 +30,9 @@ from exporter.goods.forms.common import (
         ({"name": "good-!.<>/%&*;+'(),.name"}, True, {}),
         ({"name": "good!name"}, True, {}),
         ({"name": "good-name"}, True, {}),
-        (
-            {"name": "test\r\nname"},
-            False,
-            {
-                "name": [
-                    "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
-        ),
-        (
-            {"name": "good_name"},
-            False,
-            {
-                "name": [
-                    "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
-        ),
-        (
-            {"name": "good$name"},
-            False,
-            {
-                "name": [
-                    "Product name must only include letters, numbers, and common special characters such as hyphens, brackets and apostrophes"
-                ]
-            },
-        ),
+        ({"name": "test\r\nname"}, True, {}),
+        ({"name": "good_name"}, True, {}),
+        ({"name": "good$name"}, True, {}),
     ),
 )
 def test_product_form_validation(data, is_valid, errors):

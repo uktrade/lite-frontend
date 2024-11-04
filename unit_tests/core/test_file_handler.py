@@ -63,7 +63,7 @@ def test_invalid_file_mime_type_upload(mock_handler):
 
 def test_s3_wrapper_get_client(settings, mocker):
     settings.AWS_ACCESS_KEY_ID = "aws-access-key-id"
-    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"
+    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"  # noqa: S105
     settings.AWS_REGION = "aws-region"
     settings.AWS_S3_ENDPOINT_URL = None
 
@@ -76,7 +76,7 @@ def test_s3_wrapper_get_client(settings, mocker):
     mock_boto3.client.assert_called_with(
         "s3",
         aws_access_key_id="aws-access-key-id",
-        aws_secret_access_key="aws-secret-access-key",
+        aws_secret_access_key="aws-secret-access-key",  # noqa: S106
         region_name="aws-region",
     )
 
@@ -85,7 +85,7 @@ def test_s3_wrapper_get_client(settings, mocker):
 
 def test_s3_wrapper_get_client_with_endpoint_url(settings, mocker):
     settings.AWS_ACCESS_KEY_ID = "aws-access-key-id"
-    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"
+    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"  # noqa: S105
     settings.AWS_REGION = "aws-region"
     settings.AWS_S3_ENDPOINT_URL = "http://example.com"
 
@@ -98,7 +98,7 @@ def test_s3_wrapper_get_client_with_endpoint_url(settings, mocker):
     mock_boto3.client.assert_called_with(
         "s3",
         aws_access_key_id="aws-access-key-id",
-        aws_secret_access_key="aws-secret-access-key",
+        aws_secret_access_key="aws-secret-access-key",  # noqa: S106
         region_name="aws-region",
         endpoint_url="http://example.com",
     )
@@ -107,7 +107,7 @@ def test_s3_wrapper_get_client_with_endpoint_url(settings, mocker):
 
 def test_s3_wrapper_get_client_acts_as_singleton(settings, mocker):
     settings.AWS_ACCESS_KEY_ID = "aws-access-key-id"
-    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"
+    settings.AWS_SECRET_ACCESS_KEY = "aws-secret-access-key"  # noqa: S105
     settings.AWS_REGION = "aws-region"
     settings.AWS_S3_ENDPOINT_URL = "http://example.com"
 
@@ -119,7 +119,7 @@ def test_s3_wrapper_get_client_acts_as_singleton(settings, mocker):
     mock_boto3.client.assert_called_with(
         "s3",
         aws_access_key_id="aws-access-key-id",
-        aws_secret_access_key="aws-secret-access-key",
+        aws_secret_access_key="aws-secret-access-key",  # noqa: S106
         region_name="aws-region",
         endpoint_url="http://example.com",
     )

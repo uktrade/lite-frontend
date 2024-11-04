@@ -12,10 +12,8 @@ def setup(
     mock_put_flags,
     mock_case,
     mock_get_organisation,
-    mock_flagging_rules,
     mock_countries,
     mock_flag_get,
-    mock_flagging_rule_get,
 ):
     yield
 

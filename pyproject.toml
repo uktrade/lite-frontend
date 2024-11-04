@@ -23,4 +23,8 @@ exclude = '''
 '''
 
 [tool.ruff.lint]
-select = ["F401"]
+select = ["F401", "S", "G", "LOG"]
+
+[tool.ruff.lint.per-file-ignores]
+"./{unit_tests,ui_tests,tests_common}/*" = ["S101", "S311", "S108", "S314"]
+"./lite_forms/tests.py" = ["S101"]

@@ -20,7 +20,7 @@ class AddGoodPage(BasePage):
     IS_CONTROLLED = "is_good_controlled"
     IS_PV_GRADED = "is_pv_graded"
     AUTOCOMPLETE_CONTROL_LIST_ENTRIES_SELECTOR = "#div_id_control_list_entries .lite-autocomplete__input"
-    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#control_list_entries .tokenfield-input"
+    TOKEN_BAR_CONTROL_LIST_ENTRIES_SELECTOR = "#control_list_entries .tokenfield-input"  # noqa: S105
     DESCRIPTION = "description"  # ID
 
     # Not sure form

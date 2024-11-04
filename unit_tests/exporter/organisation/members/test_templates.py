@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-import re
 
 from django.template.loader import render_to_string
 

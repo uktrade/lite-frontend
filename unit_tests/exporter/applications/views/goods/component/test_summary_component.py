@@ -1,7 +1,6 @@
 import pytest
 
 from pytest_django.asserts import assertTemplateUsed
-from django.urls import reverse
 
 
 @pytest.fixture

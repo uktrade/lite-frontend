@@ -36,21 +36,40 @@ def sites_data():
     ]
 
 
+@pytest.fixture()
+def members_data():
+    return [
+        {
+            "email": "user1@example.com",
+            "first_name": "Active",
+            "last_name": "user",
+            "role_name": "Admin",
+            "status": "Active",
+        },
+        {
+            "email": "user2@example.com",
+            "first_name": "Non",
+            "last_name": "user",
+            "role_name": "Agent",
+            "status": "Deactivated",
+        },
+    ]
+
+
 @pytest.fixture
 def url(organisation_pk):
     return reverse("organisations:add-exporter-admin", kwargs={"pk": organisation_pk})
 
 
 @pytest.fixture
-def success_url(organisation_pk):
+def organisation_members_url(organisation_pk):
     return reverse("organisations:organisation_members", kwargs={"pk": organisation_pk})
 
 
 @pytest.fixture
-def mock_get_organisation_members(requests_mock, organisation_pk):
+def mock_get_organisation_members(requests_mock, organisation_pk, members_data):
     url = client._build_absolute_uri(f"/organisations/{organisation_pk}/users/?disable_pagination=True")
-    data = [{"email": "user1@example.com"}]
-    yield requests_mock.get(url=url, json=data)
+    yield requests_mock.get(url=url, json=members_data)
 
 
 @pytest.fixture
@@ -59,6 +78,12 @@ def mock_get_organisation_sites(requests_mock, organisation_pk, sites_data):
     url = f"/organisations/{organisation_pk}/sites/?disable_pagination=True"
     json = {"sites": sites_data}
     yield requests_mock.get(client._build_absolute_uri(url), json=json)
+
+
+@pytest.fixture
+def mock_get_organisation_activity(requests_mock, organisation_pk):
+    url = client._build_absolute_uri(f"/organisations/{organisation_pk}/activity/")
+    yield requests_mock.get(url, json={"activity": {}})
 
 
 @pytest.fixture
@@ -82,11 +107,39 @@ def mock_get_organisation_500_error(requests_mock, organisation_pk):
     )
 
 
+def test_get_organisation_members(
+    authorized_client,
+    organisation_members_url,
+    mock_get_organisation_activity,
+    mock_get_organisation_members,
+    beautiful_soup,
+    members_data,
+):
+    """Test to get organisation members screen"""
+
+    response = authorized_client.get(organisation_members_url)
+    assert response.status_code == 200
+
+    soup = beautiful_soup(response.content)
+    headers = [h.text for h in soup.find("thead").select("th")]
+    assert headers == ["Name", "Email", "Role", "Status"]
+
+    soup.find("tbody").select("tr")
+    for i, row in enumerate(soup.find("tbody").select("tr")):
+        page_data = row.text.strip().split("\n")
+        member = members_data[i]
+        assert member["email"] in page_data
+        assert member["status"] in page_data
+        assert member["role_name"] in page_data
+        full_name = f'{member["first_name"]} {member["last_name"]}'
+        assert full_name in page_data
+
+
 def test_create_exporter_admin_user_get(
     authorized_client,
     requests_mock,
     url,
-    success_url,
+    organisation_members_url,
     mock_get_organisation,
     mock_get_organisation_members,
     mock_get_organisation_sites,
@@ -98,9 +151,9 @@ def test_create_exporter_admin_user_get(
 
     exporter_admin_form = response.context["form"]
 
-    assert exporter_admin_form.cancel_url == success_url
-    assert response.context["back_link_url"] == success_url
-    assert exporter_admin_form.organisation_users == {"user1@example.com"}
+    assert exporter_admin_form.cancel_url == organisation_members_url
+    assert response.context["back_link_url"] == organisation_members_url
+    assert exporter_admin_form.organisation_users == {"user1@example.com", "user2@example.com"}
     assert exporter_admin_form.fields["sites"].choices[0].value == "1"
     assert exporter_admin_form.fields["sites"].choices[1].value == "2"
 
@@ -109,7 +162,7 @@ def test_create_exporter_admin_form_success(
     authorized_client,
     requests_mock,
     url,
-    success_url,
+    organisation_members_url,
     mock_get_organisation,
     mock_get_organisation_members,
     mock_get_organisation_sites,
@@ -117,13 +170,13 @@ def test_create_exporter_admin_form_success(
 ):
     """Test to check add exporter admin is successfull when posted with correct data"""
 
-    data = {"email": "user2@example.com", "sites": ["1"]}
+    data = {"email": "user3@example.com", "sites": ["1"]}
     expected_data = {**data, "role": ExporterRoles.administrator.id}
 
     response = authorized_client.post(url, data=data)
 
     assert response.status_code == 302
-    assert response.url == success_url
+    assert response.url == organisation_members_url
 
     assert mock_organisation_create_users.called
     assert mock_organisation_create_users.last_request.json() == expected_data
@@ -185,7 +238,7 @@ def test_create_exporter_admin_api_failed(
 ):
     """Test to check add exporter admin when posted with correct data handles API failure"""
 
-    data = {"email": "user2@example.com", "sites": ["1"]}
+    data = {"email": "user3@example.com", "sites": ["1"]}
 
     with pytest.raises(ServiceError) as ex:
         authorized_client.post(url, data=data)

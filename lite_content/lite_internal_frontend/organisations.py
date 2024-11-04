@@ -44,7 +44,6 @@ class OrganisationPage:
             EORI_NUMBER = "EORI number"
             SIC_NUMBER = "SIC code"
             VAT_NUMBER = "UK VAT number"
-            COMPANY_REG_NUMBER = "Company registration number"
             CREATED_AT = "Created at"
             ADDRESS = "Address"
             STATUS = "Status"
@@ -110,7 +109,7 @@ class RegisterAnOrganisation:
         DESCRIPTION = ""
 
     class RegistrationNumber:
-        TITLE = "Companies House registration number (CRN)"
+        TITLE = "Registration number"
         DESCRIPTION = "8 numbers, or 2 letters followed by 6 numbers."
 
     class UkVatNumber:
@@ -145,7 +144,7 @@ class EditCommercialOrganisationPage(EditOrganisationPage):
         DESCRIPTION = ""
 
     class RegistrationNumber:
-        TITLE = "Companies House registration number (CRN)"
+        TITLE = "Registration number"
         DESCRIPTION = "8 numbers, or 2 letters followed by 6 numbers."
 
     class VATNumber:
@@ -190,6 +189,6 @@ class ReviewOrganisationPage:
         EORI = "EORI Number"
         SIC = "SIC Code"
         VAT = "VAT Number"
-        REGISTRATION = "Registration Number"
+        REGISTRATION = "Registered Number"
         SITE_NAME = "Registered office address Name"
         SITE_ADDRESS = "Registered office address Address"

@@ -1,21 +1,14 @@
-import pytest
-
-from django.conf import settings
 from bs4 import BeautifulSoup
 from faker import Faker
-from pytest_bdd import scenarios, then, given, when, parsers
-
+from pytest_bdd import scenarios, then, given, when
 from selenium.webdriver.common.by import By
 
-from ui_tests.exporter.fixtures.register_organisation import get_eori_number
-from ui_tests.exporter.pages.govuk_signin_page import GovukSigninPage
 from ui_tests.exporter.pages.register_organisation import RegisterOrganisation
 from ui_tests.exporter.pages.start_page import StartPage
 from tests_common import functions
 from tests_common.api_client.sub_helpers.users import create_govuk_sso_user
+from ui_tests.exporter.fixtures.register_organisation import get_eori_number  # noqa
 from ui_tests.exporter.pages.mock_signin_page import MockSigninPage
-import tests_common.tools.helpers as utils
-from ui_tests.exporter.pages.shared import Shared
 
 scenarios("../features/register_an_organisation.feature", strict_gherkin=False)
 
@@ -61,7 +54,7 @@ def enter_vat(driver):
     register.enter_random_vat_number()
 
 
-@when("I enter company registration number and continue")
+@when("I enter registration number and continue")
 def enter_vat(driver):
     register = RegisterOrganisation(driver)
     register.enter_random_registration_number()

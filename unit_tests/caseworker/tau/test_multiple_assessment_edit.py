@@ -1,13 +1,7 @@
 import pytest
-import re
 from bs4 import BeautifulSoup
-import rules
 
 from django.urls import reverse
-
-from core import client
-from caseworker.tau import views
-from core.exceptions import ServiceError
 
 
 @pytest.fixture(autouse=True)

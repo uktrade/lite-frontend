@@ -3,7 +3,6 @@ from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
-import uuid
 
 
 @pytest.fixture(autouse=True)

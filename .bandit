@@ -1,2 +1,0 @@
-[bandit]
-exclude: /.venv,/ui_tests,/unit_tests,/tests_common

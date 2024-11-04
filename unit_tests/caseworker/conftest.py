@@ -2335,21 +2335,9 @@ def mock_put_flags(requests_mock, stub_response):
 
 
 @pytest.fixture
-def mock_flagging_rules(requests_mock):
-    url = client._build_absolute_uri(f"/flags/rules/?page=1")
-    yield requests_mock.get(url=url, json={"results": []})
-
-
-@pytest.fixture
 def mock_flag_get(requests_mock, request):
     url = client._build_absolute_uri("/flags/e9f8711e-b383-47e5-b160-153f27771234/")
     yield requests_mock.get(url=url, json={})
-
-
-@pytest.fixture
-def mock_flagging_rule_get(requests_mock):
-    url = client._build_absolute_uri("/flags/rules/e9f8711e-b383-47e5-b160-153f27771234/")
-    yield requests_mock.get(url=url, json={"flag": {"level": "Destination", "matching_values": []}})
 
 
 @pytest.fixture

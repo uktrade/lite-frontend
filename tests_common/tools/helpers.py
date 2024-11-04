@@ -1,5 +1,5 @@
 from django.utils import timezone
-from os import path, makedirs, chmod, pardir
+from os import path, makedirs
 from re import search
 from time import sleep
 

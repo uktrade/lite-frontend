@@ -7,14 +7,15 @@ from crispy_forms_gds.layout import HTML
 
 from core.common.forms import BaseForm, TextChoice
 from exporter.core.services import get_countries
-from .validators import (
-    validate_vat,
-    validate_eori,
-    validate_phone,
-    validate_registration,
-    validate_sic_number,
-)
+from .validators import validate_phone
 from exporter.core.organisation.services import validate_registration_number
+from .fields import (
+    AddressLineField,
+    VatField,
+    EoriField,
+    SicField,
+    RegistrationNumberField,
+)
 
 
 class RegistrationConfirmation(BaseForm):
@@ -82,7 +83,7 @@ class RegisterDetailsBaseForm(BaseForm):
     VAT_LABEL = "UK VAT number"
     EORI_LABEL = "European Union registration and identification number (EORI)"
     SIC_CODE_LABEL = "Standard industrial classification (SIC code)"
-    REGISTRATION_LABEL = "Companies House registration number (CRN)"
+    REGISTRATION_LABEL = "Company House registration number (CRN) or Royal Charter (RC) number"
 
     class Layout:
         TITLE = "Enter organisation details"
@@ -94,19 +95,19 @@ class RegisterDetailsBaseForm(BaseForm):
         },
     )
 
-    eori_number = forms.CharField(
+    eori_number = EoriField(
         label=EORI_LABEL,
         help_text=(
-            "<a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state'"
-            "target='_blank'>Get an EORI number </a> if you don't have one."
+            """The first two letters are the country code, like GB or XI. This is followed by 12 or 15 numbers, like GB123456123456.
+            <br/> <a href='https://www.gov.uk/eori' class='govuk-link govuk-link--no-visited-state' target='_blank'>Get an EORI number</a>
+             if you don't have one."""
         ),
         error_messages={
-            "required": "Enter a EORI number",
+            "required": "Enter an EORI number",
         },
-        validators=[validate_eori],
     )
 
-    sic_number = forms.CharField(
+    sic_number = SicField(
         label=SIC_CODE_LABEL,
         help_text=(
             "<a href='https://www.gov.uk/government/publications/standard-industrial-classification-of-economic-activities-sic'"
@@ -116,21 +117,25 @@ class RegisterDetailsBaseForm(BaseForm):
         error_messages={
             "required": "Enter a SIC code",
         },
-        validators=[validate_sic_number],
     )
 
-    vat_number = forms.CharField(
+    vat_number = VatField(
         label=VAT_LABEL,
-        help_text="9 digits long, with the first 2 letters indicating the country code of the registered business.",
-        validators=[validate_vat],
+        help_text="""This is 9 numbers, sometimes with ‘GB’ at the start, for example 123456789 or GB123456789.
+            You can find it on your VAT registration certificate.""",
+        error_messages={
+            "required": "Enter a UK VAT number",
+        },
     )
-    registration_number = forms.CharField(
+
+    registration_number = RegistrationNumberField(
         label=REGISTRATION_LABEL,
-        help_text="8 numbers, or 2 letters followed by 6 numbers.",
+        help_text="""Only provide a RC number if you do not have a CRN. <br/>
+            The number will be 2 letters following by 6 numbers, or 8 numbers.
+        """,
         error_messages={
             "required": "Enter a registration number",
         },
-        validators=[validate_registration],
     )
 
     def __init__(self, *args, **kwargs):
@@ -148,8 +153,8 @@ class RegisterDetailsBaseForm(BaseForm):
 
 
 class RegisterDetailsIndividualUKForm(RegisterDetailsBaseForm):
+
     def __init__(self, *args, **kwargs):
-        self.Layout.TITLE = "Enter organisation details"
         super().__init__(*args, **kwargs)
         self.fields["registration_number"].label = self.REGISTRATION_LABEL + " (optional)"
         self.fields["registration_number"].required = False
@@ -174,8 +179,10 @@ class RegisterDetailsIndividualOverseasForm(RegisterDetailsIndividualUKForm):
 
 
 class RegisterDetailsCommercialUKForm(RegisterDetailsBaseForm):
+    class Layout:
+        TITLE = "Register a commercial organisation"
+
     def __init__(self, *args, **kwargs):
-        self.Layout.TITLE = "Register a commercial organisation"
         super().__init__(*args, **kwargs)
         self.fields["name"].label = "Name of organisation"
 
@@ -198,7 +205,7 @@ class RegisterDetailsCommercialOverseasForm(RegisterDetailsCommercialUKForm):
 
 class RegisterAddressDetailsBaseForm(BaseForm):
 
-    name = forms.CharField(
+    name = AddressLineField(
         label="Name of headquarters",
         error_messages={
             "required": "Enter a name for your site",
@@ -237,34 +244,40 @@ class RegisterAddressDetailsBaseForm(BaseForm):
 
         return website
 
+    def __init__(self, *args, **kwargs):
+        if kwargs.get("request"):
+            self.request = kwargs.pop("request")
+        super().__init__(*args, **kwargs)
 
-class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
+
+class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
     class Layout:
         TITLE = "What is your registered office address?"
 
-    def __init__(self, is_individual, *args, **kwargs):
-        if is_individual:
-            self.Layout.TITLE = "Where in the United Kingdom are you based?"
-        super().__init__(*args, **kwargs)
+    p1_address_help = HTML.details(
+        "Help with your registered office address",
+        "<p>This is usually the office address registered with Companies House. Or HM Revenue and Customs if you're not on Companies House.</p>"
+        "<p>Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>",
+    )
 
-    address_line_1 = forms.CharField(
+    address_line_1 = AddressLineField(
         label="Building and street",
         error_messages={
             "required": "Enter a real building and street name",
         },
     )
-    address_line_2 = forms.CharField(
+    address_line_2 = AddressLineField(
         label="",
         required=False,
     )
 
-    city = forms.CharField(
+    city = AddressLineField(
         label="Town or city",
         error_messages={
             "required": "Enter a real city",
         },
     )
-    region = forms.CharField(
+    region = AddressLineField(
         label="County or state",
         error_messages={
             "required": "Enter a county or state",
@@ -288,15 +301,34 @@ class RegisterAddressDetailsUKForm(RegisterAddressDetailsBaseForm):
             "postcode",
             "phone_number",
             "website",
-            HTML.details(
-                "Help with your registered office address",
-                "<p>This is usually the office address registered with Companies House. Or HM Revenue and Customs if you're not on Companies House.</p>"
-                "<p>Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>",
-            ),
+            self.p1_address_help,
         )
 
 
-class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
+class RegisterAddressDetailsUKIndividualForm(RegisterAddressDetailsUKCommercialForm):
+
+    class Layout:
+        TITLE = "Where in the United Kingdom are you based?"
+
+    name = AddressLineField(
+        label="Name of headquarters",
+        error_messages={
+            "required": "Enter a name for your site",
+        },
+        help_text="Use the name 'Home' if you are providing the address where you live",
+    )
+
+    p1_address_help = HTML.details(
+        "Help with providing your address",
+        """<p>Provide your organisation's registered address if you have one. This is usually the office address registered with Companies House or HMRC.
+        Your organisation might have multiple sites or business addresses, but there will only be one registered office.</p>""",
+    )
+
+
+class RegisterAddressDetailsOverseasCommercialForm(RegisterAddressDetailsBaseForm):
+    class Layout:
+        TITLE = "Where is your organisation based?"
+
     address = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),
         label="Address",
@@ -304,7 +336,6 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
             "required": "Enter an address",
         },
     )
-
     country = forms.ChoiceField(
         choices=[],
         widget=forms.widgets.Select(attrs={"data-module": "autocomplete-select"}),
@@ -313,13 +344,7 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
         },
     )
 
-    class Layout:
-        TITLE = "Where is your organisation based?"
-
-    def __init__(self, is_individual, request, *args, **kwargs):
-        self.request = request
-        if is_individual:
-            self.Layout.TITLE = "What is your registered office address?"
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         countries = get_countries(self.request, False, ["GB"])
         country_choices = [("", "")] + [(country["id"], country["name"]) for country in countries]
@@ -327,6 +352,11 @@ class RegisterAddressDetailsOverseasForm(RegisterAddressDetailsBaseForm):
 
     def get_layout_fields(self):
         return ("name", "address", "phone_number", "website", "country")
+
+
+class RegisterAddressDetailsOverseasIndividualForm(RegisterAddressDetailsOverseasCommercialForm):
+    class Layout:
+        TITLE = "What is your registered office address?"
 
 
 class SelectOrganisationForm(BaseForm):
