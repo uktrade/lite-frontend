@@ -3,7 +3,6 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
 from tests_common import selectors
-from tests_common.tools.helpers import scroll_to_element_by_id
 
 
 scenarios("../features/sanctions.feature", strict_gherkin=False)

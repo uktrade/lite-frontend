@@ -1,7 +1,6 @@
 from pytest_bdd import scenarios, when, parsers, then
 
 from ui_tests.exporter.pages.roles_pages import RolesPages
-from ui_tests.exporter.pages.shared import Shared
 import tests_common.tools.helpers as utils
 from tests_common import functions
 

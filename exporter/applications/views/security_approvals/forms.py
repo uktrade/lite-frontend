@@ -76,7 +76,7 @@ class SubjectToITARControlsForm(BaseForm):
         TITLE = "Are any products on this application subject to ITAR controls?"
 
     label = """
-    We need to know if this export involves any defence articles including technical data that are 
+    We need to know if this export involves any defence articles including technical data that are
     subject to controls under the United States (US) International Traffic in Arms regulations (ITAR).
     """
 
@@ -126,11 +126,9 @@ class F1686DetailsForm(BaseForm):
     )
 
     f1686_reference_number = forms.CharField(
+        required=False,
         widget=forms.TextInput,
-        label="Reference number",
-        error_messages={
-            "required": "Enter a reference number",
-        },
+        label="Reference number (optional)",
     )
 
     f1686_approval_date = CustomErrorDateInputField(
