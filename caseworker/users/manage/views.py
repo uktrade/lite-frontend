@@ -1,7 +1,10 @@
 from http import HTTPStatus
 from requests.exceptions import HTTPError
+import rules
+
+from caseworker.queues.services import get_queues
 from caseworker.teams.services import get_all_teams
-from caseworker.users.services import get_gov_user, put_gov_user
+from caseworker.users.services import get_all_roles, get_gov_user, put_gov_user
 
 from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
@@ -24,22 +27,27 @@ class EditCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         try:
             self.user_id = kwargs["pk"]
             self.user, _ = get_gov_user(self.request, self.user_id)
+            self.user = self.user["user"]
         except HTTPError:
             raise Http404()
 
-        # if not rules.test_rule("can_user_manage_organisation", self.request, self.organisation):
-        #    raise Http404()
         return super().dispatch(*args, **kwargs)
+
+    def get_initial(self):
+        return {"email": self.user["email"]}
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["teams"] = get_all_teams(self.request)
+        form_kwargs["roles"] = get_all_roles(self.request)
+        form_kwargs["queues"] = get_queues(self.request, include_system=True)
+        form_kwargs["can_caseworker_edit_role"] = rules.test_rule("can_caseworker_edit_role", self.request)
+        form_kwargs["can_caseworker_edit_team"] = rules.test_rule("can_caseworker_edit_team", self.request)
+
         return form_kwargs
 
     def form_valid(self, form):
         data = form.cleaned_data
-        # This is currently limited to Administrator
-        # data["role"] = ExporterRoles.administrator.id
         self.edit_user(data)
         return super().form_valid(form)
 
@@ -48,12 +56,11 @@ class EditCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return self.success_url
 
     @expect_status(
-        HTTPStatus.CREATED,
-        "Error adding user to organisation",
-        "Unexpected error adding user to organisation",
+        HTTPStatus.OK,
+        "Error editing user",
+        "Unexpected error editing user",
     )
     def edit_user(self, data):
-        pass
         # If user is updating their own default_queue, update the local user instance
         # if self.user_id == self.request.session["lite_api_user_id"]:
         #    self.request.session["default_queue"] = self.get_validated_data().get("gov_user").get("default_queue")

@@ -96,6 +96,7 @@ class EditUser(SingleFormView):
         self.user = user["user"]
         self.can_edit_role = self.user["id"] != request.session["lite_api_user_id"]
         self.can_edit_team = is_super_user(request_user) or is_user_in_team(request_user, ADMIN_TEAM_ID)
+        self.can_edit_role = True
         self.form = edit_user_form(request, self.user, self.can_edit_role, self.can_edit_team)
         self.data = self.user
         self.action = put_gov_user

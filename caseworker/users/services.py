@@ -98,6 +98,12 @@ def get_roles(request, convert_to_options=False):
     return data.json(), data.status_code
 
 
+def get_all_roles(request):
+    response = client.get(request, "/gov-users/roles/")
+    response.raise_for_status()
+    return response.json()["roles"]
+
+
 def get_role(request, pk):
     data = client.get(request, f"/gov-users/roles/{pk}")
     return data.json(), data.status_code
