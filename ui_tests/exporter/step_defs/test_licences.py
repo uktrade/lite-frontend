@@ -51,7 +51,7 @@ def licences_page(driver, exporter_url):
 @then("I see my standard licence")
 def standard_licence_row(context, driver, assessed_control_list_entries):
     Shared(driver).filter_by_reference_number(context.reference_code)
-    row = LicencesPage(driver).licence_row_properties(context.licence)
+    row = LicencesPage(driver).licence_row_properties(context.reference_code)
     assert context.reference_code in row
     assert ", ".join(assessed_control_list_entries) in row
     assert context.goods[0]["good"]["name"] in row

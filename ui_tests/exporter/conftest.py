@@ -754,7 +754,6 @@ def create_licence(context, decision, api_test_client):  # noqa
 
     if decision != "no_licence_required":
         api_test_client.cases.finalise_licence(context.case_id)
-        context.licence = api_test_client.context["licence"]
 
 
 @given(parsers.parse('I create a licence for my open application with "{decision}" decision document'))  # noqa
@@ -771,7 +770,6 @@ def create_open_licence(context, decision, api_test_client):  # noqa
 
     if decision != "no_licence_required":
         api_test_client.cases.finalise_licence(context.case_id)
-        context.licence = api_test_client.context["licence"]
 
 
 @given("I finalise my NLR decision")  # noqa
@@ -782,7 +780,7 @@ def finalise_case_with_nlr_decision(context, api_test_client):  # noqa
     api_test_client.cases.finalise_case(context.case_id, "no_licence_required")
     api_test_client.cases.add_generated_document(context.case_id, document_template["id"], "no_licence_required")
     context.generated_document = api_test_client.context["generated_document"]
-    api_test_client.cases.finalise_licence(context.case_id, save_licence=False)
+    api_test_client.cases.finalise_licence(context.case_id)
 
 
 @given(
@@ -799,7 +797,6 @@ def create_licence_with_licenced_goods(context, decision, api_test_client):  # n
     api_test_client.cases.finalise_case(context.case_id, "approve", additional_data)
     api_test_client.cases.add_generated_document(context.case_id, document_template["id"], decision)
     api_test_client.cases.finalise_licence(context.case_id)
-    context.licence = api_test_client.context["licence"]
 
 
 @then(parsers.parse('I can see the sections "{sections}" are on the task list'))  # noqa
