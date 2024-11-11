@@ -124,3 +124,8 @@ MIDDLEWARE += [
 ]
 
 SURVEY_URL = env.str("SURVEY_URL", "")
+
+# Content Security Policy reporting to sentry.  CSP_REPORT_URI has been deprecated but
+# using it here as some browsers still don't support CSP_REPORT_TO which replaces it
+
+CSP_REPORT_URI = env.tuple("EXPORTER_CSP_REPORT_URI", default=("",))
