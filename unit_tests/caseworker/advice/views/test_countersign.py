@@ -648,3 +648,24 @@ def test_senior_manager_countersigner_not_same_as_case_officer_or_countersigner(
     assert countersign_button
     assert countersign_button.text == "Review and countersign"
     assert countersign_button["href"] == case_senior_licensing_manager_countersign_decision_url
+
+
+def test_countersign_advice_view_trigger_list_products(
+    authorized_client,
+    requests_mock,
+    data_standard_case_with_all_trigger_list_products_assessed,
+    countersign_advice_view_url,
+):
+    case_id = data_standard_case_with_all_trigger_list_products_assessed["case"]["id"]
+    requests_mock.get(
+        client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case_with_all_trigger_list_products_assessed
+    )
+    response = authorized_client.get(countersign_advice_view_url)
+    assert response.status_code == 200
+    expected_context = [
+        {"line_number": num, **good}
+        for num, good in enumerate(
+            data_standard_case_with_all_trigger_list_products_assessed["case"]["data"]["goods"], start=1
+        )
+    ]
+    assert response.context["assessed_trigger_list_goods"] == expected_context

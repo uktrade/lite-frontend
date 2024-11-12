@@ -22,6 +22,9 @@
                     {{ formset.management_form|crispy }}
                     {% for advice in advice_to_countersign %}
                         {% include "advice/advice_details.html" %}
+                        {% if advice.0.team.alias == "DESNZ_NUCLEAR" and assessed_trigger_list_goods %}
+                            {% include "advice/assessed_products.html" with assessed_trigger_list_goods=assessed_trigger_list_goods readonly=True %}
+                        {% endif %}
                         {% with index=forloop.counter0 %}
                             {% with form=formset|index:index %}
                                 {% crispy form %}

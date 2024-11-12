@@ -133,6 +133,9 @@
                 {% endwith %}
             </div>
         {% endfor %}
+        {% if team_advice.team.alias == "DESNZ_NUCLEAR" and assessed_trigger_list_goods %}
+            {% include "advice/assessed_products.html" with assessed_trigger_list_goods=assessed_trigger_list_goods readonly=True %}
+        {% endif %}
 	</details>
     {% endfor %}
 {% endfor %}

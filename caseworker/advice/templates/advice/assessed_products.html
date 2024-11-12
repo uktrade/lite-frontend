@@ -3,7 +3,9 @@
     <div class="govuk-grid-column-full">
         <table id="assessed-products" class="govuk-table">
             <h2 class="govuk-heading-m">Assessed products</h2>
-            <a href="{% url 'cases:clear_trigger_list_assessments' queue_pk=queue_pk pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
+            {% if not readonly %}
+                <a href="{% url 'cases:clear_trigger_list_assessments' queue_pk=queue_pk pk=case.id %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Clear assessments</a>
+            {% endif %}
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header">
@@ -40,9 +42,11 @@
                             <td class="govuk-table__cell">{{ good_on_application.is_trigger_list_guidelines_applicable|yesno|title }}</td>
                             <td class="govuk-table__cell">{{ good_on_application.is_nca_applicable|yesno|title }}</td>
                             <td class="govuk-table__cell">{{ good_on_application.nsg_assessment_note|linebreaksbr }}</td>
+                            {% if not readonly %}
                             <td class="govuk-table__cell">
                                 <a class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:edit_trigger_list' queue_pk=queue_pk pk=case.id good_on_application_id=good_on_application.id %}">Edit</a>
                             </td>
+                            {% endif %}
                         </tr>
                      {% endfor %}
                 </tbody>
