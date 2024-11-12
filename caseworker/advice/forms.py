@@ -6,7 +6,14 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, Layout, Submit
 from crispy_forms_gds.choices import Choice
 
-from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion, ExpandingFieldset, RadioTextArea
+from core.forms.layouts import (
+    ConditionalCheckboxes,
+    ConditionalCheckboxesQuestion,
+    ConditionalRadios,
+    ConditionalRadiosQuestion,
+    ExpandingFieldset,
+    RadioTextArea,
+)
 from core.forms.utils import coerce_str_to_bool
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.widgets import GoodsMultipleSelect
@@ -136,12 +143,29 @@ class GiveApprovalAdviceForm(PicklistAdviceForm):
         widget=forms.RadioSelect,
         choices=(),
     )
-    proviso_radios = forms.ChoiceField(
+    proviso_radios = forms.MultipleChoiceField(
         label="Add a licence condition (optional)",
         required=False,
-        widget=forms.RadioSelect,
+        widget=forms.CheckboxSelectMultiple,
         choices=(),
     )
+
+    # Dual-use hot cell components ,  dual-use_hot_cell_components
+    # Dual-use OIELs to NPT-non-signatories ,  dual-use_oiels_to_npt-non-signatories
+    # Enrichment, reprocessing, or heavy water production equipment ,  enrichment,_reprocessing,_or_heavy_water_production_equipment
+    # Enrichment, reprocessing, or heavy water production tech ,  enrichment,_reprocessing,_or_heavy_water_production_tech
+    # Fake Trigger List with Euratom end-users ,  fake_trigger_list_with_euratom_end-users
+    # Fake Trigger List without Euratom end-users ,  fake_trigger_list_without_euratom_end-users
+    # GDA-related Trigger List tech to China ,  gda-related_trigger_list_tech_to_china
+    # Items to UAE ,  items_to_uae
+    # Material usable for nuclear weapons ,  material_usable_for_nuclear_weapons
+    # Reporting to ONR for additional protocol ,  reporting_to_onr_for_additional_protocol
+    # Trigger List equipment (Pdb) ,  trigger_list_equipment
+    # Trigger List items ,  trigger_list_items
+    # Trigger List material ,  trigger_list_material
+    # Trigger List OIELs ,  trigger_list_oiels
+    # Trigger List tech ,  trigger_list_tech
+    # Other ,  other
 
     def __init__(self, *args, **kwargs):
         approval_reason = kwargs.pop("approval_reason")
@@ -162,11 +186,25 @@ class GiveApprovalAdviceForm(PicklistAdviceForm):
         self.fields["proviso_radios"].choices = proviso_choices
         self.fields["footnote_details_radios"].choices = footnote_details_choices
 
+        # not happy with this not being set above
+        for choices in proviso_choices:
+            self.fields[choices.value] = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3, "class": "govuk-!-margin-top-4"}),
+                label="Description",
+                required=False,
+                initial=proviso_text[choices.value],
+            )
+
+        # gross
+        conditional_checkbox_choices = (
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
+        )
+
         self.helper = FormHelper()
         self.helper.layout = Layout(
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
             ExpandingFieldset(
-                RadioTextArea("proviso_radios", "proviso", self.proviso_text),
+                ConditionalCheckboxes("proviso_radios", *conditional_checkbox_choices),
                 "instructions_to_exporter",
                 RadioTextArea("footnote_details_radios", "footnote_details", self.footnote_text),
                 legend="Add a licence condition, instruction to exporter or footnote",
