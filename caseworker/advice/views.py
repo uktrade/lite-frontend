@@ -1,4 +1,5 @@
 from http import HTTPStatus
+from core.wizard.views import BaseSessionWizardView
 import sentry_sdk
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect
@@ -166,6 +167,10 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
                 services.unadvised_countries(self.caseworker, self.case),
                 **self.get_form_kwargs(),
             )
+        elif self.caseworker["team"]["alias"] in services.DESNZ_TEAMS:
+            return forms.DESNZApprovalAdviceForm(
+                **self.get_form_kwargs(),
+            )
         else:
             return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
 
@@ -199,6 +204,90 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
             "security_approvals_classified_display": self.security_approvals_classified_display,
             "title": f"{self.get_form().DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}",
         }
+
+
+class DESNZApprovalAdviceForm(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
+    # on save combine everything into a single field
+    DOCUMENT_TITLE = "Recommend approval for this case"
+    form_list = [
+        ("recommend_approval", forms.DESCNZRecommendAnApproval),
+        ("conditional", forms.PicklistApprovalAdviceForm),
+        ("footers", forms.FootnotesApprovalAdviceForm),
+    ]
+
+    condition_dict = {
+        "recommend_approval": True,
+    }
+
+    # conditional if checkbox selected
+
+    # def get_form(self):
+    #     if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
+    #         return forms.FCDOApprovalAdviceForm(
+    #             services.unadvised_countries(self.caseworker, self.case),
+    #             **self.get_form_kwargs(),
+    #         )
+    #     elif self.caseworker["team"]["alias"] in services.DESNZ_TEAMS:
+    #         return forms.DESCNZRecommendAnApproval(
+    #             **self.get_form_kwargs(),
+    #         )
+    #     else:
+    #         return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+        if step in ["recommend_approval", None]:
+            kwargs["approval_reason"] = get_picklists_list(
+                self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+            )
+        if step == "conditional":
+            kwargs["proviso"] = get_picklists_list(
+                self.request, type="proviso", disable_pagination=True, show_deactivated=False
+            )
+
+        if step == "footers":
+            kwargs["footnote_details"] = get_picklists_list(
+                self.request, type="footnotes", disable_pagination=True, show_deactivated=False
+            )
+
+        return kwargs
+
+    def form_valid(self, form):
+        services.post_approval_advice(self.request, self.case, form.cleaned_data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:view_my_advice", kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {
+            **context,
+            "security_approvals_classified_display": self.security_approvals_classified_display,
+            "title": f"{self.get_form().DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}",
+        }
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating case adviser on cases",
+        "Unexpected error updating case adviser on cases",
+    )
+    def post_approval_advice(self, form_dict):
+        # TODO extract data from form_dict, merge to a single json and add below
+        data = form_dict
+        json = {
+            "type": "proviso" if data["proviso"] else "approve",
+            "text": data["approval_reasons"],
+            "proviso": data["proviso"],
+            "note": data["instructions_to_exporter"],
+            "footnote_required": True if data["footnote_details"] else False,
+            "footnote": data["footnote_details"],
+        }
+        services.post_approval_advice(self.request, self.case, json)
+
+    def done(self, form_list, form_dict, **kwargs):
+        self.post_approval_advice(form_dict)
+        return redirect(self.get_success_url())
 
 
 class RefusalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
