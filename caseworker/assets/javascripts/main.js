@@ -21,6 +21,7 @@ import { initCaseNotes, initMentionUsers } from "./case-notes";
 import { initExpanders } from "./list-expander";
 import { initCustomisers } from "./customiser";
 import { initRadioTextArea } from "./radio-populate-textarea.js";
+import { initAdditiveTextArea } from "./additive-populate-textarea.js";
 import initSelectAllTables from "./select-all-tables.js";
 import { initTableExpanders } from "./table-expander.js";
 
@@ -45,6 +46,7 @@ initMentionUsers();
 initExpanders();
 initCustomisers();
 initRadioTextArea();
+initAdditiveTextArea();
 initSelectAllTables();
 initTableExpanders();
 

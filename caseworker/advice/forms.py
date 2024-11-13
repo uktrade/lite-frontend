@@ -6,7 +6,13 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, Layout, Submit
 from crispy_forms_gds.choices import Choice
 
-from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion, ExpandingFieldset, RadioTextArea
+from core.forms.layouts import (
+    ConditionalRadios,
+    ConditionalRadiosQuestion,
+    ExpandingFieldset,
+    RadioTextArea,
+    AdditiveTextArea,
+)
 from core.forms.utils import coerce_str_to_bool
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.tau.widgets import GoodsMultipleSelect
@@ -84,7 +90,7 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
 
 
 class PicklistAdviceForm(forms.Form):
-    def _picklist_to_choices(self, picklist_data):
+    def _picklist_to_choices(self, picklist_data, include_other=True):
         reasons_choices = []
         reasons_text = {"other": ""}
 
@@ -95,7 +101,8 @@ class PicklistAdviceForm(forms.Form):
                 choice = Choice(key, result.get("name"), divider="or")
             reasons_choices.append(choice)
             reasons_text[key] = result.get("text")
-        reasons_choices.append(Choice("other", "Other"))
+        if include_other:
+            reasons_choices.append(Choice("other", "Other"))
         return reasons_choices, reasons_text
 
 
@@ -152,7 +159,7 @@ class GiveApprovalAdviceForm(PicklistAdviceForm):
         approval_choices, approval_text = self._picklist_to_choices(approval_reason)
         self.approval_text = approval_text
 
-        proviso_choices, proviso_text = self._picklist_to_choices(proviso)
+        proviso_choices, proviso_text = self._picklist_to_choices(proviso, include_other=False)
         self.proviso_text = proviso_text
 
         footnote_details_choices, footnote_text = self._picklist_to_choices(footnote_details)
@@ -166,7 +173,7 @@ class GiveApprovalAdviceForm(PicklistAdviceForm):
         self.helper.layout = Layout(
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
             ExpandingFieldset(
-                RadioTextArea("proviso_radios", "proviso", self.proviso_text),
+                AdditiveTextArea("proviso_radios", "proviso", self.proviso_text),
                 "instructions_to_exporter",
                 RadioTextArea("footnote_details_radios", "footnote_details", self.footnote_text),
                 legend="Add a licence condition, instruction to exporter or footnote",
