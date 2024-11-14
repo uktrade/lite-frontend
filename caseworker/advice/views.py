@@ -210,16 +210,21 @@ class DESNZApprovalAdviceForm(LoginRequiredMixin, CaseContextMixin, BaseSessionW
     # on save combine everything into a single field
     DOCUMENT_TITLE = "Recommend approval for this case"
     form_list = [
-        ("recommend_approval", forms.DESCNZRecommendAnApproval),
+        ("desnz_recommend_approval", forms.DESCNZRecommendAnApproval),
+        ("fcdo_recommend_approval", forms.FCDOApprovalAdviceForm),
+        ("default_recommend_approval", forms.GiveApprovalAdviceForm),
         ("conditional", forms.PicklistApprovalAdviceForm),
         ("footers", forms.FootnotesApprovalAdviceForm),
     ]
 
+    # add conditional logic to this to display the old forms
     condition_dict = {
-        "recommend_approval": True,
+        "desnz_recommend_approval": True,
+        "fcdo_recommend_approval": False,
+        "default_recommend_approval": False,
+        "conditional": True,
+        "footers": True,
     }
-
-    # conditional if checkbox selected
 
     # def get_form(self):
     #     if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
@@ -236,7 +241,7 @@ class DESNZApprovalAdviceForm(LoginRequiredMixin, CaseContextMixin, BaseSessionW
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
-        if step in ["recommend_approval", None]:
+        if "recommend_approval" in step or step == None:
             kwargs["approval_reason"] = get_picklists_list(
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
@@ -252,10 +257,6 @@ class DESNZApprovalAdviceForm(LoginRequiredMixin, CaseContextMixin, BaseSessionW
 
         return kwargs
 
-    def form_valid(self, form):
-        services.post_approval_advice(self.request, self.case, form.cleaned_data)
-        return super().form_valid(form)
-
     def get_success_url(self):
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
@@ -267,26 +268,11 @@ class DESNZApprovalAdviceForm(LoginRequiredMixin, CaseContextMixin, BaseSessionW
             "title": f"{self.get_form().DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}",
         }
 
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating case adviser on cases",
-        "Unexpected error updating case adviser on cases",
-    )
-    def post_approval_advice(self, form_dict):
-        # TODO extract data from form_dict, merge to a single json and add below
-        data = form_dict
-        json = {
-            "type": "proviso" if data["proviso"] else "approve",
-            "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-            "note": data["instructions_to_exporter"],
-            "footnote_required": True if data["footnote_details"] else False,
-            "footnote": data["footnote_details"],
-        }
-        services.post_approval_advice(self.request, self.case, json)
-
     def done(self, form_list, form_dict, **kwargs):
-        self.post_approval_advice(form_dict)
+        data = {}
+        for form_data in form_dict.values():
+            data.update(form_data.cleaned_data)
+        services.post_approval_advice(self.request, self.case, data)
         return redirect(self.get_success_url())
 
 

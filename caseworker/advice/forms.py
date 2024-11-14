@@ -531,12 +531,6 @@ class PicklistApprovalAdviceForm(PicklistAdviceForm):
         label="",
         required=False,
     )
-    instructions_to_exporter = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "3"}),
-        label="Add any instructions for the exporter (optional)",
-        help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
-        required=False,
-    )
 
     approval_radios = forms.ChoiceField(
         label="What is your reason for approving?",
@@ -553,9 +547,8 @@ class PicklistApprovalAdviceForm(PicklistAdviceForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        # if box is checked, allow text to appear in final proviso data
-        # ordering?
-        return cleaned_data
+        # only return proviso (text) for selected radios, nothing else matters, join by 2 newlines
+        return {"proviso": "\r\n\r\n".join([cleaned_data[selected] for selected in cleaned_data["proviso_radios"]])}
 
     def __init__(self, *args, **kwargs):
         proviso = kwargs.pop("proviso")
@@ -590,6 +583,13 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm):
 
     DOCUMENT_TITLE = "Recommend approval for this case"
 
+    instructions_to_exporter = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "3"}),
+        label="Add any instructions for the exporter (optional)",
+        help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
+        required=False,
+    )
+
     footnote_details_radios = forms.ChoiceField(
         label="Add a reporting footnote (optional)",
         required=False,
@@ -613,6 +613,7 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
+            "instructions_to_exporter",
             RadioTextArea("footnote_details_radios", "footnote_details", self.footnote_text),
             Submit("submit", "Submit recommendation"),
         )
