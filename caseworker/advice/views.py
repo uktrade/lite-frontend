@@ -414,7 +414,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESNZNucle
         return context
 
 
-class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, DESNZNuclearMixin, TemplateView):
     template_name = "advice/review_countersign.html"
     form_class = forms.CountersignAdviceForm
 
@@ -424,6 +424,7 @@ class ReviewCountersignView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         context["formset"] = forms.get_formset(self.form_class, len(advice))
         context["advice_to_countersign"] = advice.values()
         context["denial_reasons_display"] = self.denial_reasons_display
+        context["assessed_trigger_list_goods"] = self.assessed_trigger_list_goods
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
         context["title"] = (
             f"{self.form_class.DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}"

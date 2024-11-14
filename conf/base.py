@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     "lite_forms",
     "health_check",
     "health_check.cache",
-    "health_check.storage",
     "core.api",
     "core.forms",
     "crispy_forms",
@@ -68,6 +67,9 @@ INSTALLED_APPS = [
     "extra_views",
     "cacheops",
 ]
+
+if not IS_ENV_DBT_PLATFORM:
+    INSTALLED_APPS += ["health_check.storage"]
 
 MIDDLEWARE = [
     "allow_cidr.middleware.AllowCIDRMiddleware",
@@ -201,9 +203,9 @@ CLAM_AV_DOMAIN = env.str("CLAM_AV_DOMAIN", "")
 # AWS
 
 AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
-AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY")
-AWS_REGION = env.str("AWS_REGION")
+AWS_ACCESS_KEY_ID = env.str("AWS_ACCESS_KEY_ID", None)
+AWS_SECRET_ACCESS_KEY = env.str("AWS_SECRET_ACCESS_KEY", None)
+AWS_REGION = env.str("AWS_REGION", "eu-west-2")
 AWS_STORAGE_BUCKET_NAME = env.str("AWS_STORAGE_BUCKET_NAME")
 AWS_DEFAULT_ACL = env.str("AWS_DEFAULT_ACL", None)
 AWS_S3_ENDPOINT_URL = env.str("AWS_S3_ENDPOINT_URL", None)
@@ -256,10 +258,18 @@ X_FRAME_OPTIONS = "SAMEORIGIN"
 
 CSP_DEFAULT_SRC = env.tuple("CSP_DEFAULT_SRC", default=("'self'",))
 CSP_STYLE_SRC = env.tuple("CSP_STYLE_SRC", default=("'self'",))
-CSP_SCRIPT_SRC = env.tuple("CSP_SCRIPT_SRC", default=("'self'",))
+CSP_SCRIPT_SRC = env.tuple(
+    "CSP_SCRIPT_SRC",
+    default=("'self'",),
+)
+CSP_CONNECT_SRC = env.tuple("CSP_CONNECT_SRC", default=("'self'",))
+CSP_FRAME_SRC = env.tuple("CSP_FRAME_SRC", default=("'self'",))
 CSP_FONT_SRC = env.tuple("CSP_FONT_SRC", default=("'self'",))
-CSP_REPORT_ONLY = env.bool("CSP_REPORT_ONLY", False)
+CSP_IMG_SRC = env.tuple("CSP_IMG_SRC", default=("'self'",))
+CSP_FRAME_ANCESTORS = env.tuple("CSP_FRAME_ANCESTORS", default=("'none'",))
 CSP_INCLUDE_NONCE_IN = env.tuple("CSP_INCLUDE_NONCE_IN", default=("script-src",))
+
+CSP_REPORT_ONLY = env.bool("CSP_REPORT_ONLY", False)
 
 if DEBUG:
     import pkg_resources
@@ -286,6 +296,7 @@ if env.str("SENTRY_DSN", ""):
         environment=env.str("SENTRY_ENVIRONMENT"),
         integrations=[DjangoIntegration()],
         send_default_pii=True,
+        traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", 1.0),
     )
 
 LITE_API_URL = env.str("LITE_API_URL")
