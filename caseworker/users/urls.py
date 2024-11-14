@@ -10,7 +10,6 @@ urlpatterns = [
     path("<uuid:pk>/", users.ViewUser.as_view(), name="user"),
     path("add", users.AddUser.as_view(), name="add"),
     path("<uuid:pk>/edit/", views.EditCaseworkerUserView.as_view(), name="edit"),
-    path("<uuid:pk>/edit2/", users.EditUser.as_view(), name="edit_2"),
     path("<uuid:pk>/edit/<str:status>/", users.ChangeUserStatus.as_view(), name="change_status"),
     path("profile/", users.ViewProfile.as_view(), name="profile"),
     path("mentions/", users.UserCaseNoteMentions.as_view(), name="user_case_note_mentions"),
