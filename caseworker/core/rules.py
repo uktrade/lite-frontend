@@ -219,8 +219,5 @@ rules.add_rule(
     "can_licence_status_be_changed", is_user_licencing_unit_senior_manager & is_case_finalised_and_licence_editable
 )
 rules.add_rule("can_user_manage_organisation", is_user_manage_organisations_role & is_organisation_active)
-rules.add_rule("can_caseworker_edit_role", is_super_user | is_user_in_admin_team)  # noqa
-rules.add_rule("can_caseworker_edit_team", is_super_user | is_user_in_admin_team)  # noqa
-rules.add_rule(
-    "can_caseworker_deactivate", (is_super_user | is_user_in_admin_team) & user_is_not_logged_in_user  # noqa
-)
+rules.add_rule("can_caseworker_deactivate", (is_super_user) & user_is_not_logged_in_user)  # noqa
+rules.add_rule("can_caseworker_edit_user", (is_super_user))  # noqa

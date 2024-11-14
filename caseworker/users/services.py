@@ -2,6 +2,7 @@ from http import HTTPStatus
 from urllib.parse import urlencode
 
 from core import client
+from core.helpers import convert_parameters_to_query_params
 from lite_content.lite_internal_frontend.users import AssignUserPage
 from lite_forms.components import Option
 
@@ -81,6 +82,18 @@ def post_gov_users(request, json):
 def put_gov_user(request, pk, json):
     data = client.put(request, f"/gov-users/{pk}/", json)
     return data.json(), data.status_code
+
+
+def update_gov_user(request, pk, json):
+    data = client.put(request, f"/caseworker/gov_users/{pk}/update", json)
+    return data.json(), data.status_code
+
+
+def get_gov_user_list(request, json):
+    params = convert_parameters_to_query_params(json)
+    response = client.get(request, f"/caseworker/gov_users/gov_users_list/{params}")
+    response.raise_for_status()
+    return response.json()
 
 
 # Roles and Permissions

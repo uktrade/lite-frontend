@@ -1,13 +1,17 @@
 from django import forms
 
 from core.common.forms import BaseForm
+from core.forms.widgets import FilterSelect
 from crispy_forms_gds.choices import Choice
+from caseworker.users.services import get_gov_user_list
 
 
 class EditCaseworkerUser(BaseForm):
     class Layout:
         TITLE = "Edit"
         SUBMIT_BUTTON_TEXT = "Save and return"
+
+    _editable_fields = ["email", "team", "role"]
 
     email = forms.EmailField(
         label="Email",
@@ -18,49 +22,55 @@ class EditCaseworkerUser(BaseForm):
 
     role = forms.ChoiceField(
         label="Role",
-        widget=forms.Select(attrs={"id": "role", "data-attribute": "1234"}),
+        widget=forms.Select(attrs={"id": "role"}),
     )
 
     team = forms.ChoiceField(label="Team", widget=forms.Select(attrs={"id": "team"}))
 
-    default_queue = forms.ChoiceField(label="Default Queue", widget=forms.Select(attrs={"id": "default_queue"}))
+    default_queue = forms.ChoiceField(
+        label="Default Queue",
+        widget=FilterSelect(
+            parent_select_name="team",
+            attrs={"id": "default_queue", "class": "govuk-select"},
+        ),
+    )
 
-    def __init__(self, teams, roles, queues, can_caseworker_edit_role, can_caseworker_edit_team, *args, **kwargs):
+    def __init__(self, request, teams, roles, queues, can_caseworker_edit_user, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
-        self.fields["role"].widget.attrs["disabled"] = not can_caseworker_edit_role
-        self.fields["team"].widget.attrs["disabled"] = not can_caseworker_edit_team
-        self.fields["role"].required = can_caseworker_edit_role
-        self.fields["team"].required = can_caseworker_edit_team
+        self.read_only = not can_caseworker_edit_user
+        self.request = request
+        self._email_changed = False
+        if self.read_only:
+            for field in self._editable_fields:
+                self.fields[field].widget.attrs["disabled"] = True
+                self.fields[field].required = False
 
         self.fields["team"].choices = [Choice(t["id"], t["name"]) for t in teams]
         self.fields["role"].choices = [Choice(r["id"], r["name"]) for r in roles]
-        queues_choice = []
-        for q in queues:
-            team_id = None
-            if q.get("team"):
-                team_id = q.get("team").get("id")
-            queues_choice.append(Choice(value=q["id"], label=q["name"], attr={"data-attribute": team_id}))
 
-        self.fields["default_queue"].choices = queues_choice
+        get_team_id = lambda q: q.get("team").get("id") if q.get("team") else None
+
+        self.fields["default_queue"].choices = [
+            Choice(value=q["id"], label=q["name"], attrs={"data-attribute": get_team_id(q)}) for q in queues
+        ]
+        self.fields["default_queue"].choices.insert(0, Choice(None, "Select"))
 
     def clean(self):
         cleaned_data = super().clean()
-        for field in ["role", "team"]:
-            if self.fields["role"].widget.attrs["disabled"] == True:
+        if self.read_only:
+            for field in self._editable_fields:
                 del cleaned_data[field]
         return cleaned_data
 
-    def _clean_for_readonly_field(self, fname):
-        """will reset value to initial - nothing will be changed
-        needs to be added dynamically - partial, see init_fields
-        """
-        return self.initial[fname]  # or getattr(self.instance, fname)
-
     def clean_email(self):
-        email = self.cleaned_data["email"]
-        # if email in self.organisation_users:
-        #    raise forms.ValidationError("Enter an email address that is not registered to this organisation")
+
+        email = self.cleaned_data["email"] or self.initial["email"]
+        if not self.read_only:
+            email_changed = email != self.initial["email"].lower()
+            if email_changed:
+                gov_user_list = get_gov_user_list(self.request, {"email": email})
+                if gov_user_list["count"]:
+                    raise forms.ValidationError("This email has already been registered")
         return email
 
     def get_layout_fields(self):

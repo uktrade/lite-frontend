@@ -4,7 +4,7 @@ import rules
 
 from caseworker.queues.services import get_queues
 from caseworker.teams.services import get_all_teams
-from caseworker.users.services import get_all_roles, get_gov_user, put_gov_user
+from caseworker.users.services import get_all_roles, get_gov_user, update_gov_user
 
 from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
@@ -34,15 +34,21 @@ class EditCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return super().dispatch(*args, **kwargs)
 
     def get_initial(self):
-        return {"email": self.user["email"]}
+        return {
+            "email": self.user["email"],
+            "role": self.user["role"]["id"],
+            "team": self.user["team"]["id"],
+            "default_queue": self.user["default_queue"]["id"],
+        }
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
+
+        form_kwargs["request"] = self.request
         form_kwargs["teams"] = get_all_teams(self.request)
         form_kwargs["roles"] = get_all_roles(self.request)
         form_kwargs["queues"] = get_queues(self.request, include_system=True)
-        form_kwargs["can_caseworker_edit_role"] = rules.test_rule("can_caseworker_edit_role", self.request)
-        form_kwargs["can_caseworker_edit_team"] = rules.test_rule("can_caseworker_edit_team", self.request)
+        form_kwargs["can_caseworker_edit_user"] = rules.test_rule("can_caseworker_edit_user", self.request)
 
         return form_kwargs
 
@@ -62,9 +68,9 @@ class EditCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     )
     def edit_user(self, data):
         # If user is updating their own default_queue, update the local user instance
-        # if self.user_id == self.request.session["lite_api_user_id"]:
-        #    self.request.session["default_queue"] = self.get_validated_data().get("gov_user").get("default_queue")
-        return put_gov_user(self.request, self.user_id, data)
+        if str(self.user_id) == self.request.session["lite_api_user_id"]:
+            self.request.session["default_queue"] = data.get("default_queue")
+        return update_gov_user(self.request, self.user_id, data)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
