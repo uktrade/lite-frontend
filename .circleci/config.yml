@@ -280,8 +280,8 @@ jobs:
           at: ~/repo/tmp
       - run: pip install coverage diff_cover
       - run: coverage combine tmp
-      - run: coverage xml
       - run: coverage html
+      - run: coverage xml
       - store_artifacts:
           path: htmlcov
       - run: diff-cover coverage.xml --compare-branch=origin/dev --html-report coverage-report.html

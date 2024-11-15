@@ -26,8 +26,8 @@
 #### Git pre-commit setup
 
 - Install pre-commit (see instructions here: https://pre-commit.com/#install)
-- Run `pre-commit install` to activate pre-commit locally.
-- Run following to scan all files for issues.
+- Run `pre-commit install` to activate pre-commit locally
+- Run following to scan all files for issues
   - `pre-commit run --all-files`
 - After this initial setup, pre-commit should run automatically whenever you run `git commit` locally.
 - All developers must use the pre-commit hooks for the project. This is to make routine tasks easier (e.g. linting, style checking) and to help ensure secrets and personally identifiable information (PII) are not leaked.
