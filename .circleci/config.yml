@@ -278,7 +278,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/repo/tmp
-      - run: pip install coverage==6.0 diff_cover
+      - run: pip install coverage==7.6.4 diff_cover
       - run: coverage combine tmp
       - run: coverage html
       - run: coverage xml
