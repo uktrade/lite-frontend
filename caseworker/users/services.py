@@ -85,13 +85,13 @@ def put_gov_user(request, pk, json):
 
 
 def update_gov_user(request, pk, json):
-    data = client.put(request, f"/caseworker/gov_users/{pk}/update", json)
+    data = client.patch(request, f"/caseworker/gov_users/{pk}/update", json)
     return data.json(), data.status_code
 
 
-def get_gov_user_list(request, json):
-    params = convert_parameters_to_query_params(json)
-    response = client.get(request, f"/caseworker/gov_users/gov_users_list/{params}")
+def get_gov_user_list(request, filters):
+    params = convert_parameters_to_query_params(filters)
+    response = client.get(request, f"/caseworker/gov_users/{params}")
     response.raise_for_status()
     return response.json()
 

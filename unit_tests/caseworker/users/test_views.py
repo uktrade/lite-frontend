@@ -10,7 +10,7 @@ from django.contrib.messages import constants, get_messages
 
 from core import client
 from core.exceptions import ServiceError
-from caseworker.users.manage.forms import EditCaseworkerUser
+from caseworker.users.manage.forms import EditCaseworker, EditCaseworkerQueue
 from caseworker.core.constants import (
     ADMIN_TEAM_ID,
     ALL_CASES_QUEUE_ID,
@@ -339,10 +339,10 @@ def test_view_user_deactivate_permissions(
 
 
 @pytest.mark.parametrize(
-    "role_id, disabled_attribute",
+    "role_id, disabled_attribute, form_class",
     (
-        (SUPER_USER_ROLE_ID, False),
-        (NON_SUPER_USER_ROLE_ID, True),
+        (SUPER_USER_ROLE_ID, False, EditCaseworker),
+        (NON_SUPER_USER_ROLE_ID, True, EditCaseworkerQueue),
     ),
 )
 def test_edit_user_get(
@@ -358,6 +358,7 @@ def test_edit_user_get(
     requests_mock,
     role_id,
     disabled_attribute,
+    form_class,
 ):
 
     gov_user_id = mock_gov_user["user"]["id"]
@@ -379,7 +380,7 @@ def test_edit_user_get(
 
     response = authorized_client.get(edit_user_url)
 
-    assert isinstance(response.context["form"], EditCaseworkerUser)
+    assert isinstance(response.context["form"], form_class)
     assert response.context["form"].initial == {
         "email": edit_user_data["user"]["email"],
         "team": edit_user_data["user"]["team"]["id"],
@@ -467,7 +468,7 @@ def test_edit_user_post(
         },
     )
 
-    mock_put = requests_mock.put(
+    mock_patch = requests_mock.patch(
         client._build_absolute_uri(f"/caseworker/gov_users/{edit_user_id}/update/"),
         json={"gov_user": edit_user_post_data},
     )
@@ -480,7 +481,7 @@ def test_edit_user_post(
         (constants.SUCCESS, "User updated successfully")
     ]
 
-    assert mock_put.last_request.json() == update_payload
+    assert mock_patch.last_request.json() == update_payload
 
 
 def test_edit_user_post_email_exists(
@@ -495,7 +496,7 @@ def test_edit_user_post_email_exists(
 ):
 
     requests_mock.get(
-        client._build_absolute_uri("/caseworker/gov_users/gov_users_list/?email=changed@changeemaild.com"),
+        client._build_absolute_uri("/caseworker/gov_users/?email=changed@changeemaild.com"),
         json={"count": 1},
     )
 
@@ -550,7 +551,7 @@ def test_edit_user_post_default_queue_change(
     session.save()
 
     requests_mock.get(client._build_absolute_uri(f"/gov-users/{edit_user_id}/"), json=edit_user_data)
-    requests_mock.put(
+    requests_mock.patch(
         client._build_absolute_uri(f"/caseworker/gov_users/{edit_user_id}/update/"),
         json={},
     )
@@ -589,7 +590,7 @@ def test_edit_user_api_failed(
 ):
 
     edit_user_id = edit_user_data["user"]["id"]
-    requests_mock.put(
+    requests_mock.patch(
         client._build_absolute_uri(f"/caseworker/gov_users/{edit_user_id}/update/"),
         json={},
         status_code=500,

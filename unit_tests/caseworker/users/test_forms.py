@@ -1,4 +1,4 @@
-from caseworker.users.manage.forms import EditCaseworkerUser
+from caseworker.users.manage.forms import EditCaseworker, EditCaseworkerQueue
 import pytest
 from core import client
 
@@ -16,24 +16,25 @@ def user_form_data():
 
 
 @pytest.mark.parametrize(
-    "can_caseworker_edit_user",
-    ([False, True]),
+    "form_class, can_caseworker_edit_user",
+    ([EditCaseworker, True], [EditCaseworkerQueue, False]),
 )
-def test_edit_user_form(can_caseworker_edit_user, user_form_data, mock_request):
+def test_edit_user_form(form_class, can_caseworker_edit_user, user_form_data, mock_request):
     roles = user_form_data["roles"]
     teams = user_form_data["teams"]
     queues = user_form_data["queues"]
 
-    form = EditCaseworkerUser(mock_request, roles, teams, queues, can_caseworker_edit_user)
+    form = form_class(mock_request, roles, teams, queues)
 
     assert len(form.fields["role"].choices) == len(roles)
     assert len(form.fields["team"].choices) == len(teams)
     assert len(form.fields["default_queue"].choices) == len(queues) + 1
 
-    assert form.fields["email"].widget.attrs.get("disabled", False) is not can_caseworker_edit_user
-    assert form.fields["role"].widget.attrs.get("disabled", False) is not can_caseworker_edit_user
-    assert form.fields["team"].widget.attrs.get("disabled", False) is not can_caseworker_edit_user
-    assert form.fields["default_queue"].widget.attrs.get("disabled") is None
+    assert form.fields["email"].disabled is not can_caseworker_edit_user
+    assert form.fields["role"].disabled is not can_caseworker_edit_user
+    assert form.fields["team"].disabled is not can_caseworker_edit_user
+
+    assert form.fields["default_queue"].disabled is False
 
     for i, t in enumerate(teams):
         assert form.fields["role"].choices[i].value == t["id"]
@@ -99,9 +100,7 @@ def test_edit_user_form_post(data, valid, cleaned_data, errors, user_form_data, 
     teams = user_form_data["teams"]
     queues = user_form_data["queues"]
 
-    form = EditCaseworkerUser(
-        request=mock_request, data=data, roles=roles, teams=teams, queues=queues, can_caseworker_edit_user=True
-    )
+    form = EditCaseworker(request=mock_request, data=data, roles=roles, teams=teams, queues=queues)
     form.initial = {"email": data.get("email")}
 
     assert form.is_valid() == valid
@@ -118,9 +117,7 @@ def test_edit_user_form_post_caseworker_no_edit_permission(user_form_data, mock_
     teams = user_form_data["teams"]
     queues = user_form_data["queues"]
 
-    form = EditCaseworkerUser(
-        request=mock_request, data=data, roles=roles, teams=teams, queues=queues, can_caseworker_edit_user=False
-    )
+    form = EditCaseworkerQueue(request=mock_request, data=data, roles=roles, teams=teams, queues=queues)
     form.initial = {"email": "test@test123.com"}
 
     assert form.is_valid() == True
@@ -147,13 +144,11 @@ def test_edit_user_form_post_update_email(
     queues = user_form_data["queues"]
 
     requests_mock.get(
-        client._build_absolute_uri("/caseworker/gov_users/gov_users_list/?email=test@123.com"),
+        client._build_absolute_uri("/caseworker/gov_users/?email=test@123.com"),
         json={"count": duplicate_count},
     )
 
-    form = EditCaseworkerUser(
-        request=mock_request, data=form_data, roles=roles, teams=teams, queues=queues, can_caseworker_edit_user=True
-    )
+    form = EditCaseworker(request=mock_request, data=form_data, roles=roles, teams=teams, queues=queues)
     form.initial = {"email": old_email}
 
     assert form.is_valid() == valid

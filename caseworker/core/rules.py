@@ -189,9 +189,12 @@ def is_super_user(request):
 
 @rules.predicate
 def check_user_is_not_logged_in_caseworker(request, user):
+    if not user:
+        return True
     caseworker = get_logged_in_caseworker(request)
     caseworker_user_id = caseworker["id"]
-    return True if not user else user.get("user", {}).get("id") != caseworker_user_id
+    is_actioned_user_not_current_user = user.get("user", {}).get("id") != caseworker_user_id
+    return is_actioned_user_not_current_user
 
 
 rules.add_rule("can_user_allocate_case", is_case_caseworker_operable)
