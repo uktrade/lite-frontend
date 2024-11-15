@@ -1,13 +1,16 @@
-from caseworker.users.manage.forms import EditCaseworkerUser
 import pytest
 import uuid
-
-from django.urls import reverse
 from bs4 import BeautifulSoup
-from core import client
-from pytest_django.asserts import assertTemplateUsed
-from requests.exceptions import HTTPError
+from unittest.mock import patch
 
+from pytest_django.asserts import assertTemplateUsed
+from django.urls import reverse
+from requests.exceptions import HTTPError
+from django.contrib.messages import constants, get_messages
+
+from core import client
+from core.exceptions import ServiceError
+from caseworker.users.manage.forms import EditCaseworkerUser
 from caseworker.core.constants import (
     ADMIN_TEAM_ID,
     ALL_CASES_QUEUE_ID,
@@ -47,10 +50,6 @@ def edit_user_data():
     }
 
 
-def mock_gov_user_id(mock_gov_user):
-    return mock_gov_user["user"]["id"]
-
-
 @pytest.fixture()
 def user_static_data():
     roles = [{"id": "00000000-0000-0000-0000-000000000002", "name": "Super User"}]
@@ -80,6 +79,28 @@ def mock_get_queues(requests_mock, user_static_data):
 def edit_user_mock(edit_user_data, requests_mock):
     user_id = edit_user_data["user"]["id"]
     yield requests_mock.get(client._build_absolute_uri(f"/gov-users/{user_id}/"), json=edit_user_data)
+
+
+@pytest.fixture
+def edit_user_url(edit_user_data):
+    user_id = edit_user_data["user"]["id"]
+    return reverse("users:edit", kwargs={"pk": user_id})
+
+
+@pytest.fixture
+def mock_edit_users_failure(requests_mock, edit_user_data):
+    url = client._build_absolute_uri(f"/caseworker/organisations/{organisation_pk}/exporter-users/")
+    yield requests_mock.post(url=url, json={}, status_code=500)
+
+
+@pytest.fixture
+def edit_user_post_data(edit_user_data, user_static_data):
+    return {
+        "email": edit_user_data["user"]["email"],
+        "role": user_static_data["roles"][0]["id"],
+        "default_queue": user_static_data["queues"][0]["id"],
+        "team": user_static_data["teams"][0]["id"],
+    }
 
 
 @pytest.mark.parametrize(
@@ -326,6 +347,7 @@ def test_view_user_deactivate_permissions(
 )
 def test_edit_user_get(
     authorized_client,
+    edit_user_url,
     mock_gov_user,
     mock_roles,
     mock_get_queues,
@@ -355,8 +377,7 @@ def test_edit_user_get(
         },
     )
 
-    url = reverse("users:edit", kwargs={"pk": edit_user_data["user"]["id"]})
-    response = authorized_client.get(url)
+    response = authorized_client.get(edit_user_url)
 
     assert isinstance(response.context["form"], EditCaseworkerUser)
     assert response.context["form"].initial == {
@@ -416,13 +437,13 @@ def test_edit_user_get(
 )
 def test_edit_user_post(
     authorized_client,
+    edit_user_post_data,
+    edit_user_url,
     mock_gov_user,
     mock_roles,
     mock_get_queues,
     edit_user_mock,
     edit_user_data,
-    user_static_data,
-    beautiful_soup,
     requests_mock,
     role_id,
     update_payload,
@@ -446,62 +467,38 @@ def test_edit_user_post(
         },
     )
 
-    url = reverse("users:edit", kwargs={"pk": edit_user_id})
-    data = {
-        "email": edit_user_data["user"]["email"],  # /PS-IGNORE
-        "role": user_static_data["roles"][0]["id"],
-        "default_queue": user_static_data["queues"][0]["id"],
-        "team": user_static_data["teams"][0]["id"],
-    }
-
     mock_put = requests_mock.put(
         client._build_absolute_uri(f"/caseworker/gov_users/{edit_user_id}/update/"),
-        json={"gov_user": data},
+        json={"gov_user": edit_user_post_data},
     )
 
-    response = authorized_client.post(url, data=data)
+    response = authorized_client.post(edit_user_url, data=edit_user_post_data)
     assert response.status_code == 302
     assert response.url == f"/users/{edit_user_id}/"
+
+    assert [(m.level, m.message) for m in get_messages(response.wsgi_request)] == [
+        (constants.SUCCESS, "User updated successfully")
+    ]
+
     assert mock_put.last_request.json() == update_payload
 
 
-@pytest.mark.parametrize(
-    "role_id, update_payload",
-    (
-        [NON_SUPER_USER_ROLE_ID, {"default_queue": ALL_CASES_QUEUE_ID}],
-        [
-            SUPER_USER_ROLE_ID,
-            {
-                "email": "test@guygydu.com",
-                "role": "00000000-0000-0000-0000-000000000002",
-                "team": "00000000-0000-0000-0000-000000000001",
-                "default_queue": ALL_CASES_QUEUE_ID,
-            },
-        ],
-    ),
-)
 def test_edit_user_post_email_exists(
     authorized_client,
+    edit_user_url,
     mock_gov_user,
     mock_roles,
     mock_get_queues,
     edit_user_mock,
-    edit_user_data,
     user_static_data,
-    beautiful_soup,
     requests_mock,
-    role_id,
-    update_payload,
 ):
-
-    edit_user_id = edit_user_data["user"]["id"]
 
     requests_mock.get(
         client._build_absolute_uri("/caseworker/gov_users/gov_users_list/?email=changed@changeemaild.com"),
         json={"count": 1},
     )
 
-    url = reverse("users:edit", kwargs={"pk": edit_user_id})
     data = {
         "email": "changed@changeemaild.com",  # /PS-IGNORE
         "role": user_static_data["roles"][0]["id"],
@@ -509,7 +506,7 @@ def test_edit_user_post_email_exists(
         "team": user_static_data["teams"][0]["id"],
     }
 
-    response = authorized_client.post(url, data=data)
+    response = authorized_client.post(edit_user_url, data=data)
     assert response.status_code == 200
 
     assert response.context["form"].errors == {"email": ["This email has already been registered"]}
@@ -536,11 +533,11 @@ def test_edit_user_post_email_exists(
 )
 def test_edit_user_post_default_queue_change(
     authorized_client,
+    edit_user_post_data,
     mock_gov_user,
     mock_roles,
     mock_get_queues,
     edit_user_data,
-    user_static_data,
     requests_mock,
     existing_queue_id,
     expected_queue_id,
@@ -559,15 +556,47 @@ def test_edit_user_post_default_queue_change(
     )
 
     url = reverse("users:edit", kwargs={"pk": edit_user_id})
-    data = {
-        "email": edit_user_data["user"]["email"],
-        "role": user_static_data["roles"][0]["id"],
-        "default_queue": new_queue_id,
-        "team": user_static_data["teams"][0]["id"],
-    }
+    edit_user_post_data["default_queue"] = new_queue_id
 
-    response = authorized_client.post(url, data=data)
+    response = authorized_client.post(url, data=edit_user_post_data)
     session = authorized_client.session
 
     assert response.status_code == 302
     assert session["default_queue"] == expected_queue_id
+
+
+@patch("caseworker.users.manage.views.get_gov_user")
+def test_edit_caseworker_404_on_get_user_error(
+    mock_get_gov_user,
+    authorized_client,
+    edit_user_url,
+):
+    mock_get_gov_user.side_effect = HTTPError()
+    response = authorized_client.get(edit_user_url)
+    assert response.status_code == 404
+
+
+def test_edit_user_api_failed(
+    authorized_client,
+    mock_gov_user,
+    edit_user_mock,
+    mock_roles,
+    mock_get_queues,
+    edit_user_url,
+    edit_user_post_data,
+    requests_mock,
+    edit_user_data,
+):
+
+    edit_user_id = edit_user_data["user"]["id"]
+    requests_mock.put(
+        client._build_absolute_uri(f"/caseworker/gov_users/{edit_user_id}/update/"),
+        json={},
+        status_code=500,
+    )
+
+    with pytest.raises(ServiceError) as ex:
+        authorized_client.post(edit_user_url, data=edit_user_post_data)
+
+    assert ex.value.status_code == 500
+    assert ex.value.user_message == "Unexpected error editing user"

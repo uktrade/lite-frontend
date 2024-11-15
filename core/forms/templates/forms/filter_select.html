@@ -1,7 +1,7 @@
 {% load static %}
 {% include "django/forms/widgets/select.html" %}
 
-<script nonce="">
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
     let parent_select = $("#{{parent_select_name}}");
     let filter_select = $("#{{widget.name}}");
 

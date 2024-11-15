@@ -1,10 +1,6 @@
-from http import HTTPStatus
 from requests.exceptions import HTTPError
+from http import HTTPStatus
 import rules
-
-from caseworker.queues.services import get_queues
-from caseworker.teams.services import get_all_teams
-from caseworker.users.services import get_all_roles, get_gov_user, update_gov_user
 
 from django.http import Http404
 from django.contrib.messages.views import SuccessMessageMixin
@@ -13,8 +9,9 @@ from django.views.generic import FormView
 
 from core.decorators import expect_status
 from core.auth.views import LoginRequiredMixin
-
-
+from caseworker.queues.services import get_queues
+from caseworker.teams.services import get_all_teams
+from caseworker.users.services import get_all_roles, get_gov_user, update_gov_user
 from .forms import EditCaseworkerUser
 
 
