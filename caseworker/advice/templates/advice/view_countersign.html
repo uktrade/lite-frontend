@@ -55,6 +55,9 @@
                     <br><br>
                     {% include "advice/advice_details.html" %}
                     <br>
+                    {% if advice.0.team.alias == "DESNZ_NUCLEAR" and assessed_trigger_list_goods %}
+                        {% include "advice/assessed_products.html" with assessed_trigger_list_goods=assessed_trigger_list_goods readonly=True %}
+                    {% endif %}
                 {% endfor %}
             </div>
             <div class="govuk-grid-column-one-quarter">
