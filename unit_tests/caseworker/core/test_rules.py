@@ -1,9 +1,7 @@
 import pytest
-import requests
 import rules
 import uuid
 
-from django.http import HttpRequest
 
 from core import client
 from caseworker.advice.constants import AdviceLevel
@@ -29,18 +27,6 @@ from caseworker.cases.objects import Case
 
 
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
-
-
-@pytest.fixture
-def get_mock_request(client):
-    def request_factory(user):
-        request = HttpRequest()
-        request.lite_user = user
-        request.session = client.session
-        request.requests_session = requests.Session()
-        return request
-
-    return request_factory
 
 
 @pytest.mark.parametrize(
@@ -79,9 +65,12 @@ def get_mock_request(client):
         ({"fake queue": []}, False),
     ),
 )
-def test_is_user_assigned(data, mock_gov_user, get_mock_request, expected_result):
+def test_is_user_assigned(data, mock_gov_user, get_mock_request_user, expected_result):
     assigned_users = {"assigned_users": data}
-    assert caseworker_rules.is_user_assigned(get_mock_request(mock_gov_user["user"]), assigned_users) is expected_result
+    assert (
+        caseworker_rules.is_user_assigned(get_mock_request_user(mock_gov_user["user"]), assigned_users)
+        is expected_result
+    )
 
 
 def test_is_user_assigned_request_missing_attribute():
@@ -98,8 +87,8 @@ def test_is_user_assigned_request_missing_attribute():
     assert not caseworker_rules.is_user_assigned(None, assigned_users)
 
 
-def test_is_user_case_officer_none(get_mock_request):
-    assert not caseworker_rules.is_user_case_officer(get_mock_request(None), {"case_officer": None})
+def test_is_user_case_officer_none(get_mock_request_user):
+    assert not caseworker_rules.is_user_case_officer(get_mock_request_user(None), {"case_officer": None})
 
 
 @pytest.mark.parametrize(
@@ -110,8 +99,8 @@ def test_is_user_case_officer_none(get_mock_request):
         ({"case_officer": None}, False),
     ),
 )
-def test_is_user_case_officer(data, mock_gov_user, get_mock_request, expected_result):
-    assert caseworker_rules.is_user_case_officer(get_mock_request(mock_gov_user["user"]), data) is expected_result
+def test_is_user_case_officer(data, mock_gov_user, get_mock_request_user, expected_result):
+    assert caseworker_rules.is_user_case_officer(get_mock_request_user(mock_gov_user["user"]), data) is expected_result
 
 
 def test_is_user_case_officer_request_missing_attribute():
@@ -171,7 +160,7 @@ def test_is_user_case_officer_request_missing_attribute():
         ),
     ),
 )
-def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expected_result):
+def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request_user, expected_result):
     for rule_name in (
         "can_user_change_case",
         "can_user_move_case_forward",
@@ -181,7 +170,7 @@ def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expe
         "can_user_add_contact",
         "can_user_change_sub_status",
     ):
-        assert rules.test_rule(rule_name, get_mock_request(mock_gov_user["user"]), data) is expected_result
+        assert rules.test_rule(rule_name, get_mock_request_user(mock_gov_user["user"]), data) is expected_result
 
 
 @pytest.mark.parametrize(
@@ -229,8 +218,8 @@ def test_user_assignment_based_rules(data, mock_gov_user, get_mock_request, expe
         ),
     ),
 )
-def test_can_user_attach_document(data, mock_gov_user, get_mock_request):
-    assert rules.test_rule("can_user_attach_document", get_mock_request(mock_gov_user["user"]), data)
+def test_can_user_attach_document(data, mock_gov_user, get_mock_request_user):
+    assert rules.test_rule("can_user_attach_document", get_mock_request_user(mock_gov_user["user"]), data)
 
 
 @pytest.mark.parametrize(
@@ -249,7 +238,7 @@ def test_can_user_attach_document(data, mock_gov_user, get_mock_request):
     ),
 )
 def test_can_use_change_sub_status(
-    requests_mock, data_standard_case, mock_gov_user, get_mock_request, expected, sub_statuses
+    requests_mock, data_standard_case, mock_gov_user, get_mock_request_user, expected, sub_statuses
 ):
     case_id = data_standard_case["case"]["id"]
     requests_mock.get(
@@ -265,7 +254,7 @@ def test_can_use_change_sub_status(
         },
         "case_officer": {"id": mock_gov_user_id},
     }
-    request = get_mock_request(mock_gov_user["user"])
+    request = get_mock_request_user(mock_gov_user["user"])
     assert rules.test_rule("can_user_change_sub_status", request, assigned_case) is expected
 
 
@@ -278,11 +267,11 @@ def test_can_use_change_sub_status(
         ({"id": LICENSING_UNIT_TEAM_ID, "name": "Licensing Unit", "alias": "LICENSING_UNIT"}, False),
     ),
 )
-def test_can_user_search_products(mock_gov_user, get_mock_request, mock_gov_user_team, expected):
+def test_can_user_search_products(mock_gov_user, get_mock_request_user, mock_gov_user_team, expected):
     user = mock_gov_user["user"]
     user["team"] = mock_gov_user_team
 
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
 
     assert rules.test_rule("can_user_search_products", request) is expected
 
@@ -296,7 +285,7 @@ def test_can_user_search_products(mock_gov_user, get_mock_request, mock_gov_user
         ({"id": LICENSING_UNIT_TEAM_ID, "name": "Licensing Unit", "alias": "LICENSING_UNIT"}, False),
     ),
 )
-def test_can_assigned_user_assess_products(mock_gov_user, get_mock_request, mock_gov_user_team, expected):
+def test_can_assigned_user_assess_products(mock_gov_user, get_mock_request_user, mock_gov_user_team, expected):
     user = mock_gov_user["user"]
     case = {
         "assigned_users": {
@@ -309,7 +298,7 @@ def test_can_assigned_user_assess_products(mock_gov_user, get_mock_request, mock
 
     user["team"] = mock_gov_user_team
 
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
 
     assert rules.test_rule("can_user_assess_products", request, case) is expected
 
@@ -323,7 +312,7 @@ def test_can_assigned_user_assess_products(mock_gov_user, get_mock_request, mock
         ({"id": LICENSING_UNIT_TEAM_ID, "name": "Licensing Unit", "alias": "LICENSING_UNIT"}, False),
     ),
 )
-def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request, mock_gov_user_team, expected):
+def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request_user, mock_gov_user_team, expected):
     case = {
         "assigned_users": {
             "fake queue": [
@@ -336,7 +325,7 @@ def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request, mo
     user = mock_gov_user["user"]
     user["team"] = mock_gov_user_team
 
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
 
     assert rules.test_rule("can_user_assess_products", request, case) is expected
 
@@ -394,7 +383,7 @@ def test_can_unassigned_user_assess_products(mock_gov_user, get_mock_request, mo
         ),
     ),
 )
-def test_can_user_review_and_combine_based_on_allocation(mock_gov_user, get_mock_request, case, expected_result):
+def test_can_user_review_and_combine_based_on_allocation(mock_gov_user, get_mock_request_user, case, expected_result):
     case["advice"] = [
         {
             "user": {"team": {"alias": OGD_TEAMS[0]}},
@@ -403,7 +392,7 @@ def test_can_user_review_and_combine_based_on_allocation(mock_gov_user, get_mock
     ]
 
     user = mock_gov_user["user"]
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
 
     assert rules.test_rule("can_user_review_and_combine", request, case) is expected_result
 
@@ -431,7 +420,7 @@ def test_can_user_review_and_combine_based_on_allocation(mock_gov_user, get_mock
         *[([{"user": {"team": {"alias": alias}}, "team": {"alias": alias}}], [], True) for alias in OGD_TEAMS],
     ),
 )
-def test_can_user_review_and_combine_based_on_advice(mock_gov_user, get_mock_request, advice, flags, expected):
+def test_can_user_review_and_combine_based_on_advice(mock_gov_user, get_mock_request_user, advice, flags, expected):
     case = {
         "advice": advice,
         "case_officer": {"id": mock_gov_user_id},
@@ -439,15 +428,15 @@ def test_can_user_review_and_combine_based_on_advice(mock_gov_user, get_mock_req
     }
 
     user = mock_gov_user["user"]
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
 
     assert rules.test_rule("can_user_review_and_combine", request, case) is expected
 
 
-def test_can_user_rerun_routing_rules(get_mock_request):
+def test_can_user_rerun_routing_rules(get_mock_request_user):
     case = {}
     user = {}
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
     assert not rules.test_rule("can_user_rerun_routing_rules", request, case)
 
 
@@ -467,7 +456,7 @@ def test_can_user_rerun_routing_rules(get_mock_request):
     ),
 )
 def test_can_licence_status_be_changed(
-    mock_gov_user, get_mock_request, user_role_id, licence_status, case_status, expected, data_standard_case
+    mock_gov_user, get_mock_request_user, user_role_id, licence_status, case_status, expected, data_standard_case
 ):
     case = Case(data_standard_case["case"])
 
@@ -485,7 +474,7 @@ def test_can_licence_status_be_changed(
 
     user = mock_gov_user["user"]
     user["role"]["id"] = user_role_id
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
 
     assert rules.test_rule("can_licence_status_be_changed", request, licence) is expected
 
@@ -500,9 +489,9 @@ def test_can_licence_status_be_changed(
         ("FCDO_team_user", False),
     ),
 )
-def test_is_user_in_lu_team(gov_user, get_mock_request, expected_result, request):
+def test_is_user_in_lu_team(gov_user, get_mock_request_user, expected_result, request):
     user = request.getfixturevalue(gov_user)
-    assert caseworker_rules.is_user_in_lu_team(get_mock_request(user)) == expected_result
+    assert caseworker_rules.is_user_in_lu_team(get_mock_request_user(user)) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -546,8 +535,8 @@ def test_is_user_in_lu_team(gov_user, get_mock_request, expected_result, request
         ),
     ),
 )
-def test_case_has_final_advice(advice_data, mock_gov_user, get_mock_request, expected_result):
-    request = get_mock_request(mock_gov_user["user"])
+def test_case_has_final_advice(advice_data, mock_gov_user, get_mock_request_user, expected_result):
+    request = get_mock_request_user(mock_gov_user["user"])
     case = {"advice": advice_data}
     assert caseworker_rules.case_has_final_advice(request, case) is expected_result
 
@@ -566,7 +555,7 @@ def invalid_user():
         ("LU_senior_licensing_manager", True),
     ),
 )
-def test_user_is_not_final_adviser(gov_user, expected_result, request, get_mock_request, LU_case_officer):
+def test_user_is_not_final_adviser(gov_user, expected_result, request, get_mock_request_user, LU_case_officer):
     case = {
         "case_officer": LU_case_officer,
         "advice": [
@@ -577,7 +566,7 @@ def test_user_is_not_final_adviser(gov_user, expected_result, request, get_mock_
         ],
     }
     user = request.getfixturevalue(gov_user)
-    assert caseworker_rules.user_is_not_final_adviser(get_mock_request(user), case) == expected_result
+    assert caseworker_rules.user_is_not_final_adviser(get_mock_request_user(user), case) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -598,7 +587,7 @@ def test_user_is_not_final_adviser(gov_user, expected_result, request, get_mock_
     ),
 )
 def test_user_not_yet_countersigned(
-    gov_user, countersigners, expected_result, request, get_mock_request, LU_case_officer
+    gov_user, countersigners, expected_result, request, get_mock_request_user, LU_case_officer
 ):
     countersign_advice = [
         {
@@ -621,7 +610,7 @@ def test_user_not_yet_countersigned(
         }
     )
     user = request.getfixturevalue(gov_user)
-    assert caseworker_rules.user_not_yet_countersigned(get_mock_request(user), case) == expected_result
+    assert caseworker_rules.user_not_yet_countersigned(get_mock_request_user(user), case) == expected_result
 
 
 @pytest.mark.parametrize(
@@ -643,7 +632,7 @@ def test_user_not_yet_countersigned(
     ),
 )
 def test_can_user_be_allowed_to_lu_countersign(
-    gov_user, countersigners, expected_result, request, get_mock_request, FCDO_team_user, LU_case_officer
+    gov_user, countersigners, expected_result, request, get_mock_request_user, FCDO_team_user, LU_case_officer
 ):
     countersign_advice = [
         {
@@ -675,7 +664,9 @@ def test_can_user_be_allowed_to_lu_countersign(
         }
     )
 
-    assert rules.test_rule("can_user_be_allowed_to_lu_countersign", get_mock_request(user), case) is expected_result
+    assert (
+        rules.test_rule("can_user_be_allowed_to_lu_countersign", get_mock_request_user(user), case) is expected_result
+    )
 
 
 @pytest.mark.parametrize(
@@ -691,12 +682,12 @@ def test_can_user_be_allowed_to_lu_countersign(
     ),
 )
 def test_can_user_manage_organisation(
-    mock_gov_user, get_mock_request, user_permission, organisation_status, expected, data_organisation
+    mock_gov_user, get_mock_request_user, user_permission, organisation_status, expected, data_organisation
 ):
 
     user = mock_gov_user["user"]
     user["role"]["permissions"] = user_permission
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
     data_organisation["status"]["key"] = organisation_status
     assert rules.test_rule("can_user_manage_organisation", request, data_organisation) is expected
 
@@ -711,12 +702,13 @@ def test_can_user_manage_organisation(
         (None, None, False),
     ),
 )
-def test_can_caseworker_edit_role(mock_gov_user, get_mock_request, user_team, user_role, expected):
+def test_can_caseworker_add_edit_role(mock_gov_user, get_mock_request_user, user_team, user_role, expected):
     user = mock_gov_user["user"]
     user["role"]["id"] = user_role
     user["team"]["id"] = user_team
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
     assert rules.test_rule("can_caseworker_edit_user", request) is expected
+    assert rules.test_rule("can_caseworker_add_user", request) is expected
 
 
 @pytest.mark.parametrize(
@@ -736,10 +728,10 @@ def test_can_caseworker_edit_role(mock_gov_user, get_mock_request, user_team, us
         (None, None, None, False),
     ),
 )
-def test_can_caseworker_deactivate(mock_gov_user, get_mock_request, user_team, user_role, user_data, expected):
+def test_can_caseworker_deactivate(mock_gov_user, get_mock_request_user, user_team, user_role, user_data, expected):
 
     user = mock_gov_user["user"]
     user["role"]["id"] = user_role
     user["team"]["id"] = user_team
-    request = get_mock_request(user)
+    request = get_mock_request_user(user)
     assert rules.test_rule("can_caseworker_deactivate", request, user_data) is expected

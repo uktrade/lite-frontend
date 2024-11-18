@@ -89,3 +89,21 @@ class EditCaseworker(BaseCaseworkerUser):
             if gov_user_list["count"]:
                 raise forms.ValidationError("This email has already been registered")
         return email
+
+
+class AddCaseworkerUser(BaseCaseworkerUser):
+    class Layout:
+        TITLE = "Invite a user"
+        SUBMIT_BUTTON_TEXT = "Save"
+
+    def __init__(self, request, teams, roles, queues, *args, **kwargs):
+        super().__init__(request, teams, roles, queues, *args, **kwargs)
+        self.fields["team"].choices.insert(0, Choice(None, "Select"))
+        self.fields["role"].choices.insert(0, Choice(None, "Select"))
+
+    def clean_email(self):
+        email = self.cleaned_data["email"] or self.initial["email"]
+        gov_user_list = get_gov_user_list(self.request, {"email": email})
+        if gov_user_list["count"]:
+            raise forms.ValidationError("This email has already been registered")
+        return email

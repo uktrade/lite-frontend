@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-
+{% load rules %}
 {% block back_link %}{% endblock %}
 
 {% block body %}
@@ -15,9 +15,12 @@
 			<a id="button-manage-roles" href="{% url 'users:roles' %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">
 				{% lcs 'users.UsersPage.MANAGE_ROLES_BUTTON' %}
 			</a>
-			<a id="button-add-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
-				{% lcs 'users.UsersPage.INVITE_BUTTON' %}
-			</a>
+			{% test_rule 'can_caseworker_add_user' request as show_add_user %}
+			{% if show_add_user %}
+				<a id="button-add-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
+					{% lcs 'users.UsersPage.INVITE_BUTTON' %}
+				</a>
+			{% endif %}
 		</div>
 	</div>
 

@@ -10,12 +10,15 @@ from django.contrib.messages import constants, get_messages
 
 from core import client
 from core.exceptions import ServiceError
-from caseworker.users.manage.forms import EditCaseworker, EditCaseworkerQueue
+from caseworker.users.manage.forms import EditCaseworker, EditCaseworkerQueue, AddCaseworkerUser
 from caseworker.core.constants import (
     ADMIN_TEAM_ID,
     ALL_CASES_QUEUE_ID,
     SUPER_USER_ROLE_ID,
 )
+
+NON_SUPER_USER_ROLE_ID = str(uuid.uuid4())
+NON_ADMIN_TEAM_ID = str(uuid.uuid4())
 
 
 @pytest.fixture(autouse=True)
@@ -88,19 +91,18 @@ def edit_user_url(edit_user_data):
 
 
 @pytest.fixture
-def mock_edit_users_failure(requests_mock, edit_user_data):
-    url = client._build_absolute_uri(f"/caseworker/organisations/{organisation_pk}/exporter-users/")
-    yield requests_mock.post(url=url, json={}, status_code=500)
-
-
-@pytest.fixture
-def edit_user_post_data(edit_user_data, user_static_data):
+def user_post_data(edit_user_data, user_static_data):
     return {
         "email": edit_user_data["user"]["email"],
         "role": user_static_data["roles"][0]["id"],
         "default_queue": user_static_data["queues"][0]["id"],
         "team": user_static_data["teams"][0]["id"],
     }
+
+
+@pytest.fixture
+def add_user_url():
+    return reverse("users:add")
 
 
 @pytest.mark.parametrize(
@@ -218,8 +220,62 @@ def test_view_user(authorized_client, requests_mock):
     assertTemplateUsed("users/profile.html")
 
 
-NON_SUPER_USER_ROLE_ID = str(uuid.uuid4())
-NON_ADMIN_TEAM_ID = str(uuid.uuid4())
+@pytest.mark.parametrize(
+    "role_id, team_id, can_add_user",
+    (
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, True),
+        (NON_SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, False),
+        (SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, True),
+        (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, False),
+    ),
+)
+def test_user_list_add_user_permissions(
+    authorized_client,
+    requests_mock,
+    mock_gov_user,
+    role_id,
+    team_id,
+    can_add_user,
+    beautiful_soup,
+):
+    user_id = str(uuid.uuid4())
+
+    requests_mock.get(
+        client._build_absolute_uri("/gov-users/?page=1&email=&status="),
+        json={"users": []},
+    )
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/{user_id}/"),
+        json={
+            "user": {
+                "id": user_id,
+                "role": {
+                    "id": role_id,
+                },
+                "team": {
+                    "id": team_id,
+                },
+            },
+        },
+    )
+
+    mock_gov_user["user"] = {
+        "id": user_id,
+        "role": {
+            "id": role_id,
+            "permissions": {},
+            "name": "Test Role",
+        },
+        "team": {
+            "id": team_id,
+        },
+    }
+
+    url = reverse("users:users")
+    response = authorized_client.get(url)
+
+    soup = beautiful_soup(response.content)
+    assert (soup.find("a", {"id": "button-add-user"}) is not None) == can_add_user
 
 
 @pytest.mark.parametrize(
@@ -231,7 +287,7 @@ NON_ADMIN_TEAM_ID = str(uuid.uuid4())
         (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, False),
     ),
 )
-def test_view_user_edit_team_permissions(
+def test_view_user_edit_user_permissions(
     authorized_client,
     requests_mock,
     mock_gov_user,
@@ -436,9 +492,9 @@ def test_edit_user_get(
         ],
     ),
 )
-def test_edit_user_post(
+def test_edit_user_success(
     authorized_client,
-    edit_user_post_data,
+    user_post_data,
     edit_user_url,
     mock_gov_user,
     mock_roles,
@@ -470,10 +526,10 @@ def test_edit_user_post(
 
     mock_patch = requests_mock.patch(
         client._build_absolute_uri(f"/caseworker/gov_users/{edit_user_id}/update/"),
-        json={"gov_user": edit_user_post_data},
+        json={"gov_user": user_post_data},
     )
 
-    response = authorized_client.post(edit_user_url, data=edit_user_post_data)
+    response = authorized_client.post(edit_user_url, data=user_post_data)
     assert response.status_code == 302
     assert response.url == f"/users/{edit_user_id}/"
 
@@ -534,7 +590,7 @@ def test_edit_user_post_email_exists(
 )
 def test_edit_user_post_default_queue_change(
     authorized_client,
-    edit_user_post_data,
+    user_post_data,
     mock_gov_user,
     mock_roles,
     mock_get_queues,
@@ -557,9 +613,9 @@ def test_edit_user_post_default_queue_change(
     )
 
     url = reverse("users:edit", kwargs={"pk": edit_user_id})
-    edit_user_post_data["default_queue"] = new_queue_id
+    user_post_data["default_queue"] = new_queue_id
 
-    response = authorized_client.post(url, data=edit_user_post_data)
+    response = authorized_client.post(url, data=user_post_data)
     session = authorized_client.session
 
     assert response.status_code == 302
@@ -584,7 +640,7 @@ def test_edit_user_api_failed(
     mock_roles,
     mock_get_queues,
     edit_user_url,
-    edit_user_post_data,
+    user_post_data,
     requests_mock,
     edit_user_data,
 ):
@@ -597,7 +653,116 @@ def test_edit_user_api_failed(
     )
 
     with pytest.raises(ServiceError) as ex:
-        authorized_client.post(edit_user_url, data=edit_user_post_data)
+        authorized_client.post(edit_user_url, data=user_post_data)
 
     assert ex.value.status_code == 500
     assert ex.value.user_message == "Unexpected error editing user"
+
+
+def test_add_user_get(
+    authorized_client,
+    add_user_url,
+    mock_gov_user,
+    mock_roles,
+    mock_get_queues,
+    user_static_data,
+    beautiful_soup,
+):
+
+    response = authorized_client.get(add_user_url)
+
+    assert isinstance(response.context["form"], AddCaseworkerUser)
+
+    soup = beautiful_soup(response.content)
+
+    teams_select = soup.find(id="team").find_all("option")
+    roles_select = soup.find(id="role").find_all("option")
+    default_queue_select = soup.find(id="default_queue").find_all("option")
+
+    assert len(teams_select) == len(user_static_data["teams"]) + 1
+    assert len(roles_select) == len(user_static_data["roles"]) + 1
+    assert len(default_queue_select) == len(user_static_data["queues"]) + 1
+
+
+def test_add_user_success(
+    authorized_client,
+    add_user_url,
+    mock_gov_user,
+    mock_roles,
+    mock_get_queues,
+    user_post_data,
+    requests_mock,
+):
+
+    email = user_post_data["email"]
+    requests_mock.get(
+        client._build_absolute_uri(f"/caseworker/gov_users/?email={email}"),
+        json={"count": 0},
+    )
+    mock_post = requests_mock.post(
+        client._build_absolute_uri("/gov-users/"),
+        json={},
+        status_code=201,
+    )
+    response = authorized_client.post(add_user_url, user_post_data)
+
+    assert response.status_code == 302
+    assert response.url == "/users/"
+
+    user_post_data["first_name"] = ""
+    user_post_data["last_name"] = ""
+    assert mock_post.last_request.json() == user_post_data
+    assert [(m.level, m.message) for m in get_messages(response.wsgi_request)] == [
+        (constants.SUCCESS, "User added successfully")
+    ]
+
+
+def test_add_user_api_failed(
+    authorized_client,
+    add_user_url,
+    mock_gov_user,
+    mock_roles,
+    mock_get_queues,
+    user_post_data,
+    requests_mock,
+):
+
+    email = user_post_data["email"]
+    requests_mock.get(
+        client._build_absolute_uri(f"/caseworker/gov_users/?email={email}"),
+        json={"count": 0},
+    )
+    requests_mock.post(
+        client._build_absolute_uri("/gov-users/"),
+        json={},
+        status_code=500,
+    )
+
+    with pytest.raises(ServiceError) as ex:
+        authorized_client.post(add_user_url, data=user_post_data)
+
+    assert ex.value.status_code == 500
+    assert ex.value.user_message == "Unexpected error adding user"
+
+
+def test_add_user_no_permission(
+    authorized_client,
+    mock_gov_user,
+    add_user_url,
+    user_post_data,
+    requests_mock,
+):
+
+    mock_gov_user["user"]["role"]["id"] = NON_SUPER_USER_ROLE_ID
+
+    mock_gov_user_id = mock_gov_user["user"]["id"]
+
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov-users/{mock_gov_user_id}/"),
+        json=mock_gov_user,
+    )
+    response = authorized_client.get(add_user_url)
+    assert response.status_code == 404
+
+    response = authorized_client.post(add_user_url, user_post_data)
+    assert response.status_code == 404

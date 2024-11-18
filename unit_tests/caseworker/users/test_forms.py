@@ -1,4 +1,4 @@
-from caseworker.users.manage.forms import EditCaseworker, EditCaseworkerQueue
+from caseworker.users.manage.forms import AddCaseworkerUser, EditCaseworker, EditCaseworkerQueue
 import pytest
 from core import client
 
@@ -148,8 +148,107 @@ def test_edit_user_form_post_update_email(
         json={"count": duplicate_count},
     )
 
-    form = EditCaseworker(request=mock_request, data=form_data, roles=roles, teams=teams, queues=queues)
-    form.initial = {"email": old_email}
+    form_edit = EditCaseworker(request=mock_request, data=form_data, roles=roles, teams=teams, queues=queues)
+    form_edit.initial = {"email": old_email}
+
+    form_edit.initial = {"email": old_email}
+
+    assert form_edit.is_valid() == valid
+    assert form_edit.errors == errors
+
+
+@pytest.mark.parametrize(
+    "new_email, valid, duplicate_count, errors",
+    (
+        ["test@123.com", False, 1, {"email": ["This email has already been registered"]}],
+        ["test@123.com", True, 0, {}],
+    ),
+)
+def test_add_user_form_clean_email(
+    new_email, valid, duplicate_count, errors, user_form_data, mock_request, requests_mock
+):
+
+    form_data = {"role": "1", "team": "2", "default_queue": "3", "email": new_email}
+    roles = user_form_data["roles"]
+    teams = user_form_data["teams"]
+    queues = user_form_data["queues"]
+
+    requests_mock.get(
+        client._build_absolute_uri("/caseworker/gov_users/?email=test@123.com"),
+        json={"count": duplicate_count},
+    )
+
+    form_add = AddCaseworkerUser(
+        request=mock_request,
+        data=form_data,
+        roles=roles,
+        teams=teams,
+        queues=queues,
+    )
+
+    assert form_add.is_valid() == valid
+    assert form_add.errors == errors
+
+
+def test_add_user_form(user_form_data, mock_request):
+    roles = user_form_data["roles"]
+    teams = user_form_data["teams"]
+    queues = user_form_data["queues"]
+
+    form = AddCaseworkerUser(mock_request, roles, teams, queues)
+
+    assert len(form.fields["default_queue"].choices) == len(queues) + 1
+    assert len(form.fields["team"].choices) == len(teams) + 1
+    assert len(form.fields["role"].choices) == len(roles) + 1
+
+    for i, t in enumerate(teams, 1):
+        assert form.fields["role"].choices[i].value == t["id"]
+        assert form.fields["role"].choices[i].label == t["name"]
+
+    for i, r in enumerate(roles, 1):
+        assert form.fields["team"].choices[i].value == r["id"]
+        assert form.fields["team"].choices[i].label == r["name"]
+
+    assert form.fields["default_queue"].choices[0].value == None
+    assert form.fields["default_queue"].choices[0].label == "Select"
+
+    assert form.fields["default_queue"].choices[1].value == 1
+    assert form.fields["default_queue"].choices[1].label == "Queue A"
+    assert form.fields["default_queue"].choices[1].attrs == {"data-attribute": "1"}
+
+    assert form.fields["default_queue"].choices[3].value == 3
+    assert form.fields["default_queue"].choices[3].label == "Queue C"
+    assert form.fields["default_queue"].choices[3].attrs == {"data-attribute": None}
+
+
+@pytest.mark.parametrize(
+    "new_email, valid, duplicate_count, errors",
+    (
+        ["test@123.com", False, 1, {"email": ["This email has already been registered"]}],
+        ["test@123.com", True, 0, {}],
+    ),
+)
+def test_add_user_form_post_email(
+    new_email, valid, duplicate_count, errors, user_form_data, mock_request, requests_mock
+):
+
+    form_data = {"role": "1", "team": "2", "default_queue": "3", "email": new_email}
+    roles = user_form_data["roles"]
+    teams = user_form_data["teams"]
+    queues = user_form_data["queues"]
+
+    requests_mock.get(
+        client._build_absolute_uri("/caseworker/gov_users/?email=test@123.com"),
+        json={"count": duplicate_count},
+    )
+
+    form = AddCaseworkerUser(
+        request=mock_request,
+        data=form_data,
+        roles=roles,
+        teams=teams,
+        queues=queues,
+    )
 
     assert form.is_valid() == valid
     assert form.errors == errors
