@@ -1,5 +1,7 @@
 from http import HTTPStatus
+from caseworker.advice.conditionals import add_conditions, FCDO_team, DESNZ_team
 from core.wizard.views import BaseSessionWizardView
+from core.wizard.conditionals import C
 import sentry_sdk
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect
@@ -154,90 +156,23 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
-class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
-    """
-    Form to recommend approval advice for all products on the application
-    """
-
-    template_name = "advice/give-approval-advice.html"
-
-    def get_form(self):
-        if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
-            return forms.FCDOApprovalAdviceForm(
-                services.unadvised_countries(self.caseworker, self.case),
-                **self.get_form_kwargs(),
-            )
-        elif self.caseworker["team"]["alias"] in services.DESNZ_TEAMS:
-            return forms.DESNZApprovalAdviceForm(
-                **self.get_form_kwargs(),
-            )
-        else:
-            return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        approval_reason = get_picklists_list(
-            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
-        )
-        proviso = get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
-
-        footnote_details = get_picklists_list(
-            self.request, type="footnotes", disable_pagination=True, show_deactivated=False
-        )
-
-        kwargs["approval_reason"] = approval_reason
-        kwargs["proviso"] = proviso
-        kwargs["footnote_details"] = footnote_details
-        return kwargs
-
-    def form_valid(self, form):
-        services.post_approval_advice(self.request, self.case, form.cleaned_data)
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("cases:view_my_advice", kwargs=self.kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return {
-            **context,
-            "security_approvals_classified_display": self.security_approvals_classified_display,
-            "title": f"{self.get_form().DOCUMENT_TITLE} - {self.case.reference_code} - {self.case.organisation['name']}",
-        }
-
-
-class DESNZApprovalAdviceForm(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
+class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
     # on save combine everything into a single field
-    DOCUMENT_TITLE = "Recommend approval for this case"
     form_list = [
-        ("desnz_recommend_approval", forms.DESCNZRecommendAnApproval),
+        ("desnz_recommend_approval", forms.DESNZRecommendAnApproval),
         ("fcdo_recommend_approval", forms.FCDOApprovalAdviceForm),
         ("default_recommend_approval", forms.GiveApprovalAdviceForm),
         ("conditional", forms.PicklistApprovalAdviceForm),
         ("footers", forms.FootnotesApprovalAdviceForm),
     ]
 
-    # add conditional logic to this to display the old forms
     condition_dict = {
-        "desnz_recommend_approval": True,
-        "fcdo_recommend_approval": False,
-        "default_recommend_approval": False,
-        "conditional": True,
-        "footers": True,
+        "desnz_recommend_approval": C(DESNZ_team),
+        "fcdo_recommend_approval": C(FCDO_team),
+        "default_recommend_approval": not C(DESNZ_team) or C(FCDO_team),
+        "conditional": C(add_conditions("desnz_recommend_approval")),
+        "footers": C(add_conditions("desnz_recommend_approval")),
     }
-
-    # def get_form(self):
-    #     if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
-    #         return forms.FCDOApprovalAdviceForm(
-    #             services.unadvised_countries(self.caseworker, self.case),
-    #             **self.get_form_kwargs(),
-    #         )
-    #     elif self.caseworker["team"]["alias"] in services.DESNZ_TEAMS:
-    #         return forms.DESCNZRecommendAnApproval(
-    #             **self.get_form_kwargs(),
-    #         )
-    #     else:
-    #         return forms.GiveApprovalAdviceForm(**self.get_form_kwargs())
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
@@ -352,7 +287,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESN
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+class EditAdviceViewA(LoginRequiredMixin, CaseContextMixin, FormView):
     """
     Form to edit given advice for all products on the application
     """
@@ -423,6 +358,98 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
         context["edit"] = True
         return context
+
+
+class EditAdviceView(GiveApprovalAdviceView):
+    """
+    Form to edit given advice for all products on the application
+    """
+
+    form_list = [
+        ("desnz_recommend_approval", forms.DESNZRecommendAnApproval),
+        ("default_recommend_approval", forms.GiveApprovalAdviceForm),
+        ("conditional", forms.PicklistApprovalAdviceFormEdit),
+        ("footers", forms.FootnotesApprovalAdviceForm),
+        ("refusal", forms.RefusalAdviceForm),
+    ]
+
+    condition_dict = {
+        "desnz_recommend_approval": C(DESNZ_team),
+        "fcdo_recommend_approval": C(FCDO_team),
+        "default_recommend_approval": not C(DESNZ_team),
+        "conditional": C(add_conditions("desnz_recommend_approval")),
+        "footers": C(add_conditions("desnz_recommend_approval")),
+        "refusal": False,
+    }
+
+    def advised_countries(self):
+        """Returns a list of countries for which advice has given by the current user."""
+        dest_types = constants.DESTINATION_TYPES
+        advice = services.filter_current_user_advice(self.case.advice, self.caseworker_id)
+        advised_on = {a.get(dest_type) for dest_type in dest_types for a in advice if a.get(dest_type) is not None}
+        return [dest["country"]["id"] for dest in self.case.destinations if dest["id"] in advised_on]
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == "refuse":
+            advice = get_denial_reasons(self.request)
+            data = data or {
+                "refusal_reasons": advice["text"],
+                "denial_reasons": [r for r in advice["denial_reasons"]],
+            }
+
+            kwargs["choices"] = group_denial_reasons(advice)
+
+        return kwargs
+
+    def get_form_initial(self, step):
+        my_advice = services.filter_current_user_advice(self.case.advice, self.caseworker_id)
+        if len(my_advice) > 0:
+            advice = my_advice[0]
+
+            if "recommend_approval" in step or step == None:
+                # default to other so that they're not likely to reselect, approval_radios isn't stored.
+                return {
+                    "add_conditions": bool(advice.get("proviso")),
+                    "approval_reasons": advice.get("text", ""),
+                    "approval_radios": "other",
+                }
+            if step == "conditional":
+                return {"proviso": advice.get("proviso")}
+            if step == "footers":
+                return {
+                    "instructions_to_exporter": advice.get("note", ""),
+                    "footnote_details": advice.get("footnote", ""),
+                    "footnote_details_radios": "other",
+                }
+            if step == "refuse":
+                return {
+                    "text": advice.get("text"),
+                    "denial_reasons": advice.get("denial_reasons"),
+                    "is_refusal_note": advice.get("is_refusal_note"),
+                }
+
+        return self.instance_dict.get(step, None)
+
+    def done(self, form_list, form_dict, **kwargs):
+        data = {}
+        for form_data in form_dict.values():
+            data.update(form_data.cleaned_data)
+
+        if data.get("approval_reasons"):
+            # When an FCO officer edits the advice, we don't allow for changing the countries
+            # & therefore, we render the normal forms and not the FCO ones.
+            # This means that here data here doesn't include the list of countries for which
+            # the advice should be applied and so we pop that in using a method.
+            data["countries"] = self.advised_countries()
+            services.post_approval_advice(self.request, self.case, data)
+
+        if data.get("refusal_reasons"):
+            data["text"] = data["refusal_reasons"]
+            services.post_refusal_advice(self.request, self.case, data)
+
+        return redirect(self.get_success_url())
 
 
 class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):

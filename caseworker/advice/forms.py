@@ -2,6 +2,7 @@ from django import forms
 from django.forms.formsets import formset_factory
 from django.utils.html import format_html
 
+from core.common.forms import BaseForm
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Field, Layout, Submit
 from crispy_forms_gds.choices import Choice
@@ -90,7 +91,7 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
         self.fields["recommendation"].label = f"{recommendation_label}?"
 
 
-class PicklistAdviceForm(forms.Form):
+class PicklistAdviceForm(BaseForm):
     def _picklist_to_choices(self, picklist_data):
         reasons_choices = []
         reasons_text = {"other": ""}
@@ -493,8 +494,12 @@ class DESNZTriggerListAssessmentEditForm(DESNZTriggerListFormBase):
         self.organisation_documents = organisation_documents
 
 
-class DESCNZRecommendAnApproval(PicklistAdviceForm):
+class DESNZRecommendAnApproval(PicklistAdviceForm):
     DOCUMENT_TITLE = "Recommend approval for this case"
+
+    class Layout:
+        TITLE = "Recommend an approval"
+
     approval_reasons = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
         label="",
@@ -506,24 +511,53 @@ class DESCNZRecommendAnApproval(PicklistAdviceForm):
         widget=forms.RadioSelect,
         choices=(),
     )
+    add_conditions = forms.BooleanField(
+        label="Add licence conditions, instructions to exporter or footnotes (optional)",
+        required=False,
+    )
 
     def __init__(self, *args, **kwargs):
         approval_reason = kwargs.pop("approval_reason")
-        super().__init__(*args, **kwargs)
         # this follows the same pattern as denial_reasons.
         approval_choices, approval_text = self._picklist_to_choices(approval_reason)
         self.approval_text = approval_text
+        super().__init__(*args, **kwargs)
 
         self.fields["approval_radios"].choices = approval_choices
 
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
+    def get_layout_fields(self):
+        return (
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
-            Submit("submit", "Submit recommendation"),
+            "add_conditions",
         )
 
 
+class PicklistApprovalAdviceFormEdit(BaseForm):
+    DOCUMENT_TITLE = "Recommend approval for this case"
+
+    class Layout:
+        TITLE = "Add licence conditions, instructions to exporter or footnotes (optional)"
+
+    DOCUMENT_TITLE = "Recommend approval for this case"
+    proviso = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 30, "class": "govuk-!-margin-top-4"}),
+        label="",
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        proviso = kwargs.pop("proviso")
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return ("proviso",)
+
+
 class PicklistApprovalAdviceForm(PicklistAdviceForm):
+    DOCUMENT_TITLE = "Recommend approval for this case"
+
+    class Layout:
+        TITLE = "Add licence conditions, instructions to exporter or footnotes (optional)"
 
     DOCUMENT_TITLE = "Recommend approval for this case"
     proviso = forms.CharField(
@@ -552,14 +586,17 @@ class PicklistApprovalAdviceForm(PicklistAdviceForm):
 
     def __init__(self, *args, **kwargs):
         proviso = kwargs.pop("proviso")
-        super().__init__(*args, **kwargs)
-        # this follows the same pattern as denial_reasons.
 
-        # this could be cleaned up so generating the charfield isn't so messy
         proviso_choices, proviso_text = self._picklist_to_choices(proviso)
         self.proviso_text = proviso_text
-        self.fields["proviso_radios"].choices = proviso_choices
 
+        self.conditional_checkbox_choices = (
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
+        )
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["proviso_radios"].choices = proviso_choices
         for choices in proviso_choices:
             self.fields[choices.value] = forms.CharField(
                 widget=forms.Textarea(attrs={"rows": 3, "class": "govuk-!-margin-top-4"}),
@@ -568,20 +605,17 @@ class PicklistApprovalAdviceForm(PicklistAdviceForm):
                 initial=proviso_text[choices.value],
             )
 
-        conditional_checkbox_choices = (
-            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
-        )
+    def get_layout_fields(self):
 
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            ConditionalCheckboxes("proviso_radios", *conditional_checkbox_choices),
-            Submit("submit", "Submit recommendation"),
-        )
+        return (ConditionalCheckboxes("proviso_radios", *self.conditional_checkbox_choices),)
 
 
 class FootnotesApprovalAdviceForm(PicklistAdviceForm):
 
     DOCUMENT_TITLE = "Recommend approval for this case"
+
+    class Layout:
+        TITLE = "Instructions for the exporter (optional)"
 
     instructions_to_exporter = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "3"}),
@@ -604,16 +638,15 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm):
 
     def __init__(self, *args, **kwargs):
         footnote_details = kwargs.pop("footnote_details")
-        super().__init__(*args, **kwargs)
-        # this follows the same pattern as denial_reasons.
         footnote_details_choices, footnote_text = self._picklist_to_choices(footnote_details)
         self.footnote_text = footnote_text
 
+        super().__init__(*args, **kwargs)
+
         self.fields["footnote_details_radios"].choices = footnote_details_choices
 
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
+    def get_layout_fields(self):
+        return (
             "instructions_to_exporter",
             RadioTextArea("footnote_details_radios", "footnote_details", self.footnote_text),
-            Submit("submit", "Submit recommendation"),
         )
