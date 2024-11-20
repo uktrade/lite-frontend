@@ -7,7 +7,7 @@ class SimpleHealthCheckBackend(BaseHealthCheckBackend):
     critical_service = False
 
     def check_status(self):
-        print("API is OK")
+        print("Frontend is OK")
         pass
 
     def identifier(self):

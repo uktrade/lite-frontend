@@ -77,9 +77,7 @@ e.g. BASEURL.com/healthcheck/startup-liveness-probe/
 """
 HEALTH_CHECK = {
     "SUBSETS": {
-        "startup-liveness-probe": [
-            "DefaultFileStorageHealthCheck",
-        ],
+        "startup-liveness-probe": ["SimpleHealthCheckBackend"],
     },
 }
 
