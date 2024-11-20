@@ -222,3 +222,8 @@ def _add_team_decisions(grouped_advice):
                 team_advice["decision"] = constants.TEAM_DECISION_REFUSED
             else:
                 team_advice["decision"] = constants.TEAM_DECISION_APPROVED_REFUSED
+
+
+@register.filter
+def user_in_DESNZ_team(caseworker):
+    return caseworker["team"]["alias"] in services.DESNZ_TEAMS
