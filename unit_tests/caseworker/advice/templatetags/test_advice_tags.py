@@ -7,6 +7,7 @@ from caseworker.advice.templatetags.advice_tags import (
     is_case_pv_graded,
     get_denial_reason_display_values,
     format_serial_numbers,
+    user_in_DESNZ_team,
 )
 from caseworker.cases.objects import Case
 
@@ -461,4 +462,14 @@ def test_get_denial_reason_display_values():
 )
 def test_format_serial_numbersformat_serial_numbers(serial_numbers, quantity, expected_result):
     result = format_serial_numbers(serial_numbers, quantity)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize(
+    "alias, expected_result",
+    ([("DESNZ_CHEMICAL", True), ("GIBBERISH", False)]),
+)
+def test_user_in_DESNZ_team(alias, expected_result):
+    caseworker = {"team": {"alias": alias}}
+    result = user_in_DESNZ_team(caseworker)
     assert result == expected_result

@@ -5,6 +5,7 @@ import pytest
 from django.urls import reverse
 
 from caseworker.advice import services
+from caseworker.advice.constants import AdviceView
 
 
 @pytest.fixture(autouse=True)
@@ -91,7 +92,7 @@ def test_fco_give_approval_advice_existing_get(mock_get_gov_user, authorized_cli
     ],
 )
 @mock.patch("caseworker.advice.views.get_gov_user")
-def test_fco_give_approval_advice_post(
+def test_fcdo_give_approval_advice_post(
     mock_get_gov_user,
     authorized_client,
     requests_mock,
@@ -112,3 +113,227 @@ def test_fco_give_approval_advice_post(
     data = {"approval_reasons": approval_reasons, "countries": countries}
     response = authorized_client.post(url, data=data)
     assert response.status_code == expected_status_code
+
+
+@pytest.fixture
+def url_desnz(data_queue, data_standard_case):
+    return reverse(
+        "cases:approve_all_desnz", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
+
+
+@pytest.fixture
+def post_to_step(post_to_step_factory, url_desnz):
+    return post_to_step_factory(url_desnz)
+
+
+@mock.patch("caseworker.advice.views.get_gov_user")
+def test_DESNZ_give_approval_advice_post_valid(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso,
+    mock_footnote_details,
+    post_to_step,
+    beautiful_soup,
+):
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "DESNZ Chemical",
+                    "alias": services.DESNZ_CHEMICAL,
+                }
+            }
+        },
+        None,
+    )
+    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
+
+    response = post_to_step(
+        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        {"approval_reasons": "Data"},
+    )
+    assert response.status_code == 302
+
+
+@mock.patch("caseworker.advice.views.get_gov_user")
+def test_DESNZ_give_approval_advice_post_valid_add_conditional(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso,
+    mock_footnote_details,
+    post_to_step,
+    beautiful_soup,
+):
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "DESNZ Chemical",
+                    "alias": services.DESNZ_CHEMICAL,
+                }
+            }
+        },
+        None,
+    )
+    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
+
+    response = post_to_step(
+        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        {"approval_reasons": "reason", "add_licence_conditions": True},
+    )
+    assert response.status_code == 200
+    soup = beautiful_soup(response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add licence conditions, instructions to exporter or footnotes (optional)"
+
+    add_LC_response = post_to_step(
+        AdviceView.LICENCE_CONDITIONS,
+        {"proviso": "proviso"},
+    )
+    assert add_LC_response.status_code == 200
+    soup = beautiful_soup(add_LC_response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Instructions for the exporter (optional)"
+
+    add_instructions_response = post_to_step(
+        AdviceView.LICENCE_FOOTNOTES,
+        {"instructions_to_exporter": "instructions", "footnote_details": "footnotes"},
+    )
+    assert add_instructions_response.status_code == 302
+
+
+@mock.patch("caseworker.advice.views.get_gov_user")
+def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso,
+    mock_footnote_details,
+    post_to_step,
+    beautiful_soup,
+):
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "DESNZ Chemical",
+                    "alias": services.DESNZ_CHEMICAL,
+                }
+            }
+        },
+        None,
+    )
+    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
+
+    response = post_to_step(
+        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        {"approval_reasons": "reason", "add_licence_conditions": True},
+    )
+    assert response.status_code == 200
+    soup = beautiful_soup(response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add licence conditions, instructions to exporter or footnotes (optional)"
+
+    add_LC_response = post_to_step(
+        AdviceView.LICENCE_CONDITIONS,
+        {},
+    )
+    assert add_LC_response.status_code == 200
+    soup = beautiful_soup(add_LC_response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Instructions for the exporter (optional)"
+
+    add_instructions_response = post_to_step(
+        AdviceView.LICENCE_FOOTNOTES,
+        {},
+    )
+    assert add_instructions_response.status_code == 302
+
+
+@mock.patch("caseworker.advice.views.get_gov_user")
+def test_DESNZ_give_approval_advice_post_invalid(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso,
+    mock_footnote_details,
+    post_to_step,
+    beautiful_soup,
+):
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "DESNZ Chemical",
+                    "alias": services.DESNZ_CHEMICAL,
+                }
+            }
+        },
+        None,
+    )
+    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
+
+    response = post_to_step(
+        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        {"approval_reasons": ""},
+    )
+    assert response.status_code == 200
+    soup = beautiful_soup(response.content)
+
+
+@mock.patch("caseworker.advice.views.get_gov_user")
+def test_DESNZ_give_approval_advice_post_invalid_user(
+    mock_get_gov_user,
+    authorized_client,
+    requests_mock,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso,
+    mock_footnote_details,
+    post_to_step,
+    beautiful_soup,
+):
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "DESNZ Chemical",
+                    "alias": services.FCDO_TEAM,
+                }
+            }
+        },
+        None,
+    )
+    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
+
+    # DESNZ only.
+    with pytest.raises(IndexError) as err:
+        response = post_to_step(
+            AdviceView.DESNZ_RECOMMEND_APPROVAL,
+            {"approval_reasons": ""},
+        )

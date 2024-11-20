@@ -26,3 +26,9 @@ class AdviceType:
     PROVISO = "proviso"
     REFUSE = "refuse"
     NO_LICENCE_REQUIRED = "no_licence_required"
+
+
+class AdviceView:
+    DESNZ_RECOMMEND_APPROVAL = "desnz_recommend_approval"
+    LICENCE_CONDITIONS = "licence_conditions"
+    LICENCE_FOOTNOTES = "licence_footnotes"

@@ -1,7 +1,10 @@
+from unittest import mock
 import pytest
 from bs4 import BeautifulSoup
 
 from django.urls import reverse
+
+from caseworker.advice import services
 
 
 @pytest.fixture(autouse=True)
@@ -24,6 +27,25 @@ def test_select_advice_post(authorized_client, url, recommendation, redirect):
     response = authorized_client.post(url, data={"recommendation": recommendation})
     assert response.status_code == 302
     assert redirect in response.url
+
+
+@mock.patch("caseworker.advice.views.get_gov_user")
+def test_select_advice_post_desnz(mock_get_gov_user, authorized_client, url):
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "DESNZ Chemical",
+                    "alias": services.DESNZ_CHEMICAL,
+                }
+            }
+        },
+        None,
+    )
+    response = authorized_client.post(url, data={"recommendation": "approve_all"})
+    assert response.status_code == 302
+    assert "approve-all-desnz" in response.url
 
 
 def test_view_serial_numbers_for_firearm_product_in_select_advice_view(authorized_client, data_standard_case, url):
