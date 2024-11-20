@@ -4,7 +4,7 @@
 <table id="table-licenceable-products" class="govuk-table advice-table">
     {% if decision == 'approve' or decision == 'proviso' %}
     <h2 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 app-advice-recommendation-heading app-bg-colour--green">
-        {% if team %} Approved by {{ user.team.name }} {% else %} Approved by {{ user|full_name }} {% endif %}
+        {% if team %} Approved by {{ advice.0.team.name }} {% else %} Approved by {{ user|full_name }} {% endif %}
 		<span class="govuk-!-font-weight-regular app-advice-recommendation-heading__additional_details">{{ advice.0.created_at|parse_date|date:"d F Y" }}</span>
     </h2>
     {% elif decision == 'refuse' %}
