@@ -34,6 +34,24 @@ def test_countersign_view_security_approvals(authorized_client, requests_mock, d
     assert response.context["security_approvals_classified_display"] == "F680"
 
 
+def test_countersign_view_trigger_list_products(
+    authorized_client, requests_mock, data_standard_case_with_all_trigger_list_products_assessed, url
+):
+    case_id = data_standard_case_with_all_trigger_list_products_assessed["case"]["id"]
+    requests_mock.get(
+        client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case_with_all_trigger_list_products_assessed
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    expected_context = [
+        {"line_number": num, **good}
+        for num, good in enumerate(
+            data_standard_case_with_all_trigger_list_products_assessed["case"]["data"]["goods"], start=1
+        )
+    ]
+    assert response.context["assessed_trigger_list_goods"] == expected_context
+
+
 @patch("caseworker.advice.views.get_gov_user")
 def test_single_lu_countersignature(
     mock_get_gov_user,

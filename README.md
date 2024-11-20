@@ -71,7 +71,6 @@ make run_exporter
   - Further information at https://kinsta.com/knowledgebase/edit-mac-hosts-file/
 
 * Ensure docker is running
-
 * Build and start docker images:
   - If you haven't already done this for lite-api, set up a shared docker network:
   - `docker network create lite` - shared network to allow API and frontend to communicate
