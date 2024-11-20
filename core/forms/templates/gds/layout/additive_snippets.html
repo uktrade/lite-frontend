@@ -16,7 +16,7 @@ https://github.com/wildfish/crispy-forms-gds/blob/e5ecb6fc3ac906c80f1bd9f1d4a12e
 
   {% include 'gds/layout/help_text_and_errors.html' %}
 
-  <div>
+  <div class="govuk-body">
     {% for choice in field.field.choices %}
         <p>
             {{ choice.1|unlocalize }} <a href="#" class="govuk-link govuk-link--no-visited-state" data-additive-key="{{ choice.0|unlocalize }}">Add</a>

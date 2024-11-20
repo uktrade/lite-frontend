@@ -198,7 +198,7 @@ class ConsolidateApprovalForm(GiveApprovalAdviceForm):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
-            RadioTextArea("proviso_radios", "proviso", self.proviso_text),
+            AdditiveTextArea("proviso_radios", "proviso", self.proviso_text),
             Submit("submit", "Submit recommendation"),
         )
 

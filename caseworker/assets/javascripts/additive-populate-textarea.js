@@ -15,7 +15,7 @@ class PopulateTextOnRadioInput {
         if (this.$textArea.value == "") {
           this.$textArea.value = text;
         } else {
-          this.$textArea.value = this.$textArea.value + "\n\n\n" + text;
+          this.$textArea.value = text + "\n\n--------\n" + this.$textArea.value;
         }
       });
     });
