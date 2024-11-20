@@ -8,7 +8,6 @@ class SimpleHealthCheckBackend(BaseHealthCheckBackend):
 
     def check_status(self):
         print("Frontend is OK")
-        pass
 
     def identifier(self):
         return self.__class__.__name__
