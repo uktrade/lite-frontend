@@ -186,9 +186,15 @@ class GiveApprovalAdviceForm(PicklistAdviceForm):
 class ConsolidateApprovalForm(GiveApprovalAdviceForm):
     """Approval form minus some fields."""
 
+    proviso = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 10, "cols": 90, "class": "govuk-!-margin-top-4"}),
+        label="",
+        required=False,
+        help_text="Licence conditions are collected from all advice by default",
+    )
+
     def __init__(self, team_alias, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.helper = FormHelper()
         self.helper.layout = Layout(
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),

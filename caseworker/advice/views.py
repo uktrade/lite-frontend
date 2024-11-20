@@ -600,6 +600,8 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             form_kwargs["footnote_details"] = get_picklists_list(
                 self.request, type="footnotes", disable_pagination=True, show_deactivated=False
             )
+            initial_proviso = self.grab_all_provisos(self.advice_to_consolidate)
+            form_kwargs["initial"]["proviso"] = initial_proviso
 
             team_alias = self.caseworker["team"].get("alias", None)
             return forms.ConsolidateApprovalForm(team_alias=team_alias, **form_kwargs)
@@ -607,13 +609,25 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         team_name = self.caseworker["team"]["name"]
         return forms.ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)
 
-    def get_context(self, **kwargs):
-        context = super().get_context()
+    def grab_all_provisos(self, advice_to_consolidate):
+        # Should be a set, but dict gives us consistent ordering
+        unique_provisos = {}
+        for team_advice in advice_to_consolidate:
+            for advice in team_advice:
+                if advice["proviso"]:
+                    unique_provisos[advice["proviso"]] = None
+        return "\n\n--------\n".join(unique_provisos.keys())
+
+    @cached_property
+    def advice_to_consolidate(self):
         team_alias = (
             self.caseworker["team"]["alias"] if self.caseworker["team"]["alias"] else self.caseworker["team"]["id"]
         )
-        advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice, team_alias)
-        context["advice_to_consolidate"] = advice_to_consolidate.values()
+        return list(services.get_advice_to_consolidate(self.case.advice, team_alias).values())
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        context["advice_to_consolidate"] = self.advice_to_consolidate
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
         title = (
