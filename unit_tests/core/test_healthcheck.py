@@ -7,6 +7,7 @@ from health_check.exceptions import HealthCheckException
 from health_check.plugins import plugin_dir
 
 from core.health_check.views import HealthCheckPingdomView
+from django.urls import reverse
 
 
 @pytest.fixture(autouse=True)
@@ -66,3 +67,21 @@ def test_healthcheck_down(backends):
         b"</status><response_time>0.23</response_time>"
         b"</pingdom_http_custom_check>\n"
     )
+
+
+def test_service_available_check_broken(client, backends):
+    backends.reset()
+    backends.register(HealthCheckBroken)
+    url = reverse("service-available-check")
+    response = client.get(url)
+
+    assert response.status_code == 200
+
+
+def test_service_available_check_ok(client, backends):
+    backends.reset()
+    backends.register(HealthCheckOk)
+    url = reverse("service-available-check")
+    response = client.get(url)
+
+    assert response.status_code == 200
