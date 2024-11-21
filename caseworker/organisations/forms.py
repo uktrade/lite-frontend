@@ -42,7 +42,7 @@ def register_organisation_forms(request):
         [
             Form(
                 title=RegisterAnOrganisation.CommercialOrIndividual.TITLE,
-                description=RegisterAnOrganisation.CommercialOrIndividual.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="type",
@@ -50,12 +50,10 @@ def register_organisation_forms(request):
                             Option(
                                 key="commercial",
                                 value=RegisterAnOrganisation.CommercialOrIndividual.COMMERCIAL_TITLE,
-                                description=RegisterAnOrganisation.CommercialOrIndividual.COMMERCIAL_DESCRIPTION,
                             ),
                             Option(
                                 key="individual",
                                 value=RegisterAnOrganisation.CommercialOrIndividual.INDIVIDUAL_TITLE,
-                                description=RegisterAnOrganisation.CommercialOrIndividual.INDIVIDUAL_DESCRIPTION,
                             ),
                         ],
                     )
@@ -65,7 +63,7 @@ def register_organisation_forms(request):
             ),
             Form(
                 title=RegisterAnOrganisation.WhereIsTheExporterBased.TITLE,
-                description=RegisterAnOrganisation.WhereIsTheExporterBased.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="location",
@@ -185,7 +183,7 @@ def create_admin_user_form():
             TextInput(title="Contact telephone number", name="user.phone_number", optional=True),
         ],
         default_button_name="Submit",
-        helpers=[HelpSection("Help", RegisterAnOrganisation.DEFAULT_USER)],
+        helpers=[HelpSection("Help", "This will be the default user for this organisation.")],
     )
 
 

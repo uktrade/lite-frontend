@@ -12,16 +12,14 @@
 	</div>
 
 	{% include 'includes/tabs.html' %}
-		{% if FEATURE_FLAG_ONLY_ALLOW_SIEL %}
-		<div class="govuk-inset-text govuk-!-margin-top-0">
-			Use <a href="https://www.spire.trade.gov.uk">SPIRE – the online export licensing system</a>
-			 to view and manage your OGLs.
-		</div>
-	{% endif %}
+	<div class="govuk-inset-text govuk-!-margin-top-0">
+		Use <a href="https://www.spire.trade.gov.uk">SPIRE – the online export licensing system</a>
+			to view and manage your OGLs.
+	</div>
 	<div>
 		<p class="lite-filters__hint-text lite-filters__hint-text--warning">
-			{% lcs 'licences.OpenGeneralLicencesList.WARNING_LINK' as link %}
-			{{ link|markdown }}
+			Read <a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/government/publications/compliance-code-of-practice">
+				guidance on compliance and enforcement of export controls</a>
 		</p>
 
 		{% include 'filters.html' %}

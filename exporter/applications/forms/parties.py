@@ -89,7 +89,7 @@ def party_signatory_name_form(title, button):
 def party_clearance_level_form(options, button):
     return Form(
         title=strings.Parties.Clearance.Level.TITLE,
-        description=strings.Parties.Clearance.Level.DESCRIPTION,
+        description="",
         questions=[RadioButtons(name="clearance_level", options=options)],
         default_button_name=button,
     )

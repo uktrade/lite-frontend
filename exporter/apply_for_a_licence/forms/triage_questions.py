@@ -2,11 +2,6 @@ from django.urls import reverse
 from django.conf import settings
 
 from exporter.applications.forms.edit import firearms_form, reference_name_form, told_by_an_official_form
-from exporter.apply_for_a_licence.forms.trade_control_licence import (
-    application_type_form,
-    activity_form,
-    product_category_form,
-)
 from core.constants import GoodsTypeCategory
 from exporter.core.constants import CaseTypes
 from lite_content.lite_exporter_frontend import generic
@@ -200,25 +195,12 @@ def goodstype_category_form(application_id=None):
     )
 
 
-def trade_control_licence_questions(request):
-    return FormGroup(
-        [
-            application_type_form(),
-            *conditional(
-                request.POST.get("application_type") != CaseTypes.OGTCL,
-                [reference_name_form(), activity_form(request), product_category_form(request)],
-                [],
-            ),
-        ]
-    )
-
-
 def transhipment_questions(request):
     return FormGroup(
         [
             Form(
                 title=TranshipmentQuestions.TranshipmentLicenceQuestion.TITLE,
-                description=TranshipmentQuestions.TranshipmentLicenceQuestion.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="application_type",
@@ -226,12 +208,15 @@ def transhipment_questions(request):
                             Option(
                                 key=CaseTypes.OGTL,
                                 value=TranshipmentQuestions.TranshipmentLicenceQuestion.OPEN_GENERAL_TRANSHIPMENT_LICENCE,
-                                description=TranshipmentQuestions.TranshipmentLicenceQuestion.OPEN_GENERAL_TRANSHIPMENT_LICENCE_DESCRIPTION,
+                                description=(
+                                    "Select to register a pre-published licence with set terms and conditions. Being an OGTL holder can benefit your "
+                                    "business by saving time and money."
+                                ),
                             ),
                             Option(
                                 key=CaseTypes.SITL,
                                 value=TranshipmentQuestions.TranshipmentLicenceQuestion.STANDARD_LICENCE,
-                                description=TranshipmentQuestions.TranshipmentLicenceQuestion.STANDARD_LICENCE_DESCRIPTION,
+                                description="Select a standard transhipment licence for a set quantity and set value of products",
                             ),
                         ],
                     ),
@@ -255,7 +240,7 @@ def MOD_questions(application_type=None):
         [
             Form(
                 title=MODQuestions.WhatAreYouApplyingFor.TITLE,
-                description=MODQuestions.WhatAreYouApplyingFor.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="application_type",

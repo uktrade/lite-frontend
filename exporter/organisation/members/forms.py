@@ -32,7 +32,7 @@ def edit_user_form(request, user_id, can_edit_role: bool):
 def assign_sites(request):
     return Form(
         title=strings.users.AssignToSitesForm.ASSIGN_USER_TO_SITES_TITLE,
-        description=strings.users.AssignToSitesForm.ASSIGN_USER_TO_SITES_DESCRIPTION,
+        description="",
         questions=[Checkboxes(name="sites[]", options=get_sites(request, request.session["organisation"], True))],
         default_button_name=strings.SAVE,
     )
