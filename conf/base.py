@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "lite_forms",
     "health_check",
     "health_check.cache",
+    "health_check.storage",
     "core.api",
     "core.forms",
     "crispy_forms",
@@ -68,8 +69,6 @@ INSTALLED_APPS = [
     "cacheops",
 ]
 
-if not IS_ENV_DBT_PLATFORM:
-    INSTALLED_APPS += ["health_check.storage"]
 
 MIDDLEWARE = [
     "allow_cidr.middleware.AllowCIDRMiddleware",
