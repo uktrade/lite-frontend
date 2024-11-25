@@ -28,7 +28,7 @@ def attach_documents_form(case_url):
 def upload_document_form(queue_pk):
     return Form(
         UploadEnforcementXML.TITLE,
-        UploadEnforcementXML.DESCRIPTION,
+        "",
         [
             FileUpload(name="file"),
         ],

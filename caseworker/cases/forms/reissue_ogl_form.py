@@ -7,7 +7,7 @@ from lite_forms.components import Form, TextArea, RadioButtons, DetailComponent,
 def reissue_ogl_confirmation_form(case_id, queue_id):
     return Form(
         title=Manage.ReissueOGL.TITLE,
-        description=Manage.ReissueOGL.DESCRIPTION,
+        description="Doing so will allow the exporter to resume using this open general licence",
         questions=[
             RadioButtons(
                 name="confirm",

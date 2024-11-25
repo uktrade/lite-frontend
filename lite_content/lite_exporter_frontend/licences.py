@@ -52,7 +52,6 @@ class OpenGeneralLicencesList:
 
 class OpenGeneralLicenceRegistration:
     TITLE = "Registration complete"
-    SECONDARY_TITLE = "You've successfully registered for **{} ({})**"
 
     class Links:
         VIEW_OGLS_LINK = "View your open general licences"

@@ -1,33 +1,12 @@
 class OpenReturnsHelpPage:
     TITLE = "Before you start"
     BACK = "Back to hub"
-    DESCRIPTION = """Submit open licence returns using a CSV file that follows this [template and guidance](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/385687/14-1290-open-licence-returns.pdf).\n
-     You must submit open licence returns for:\n
-     - Open Individual Export Licences (OIELs)\n - Open Individual Trade Control Licences (OITCLs)\n - Open General Export Licences (OGELs)\n - Open General Trade Control Licences (OGTCLs)
-     """  # noqa
-    FORMATTING_HELP_LINK = "Format your open licence returns CSV"
-    FORMATTING_HELP_DETAILS = """The first row must contain column headers, or be blank. It must not contain returns data.\n
-     Columns must start from column A and be in the following order:\n
-
-    - Licence number\n - Destination\n - End user type\n - Usage count\n - Period\n
-
-    Licence number must be in one of the following formats:\n
-
-    - GBOXX20XX/XXXXX. For example GBOIE2020/00001)\n - GBOXX20XX/XXXXX/X for amended licences. For example GBOIE2020/00001/A\n
-
-    Destination names must be entered exactly as they appear on the licence.\n
-    \n
-
-    End user type must be one of the following, entered exactly as shown here:\n
-
-    - Government\n - Commercial\n - Pvt Indiv\n - Other\n
-
-    Usage count must be a positive integer.\n
-    \n
-
-    Period must be in the following format, entered exactly as shown with YY replaced with the last 2 digits of the year:\n
-
-    - 01-JAN-YY to 31-DEC-YY\n"""
+    DESCRIPTION = (
+        "Submit open licence returns using a CSV file that follows this [template and guidance]"
+        "(https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/385687/14-1290-open-licence-returns.pdf).<br>"
+        " You must submit open licence returns for:<br> - Open Individual Export Licences (OIELs)<br>"
+        "- Open Individual Trade Control Licences (OITCLs)<br> - Open General Export Licences (OGELs)<br> - Open General Trade Control Licences (OGTCLs)"
+    )
     BUTTON = "Next"
 
 
@@ -73,7 +52,6 @@ class OpenReturnsForm:
 
     class Success:
         TITLE = "Open licence return submitted"
-        SECONDARY_TITLE = ""
         DESCRIPTION = ""
         OPEN_LICENCE_RETURNS_LINK = "View open licence returns"
         HOME_LINK = "Return to your export control account dashboard"

@@ -16,6 +16,9 @@ from lite_forms.components import (
 from caseworker.letter_templates.services import get_letter_layouts
 from lite_forms.helpers import conditional
 
+EDIT_LETTER_TEMPLATE_HINT = """Call it something that:<br /> • is easy to find<br />
+        • explains when to use this template<br>For example, 'Refuse a licence' """
+
 
 def _letter_layout_options(request):
     options = []
@@ -49,7 +52,7 @@ def add_letter_template(request):
         forms=[
             Form(
                 title=strings.LetterTemplates.AddLetterTemplate.Name.TITLE,
-                description=strings.LetterTemplates.AddLetterTemplate.Name.HINT,
+                description=EDIT_LETTER_TEMPLATE_HINT,
                 questions=[TextInput(name="name")],
                 back_link=BackLink(
                     strings.LetterTemplates.AddLetterTemplate.Name.BACK_LINK,
@@ -75,7 +78,7 @@ def add_letter_template(request):
                 is_application_case_types_only,
                 Form(
                     title=strings.LetterTemplates.EditLetterTemplate.Decisions.TITLE,
-                    description=strings.LetterTemplates.EditLetterTemplate.Decisions.DESCRIPTION,
+                    description="Select the decisions that apply to your template",
                     questions=[
                         Checkboxes(
                             name="decisions[]",
@@ -90,7 +93,7 @@ def add_letter_template(request):
             ),
             Form(
                 title=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.TITLE,
-                description=strings.LetterTemplates.AddLetterTemplate.VisibleToExporter.DESCRIPTION,
+                description="Should documents created with this template be visible to exporters?",
                 questions=[
                     RadioButtons(
                         name="visible_to_exporter",
@@ -108,7 +111,7 @@ def add_letter_template(request):
             ),
             Form(
                 title=strings.LetterTemplates.AddLetterTemplate.IncludeSignature.TITLE,
-                description=strings.LetterTemplates.AddLetterTemplate.IncludeSignature.DESCRIPTION,
+                description="",
                 questions=[
                     RadioButtons(
                         name="include_digital_signature",
@@ -138,25 +141,25 @@ def edit_letter_template(request, letter_template, case_type_options, decision_o
         title=strings.LetterTemplates.EditLetterTemplate.TITLE % letter_template["name"],
         questions=[
             TextInput(
-                title=strings.LetterTemplates.EditLetterTemplate.Name.TITLE,
-                description=strings.LetterTemplates.EditLetterTemplate.Name.HINT,
+                title="Give your template a name",
+                description=EDIT_LETTER_TEMPLATE_HINT,
                 name="name",
             ),
             Checkboxes(
-                title=strings.LetterTemplates.EditLetterTemplate.CaseTypes.TITLE,
+                title="When should someone use this template?",
                 name="case_types[]",
                 options=case_type_options,
                 classes=["govuk-checkboxes--small"],
             ),
             Checkboxes(
-                title=strings.LetterTemplates.EditLetterTemplate.Decisions.TITLE,
-                description=strings.LetterTemplates.EditLetterTemplate.Decisions.DESCRIPTION,
+                title="Decisions (optional)",
+                description="Select the decisions that apply to your template",
                 name="decisions[]",
                 options=decision_options,
                 classes=["govuk-checkboxes--small"],
             ),
             RadioButtonsImage(
-                title=strings.LetterTemplates.EditLetterTemplate.Layout.TITLE,
+                title="Choose a layout",
                 name="layout",
                 options=_letter_layout_options(request),
             ),

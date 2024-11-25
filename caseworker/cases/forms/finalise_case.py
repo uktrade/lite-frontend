@@ -10,7 +10,7 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, 
         title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.APPROVE_TITLE,
         questions=[
             DateInput(
-                description=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.DATE_DESCRIPTION,
+                description="For example, 27 3 2019",
                 title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.DATE_TITLE,
                 prefix="",
             ),
@@ -48,9 +48,9 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, 
 
 def deny_licence_form(queue_pk, case_id, is_open_licence, nlr):
     if nlr:
-        description = lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.NLR_DESCRIPTION
+        description = "You'll be informing the exporter that no licence is required"
     else:
-        description = lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.REFUSE_DESCRIPTION
+        description = "You'll be denying the case"
 
     return Form(
         title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.FINALISE_TITLE,

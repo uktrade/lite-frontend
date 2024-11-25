@@ -1,7 +1,6 @@
 import copy
 from collections.abc import MutableMapping
 
-from markdown import markdown
 
 from lite_forms.components import FormGroup, Form, HiddenField, TreeNode
 
@@ -153,20 +152,6 @@ def heading_used_as_label(components):
                     single_input = component
 
     return single_input
-
-
-def convert_to_markdown(text):
-    if text:
-        text = "<br>".join([markdown(item.strip(), extensions=["nl2br"]) for item in text.split("\n\n")])
-        # Replace leading (<p>) & trailing (</p>) p tags as they are not needed
-        text = text.replace("<p>", "")
-        text = text.replace("</p>", "")
-        text = text.replace(
-            "<a", '<a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank"'
-        )
-        return text
-    else:
-        return None
 
 
 def handle_lists(data):

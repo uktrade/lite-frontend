@@ -1,8 +1,6 @@
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.generic import PERMISSION_FINDER_LINK
 
-from exporter.core.constants import FileUploadFileTypes
-
 
 class GoodsList:
     TITLE = "Product list"
@@ -117,12 +115,12 @@ class DocumentAvailabilityForm:
 
 class DocumentSensitivityForm:
     TITLE = "Is the document rated above OFFICIAL-SENSITIVE?"
-    ECJU_HELPLINE = (
-        "**<noscript>If the answer is No;</noscript>**\n\nContact ECJU to arrange a more secure way to send "
-        "this document.\n\n You can continue with the application "
-        "without attaching a document.\n\n**ECJU helpline**\n 020 7215 4594\n "
-        "[Find out about call charges (opens in new tab)](https://www.gov.uk/call-charges)"
-    )
+    ECJU_HELPLINE = """<strong><noscript>If the answer is No;</noscript></strong>
+                    <br>Contact ECJU to arrange a more secure way to send this document.
+                    <br>You can continue with the application without attaching a document.
+                    <br><strong>ECJU helpline</strong><br />020 7215 4594<br />
+                    <a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/call-charges">
+                    Find out about call charges (opens in new tab)</a>"""
     SUBMIT_BUTTON = "Save and continue"
 
     class Options:
@@ -146,12 +144,16 @@ class CreateGoodForm:
     class IsControlled:
         TITLE = "Is the product on the control list?"
         DESCRIPTION = (
-            "Products that aren't on the " + PERMISSION_FINDER_LINK + " may be affected by [military end use controls]"
-            "(https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology), "
-            "[current trade sanctions and embargoes]"
-            "(https://www.gov.uk/guidance/current-arms-embargoes-and-other-restrictions) or "
-            "[weapons of mass destruction controls](https://www.gov.uk/guidance/supplementary-wmd-end-use-controls). "
-            "If the product isn't subject to any controls, you'll get a no licence required (NLR) document from ECJU."
+            'Products that aren\'t on the <a class="govuk-link govuk-link--no-visited-state" '
+            'rel="noreferrer noopener" target="_blank" href="">control list</a>'
+            'may be affected by <a class="govuk-link govuk-link--no-visited-state" '
+            'rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology"> '
+            'military end use controls</a>, <a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" '
+            'target="_blank" href="https://www.gov.uk/guidance/current-arms-embargoes-and-other-restrictions">'
+            'current trade sanctions and embargoes</a> or <a class="govuk-link govuk-link--no-visited-state" '
+            'rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/guidance/supplementary-wmd-end-use-controls">'
+            "weapons of mass destruction controls</a>. If the product isn't subject to any controls, "
+            "you'll get a no licence required (NLR) document from ECJU."
         )
         CLC_REQUIRED = (
             "Products that aren't on the " + PERMISSION_FINDER_LINK + " may be affected by [military end use controls]"
@@ -335,13 +337,6 @@ class EditGoodForm:
 
 class AttachDocumentForm:
     TITLE = "Attach a document"
-    DESCRIPTION = (
-        FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT
-        + "\n\nDocumentation could be specifications, datasheets, sales brochures, drawings "
-        "or anything else that fully details what the product is and what it's designed to do."
-        "\n\nDo not attach a document that’s above OFFICIAL-SENSITIVE. "
-        "\n\nThe file must be smaller than 50MB."
-    )
     BUTTON = "Save and continue"
     BACK_FORM_LINK = "Back"
     BACK_GOOD_LINK = "Back to product"

@@ -9,7 +9,7 @@ from lite_forms.components import Form, Filter, Checkboxes, RadioButtons, Option
 def countries_form(request, application_id):
     return Form(
         title=strings.applications.DestinationForm.TITLE,
-        description=strings.applications.DestinationForm.DESCRIPTION,
+        description="",
         questions=[
             Filter(),
             Checkboxes(
@@ -28,7 +28,7 @@ def countries_form(request, application_id):
 def choose_contract_type_form():
     return Form(
         title=contractTypeStrings.ChooseContractTypeForm.TITLE,
-        description=contractTypeStrings.ChooseContractTypeForm.DESCRIPTION,
+        description="Examples of sectors and contract types are ‘army’, ‘registered firearm dealers’ and ‘for the exporters own use’.",
         questions=[
             RadioButtons(
                 "choice",
@@ -46,7 +46,7 @@ def choose_contract_type_form():
 def contract_type_per_country_form(current_country, country_name):
     return Form(
         title=contractTypeStrings.AddContractTypesForm.TITLE + country_name,
-        description=contractTypeStrings.AddContractTypesForm.DESCRIPTION,
+        description="",
         questions=[
             HiddenField("countries", current_country),
             Checkboxes(

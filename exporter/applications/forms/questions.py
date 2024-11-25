@@ -125,7 +125,18 @@ def electronic_warfare_form():
             RadioButtons(
                 name="electronic_warfare_requirement",
                 options=[
-                    Option(key=True, value="Yes", components=[Label(text=F680Questions.EWRequirement.ATTACHMENT)]),
+                    Option(
+                        key=True,
+                        value="Yes",
+                        components=[
+                            Label(
+                                text=(
+                                    "You need to complete part A of the MOD EW Data Release Capture"
+                                    " Form and attach it to the application in the supporting documents section."
+                                )
+                            )
+                        ],
+                    ),
                     Option(key=False, value="No"),
                 ],
             )
