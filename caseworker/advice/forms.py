@@ -494,7 +494,7 @@ class DESNZTriggerListAssessmentEditForm(DESNZTriggerListFormBase):
         self.organisation_documents = organisation_documents
 
 
-class DESNZRecommendAnApproval(PicklistAdviceForm, BaseForm):
+class RecommendAnApproval(PicklistAdviceForm, BaseForm):
     DOCUMENT_TITLE = "Recommend approval for this case"
 
     class Layout:
@@ -540,7 +540,6 @@ class PicklistApprovalAdviceFormEdit(BaseForm):
     class Layout:
         TITLE = "Add licence conditions, instructions to exporter or footnotes (optional)"
 
-    DOCUMENT_TITLE = "Recommend approval for this case"
     proviso = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 30, "class": "govuk-!-margin-top-4"}),
         label="",
@@ -557,13 +556,12 @@ class PicklistApprovalAdviceFormEdit(BaseForm):
         return ("proviso",)
 
 
-class PicklistApprovalAdviceForm(PicklistAdviceForm, BaseForm):
+class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
     DOCUMENT_TITLE = "Recommend approval for this case"
 
     class Layout:
         TITLE = "Add licence conditions, instructions to exporter or footnotes (optional)"
 
-    DOCUMENT_TITLE = "Recommend approval for this case"
     proviso = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
         label="",
@@ -576,7 +574,7 @@ class PicklistApprovalAdviceForm(PicklistAdviceForm, BaseForm):
         widget=forms.RadioSelect,
         choices=(),
     )
-    proviso_radios = forms.MultipleChoiceField(
+    proviso_checkboxes = forms.MultipleChoiceField(
         label="Add a licence condition (optional)",
         required=False,
         widget=forms.CheckboxSelectMultiple,
@@ -586,7 +584,7 @@ class PicklistApprovalAdviceForm(PicklistAdviceForm, BaseForm):
     def clean(self):
         cleaned_data = super().clean()
         # only return proviso (text) for selected radios, nothing else matters, join by 2 newlines
-        return {"proviso": "\r\n\r\n".join([cleaned_data[selected] for selected in cleaned_data["proviso_radios"]])}
+        return {"proviso": "\r\n\r\n".join([cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]])}
 
     def __init__(self, *args, **kwargs):
         kwargs.pop("approval_reason")
@@ -602,7 +600,7 @@ class PicklistApprovalAdviceForm(PicklistAdviceForm, BaseForm):
 
         super().__init__(*args, **kwargs)
 
-        self.fields["proviso_radios"].choices = proviso_choices
+        self.fields["proviso_checkboxes"].choices = proviso_choices
         for choices in proviso_choices:
             self.fields[choices.value] = forms.CharField(
                 widget=forms.Textarea(attrs={"rows": 3, "class": "govuk-!-margin-top-4"}),
@@ -613,7 +611,7 @@ class PicklistApprovalAdviceForm(PicklistAdviceForm, BaseForm):
 
     def get_layout_fields(self):
 
-        return (ConditionalCheckboxes("proviso_radios", *self.conditional_checkbox_choices),)
+        return (ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),)
 
 
 class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):

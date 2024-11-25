@@ -35,10 +35,10 @@
               <h1 class="govuk-heading-xl">View recommendation</h1>
               {% if my_advice %}
                 {% if buttons.edit_recommendation %}
-                  {% if caseworker|user_in_DESNZ_team%}
-                    <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice_desnz' queue_pk case.id %}">Edit recommendation</a>
-                  {% else %}
+                  {% if caseworker|is_desnz_team and case|is_approval %}
                     <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice' queue_pk case.id %}">Edit recommendation</a>
+                  {% else %}
+                    <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice_legacy' queue_pk case.id %}">Edit recommendation</a>
                   {% endif %}
                 {% endif %}
                 {% if buttons.clear_recommendation %}

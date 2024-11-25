@@ -29,6 +29,6 @@ class AdviceType:
 
 
 class AdviceView:
-    DESNZ_RECOMMEND_APPROVAL = "desnz_recommend_approval"
+    RECOMMEND_APPROVAL = "recommend_approval"
     LICENCE_CONDITIONS = "licence_conditions"
     LICENCE_FOOTNOTES = "licence_footnotes"

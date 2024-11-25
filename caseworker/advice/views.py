@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from caseworker.advice.conditionals import form_add_licence_conditions, DESNZ_team
+from caseworker.advice.conditionals import form_add_licence_conditions, is_desnz_team
 from core.wizard.views import BaseSessionWizardView
 from core.wizard.conditionals import C
 import sentry_sdk
@@ -148,8 +148,8 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         recommendation = self.request.POST.get("recommendation")
         if recommendation == "approve_all":
             if self.caseworker["team"]["alias"] in services.DESNZ_TEAMS:
-                return reverse("cases:approve_all_desnz", kwargs=self.kwargs)
-            return reverse("cases:approve_all", kwargs=self.kwargs)
+                return reverse("cases:approve_all", kwargs=self.kwargs)
+            return reverse("cases:approve_all_legacy", kwargs=self.kwargs)
         else:
             return reverse("cases:refuse_all", kwargs=self.kwargs)
 
@@ -158,7 +158,7 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
-class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+class GiveApprovalAdviceViewLegacy(LoginRequiredMixin, CaseContextMixin, FormView):
     """
     Form to recommend approval advice for all products on the application
     """
@@ -283,7 +283,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESN
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+class EditAdviceViewLegacy(LoginRequiredMixin, CaseContextMixin, FormView):
     """
     Form to edit given advice for all products on the application
     """
@@ -356,19 +356,18 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return context
 
 
-class GiveApprovalAdviceViewDESNZ(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
-    # on save combine everything into a single field
+class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
 
     form_list = [
-        (AdviceView.DESNZ_RECOMMEND_APPROVAL, forms.DESNZRecommendAnApproval),
-        (AdviceView.LICENCE_CONDITIONS, forms.PicklistApprovalAdviceForm),
+        (AdviceView.RECOMMEND_APPROVAL, forms.RecommendAnApproval),
+        (AdviceView.LICENCE_CONDITIONS, forms.LicenceConditionsForm),
         (AdviceView.LICENCE_FOOTNOTES, forms.FootnotesApprovalAdviceForm),
     ]
 
     condition_dict = {
-        AdviceView.DESNZ_RECOMMEND_APPROVAL: C(DESNZ_team),
-        AdviceView.LICENCE_CONDITIONS: C(form_add_licence_conditions("desnz_recommend_approval")),
-        AdviceView.LICENCE_FOOTNOTES: C(form_add_licence_conditions("desnz_recommend_approval")),
+        AdviceView.RECOMMEND_APPROVAL: C(is_desnz_team),
+        AdviceView.LICENCE_CONDITIONS: C(form_add_licence_conditions("recommend_approval")),
+        AdviceView.LICENCE_FOOTNOTES: C(form_add_licence_conditions("recommend_approval")),
     }
 
     def get_form_kwargs(self, step=None):
@@ -387,18 +386,27 @@ class GiveApprovalAdviceViewDESNZ(LoginRequiredMixin, CaseContextMixin, BaseSess
     def get_success_url(self):
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error adding approval advice",
+        "Unexpected error adding approval advice",
+    )
+    def post_approval_advice(self, data):
+        return services.post_approval_advice(self.request, self.case, data)
+
     def done(self, form_list, form_dict, **kwargs):
         data = {}
+        # flattens the form_dict
         for form_data in form_dict.values():
             data.update(form_data.cleaned_data)
-        services.post_approval_advice(self.request, self.case, data)
+        self.post_approval_advice(data)
         return redirect(self.get_success_url())
 
 
-class EditAdviceViewDESNZ(GiveApprovalAdviceViewDESNZ):
+class EditAdviceView(GiveApprovalAdviceView):
 
     form_list = [
-        (AdviceView.DESNZ_RECOMMEND_APPROVAL, forms.DESNZRecommendAnApproval),
+        (AdviceView.RECOMMEND_APPROVAL, forms.RecommendAnApproval),
         (AdviceView.LICENCE_CONDITIONS, forms.PicklistApprovalAdviceFormEdit),
         (AdviceView.LICENCE_FOOTNOTES, forms.FootnotesApprovalAdviceForm),
     ]
@@ -407,7 +415,8 @@ class EditAdviceViewDESNZ(GiveApprovalAdviceViewDESNZ):
         my_advice = services.filter_current_user_advice(self.case.advice, self.caseworker_id)
         advice = my_advice[0]
 
-        # default to other so that they're not likely to reselect, approval_radios isn't stored.
+        # When the form is prepopulated in the edit flow,
+        # the radio values are set to other because only the textfield values are stored it's not possible to replay the selected radio.
         return {
             "add_licence_conditions": bool(advice.get("proviso")),
             "approval_reasons": advice.get("text", ""),

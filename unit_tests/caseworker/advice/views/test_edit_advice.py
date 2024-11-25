@@ -16,7 +16,9 @@ def setup(mock_queue, mock_case, mock_denial_reasons, mock_approval_reason, mock
 
 @pytest.fixture
 def url(data_queue, data_standard_case):
-    return reverse(f"cases:edit_advice", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    return reverse(
+        f"cases:edit_advice_legacy", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
 
 
 def test_edit_approve_advice_post(authorized_client, requests_mock, data_standard_case, standard_case_with_advice, url):
@@ -210,9 +212,7 @@ def test_edit_refuse_advice_get(
 
 @pytest.fixture
 def url_desnz(data_queue, data_standard_case):
-    return reverse(
-        f"cases:edit_advice_desnz", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
-    )
+    return reverse(f"cases:edit_advice", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
 
 
 @pytest.fixture
@@ -260,7 +260,7 @@ def test_DESNZ_give_approval_advice_post_valid(
     )
 
     response = post_to_step(
-        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        AdviceView.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason updated", "add_licence_conditions": False},
     )
     assert response.status_code == 302
@@ -268,16 +268,68 @@ def test_DESNZ_give_approval_advice_post_valid(
     assert len(history) == 1
     history = history[0]
     assert history.method == "POST"
-    assert history.json()[0] == {
-        "type": "approve",
-        "text": "reason updated",
-        "proviso": "",
-        "note": "",
-        "footnote_required": False,
-        "footnote": "",
-        "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
-        "denial_reasons": [],
-    }
+    assert history.json() == [
+        {
+            "type": "approve",
+            "text": "reason updated",
+            "proviso": "",
+            "note": "",
+            "footnote_required": False,
+            "footnote": "",
+            "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+            "denial_reasons": [],
+        },
+        {
+            "type": "approve",
+            "text": "reason updated",
+            "proviso": "",
+            "note": "",
+            "footnote_required": False,
+            "footnote": "",
+            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
+            "denial_reasons": [],
+        },
+        {
+            "type": "approve",
+            "text": "reason updated",
+            "proviso": "",
+            "note": "",
+            "footnote_required": False,
+            "footnote": "",
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+            "denial_reasons": [],
+        },
+        {
+            "type": "approve",
+            "text": "reason updated",
+            "proviso": "",
+            "note": "",
+            "footnote_required": False,
+            "footnote": "",
+            "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
+            "denial_reasons": [],
+        },
+        {
+            "type": "approve",
+            "text": "reason updated",
+            "proviso": "",
+            "note": "",
+            "footnote_required": False,
+            "footnote": "",
+            "good": "9fbffa7f-ef50-402e-93ac-2f3f37d09030",
+            "denial_reasons": [],
+        },
+        {
+            "type": "no_licence_required",
+            "text": "",
+            "proviso": "",
+            "note": "",
+            "footnote_required": False,
+            "footnote": "",
+            "good": "d4feac1e-851d-41a5-b833-eb28addb8547",
+            "denial_reasons": [],
+        },
+    ]
 
 
 @mock.patch("caseworker.advice.views.get_gov_user")
@@ -320,7 +372,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     )
 
     response = post_to_step(
-        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        AdviceView.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason updated", "add_licence_conditions": True},
     )
     assert response.status_code == 200
@@ -348,13 +400,65 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     assert len(history) == 1
     history = history[0]
     assert history.method == "POST"
-    assert history.json()[0] == {
-        "type": "proviso",
-        "text": "reason updated",
-        "proviso": "proviso updated",
-        "note": "instructions updated",
-        "footnote_required": True,
-        "footnote": "footnotes updated",
-        "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
-        "denial_reasons": [],
-    }
+    assert history.json() == [
+        {
+            "type": "proviso",
+            "text": "reason updated",
+            "proviso": "proviso updated",
+            "note": "instructions updated",
+            "footnote_required": True,
+            "footnote": "footnotes updated",
+            "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+            "denial_reasons": [],
+        },
+        {
+            "type": "proviso",
+            "text": "reason updated",
+            "proviso": "proviso updated",
+            "note": "instructions updated",
+            "footnote_required": True,
+            "footnote": "footnotes updated",
+            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
+            "denial_reasons": [],
+        },
+        {
+            "type": "proviso",
+            "text": "reason updated",
+            "proviso": "proviso updated",
+            "note": "instructions updated",
+            "footnote_required": True,
+            "footnote": "footnotes updated",
+            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+            "denial_reasons": [],
+        },
+        {
+            "type": "proviso",
+            "text": "reason updated",
+            "proviso": "proviso updated",
+            "note": "instructions updated",
+            "footnote_required": True,
+            "footnote": "footnotes updated",
+            "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
+            "denial_reasons": [],
+        },
+        {
+            "type": "proviso",
+            "text": "reason updated",
+            "proviso": "proviso updated",
+            "note": "instructions updated",
+            "footnote_required": True,
+            "footnote": "footnotes updated",
+            "good": "9fbffa7f-ef50-402e-93ac-2f3f37d09030",
+            "denial_reasons": [],
+        },
+        {
+            "type": "no_licence_required",
+            "text": "",
+            "proviso": "",
+            "note": "",
+            "footnote_required": False,
+            "footnote": "",
+            "good": "d4feac1e-851d-41a5-b833-eb28addb8547",
+            "denial_reasons": [],
+        },
+    ]

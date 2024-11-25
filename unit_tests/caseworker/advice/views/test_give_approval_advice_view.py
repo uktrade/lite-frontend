@@ -15,7 +15,9 @@ def setup(mock_queue, mock_case, mock_approval_reason, mock_proviso, mock_footno
 
 @pytest.fixture
 def url(data_queue, data_standard_case):
-    return reverse("cases:approve_all", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+    return reverse(
+        "cases:approve_all_legacy", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
 
 
 def test_give_approval_advice_get(authorized_client, url):
@@ -117,9 +119,7 @@ def test_fcdo_give_approval_advice_post(
 
 @pytest.fixture
 def url_desnz(data_queue, data_standard_case):
-    return reverse(
-        "cases:approve_all_desnz", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
-    )
+    return reverse("cases:approve_all", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
 
 
 @pytest.fixture
@@ -155,7 +155,7 @@ def test_DESNZ_give_approval_advice_post_valid(
     requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
 
     response = post_to_step(
-        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        AdviceView.RECOMMEND_APPROVAL,
         {"approval_reasons": "Data"},
     )
     assert response.status_code == 302
@@ -189,7 +189,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
 
     response = post_to_step(
-        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        AdviceView.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason", "add_licence_conditions": True},
     )
     assert response.status_code == 200
@@ -243,7 +243,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
     requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
 
     response = post_to_step(
-        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        AdviceView.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason", "add_licence_conditions": True},
     )
     assert response.status_code == 200
@@ -297,7 +297,7 @@ def test_DESNZ_give_approval_advice_post_invalid(
     requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
 
     response = post_to_step(
-        AdviceView.DESNZ_RECOMMEND_APPROVAL,
+        AdviceView.RECOMMEND_APPROVAL,
         {"approval_reasons": ""},
     )
     assert response.status_code == 200
@@ -334,6 +334,6 @@ def test_DESNZ_give_approval_advice_post_invalid_user(
     # DESNZ only.
     with pytest.raises(IndexError) as err:
         response = post_to_step(
-            AdviceView.DESNZ_RECOMMEND_APPROVAL,
+            AdviceView.RECOMMEND_APPROVAL,
             {"approval_reasons": ""},
         )

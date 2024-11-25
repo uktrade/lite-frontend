@@ -225,5 +225,10 @@ def _add_team_decisions(grouped_advice):
 
 
 @register.filter
-def user_in_DESNZ_team(caseworker):
+def is_desnz_team(caseworker):
     return caseworker["team"]["alias"] in services.DESNZ_TEAMS
+
+
+@register.filter
+def is_approval(case):
+    return case["advice"][0]["type"]["key"] in ["proviso", "approve"]

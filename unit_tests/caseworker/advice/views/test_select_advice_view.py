@@ -45,7 +45,7 @@ def test_select_advice_post_desnz(mock_get_gov_user, authorized_client, url):
     )
     response = authorized_client.post(url, data={"recommendation": "approve_all"})
     assert response.status_code == 302
-    assert "approve-all-desnz" in response.url
+    assert "approve-all" in response.url
 
 
 def test_view_serial_numbers_for_firearm_product_in_select_advice_view(authorized_client, data_standard_case, url):

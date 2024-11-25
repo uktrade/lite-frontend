@@ -7,7 +7,8 @@ from caseworker.advice.templatetags.advice_tags import (
     is_case_pv_graded,
     get_denial_reason_display_values,
     format_serial_numbers,
-    user_in_DESNZ_team,
+    is_desnz_team,
+    is_approval,
 )
 from caseworker.cases.objects import Case
 
@@ -469,7 +470,17 @@ def test_format_serial_numbersformat_serial_numbers(serial_numbers, quantity, ex
     "alias, expected_result",
     ([("DESNZ_CHEMICAL", True), ("GIBBERISH", False)]),
 )
-def test_user_in_DESNZ_team(alias, expected_result):
+def test_is_desnz_team(alias, expected_result):
     caseworker = {"team": {"alias": alias}}
-    result = user_in_DESNZ_team(caseworker)
+    result = is_desnz_team(caseworker)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize(
+    "advice, expected_result",
+    ([("approve", True), ("proviso", True), ("refuse", False)]),
+)
+def test_is_approval(advice, expected_result):
+    case = {"advice": [{"type": {"key": advice}}]}
+    result = is_approval(case)
     assert result == expected_result
