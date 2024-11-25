@@ -51,6 +51,11 @@ class BaseCaseworkerUser(BaseForm):
         ]
         self.fields["default_queue"].choices.insert(0, Choice(None, "Select"))
 
+    def validate_email_duplicates(self, email):
+        gov_user_list = get_gov_user_list(self.request, {"email": email})
+        if gov_user_list["count"]:
+            raise forms.ValidationError("This email has already been registered")
+
 
 class EditCaseworkerQueue(BaseCaseworkerUser):
     class Layout:
@@ -85,9 +90,7 @@ class EditCaseworker(BaseCaseworkerUser):
     def clean_email(self):
         email = self.cleaned_data["email"] or self.initial["email"]
         if email != self.initial["email"].lower():
-            gov_user_list = get_gov_user_list(self.request, {"email": email})
-            if gov_user_list["count"]:
-                raise forms.ValidationError("This email has already been registered")
+            self.validate_email_duplicates(email)
         return email
 
 
@@ -103,7 +106,5 @@ class AddCaseworkerUser(BaseCaseworkerUser):
 
     def clean_email(self):
         email = self.cleaned_data["email"] or self.initial["email"]
-        gov_user_list = get_gov_user_list(self.request, {"email": email})
-        if gov_user_list["count"]:
-            raise forms.ValidationError("This email has already been registered")
+        self.validate_email_duplicates(email)
         return email
