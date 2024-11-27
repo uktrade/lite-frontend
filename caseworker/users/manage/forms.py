@@ -44,7 +44,7 @@ class BaseCaseworkerUser(BaseForm):
         self.fields["team"].choices = [Choice(t["id"], t["name"]) for t in teams]
         self.fields["role"].choices = [Choice(r["id"], r["name"]) for r in roles]
 
-        get_team_id = lambda q: q.get("team").get("id") if q.get("team") else None
+        get_team_id = lambda queue: queue["team"].get("id") if queue.get("team") else None
 
         self.fields["default_queue"].choices = [
             Choice(value=q["id"], label=q["name"], attrs={"data-attribute": get_team_id(q)}) for q in queues
