@@ -8,21 +8,19 @@ from caseworker.cases.services import update_mentions
 
 from core.auth.views import LoginRequiredMixin
 from caseworker.core.constants import (
-    ADMIN_TEAM_ID,
     UserStatuses,
 )
 from lite_content.lite_internal_frontend import strings
 from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.components import FiltersBar, Select, Option, TextInput
 from lite_forms.views import SingleFormView
-from caseworker.users.forms.users import add_user_form, edit_user_form
+from caseworker.users.forms.users import add_user_form
 from caseworker.users.services import (
     get_gov_users,
     post_gov_users,
     put_gov_user,
     get_gov_user,
     is_super_user,
-    is_user_in_team,
     get_user_case_note_mentions,
 )
 
@@ -86,38 +84,6 @@ class ViewUser(TemplateView):
 class ViewProfile(TemplateView):
     def get(self, request, **kwargs):
         return redirect(reverse_lazy("users:user", kwargs={"pk": request.session["lite_api_user_id"]}))
-
-
-class EditUser(SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        user, _ = get_gov_user(request, self.object_pk)
-        request_user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
-        self.user = user["user"]
-        self.can_edit_role = self.user["id"] != request.session["lite_api_user_id"]
-        self.can_edit_team = is_super_user(request_user) or is_user_in_team(request_user, ADMIN_TEAM_ID)
-        self.form = edit_user_form(request, self.user, self.can_edit_role, self.can_edit_team)
-        self.data = self.user
-        self.action = put_gov_user
-        self.success_url = reverse("users:user", kwargs={"pk": self.object_pk})
-
-    def clean_data(self, data):
-        # We have to remove these by hand as lite-forms by default just passes through the full post data instead of
-        # cleansing the data in the edit form itself.
-        # We are removing these form fields programatically in the form code but this isn't enough to remove the data
-        # from this data blob.
-        if not self.can_edit_team and "team" in data:
-            del data["team"]
-        if not self.can_edit_role and "role" in data:
-            del data["role"]
-        return data
-
-    def post_success_step(self):
-        super().post_success_step()
-
-        # If user is updating their own default_queue, update the local user instance
-        if self.user["id"] == self.request.session["lite_api_user_id"]:
-            self.request.session["default_queue"] = self.get_validated_data().get("gov_user").get("default_queue")
 
 
 class ChangeUserStatus(TemplateView):
