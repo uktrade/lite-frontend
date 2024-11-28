@@ -2,7 +2,7 @@ from requests.exceptions import HTTPError
 from http import HTTPStatus
 import rules
 
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views.generic import FormView
@@ -87,7 +87,7 @@ class AddCaseworkerUserView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
     def dispatch(self, *args, **kwargs):
         if not rules.test_rule("can_caseworker_add_user", self.request):
-            raise Http404()
+            return HttpResponseForbidden()
         return super().dispatch(*args, **kwargs)
 
     def get_form_kwargs(self):

@@ -762,7 +762,7 @@ def test_add_user_no_permission(
         json=mock_gov_user,
     )
     response = authorized_client.get(add_user_url)
-    assert response.status_code == 404
+    assert response.status_code == 403
 
     response = authorized_client.post(add_user_url, user_post_data)
-    assert response.status_code == 404
+    assert response.status_code == 403
