@@ -5,6 +5,9 @@ from typing import List
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.conf import settings
+from django.http import HttpResponseForbidden
 
 from lite_forms.components import FormGroup, Form
 from lite_forms.generators import form_page
@@ -188,7 +191,7 @@ class MultiFormView(FormView):
         self.init(request, **kwargs)
         submission = self.on_submission(request, **kwargs)  # noqa
 
-        if submission:
+        if submission and url_has_allowed_host_and_scheme(redirect(submission), allowed_hosts=settings.ALLOWED_HOSTS):
             return redirect(submission)
 
         response, data = submit_paged_form(
@@ -340,7 +343,10 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        return redirect(request.path)
+        if url_has_allowed_host_and_scheme(redirect(request.path), allowed_hosts=settings.ALLOWED_HOSTS):
+            return request.path
+        else:
+            return HttpResponseForbidden
 
     def post(self, request, **kwargs):
         return self._post(request, **kwargs)
@@ -403,7 +409,10 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        return redirect(request.path)
+        if url_has_allowed_host_and_scheme(redirect(request.path), allowed_hosts=settings.ALLOWED_HOSTS):
+            return request.path
+        else:
+            return HttpResponseForbidden
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() in self.http_method_names:
