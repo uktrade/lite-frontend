@@ -47,8 +47,8 @@ MOD_CONSOLIDATE_TEAMS = [
     "MOD_CAPPROT",
 ]
 MOD_TEAMS = [MOD_ECJU_TEAM, *MOD_CONSOLIDATE_TEAMS]
-LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
 NCSC_TEAM = "NCSC"
+LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM, DESNZ_NUCLEAR, DESNZ_CHEMICAL, NCSC_TEAM]
 OGD_TEAMS = [
     *DESNZ_TEAMS,
     FCDO_TEAM,
@@ -176,7 +176,7 @@ def group_advice_by_user(advice):
     """
     result = defaultdict(list)
     for item in advice:
-        result[item["user"]["id"]].append(item)
+        result[f"{item['user']['id']}-{item['team']['id']}"].append(item)
     return result
 
 
