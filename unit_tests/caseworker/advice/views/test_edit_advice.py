@@ -230,12 +230,11 @@ def test_DESNZ_give_approval_advice_post_valid(
     mock_approval_reason,
     mock_proviso,
     mock_footnote_details,
+    mock_post_advice,
     standard_case_with_advice,
     post_to_step,
     beautiful_soup,
 ):
-    user_advice_create_url = f"/cases/{data_standard_case['case']['id']}/user-advice/"
-    requests_mock.post(user_advice_create_url, json={})
     case_data = deepcopy(data_standard_case)
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     case_data["case"]["advice"] = standard_case_with_advice["advice"]
@@ -264,7 +263,7 @@ def test_DESNZ_give_approval_advice_post_valid(
         {"approval_reasons": "reason updated", "add_licence_conditions": False},
     )
     assert response.status_code == 302
-    history = [item for item in requests_mock.request_history if user_advice_create_url in item.url]
+    history = mock_post_advice.request_history
     assert len(history) == 1
     history = history[0]
     assert history.method == "POST"
@@ -342,12 +341,11 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     mock_approval_reason,
     mock_proviso,
     mock_footnote_details,
+    mock_post_advice,
     standard_case_with_advice,
     post_to_step,
     beautiful_soup,
 ):
-    user_advice_create_url = f"/cases/{data_standard_case['case']['id']}/user-advice/"
-    requests_mock.post(user_advice_create_url, json={})
     case_data = deepcopy(data_standard_case)
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     case_data["case"]["advice"] = standard_case_with_advice["advice"]
@@ -396,7 +394,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
         {"instructions_to_exporter": "instructions updated", "footnote_details": "footnotes updated"},
     )
     assert add_instructions_response.status_code == 302
-    history = [item for item in requests_mock.request_history if user_advice_create_url in item.url]
+    history = mock_post_advice.request_history
     assert len(history) == 1
     history = history[0]
     assert history.method == "POST"

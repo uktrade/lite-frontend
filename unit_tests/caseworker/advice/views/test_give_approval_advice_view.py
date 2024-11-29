@@ -131,12 +131,12 @@ def post_to_step(post_to_step_factory, url_desnz):
 def test_DESNZ_give_approval_advice_post_valid(
     mock_get_gov_user,
     authorized_client,
-    requests_mock,
     data_standard_case,
     url,
     mock_approval_reason,
     mock_proviso,
     mock_footnote_details,
+    mock_post_advice,
     post_to_step,
     beautiful_soup,
 ):
@@ -152,7 +152,6 @@ def test_DESNZ_give_approval_advice_post_valid(
         },
         None,
     )
-    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
 
     response = post_to_step(
         AdviceView.RECOMMEND_APPROVAL,
@@ -165,12 +164,12 @@ def test_DESNZ_give_approval_advice_post_valid(
 def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     mock_get_gov_user,
     authorized_client,
-    requests_mock,
     data_standard_case,
     url,
     mock_approval_reason,
     mock_proviso,
     mock_footnote_details,
+    mock_post_advice,
     post_to_step,
     beautiful_soup,
 ):
@@ -186,8 +185,6 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
         },
         None,
     )
-    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
-
     response = post_to_step(
         AdviceView.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason", "add_licence_conditions": True},
@@ -219,12 +216,12 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
 def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
     mock_get_gov_user,
     authorized_client,
-    requests_mock,
     data_standard_case,
     url,
     mock_approval_reason,
     mock_proviso,
     mock_footnote_details,
+    mock_post_advice,
     post_to_step,
     beautiful_soup,
 ):
@@ -240,7 +237,6 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
         },
         None,
     )
-    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
 
     response = post_to_step(
         AdviceView.RECOMMEND_APPROVAL,

@@ -387,7 +387,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
     @expect_status(
-        HTTPStatus.OK,
+        HTTPStatus.CREATED,
         "Error adding approval advice",
         "Unexpected error adding approval advice",
     )
