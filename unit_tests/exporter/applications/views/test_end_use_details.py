@@ -50,7 +50,7 @@ def test_application_end_use_summary_post_url_has_allowed_host_and_scheme_fail(
             "_action": "submit",
         },
     )
-    assert response.status_code == 302
+    assert response.status_code == 403
 
 
 @override_settings(ALLOWED_HOSTS="*")
