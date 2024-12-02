@@ -29,6 +29,7 @@ class UnsafeRedirectDestination(SuspiciousOperation):
     pass
 
 
+# Check that the redirect url is not an injected path taking the user somewhere outside of the application
 def ensure_redirect_destination_relative(destination):
     destination = destination.replace("\\", "")
     valid_url = not urlparse(destination).netloc and not urlparse(destination).scheme
