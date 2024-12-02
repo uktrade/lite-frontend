@@ -65,17 +65,3 @@ def test_application_end_use_summary_post_url_has_allowed_host_and_scheme_succes
         },
     )
     assert response.status_code == 302
-
-
-# @override_settings(DEBUG=True)
-# def test_application_end_use_summary_post(
-#     authorized_client, mock_application_get, application_end_use_summary_url, application_task_list_url
-# ):
-#     response = authorized_client.post(application_end_use_summary_url, data={})
-#     assert response.status_code == 200  # Assuming the form is invalid and re-renders the page
-#     assert response.context["back_url"] == application_task_list_url + "#end_use_details"
-#     assert response.context["back_link_text"] == "Back to application overview"
-#     assert (
-#         response.context["instruction_text"]
-#         == "Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress."
-#     )
