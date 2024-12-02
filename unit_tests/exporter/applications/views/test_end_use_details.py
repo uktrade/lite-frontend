@@ -36,20 +36,35 @@ def test_application_end_use_summary(
     )
 
 
-@override_settings(ALLOWED_HOSTS=None)
-def test_application_end_use_summary_has_url_has_allowed_host_and_scheme_fail(
-    authorized_client, mock_application_get, application_end_use_summary_url, application_task_list_url
+@override_settings(ALLOWED_HOSTS=[])
+def test_application_end_use_summary_post_url_has_allowed_host_and_scheme_fail(
+    authorized_client,
+    mock_application_get,
+    application_end_use_summary_url,
+    application_task_list_url,
 ):
-    response = authorized_client.post(application_end_use_summary_url, data={})
+
+    response = authorized_client.post(
+        application_end_use_summary_url,
+        data={
+            "_action": "submit",
+        },
+    )
     assert response.status_code == 403
 
 
 @override_settings(ALLOWED_HOSTS="*")
-def test_application_end_use_summary_has_url_has_allowed_host_and_scheme_success(
+def test_application_end_use_summary_post_url_has_allowed_host_and_scheme_success(
     authorized_client, mock_application_get, application_end_use_summary_url, application_task_list_url
 ):
-    response = authorized_client.post(application_end_use_summary_url, data={})
-    assert response.status_code == 200
+
+    response = authorized_client.post(
+        application_end_use_summary_url,
+        data={
+            "_action": "submit",
+        },
+    )
+    assert response.status_code == 302
 
 
 # @override_settings(DEBUG=True)
