@@ -1,6 +1,7 @@
 import pytest
 
 from django.urls import reverse
+from lite_forms.views import ensure_redirect_destination_relative, UnsafeRedirectDestination
 
 
 @pytest.fixture
@@ -33,3 +34,27 @@ def test_application_end_use_summary(
         response.context["instruction_text"]
         == "Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress."
     )
+
+
+def test_ensure_redirect_destination_relative_valid():
+    try:
+        ensure_redirect_destination_relative("/valid/path")
+    except UnsafeRedirectDestination:
+        pytest.fail("UnsafeRedirectDestination was raised unexpectedly!")
+
+
+def test_ensure_redirect_destination_relative_backslashes_valid():
+    try:
+        ensure_redirect_destination_relative("\\valid\path")
+    except UnsafeRedirectDestination:
+        pytest.fail("UnsafeRedirectDestination was raised unexpectedly!")
+
+
+def test_ensure_redirect_destination_relative_invalid():
+    with pytest.raises(UnsafeRedirectDestination) as error:
+        ensure_redirect_destination_relative("https://malicious.com/invalid/path")
+
+
+def test_ensure_redirect_destination_relative_backslashes_invalid():
+    with pytest.raises(UnsafeRedirectDestination):
+        ensure_redirect_destination_relative("https:/malicious.com")
