@@ -5,9 +5,8 @@ from typing import List
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
-from django.utils.http import url_has_allowed_host_and_scheme
-from django.conf import settings
-from django.http import HttpResponseForbidden
+from django.core.exceptions import SuspiciousOperation
+
 
 from lite_forms.components import FormGroup, Form
 from lite_forms.generators import form_page
@@ -23,6 +22,18 @@ from lite_forms.helpers import (
     validate_data_unknown,
 )
 from lite_forms.submitters import submit_paged_form
+from urllib.parse import urlparse
+
+
+class UnsafeRedirectDestination(SuspiciousOperation):
+    pass
+
+
+def ensure_redirect_destination_relative(destination):
+    destination = destination.replace("\\", "")
+    if not urlparse(destination).netloc and not urlparse(destination).scheme:
+        raise UnsafeRedirectDestination(f"Redirect destination '{destination}' was not a relative URL")
+
 
 ACTION = "_action"
 VALIDATE_ONLY = "validate_only"
@@ -191,9 +202,8 @@ class MultiFormView(FormView):
         self.init(request, **kwargs)
         submission = self.on_submission(request, **kwargs)  # noqa
 
-        if submission and url_has_allowed_host_and_scheme(
-            redirect(submission).url, allowed_hosts=settings.ALLOWED_HOSTS
-        ):
+        if submission:
+            ensure_redirect_destination_relative(redirect(submission).url)
             return redirect(submission)
 
         response, data = submit_paged_form(
@@ -345,10 +355,8 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        if url_has_allowed_host_and_scheme(redirect(request.path).url, allowed_hosts=settings.ALLOWED_HOSTS):
-            return redirect(request.path)
-        else:
-            return HttpResponseForbidden
+        ensure_redirect_destination_relative(redirect(request.path).url)
+        return redirect(request.path)
 
     def post(self, request, **kwargs):
         return self._post(request, **kwargs)
@@ -411,10 +419,8 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        if url_has_allowed_host_and_scheme(redirect(request.path).url, allowed_hosts=settings.ALLOWED_HOSTS):
-            return redirect(request.path)
-        else:
-            return HttpResponseForbidden
+        ensure_redirect_destination_relative(redirect(request.path).url)
+        return redirect(request.path)
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() in self.http_method_names:
@@ -425,3 +431,6 @@ class SummaryListFormView(FormView):
 
         handler = self.http_method_not_allowed
         return handler(request, *args, **kwargs)
+
+
+from django.core.exceptions import SuspiciousOperation
