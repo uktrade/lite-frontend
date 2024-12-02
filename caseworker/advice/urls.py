@@ -1,6 +1,6 @@
 from django.urls import path
 
-from caseworker.advice import views
+from caseworker.advice.views import views, consolidate_advice
 
 urlpatterns = [
     path("", views.AdviceView.as_view(), name="advice_view"),
@@ -28,8 +28,8 @@ urlpatterns = [
         name="countersign_decision_edit",
     ),
     path("consolidate/", views.ConsolidateAdviceView.as_view(), name="consolidate_advice_view"),
-    path("consolidate/review/<advice_type>/", views.ReviewConsolidateView.as_view()),
-    path("consolidate/review/", views.ReviewConsolidateView.as_view(), name="consolidate_review"),
+    path("consolidate/review/<advice_type>/", views.ReviewConsolidateView.as_view(), name="consolidate"),
+    path("consolidate/review/", consolidate_advice.ConsolidateSelectDecisionView.as_view(), name="consolidate_review"),
     path("consolidate/edit/", views.ConsolidateEditView.as_view(), name="consolidate_edit"),
     path("consolidate/view-advice/", views.ViewConsolidatedAdviceView.as_view(), name="consolidate_view"),
     path("assess-trigger-list-products/", views.DESNZProductAssessmentView.as_view(), name="assess_trigger_list"),

@@ -306,8 +306,6 @@ def gov_user():
 @pytest.mark.parametrize(
     "path, form_class, team_alias, team_name",
     (
-        ("", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
         ("approve/", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
         ("refuse/", forms.LUConsolidateRefusalForm, LICENSING_UNIT_TEAM, "LU Team"),
         ("approve/", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
@@ -766,7 +764,6 @@ def test_view_consolidate_refuse_outcome(
 @pytest.mark.parametrize(
     "path, form_class",
     (
-        ("", forms.ConsolidateApprovalForm),
         ("approve/", forms.ConsolidateApprovalForm),
         ("refuse/", forms.RefusalAdviceForm),
     ),

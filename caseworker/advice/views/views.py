@@ -649,6 +649,7 @@ class CountersignAdviceView(AdviceView):
         return {**super().get_context(**kwargs), "countersign": True}
 
 
+# TODO: Move to views/consolidate_advice.py on change
 class ConsolidateAdviceView(AdviceView):
     def get_context(self, **kwargs):
         return {**super().get_context(**kwargs), "consolidate": True}
@@ -661,10 +662,6 @@ class ConsolidateAdviceView(AdviceView):
 
 class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/review_consolidate.html"
-
-    def is_advice_approve_only(self):
-        approve_advice_types = ("approve", "proviso", "no_licence_required")
-        return all(a["type"]["key"] in approve_advice_types for a in self.case.advice)
 
     def get_form(self):
         form_kwargs = self.get_form_kwargs()
@@ -679,7 +676,7 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             )
             return forms.RefusalAdviceForm(choices, **form_kwargs)
 
-        if self.kwargs.get("advice_type") == AdviceType.APPROVE or self.is_advice_approve_only():
+        if self.kwargs.get("advice_type") == AdviceType.APPROVE:
             form_kwargs["approval_reason"] = get_picklists_list(
                 self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
             )
@@ -737,15 +734,10 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        if self.kwargs.get("advice_type") is None:
-            recommendation = self.request.POST.get("recommendation")
-            if recommendation == "approve":
-                return f"{self.request.path}approve/"
-            if recommendation == "refuse":
-                return f"{self.request.path}refuse/"
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
+# TODO: Move to views/consolidate_advice.py on change
 class ConsolidateEditView(ReviewConsolidateView):
     """
     Form to edit consolidated advice.
@@ -828,6 +820,7 @@ class ConsolidateEditView(ReviewConsolidateView):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
 
 
+# TODO: Move to views/consolidate_advice.py on change
 class ViewConsolidatedAdviceView(AdviceView, FormView):
     form_class = forms.MoveCaseForwardForm
 
