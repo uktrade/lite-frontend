@@ -34,8 +34,10 @@
             <div class="govuk-grid-column-three-quarters">
               <h1 class="govuk-heading-xl">View recommendation</h1>
               {% if my_advice %}
+                {% test_rule 'can_user_make_desnz_edit' request case as can_user_make_desnz_edit %}
+
                 {% if buttons.edit_recommendation %}
-                  {% if caseworker|is_desnz_team and case|is_approval %}
+                  {% if can_user_make_desnz_edit %}
                     <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice' queue_pk case.id %}">Edit recommendation</a>
                   {% else %}
                     <a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:edit_advice_legacy' queue_pk case.id %}">Edit recommendation</a>

@@ -494,9 +494,7 @@ class DESNZTriggerListAssessmentEditForm(DESNZTriggerListFormBase):
         self.organisation_documents = organisation_documents
 
 
-class RecommendAnApproval(PicklistAdviceForm, BaseForm):
-    DOCUMENT_TITLE = "Recommend approval for this case"
-
+class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
     class Layout:
         TITLE = "Recommend an approval"
 
@@ -517,8 +515,8 @@ class RecommendAnApproval(PicklistAdviceForm, BaseForm):
     )
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("proviso")
-        kwargs.pop("footnote_details")
+        del kwargs["proviso"]
+        del kwargs["footnote_details"]
         approval_reason = kwargs.pop("approval_reason")
         # this follows the same pattern as denial_reasons.
         approval_choices, approval_text = self._picklist_to_choices(approval_reason)
@@ -534,9 +532,7 @@ class RecommendAnApproval(PicklistAdviceForm, BaseForm):
         )
 
 
-class PicklistApprovalAdviceFormEdit(BaseForm):
-    DOCUMENT_TITLE = "Recommend approval for this case"
-
+class PicklistApprovalAdviceEditForm(BaseForm):
     class Layout:
         TITLE = "Add licence conditions, instructions to exporter or footnotes (optional)"
 
@@ -547,9 +543,9 @@ class PicklistApprovalAdviceFormEdit(BaseForm):
     )
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("approval_reason")
-        kwargs.pop("proviso")
-        kwargs.pop("footnote_details")
+        del kwargs["approval_reason"]
+        del kwargs["proviso"]
+        del kwargs["footnote_details"]
         super().__init__(*args, **kwargs)
 
     def get_layout_fields(self):
@@ -557,8 +553,6 @@ class PicklistApprovalAdviceFormEdit(BaseForm):
 
 
 class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
-    DOCUMENT_TITLE = "Recommend approval for this case"
-
     class Layout:
         TITLE = "Add licence conditions, instructions to exporter or footnotes (optional)"
 
@@ -587,8 +581,9 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
         return {"proviso": "\r\n\r\n".join([cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]])}
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("approval_reason")
-        kwargs.pop("footnote_details")
+        del kwargs["approval_reason"]
+        del kwargs["footnote_details"]
+
         proviso = kwargs.pop("proviso")
 
         proviso_choices, proviso_text = self._picklist_to_choices(proviso)
@@ -615,9 +610,6 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
 
 
 class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
-
-    DOCUMENT_TITLE = "Recommend approval for this case"
-
     class Layout:
         TITLE = "Instructions for the exporter (optional)"
 
@@ -641,8 +633,9 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
     )
 
     def __init__(self, *args, **kwargs):
-        kwargs.pop("approval_reason")
-        kwargs.pop("proviso")
+        del kwargs["approval_reason"]
+        del kwargs["proviso"]
+
         footnote_details = kwargs.pop("footnote_details")
         footnote_details_choices, footnote_text = self._picklist_to_choices(footnote_details)
         self.footnote_text = footnote_text

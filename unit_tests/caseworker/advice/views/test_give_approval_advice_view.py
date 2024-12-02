@@ -5,7 +5,7 @@ import pytest
 from django.urls import reverse
 
 from caseworker.advice import services
-from caseworker.advice.constants import AdviceView
+from caseworker.advice.constants import AdviceSteps
 
 
 @pytest.fixture(autouse=True)
@@ -154,7 +154,7 @@ def test_DESNZ_give_approval_advice_post_valid(
     )
 
     response = post_to_step(
-        AdviceView.RECOMMEND_APPROVAL,
+        AdviceSteps.RECOMMEND_APPROVAL,
         {"approval_reasons": "Data"},
     )
     assert response.status_code == 302
@@ -186,7 +186,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
         None,
     )
     response = post_to_step(
-        AdviceView.RECOMMEND_APPROVAL,
+        AdviceSteps.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason", "add_licence_conditions": True},
     )
     assert response.status_code == 200
@@ -196,7 +196,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     assert header.text == "Add licence conditions, instructions to exporter or footnotes (optional)"
 
     add_LC_response = post_to_step(
-        AdviceView.LICENCE_CONDITIONS,
+        AdviceSteps.LICENCE_CONDITIONS,
         {"proviso": "proviso"},
     )
     assert add_LC_response.status_code == 200
@@ -206,7 +206,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     assert header.text == "Instructions for the exporter (optional)"
 
     add_instructions_response = post_to_step(
-        AdviceView.LICENCE_FOOTNOTES,
+        AdviceSteps.LICENCE_FOOTNOTES,
         {"instructions_to_exporter": "instructions", "footnote_details": "footnotes"},
     )
     assert add_instructions_response.status_code == 302
@@ -239,7 +239,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
     )
 
     response = post_to_step(
-        AdviceView.RECOMMEND_APPROVAL,
+        AdviceSteps.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason", "add_licence_conditions": True},
     )
     assert response.status_code == 200
@@ -249,7 +249,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
     assert header.text == "Add licence conditions, instructions to exporter or footnotes (optional)"
 
     add_LC_response = post_to_step(
-        AdviceView.LICENCE_CONDITIONS,
+        AdviceSteps.LICENCE_CONDITIONS,
         {},
     )
     assert add_LC_response.status_code == 200
@@ -259,7 +259,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
     assert header.text == "Instructions for the exporter (optional)"
 
     add_instructions_response = post_to_step(
-        AdviceView.LICENCE_FOOTNOTES,
+        AdviceSteps.LICENCE_FOOTNOTES,
         {},
     )
     assert add_instructions_response.status_code == 302
@@ -293,7 +293,7 @@ def test_DESNZ_give_approval_advice_post_invalid(
     requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
 
     response = post_to_step(
-        AdviceView.RECOMMEND_APPROVAL,
+        AdviceSteps.RECOMMEND_APPROVAL,
         {"approval_reasons": ""},
     )
     assert response.status_code == 200
@@ -330,6 +330,6 @@ def test_DESNZ_give_approval_advice_post_invalid_user(
     # DESNZ only.
     with pytest.raises(IndexError) as err:
         response = post_to_step(
-            AdviceView.RECOMMEND_APPROVAL,
+            AdviceSteps.RECOMMEND_APPROVAL,
             {"approval_reasons": ""},
         )

@@ -28,7 +28,7 @@ class AdviceType:
     NO_LICENCE_REQUIRED = "no_licence_required"
 
 
-class AdviceView:
+class AdviceSteps:
     RECOMMEND_APPROVAL = "recommend_approval"
     LICENCE_CONDITIONS = "licence_conditions"
     LICENCE_FOOTNOTES = "licence_footnotes"

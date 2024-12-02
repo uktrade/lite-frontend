@@ -1,4 +1,3 @@
-from unittest import mock
 import pytest
 from bs4 import BeautifulSoup
 
@@ -22,16 +21,20 @@ def test_select_advice_get(authorized_client, url):
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize("recommendation, redirect", [("approve_all", "approve"), ("refuse_all", "refuse")])
-def test_select_advice_post(authorized_client, url, recommendation, redirect):
+@pytest.mark.parametrize(
+    "recommendation, redirect", [("approve_all", "approve-all-legacy"), ("refuse_all", "refuse-all")]
+)
+def test_select_advice_post(authorized_client, url, recommendation, redirect, data_standard_case):
     response = authorized_client.post(url, data={"recommendation": recommendation})
     assert response.status_code == 302
-    assert redirect in response.url
+    assert (
+        response.url
+        == f'/queues/00000000-0000-0000-0000-000000000001/cases/{data_standard_case["case"]["id"]}/advice/{redirect}/'
+    )
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
-def test_select_advice_post_desnz(mock_get_gov_user, authorized_client, url):
-    mock_get_gov_user.return_value = (
+def test_select_advice_post_desnz(authorized_client, url, data_standard_case, mocker):
+    get_gov_user_value = (
         {
             "user": {
                 "team": {
@@ -43,9 +46,13 @@ def test_select_advice_post_desnz(mock_get_gov_user, authorized_client, url):
         },
         None,
     )
+    mocker.patch("caseworker.advice.views.get_gov_user", return_value=get_gov_user_value)
     response = authorized_client.post(url, data={"recommendation": "approve_all"})
     assert response.status_code == 302
-    assert "approve-all" in response.url
+    assert (
+        response.url
+        == f'/queues/00000000-0000-0000-0000-000000000001/cases/{data_standard_case["case"]["id"]}/advice/approve-all/'
+    )
 
 
 def test_view_serial_numbers_for_firearm_product_in_select_advice_view(authorized_client, data_standard_case, url):

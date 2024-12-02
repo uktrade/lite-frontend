@@ -1,4 +1,3 @@
-from unittest import mock
 import pytest
 
 from copy import deepcopy
@@ -6,7 +5,7 @@ from django.urls import reverse
 
 from caseworker.advice import services
 from core import client
-from caseworker.advice.constants import AdviceView
+from caseworker.advice.constants import AdviceSteps
 
 
 @pytest.fixture(autouse=True)
@@ -220,9 +219,7 @@ def post_to_step(post_to_step_factory, url_desnz):
     return post_to_step_factory(url_desnz)
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
 def test_DESNZ_give_approval_advice_post_valid(
-    mock_get_gov_user,
     authorized_client,
     requests_mock,
     data_standard_case,
@@ -234,18 +231,9 @@ def test_DESNZ_give_approval_advice_post_valid(
     standard_case_with_advice,
     post_to_step,
     beautiful_soup,
+    mocker,
 ):
-    case_data = deepcopy(data_standard_case)
-    case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
-    case_data["case"]["advice"] = standard_case_with_advice["advice"]
-
-    requests_mock.get(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}"), json=case_data)
-    requests_mock.get(
-        client._build_absolute_uri(f"/gov_users/{data_standard_case['case']['id']}"),
-        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
-    )
-
-    mock_get_gov_user.return_value = (
+    get_gov_user_value = (
         {
             "user": {
                 "team": {
@@ -257,9 +245,19 @@ def test_DESNZ_give_approval_advice_post_valid(
         },
         None,
     )
+    mocker.patch("caseworker.advice.views.get_gov_user", return_value=get_gov_user_value)
+    case_data = deepcopy(data_standard_case)
+    case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
+    case_data["case"]["advice"] = standard_case_with_advice["advice"]
+
+    requests_mock.get(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}"), json=case_data)
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov_users/{data_standard_case['case']['id']}"),
+        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
+    )
 
     response = post_to_step(
-        AdviceView.RECOMMEND_APPROVAL,
+        AdviceSteps.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason updated", "add_licence_conditions": False},
     )
     assert response.status_code == 302
@@ -331,9 +329,7 @@ def test_DESNZ_give_approval_advice_post_valid(
     ]
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
 def test_DESNZ_give_approval_advice_post_valid_add_conditional(
-    mock_get_gov_user,
     authorized_client,
     requests_mock,
     data_standard_case,
@@ -345,18 +341,9 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     standard_case_with_advice,
     post_to_step,
     beautiful_soup,
+    mocker,
 ):
-    case_data = deepcopy(data_standard_case)
-    case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
-    case_data["case"]["advice"] = standard_case_with_advice["advice"]
-
-    requests_mock.get(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}"), json=case_data)
-    requests_mock.get(
-        client._build_absolute_uri(f"/gov_users/{data_standard_case['case']['id']}"),
-        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
-    )
-
-    mock_get_gov_user.return_value = (
+    get_gov_user_value = (
         {
             "user": {
                 "team": {
@@ -368,9 +355,19 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
         },
         None,
     )
+    mocker.patch("caseworker.advice.views.get_gov_user", return_value=get_gov_user_value)
+    case_data = deepcopy(data_standard_case)
+    case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
+    case_data["case"]["advice"] = standard_case_with_advice["advice"]
+
+    requests_mock.get(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}"), json=case_data)
+    requests_mock.get(
+        client._build_absolute_uri(f"/gov_users/{data_standard_case['case']['id']}"),
+        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
+    )
 
     response = post_to_step(
-        AdviceView.RECOMMEND_APPROVAL,
+        AdviceSteps.RECOMMEND_APPROVAL,
         {"approval_reasons": "reason updated", "add_licence_conditions": True},
     )
     assert response.status_code == 200
@@ -379,18 +376,18 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     header = soup.find("h1")
     assert header.text == "Add licence conditions, instructions to exporter or footnotes (optional)"
 
-    add_LC_response = post_to_step(
-        AdviceView.LICENCE_CONDITIONS,
+    add_licence_condition_response = post_to_step(
+        AdviceSteps.LICENCE_CONDITIONS,
         {"proviso": "proviso updated"},
     )
-    assert add_LC_response.status_code == 200
-    soup = beautiful_soup(add_LC_response.content)
+    assert add_licence_condition_response.status_code == 200
+    soup = beautiful_soup(add_licence_condition_response.content)
     # redirected to next form
     header = soup.find("h1")
     assert header.text == "Instructions for the exporter (optional)"
 
     add_instructions_response = post_to_step(
-        AdviceView.LICENCE_FOOTNOTES,
+        AdviceSteps.LICENCE_FOOTNOTES,
         {"instructions_to_exporter": "instructions updated", "footnote_details": "footnotes updated"},
     )
     assert add_instructions_response.status_code == 302

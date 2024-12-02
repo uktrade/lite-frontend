@@ -1,5 +1,6 @@
 from http import HTTPStatus
 from caseworker.advice.conditionals import form_add_licence_conditions, is_desnz_team
+from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from core.wizard.views import BaseSessionWizardView
 from core.wizard.conditionals import C
 import sentry_sdk
@@ -22,7 +23,7 @@ from caseworker.picklists.services import get_picklists_list
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
 
-from caseworker.advice.constants import AdviceType, AdviceView
+from caseworker.advice.constants import AdviceType, AdviceSteps
 from core import client
 from core.auth.views import LoginRequiredMixin
 from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
@@ -359,15 +360,15 @@ class EditAdviceViewLegacy(LoginRequiredMixin, CaseContextMixin, FormView):
 class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
 
     form_list = [
-        (AdviceView.RECOMMEND_APPROVAL, forms.RecommendAnApproval),
-        (AdviceView.LICENCE_CONDITIONS, forms.LicenceConditionsForm),
-        (AdviceView.LICENCE_FOOTNOTES, forms.FootnotesApprovalAdviceForm),
+        (AdviceSteps.RECOMMEND_APPROVAL, forms.RecommendAnApprovalForm),
+        (AdviceSteps.LICENCE_CONDITIONS, forms.LicenceConditionsForm),
+        (AdviceSteps.LICENCE_FOOTNOTES, forms.FootnotesApprovalAdviceForm),
     ]
 
     condition_dict = {
-        AdviceView.RECOMMEND_APPROVAL: C(is_desnz_team),
-        AdviceView.LICENCE_CONDITIONS: C(form_add_licence_conditions("recommend_approval")),
-        AdviceView.LICENCE_FOOTNOTES: C(form_add_licence_conditions("recommend_approval")),
+        AdviceSteps.RECOMMEND_APPROVAL: C(is_desnz_team),
+        AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions("recommend_approval")),
+        AdviceSteps.LICENCE_FOOTNOTES: C(form_add_licence_conditions("recommend_approval")),
     }
 
     def get_form_kwargs(self, step=None):
@@ -386,6 +387,11 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
     def get_success_url(self):
         return reverse("cases:view_my_advice", kwargs=self.kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("cases:advice_view", kwargs=self.kwargs)
+        return context
+
     @expect_status(
         HTTPStatus.CREATED,
         "Error adding approval advice",
@@ -394,11 +400,11 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
     def post_approval_advice(self, data):
         return services.post_approval_advice(self.request, self.case, data)
 
+    def get_payload(self, form_dict):
+        return GiveApprovalAdvicePayloadBuilder().build(form_dict)
+
     def done(self, form_list, form_dict, **kwargs):
-        data = {}
-        # flattens the form_dict
-        for form_data in form_dict.values():
-            data.update(form_data.cleaned_data)
+        data = self.get_payload(form_dict)
         self.post_approval_advice(data)
         return redirect(self.get_success_url())
 
@@ -406,10 +412,15 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
 class EditAdviceView(GiveApprovalAdviceView):
 
     form_list = [
-        (AdviceView.RECOMMEND_APPROVAL, forms.RecommendAnApproval),
-        (AdviceView.LICENCE_CONDITIONS, forms.PicklistApprovalAdviceFormEdit),
-        (AdviceView.LICENCE_FOOTNOTES, forms.FootnotesApprovalAdviceForm),
+        (AdviceSteps.RECOMMEND_APPROVAL, forms.RecommendAnApprovalForm),
+        (AdviceSteps.LICENCE_CONDITIONS, forms.PicklistApprovalAdviceEditForm),
+        (AdviceSteps.LICENCE_FOOTNOTES, forms.FootnotesApprovalAdviceForm),
     ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = self.get_success_url()
+        return context
 
     def get_form_initial(self, step):
         my_advice = services.filter_current_user_advice(self.case.advice, self.caseworker_id)
