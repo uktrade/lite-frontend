@@ -31,7 +31,8 @@ class UnsafeRedirectDestination(SuspiciousOperation):
 
 def ensure_redirect_destination_relative(destination):
     destination = destination.replace("\\", "")
-    if urlparse(destination).netloc and urlparse(destination).scheme:
+    valid_url = not urlparse(destination).netloc and not urlparse(destination).scheme
+    if not valid_url:
         raise UnsafeRedirectDestination(f"Redirect destination '{destination}' was not a relative URL")
 
 
