@@ -31,7 +31,7 @@ class UnsafeRedirectDestination(SuspiciousOperation):
 
 def ensure_redirect_destination_relative(destination):
     destination = destination.replace("\\", "")
-    if not urlparse(destination).netloc and not urlparse(destination).scheme:
+    if urlparse(destination).netloc and urlparse(destination).scheme:
         raise UnsafeRedirectDestination(f"Redirect destination '{destination}' was not a relative URL")
 
 
@@ -431,6 +431,3 @@ class SummaryListFormView(FormView):
 
         handler = self.http_method_not_allowed
         return handler(request, *args, **kwargs)
-
-
-from django.core.exceptions import SuspiciousOperation
