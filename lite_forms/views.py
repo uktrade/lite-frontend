@@ -191,7 +191,9 @@ class MultiFormView(FormView):
         self.init(request, **kwargs)
         submission = self.on_submission(request, **kwargs)  # noqa
 
-        if submission and url_has_allowed_host_and_scheme(redirect(submission), allowed_hosts=settings.ALLOWED_HOSTS):
+        if submission and url_has_allowed_host_and_scheme(
+            redirect(submission).url, allowed_hosts=settings.ALLOWED_HOSTS
+        ):
             return redirect(submission)
 
         response, data = submit_paged_form(
@@ -343,8 +345,8 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        if url_has_allowed_host_and_scheme(redirect(request.path), allowed_hosts=settings.ALLOWED_HOSTS):
-            return request.path
+        if url_has_allowed_host_and_scheme(redirect(request.path).url, allowed_hosts=settings.ALLOWED_HOSTS):
+            return redirect(request.path)
         else:
             return HttpResponseForbidden
 
@@ -409,8 +411,8 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        if url_has_allowed_host_and_scheme(redirect(request.path), allowed_hosts=settings.ALLOWED_HOSTS):
-            return request.path
+        if url_has_allowed_host_and_scheme(redirect(request.path).url, allowed_hosts=settings.ALLOWED_HOSTS):
+            return redirect(request.path)
         else:
             return HttpResponseForbidden
 
