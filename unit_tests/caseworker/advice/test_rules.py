@@ -225,3 +225,17 @@ def test_can_user_make_desnz_edit_invalid_advice_and_user(mock_gov_user, data_fa
     data_assigned_case
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
     assert not rules.test_rule("can_user_make_desnz_edit", request, data_assigned_case)
+
+
+def test_can_user_make_desnz_edit_request_missing_attributes(mock_gov_user, data_fake_queue, data_standard_case):
+    case = Case(data_standard_case["case"])
+    request = None
+
+    assert not advice_rules.can_user_make_desnz_edit(request, case)
+
+
+def test_can_user_make_desnz_edit_user_not_allocated(mock_gov_user, data_fake_queue, data_standard_case):
+    case = Case(data_standard_case["case"])
+    request = get_mock_request(mock_gov_user["user"], data_fake_queue)
+
+    assert not rules.test_rule("can_user_make_desnz_edit", request, case)
