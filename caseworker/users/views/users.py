@@ -1,7 +1,6 @@
-from django.contrib import messages
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.utils.functional import cached_property
 from caseworker.cases.services import update_mentions
@@ -11,13 +10,9 @@ from caseworker.core.constants import (
     UserStatuses,
 )
 from lite_content.lite_internal_frontend import strings
-from lite_content.lite_internal_frontend.users import UsersPage
 from lite_forms.components import FiltersBar, Select, Option, TextInput
-from lite_forms.views import SingleFormView
-from caseworker.users.forms.users import add_user_form
 from caseworker.users.services import (
     get_gov_users,
-    post_gov_users,
     put_gov_user,
     get_gov_user,
     is_super_user,
@@ -60,16 +55,6 @@ class UsersList(TemplateView):
             "filters": filters,
         }
         return render(request, "users/index.html", context)
-
-
-class AddUser(SingleFormView):
-    def init(self, request, **kwargs):
-        self.form = add_user_form(request)
-        self.action = post_gov_users
-
-    def get_success_url(self):
-        messages.success(self.request, UsersPage.INVITE_SUCCESSFUL_BANNER)
-        return reverse("users:users")
 
 
 class ViewUser(TemplateView):
