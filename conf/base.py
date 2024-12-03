@@ -161,7 +161,10 @@ HAWK_RECEIVER_NONCE_EXPIRY_SECONDS = 60
 
 LOGIN_URL = reverse_lazy("auth:login")
 
-DATA_DIR = os.path.dirname(BASE_DIR)
+if IS_ENV_DBT_PLATFORM:
+    DATA_DIR = BASE_DIR
+else:
+    DATA_DIR = os.path.dirname(BASE_DIR)
 
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -217,7 +220,6 @@ LOGGING = {
 }
 
 if IS_ENV_DBT_PLATFORM:
-    ALLOWED_HOSTS = setup_allowed_hosts(ALLOWED_HOSTS)
     REDIS_URL = env.str("REDIS_URL", "")
     LOGGING.update({"formatters": {"asim_formatter": {"()": ASIMFormatter}}})
     LOGGING.update({"handlers": {"asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"}}})
