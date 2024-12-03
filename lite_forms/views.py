@@ -186,9 +186,6 @@ class MultiFormView(FormView):
             raise AttributeError("Form index exceeds the number of forms in the form group")
         return forms[form_pk]
 
-    def on_submission(self, request, **kwargs):
-        return
-
     def post_success_step(self):
         if self.success_message:
             messages.success(self.request, self.success_message)
@@ -202,11 +199,6 @@ class MultiFormView(FormView):
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
-        submission = self.on_submission(request, **kwargs)  # noqa
-
-        if submission:
-            ensure_redirect_destination_relative(redirect(submission).url)
-            return redirect(submission)
 
         response, data = submit_paged_form(
             request,
