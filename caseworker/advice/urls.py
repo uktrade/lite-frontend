@@ -28,6 +28,9 @@ urlpatterns = [
         name="countersign_decision_edit",
     ),
     path("consolidate/", views.ConsolidateAdviceView.as_view(), name="consolidate_advice_view"),
+    path(
+        "consolidate/review/approve/", consolidate_advice.ConsolidateApproveView.as_view(), name="consolidate_approve"
+    ),
     path("consolidate/review/<advice_type>/", views.ReviewConsolidateView.as_view(), name="consolidate"),
     path("consolidate/review/", consolidate_advice.ConsolidateSelectDecisionView.as_view(), name="consolidate_review"),
     path("consolidate/edit/", views.ConsolidateEditView.as_view(), name="consolidate_edit"),

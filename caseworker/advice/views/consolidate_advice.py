@@ -2,11 +2,14 @@ from django.views.generic import FormView
 from django.shortcuts import redirect
 from django.urls import reverse
 
+from requests.exceptions import HTTPError
+
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.advice import forms
 from caseworker.advice.views.views import CaseContextMixin
 from caseworker.advice import services
+from caseworker.picklists.services import get_picklists_list
 
 
 class BaseConsolidationView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -55,7 +58,53 @@ class ConsolidateSelectDecisionView(BaseConsolidationView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse(
-            "cases:consolidate",
-            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "advice_type": self.decision},
+        if self.decision == "approve":
+            return reverse(
+                "cases:consolidate_approve",
+                kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]},
+            )
+        else:
+            return reverse(
+                "cases:consolidate",
+                kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "advice_type": "refuse"},
+            )
+
+
+class ConsolidateApproveView(BaseConsolidationView):
+    """
+    Consolidate advice and approve.
+    """
+
+    template_name = "advice/review_consolidate.html"
+    form_class = forms.ConsolidateApprovalForm
+
+    def setup(self, *args, **kwargs):
+        super().setup(*args, **kwargs)
+        self.team_alias = self.caseworker["team"].get("alias", None)
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["approval_reason"] = get_picklists_list(
+            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
         )
+        form_kwargs["proviso"] = get_picklists_list(
+            self.request, type="proviso", disable_pagination=True, show_deactivated=False
+        )
+        form_kwargs["footnote_details"] = get_picklists_list(
+            self.request, type="footnotes", disable_pagination=True, show_deactivated=False
+        )
+        form_kwargs["team_alias"] = self.team_alias
+        return form_kwargs
+
+    def form_valid(self, form):
+        level = "final-advice" if self.team_alias == services.LICENSING_UNIT_TEAM else "team-advice"
+        try:
+            services.post_approval_advice(self.request, self.case, form.cleaned_data, level=level)
+        except HTTPError as e:
+            errors = e.response.json()["errors"]
+            form.add_error(None, errors)
+            return super().form_invalid(form)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
