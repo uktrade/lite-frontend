@@ -15,7 +15,7 @@ export NOTIFY_FEEDBACK_EMAIL="example"
 export FEEDBACK_URL="example"
 export INTERNAL_FRONTEND_URL="example"
 export LITE_EXPORTER_HAWK_KEY="example"
-export COPILOT_ENVIRONMENT_NAME="example" # force env var to exist to build correctly
+export COPILOT_ENVIRONMENT_NAME="example"
 export LITE_INTERNAL_HAWK_KEY="example"
 
 declare -a settings_modules=(conf.exporter conf.caseworker)
