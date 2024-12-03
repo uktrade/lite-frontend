@@ -1,5 +1,5 @@
 {% extends 'layouts/base.html' %}
-
+{% load rules %}
 {% block back_link %}
 	{% if not is_user_in_team %}
 		<a href="{% url 'teams:teams' %}" class="govuk-back-link">{% lcs 'teams.TeamPage.BACK_LINK' %}</a>
@@ -27,11 +27,14 @@
 					<a href="{% url 'picklists:picklists' %}" class="lite-tabs__tab">{% lcs 'teams.TeamPage.Tabs.PICKLISTS' %}</a>
 				{% endif %}
 			</div>
-			<div class="lite-tabs__controls">
-				<a id="button-add-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
-					{% lcs 'teams.TeamPage.ADD_A_MEMBER_BUTTON' %}
-				</a>
-			</div>
+			{% test_rule 'can_caseworker_add_user' request as show_add_user %}
+			{% if show_add_user %}
+				<div class="lite-tabs__controls">
+					<a id="button-add-user" href="{% url 'users:add' %}" class="govuk-button" draggable="false" role="button">
+						{% lcs 'teams.TeamPage.ADD_A_MEMBER_BUTTON' %}
+					</a>
+				</div>
+			{% endif %}
 		</div>
 	{% endif %}
 

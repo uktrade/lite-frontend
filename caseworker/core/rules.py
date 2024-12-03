@@ -224,3 +224,4 @@ rules.add_rule(
 rules.add_rule("can_user_manage_organisation", is_user_manage_organisations_role & is_organisation_active)
 rules.add_rule("can_caseworker_deactivate", (is_super_user) & check_user_is_not_logged_in_caseworker)  # noqa
 rules.add_rule("can_caseworker_edit_user", (is_super_user))  # noqa
+rules.add_rule("can_caseworker_add_user", (is_super_user))  # noqa

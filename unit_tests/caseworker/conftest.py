@@ -4,12 +4,14 @@ import re
 import os
 import uuid
 from urllib import parse
+import requests
 
 import pytest
 from dotenv import load_dotenv
 from django.conf import settings
 from django.test import Client
 from django.utils import timezone
+from django.http import HttpRequest
 
 from caseworker.advice import services
 from core import client
@@ -3195,3 +3197,16 @@ def mock_roles(requests_mock):
         url=url,
         json={"roles": [{"id": SUPER_USER_ROLE_ID, "name": "Super User"}]},
     )
+
+
+@pytest.fixture
+def get_mock_request_user(client):
+    def request_factory(user):
+        request = HttpRequest()
+        request.lite_user = user
+        request.session = client.session
+        request.requests_session = requests.Session()
+        request.META["HTTP_HOST"] = "testserver.com"
+        return request
+
+    return request_factory
