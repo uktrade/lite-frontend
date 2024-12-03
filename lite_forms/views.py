@@ -202,6 +202,7 @@ class MultiFormView(FormView):
 
     def post(self, request, **kwargs):
         self.init(request, **kwargs)
+        submission = self.on_submission(request, **kwargs)  # noqa
 
         response, data = submit_paged_form(
             request,
