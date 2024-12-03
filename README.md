@@ -303,7 +303,7 @@ The production assets are built on deployment as part of the cloudfoundry build.
 to run the tests run:
 `docker exec -it lite-frontend_frontend_assets_watcher_1 npm run test`
 
-### Without docker
+### Without Docker
 
 Node version required can be found in the `package.json` under `engines`.
 All javascripts and scss files are stored under caseworker/assets and exporter/assets
