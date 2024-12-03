@@ -1,4 +1,8 @@
 from http import HTTPStatus
+from caseworker.advice.conditionals import form_add_licence_conditions, is_desnz_team
+from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
+from core.wizard.views import BaseSessionWizardView
+from core.wizard.conditionals import C
 import sentry_sdk
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect
@@ -19,7 +23,7 @@ from caseworker.picklists.services import get_picklists_list
 from caseworker.tau.summaries import get_good_on_application_tau_summary
 from caseworker.users.services import get_gov_user
 
-from caseworker.advice.constants import AdviceType
+from caseworker.advice.constants import AdviceType, AdviceSteps
 from core import client
 from core.auth.views import LoginRequiredMixin
 from core.constants import SecurityClassifiedApprovalsType, OrganisationDocumentType
@@ -144,7 +148,9 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_success_url(self):
         recommendation = self.request.POST.get("recommendation")
         if recommendation == "approve_all":
-            return reverse("cases:approve_all", kwargs=self.kwargs)
+            if self.caseworker["team"]["alias"] in services.DESNZ_TEAMS:
+                return reverse("cases:approve_all", kwargs=self.kwargs)
+            return reverse("cases:approve_all_legacy", kwargs=self.kwargs)
         else:
             return reverse("cases:refuse_all", kwargs=self.kwargs)
 
@@ -153,7 +159,7 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
-class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+class GiveApprovalAdviceViewLegacy(LoginRequiredMixin, CaseContextMixin, FormView):
     """
     Form to recommend approval advice for all products on the application
     """
@@ -248,6 +254,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESN
         nlr_products = services.filter_nlr_products(self.case["data"]["goods"])
         advice_completed = services.unadvised_countries(self.caseworker, self.case) == {}
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
+
         return {
             **context,
             "title": title,
@@ -277,7 +284,7 @@ class AdviceDetailView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESN
         return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["queue_pk"]})
 
 
-class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+class EditAdviceViewLegacy(LoginRequiredMixin, CaseContextMixin, FormView):
     """
     Form to edit given advice for all products on the application
     """
@@ -348,6 +355,88 @@ class EditAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
         context["edit"] = True
         return context
+
+
+class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
+
+    form_list = [
+        (AdviceSteps.RECOMMEND_APPROVAL, forms.RecommendAnApprovalForm),
+        (AdviceSteps.LICENCE_CONDITIONS, forms.LicenceConditionsForm),
+        (AdviceSteps.LICENCE_FOOTNOTES, forms.FootnotesApprovalAdviceForm),
+    ]
+
+    condition_dict = {
+        AdviceSteps.RECOMMEND_APPROVAL: C(is_desnz_team),
+        AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions("recommend_approval")),
+        AdviceSteps.LICENCE_FOOTNOTES: C(form_add_licence_conditions("recommend_approval")),
+    }
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+        kwargs["approval_reason"] = get_picklists_list(
+            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+        )
+        kwargs["proviso"] = get_picklists_list(
+            self.request, type="proviso", disable_pagination=True, show_deactivated=False
+        )
+        kwargs["footnote_details"] = get_picklists_list(
+            self.request, type="footnotes", disable_pagination=True, show_deactivated=False
+        )
+        return kwargs
+
+    def get_success_url(self):
+        return reverse("cases:view_my_advice", kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("cases:advice_view", kwargs=self.kwargs)
+        return context
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding approval advice",
+        "Unexpected error adding approval advice",
+    )
+    def post_approval_advice(self, data):
+        return services.post_approval_advice(self.request, self.case, data)
+
+    def get_payload(self, form_dict):
+        return GiveApprovalAdvicePayloadBuilder().build(form_dict)
+
+    def done(self, form_list, form_dict, **kwargs):
+        data = self.get_payload(form_dict)
+        self.post_approval_advice(data)
+        return redirect(self.get_success_url())
+
+
+class EditAdviceView(GiveApprovalAdviceView):
+
+    form_list = [
+        (AdviceSteps.RECOMMEND_APPROVAL, forms.RecommendAnApprovalForm),
+        (AdviceSteps.LICENCE_CONDITIONS, forms.PicklistApprovalAdviceEditForm),
+        (AdviceSteps.LICENCE_FOOTNOTES, forms.FootnotesApprovalAdviceForm),
+    ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = self.get_success_url()
+        return context
+
+    def get_form_initial(self, step):
+        my_advice = services.filter_current_user_advice(self.case.advice, self.caseworker_id)
+        advice = my_advice[0]
+
+        # When the form is prepopulated in the edit flow,
+        # the radio values are set to other because only the textfield values are stored it's not possible to replay the selected radio.
+        return {
+            "add_licence_conditions": bool(advice.get("proviso")),
+            "approval_reasons": advice.get("text", ""),
+            "approval_radios": "other",
+            "proviso": advice.get("proviso"),
+            "instructions_to_exporter": advice.get("note", ""),
+            "footnote_details": advice.get("footnote", ""),
+            "footnote_details_radios": "other",
+        }
 
 
 class DeleteAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
