@@ -6,7 +6,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from django_log_formatter_ecs import ECSFormatter
 from django_log_formatter_asim import ASIMFormatter
 from dbt_copilot_python.utility import is_copilot
-from dbt_copilot_python.network import setup_allowed_hosts
 
 from django.urls import reverse_lazy
 
