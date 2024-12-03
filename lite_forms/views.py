@@ -31,10 +31,11 @@ class UnsafeRedirectDestination(SuspiciousOperation):
 
 # Check that the redirect url is not an injected path taking the user somewhere outside of the application
 def ensure_redirect_destination_relative(destination):
-    destination = destination.replace("\\", "")
-    valid_url = not urlparse(destination).netloc and not urlparse(destination).scheme
+    destination_url_string = str(destination).replace("\\", "")
+    valid_url = not urlparse(destination_url_string).netloc and not urlparse(destination_url_string).scheme
     if not valid_url:
-        raise UnsafeRedirectDestination(f"Redirect destination '{destination}' was not a relative URL")
+        raise UnsafeRedirectDestination(f"Redirect destination '{destination_url_string}' was not a relative URL")
+    return destination
 
 
 ACTION = "_action"
@@ -353,8 +354,8 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        ensure_redirect_destination_relative(redirect(request.path).url)
-        return redirect(request.path)
+        sanitised_path = ensure_redirect_destination_relative(request.path)
+        return redirect(sanitised_path)
 
     def post(self, request, **kwargs):
         return self._post(request, **kwargs)
@@ -417,8 +418,8 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        ensure_redirect_destination_relative(redirect(request.path).url)
-        return redirect(request.path)
+        sanitised_path = ensure_redirect_destination_relative(request.path)
+        return redirect(sanitised_path)
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() in self.http_method_names:
