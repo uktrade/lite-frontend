@@ -33,7 +33,7 @@ def test_select_advice_post(authorized_client, requests_mock, data_standard_case
     assert response.status_code == 302
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
+@mock.patch("caseworker.advice.views.views.get_gov_user")
 def test_fco_give_approval_advice_get(mock_get_gov_user, authorized_client, url):
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
@@ -48,7 +48,7 @@ def test_fco_give_approval_advice_get(mock_get_gov_user, authorized_client, url)
     ]
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
+@mock.patch("caseworker.advice.views.views.get_gov_user")
 def test_fco_give_approval_advice_existing_get(mock_get_gov_user, authorized_client, url, data_standard_case):
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
@@ -93,8 +93,8 @@ def test_fco_give_approval_advice_existing_get(mock_get_gov_user, authorized_cli
         ([], "", 200),
     ],
 )
-@mock.patch("caseworker.advice.views.get_gov_user")
-def test_fcdo_give_approval_advice_post(
+@mock.patch("caseworker.advice.views.views.get_gov_user")
+def test_fco_give_approval_advice_post(
     mock_get_gov_user,
     authorized_client,
     requests_mock,
@@ -127,7 +127,7 @@ def post_to_step(post_to_step_factory, url_desnz):
     return post_to_step_factory(url_desnz)
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
+@mock.patch("caseworker.advice.views.views.get_gov_user")
 def test_DESNZ_give_approval_advice_post_valid(
     mock_get_gov_user,
     authorized_client,
@@ -160,7 +160,7 @@ def test_DESNZ_give_approval_advice_post_valid(
     assert response.status_code == 302
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
+@mock.patch("caseworker.advice.views.views.get_gov_user")
 def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     mock_get_gov_user,
     authorized_client,
@@ -212,7 +212,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     assert add_instructions_response.status_code == 302
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
+@mock.patch("caseworker.advice.views.views.get_gov_user")
 def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
     mock_get_gov_user,
     authorized_client,
@@ -265,7 +265,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional_optional(
     assert add_instructions_response.status_code == 302
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
+@mock.patch("caseworker.advice.views.views.get_gov_user")
 def test_DESNZ_give_approval_advice_post_invalid(
     mock_get_gov_user,
     authorized_client,
@@ -300,7 +300,7 @@ def test_DESNZ_give_approval_advice_post_invalid(
     soup = beautiful_soup(response.content)
 
 
-@mock.patch("caseworker.advice.views.get_gov_user")
+@mock.patch("caseworker.advice.views.views.get_gov_user")
 def test_DESNZ_give_approval_advice_post_invalid_user(
     mock_get_gov_user,
     authorized_client,

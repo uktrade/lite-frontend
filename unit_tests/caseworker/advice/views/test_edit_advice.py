@@ -245,7 +245,7 @@ def test_DESNZ_give_approval_advice_post_valid(
         },
         None,
     )
-    mocker.patch("caseworker.advice.views.get_gov_user", return_value=get_gov_user_value)
+    mocker.patch("caseworker.advice.views.views.get_gov_user", return_value=get_gov_user_value)
     case_data = deepcopy(data_standard_case)
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     case_data["case"]["advice"] = standard_case_with_advice["advice"]
@@ -355,7 +355,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
         },
         None,
     )
-    mocker.patch("caseworker.advice.views.get_gov_user", return_value=get_gov_user_value)
+    mocker.patch("caseworker.advice.views.views.get_gov_user", return_value=get_gov_user_value)
     case_data = deepcopy(data_standard_case)
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     case_data["case"]["advice"] = standard_case_with_advice["advice"]

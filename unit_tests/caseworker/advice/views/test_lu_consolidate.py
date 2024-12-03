@@ -22,7 +22,7 @@ def url(request, data_queue, data_standard_case):
     )
 
 
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_no_advice_summary_for_lu(
     mock_get_gov_user,
     url,
@@ -53,7 +53,7 @@ def test_no_advice_summary_for_lu(
         ],
     ),
 )
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_lu_consolidate_check_countersignatures_other_recommendations(
     mock_get_gov_user,
     countersigning_data,
@@ -104,14 +104,14 @@ def test_lu_consolidate_check_countersignatures_other_recommendations(
 def advice(current_user):
     return [
         {
-            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
+            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
             "country": None,
             "created_at": "2021-10-16T23:48:39.486679+01:00",
             "denial_reasons": [],
             "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
             "footnote": "footnotes",
             "good": good_id,
-            "id": "429c5596-fe8b-4540-988b-c37805cd08de",
+            "id": "429c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
             "level": "user",
             "note": "additional notes",
             "proviso": "no conditions",
@@ -132,7 +132,7 @@ def url_consolidate_review(data_queue, data_standard_case):
     )
 
 
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_refusal_note_post(
     mock_get_gov_user, requests_mock, authorized_client, data_standard_case, url_consolidate_review
 ):
@@ -162,7 +162,7 @@ def test_refusal_note_post(
             "type": "refuse",
             "text": "test",
             "footnote_required": False,
-            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
+            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
             "denial_reasons": ["1a"],
             "is_refusal_note": True,
         },
