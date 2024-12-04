@@ -17,7 +17,6 @@ def setup(
     mock_denial_reasons,
     mock_proviso,
     mock_footnote_details,
-    mock_finalise_advice_documents,
 ):
     return
 
@@ -40,8 +39,16 @@ def consolidate_approve_url(data_queue, data_standard_case):
 @pytest.fixture
 def consolidate_refuse_url(data_queue, data_standard_case):
     return reverse(
-        "cases:consolidate",
-        kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"], "advice_type": "refuse"},
+        "cases:consolidate_refuse",
+        kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
+    )
+
+
+@pytest.fixture
+def lu_consolidate_refuse_url(data_queue, data_standard_case):
+    return reverse(
+        "cases:consolidate_refuse_lu",
+        kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]},
     )
 
 
@@ -188,7 +195,10 @@ def test_ConsolidateSelectDecisionView_lu_gov_user_GET(
     data_standard_case["case"]["advice"] = mixed_advice
     response = authorized_client.get(consolidate_select_decision_url, follow=False)
     assert response.status_code == 200
-    assert response.context["title"] == "Review and combine case recommendation - GBSIEL/2020/0002687/T - jim"
+    assert (
+        response.context["title"]
+        == f"Review and combine case recommendation - {data_standard_case['case']['reference_code']} - {data_standard_case['case']['data']['organisation']['name']}"
+    )
 
 
 def test_ConsolidateSelectDecisionView_mod_ecju_gov_user_GET(
@@ -201,7 +211,10 @@ def test_ConsolidateSelectDecisionView_mod_ecju_gov_user_GET(
     data_standard_case["case"]["advice"] = mixed_advice
     response = authorized_client.get(consolidate_select_decision_url, follow=False)
     assert response.status_code == 200
-    assert response.context["title"] == "Review and combine case recommendation - GBSIEL/2020/0002687/T - jim"
+    assert (
+        response.context["title"]
+        == f"Review and combine case recommendation - {data_standard_case['case']['reference_code']} - {data_standard_case['case']['data']['organisation']['name']}"
+    )
 
 
 def test_ConsolidateSelectDecisionView_POST_bad_data(
@@ -237,13 +250,27 @@ def test_ConsolidateSelectDecisionView_POST_refuse_success(
     consolidate_select_decision_url,
     mixed_advice,
     data_standard_case,
-    lu_gov_user,
+    mod_ecju_gov_user,
     consolidate_refuse_url,
 ):
     data_standard_case["case"]["advice"] = mixed_advice
     response = authorized_client.post(consolidate_select_decision_url, data={"recommendation": "refuse"}, follow=False)
     assert response.status_code == 302
     assert response.url == consolidate_refuse_url
+
+
+def test_ConsolidateSelectDecisionView_POST_lu_refuse_success(
+    authorized_client,
+    consolidate_select_decision_url,
+    mixed_advice,
+    data_standard_case,
+    lu_gov_user,
+    lu_consolidate_refuse_url,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    response = authorized_client.post(consolidate_select_decision_url, data={"recommendation": "refuse"}, follow=False)
+    assert response.status_code == 302
+    assert response.url == lu_consolidate_refuse_url
 
 
 def test_ConsolidateApproveView_GET_team_not_allowed_raises_exception(
@@ -285,7 +312,10 @@ def test_ConsolidateApproveView_lu_gov_user_GET(
     data_standard_case["case"]["advice"] = mixed_advice
     response = authorized_client.get(consolidate_approve_url, follow=False)
     assert response.status_code == 200
-    assert response.context["title"] == "Review and combine case recommendation - GBSIEL/2020/0002687/T - jim"
+    assert (
+        response.context["title"]
+        == f"Review and combine case recommendation - {data_standard_case['case']['reference_code']} - {data_standard_case['case']['data']['organisation']['name']}"
+    )
 
 
 def test_ConsolidateApproveView_mod_ecju_gov_user_GET(
@@ -298,7 +328,10 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_GET(
     data_standard_case["case"]["advice"] = mixed_advice
     response = authorized_client.get(consolidate_approve_url, follow=False)
     assert response.status_code == 200
-    assert response.context["title"] == "Review and combine case recommendation - GBSIEL/2020/0002687/T - jim"
+    assert (
+        response.context["title"]
+        == f"Review and combine case recommendation - {data_standard_case['case']['reference_code']} - {data_standard_case['case']['data']['organisation']['name']}"
+    )
 
 
 def test_ConsolidateApproveView_POST_bad_input(
@@ -651,3 +684,418 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
     assert response.url == consolidate_view_url
     assert len(mock_post_approval_team_advice.request_history) == 1
     assert mock_post_approval_team_advice.request_history[0].json() == expected_post_data
+
+
+def test_ConsolidateRefuseView_GET_team_not_allowed_raises_exception(
+    authorized_client,
+    consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+
+    with pytest.raises(Exception) as err:
+        authorized_client.get(consolidate_refuse_url)
+
+    assert str(err.value) == "Consolidate/combine operation not allowed for team 00000000-0000-0000-0000-000000000001"
+
+
+def test_ConsolidateRefuseView_POST_team_not_allowed_raises_exception(
+    authorized_client,
+    consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    pass
+
+    with pytest.raises(Exception) as err:
+        authorized_client.post(consolidate_refuse_url)
+
+    assert str(err.value) == "Consolidate/combine operation not allowed for team 00000000-0000-0000-0000-000000000001"
+
+
+def test_ConsolidateRefuseView_GET(
+    authorized_client,
+    consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+    mod_ecju_gov_user,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    response = authorized_client.get(consolidate_refuse_url, follow=False)
+    assert response.status_code == 200
+    assert (
+        response.context["title"]
+        == f"Licence refused for case - {data_standard_case['case']['reference_code']} - {data_standard_case['case']['data']['organisation']['name']}"
+    )
+
+
+def test_ConsolidateRefuseView_POST_bad_input(
+    authorized_client,
+    consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+    mod_ecju_gov_user,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    response = authorized_client.post(consolidate_refuse_url, data={})
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert form.errors == {
+        "denial_reasons": ["Select at least one refusal criteria"],
+        "refusal_reasons": ["Enter a reason for refusing"],
+    }
+
+
+@pytest.fixture
+def mock_post_refusal_team_advice(requests_mock, data_standard_case):
+    return requests_mock.post(
+        client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/team-advice/"),
+        json={},
+    )
+
+
+@pytest.mark.parametrize(
+    "refusal_data, expected_post_data",
+    (
+        (
+            {"denial_reasons": ["1"], "refusal_reasons": "you can't do that"},
+            [
+                {
+                    "denial_reasons": ["1"],
+                    "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+                    "footnote_required": False,
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "type": "refuse",
+                },
+                {
+                    "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
+                    "denial_reasons": ["1"],
+                    "footnote_required": False,
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": ["1"],
+                    "footnote_required": False,
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "type": "refuse",
+                    "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+                },
+                {
+                    "denial_reasons": ["1"],
+                    "footnote_required": False,
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": ["1"],
+                    "footnote_required": False,
+                    "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": [],
+                    "footnote": "",
+                    "footnote_required": False,
+                    "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "note": "",
+                    "proviso": "",
+                    "text": "",
+                    "type": "no_licence_required",
+                },
+            ],
+        ),
+        (
+            {"denial_reasons": ["1", "2a"], "refusal_reasons": "you can't do that"},
+            [
+                {
+                    "denial_reasons": ["1", "2a"],
+                    "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+                    "footnote_required": False,
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "type": "refuse",
+                },
+                {
+                    "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
+                    "denial_reasons": ["1", "2a"],
+                    "footnote_required": False,
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": ["1", "2a"],
+                    "footnote_required": False,
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "type": "refuse",
+                    "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+                },
+                {
+                    "denial_reasons": ["1", "2a"],
+                    "footnote_required": False,
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": ["1", "2a"],
+                    "footnote_required": False,
+                    "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "is_refusal_note": False,
+                    "text": "you can't do that",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": [],
+                    "footnote": "",
+                    "footnote_required": False,
+                    "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "note": "",
+                    "proviso": "",
+                    "text": "",
+                    "type": "no_licence_required",
+                },
+            ],
+        ),
+    ),
+)
+def test_ConsolidateRefuseView_POST_success(
+    refusal_data,
+    expected_post_data,
+    authorized_client,
+    consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+    mod_ecju_gov_user,
+    mock_post_refusal_team_advice,
+    consolidate_view_url,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    data_standard_case["case"]["data"]["goods"][0]["is_good_controlled"] = {"key": "True", "value": "Yes"}
+
+    response = authorized_client.post(consolidate_refuse_url, data=refusal_data)
+    assert response.status_code == 302
+    assert response.url == consolidate_view_url
+    assert len(mock_post_refusal_team_advice.request_history) == 1
+    assert mock_post_refusal_team_advice.request_history[0].json() == expected_post_data
+
+
+# LU refusals...
+
+
+def test_LUConsolidateRefuseView_GET_team_not_allowed_raises_exception(
+    authorized_client,
+    lu_consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+
+    with pytest.raises(Exception) as err:
+        authorized_client.get(lu_consolidate_refuse_url)
+
+    assert str(err.value) == "Consolidate/combine operation not allowed for team 00000000-0000-0000-0000-000000000001"
+
+
+def test_LUConsolidateRefuseView_POST_team_not_allowed_raises_exception(
+    authorized_client,
+    lu_consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    pass
+
+    with pytest.raises(Exception) as err:
+        authorized_client.post(lu_consolidate_refuse_url)
+
+    assert str(err.value) == "Consolidate/combine operation not allowed for team 00000000-0000-0000-0000-000000000001"
+
+
+def test_LUConsolidateRefuseView_GET(
+    authorized_client,
+    lu_consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+    lu_gov_user,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    response = authorized_client.get(lu_consolidate_refuse_url, follow=False)
+    assert response.status_code == 200
+    assert (
+        response.context["title"]
+        == f"Licence refused for case - {data_standard_case['case']['reference_code']} - {data_standard_case['case']['data']['organisation']['name']}"
+    )
+
+
+def test_LUConsolidateRefuseView_POST_bad_input(
+    authorized_client,
+    lu_consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+    lu_gov_user,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    response = authorized_client.post(lu_consolidate_refuse_url, data={})
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert form.errors == {
+        "denial_reasons": ["Select at least one refusal criteria"],
+        "refusal_note": ["Enter the refusal meeting note"],
+    }
+
+
+@pytest.fixture
+def mock_post_refusal_final_advice(requests_mock, data_standard_case):
+    return requests_mock.post(
+        client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice/"),
+        json={},
+    )
+
+
+@pytest.mark.parametrize(
+    "refusal_data, expected_post_data",
+    (
+        (
+            {"denial_reasons": ["1"], "refusal_note": "LU says no"},
+            [
+                {
+                    "denial_reasons": ["1"],
+                    "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+                    "footnote_required": False,
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "type": "refuse",
+                },
+                {
+                    "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
+                    "denial_reasons": ["1"],
+                    "footnote_required": False,
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": ["1"],
+                    "footnote_required": False,
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "type": "refuse",
+                    "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+                },
+                {
+                    "denial_reasons": ["1"],
+                    "footnote_required": False,
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": ["1"],
+                    "footnote_required": False,
+                    "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": [],
+                    "footnote": "",
+                    "footnote_required": False,
+                    "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "note": "",
+                    "proviso": "",
+                    "text": "",
+                    "type": "no_licence_required",
+                },
+            ],
+        ),
+        (
+            {"denial_reasons": ["1", "2a"], "refusal_note": "LU says no"},
+            [
+                {
+                    "denial_reasons": ["1", "2a"],
+                    "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
+                    "footnote_required": False,
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "type": "refuse",
+                },
+                {
+                    "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
+                    "denial_reasons": ["1", "2a"],
+                    "footnote_required": False,
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": ["1", "2a"],
+                    "footnote_required": False,
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "type": "refuse",
+                    "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
+                },
+                {
+                    "denial_reasons": ["1", "2a"],
+                    "footnote_required": False,
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": ["1", "2a"],
+                    "footnote_required": False,
+                    "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "is_refusal_note": True,
+                    "text": "LU says no",
+                    "type": "refuse",
+                },
+                {
+                    "denial_reasons": [],
+                    "footnote": "",
+                    "footnote_required": False,
+                    "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+                    "note": "",
+                    "proviso": "",
+                    "text": "",
+                    "type": "no_licence_required",
+                },
+            ],
+        ),
+    ),
+)
+def test_LUConsolidateRefuseView_POST_success(
+    refusal_data,
+    expected_post_data,
+    authorized_client,
+    lu_consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+    lu_gov_user,
+    mock_post_refusal_final_advice,
+    consolidate_view_url,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    data_standard_case["case"]["data"]["goods"][0]["is_good_controlled"] = {"key": "True", "value": "Yes"}
+
+    response = authorized_client.post(lu_consolidate_refuse_url, data=refusal_data)
+    assert response.status_code == 302
+    assert response.url == consolidate_view_url
+    assert len(mock_post_refusal_final_advice.request_history) == 1
+    assert mock_post_refusal_final_advice.request_history[0].json() == expected_post_data

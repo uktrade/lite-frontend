@@ -6,9 +6,7 @@ from django.urls import reverse
 from caseworker.advice import forms
 from caseworker.advice import services
 from caseworker.advice.services import (
-    FCDO_TEAM,
     LICENSING_UNIT_TEAM,
-    MOD_CONSOLIDATE_TEAMS,
     MOD_ECJU_TEAM,
     MANPADS_ID,
     AP_LANDMINE_ID,
@@ -301,48 +299,6 @@ def gov_user():
             },
         }
     }
-
-
-@pytest.mark.parametrize(
-    "path, form_class, team_alias, team_name",
-    (
-        ("refuse/", forms.LUConsolidateRefusalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("refuse/", forms.RefusalAdviceForm, MOD_ECJU_TEAM, "MOD Team"),
-    ),
-)
-def test_consolidate_review(
-    requests_mock,
-    authorized_client,
-    data_standard_case,
-    url,
-    advice_to_consolidate,
-    gov_user,
-    path,
-    form_class,
-    team_alias,
-    team_name,
-):
-    data_standard_case["case"]["advice"] = advice_to_consolidate
-    gov_user["user"]["team"]["name"] = team_name
-    gov_user["user"]["team"]["alias"] = team_alias
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
-
-    response = authorized_client.get(url + path)
-    assert response.status_code == 200
-    form = response.context["form"]
-    assert isinstance(form, form_class)
-
-    advice_to_review = list(response.context["advice_to_consolidate"])
-    advice_teams = {item[0]["user"]["team"]["alias"] for item in advice_to_review}
-
-    if team_alias == LICENSING_UNIT_TEAM:
-        assert advice_teams == {FCDO_TEAM, MOD_ECJU_TEAM}
-    elif team_alias == MOD_ECJU_TEAM:
-        assert bool(advice_teams.intersection(MOD_CONSOLIDATE_TEAMS)) == True
 
 
 @pytest.mark.parametrize(

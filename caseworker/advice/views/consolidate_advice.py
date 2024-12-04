@@ -9,6 +9,7 @@ from core.auth.views import LoginRequiredMixin
 from caseworker.advice import forms
 from caseworker.advice.views.views import CaseContextMixin
 from caseworker.advice import services
+from caseworker.core.services import get_denial_reasons, group_denial_reasons
 from caseworker.picklists.services import get_picklists_list
 
 
@@ -40,6 +41,7 @@ class ConsolidateSelectDecisionView(BaseConsolidationView):
     form_class = forms.ConsolidateSelectAdviceForm
 
     def dispatch(self, request, *args, **kwargs):
+        self.team_alias = self.caseworker["team"].get("alias", None)
         approve_advice_types = ("approve", "proviso", "no_licence_required")
         is_all_advice_approval = all(a["type"]["key"] in approve_advice_types for a in self.case.advice)
         if is_all_advice_approval:
@@ -57,17 +59,19 @@ class ConsolidateSelectDecisionView(BaseConsolidationView):
         self.decision = form.cleaned_data["recommendation"]
         return super().form_valid(form)
 
-    def get_success_url(self):
+    def get_success_url_name(self):
         if self.decision == "approve":
-            return reverse(
-                "cases:consolidate_approve",
-                kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]},
-            )
-        else:
-            return reverse(
-                "cases:consolidate",
-                kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "advice_type": "refuse"},
-            )
+            return "cases:consolidate_approve"
+        if self.team_alias == services.LICENSING_UNIT_TEAM:
+            return "cases:consolidate_refuse_lu"
+        return "cases:consolidate_refuse"
+
+    def get_success_url(self):
+        url_name = self.get_success_url_name()
+        return reverse(
+            url_name,
+            kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]},
+        )
 
 
 class ConsolidateApproveView(BaseConsolidationView):
@@ -108,3 +112,73 @@ class ConsolidateApproveView(BaseConsolidationView):
 
     def get_success_url(self):
         return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+
+
+class BaseConsolidateRefuseView(BaseConsolidationView):
+    """
+    Base view to consolidate advice and refuse.
+    """
+
+    template_name = "advice/review_consolidate.html"
+    advice_level = None
+
+    def get_title(self):
+        return f"Licence refused for case - {self.case.reference_code} - {self.case.organisation['name']}"
+
+    def form_valid(self, form):
+        try:
+            data = self.build_refusal_payload(form.cleaned_data)
+            services.post_refusal_advice(self.request, self.case, data, level=self.advice_level)
+        except HTTPError as e:
+            errors = e.response.json()["errors"]
+            form.add_error(None, errors)
+            return super().form_invalid(form)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:consolidate_view", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
+
+
+class LUConsolidateRefuseView(BaseConsolidateRefuseView):
+    """
+    Consolidate advice and refuse for LU.
+    """
+
+    form_class = forms.LUConsolidateRefusalForm
+    advice_level = "final-advice"
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        denial_reasons = get_denial_reasons(self.request)
+        choices = group_denial_reasons(denial_reasons)
+        form_kwargs["choices"] = choices
+        return form_kwargs
+
+    def build_refusal_payload(self, cleaned_data):
+        data = cleaned_data
+        data["text"] = data["refusal_note"]
+        data["is_refusal_note"] = True
+        return data
+
+
+class ConsolidateRefuseView(BaseConsolidateRefuseView):
+    """
+    Consolidate advice and refuse for non-LU. Currently MOD-ECJU.
+    """
+
+    form_class = forms.RefusalAdviceForm
+    advice_level = "team-advice"
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        denial_reasons = get_denial_reasons(self.request)
+        form_kwargs["choices"] = group_denial_reasons(denial_reasons)
+        form_kwargs["refusal_reasons"] = get_picklists_list(
+            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
+        )
+        return form_kwargs
+
+    def build_refusal_payload(self, cleaned_data):
+        data = cleaned_data
+        data["text"] = data["refusal_reasons"]
+        return data
