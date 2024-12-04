@@ -25,16 +25,12 @@ from lite_forms.submitters import submit_paged_form
 from urllib.parse import urlparse
 
 
-class UnsafeRedirectDestination(SuspiciousOperation):
-    pass
-
-
 # Check that the redirect url is not an injected path taking the user somewhere outside of the application
 def ensure_redirect_destination_relative(destination):
     destination_url_string = str(destination).replace("\\", "")
     valid_url = not urlparse(destination_url_string).netloc and not urlparse(destination_url_string).scheme
     if not valid_url:
-        raise UnsafeRedirectDestination(f"Redirect destination '{destination_url_string}' was not a relative URL")
+        raise SuspiciousOperation(f"Redirect destination '{destination_url_string}' was not a relative URL")
     return destination
 
 
