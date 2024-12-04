@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
-
 from lite_forms.components import FormGroup, Form
 from lite_forms.generators import form_page
 from lite_forms.helpers import (
