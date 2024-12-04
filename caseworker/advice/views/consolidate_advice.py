@@ -104,9 +104,8 @@ class ConsolidateApproveView(BaseConsolidationView):
         level = "final-advice" if self.team_alias == services.LICENSING_UNIT_TEAM else "team-advice"
         try:
             services.post_approval_advice(self.request, self.case, form.cleaned_data, level=level)
-        except HTTPError as e:
-            errors = e.response.json()["errors"]
-            form.add_error(None, errors)
+        except HTTPError:
+            form.add_error(None, ["An error occurred when saving consolidated advice"])
             return super().form_invalid(form)
         return super().form_valid(form)
 
@@ -129,9 +128,8 @@ class BaseConsolidateRefuseView(BaseConsolidationView):
         try:
             data = self.build_refusal_payload(form.cleaned_data)
             services.post_refusal_advice(self.request, self.case, data, level=self.advice_level)
-        except HTTPError as e:
-            errors = e.response.json()["errors"]
-            form.add_error(None, errors)
+        except HTTPError:
+            form.add_error(None, ["An error occurred when saving consolidated advice"])
             return super().form_invalid(form)
         return super().form_valid(form)
 

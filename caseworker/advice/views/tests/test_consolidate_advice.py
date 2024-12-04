@@ -143,6 +143,11 @@ def mod_ecju_gov_user(requests_mock, gov_user):
     )
 
 
+#################################
+# ConsolidateSelectDecisionView
+#################################
+
+
 def test_ConsolidateSelectDecisionView_GET_team_not_allowed_raises_exception(
     authorized_client,
     consolidate_select_decision_url,
@@ -271,6 +276,11 @@ def test_ConsolidateSelectDecisionView_POST_lu_refuse_success(
     response = authorized_client.post(consolidate_select_decision_url, data={"recommendation": "refuse"}, follow=False)
     assert response.status_code == 302
     assert response.url == lu_consolidate_refuse_url
+
+
+########################
+# ConsolidateApproveView
+########################
 
 
 def test_ConsolidateApproveView_GET_team_not_allowed_raises_exception(
@@ -686,6 +696,35 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
     assert mock_post_approval_team_advice.request_history[0].json() == expected_post_data
 
 
+@pytest.fixture
+def mock_post_approval_team_advice_server_error(requests_mock, data_standard_case):
+    return requests_mock.post(
+        client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/team-advice/"),
+        json={},
+        status_code=500,
+    )
+
+
+def test_ConsolidateApproveView_POST_server_error(
+    authorized_client,
+    consolidate_approve_url,
+    mixed_advice,
+    data_standard_case,
+    mod_ecju_gov_user,
+    mock_post_approval_team_advice_server_error,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    response = authorized_client.post(consolidate_approve_url, data={"approval_reasons": "yep, go for it"})
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert form.errors == {"__all__": ["An error occurred when saving consolidated advice"]}
+
+
+########################
+# ConsolidateRefuseView
+########################
+
+
 def test_ConsolidateRefuseView_GET_team_not_allowed_raises_exception(
     authorized_client,
     consolidate_refuse_url,
@@ -892,7 +931,33 @@ def test_ConsolidateRefuseView_POST_success(
     assert mock_post_refusal_team_advice.request_history[0].json() == expected_post_data
 
 
-# LU refusals...
+@pytest.fixture
+def mock_post_refusal_team_advice_server_error(requests_mock, data_standard_case):
+    return requests_mock.post(
+        client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/team-advice/"),
+        json={},
+        status_code=500,
+    )
+
+
+def test_ConsolidateRefuseView_POST_server_error(
+    authorized_client,
+    consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+    mod_ecju_gov_user,
+    mock_post_refusal_team_advice_server_error,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    response = authorized_client.post(
+        consolidate_refuse_url, data={"denial_reasons": ["1", "2a"], "refusal_reasons": "you can't do that"}
+    )
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert form.errors == {"__all__": ["An error occurred when saving consolidated advice"]}
+
+
+# LUConsolidatRefuseView
 
 
 def test_LUConsolidateRefuseView_GET_team_not_allowed_raises_exception(
@@ -1099,3 +1164,29 @@ def test_LUConsolidateRefuseView_POST_success(
     assert response.url == consolidate_view_url
     assert len(mock_post_refusal_final_advice.request_history) == 1
     assert mock_post_refusal_final_advice.request_history[0].json() == expected_post_data
+
+
+@pytest.fixture
+def mock_post_refusal_final_advice_server_error(requests_mock, data_standard_case):
+    return requests_mock.post(
+        client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice/"),
+        json={},
+        status_code=500,
+    )
+
+
+def test_LUConsolidateRefuseView_POST_server_error(
+    authorized_client,
+    lu_consolidate_refuse_url,
+    mixed_advice,
+    data_standard_case,
+    lu_gov_user,
+    mock_post_refusal_final_advice_server_error,
+):
+    data_standard_case["case"]["advice"] = mixed_advice
+    response = authorized_client.post(
+        lu_consolidate_refuse_url, data={"denial_reasons": ["1", "2a"], "refusal_note": "you can't do that"}
+    )
+    assert response.status_code == 200
+    form = response.context["form"]
+    assert form.errors == {"__all__": ["An error occurred when saving consolidated advice"]}
