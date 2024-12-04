@@ -660,6 +660,7 @@ class ConsolidateAdviceView(AdviceView):
         return context
 
 
+# TODO: Delete this when ConsolidateEditView (below) is moved over/refactored in views/consolidate_advice.py
 class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
     template_name = "advice/review_consolidate.html"
 
