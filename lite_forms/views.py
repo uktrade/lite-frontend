@@ -5,7 +5,6 @@ from typing import List
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
-from django.core.exceptions import SuspiciousOperation
 
 
 from lite_forms.components import FormGroup, Form
@@ -22,16 +21,7 @@ from lite_forms.helpers import (
     validate_data_unknown,
 )
 from lite_forms.submitters import submit_paged_form
-from urllib.parse import urlparse
-
-
-# Check that the redirect url is not an injected path taking the user somewhere outside of the application
-def ensure_redirect_destination_relative(destination):
-    destination_url_string = str(destination).replace("\\", "")
-    valid_url = not urlparse(destination_url_string).netloc and not urlparse(destination_url_string).scheme
-    if not valid_url:
-        raise SuspiciousOperation(f"Redirect destination '{destination_url_string}' was not a relative URL")
-    return destination
+from core.helpers import check_url
 
 
 ACTION = "_action"
@@ -350,8 +340,8 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        sanitised_path = ensure_redirect_destination_relative(request.path)
-        return redirect(sanitised_path)
+        sanitised_url = check_url(request, request.path)
+        return redirect(sanitised_url)
 
     def post(self, request, **kwargs):
         return self._post(request, **kwargs)
@@ -414,8 +404,9 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        sanitised_path = ensure_redirect_destination_relative(request.path)
-        return redirect(sanitised_path)
+        sanitised_url = check_url(request, request.path)
+
+        return redirect(sanitised_url)
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() in self.http_method_names:
