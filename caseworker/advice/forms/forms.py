@@ -29,7 +29,7 @@ def get_approval_advice_form_factory(advice, approval_reason, proviso, footnote_
 
 
 class PicklistAdviceForm(forms.Form):
-    def _picklist_to_choices(self, picklist_data):
+    def _picklist_to_choices(self, picklist_data, include_other=True):
         reasons_choices = []
         reasons_text = {"other": ""}
 
@@ -40,7 +40,8 @@ class PicklistAdviceForm(forms.Form):
                 choice = Choice(key, result.get("name"), divider="or")
             reasons_choices.append(choice)
             reasons_text[key] = result.get("text")
-        reasons_choices.append(Choice("other", "Other"))
+        if include_other:
+            reasons_choices.append(Choice("other", "Other"))
         return reasons_choices, reasons_text
 
 

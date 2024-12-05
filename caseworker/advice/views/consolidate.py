@@ -111,10 +111,6 @@ class ConsolidateApproveView(BaseConsolidationView):
         form_kwargs["proviso"] = get_picklists_list(
             self.request, type="proviso", disable_pagination=True, show_deactivated=False
         )
-        form_kwargs["footnote_details"] = get_picklists_list(
-            self.request, type="footnotes", disable_pagination=True, show_deactivated=False
-        )
-        form_kwargs["team_alias"] = self.team_alias
         form_kwargs["initial"]["proviso"] = self.collate_all_provisos()
         return form_kwargs
 

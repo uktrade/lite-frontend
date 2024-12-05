@@ -1,10 +1,8 @@
-class PopulateTextOnAddButtonsClick {
+class CannedSnippetsTextArea {
   constructor($el) {
     this.$addButtons = $el.querySelectorAll("a[data-snippet-key]");
     this.$textArea = $el.querySelector("textarea");
-    this.$lookup = JSON.parse(
-      $el.querySelector(`#${this.$textArea.name}`).textContent,
-    );
+    this.$lookup = JSON.parse($el.querySelector("script").textContent);
   }
 
   init() {
@@ -22,10 +20,11 @@ class PopulateTextOnAddButtonsClick {
   }
 }
 
-export default function initCannedSnippetsTextArea() {
+const initCannedSnippetsTextArea = () => {
   document
     .querySelectorAll("[data-module=canned-snippets-textarea]")
-    .forEach(($el) => new PopulateTextOnAddButtonsClick($el).init());
-}
+    .forEach(($el) => new CannedSnippetsTextArea($el).init());
+};
 
+export default CannedSnippetsTextArea;
 export { initCannedSnippetsTextArea };
