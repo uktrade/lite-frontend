@@ -1,9 +1,11 @@
 from urllib.parse import urlencode
-from django.http import (
-    Http404,
-    StreamingHttpResponse,
-)
+from django.http import StreamingHttpResponse
+from django.core.exceptions import SuspiciousOperation
 from django.utils.http import url_has_allowed_host_and_scheme
+
+
+class UnsafeURLDestination(SuspiciousOperation):
+    pass
 
 
 def dummy_quote(string, safe="", encoding=None, errors=None):
@@ -59,7 +61,7 @@ def check_url(request, url):
     if url_is_safe:
         return url
     else:
-        raise Http404
+        raise UnsafeURLDestination(f"URL destination '{url}' was deemed to be unsafe")
 
 
 def stream_document_response(api_response):

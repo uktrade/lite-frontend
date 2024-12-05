@@ -17,3 +17,4 @@ def is_fcdo_team(wizard):
 
 def is_ogd_team(wizard):
     return not is_fcdo_team(wizard)
+
