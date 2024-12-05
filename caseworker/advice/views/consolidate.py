@@ -23,13 +23,18 @@ class BaseConsolidationView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_title(self):
         return f"Review and combine case recommendation - {self.case.reference_code} - {self.case.organisation['name']}"
 
-    def get_context(self, **kwargs):
-        context = super().get_context()
-        team_alias = (
+    def setup(self, *args, **kwargs):
+        super().setup(*args, **kwargs)
+        self.team_alias = (
             self.caseworker["team"]["alias"] if self.caseworker["team"]["alias"] else self.caseworker["team"]["id"]
         )
-        advice_to_consolidate = services.get_advice_to_consolidate(self.case.advice, team_alias)
-        context["advice_to_consolidate"] = list(advice_to_consolidate.values())
+        self.advice_to_consolidate = list(
+            services.get_advice_to_consolidate(self.case.advice, self.team_alias).values()
+        )
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        context["advice_to_consolidate"] = self.advice_to_consolidate
         context["denial_reasons_display"] = self.denial_reasons_display
         context["security_approvals_classified_display"] = self.security_approvals_classified_display
         context["title"] = self.get_title()
@@ -46,7 +51,6 @@ class ConsolidateSelectDecisionView(BaseConsolidationView):
     form_class = ConsolidateSelectAdviceForm
 
     def dispatch(self, request, *args, **kwargs):
-        self.team_alias = self.caseworker["team"].get("alias", None)
         approve_advice_types = ("approve", "proviso", "no_licence_required")
         is_all_advice_approval = all(a["type"]["key"] in approve_advice_types for a in self.case.advice)
         if is_all_advice_approval:
@@ -87,9 +91,17 @@ class ConsolidateApproveView(BaseConsolidationView):
     template_name = "advice/review_consolidate.html"
     form_class = ConsolidateApprovalForm
 
-    def setup(self, *args, **kwargs):
-        super().setup(*args, **kwargs)
-        self.team_alias = self.caseworker["team"].get("alias", None)
+    def collate_all_provisos(self):
+        """
+        Collate all provisos across all team advice in to a single string.
+        """
+        # Should be a set, but dict gives us consistent ordering
+        unique_provisos = {}
+        for team_advice in self.advice_to_consolidate:
+            for advice in team_advice:
+                if advice["proviso"]:
+                    unique_provisos[advice["proviso"]] = None
+        return "\n\n--------\n".join(unique_provisos.keys())
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
@@ -103,6 +115,7 @@ class ConsolidateApproveView(BaseConsolidationView):
             self.request, type="footnotes", disable_pagination=True, show_deactivated=False
         )
         form_kwargs["team_alias"] = self.team_alias
+        form_kwargs["initial"]["proviso"] = self.collate_all_provisos()
         return form_kwargs
 
     def form_valid(self, form):
