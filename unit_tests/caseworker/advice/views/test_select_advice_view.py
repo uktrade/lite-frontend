@@ -21,9 +21,7 @@ def test_select_advice_get(authorized_client, url):
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize(
-    "recommendation, redirect", [("approve_all", "approve-all-legacy"), ("refuse_all", "refuse-all")]
-)
+@pytest.mark.parametrize("recommendation, redirect", [("approve_all", "approve-all"), ("refuse_all", "refuse-all")])
 def test_select_advice_post(authorized_client, url, recommendation, redirect, data_standard_case):
     response = authorized_client.post(url, data={"recommendation": recommendation})
     assert response.status_code == 302
