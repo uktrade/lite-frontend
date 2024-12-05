@@ -174,7 +174,16 @@ class PartySubTypeSelectForm(BaseForm):
             "required": "Select what type of party you're creating",
         },
     )
-    sub_type_other = forms.CharField(required=False, label="")
+    sub_type_other = forms.CharField(
+        required=False,
+        label="",
+        validators=[
+            MaxLengthValidator(
+                75,
+                f"Party type should be 75 characters or less",
+            ),
+        ],
+    )
 
     def get_layout_fields(self):
         return (
@@ -189,8 +198,8 @@ class PartySubTypeSelectForm(BaseForm):
 
     def clean(self):
         cleaned_data = super().clean()
-
-        if cleaned_data.get("sub_type") == "other" and not cleaned_data.get("sub_type_other"):
+        errors = self.errors
+        if not errors and cleaned_data.get("sub_type") == "other" and not cleaned_data.get("sub_type_other"):
             self.add_error("sub_type_other", "Enter the type of the party you're adding")
 
         return cleaned_data

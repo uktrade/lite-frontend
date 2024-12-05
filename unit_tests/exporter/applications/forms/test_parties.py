@@ -29,6 +29,14 @@ def test_party_reuse_form(data, valid, errors):
         ({"sub_type": "other", "sub_type_other": "test_sub_type"}, True, None),
         ({"sub_type": ""}, False, {"sub_type": ["Select what type of party you're creating"]}),
         ({"sub_type": "other"}, False, {"sub_type_other": ["Enter the type of the party you're adding"]}),
+        (
+            {
+                "sub_type": "other",
+                "sub_type_other": "supercalifragilisticexpiallidodiousnessifyouknowthesoundofititsreallyquiteprecocious",
+            },
+            False,
+            {"sub_type_other": ["Party type should be 75 characters or less"]},
+        ),
     ),
 )
 def test_end_user_subtype_select_form(data, valid, errors):
