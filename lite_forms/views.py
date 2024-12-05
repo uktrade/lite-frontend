@@ -20,6 +20,8 @@ from lite_forms.helpers import (
     validate_data_unknown,
 )
 from lite_forms.submitters import submit_paged_form
+from core.helpers import check_url
+
 
 ACTION = "_action"
 VALIDATE_ONLY = "validate_only"
@@ -188,9 +190,6 @@ class MultiFormView(FormView):
         self.init(request, **kwargs)
         submission = self.on_submission(request, **kwargs)  # noqa
 
-        if submission:
-            return redirect(submission)
-
         response, data = submit_paged_form(
             request,
             self.get_forms(),
@@ -340,7 +339,8 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        return redirect(request.path)
+        sanitised_url = check_url(request, request.path)
+        return redirect(sanitised_url)
 
     def post(self, request, **kwargs):
         return self._post(request, **kwargs)
@@ -403,7 +403,9 @@ class SummaryListFormView(FormView):
         if self.validate_only_until_final_submission:
             return self.generate_summary_list()
 
-        return redirect(request.path)
+        sanitised_url = check_url(request, request.path)
+
+        return redirect(sanitised_url)
 
     def dispatch(self, request, *args, **kwargs):
         if request.method.lower() in self.http_method_names:

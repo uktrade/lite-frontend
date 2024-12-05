@@ -1,6 +1,5 @@
 import pytest
-from django.http import Http404
-from core.helpers import convert_parameters_to_query_params, check_url
+from core.helpers import convert_parameters_to_query_params, check_url, UnsafeURLDestination
 
 
 @pytest.fixture
@@ -15,13 +14,13 @@ def test_convert_parameters_to_query_params():
     assert convert_parameters_to_query_params(params) == "?org_type=individual&org_type=commercial&page=1"
 
 
-@pytest.mark.parametrize("url", ["/next-url/", "http://testserver/next-url/"])
+@pytest.mark.parametrize("url", ["/next-url/", "http://testserver/next-url/", "\\valid\path"])
 def test_check_url(mock_request, url):
     assert check_url(mock_request, url) == url
 
 
 # Check not valid host and non secure url
-@pytest.mark.parametrize("url", ["http://not-the-same.com/next/", "https://test-server/next/"])
+@pytest.mark.parametrize("url", ["http://not-the-same.com/next/", "https://test-server/next/", "https:/malicious.com"])
 def test_check_url_not_allowed(mock_request, url):
-    with pytest.raises(Http404):
+    with pytest.raises(UnsafeURLDestination):
         check_url(mock_request, url)
