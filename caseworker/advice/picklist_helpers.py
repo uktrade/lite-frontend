@@ -9,14 +9,6 @@ def approval_picklist(self):
     }
 
 
-def fcdo_picklist(self):
-    return {
-        "approval_reason": get_picklists_list(
-            self.request, type="standard_advice", disable_pagination=True, show_deactivated=False
-        )
-    }
-
-
 def proviso_picklist(self):
     return {
         "proviso": get_picklists_list(self.request, type="proviso", disable_pagination=True, show_deactivated=False)
