@@ -161,7 +161,10 @@ def test_register_details_form_required_fields(
                     "Enter a SIC code that is 5 numbers long, like 12345",
                     "SIC code can only include numbers",
                 ],
-                "registration_number": ["The CRN or RC number is too long"],
+                "registration_number": [
+                    "The CRN or RC number is too long",
+                    "Enter a CRN or RC number in the correct format",
+                ],
             },
             forms.RegisterDetailsCommercialOverseasForm,
         ),
@@ -177,7 +180,10 @@ def test_register_details_form_required_fields(
             {
                 "sic_number": ["Enter a SIC code that is 5 numbers long, like 12345"],
                 "vat_number": ["UK VAT number is too long", "Enter a UK VAT number in the correct format"],
-                "registration_number": ["The CRN or RC number is too long"],
+                "registration_number": [
+                    "The CRN or RC number is too long",
+                    "Enter a CRN or RC number in the correct format",
+                ],
             },
             forms.RegisterDetailsCommercialUKForm,
         ),
@@ -200,7 +206,10 @@ def test_register_details_form_required_fields(
                     "UK VAT number can only include numbers and letters",
                     "Enter a UK VAT number in the correct format",
                 ],
-                "registration_number": ["The CRN or RC number is too long"],
+                "registration_number": [
+                    "The CRN or RC number is too long",
+                    "Enter a CRN or RC number in the correct format",
+                ],
             },
             forms.RegisterDetailsCommercialUKForm,
         ),
@@ -223,7 +232,10 @@ def test_register_details_form_required_fields(
                     "UK VAT number can only include numbers and letters",
                     "Enter a UK VAT number in the correct format",
                 ],
-                "registration_number": ["The CRN or RC number is too long"],
+                "registration_number": [
+                    "The CRN or RC number is too long",
+                    "Enter a CRN or RC number in the correct format",
+                ],
             },
             forms.RegisterDetailsCommercialUKForm,
         ),
@@ -311,7 +323,10 @@ def test_register_details_form_field_validation(
             },
             False,
             {
-                "registration_number": ["The CRN or RC number is too long"],
+                "registration_number": [
+                    "The CRN or RC number is too long",
+                    "Enter a CRN or RC number in the correct format",
+                ],
             },
         ),
         (
@@ -320,7 +335,10 @@ def test_register_details_form_field_validation(
             },
             False,
             {
-                "registration_number": ["The CRN or RC number is too short"],
+                "registration_number": [
+                    "The CRN or RC number is too short",
+                    "Enter a CRN or RC number in the correct format",
+                ],
             },
         ),
         (
@@ -350,15 +368,6 @@ def test_register_details_form_field_validation(
         ),
         (
             {
-                "registration_number": "FF123456",
-            },
-            False,
-            {
-                "registration_number": ["Enter a CRN or RC number in the correct format"],
-            },
-        ),
-        (
-            {
                 "registration_number": "123456RC",
             },
             False,
@@ -368,14 +377,48 @@ def test_register_details_form_field_validation(
         ),
         (
             {
-                "registration_number": "RC123456",
+                "registration_number": "ABC12345",
+            },
+            False,
+            {
+                "registration_number": ["Enter a CRN or RC number in the correct format"],
+            },
+        ),
+        (
+            {
+                "registration_number": "A1234567",
+            },
+            False,
+            {
+                "registration_number": ["Enter a CRN or RC number in the correct format"],
+            },
+        ),
+        (
+            {
+                "registration_number": "SO123456",
+            },
+            False,
+            {
+                "registration_number": ["Enter a CRN or RC number in the correct format"],
+            },
+        ),
+        (
+            {
+                "registration_number": "12345678",
             },
             True,
             None,
         ),
         (
             {
-                "registration_number": "12345678",
+                "registration_number": "NI123456",
+            },
+            True,
+            None,
+        ),
+        (
+            {
+                "registration_number": "RC123456",
             },
             True,
             None,
