@@ -42,7 +42,6 @@ def get_queues(
                 option.data_attribute = queue_team.get("id")
 
             options.append(option)
-
         return options
     else:
         return data

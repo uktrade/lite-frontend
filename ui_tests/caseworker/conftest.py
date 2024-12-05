@@ -116,6 +116,11 @@ def mock_sso_lu_senior_manager_user_caseworker_sign_in(driver, internal_url):  #
     mock_sso_signin_with_email(driver, internal_url, "luseniormanager@digital.trade.gov.uk")
 
 
+@given("I sign in as Enforcement Unit Manager")
+def mock_sso_en_senior_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
+    mock_sso_signin_with_email(driver, internal_url, "enforcementmanager@digital.trade.gov.uk")
+
+
 @then("I logout")  # noqa
 @when("I logout")  # noqa
 def i_logout(driver, internal_url):  # noqa

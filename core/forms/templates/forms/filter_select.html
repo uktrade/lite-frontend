@@ -1,0 +1,27 @@
+{% load static %}
+{% include "django/forms/widgets/select.html" %}
+
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+    let parent_select = $("#{{parent_select_name}}");
+    let filter_select = $("#{{widget.name}}");
+
+    function filterOptions(value, change_to_select) {
+      filter_select.children("option[data-attribute!='None']").hide();
+      filter_select
+        .children("option[data-attribute='" + value + "'], option[value='']")
+        .show();
+
+      // Set the selected value to 'Select'
+      if (change_to_select === true) {
+        filter_select.val("");
+      }
+    }
+
+    parent_select.change(function () {
+      filterOptions(parent_select.val(), true);
+    });
+
+    parent_select.ready(function () {
+      filterOptions(parent_select.val(), false);
+    });
+</script>

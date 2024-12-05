@@ -321,12 +321,12 @@ def get_advice_subjects(case, countries=None):
 def post_approval_advice(request, case, data, level="user-advice"):
     json = [
         {
-            "type": "proviso" if data["proviso"] else "approve",
+            "type": "proviso" if data.get("proviso", False) else "approve",
             "text": data["approval_reasons"],
-            "proviso": data["proviso"],
-            "note": data["instructions_to_exporter"],
-            "footnote_required": True if data["footnote_details"] else False,
-            "footnote": data["footnote_details"],
+            "proviso": data.get("proviso", ""),
+            "note": data.get("instructions_to_exporter", ""),
+            "footnote_required": True if data.get("footnote_details") else False,
+            "footnote": data.get("footnote_details", ""),
             subject_name: subject_id,
             "denial_reasons": [],
         }
