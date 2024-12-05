@@ -61,7 +61,7 @@ def consolidate_view_url(data_queue, data_standard_case):
 
 
 @pytest.fixture
-def advice_data(current_user, admin_team):
+def advice_data(current_user):
     return {
         "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
         "country": None,
@@ -79,7 +79,7 @@ def advice_data(current_user, admin_team):
         "type": {"key": "approve", "value": "Approve"},
         "ultimate_end_user": None,
         "user": current_user,
-        "team": admin_team,
+        "team": {"id": "some-team", "alias": "FCO"},
     }
 
 
@@ -342,6 +342,34 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_GET(
         response.context["title"]
         == f"Review and combine case recommendation - {data_standard_case['case']['reference_code']} - {data_standard_case['case']['data']['organisation']['name']}"
     )
+
+
+def test_ConsolidateApproveView_GET_collated_provisos(
+    authorized_client,
+    consolidate_approve_url,
+    mixed_advice,
+    advice_data,
+    data_standard_case,
+    lu_gov_user,
+):
+    """
+    Ensure that proviso is pre-filled from collecting provisos across all valid advice.
+    """
+    mixed_advice[0]["proviso"] = "condition 1"
+    mixed_advice[1]["proviso"] = "condition 2"
+    extra_advice = {
+        **advice_data,
+        "team": {"id": "mod-ecju-team", "alias": "MOD_ECJU"},
+        "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "type": {"key": "approve", "value": "Approve"},
+        "proviso": "",
+    }
+    mixed_advice.append(extra_advice)
+    data_standard_case["case"]["advice"] = mixed_advice
+
+    response = authorized_client.get(consolidate_approve_url, follow=False)
+    assert response.status_code == 200
+    assert response.context["form"].initial == {"proviso": "condition 1\n\n--------\ncondition 2"}
 
 
 def test_ConsolidateApproveView_POST_bad_input(
