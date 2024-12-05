@@ -4,6 +4,7 @@ import { initAll } from "govuk-frontend";
 // our JS
 import "../../../core/assets/javascripts/definitions.js";
 import "../../../core/assets/javascripts/back-link.js";
+import initCannedSnippetsTextArea from "../../../core/assets/javascripts/canned-snippets-textarea.js";
 import initCookierBanner from "../../../core/assets/javascripts/cookies/banner.js";
 import { gaPushUserID } from "../../../core/assets/javascripts/ga-events.js";
 
@@ -47,6 +48,7 @@ initCustomisers();
 initRadioTextArea();
 initSelectAllTables();
 initTableExpanders();
+initCannedSnippetsTextArea();
 
 // Push GA user_id
 gaPushUserID();

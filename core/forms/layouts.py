@@ -187,6 +187,32 @@ class RadioTextArea(TemplateNameMixin):
         return render_to_string(template, context.flatten())
 
 
+class CannedSnippetsTextArea(TemplateNameMixin):
+    template = "%s/layout/canned_snippets_textarea.html"
+
+    def __init__(self, snippets_field, field, json_choices, add_label="Add"):
+        self.field = field
+        self.snippets_field = snippets_field
+        self.json_choices = json_choices
+        self.add_label = add_label
+
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        template = self.get_template_name(template_pack)
+
+        bound_field = form[self.field]
+        snippets_field = form[self.snippets_field]
+        context.update(
+            {
+                "field": bound_field,
+                "snippets_field": snippets_field,
+                "json_choices": self.json_choices,
+                "add_label": self.add_label,
+            }
+        )
+
+        return render_to_string(template, context.flatten())
+
+
 class StarRadioSelect(TemplateNameMixin):
     template = "%s/layout/star_radio_select.html"
 
