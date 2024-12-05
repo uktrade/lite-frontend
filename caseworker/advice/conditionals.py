@@ -13,11 +13,3 @@ def form_add_licence_conditions(step_name):
 
 def is_desnz_team(wizard):
     return wizard.caseworker["team"]["alias"] in services.DESNZ_TEAMS
-
-
-def is_fcdo_team(wizard):
-    return wizard.caseworker["team"]["alias"] == services.FCDO_TEAM
-
-
-def default_form(wizard):
-    return not (is_fcdo_team(wizard) or is_desnz_team(wizard))

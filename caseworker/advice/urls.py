@@ -1,8 +1,8 @@
 from django.urls import path
 
-from caseworker.advice.views import views, consolidate_advice
-from caseworker.advice.views.add_advice import GiveApprovalAdviceView
-from caseworker.advice.views.edit_advice import EditAdviceView
+from caseworker.advice.views import consolidate, views
+from caseworker.advice.views.approval import GiveApprovalAdviceView
+from caseworker.advice.views.edit import EditAdviceView
 
 urlpatterns = [
     path("", views.AdviceView.as_view(), name="advice_view"),
@@ -30,14 +30,12 @@ urlpatterns = [
         name="countersign_decision_edit",
     ),
     path("consolidate/", views.ConsolidateAdviceView.as_view(), name="consolidate_advice_view"),
-    path("consolidate/review/", consolidate_advice.ConsolidateSelectDecisionView.as_view(), name="consolidate_review"),
-    path(
-        "consolidate/review/approve/", consolidate_advice.ConsolidateApproveView.as_view(), name="consolidate_approve"
-    ),
-    path("consolidate/review/refuse/", consolidate_advice.ConsolidateRefuseView.as_view(), name="consolidate_refuse"),
+    path("consolidate/review/", consolidate.ConsolidateSelectDecisionView.as_view(), name="consolidate_review"),
+    path("consolidate/review/approve/", consolidate.ConsolidateApproveView.as_view(), name="consolidate_approve"),
+    path("consolidate/review/refuse/", consolidate.ConsolidateRefuseView.as_view(), name="consolidate_refuse"),
     path(
         "consolidate/review/lu-refuse/",
-        consolidate_advice.LUConsolidateRefuseView.as_view(),
+        consolidate.LUConsolidateRefuseView.as_view(),
         name="consolidate_refuse_lu",
     ),
     path("consolidate/edit/", views.ConsolidateEditView.as_view(), name="consolidate_edit"),

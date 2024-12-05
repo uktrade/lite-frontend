@@ -1,6 +1,6 @@
 from caseworker.advice.forms.approval import FootnotesApprovalAdviceForm, RecommendAnApprovalForm
 from caseworker.advice.forms.edit import PicklistApprovalAdviceEditForm
-from caseworker.advice.views.add_advice import GiveApprovalAdviceView
+from caseworker.advice.views.approval import GiveApprovalAdviceView
 from caseworker.advice import services
 from caseworker.advice.constants import AdviceSteps
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist
