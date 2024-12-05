@@ -3,8 +3,14 @@ import uuid
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
-from caseworker.advice import forms
+from caseworker.advice.forms.consolidate import (
+    ConsolidateApprovalForm,
+    ConsolidateSelectAdviceForm,
+    LUConsolidateRefusalForm,
+)
 from caseworker.advice import services
+from caseworker.advice.forms.forms import GiveApprovalAdviceForm
+from caseworker.advice.forms.refusal import RefusalAdviceForm
 from caseworker.advice.services import (
     FCDO_TEAM,
     LICENSING_UNIT_TEAM,
@@ -306,12 +312,12 @@ def gov_user():
 @pytest.mark.parametrize(
     "path, form_class, team_alias, team_name",
     (
-        ("", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
-        ("approve/", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("refuse/", forms.LUConsolidateRefusalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("approve/", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
-        ("refuse/", forms.RefusalAdviceForm, MOD_ECJU_TEAM, "MOD Team"),
+        ("", ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
+        ("", ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
+        ("approve/", ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
+        ("refuse/", LUConsolidateRefusalForm, LICENSING_UNIT_TEAM, "LU Team"),
+        ("approve/", ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
+        ("refuse/", RefusalAdviceForm, MOD_ECJU_TEAM, "MOD Team"),
     ),
 )
 def test_consolidate_review(
@@ -369,7 +375,7 @@ def test_approval_reasons_mocked(
     response = authorized_client.get(url + "approve/")
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.GiveApprovalAdviceForm)
+    assert isinstance(form, GiveApprovalAdviceForm)
     # this is built mock_approval_reason
     response_choices = [list(choice) for choice in form.fields["approval_radios"].choices]
     assert response_choices == [
@@ -418,7 +424,7 @@ def test_approval_reasons_manual(
     response = authorized_client.get(url + "approve/")
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.GiveApprovalAdviceForm)
+    assert isinstance(form, GiveApprovalAdviceForm)
     response_choices = [list(choice) for choice in form.fields["approval_radios"].choices]
 
     assert list(response_choices) == [
@@ -465,7 +471,7 @@ def test_proviso_manual(
     response = authorized_client.get(url + "approve/")
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.GiveApprovalAdviceForm)
+    assert isinstance(form, GiveApprovalAdviceForm)
     response_choices = [list(choice) for choice in form.fields["proviso_radios"].choices]
 
     assert list(response_choices) == [
@@ -514,7 +520,7 @@ def test_consolidate_review_refusal_advice(
     response = authorized_client.get(url)
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.ConsolidateSelectAdviceForm)
+    assert isinstance(form, ConsolidateSelectAdviceForm)
     response = authorized_client.post(url, data={"recommendation": recommendation})
     assert response.status_code == 302
     assert redirect in response.url
@@ -549,7 +555,7 @@ def test_consolidate_review_refusal_advice_recommendation_label(
     response = authorized_client.get(url)
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.ConsolidateSelectAdviceForm)
+    assert isinstance(form, ConsolidateSelectAdviceForm)
     assert form.fields["recommendation"].label == recommendation_label
 
 
@@ -766,9 +772,9 @@ def test_view_consolidate_refuse_outcome(
 @pytest.mark.parametrize(
     "path, form_class",
     (
-        ("", forms.ConsolidateApprovalForm),
-        ("approve/", forms.ConsolidateApprovalForm),
-        ("refuse/", forms.RefusalAdviceForm),
+        ("", ConsolidateApprovalForm),
+        ("approve/", ConsolidateApprovalForm),
+        ("refuse/", RefusalAdviceForm),
     ),
 )
 def test_consolidate_raises_exception_for_other_team(
