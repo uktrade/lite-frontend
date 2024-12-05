@@ -19,22 +19,6 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 
-# class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
-#     template_name = "advice/select_advice.html"
-#     form_class = SelectAdviceForm
-
-#     def get_success_url(self):
-#         recommendation = self.request.POST.get("recommendation")
-#         if recommendation == "approve_all":
-#             return reverse("cases:approve_all", kwargs=self.kwargs)
-#         else:
-#             return reverse("cases:refuse_all", kwargs=self.kwargs)
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
-
-
 class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
 
     form_list = [
