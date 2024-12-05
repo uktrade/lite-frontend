@@ -1,9 +1,10 @@
 from http import HTTPStatus
-from caseworker.advice.conditionals import form_add_licence_conditions, is_desnz_team
+from caseworker.advice.conditionals import form_add_licence_conditions, is_ogd_team
 from caseworker.advice.forms.approval import (
     FootnotesApprovalAdviceForm,
     LicenceConditionsForm,
     RecommendAnApprovalForm,
+    SelectAdviceForm,
 )
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
@@ -11,12 +12,31 @@ from core.wizard.views import BaseSessionWizardView
 from core.wizard.conditionals import C
 from django.shortcuts import redirect
 from django.urls import reverse
-from caseworker.advice.views.mixins import CaseContextMixin
 from caseworker.advice import services
 
 from caseworker.advice.constants import AdviceSteps
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
+from http import HTTPStatus
+from caseworker.advice.forms.approval import SelectAdviceForm
+from caseworker.advice.views.mixins import CaseContextMixin
+from django.views.generic import FormView
+
+
+class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/select_advice.html"
+    form_class = SelectAdviceForm
+
+    def get_success_url(self):
+        recommendation = self.request.POST.get("recommendation")
+        if recommendation == "approve_all":
+            return reverse("cases:approve_all", kwargs=self.kwargs)
+        else:
+            return reverse("cases:refuse_all", kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
 class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
@@ -28,7 +48,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
     ]
 
     condition_dict = {
-        AdviceSteps.RECOMMEND_APPROVAL: C(is_desnz_team),
+        AdviceSteps.RECOMMEND_APPROVAL: C(is_ogd_team),
         AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
         AdviceSteps.LICENCE_FOOTNOTES: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
     }
