@@ -684,12 +684,8 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
             form_kwargs["proviso"] = get_picklists_list(
                 self.request, type="proviso", disable_pagination=True, show_deactivated=False
             )
-            form_kwargs["footnote_details"] = get_picklists_list(
-                self.request, type="footnotes", disable_pagination=True, show_deactivated=False
-            )
 
-            team_alias = self.caseworker["team"].get("alias", None)
-            return forms.ConsolidateApprovalForm(team_alias=team_alias, **form_kwargs)
+            return forms.ConsolidateApprovalForm(**form_kwargs)
 
         team_name = self.caseworker["team"]["name"]
         return forms.ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)
