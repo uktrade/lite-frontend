@@ -11,5 +11,9 @@ def form_add_licence_conditions(step_name):
     return _get_form_field_boolean
 
 
-def is_desnz_team(wizard):
-    return wizard.caseworker["team"]["alias"] in services.DESNZ_TEAMS
+def is_fcdo_team(wizard):
+    return wizard.caseworker["team"]["alias"] == services.FCDO_TEAM
+
+
+def is_ogd_team(wizard):
+    return not is_fcdo_team(wizard)

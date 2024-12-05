@@ -10,6 +10,7 @@ from core.forms.layouts import (
     ConditionalCheckboxesQuestion,
     RadioTextArea,
 )
+from core.forms.widgets import GridmultipleSelect
 
 
 class SelectAdviceForm(forms.Form):
@@ -71,7 +72,65 @@ class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
         )
 
 
-class PicklistLicenceConditionsForm(PicklistAdviceForm, BaseForm):
+class FCDOApprovalAdviceForm(RecommendAnApprovalForm):
+    class Layout:
+        TITLE = "Recommend an approval"
+
+    def __init__(self, countries, *args, **kwargs):
+        countries = kwargs.pop("countries")
+        super().__init__(*args, **kwargs)
+        self.fields["countries"] = forms.MultipleChoiceField(
+            choices=countries.items(),
+            widget=GridmultipleSelect(),
+            label="Select countries for which you want to give advice",
+            error_messages={"required": "Select the destinations you want to make recommendations for"},
+        )
+
+    def get_layout_fields(self):
+        return (
+            RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
+            "countries",
+            "add_licence_conditions",
+        )
+
+
+class DESNZApprovalForm(PicklistAdviceForm, BaseForm):
+    class Layout:
+        TITLE = "Recommend an approval"
+
+    approval_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        label="",
+        error_messages={"required": "Enter a reason for approving"},
+    )
+    approval_radios = forms.ChoiceField(
+        label="What is your reason for approving?",
+        required=False,
+        widget=forms.RadioSelect,
+        choices=(),
+    )
+    add_licence_conditions = forms.BooleanField(
+        label="Add licence conditions, instructions to exporter or footnotes (optional)",
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        approval_reason = kwargs.pop("approval_reason")
+        # this follows the same pattern as denial_reasons.
+        approval_choices, approval_text = self._picklist_to_choices(approval_reason)
+        self.approval_text = approval_text
+        super().__init__(*args, **kwargs)
+
+        self.fields["approval_radios"].choices = approval_choices
+
+    def get_layout_fields(self):
+        return (
+            RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
+            "add_licence_conditions",
+        )
+
+
+class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
     class Layout:
         TITLE = "Add licence conditions (optional)"
 
