@@ -180,7 +180,7 @@ class PartySubTypeSelectForm(BaseForm):
         validators=[
             MaxLengthValidator(
                 75,
-                f"Party type should be 75 characters or less",
+                f"Enter a party type that is 75 characters or less",
             ),
         ],
     )
