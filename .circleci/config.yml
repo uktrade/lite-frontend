@@ -236,7 +236,7 @@ jobs:
     environment:
       <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: tests.caseworker.env
-      PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
+      PYTEST_ADDOPTS: caseworker unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - backend_unit_tests:

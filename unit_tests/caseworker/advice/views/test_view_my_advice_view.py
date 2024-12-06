@@ -267,7 +267,7 @@ def test_move_case_forward_permission(
     assert len(soup.find_all("form")) == (1 if is_user_case_advisor else 0)
 
 
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_lu_countersignatures_not_shown(
     mock_get_gov_user,
     authorized_client,

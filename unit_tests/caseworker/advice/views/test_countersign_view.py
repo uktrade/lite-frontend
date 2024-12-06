@@ -52,7 +52,7 @@ def test_countersign_view_trigger_list_products(
     assert response.context["assessed_trigger_list_goods"] == expected_context
 
 
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_single_lu_countersignature(
     mock_get_gov_user,
     authorized_client,
@@ -89,7 +89,7 @@ def test_single_lu_countersignature(
     assert not rejected_warning
 
 
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_double_lu_countersignature(
     mock_get_gov_user,
     authorized_client,
@@ -140,7 +140,7 @@ def test_double_lu_countersignature(
         ],
     ),
 )
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_single_lu_rejected_countersignature(
     mock_get_gov_user,
     countersigning_data,
@@ -205,7 +205,7 @@ def test_single_lu_rejected_countersignature(
         ],
     ),
 )
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_lu_rejected_senior_countersignature(
     mock_get_gov_user,
     countersigning_data,

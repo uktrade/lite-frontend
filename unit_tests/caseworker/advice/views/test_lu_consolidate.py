@@ -22,7 +22,7 @@ def url(request, data_queue, data_standard_case):
     )
 
 
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_no_advice_summary_for_lu(
     mock_get_gov_user,
     url,
@@ -53,7 +53,7 @@ def test_no_advice_summary_for_lu(
         ],
     ),
 )
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.views.get_gov_user")
 def test_lu_consolidate_check_countersignatures_other_recommendations(
     mock_get_gov_user,
     countersigning_data,
@@ -104,14 +104,14 @@ def test_lu_consolidate_check_countersignatures_other_recommendations(
 def advice(current_user):
     return [
         {
-            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
+            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
             "country": None,
             "created_at": "2021-10-16T23:48:39.486679+01:00",
             "denial_reasons": [],
             "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
             "footnote": "footnotes",
             "good": good_id,
-            "id": "429c5596-fe8b-4540-988b-c37805cd08de",
+            "id": "429c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
             "level": "user",
             "note": "additional notes",
             "proviso": "no conditions",
@@ -122,84 +122,4 @@ def advice(current_user):
             "user": current_user,
         }
         for good_id in ("0bedd1c3-cf97-4aad-b711-d5c9a9f4586e", "6daad1c3-cf97-4aad-b711-d5c9a9f4586e")
-    ]
-
-
-@pytest.fixture
-def url_consolidate_review(data_queue, data_standard_case):
-    return reverse(
-        "cases:consolidate_review", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
-    )
-
-
-@patch("caseworker.advice.views.get_gov_user")
-def test_refusal_note_post(
-    mock_get_gov_user, requests_mock, authorized_client, data_standard_case, url_consolidate_review
-):
-    mock_get_gov_user.return_value = (
-        {"user": {"team": {"id": "21313212-23123-3123-323wq2", "alias": LICENSING_UNIT_TEAM}}},
-        None,
-    )
-
-    requests_mock.post(client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice/"), json={})
-
-    response = authorized_client.post(
-        url_consolidate_review + "refuse/", data={"denial_reasons": ["1a"], "refusal_note": "test"}
-    )
-    assert response.status_code == 302
-    request = requests_mock.request_history.pop()
-    assert "final-advice" in request.url
-    assert request.json() == [
-        {
-            "type": "refuse",
-            "text": "test",
-            "footnote_required": False,
-            "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
-            "denial_reasons": ["1a"],
-            "is_refusal_note": True,
-        },
-        {
-            "type": "refuse",
-            "text": "test",
-            "footnote_required": False,
-            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
-            "denial_reasons": ["1a"],
-            "is_refusal_note": True,
-        },
-        {
-            "type": "refuse",
-            "text": "test",
-            "footnote_required": False,
-            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
-            "denial_reasons": ["1a"],
-            "is_refusal_note": True,
-        },
-        {
-            "type": "refuse",
-            "text": "test",
-            "footnote_required": False,
-            "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
-            "denial_reasons": ["1a"],
-            "is_refusal_note": True,
-        },
-        {
-            "type": "no_licence_required",
-            "text": "",
-            "proviso": "",
-            "note": "",
-            "footnote_required": False,
-            "footnote": "",
-            "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-            "denial_reasons": [],
-        },
-        {
-            "type": "no_licence_required",
-            "text": "",
-            "proviso": "",
-            "note": "",
-            "footnote_required": False,
-            "footnote": "",
-            "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-            "denial_reasons": [],
-        },
     ]
