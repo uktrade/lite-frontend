@@ -35,7 +35,7 @@ def test_party_reuse_form(data, valid, errors):
                 "sub_type_other": "supercalifragilisticexpiallidodiousnessifyouknowthesoundofititsreallyquiteprecocious",
             },
             False,
-            {"sub_type_other": ["Party type should be 75 characters or less"]},
+            {"sub_type_other": ["Enter a party type that is 75 characters or less"]},
         ),
     ),
 )
