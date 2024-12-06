@@ -186,12 +186,18 @@ def group_advice_by_user(advice):
     return result
 
 
-def group_advice_by_team(advice, exclude_good_advice=True):
+def group_advice_by_team(advice):
     result = defaultdict(list)
     for item in advice:
-        if exclude_good_advice and item.get("good"):
-            continue
-        result[item["team"]["id"]].append(item)
+        if not item.get("good"):
+            result[item["team"]["id"]].append(item)
+    return result
+
+
+def group_advice_by_team_and_decision(advice):
+    result = defaultdict(list)
+    for item in advice:
+        result[f"{item['team']['id']}-{item['type']['key']}"].append(item)
     return result
 
 
@@ -289,7 +295,7 @@ def get_advice_to_consolidate(advice, user_team_alias):
     else:
         raise Exception(f"Consolidate/combine operation not allowed for team {user_team_alias}")
 
-    return group_advice_by_team(advice_from_teams, exclude_good_advice=False)
+    return group_advice_by_team_and_decision(advice_from_teams)
 
 
 def order_by_party_type(all_advice):

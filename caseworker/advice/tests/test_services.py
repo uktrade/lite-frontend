@@ -28,58 +28,221 @@ def test_get_advice_to_consolidate_unrecognized_team_raises_exception():
         # FCDO advice only
         (
             [
-                {"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
+                {
+                    "id": "advice-1",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
             ],
-            {"id-fcdo": [{"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}}]},
+            {
+                "id-fcdo-approve": [
+                    {
+                        "id": "advice-1",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                    }
+                ]
+            },
         ),
         # FCDO and MOD-DI advice only
         (
             [
-                {"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                {"id": "advice-2", "level": "team", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                {"id": "advice-3", "level": "team", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
+                {
+                    "id": "advice-1",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-2",
+                    "level": "team",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-3",
+                    "level": "team",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                },
             ],
             {
-                "id-fcdo": [
-                    {"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                    {"id": "advice-2", "level": "team", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
+                "id-fcdo-approve": [
+                    {
+                        "id": "advice-1",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                    },
+                    {
+                        "id": "advice-2",
+                        "level": "team",
+                        "type": {"key": "approve"},
+                        "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                    },
                 ],
-                "id-mod-di": [
-                    {"id": "advice-3", "level": "team", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
+                "id-mod-di-approve": [
+                    {
+                        "id": "advice-3",
+                        "level": "team",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                    },
                 ],
             },
         ),
         # All OGDs advising with MOD collected under MOD-ECJU
         (
             [
-                {"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                {"id": "advice-2", "level": "team", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                {"id": "advice-3", "level": "team", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
-                {"id": "advice-4", "level": "user", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
-                {"id": "advice-5", "level": "user", "team": {"alias": DESNZ_NUCLEAR, "id": "id-desnz-nuclear"}},
-                {"id": "advice-6", "level": "user", "team": {"alias": DESNZ_CHEMICAL, "id": "id-desnz-chemical"}},
-                {"id": "advice-7", "level": "user", "team": {"alias": NCSC_TEAM, "id": "id-ncsc"}},
-                {"id": "advice-8", "level": "user", "team": {"alias": MOD_CAPPROT_TEAM, "id": "id-mod-capprot"}},
-                {"id": "advice-9", "level": "user", "team": {"alias": MOD_DSR_TEAM, "id": "id-mod-dsr"}},
-                {"id": "advice-10", "level": "user", "team": {"alias": MOD_DSTL_TEAM, "id": "id-mod-dstl"}},
-                {"id": "advice-11", "level": "team", "team": {"alias": MOD_ECJU_TEAM, "id": "id-mod-ecju"}},
+                {
+                    "id": "advice-1",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-2",
+                    "level": "team",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-2",
+                    "level": "team",
+                    "type": {"key": "proviso"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-3",
+                    "level": "team",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                },
+                {
+                    "id": "advice-4",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                },
+                {
+                    "id": "advice-4",
+                    "level": "user",
+                    "type": {"key": "refuse"},
+                    "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                },
+                {
+                    "id": "advice-5",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": DESNZ_NUCLEAR, "id": "id-desnz-nuclear"},
+                },
+                {
+                    "id": "advice-6",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": DESNZ_CHEMICAL, "id": "id-desnz-chemical"},
+                },
+                {
+                    "id": "advice-6",
+                    "level": "user",
+                    "type": {"key": "refuse"},
+                    "team": {"alias": DESNZ_CHEMICAL, "id": "id-desnz-chemical"},
+                },
+                {
+                    "id": "advice-7",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": NCSC_TEAM, "id": "id-ncsc"},
+                },
+                {
+                    "id": "advice-8",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_CAPPROT_TEAM, "id": "id-mod-capprot"},
+                },
+                {
+                    "id": "advice-9",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DSR_TEAM, "id": "id-mod-dsr"},
+                },
+                {
+                    "id": "advice-10",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DSTL_TEAM, "id": "id-mod-dstl"},
+                },
+                {
+                    "id": "advice-11",
+                    "level": "team",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_ECJU_TEAM, "id": "id-mod-ecju"},
+                },
             ],
             {
-                "id-fcdo": [
-                    {"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                    {"id": "advice-2", "level": "team", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
+                "id-fcdo-approve": [
+                    {
+                        "id": "advice-1",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                    },
+                    {
+                        "id": "advice-2",
+                        "level": "team",
+                        "type": {"key": "approve"},
+                        "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                    },
                 ],
-                "id-desnz-nuclear": [
-                    {"id": "advice-5", "level": "user", "team": {"alias": DESNZ_NUCLEAR, "id": "id-desnz-nuclear"}},
+                "id-fcdo-proviso": [
+                    {
+                        "id": "advice-2",
+                        "level": "team",
+                        "type": {"key": "proviso"},
+                        "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                    },
                 ],
-                "id-desnz-chemical": [
-                    {"id": "advice-6", "level": "user", "team": {"alias": DESNZ_CHEMICAL, "id": "id-desnz-chemical"}},
+                "id-desnz-nuclear-approve": [
+                    {
+                        "id": "advice-5",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": DESNZ_NUCLEAR, "id": "id-desnz-nuclear"},
+                    },
                 ],
-                "id-ncsc": [
-                    {"id": "advice-7", "level": "user", "team": {"alias": NCSC_TEAM, "id": "id-ncsc"}},
+                "id-desnz-chemical-approve": [
+                    {
+                        "id": "advice-6",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": DESNZ_CHEMICAL, "id": "id-desnz-chemical"},
+                    },
                 ],
-                "id-mod-ecju": [
-                    {"id": "advice-11", "level": "team", "team": {"alias": MOD_ECJU_TEAM, "id": "id-mod-ecju"}},
+                "id-desnz-chemical-refuse": [
+                    {
+                        "id": "advice-6",
+                        "level": "user",
+                        "type": {"key": "refuse"},
+                        "team": {"alias": DESNZ_CHEMICAL, "id": "id-desnz-chemical"},
+                    },
+                ],
+                "id-ncsc-approve": [
+                    {
+                        "id": "advice-7",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": NCSC_TEAM, "id": "id-ncsc"},
+                    },
+                ],
+                "id-mod-ecju-approve": [
+                    {
+                        "id": "advice-11",
+                        "level": "team",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_ECJU_TEAM, "id": "id-mod-ecju"},
+                    },
                 ],
             },
         ),
@@ -97,49 +260,158 @@ def test_get_advice_to_consolidate_lu(advice, expected_grouping):
         # FCDO advice only
         (
             [
-                {"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
+                {
+                    "id": "advice-1",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
             ],
             {},
         ),
         # FCDO and MOD-DI advice only
         (
             [
-                {"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                {"id": "advice-2", "level": "team", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                {"id": "advice-3", "level": "user", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
+                {
+                    "id": "advice-1",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-2",
+                    "level": "team",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-3",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                },
+                {
+                    "id": "advice-3",
+                    "level": "user",
+                    "type": {"key": "refuse"},
+                    "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                },
             ],
             {
-                "id-mod-di": [
-                    {"id": "advice-3", "level": "user", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
-                ]
+                "id-mod-di-approve": [
+                    {
+                        "id": "advice-3",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                    },
+                ],
+                "id-mod-di-refuse": [
+                    {
+                        "id": "advice-3",
+                        "level": "user",
+                        "type": {"key": "refuse"},
+                        "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                    },
+                ],
             },
         ),
         # All OGDs advising with MOD collected under MOD-ECJU
         (
             [
-                {"id": "advice-1", "level": "user", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                {"id": "advice-2", "level": "team", "team": {"alias": FCDO_TEAM, "id": "id-fcdo"}},
-                {"id": "advice-3", "level": "team", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
-                {"id": "advice-4", "level": "user", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
-                {"id": "advice-5", "level": "user", "team": {"alias": DESNZ_NUCLEAR, "id": "id-desnz-nuclear"}},
-                {"id": "advice-6", "level": "user", "team": {"alias": DESNZ_CHEMICAL, "id": "id-desnz-chemical"}},
-                {"id": "advice-7", "level": "user", "team": {"alias": NCSC_TEAM, "id": "id-ncsc"}},
-                {"id": "advice-8", "level": "user", "team": {"alias": MOD_CAPPROT_TEAM, "id": "id-mod-capprot"}},
-                {"id": "advice-9", "level": "user", "team": {"alias": MOD_DSR_TEAM, "id": "id-mod-dsr"}},
-                {"id": "advice-10", "level": "user", "team": {"alias": MOD_DSTL_TEAM, "id": "id-mod-dstl"}},
+                {
+                    "id": "advice-1",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-2",
+                    "level": "team",
+                    "type": {"key": "approve"},
+                    "team": {"alias": FCDO_TEAM, "id": "id-fcdo"},
+                },
+                {
+                    "id": "advice-3",
+                    "level": "team",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                },
+                {
+                    "id": "advice-4",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                },
+                {
+                    "id": "advice-5",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": DESNZ_NUCLEAR, "id": "id-desnz-nuclear"},
+                },
+                {
+                    "id": "advice-6",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": DESNZ_CHEMICAL, "id": "id-desnz-chemical"},
+                },
+                {
+                    "id": "advice-7",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": NCSC_TEAM, "id": "id-ncsc"},
+                },
+                {
+                    "id": "advice-8",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_CAPPROT_TEAM, "id": "id-mod-capprot"},
+                },
+                {
+                    "id": "advice-9",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DSR_TEAM, "id": "id-mod-dsr"},
+                },
+                {
+                    "id": "advice-10",
+                    "level": "user",
+                    "type": {"key": "approve"},
+                    "team": {"alias": MOD_DSTL_TEAM, "id": "id-mod-dstl"},
+                },
             ],
             {
-                "id-mod-di": [
-                    {"id": "advice-4", "level": "user", "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"}},
+                "id-mod-di-approve": [
+                    {
+                        "id": "advice-4",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                    },
                 ],
-                "id-mod-capprot": [
-                    {"id": "advice-8", "level": "user", "team": {"alias": MOD_CAPPROT_TEAM, "id": "id-mod-capprot"}},
+                "id-mod-capprot-approve": [
+                    {
+                        "id": "advice-8",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_CAPPROT_TEAM, "id": "id-mod-capprot"},
+                    },
                 ],
-                "id-mod-dsr": [
-                    {"id": "advice-9", "level": "user", "team": {"alias": MOD_DSR_TEAM, "id": "id-mod-dsr"}},
+                "id-mod-dsr-approve": [
+                    {
+                        "id": "advice-9",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_DSR_TEAM, "id": "id-mod-dsr"},
+                    },
                 ],
-                "id-mod-dstl": [
-                    {"id": "advice-10", "level": "user", "team": {"alias": MOD_DSTL_TEAM, "id": "id-mod-dstl"}},
+                "id-mod-dstl-approve": [
+                    {
+                        "id": "advice-10",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_DSTL_TEAM, "id": "id-mod-dstl"},
+                    },
                 ],
             },
         ),
