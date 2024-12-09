@@ -4,9 +4,14 @@ from django.urls import reverse
 
 from requests.exceptions import HTTPError
 
+from caseworker.advice.forms.refusal import RefusalAdviceForm
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice import forms
+from caseworker.advice.forms.consolidate import (
+    ConsolidateApprovalForm,
+    ConsolidateSelectAdviceForm,
+    LUConsolidateRefusalForm,
+)
 from caseworker.advice.views.views import CaseContextMixin
 from caseworker.advice import services
 from caseworker.core.services import get_denial_reasons, group_denial_reasons
@@ -38,7 +43,7 @@ class ConsolidateSelectDecisionView(BaseConsolidationView):
     """
 
     template_name = "advice/review_consolidate.html"
-    form_class = forms.ConsolidateSelectAdviceForm
+    form_class = ConsolidateSelectAdviceForm
 
     def dispatch(self, request, *args, **kwargs):
         self.team_alias = self.caseworker["team"].get("alias", None)
@@ -80,7 +85,7 @@ class ConsolidateApproveView(BaseConsolidationView):
     """
 
     template_name = "advice/review_consolidate.html"
-    form_class = forms.ConsolidateApprovalForm
+    form_class = ConsolidateApprovalForm
 
     def setup(self, *args, **kwargs):
         super().setup(*args, **kwargs)
@@ -142,7 +147,7 @@ class LUConsolidateRefuseView(BaseConsolidateRefuseView):
     Consolidate advice and refuse for LU.
     """
 
-    form_class = forms.LUConsolidateRefusalForm
+    form_class = LUConsolidateRefusalForm
     advice_level = "final-advice"
 
     def get_form_kwargs(self):
@@ -164,7 +169,7 @@ class ConsolidateRefuseView(BaseConsolidateRefuseView):
     Consolidate advice and refuse for non-LU. Currently MOD-ECJU.
     """
 
-    form_class = forms.RefusalAdviceForm
+    form_class = RefusalAdviceForm
     advice_level = "team-advice"
 
     def get_form_kwargs(self):
