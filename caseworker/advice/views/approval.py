@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from caseworker.advice.conditionals import form_add_licence_conditions, is_desnz_team
+from caseworker.advice.conditionals import form_add_licence_conditions, is_ogd_team
 from caseworker.advice.forms.approval import (
     FootnotesApprovalAdviceForm,
     LicenceConditionsForm,
@@ -28,7 +28,7 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
     ]
 
     condition_dict = {
-        AdviceSteps.RECOMMEND_APPROVAL: C(is_desnz_team),
+        AdviceSteps.RECOMMEND_APPROVAL: C(is_ogd_team),
         AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
         AdviceSteps.LICENCE_FOOTNOTES: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
     }

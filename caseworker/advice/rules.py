@@ -34,7 +34,7 @@ def can_desnz_make_recommendation(user, case, queue_alias):
 
 
 def can_ogd_make_edit(team):
-    return team not in services.FCDO_TEAM
+    return not team == services.FCDO_TEAM
 
 
 def case_has_approval_advice(advice):
@@ -51,7 +51,7 @@ def can_user_make_edit(request, case):
         return False
 
     team = user["team"]["alias"]
-    advice = services.filter_urrent_user_advice(case.advice, user["id"])
+    advice = services.filter_current_user_advice(case.advice, user["id"])
     return can_ogd_make_edit(team) and case_has_approval_advice(advice)
 
 
