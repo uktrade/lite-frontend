@@ -31,7 +31,7 @@ def post_to_step(post_to_step_factory, url_approve):
 
 
 def test_edit_approve_advice_post(
-    authorized_client, requests_mock, mock_post_advice, data_standard_case, standard_case_with_advice, post_to_step, url
+    authorized_client, requests_mock, mock_post_advice, data_standard_case, standard_case_with_advice, post_to_step
 ):
     user_advice_create_url = f"/cases/{data_standard_case['case']['id']}/user-advice/"
     case_data = deepcopy(data_standard_case)
@@ -122,7 +122,6 @@ def test_give_approval_advice_post_valid_add_conditional(
     authorized_client,
     requests_mock,
     data_standard_case,
-    url,
     mock_approval_reason,
     mock_proviso,
     mock_footnote_details,

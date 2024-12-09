@@ -1,8 +1,7 @@
 from django.urls import path
 
 from caseworker.advice.views import consolidate, views
-from caseworker.advice.views.add_advice import SelectAdviceView
-from caseworker.advice.views.approval import GiveApprovalAdviceView
+from caseworker.advice.views.approval import GiveApprovalAdviceView, SelectAdviceView
 from caseworker.advice.views.edit import EditAdviceView
 
 urlpatterns = [
