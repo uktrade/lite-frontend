@@ -41,7 +41,7 @@ def test_refuse_all_post(authorized_client, url, denial_reasons, refusal_reasons
     assert response.status_code == expected_status_code
 
 
-@mock.patch("caseworker.advice.views.views.get_gov_user")
+@mock.patch("caseworker.advice.views.mixins.get_gov_user")
 def test_fco_give_refusal_advice_get(mock_get_gov_user, authorized_client, url):
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
@@ -56,7 +56,7 @@ def test_fco_give_refusal_advice_get(mock_get_gov_user, authorized_client, url):
     ]
 
 
-@mock.patch("caseworker.advice.views.views.get_gov_user")
+@mock.patch("caseworker.advice.views.mixins.get_gov_user")
 def test_fco_give_refusal_advice_existing_get(mock_get_gov_user, authorized_client, url, data_standard_case):
     mock_get_gov_user.return_value = (
         {"user": {"team": {"id": "67b9a4a3-6f3d-4511-8a19-23ccff221a74", "name": "FCO", "alias": services.FCDO_TEAM}}},
@@ -101,7 +101,7 @@ def test_fco_give_refusal_advice_existing_get(mock_get_gov_user, authorized_clie
         ([], "", 200),
     ],
 )
-@mock.patch("caseworker.advice.views.views.get_gov_user")
+@mock.patch("caseworker.advice.views.mixins.get_gov_user")
 def test_fco_give_approval_advice_post(
     mock_get_gov_user,
     authorized_client,

@@ -3,8 +3,12 @@ import uuid
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
-from caseworker.advice import forms
+from caseworker.advice.forms.consolidate import (
+    ConsolidateApprovalForm,
+    ConsolidateSelectAdviceForm,
+)
 from caseworker.advice import services
+from caseworker.advice.forms.refusal import RefusalAdviceForm
 from caseworker.advice.services import (
     LICENSING_UNIT_TEAM,
     MOD_ECJU_TEAM,
@@ -333,7 +337,7 @@ def test_consolidate_review_refusal_advice(
     response = authorized_client.get(url)
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.ConsolidateSelectAdviceForm)
+    assert isinstance(form, ConsolidateSelectAdviceForm)
     response = authorized_client.post(url, data={"recommendation": recommendation})
     assert response.status_code == 302
     assert redirect in response.url
@@ -368,7 +372,7 @@ def test_consolidate_review_refusal_advice_recommendation_label(
     response = authorized_client.get(url)
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.ConsolidateSelectAdviceForm)
+    assert isinstance(form, ConsolidateSelectAdviceForm)
     assert form.fields["recommendation"].label == recommendation_label
 
 
@@ -512,8 +516,8 @@ def test_view_consolidate_refuse_outcome(
 @pytest.mark.parametrize(
     "path, form_class",
     (
-        ("approve/", forms.ConsolidateApprovalForm),
-        ("refuse/", forms.RefusalAdviceForm),
+        ("approve/", ConsolidateApprovalForm),
+        ("refuse/", RefusalAdviceForm),
     ),
 )
 def test_consolidate_raises_exception_for_other_team(

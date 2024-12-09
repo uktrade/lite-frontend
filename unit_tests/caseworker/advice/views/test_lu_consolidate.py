@@ -22,7 +22,7 @@ def url(request, data_queue, data_standard_case):
     )
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_no_advice_summary_for_lu(
     mock_get_gov_user,
     url,
@@ -53,7 +53,7 @@ def test_no_advice_summary_for_lu(
         ],
     ),
 )
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_lu_consolidate_check_countersignatures_other_recommendations(
     mock_get_gov_user,
     countersigning_data,

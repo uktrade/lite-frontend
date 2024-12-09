@@ -262,7 +262,7 @@ def test_update_countersign_decision_advice(
     ]
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_update_advice_by_team_other_than_LU_raises_error(
     mock_get_gov_user,
     advice,
@@ -284,7 +284,7 @@ def test_update_advice_by_team_other_than_LU_raises_error(
         update_advice(requests_mock, case, current_user, "refuse", {}, "final-advice")
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_update_advice_not_supported_advice_type_raises_error(
     mock_get_gov_user,
     advice,

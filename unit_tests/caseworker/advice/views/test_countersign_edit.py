@@ -272,7 +272,7 @@ def test_lu_countersign_decision_edit_post_success(
     ]
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_lu_countersign_edit_get_shows_previous_countersignature(
     mock_get_gov_user,
     authorized_client,

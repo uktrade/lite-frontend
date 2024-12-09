@@ -7,8 +7,9 @@ from uuid import uuid4
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
+from caseworker.advice.forms.consolidate import ConsolidateApprovalForm
 from core import client
-from caseworker.advice import forms, services
+from caseworker.advice import services
 from caseworker.advice.constants import AdviceType
 from unit_tests.caseworker.conftest import countersignatures_for_advice
 from caseworker.advice.services import LICENSING_UNIT_TEAM, MOD_ECJU_TEAM
@@ -240,7 +241,7 @@ def test_edit_refuse_advice_post(
     "team, advice_level",
     ((services.LICENSING_UNIT_TEAM, "final"), (services.MOD_ECJU_TEAM, "team")),
 )
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_edit_advice_get(
     mock_get_gov_user,
     team,
@@ -266,10 +267,10 @@ def test_edit_advice_get(
     response = authorized_client.get(url)
     form = response.context["form"]
     # The final advice was approval advice so we should see an approval form
-    assert isinstance(form, forms.ConsolidateApprovalForm)
+    assert isinstance(form, ConsolidateApprovalForm)
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_edit_consolidated_advice_approve_by_lu_put(
     mock_get_gov_user,
     authorized_client,
@@ -298,7 +299,7 @@ def test_edit_consolidated_advice_approve_by_lu_put(
     ]
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_edit_consolidated_advice_approve__with_nlr_products_by_lu_put(
     mock_get_gov_user,
     authorized_client,
@@ -337,7 +338,7 @@ def test_edit_consolidated_advice_approve__with_nlr_products_by_lu_put(
     )
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_edit_consolidated_advice_refuse_note_by_lu_put(
     mock_get_gov_user,
     authorized_client,
@@ -375,7 +376,7 @@ def test_edit_consolidated_advice_refuse_note_by_lu_put(
     ]
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_edit_consolidated_advice_by_LU_error_from_API(
     mock_get_gov_user,
     authorized_client,
@@ -410,7 +411,7 @@ def test_edit_consolidated_advice_by_LU_error_from_API(
         ("MOD", "Countersigned by MOD User"),
     ),
 )
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_edit_advice_get_displays_correct_counteradvice(
     mock_get_gov_user,
     authorized_client,
@@ -458,7 +459,7 @@ def test_edit_advice_get_displays_correct_counteradvice(
     assert countersignatures[0].find("p").text == fcdo_or_mod_advice[0]["countersign_comments"]
 
 
-@patch("caseworker.advice.views.views.get_gov_user")  # Pass to the mock version; mock_get_gov_user
+@patch("caseworker.advice.views.mixins.get_gov_user")  # Pass to the mock version; mock_get_gov_user
 def test_edit_refusal_note_exists(
     mock_get_gov_user,
     authorized_client,
@@ -483,7 +484,7 @@ def test_edit_refusal_note_exists(
     assert note_element.get_text(strip=True) == "The refusal note assess_1_2"
 
 
-@patch("caseworker.advice.views.views.get_gov_user")  # Pass to the mock version; mock_get_gov_user
+@patch("caseworker.advice.views.mixins.get_gov_user")  # Pass to the mock version; mock_get_gov_user
 def test_mod_ecju_edit_exists(
     mock_get_gov_user,
     authorized_client,

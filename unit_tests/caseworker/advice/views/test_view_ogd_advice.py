@@ -78,7 +78,7 @@ def test_advice_view_heading_ogd_advice(
     assert team_headings == {"A team has approved and refused", "B team has approved"}
 
 
-@mock.patch("caseworker.advice.views.views.get_gov_user")
+@mock.patch("caseworker.advice.views.mixins.get_gov_user")
 def test_fcdo_cannot_advice_when_all_destinations_covered(
     mock_get_gov_user, authorized_client, data_queue, data_standard_case
 ):

@@ -468,7 +468,7 @@ def test_lu_countersign_decision_post_success(
     ]
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_lu_countersign_get_shows_previous_countersignature(
     mock_get_gov_user,
     authorized_client,
@@ -523,7 +523,7 @@ def user_not_allowed_to_countersign(response):
     return True
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
 def test_case_officer_cannot_countersign_as_licensing_manager(
     mock_caseworker,
@@ -546,7 +546,7 @@ def test_case_officer_cannot_countersign_as_licensing_manager(
     assert user_not_allowed_to_countersign(response)
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
 def test_licensing_manager_countersigner_not_same_as_case_officer(
     mock_caseworker,
@@ -575,7 +575,7 @@ def test_licensing_manager_countersigner_not_same_as_case_officer(
 
 
 # Senior Licensing manager tests
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
 def test_case_officer_cannot_countersign_as_senior_licensing_manager(
     mock_caseworker,
@@ -598,7 +598,7 @@ def test_case_officer_cannot_countersign_as_senior_licensing_manager(
     assert user_not_allowed_to_countersign(response)
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
 def test_licensing_manager_cannot_countersign_as_senior_licensing_manager(
     mock_caseworker,
@@ -621,7 +621,7 @@ def test_licensing_manager_cannot_countersign_as_senior_licensing_manager(
     assert user_not_allowed_to_countersign(response)
 
 
-@patch("caseworker.advice.views.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 @patch("caseworker.core.rules.get_logged_in_caseworker")
 def test_senior_manager_countersigner_not_same_as_case_officer_or_countersigner(
     mock_caseworker,
