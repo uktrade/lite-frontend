@@ -2,7 +2,6 @@ from http import HTTPStatus
 from caseworker.advice.forms.approval import MoveCaseForwardForm, SelectAdviceForm
 from caseworker.advice.forms.consolidate import (
     ConsolidateApprovalForm,
-    ConsolidateSelectAdviceForm,
     LUConsolidateRefusalForm,
 )
 from caseworker.advice.forms.countersign import CountersignAdviceForm, CountersignDecisionAdviceForm
@@ -518,9 +517,6 @@ class ReviewConsolidateView(LoginRequiredMixin, CaseContextMixin, FormView):
 
             team_alias = self.caseworker["team"].get("alias", None)
             return ConsolidateApprovalForm(team_alias=team_alias, **form_kwargs)
-
-        team_name = self.caseworker["team"]["name"]
-        return ConsolidateSelectAdviceForm(team_name=team_name, **form_kwargs)
 
     def get_context(self, **kwargs):
         context = super().get_context()
