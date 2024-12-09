@@ -189,7 +189,7 @@ def test_can_user_allocate_and_approve(mock_gov_user, data_fake_queue, data_stan
     assert rules.test_rule("can_user_allocate_and_approve", request, case)
 
 
-def test_can_user_make_desnz_edit_valid(
+def test_can_user_make_edit_valid(
     mock_gov_user, data_fake_queue, data_assigned_case, standard_case_with_advice, mocker
 ):
     mock_gov_user["user"]["team"]["alias"] = services.DESNZ_TEAMS[0]
@@ -198,44 +198,44 @@ def test_can_user_make_desnz_edit_valid(
     mocker.patch(
         "caseworker.advice.rules.services.filter_current_user_advice", return_value=standard_case_with_advice["advice"]
     )
-    assert rules.test_rule("can_user_make_desnz_edit", request, data_assigned_case)
+    assert rules.test_rule("can_user_make_edit", request, data_assigned_case)
 
 
-def test_can_user_make_desnz_edit_invalid_advice(mock_gov_user, data_fake_queue, data_assigned_case):
+def test_can_user_make_edit_invalid_advice(mock_gov_user, data_fake_queue, data_assigned_case):
     mock_gov_user["user"]["team"]["alias"] = services.DESNZ_TEAMS[0]
     data_fake_queue["alias"] = services.DESNZ_CHEMICAL_CASES_TO_REVIEW
-    data_assigned_case
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
-    assert not rules.test_rule("can_user_make_desnz_edit", request, data_assigned_case)
+    assert not rules.test_rule("can_user_make_edit", request, data_assigned_case)
 
 
-def test_can_user_make_desnz_edit_invalid_user(
+def test_can_user_make_edit_invalid_user(
     mock_gov_user, data_fake_queue, data_assigned_case, standard_case_with_advice, mocker
 ):
-    data_fake_queue["alias"] = services.DESNZ_CHEMICAL_CASES_TO_REVIEW
+    mock_gov_user["user"]["team"]["alias"] = services.FCDO_TEAM
+    data_fake_queue["alias"] = services.FCDO_CASES_TO_REVIEW_QUEUE
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
     mocker.patch(
         "caseworker.advice.rules.services.filter_current_user_advice", return_value=standard_case_with_advice["advice"]
     )
-    assert not rules.test_rule("can_user_make_desnz_edit", request, data_assigned_case)
+    assert not rules.test_rule("can_user_make_edit", request, data_assigned_case)
 
 
-def test_can_user_make_desnz_edit_invalid_advice_and_user(mock_gov_user, data_fake_queue, data_assigned_case):
-    data_fake_queue["alias"] = services.DESNZ_CHEMICAL_CASES_TO_REVIEW
-    data_assigned_case
+def test_can_user_make_edit_invalid_advice_and_user(mock_gov_user, data_fake_queue, data_assigned_case):
+    mock_gov_user["user"]["team"]["alias"] = services.FCDO_TEAM
+    data_fake_queue["alias"] = services.FCDO_CASES_TO_REVIEW_QUEUE
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
-    assert not rules.test_rule("can_user_make_desnz_edit", request, data_assigned_case)
+    assert not rules.test_rule("can_user_make_edit", request, data_assigned_case)
 
 
-def test_can_user_make_desnz_edit_request_missing_attributes(mock_gov_user, data_fake_queue, data_standard_case):
+def test_can_user_make_edit_request_missing_attributes(mock_gov_user, data_fake_queue, data_standard_case):
     case = Case(data_standard_case["case"])
     request = None
 
-    assert not advice_rules.can_user_make_desnz_edit(request, case)
+    assert not advice_rules.can_user_make_edit(request, case)
 
 
-def test_can_user_make_desnz_edit_user_not_allocated(mock_gov_user, data_fake_queue, data_standard_case):
+def test_can_user_make_edit_user_not_allocated(mock_gov_user, data_fake_queue, data_standard_case):
     case = Case(data_standard_case["case"])
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
 
-    assert not rules.test_rule("can_user_make_desnz_edit", request, case)
+    assert not rules.test_rule("can_user_make_edit", request, case)
