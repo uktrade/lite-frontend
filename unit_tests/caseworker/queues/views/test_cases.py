@@ -371,6 +371,19 @@ def test_cases_home_page_exclude_control_list_entries_search(authorized_client, 
     }
 
 
+def test_cases_home_page_exclude_flags_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+
+    url = reverse("queues:cases") + "?exclude_flags=flag_id_1&exclude_flags=flag_id_2"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "exclude_flags": ["flag_id_1", "flag_id_2"],
+    }
+
+
 def test_cases_home_page_max_total_value_search(authorized_client, mock_cases_search):
     url = reverse("queues:cases")
     response = authorized_client.get(url)
