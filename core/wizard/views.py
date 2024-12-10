@@ -14,6 +14,8 @@ class BaseSessionWizardView(SessionWizardView):
     file_storage = NoSaveStorage()
     template_name = "core/form-wizard.html"
 
+    step_kwargs = {}
+
     def get_cleaned_data_for_step(self, step):
         cleaned_data = super().get_cleaned_data_for_step(step)
         if cleaned_data is None:
@@ -29,6 +31,14 @@ class BaseSessionWizardView(SessionWizardView):
             pass
 
         return context
+
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+        if self.step_kwargs:
+            if self.step_kwargs.get(step):
+                step_kwargs = self.step_kwargs[step](self)
+                kwargs.update(step_kwargs)
+        return kwargs
 
     def render_to_response(self, context):
         if "title" not in context:
