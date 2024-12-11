@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
+from tests_common.constants import WebDriverDelay
 
 
 def click_submit(driver: WebDriver):
@@ -70,7 +71,7 @@ def select_multi_select_options(driver: WebDriver, element_selector: str, option
         element = driver.find_element(by=By.CSS_SELECTOR, value=element_selector)
         element.send_keys(option)
         element.send_keys(Keys.ENTER)
-        WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located(
                 (By.XPATH, f"//span[@class='selected-options__option-text' and contains(text(), '{option}')]")
             ),
@@ -83,17 +84,17 @@ def click_apply_filters(driver: WebDriver):
 
 def open_case_filters(driver: WebDriver):
     if not driver.find_element(by=By.CLASS_NAME, value="case-filters").is_displayed():
-        WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, "show-filters-link"))
         ).click()
-        WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, WebDriverDelay.THIRTY).until(
             expected_conditions.element_to_be_clickable((By.ID, "accordion-case-filters"))
         ).click()
 
 
 def try_open_filters(driver: WebDriver):
     if not driver.find_element(by=By.CLASS_NAME, value="lite-filter-bar").is_displayed():
-        WebDriverWait(driver, 30).until(
+        WebDriverWait(driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, "show-filters-link"))
         ).click()
 
@@ -115,7 +116,7 @@ def click_next_page(driver: WebDriver):
 def select_report_summary_subject_and_fill(driver, subject):
     suggestion_input_autocomplete = driver.find_element(by=By.ID, value="_report_summary_subject")
     suggestion_input_autocomplete.send_keys(subject)
-    WebDriverWait(driver, 30).until(
+    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
         expected_conditions.text_to_be_present_in_element(
             (By.CSS_SELECTOR, ".lite-autocomplete__menu--visible #_report_summary_subject__option--0"),
             subject,
@@ -128,7 +129,7 @@ def select_report_summary_subject_and_fill(driver, subject):
 def select_report_summary_prefix_and_fill(driver, prefix):
     suggestion_input_autocomplete = driver.find_element(by=By.ID, value="_report_summary_prefix")
     suggestion_input_autocomplete.send_keys(prefix)
-    WebDriverWait(driver, 30).until(
+    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
         expected_conditions.text_to_be_present_in_element(
             (By.CSS_SELECTOR, ".lite-autocomplete__menu--visible #_report_summary_prefix__option--0"),
             prefix,

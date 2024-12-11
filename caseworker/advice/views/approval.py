@@ -28,6 +28,8 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     def get_success_url(self):
         recommendation = self.request.POST.get("recommendation")
         if recommendation == "approve_all":
+            if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
+                return reverse("cases:approve_all_legacy", kwargs=self.kwargs)
             return reverse("cases:approve_all", kwargs=self.kwargs)
         else:
             return reverse("cases:refuse_all", kwargs=self.kwargs)

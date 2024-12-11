@@ -1,3 +1,4 @@
+from tests_common.constants import WebDriverDelay
 from ui_tests.exporter.pages.BasePage import BasePage
 
 from selenium.webdriver.common.by import By
@@ -33,7 +34,7 @@ class Shared(BasePage):
         return self.driver.find_elements_by_css_selector(self.GOV_TABLE_ROW)
 
     def get_text_of_organisation_heading(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, self.ORG_NAME_HEADING_ID))
         )
 

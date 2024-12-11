@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from tests_common import functions
+from tests_common.constants import WebDriverDelay
 from ui_tests.caseworker.pages.product_search import ProductSearchPage
 
 
@@ -16,7 +17,7 @@ scenarios("../features/product_search.feature", strict_gherkin=False)
 
 @when("I go to product search page")
 def go_to_product_search_page(driver):
-    WebDriverWait(driver, 30).until(
+    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
         expected_conditions.presence_of_element_located((By.ID, "link-product-search"))
     ).click()
 

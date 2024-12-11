@@ -4,6 +4,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.ui import Select
 
 from tests_common import functions
+from tests_common.constants import WebDriverDelay
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common.tools.helpers import scroll_to_element_by_id
 from tests_common.tools.helpers import scroll_to_element_below_header_by_id
@@ -67,7 +68,7 @@ class ApplicationPage(BasePage):
         return self.driver.find_element(by=By.ID, value=self.CASE_COPY_OF_ID).get_attribute("href")
 
     def click_visible_to_exporter_checkbox(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, self.IS_VISIBLE_TO_EXPORTER_CHECKBOX_ID))
         ).click()
 
@@ -82,7 +83,7 @@ class ApplicationPage(BasePage):
         return self.driver.find_element(by=By.ID, value=self.INPUT_CASE_NOTE_ID).text
 
     def click_post_note_btn(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located(
                 (By.CSS_SELECTOR, f"#{self.BUTTON_POST_NOTE_ID}:not([disabled])")
             )
@@ -90,7 +91,7 @@ class ApplicationPage(BasePage):
         functions.click_submit(self.driver)
 
     def click_cancel_btn(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, self.LINK_CANCEL_NOTE_ID))
         ).click()
 
@@ -150,7 +151,7 @@ class ApplicationPage(BasePage):
         self.driver.execute_script("arguments[0].click();", element)
 
     def click_move_case_button(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, self.MOVE_CASE_BUTTON))
         ).click()
 
@@ -241,7 +242,7 @@ class ApplicationPage(BasePage):
         self.driver.find_element(by=By.ID, value=self.ASSIGN_USER_ID).click()
 
     def click_im_done_button(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, self.BUTTON_IM_DONE_ID))
         ).click()
 
@@ -305,7 +306,7 @@ class ApplicationPage(BasePage):
         """Return a list of names that have denial matches based on
         the supplied match_type - one of "PARTIAL MATCH" or "EXACT MATCH".
         """
-        table = WebDriverWait(self.driver, 30).until(
+        table = WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.XPATH, "//table[@id='table-denial-matches']"))
         )
 
