@@ -1,6 +1,7 @@
 from django.views.generic import FormView
 from django.shortcuts import redirect
 from django.urls import reverse
+from ordered_set import OrderedSet
 
 from requests.exceptions import HTTPError
 
@@ -95,13 +96,12 @@ class ConsolidateApproveView(BaseConsolidationView):
         """
         Collate all provisos across all team advice in to a single string.
         """
-        # Should be a set, but dict gives us consistent ordering
-        unique_provisos = {}
+        unique_provisos = OrderedSet()
         for team_advice in self.advice_to_consolidate:
             for advice in team_advice:
                 if advice["proviso"]:
-                    unique_provisos[advice["proviso"]] = None
-        return "\n\n--------\n".join(unique_provisos.keys())
+                    unique_provisos.add(advice["proviso"])
+        return "\n\n--------\n".join(unique_provisos)
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
