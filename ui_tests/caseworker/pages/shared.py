@@ -3,6 +3,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from tests_common import functions
+from tests_common.constants import WebDriverDelay
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common.tools.helpers import scroll_to_element_by_id
 
@@ -122,14 +123,14 @@ class Shared(BasePage):
 
     def expand_govuk_details(self):
         self.driver.find_element(by=By.CLASS_NAME, value=self.GOVUK_DETAILS).click()
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located(
                 (By.XPATH, f"//*[contains(@class, '{self.GOVUK_DETAILS}') and ancestor::details/@open]")
             )
         )
 
     def try_open_filters(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.CLASS_NAME, "lite-filter-bar"))
         )
 

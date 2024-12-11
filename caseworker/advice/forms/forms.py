@@ -23,7 +23,7 @@ def get_approval_advice_form_factory(advice, approval_reason, proviso, footnote_
         "instructions_to_exporter": advice["note"],
         "footnote_details": advice["footnote"],
     }
-    return FCDOApprovalAdviceForm(
+    return GiveApprovalAdviceForm(
         approval_reason=approval_reason, proviso=proviso, footnote_details=footnote_details, data=data
     )
 

@@ -8,6 +8,7 @@ from caseworker.advice.forms.countersign import CountersignAdviceForm, Countersi
 from caseworker.advice.forms.delete import DeleteAdviceForm
 from caseworker.advice.forms.forms import (
     FCDOApprovalAdviceForm,
+    GiveApprovalAdviceForm,
     get_approval_advice_form_factory,
     get_formset,
 )
@@ -223,8 +224,9 @@ class EditAdviceViewLegacy(LoginRequiredMixin, CaseContextMixin, FormView):
         # & therefore, we render the normal forms and not the FCO ones.
         # This means that here data here doesn't include the list of countries for which
         # the advice should be applied and so we pop that in using a method.
-        data["countries"] = self.advised_countries()
-        if isinstance(form, FCDOApprovalAdviceForm):
+        if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
+            data["countries"] = self.advised_countries()
+        if isinstance(form, GiveApprovalAdviceForm):
             services.post_approval_advice(self.request, self.case, data)
         elif isinstance(form, RefusalAdviceForm):
             data["text"] = data["refusal_reasons"]
