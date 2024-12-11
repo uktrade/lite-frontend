@@ -1,6 +1,6 @@
 class CannedSnippetsTextArea {
   constructor($el) {
-    this.$addButtons = $el.querySelectorAll("a[data-snippet-key]");
+    this.$addButtons = $el.querySelectorAll("button[data-snippet-key]");
     this.$textArea = $el.querySelector("textarea");
     this.$lookup = JSON.parse($el.querySelector("script").textContent);
   }

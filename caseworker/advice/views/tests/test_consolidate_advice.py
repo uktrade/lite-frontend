@@ -400,7 +400,7 @@ def test_ConsolidateApproveView_GET_canned_snippets(
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
     assert "firearm serial numbers" in soup.find("div", {"id": "div_id_proviso_snippets"}).text
-    assert soup.find("a", attrs={"data-snippet-key": "firearm_serial_numbers"}).text == "Add licence condition"
+    assert soup.find("button", attrs={"data-snippet-key": "firearm_serial_numbers"}).text == "Add licence condition"
     assert (
         soup.find("script", {"id": "proviso"}).text
         == '{"other": "", "firearm_serial_numbers": "Firearm serial numbers text"}'

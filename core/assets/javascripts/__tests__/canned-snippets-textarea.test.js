@@ -14,11 +14,11 @@ describe("Canned snippets textarea", () => {
       <textarea name="text">Some starting text</textarea>
       <p>
         Snippet 1
-        <a data-snippet-key="snippet_1">Add</a>
+        <button data-snippet-key="snippet_1">Add</button>
       </p>
       <p>
         Snippet 2
-        <a data-snippet-key="snippet_2">Add</a>
+        <button data-snippet-key="snippet_2">Add</button>
       </p>
       <script type="application/json">{"snippet_1": "snippet 1 text", "snippet_2": "snippet 2 text"}</script>
     </div>
@@ -29,8 +29,12 @@ describe("Canned snippets textarea", () => {
     const component = createComponent($div);
 
     component.init();
-    const addSnippet1 = document.querySelector("a[data-snippet-key=snippet_1]");
-    const addSnippet2 = document.querySelector("a[data-snippet-key=snippet_2]");
+    const addSnippet1 = document.querySelector(
+      "button[data-snippet-key=snippet_1]",
+    );
+    const addSnippet2 = document.querySelector(
+      "button[data-snippet-key=snippet_2]",
+    );
     await userEvent.click(addSnippet1);
     expect($textarea).toHaveDisplayValue(
       `snippet 1 text
