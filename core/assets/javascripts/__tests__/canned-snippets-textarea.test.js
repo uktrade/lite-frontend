@@ -32,14 +32,14 @@ describe("Canned snippets textarea", () => {
     const addSnippet1 = document.querySelector("a[data-snippet-key=snippet_1]");
     const addSnippet2 = document.querySelector("a[data-snippet-key=snippet_2]");
     await userEvent.click(addSnippet1);
-    expect($textarea.value).toBe(
+    expect($textarea).toHaveDisplayValue(
       `snippet 1 text
 
 --------
 Some starting text`,
     );
     await userEvent.click(addSnippet2);
-    expect($textarea.value).toBe(
+    expect($textarea).toHaveDisplayValue(
       `snippet 2 text
 
 --------
