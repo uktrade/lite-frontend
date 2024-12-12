@@ -1,0 +1,12 @@
+div.canned-snippets__snippet {
+    display: flex;
+    align-items: center;
+
+    span {
+        flex: 0 0 50%;
+    }
+    button {
+        display: flex;
+        margin: 0;
+    }
+}
