@@ -2,12 +2,13 @@ from django import forms
 from django.utils.html import format_html
 
 from caseworker.advice.forms.approval import SelectAdviceForm
-from caseworker.advice.forms.forms import GiveApprovalAdviceForm
+from caseworker.advice.forms.forms import PicklistAdviceForm
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit
 
 from core.forms.layouts import (
     RadioTextArea,
+    CannedSnippetsTextArea,
 )
 
 
@@ -30,16 +31,46 @@ class ConsolidateSelectAdviceForm(SelectAdviceForm):
         self.fields["recommendation"].label = f"{recommendation_label}?"
 
 
-class ConsolidateApprovalForm(GiveApprovalAdviceForm):
-    """Approval form minus some fields."""
+class ConsolidateApprovalForm(PicklistAdviceForm):
 
-    def __init__(self, team_alias, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    approval_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        label="",
+        error_messages={"required": "Enter a reason for approving"},
+    )
+    approval_radios = forms.ChoiceField(
+        label="What is your reason for approving?",
+        required=False,
+        widget=forms.RadioSelect,
+        choices=(),
+    )
+    proviso = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        label="",
+        required=False,
+    )
+    proviso_snippets = forms.ChoiceField(
+        label="Add a licence condition (optional)",
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        choices=(),
+    )
+
+    def __init__(self, approval_reason, proviso, **kwargs):
+        super().__init__(**kwargs)
+
+        approval_choices, approval_text = self._picklist_to_choices(approval_reason, include_other=False)
+        self.approval_text = approval_text
+        self.fields["approval_radios"].choices = approval_choices
+
+        proviso_choices, proviso_text = self._picklist_to_choices(proviso, include_other=False)
+        self.proviso_text = proviso_text
+        self.fields["proviso_snippets"].choices = proviso_choices
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
             RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
-            RadioTextArea("proviso_radios", "proviso", self.proviso_text),
+            CannedSnippetsTextArea("proviso_snippets", "proviso", self.proviso_text, add_label="Add licence condition"),
             Submit("submit", "Submit recommendation"),
         )
 

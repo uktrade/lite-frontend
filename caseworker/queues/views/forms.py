@@ -179,6 +179,14 @@ class CasesFiltersForm(forms.Form):
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
         )
+        self.fields["exclude_flags"] = forms.MultipleChoiceField(
+            label="Exclude flags",
+            choices=flags_choices,
+            required=False,
+            help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
+            # setting id for javascript to use
+            widget=forms.SelectMultiple(attrs={"id": "exclude_flags"}),
+        )
         self.fields["control_list_entry"] = forms.MultipleChoiceField(
             label="Control list entry",
             choices=cle_choices,
@@ -220,6 +228,7 @@ class CasesFiltersForm(forms.Form):
             "submitted_from",
             "submitted_to",
             Field("flags", css_class="multi-select-filter"),
+            Field("exclude_flags", css_class="multi-select-filter"),
             "finalised_from",
             "finalised_to",
         ]

@@ -2,10 +2,11 @@
 import { initAll } from "govuk-frontend";
 
 // our JS
-import "../../../core/assets/javascripts/definitions.js";
-import "../../../core/assets/javascripts/back-link.js";
-import initCookierBanner from "../../../core/assets/javascripts/cookies/banner.js";
-import { gaPushUserID } from "../../../core/assets/javascripts/ga-events.js";
+import "core/definitions.js";
+import "core/back-link.js";
+import { initCannedSnippetsTextArea } from "core/canned-snippets-textarea.js";
+import initCookierBanner from "core/cookies/banner.js";
+import { gaPushUserID } from "core/ga-events.js";
 
 // core
 // TODO: can't rewrite these as ES6 imports yet as they are used by other templates
@@ -47,6 +48,7 @@ initCustomisers();
 initRadioTextArea();
 initSelectAllTables();
 initTableExpanders();
+initCannedSnippetsTextArea();
 
 // Push GA user_id
 gaPushUserID();

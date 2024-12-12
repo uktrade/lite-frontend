@@ -1,5 +1,6 @@
 import pytest
 
+from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
@@ -61,7 +62,7 @@ def consolidate_view_url(data_queue, data_standard_case):
 
 
 @pytest.fixture
-def advice_data(current_user, admin_team):
+def advice_data(current_user):
     return {
         "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",  # /PS-IGNORE
         "country": None,
@@ -79,7 +80,7 @@ def advice_data(current_user, admin_team):
         "type": {"key": "approve", "value": "Approve"},
         "ultimate_end_user": None,
         "user": current_user,
-        "team": admin_team,
+        "team": {"id": "some-team", "alias": "FCO"},
     }
 
 
@@ -344,6 +345,68 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_GET(
     )
 
 
+def test_ConsolidateApproveView_GET_collated_provisos(
+    authorized_client,
+    consolidate_approve_url,
+    mixed_advice,
+    advice_data,
+    data_standard_case,
+    lu_gov_user,
+):
+    """
+    Ensure that proviso is pre-filled from collecting provisos across all valid advice.
+    """
+    mixed_advice[0]["proviso"] = "condition 1"
+    mixed_advice[1]["proviso"] = "condition 2"
+    extra_advice = {
+        **advice_data,
+        "team": {"id": "mod-ecju-team", "alias": "MOD_ECJU"},
+        "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "type": {"key": "approve", "value": "Approve"},
+        "proviso": "",
+    }
+    mixed_advice.append(extra_advice)
+    data_standard_case["case"]["advice"] = mixed_advice
+
+    response = authorized_client.get(consolidate_approve_url, follow=False)
+    assert response.status_code == 200
+    assert response.context["form"].initial == {"proviso": "condition 1\n\n--------\ncondition 2"}
+
+
+def test_ConsolidateApproveView_GET_canned_snippets(
+    authorized_client,
+    consolidate_approve_url,
+    mixed_advice,
+    advice_data,
+    data_standard_case,
+    lu_gov_user,
+):
+    """
+    Ensure that the canned snippets proviso component renders as expected.
+    """
+    mixed_advice[0]["proviso"] = "condition 1"
+    mixed_advice[1]["proviso"] = "condition 2"
+    extra_advice = {
+        **advice_data,
+        "team": {"id": "mod-ecju-team", "alias": "MOD_ECJU"},
+        "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
+        "type": {"key": "approve", "value": "Approve"},
+        "proviso": "",
+    }
+    mixed_advice.append(extra_advice)
+    data_standard_case["case"]["advice"] = mixed_advice
+
+    response = authorized_client.get(consolidate_approve_url, follow=False)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert "firearm serial numbers" in soup.find("div", {"id": "div_id_proviso_snippets"}).text
+    assert soup.find("button", attrs={"data-snippet-key": "firearm_serial_numbers"}).text == "Add licence condition"
+    assert (
+        soup.find("script", {"id": "proviso"}).text
+        == '{"other": "", "firearm_serial_numbers": "Firearm serial numbers text"}'
+    )
+
+
 def test_ConsolidateApproveView_POST_bad_input(
     authorized_client,
     consolidate_approve_url,
@@ -446,8 +509,6 @@ def mock_post_approval_team_advice(requests_mock, data_standard_case):
             {
                 "approval_reasons": "yep, go for it",
                 "proviso": "just consider this",
-                "instructions_to_exporter": "and this",
-                "footnote": "some footnote",
             },
             [
                 {
@@ -455,7 +516,7 @@ def mock_post_approval_team_advice(requests_mock, data_standard_case):
                     "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
                     "footnote": "",
                     "footnote_required": False,
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "type": "proviso",
@@ -465,7 +526,7 @@ def mock_post_approval_team_advice(requests_mock, data_standard_case):
                     "denial_reasons": [],
                     "footnote": "",
                     "footnote_required": False,
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "type": "proviso",
@@ -474,7 +535,7 @@ def mock_post_approval_team_advice(requests_mock, data_standard_case):
                     "denial_reasons": [],
                     "footnote": "",
                     "footnote_required": False,
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "type": "proviso",
@@ -484,7 +545,7 @@ def mock_post_approval_team_advice(requests_mock, data_standard_case):
                     "denial_reasons": [],
                     "footnote": "",
                     "footnote_required": False,
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
@@ -495,7 +556,7 @@ def mock_post_approval_team_advice(requests_mock, data_standard_case):
                     "footnote": "",
                     "footnote_required": False,
                     "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "type": "proviso",
@@ -514,7 +575,7 @@ def mock_post_approval_team_advice(requests_mock, data_standard_case):
         ),
     ),
 )
-def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
+def test_ConsolidateApproveView_lu_gov_user_POST_success(
     approval_data,
     expected_post_data,
     authorized_client,
@@ -532,7 +593,7 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
     assert response.status_code == 302
     assert response.url == consolidate_view_url
     assert len(mock_post_approval_final_advice.request_history) == 1
-    assert mock_post_approval_team_advice.request_history[0].json() == expected_post_data
+    assert mock_post_approval_final_advice.request_history[0].json() == expected_post_data
 
 
 @pytest.mark.parametrize(
@@ -607,8 +668,6 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
             {
                 "approval_reasons": "yep, go for it",
                 "proviso": "just consider this",
-                "instructions_to_exporter": "and this",
-                "footnote": "some footnote",
             },
             [
                 {
@@ -616,7 +675,7 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
                     "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
                     "footnote": "",
                     "footnote_required": False,
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "type": "proviso",
@@ -626,7 +685,7 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
                     "denial_reasons": [],
                     "footnote": "",
                     "footnote_required": False,
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "type": "proviso",
@@ -635,7 +694,7 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
                     "denial_reasons": [],
                     "footnote": "",
                     "footnote_required": False,
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "type": "proviso",
@@ -645,7 +704,7 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
                     "denial_reasons": [],
                     "footnote": "",
                     "footnote_required": False,
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
@@ -656,7 +715,7 @@ def test_ConsolidateApproveView_mod_ecju_gov_user_POST_success(
                     "footnote": "",
                     "footnote_required": False,
                     "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-                    "note": "and this",
+                    "note": "",
                     "proviso": "just consider this",
                     "text": "yep, go for it",
                     "type": "proviso",

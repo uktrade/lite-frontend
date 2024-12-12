@@ -42,7 +42,7 @@
 						<p>{{ good.advice.text }}<br></p>
 						{% if good.advice.proviso %}
 							<p>{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PROVISO_TEXT' %}</p>
-							{{ good.advice.proviso }}
+							{{ good.advice.proviso|linebreaks }}
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell">
