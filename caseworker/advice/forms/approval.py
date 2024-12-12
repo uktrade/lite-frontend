@@ -89,7 +89,7 @@ class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
 
 class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
     class Layout:
-        TITLE = "Add licence conditions, instructions to exporter or footnotes (optional)"
+        TITLE = "Add licence conditions (optional)"
 
     proviso = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
@@ -104,7 +104,7 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
         choices=(),
     )
     proviso_checkboxes = forms.MultipleChoiceField(
-        label="Add a licence condition (optional)",
+        label="",
         required=False,
         widget=forms.CheckboxSelectMultiple,
         choices=(),
@@ -143,7 +143,7 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
 
 class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
     class Layout:
-        TITLE = "Instructions for the exporter (optional)"
+        TITLE = "Add instructions to the exporter, or a reporting footnote (optional)"
 
     instructions_to_exporter = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "3"}),
