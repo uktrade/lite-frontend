@@ -5,7 +5,7 @@ from core.common.forms import BaseForm
 
 class PicklistApprovalAdviceEditForm(BaseForm):
     class Layout:
-        TITLE = "Add licence conditions, instructions to exporter or footnotes (optional)"
+        TITLE = "Add licence conditions (optional)"
 
     proviso = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 30, "class": "govuk-!-margin-top-4"}),
