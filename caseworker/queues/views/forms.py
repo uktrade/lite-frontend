@@ -172,18 +172,16 @@ class CasesFiltersForm(forms.Form):
 
         flag_url = reverse("flags:flags")
         self.fields["flags"] = forms.MultipleChoiceField(
-            label="Flags",
+            label="Show only cases with these flags",
             choices=flags_choices,
             required=False,
-            help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "flags"}),
         )
         self.fields["exclude_flags"] = forms.MultipleChoiceField(
-            label="Exclude flags",
+            label="Do not show cases with these flags",
             choices=flags_choices,
             required=False,
-            help_text=f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>',
             # setting id for javascript to use
             widget=forms.SelectMultiple(attrs={"id": "exclude_flags"}),
         )
@@ -229,6 +227,11 @@ class CasesFiltersForm(forms.Form):
             "submitted_to",
             Field("flags", css_class="multi-select-filter"),
             Field("exclude_flags", css_class="multi-select-filter"),
+            HTML(
+                '<div class="govuk-!-margin-bottom-3">'
+                f'<a href="{flag_url}" class="govuk-link govuk-link--no-visited-state" target="_blank">Flag information (open in a new window)</a>'
+                "</div>"
+            ),
             "finalised_from",
             "finalised_to",
         ]
