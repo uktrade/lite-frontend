@@ -245,7 +245,7 @@ def test_DESNZ_give_approval_advice_post_valid(
         },
         None,
     )
-    mocker.patch("caseworker.advice.views.get_gov_user", return_value=get_gov_user_value)
+    mocker.patch("caseworker.advice.views.mixins.get_gov_user", return_value=get_gov_user_value)
     case_data = deepcopy(data_standard_case)
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     case_data["case"]["advice"] = standard_case_with_advice["advice"]
@@ -355,7 +355,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
         },
         None,
     )
-    mocker.patch("caseworker.advice.views.get_gov_user", return_value=get_gov_user_value)
+    mocker.patch("caseworker.advice.views.mixins.get_gov_user", return_value=get_gov_user_value)
     case_data = deepcopy(data_standard_case)
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
     case_data["case"]["advice"] = standard_case_with_advice["advice"]
@@ -374,7 +374,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     soup = beautiful_soup(response.content)
     # redirected to next form
     header = soup.find("h1")
-    assert header.text == "Add licence conditions, instructions to exporter or footnotes (optional)"
+    assert header.text == "Add licence conditions (optional)"
 
     add_licence_condition_response = post_to_step(
         AdviceSteps.LICENCE_CONDITIONS,
@@ -384,7 +384,7 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
     soup = beautiful_soup(add_licence_condition_response.content)
     # redirected to next form
     header = soup.find("h1")
-    assert header.text == "Instructions for the exporter (optional)"
+    assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
 
     add_instructions_response = post_to_step(
         AdviceSteps.LICENCE_FOOTNOTES,

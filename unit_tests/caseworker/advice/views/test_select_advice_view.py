@@ -46,7 +46,7 @@ def test_select_advice_post_desnz(authorized_client, url, data_standard_case, mo
         },
         None,
     )
-    mocker.patch("caseworker.advice.views.get_gov_user", return_value=get_gov_user_value)
+    mocker.patch("caseworker.advice.views.mixins.get_gov_user", return_value=get_gov_user_value)
     response = authorized_client.post(url, data={"recommendation": "approve_all"})
     assert response.status_code == 302
     assert (

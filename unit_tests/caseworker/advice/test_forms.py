@@ -1,6 +1,9 @@
 import pytest
 
-from caseworker.advice import forms
+from caseworker.advice.forms.approval import SelectAdviceForm
+from caseworker.advice.forms.consolidate import ConsolidateSelectAdviceForm
+from caseworker.advice.forms.countersign import CountersignAdviceForm, CountersignDecisionAdviceForm
+from caseworker.advice.forms.forms import GiveApprovalAdviceForm, FCDOApprovalAdviceForm
 
 
 @pytest.mark.parametrize(
@@ -11,7 +14,7 @@ from caseworker.advice import forms
     ),
 )
 def test_give_approval_advice_form_valid(data, valid_status):
-    form = forms.GiveApprovalAdviceForm(
+    form = GiveApprovalAdviceForm(
         data=data, approval_reason={"results": []}, proviso={"results": []}, footnote_details={"results": []}
     )
     assert form.is_valid() == valid_status
@@ -29,7 +32,7 @@ def test_give_approval_advice_form_valid(data, valid_status):
     ),
 )
 def test_select_advice_form_valid(data, valid_status):
-    form = forms.SelectAdviceForm(data=data)
+    form = SelectAdviceForm(data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors["recommendation"] == ["Select if you approve all or refuse all"]
@@ -45,7 +48,7 @@ def test_select_advice_form_valid(data, valid_status):
     ),
 )
 def test_consolidate_select_advice_form_valid(data, valid_status):
-    form = forms.ConsolidateSelectAdviceForm(team_name=None, data=data)
+    form = ConsolidateSelectAdviceForm(team_name=None, data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors["recommendation"] == ["Select if you approve or refuse"]
@@ -59,7 +62,7 @@ def test_consolidate_select_advice_form_valid(data, valid_status):
     ),
 )
 def test_consolidate_select_advice_form_recommendation_label(team_name, label):
-    form = forms.ConsolidateSelectAdviceForm(team_name=team_name)
+    form = ConsolidateSelectAdviceForm(team_name=team_name)
     assert form.fields["recommendation"].label == label
 
 
@@ -72,7 +75,7 @@ def test_consolidate_select_advice_form_recommendation_label(team_name, label):
     ),
 )
 def test_countersign_advice_form_valid(data, valid_status):
-    form = forms.CountersignAdviceForm(data=data)
+    form = CountersignAdviceForm(data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors["approval_reasons"] == ["Enter why you agree with the recommendation"]
@@ -102,7 +105,7 @@ def test_countersign_advice_form_valid(data, valid_status):
     ),
 )
 def test_countersign_decision_advice_form_valid(data, valid_status, errors):
-    form = forms.CountersignDecisionAdviceForm(data=data)
+    form = CountersignDecisionAdviceForm(data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors == errors
@@ -124,7 +127,7 @@ def test_countersign_decision_advice_form_valid(data, valid_status, errors):
     ),
 )
 def test_give_fcdo_approval_advice_form_valid(data, valid_status):
-    form = forms.FCDOApprovalAdviceForm(
+    form = FCDOApprovalAdviceForm(
         data=data,
         countries={"GB": "United Kingdom"},
         approval_reason={"results": []},
