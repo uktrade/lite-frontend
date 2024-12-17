@@ -164,7 +164,9 @@ commands:
         default: auto
         type: string
     steps:
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+            chrome-version: "125.0.6422.112"
+            replace-existing: true
       - browser-tools/install-chromedriver
       - run:
             name: "Install dependencies"
