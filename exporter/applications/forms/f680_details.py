@@ -8,7 +8,7 @@ from lite_forms.components import Form, Checkboxes, Option
 def f680_details_form(request, application_id):
     return Form(
         title=F680Details.TITLE,
-        description=F680Details.DESCRIPTION,
+        description="",
         questions=[
             Checkboxes(
                 name="types[]",

@@ -13,7 +13,7 @@ from core.auth.views import LoginRequiredMixin
 def clearance_level_form(application_id, options):
     return Form(
         title=ClearanceLevel.TITLE,
-        description=ClearanceLevel.DESCRIPTION,
+        description="",
         questions=[RadioButtons(name="clearance_level", options=options)],
         back_link=back_to_task_list(application_id),
     )
