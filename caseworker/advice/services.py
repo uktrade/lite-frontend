@@ -54,13 +54,20 @@ MOD_TEAMS = [MOD_ECJU_TEAM, *MOD_CONSOLIDATE_TEAMS]
 NCSC_TEAM = "NCSC"
 OGD_TEAMS_EXCLUDING_MOD = [
     *DESNZ_TEAMS,
+    # MOD-DI team present here to ensure that advice given in MOD-DI Direct is consolidated by LU
+    MOD_DI_TEAM,
     FCDO_TEAM,
     NCSC_TEAM,
 ]
-OGD_TEAMS = [
-    *OGD_TEAMS_EXCLUDING_MOD,
-    *MOD_TEAMS,
-]
+# Make OGD_TEAMS a set to avoid having duplicate entries for MOD-DI - advice from them should appear unconditionally
+OGD_TEAMS = list(
+    set(
+        [
+            *OGD_TEAMS_EXCLUDING_MOD,
+            *MOD_TEAMS,
+        ]
+    )
+)
 
 # Flags
 LU_COUNTERSIGN_REQUIRED_ID = "bbf29b42-0aae-4ebc-b77a-e502ddea30a8"  # /PS-IGNORE

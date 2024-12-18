@@ -244,6 +244,28 @@ def test_get_advice_to_consolidate_unrecognized_team_raises_exception():
                         "team": {"alias": MOD_ECJU_TEAM, "id": "id-mod-ecju"},
                     },
                 ],
+                "id-mod-di-approve": [
+                    {
+                        "id": "advice-3",
+                        "level": "team",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                    },
+                    {
+                        "id": "advice-4",
+                        "level": "user",
+                        "type": {"key": "approve"},
+                        "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                    },
+                ],
+                "id-mod-di-refuse": [
+                    {
+                        "id": "advice-4",
+                        "level": "user",
+                        "type": {"key": "refuse"},
+                        "team": {"alias": MOD_DI_TEAM, "id": "id-mod-di"},
+                    },
+                ],
             },
         ),
     ),
