@@ -164,7 +164,9 @@ commands:
         default: auto
         type: string
     steps:
-      - browser-tools/install-chrome
+      - browser-tools/install-chrome:
+            chrome-version: "125.0.6422.112"
+            replace-existing: true
       - browser-tools/install-chromedriver
       - run:
             name: "Install dependencies"
@@ -236,7 +238,7 @@ jobs:
     environment:
       <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: tests.caseworker.env
-      PYTEST_ADDOPTS: unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
+      PYTEST_ADDOPTS: caseworker unit_tests/caseworker lite_forms/tests.py --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - backend_unit_tests:

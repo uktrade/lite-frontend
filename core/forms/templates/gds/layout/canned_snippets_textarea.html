@@ -1,0 +1,10 @@
+{% load l10n crispy_forms_gds %}
+<fieldset class="govuk-fieldset" data-module="canned-snippets-textarea">
+    <div id="div_id_{{snippets_field.html_name}}" class="govuk-form-group govuk-body govuk-!-margin-bottom-0">
+        {% include 'gds/layout/canned_snippets.html' with field=snippets_field add_label=add_label %}
+    </div>
+    <div id="div_id_{{field.html_name}}" class="govuk-form-group">
+        {% include 'gds/layout/multifield.html' with field=field %}
+    </div>
+    {{ json_choices | json_script:field.html_name }}
+</fieldset>

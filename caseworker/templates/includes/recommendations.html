@@ -7,7 +7,7 @@
                     {% if advice.type.key == 'approve' %}
                         Approved
                     {% elif advice.type.key == 'proviso' %}
-                        Approved with license conditions
+                        Approved with licence conditions
                     {% elif advice.type.key == 'refuse' %}
                         Refused under
                         {{ advice.denial_reasons|get_display_values:'display_value' }}

@@ -167,6 +167,7 @@ def test_cases_home_page_view_context(authorized_client):
         "assigned_user",
         "licence_status",
         "flags",
+        "exclude_flags",
         "countries",
         "assigned_queues",
         "is_nca_applicable",
@@ -368,6 +369,19 @@ def test_cases_home_page_exclude_control_list_entries_search(authorized_client, 
         **default_params,
         "control_list_entry": ["ml1"],
         "exclude_control_list_entry": ["true"],
+    }
+
+
+def test_cases_home_page_exclude_flags_search(authorized_client, mock_cases_search):
+    url = reverse("queues:cases")
+    response = authorized_client.get(url)
+
+    url = reverse("queues:cases") + "?exclude_flags=flag_id_1&exclude_flags=flag_id_2"
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    assert mock_cases_search.last_request.qs == {
+        **default_params,
+        "exclude_flags": ["flag_id_1", "flag_id_2"],
     }
 
 

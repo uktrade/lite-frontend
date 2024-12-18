@@ -40,21 +40,34 @@ DESNZ_TEAMS = [
 FCDO_TEAM = "FCO"
 LICENSING_UNIT_TEAM = "LICENSING_UNIT"
 MOD_ECJU_TEAM = "MOD_ECJU"
+MOD_DI_TEAM = "MOD_DI"
+MOD_DSR_TEAM = "MOD_DSR"
+MOD_DSTL_TEAM = "MOD_DSTL"
+MOD_CAPPROT_TEAM = "MOD_CAPPROT"
 MOD_CONSOLIDATE_TEAMS = [
-    "MOD_DI",
-    "MOD_DSR",
-    "MOD_DSTL",
-    "MOD_CAPPROT",
+    MOD_DI_TEAM,
+    MOD_DSR_TEAM,
+    MOD_DSTL_TEAM,
+    MOD_CAPPROT_TEAM,
 ]
 MOD_TEAMS = [MOD_ECJU_TEAM, *MOD_CONSOLIDATE_TEAMS]
-LU_CONSOLIDATE_TEAMS = [FCDO_TEAM, MOD_ECJU_TEAM]
 NCSC_TEAM = "NCSC"
-OGD_TEAMS = [
+OGD_TEAMS_EXCLUDING_MOD = [
     *DESNZ_TEAMS,
+    # MOD-DI team present here to ensure that advice given in MOD-DI Direct is consolidated by LU
+    MOD_DI_TEAM,
     FCDO_TEAM,
-    *MOD_TEAMS,
     NCSC_TEAM,
 ]
+# Make OGD_TEAMS a set to avoid having duplicate entries for MOD-DI - advice from them should appear unconditionally
+OGD_TEAMS = list(
+    set(
+        [
+            *OGD_TEAMS_EXCLUDING_MOD,
+            *MOD_TEAMS,
+        ]
+    )
+)
 
 # Flags
 LU_COUNTERSIGN_REQUIRED_ID = "bbf29b42-0aae-4ebc-b77a-e502ddea30a8"  # /PS-IGNORE
@@ -188,6 +201,13 @@ def group_advice_by_team(advice):
     return result
 
 
+def group_advice_by_team_and_decision(advice):
+    result = defaultdict(list)
+    for item in advice:
+        result[f"{item['team']['id']}-{item['type']['key']}"].append(item)
+    return result
+
+
 def get_advice_to_countersign(advice, caseworker):
     advice_levels_to_countersign = [constants.AdviceLevel.USER]
 
@@ -269,16 +289,20 @@ def get_advice_to_consolidate(advice, user_team_alias):
     """
 
     if user_team_alias == LICENSING_UNIT_TEAM:
-        # LU needs to review the consolidated advice given by MOD which is at team level
         user_team_advice = filter_advice_by_level(advice, [constants.AdviceLevel.USER, constants.AdviceLevel.TEAM])
-        advice_from_teams = filter_advice_by_teams(user_team_advice, LU_CONSOLIDATE_TEAMS)
+        lu_consolidate_teams = OGD_TEAMS.copy()
+        mod_ecju_in_advice = any(advice["team"]["alias"] == MOD_ECJU_TEAM for advice in user_team_advice)
+        # If MOD ECJU advice is present, this will supersede all MOD advice
+        if mod_ecju_in_advice:
+            lu_consolidate_teams = [*OGD_TEAMS_EXCLUDING_MOD, MOD_ECJU_TEAM]
+        advice_from_teams = filter_advice_by_teams(user_team_advice, lu_consolidate_teams)
     elif user_team_alias == MOD_ECJU_TEAM:
         user_advice = filter_advice_by_level(advice, [constants.AdviceLevel.USER])
         advice_from_teams = filter_advice_by_teams(user_advice, MOD_CONSOLIDATE_TEAMS)
     else:
         raise Exception(f"Consolidate/combine operation not allowed for team {user_team_alias}")
 
-    return group_advice_by_user(advice_from_teams)
+    return group_advice_by_team_and_decision(advice_from_teams)
 
 
 def order_by_party_type(all_advice):
