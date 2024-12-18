@@ -3,8 +3,8 @@ from django import forms
 from core.common.forms import BaseForm
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit
-from crispy_forms_gds.choices import Choice
 
+from caseworker.advice.forms.forms import PicklistAdviceForm
 from core.forms.layouts import (
     ConditionalCheckboxes,
     ConditionalCheckboxesQuestion,
@@ -26,22 +26,6 @@ class SelectAdviceForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Continue"))
-
-
-class PicklistAdviceForm(forms.Form):
-    def _picklist_to_choices(self, picklist_data):
-        reasons_choices = []
-        reasons_text = {"other": ""}
-
-        for result in picklist_data["results"]:
-            key = "_".join(result.get("name").lower().split())
-            choice = Choice(key, result.get("name"))
-            if result == picklist_data["results"][-1]:
-                choice = Choice(key, result.get("name"), divider="or")
-            reasons_choices.append(choice)
-            reasons_text[key] = result.get("text")
-        reasons_choices.append(Choice("other", "Other"))
-        return reasons_choices, reasons_text
 
 
 class MoveCaseForwardForm(forms.Form):
