@@ -19,6 +19,11 @@ if os.path.exists(ENV_FILE):
 
 env = Env()
 
+# The maximum number of parameters that may be received via GET or POST
+# before a SuspiciousOperation (TooManyFields) is raised.
+# Increased due to potential of selecting all control list entries/ serial numbers for exporter
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 3500
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
