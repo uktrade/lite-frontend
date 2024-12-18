@@ -3,7 +3,7 @@
 
 {% block back_link %}
 	<a href="{% url 'users:users' %}" id="back-link" class="govuk-back-link">
-		{% lcs 'users.UserProfile.BACK_LINK' %}
+		back
 	</a>
 {% endblock %}
 
@@ -67,10 +67,13 @@
 				{{ data.user.email }}
 			</dd>
 			<dd class="govuk-summary-list__actions">
-				<a id="link-edit-email" href="{% url 'users:edit' data.user.id %}#email" class="govuk-link govuk-link--no-visited-state">
-					{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
-					<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.EMAIL' %}</span>
-				</a>
+				{% test_rule 'can_caseworker_edit_user' request as show_edit_email %}
+				{% if show_edit_email %}
+					<a id="link-edit-email" href="{% url 'users:edit' data.user.id %}#email" class="govuk-link govuk-link--no-visited-state">
+						{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
+						<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.EMAIL' %}</span>
+					</a>
+				{% endif %}
 			</dd>
 		</div>
 		<div class="govuk-summary-list__row">
@@ -81,9 +84,9 @@
 				<a href="{% url 'teams:team' data.user.team.id %}" id="user-team-name" class="govuk-link govuk-link--no-visited-state">{{ data.user.team.name }}</a>
 			</dd>
 			<dd class="govuk-summary-list__actions">
-				{% test_rule 'can_caseworker_edit_team' request as show_edit_team %}
+				{% test_rule 'can_caseworker_edit_user' request as show_edit_team %}
 				{% if show_edit_team %}
-					<a id="link-edit-team" href="{% url 'users:edit' data.user.id %}#team" class="govuk-link govuk-link--no-visited-state">
+					<a id="link-edit-team" href="{% url 'users:edit' data.user.id %}" class="govuk-link govuk-link--no-visited-state">
 						{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
 						<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.TEAM' %}</span>
 					</a>
@@ -98,9 +101,9 @@
 				{{ data.user.role.name }}
 			</dd>
 			<dd class="govuk-summary-list__actions">
-				{% test_rule 'can_caseworker_edit_role' request as show_edit_role %}
+				{% test_rule 'can_caseworker_edit_user' request as show_edit_role %}
 				{% if show_edit_role %}
-					<a id="link-edit-role" href="{% url 'users:edit' data.user.id %}#role" class="govuk-link govuk-link--no-visited-state">
+					<a id="link-edit-role" href="{% url 'users:edit' data.user.id %}" class="govuk-link govuk-link--no-visited-state">
 						{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
 						<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.ROLE' %}</span>
 					</a>
@@ -115,7 +118,7 @@
 				{{ data.user.default_queue.name }}
 			</dd>
 			<dd class="govuk-summary-list__actions">
-				<a id="link-edit-default-queue" href="{% url 'users:edit' data.user.id %}#default_queue" class="govuk-link govuk-link--no-visited-state">
+				<a id="link-edit-default-queue" href="{% url 'users:edit' data.user.id %}" class="govuk-link govuk-link--no-visited-state">
 					{% lcs 'users.UserProfile.SummaryList.CHANGE' %}
 					<span class="govuk-visually-hidden">{% lcs 'users.UserProfile.SummaryList.DEFAULT_QUEUE' %}</span>
 				</a>

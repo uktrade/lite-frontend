@@ -3,12 +3,14 @@ import uuid
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
-from caseworker.advice import forms
+from caseworker.advice.forms.consolidate import (
+    ConsolidateApprovalForm,
+    ConsolidateSelectAdviceForm,
+)
 from caseworker.advice import services
+from caseworker.advice.forms.refusal import RefusalAdviceForm
 from caseworker.advice.services import (
-    FCDO_TEAM,
     LICENSING_UNIT_TEAM,
-    MOD_CONSOLIDATE_TEAMS,
     MOD_ECJU_TEAM,
     MANPADS_ID,
     AP_LANDMINE_ID,
@@ -304,185 +306,6 @@ def gov_user():
 
 
 @pytest.mark.parametrize(
-    "path, form_class, team_alias, team_name",
-    (
-        ("", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
-        ("approve/", forms.ConsolidateApprovalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("refuse/", forms.LUConsolidateRefusalForm, LICENSING_UNIT_TEAM, "LU Team"),
-        ("approve/", forms.ConsolidateApprovalForm, MOD_ECJU_TEAM, "MOD Team"),
-        ("refuse/", forms.RefusalAdviceForm, MOD_ECJU_TEAM, "MOD Team"),
-    ),
-)
-def test_consolidate_review(
-    requests_mock,
-    authorized_client,
-    data_standard_case,
-    url,
-    advice_to_consolidate,
-    gov_user,
-    path,
-    form_class,
-    team_alias,
-    team_name,
-):
-    data_standard_case["case"]["advice"] = advice_to_consolidate
-    gov_user["user"]["team"]["name"] = team_name
-    gov_user["user"]["team"]["alias"] = team_alias
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
-
-    response = authorized_client.get(url + path)
-    assert response.status_code == 200
-    form = response.context["form"]
-    assert isinstance(form, form_class)
-
-    advice_to_review = list(response.context["advice_to_consolidate"])
-    advice_teams = {item[0]["user"]["team"]["alias"] for item in advice_to_review}
-
-    if team_alias == LICENSING_UNIT_TEAM:
-        assert advice_teams == {FCDO_TEAM, MOD_ECJU_TEAM}
-    elif team_alias == MOD_ECJU_TEAM:
-        assert bool(advice_teams.intersection(MOD_CONSOLIDATE_TEAMS)) == True
-
-
-def test_approval_reasons_mocked(
-    requests_mock,
-    authorized_client,
-    data_standard_case,
-    url,
-    advice_to_consolidate,
-    gov_user,
-):
-    data_standard_case["case"]["advice"] = advice_to_consolidate
-    gov_user["user"]["team"]["name"] = "LU Team"
-    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
-
-    response = authorized_client.get(url + "approve/")
-    assert response.status_code == 200
-    form = response.context["form"]
-    assert isinstance(form, forms.GiveApprovalAdviceForm)
-    # this is built mock_approval_reason
-    response_choices = [list(choice) for choice in form.fields["approval_radios"].choices]
-    assert response_choices == [
-        ["no_concerns", "no concerns"],
-        ["concerns", "concerns"],
-        ["wmd", "wmd"],
-        ["other", "Other"],
-    ]
-    assert form.approval_text == {
-        "no_concerns": "No Concerns Text",
-        "concerns": "Concerns Text",
-        "wmd": "Weapons of mass destruction Text",
-        "other": "",
-    }
-
-
-def test_approval_reasons_manual(
-    requests_mock,
-    authorized_client,
-    data_standard_case,
-    url,
-    advice_to_consolidate,
-    gov_user,
-):
-    data_standard_case["case"]["advice"] = advice_to_consolidate
-    gov_user["user"]["team"]["name"] = "LU Team"
-    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
-
-    requests_mock.get(
-        client._build_absolute_uri(
-            "/picklist/?type=standard_advice&page=1&disable_pagination=True&show_deactivated=False"
-        ),
-        json={
-            "results": [
-                {"name": "custom Value", "text": "This Casing is Maintained"},
-                {"name": "another custom value with many spaces", "text": "Concerns Text"},
-                {"name": "ALLCAPSNOSPACES", "text": "This is all caps text"},
-            ]
-        },
-    )
-    response = authorized_client.get(url + "approve/")
-    assert response.status_code == 200
-    form = response.context["form"]
-    assert isinstance(form, forms.GiveApprovalAdviceForm)
-    response_choices = [list(choice) for choice in form.fields["approval_radios"].choices]
-
-    assert list(response_choices) == [
-        ["custom_value", "custom Value"],
-        ["another_custom_value_with_many_spaces", "another custom value with many spaces"],
-        ["allcapsnospaces", "ALLCAPSNOSPACES"],
-        ["other", "Other"],
-    ]
-    assert form.approval_text == {
-        "custom_value": "This Casing is Maintained",
-        "another_custom_value_with_many_spaces": "Concerns Text",
-        "allcapsnospaces": "This is all caps text",
-        "other": "",
-    }
-
-
-def test_proviso_manual(
-    requests_mock,
-    authorized_client,
-    data_standard_case,
-    url,
-    advice_to_consolidate,
-    gov_user,
-):
-    data_standard_case["case"]["advice"] = advice_to_consolidate
-    gov_user["user"]["team"]["name"] = "LU Team"
-    gov_user["user"]["team"]["alias"] = LICENSING_UNIT_TEAM
-
-    requests_mock.get(
-        client._build_absolute_uri("/gov-users/2a43805b-c082-47e7-9188-c8b3e1a83cb0"),
-        json=gov_user,
-    )
-
-    requests_mock.get(
-        client._build_absolute_uri("/picklist/?type=proviso&page=1&disable_pagination=True&show_deactivated=False"),
-        json={
-            "results": [
-                {"name": "custom Value", "text": "This Casing is Maintained"},
-                {"name": "another custom value with many spaces", "text": "Concerns Text"},
-                {"name": "ALLCAPSNOSPACES", "text": "This is all caps text"},
-            ]
-        },
-    )
-    response = authorized_client.get(url + "approve/")
-    assert response.status_code == 200
-    form = response.context["form"]
-    assert isinstance(form, forms.GiveApprovalAdviceForm)
-    response_choices = [list(choice) for choice in form.fields["proviso_radios"].choices]
-
-    assert list(response_choices) == [
-        ["custom_value", "custom Value"],
-        ["another_custom_value_with_many_spaces", "another custom value with many spaces"],
-        ["allcapsnospaces", "ALLCAPSNOSPACES"],
-        ["other", "Other"],
-    ]
-    assert form.proviso_text == {
-        "custom_value": "This Casing is Maintained",
-        "another_custom_value_with_many_spaces": "Concerns Text",
-        "allcapsnospaces": "This is all caps text",
-        "other": "",
-    }
-
-
-@pytest.mark.parametrize(
     "team_alias, team_name, recommendation, redirect",
     [
         (LICENSING_UNIT_TEAM, "Licensing Unit", "approve", "approve"),
@@ -514,7 +337,7 @@ def test_consolidate_review_refusal_advice(
     response = authorized_client.get(url)
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.ConsolidateSelectAdviceForm)
+    assert isinstance(form, ConsolidateSelectAdviceForm)
     response = authorized_client.post(url, data={"recommendation": recommendation})
     assert response.status_code == 302
     assert redirect in response.url
@@ -549,145 +372,8 @@ def test_consolidate_review_refusal_advice_recommendation_label(
     response = authorized_client.get(url)
     assert response.status_code == 200
     form = response.context["form"]
-    assert isinstance(form, forms.ConsolidateSelectAdviceForm)
+    assert isinstance(form, ConsolidateSelectAdviceForm)
     assert form.fields["recommendation"].label == recommendation_label
-
-
-def test_consolidate_review_approve(requests_mock, authorized_client, data_standard_case, url, advice):
-    data_standard_case["case"]["advice"] = advice
-    data = {"approval_reasons": "test", "countries": ["GB"]}
-
-    response = authorized_client.post(url + "approve/", data=data)
-    assert response.status_code == 302
-    request = requests_mock.request_history.pop()
-    assert request.method == "POST"
-    assert "team-advice" in request.url
-    assert request.json() == [
-        {
-            "type": "approve",
-            "text": "test",
-            "proviso": "",
-            "note": "",
-            "footnote_required": False,
-            "footnote": "",
-            "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
-            "denial_reasons": [],
-        },
-        {
-            "type": "approve",
-            "text": "test",
-            "proviso": "",
-            "note": "",
-            "footnote_required": False,
-            "footnote": "",
-            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
-            "denial_reasons": [],
-        },
-        {
-            "denial_reasons": [],
-            "footnote": "",
-            "footnote_required": False,
-            "note": "",
-            "proviso": "",
-            "text": "test",
-            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
-            "type": "approve",
-        },
-        {
-            "type": "approve",
-            "text": "test",
-            "proviso": "",
-            "note": "",
-            "footnote_required": False,
-            "footnote": "",
-            "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
-            "denial_reasons": [],
-        },
-        {
-            "denial_reasons": [],
-            "footnote": "",
-            "footnote_required": False,
-            "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-            "note": "",
-            "proviso": "",
-            "text": "",
-            "type": "no_licence_required",
-        },
-        {
-            "denial_reasons": [],
-            "footnote": "",
-            "footnote_required": False,
-            "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-            "note": "",
-            "proviso": "",
-            "text": "",
-            "type": "no_licence_required",
-        },
-    ]
-
-
-def test_consolidate_review_refuse(requests_mock, authorized_client, data_standard_case, url, advice):
-    data_standard_case["case"]["advice"] = advice
-    data = {"denial_reasons": ["1"], "refusal_reasons": "test", "countries": ["GB"]}
-    response = authorized_client.post(url + "refuse/", data=data)
-    assert response.status_code == 302
-    request = requests_mock.request_history.pop()
-    assert request.method == "POST"
-    assert "team-advice" in request.url
-    assert request.json() == [
-        {
-            "denial_reasons": ["1"],
-            "end_user": "95d3ea36-6ab9-41ea-a744-7284d17b9cc5",
-            "footnote_required": False,
-            "text": "test",
-            "type": "refuse",
-            "is_refusal_note": False,
-        },
-        {
-            "consignee": "cd2263b4-a427-4f14-8552-505e1d192bb8",
-            "denial_reasons": ["1"],
-            "footnote_required": False,
-            "text": "test",
-            "type": "refuse",
-            "is_refusal_note": False,
-        },
-        {
-            "denial_reasons": ["1"],
-            "footnote_required": False,
-            "text": "test",
-            "ultimate_end_user": "9f077b3c-6116-4111-b9a0-b2491198aa72",
-            "type": "refuse",
-            "is_refusal_note": False,
-        },
-        {
-            "denial_reasons": ["1"],
-            "footnote_required": False,
-            "text": "test",
-            "third_party": "95c2d6b7-5cfd-47e8-b3c8-dc76e1ac9747",
-            "type": "refuse",
-            "is_refusal_note": False,
-        },
-        {
-            "denial_reasons": [],
-            "footnote": "",
-            "footnote_required": False,
-            "good": "0bedd1c3-cf97-4aad-b711-d5c9a9f4586e",
-            "note": "",
-            "proviso": "",
-            "text": "",
-            "type": "no_licence_required",
-        },
-        {
-            "denial_reasons": [],
-            "footnote": "",
-            "footnote_required": False,
-            "good": "6daad1c3-cf97-4aad-b711-d5c9a9f4586e",
-            "note": "",
-            "proviso": "",
-            "text": "",
-            "type": "no_licence_required",
-        },
-    ]
 
 
 def test_view_consolidate_approve_outcome(
@@ -766,9 +452,8 @@ def test_view_consolidate_refuse_outcome(
 @pytest.mark.parametrize(
     "path, form_class",
     (
-        ("", forms.ConsolidateApprovalForm),
-        ("approve/", forms.ConsolidateApprovalForm),
-        ("refuse/", forms.RefusalAdviceForm),
+        ("approve/", ConsolidateApprovalForm),
+        ("refuse/", RefusalAdviceForm),
     ),
 )
 def test_consolidate_raises_exception_for_other_team(

@@ -6,7 +6,6 @@ from sentry_sdk.integrations.django import DjangoIntegration
 from django_log_formatter_ecs import ECSFormatter
 from django_log_formatter_asim import ASIMFormatter
 from dbt_copilot_python.utility import is_copilot
-from dbt_copilot_python.network import setup_allowed_hosts
 
 from django.urls import reverse_lazy
 
@@ -54,6 +53,7 @@ INSTALLED_APPS = [
     "lite_forms",
     "health_check",
     "health_check.cache",
+    "health_check.storage",
     "core.api",
     "core.forms",
     "crispy_forms",
@@ -68,8 +68,6 @@ INSTALLED_APPS = [
     "cacheops",
 ]
 
-if not IS_ENV_DBT_PLATFORM:
-    INSTALLED_APPS += ["health_check.storage"]
 
 MIDDLEWARE = [
     "allow_cidr.middleware.AllowCIDRMiddleware",
@@ -162,7 +160,10 @@ HAWK_RECEIVER_NONCE_EXPIRY_SECONDS = 60
 
 LOGIN_URL = reverse_lazy("auth:login")
 
-DATA_DIR = os.path.dirname(BASE_DIR)
+if IS_ENV_DBT_PLATFORM:
+    DATA_DIR = BASE_DIR
+else:
+    DATA_DIR = os.path.dirname(BASE_DIR)
 
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -218,7 +219,6 @@ LOGGING = {
 }
 
 if IS_ENV_DBT_PLATFORM:
-    ALLOWED_HOSTS = setup_allowed_hosts(ALLOWED_HOSTS)
     REDIS_URL = env.str("REDIS_URL", "")
     LOGGING.update({"formatters": {"asim_formatter": {"()": ASIMFormatter}}})
     LOGGING.update({"handlers": {"asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"}}})

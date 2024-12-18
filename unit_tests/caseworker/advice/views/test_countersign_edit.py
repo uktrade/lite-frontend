@@ -46,6 +46,24 @@ def countersign_advice(data_standard_case, advice_for_countersign, current_user)
     ]
 
 
+def test_countersign_edit_trigger_list_products(
+    authorized_client, requests_mock, data_standard_case_with_all_trigger_list_products_assessed, url
+):
+    case_id = data_standard_case_with_all_trigger_list_products_assessed["case"]["id"]
+    requests_mock.get(
+        client._build_absolute_uri(f"/cases/{case_id}"), json=data_standard_case_with_all_trigger_list_products_assessed
+    )
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+    expected_context = [
+        {"line_number": num, **good}
+        for num, good in enumerate(
+            data_standard_case_with_all_trigger_list_products_assessed["case"]["data"]["goods"], start=1
+        )
+    ]
+    assert response.context["assessed_trigger_list_goods"] == expected_context
+
+
 def test_edit_post(authorized_client, requests_mock, data_standard_case, standard_case_with_advice, url):
     case_data = data_standard_case
     case_data["case"]["data"]["goods"] = standard_case_with_advice["data"]["goods"]
@@ -254,7 +272,7 @@ def test_lu_countersign_decision_edit_post_success(
     ]
 
 
-@patch("caseworker.advice.views.get_gov_user")
+@patch("caseworker.advice.views.mixins.get_gov_user")
 def test_lu_countersign_edit_get_shows_previous_countersignature(
     mock_get_gov_user,
     authorized_client,

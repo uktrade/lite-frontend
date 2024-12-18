@@ -26,3 +26,11 @@ class AdviceType:
     PROVISO = "proviso"
     REFUSE = "refuse"
     NO_LICENCE_REQUIRED = "no_licence_required"
+
+
+class AdviceSteps:
+    RECOMMEND_APPROVAL = "recommend_approval"
+    DESNZ_APPROVAL = "desnz_approval"
+    FCDO_APPROVAL = "fcdo_approval"
+    LICENCE_CONDITIONS = "licence_conditions"
+    LICENCE_FOOTNOTES = "licence_footnotes"
