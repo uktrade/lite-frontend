@@ -48,7 +48,7 @@ def ecju_query_respond_confirmation_form(edit_response_url):
 def upload_documents_form(back_link):
     return Form(
         title=ecju_queries.UploadDocumentForm.TITLE,
-        description=ecju_queries.UploadDocumentForm.DESCRIPTION,
+        description="Do not attach a document that's above OFFICIAL-SENSITIVE.<br><br>The file must be smaller than 50MB.",
         questions=[
             FileUpload(),
             TextArea(

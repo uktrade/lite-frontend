@@ -10,14 +10,14 @@ from caseworker.users.services import get_permissions
 def add_role(request: HttpRequest):
     return Form(
         title=AddRoleForm.TITLE,
-        description=AddRoleForm.DESCRIPTION,
+        description="",
         questions=[
             TextInput(title=AddRoleForm.ROLE_NAME, name="name"),
             Checkboxes(
                 name="permissions[]",
                 options=get_permissions(request, True),
                 title=AddRoleForm.PERMISSION_CHECKBOXES_TITLE,
-                description=AddRoleForm.PERMISSION_CHECKBOXES_DESCRIPTION,
+                description="",
                 optional=True,
                 classes=["govuk-checkboxes--small"],
             ),
@@ -25,7 +25,7 @@ def add_role(request: HttpRequest):
                 name="statuses[]",
                 options=get_statuses(request, True),
                 title=AddRoleForm.STATUSES_CHECKBOXES_TITLE,
-                description=AddRoleForm.STATUSES_CHECKBOXES_DESCRIPTION,
+                description="",
                 optional=True,
                 classes=["govuk-checkboxes--small"],
             ),
@@ -38,14 +38,14 @@ def add_role(request: HttpRequest):
 def edit_role(request: HttpRequest):
     return Form(
         title=EditRoleForm.TITLE,
-        description=EditRoleForm.DESCRIPTION,
+        description="",
         questions=[
             TextInput(title=EditRoleForm.ROLE_NAME, name="name"),
             Checkboxes(
                 name="permissions[]",
                 options=get_permissions(request, True),
                 title=EditRoleForm.PERMISSION_CHECKBOXES_TITLE,
-                description=EditRoleForm.PERMISSION_CHECKBOXES_DESCRIPTION,
+                description="",
                 optional=True,
                 classes=["govuk-checkboxes--small"],
             ),
@@ -53,7 +53,7 @@ def edit_role(request: HttpRequest):
                 name="statuses[]",
                 options=get_statuses(request, True),
                 title=AddRoleForm.STATUSES_CHECKBOXES_TITLE,
-                description=AddRoleForm.STATUSES_CHECKBOXES_DESCRIPTION,
+                description="",
                 optional=True,
                 classes=["govuk-checkboxes--small"],
             ),

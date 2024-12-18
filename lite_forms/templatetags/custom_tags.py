@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 
 from core.builtins.custom_tags import get_const_string
-from lite_forms.helpers import convert_to_markdown, flatten_data
+from lite_forms.helpers import flatten_data
 
 
 @register.filter
@@ -157,12 +157,6 @@ def date_join(data, prefix):
 @register.filter
 def get(value, arg):
     return value.get(arg, "") if value else None
-
-
-@register.filter
-@mark_safe  # noqa: S308
-def markdown(text):
-    return convert_to_markdown(text)
 
 
 @register.filter
