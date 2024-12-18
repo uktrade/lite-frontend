@@ -260,14 +260,6 @@ class Applications:
         )
         return response.json()
 
-    def add_copied_open_application(self, draft_id, app_name, end_use_details, route_of_goods):
-        response = self.copy_application(draft_id, app_name)
-        self.add_end_use_details(response["data"], details=end_use_details)
-        self.add_route_of_goods(response["data"], route_of_goods)
-        self.submit_application(response["data"])
-        self.api_client.add_to_context("application_id", response["data"])
-        self.api_client.add_to_context("case_id", response["data"])
-
     def is_party_document_processed(self, draft_id, party_id):
         url = "/applications/" + draft_id + "/parties/" + party_id + "/document/"
         return self.is_document_processed(url)

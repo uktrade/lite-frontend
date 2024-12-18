@@ -213,28 +213,6 @@ class CaseDetail(CaseTabsMixin, CaseView):
             "blocking_flags": blocking_flags,
         }
 
-    def get_open_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
-        self.slices = [
-            Slices.GOODS,
-            Slices.DESTINATIONS,
-            Slices.OPEN_APP_PARTIES,
-            Slices.SANCTION_MATCHES,
-            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
-            Slices.LOCATIONS,
-            *conditional(
-                self.case.data["goodstype_category"]["key"] != "cryptographic",
-                [Slices.END_USE_DETAILS, Slices.ROUTE_OF_GOODS],
-                [],
-            ),
-            Slices.SUPPORTING_DOCUMENTS,
-            conditional(self.case.data["export_type"]["key"] == "temporary", Slices.TEMPORARY_EXPORT_DETAILS),
-        ]
-
-        self.additional_context = self.get_advice_additional_context()
-
     def get_standard_application(self):
         self.tabs = self.get_standard_application_tabs()
         self.slices = [

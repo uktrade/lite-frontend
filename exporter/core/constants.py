@@ -1,4 +1,3 @@
-from core.constants import GoodsTypeCategory
 from lite_content.lite_exporter_frontend import applications
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -51,7 +50,6 @@ CASE_SECTIONS = {
     "HAS_PRODUCT_JOURNEY": [STANDARD],
     "HAS_COUNTRIES": OPEN,
     "HAS_END_USER": [STANDARD, F680, GIFTING, CaseTypes.OICL],
-    "HAS_END_USER_OPEN_APP": [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF],
     "HAS_ULTIMATE_END_USERS": [STANDARD, HMRC, OPEN],
     "HAS_CONSIGNEE": [STANDARD, HMRC],
     "HAS_THIRD_PARTIES": [STANDARD, F680, GIFTING],

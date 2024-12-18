@@ -88,37 +88,37 @@ def mock_sso_signin_with_email(driver, internal_url, email):
 
 @given("I sign in as Test UAT user")
 def mock_sso_test_uat_user_caseworker_sign_in(driver, internal_url):  # noqa
-    mock_sso_signin_with_email(driver, internal_url, "test-uat-user@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "test-uat-user@digital.trade.gov.uk")  # /PS-IGNORE
 
 
 @when("I sign in as Test UAT user")
 def test_uat_user_signin(driver, internal_url):
-    mock_sso_signin_with_email(driver, internal_url, "test-uat-user@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "test-uat-user@digital.trade.gov.uk")  # /PS-IGNORE
 
 
 @given("I sign in as Licensing Unit Officer")
 def mock_sso_lu_officer_signin_given(driver, internal_url):
-    mock_sso_signin_with_email(driver, internal_url, "lucaseofficer@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "lucaseofficer@digital.trade.gov.uk")  # /PS-IGNORE
 
 
 @when("I sign in as Licensing Unit Officer")
 def mock_sso_lu_officer_signin(driver, internal_url):
-    mock_sso_signin_with_email(driver, internal_url, "lucaseofficer@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "lucaseofficer@digital.trade.gov.uk")  # /PS-IGNORE
 
 
 @when("I sign in as Licensing Unit Manager")
 def mock_sso_lu_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
-    mock_sso_signin_with_email(driver, internal_url, "lumanager@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "lumanager@digital.trade.gov.uk")  # /PS-IGNORE
 
 
 @when("I sign in as Licensing Unit Senior Manager")
 def mock_sso_lu_senior_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
-    mock_sso_signin_with_email(driver, internal_url, "luseniormanager@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "luseniormanager@digital.trade.gov.uk")  # /PS-IGNORE
 
 
 @given("I sign in as Enforcement Unit Manager")
 def mock_sso_en_senior_manager_user_caseworker_sign_in(driver, internal_url):  # noqa
-    mock_sso_signin_with_email(driver, internal_url, "enforcementmanager@digital.trade.gov.uk")
+    mock_sso_signin_with_email(driver, internal_url, "enforcementmanager@digital.trade.gov.uk")  # /PS-IGNORE
 
 
 @then("I logout")  # noqa
@@ -199,11 +199,6 @@ def check_product_report_summary(driver, report_summary):  # noqa
 @then(parsers.parse('I should see "{timeline_text}" appear in the timeline'))
 def check_timeline(driver, timeline_text):  # noqa
     assert timeline_text in Shared(driver).get_audit_trail_text_timeline()
-
-
-@given("I create open application or open application has been previously created")  # noqa
-def create_open_app(driver, apply_for_open_application):  # noqa
-    pass
 
 
 @given("I prepare the application for final review NLR")
@@ -839,34 +834,6 @@ def generate_decision_document(driver, context):  # noqa
     GeneratedDecisionDocuments(driver).click_generate_decision_document(context.advice_type)
 
 
-@given(parsers.parse('I "{decision}" the open application good and country at all advice levels'))  # noqa
-def approve_open_application_objects(context, api_test_client, decision):  # noqa
-    context.advice_type = decision
-    text = "abc"
-    note = ""
-    footnote_required = "False"
-    data = [
-        {
-            "type": context.advice_type,
-            "text": text,
-            "note": note,
-            "goods_type": context.goods_type["id"],
-            "footnote_required": footnote_required,
-        },
-        {
-            "type": context.advice_type,
-            "text": text,
-            "note": note,
-            "country": context.country["code"],
-            "footnote_required": footnote_required,
-        },
-    ]
-
-    api_test_client.cases.create_user_advice(context.case_id, data)
-    api_test_client.cases.create_team_advice(context.case_id, data)
-    api_test_client.cases.create_final_advice(context.case_id, data)
-
-
 @when("I approve the good country combination")  # noqa
 def approve_good_country_combination(driver, context):  # noqa
     GoodCountryMatrixPage(driver).select_good_country_option(
@@ -1115,7 +1082,7 @@ def assign_as_case_officer(driver, email):
 
 @when("I assign myself as case officer to the case")
 def assign_myself_as_case_officer(driver):  # noqa
-    assign_as_case_officer(driver, "lucaseofficer@digital.trade.gov.uk")
+    assign_as_case_officer(driver, "lucaseofficer@digital.trade.gov.uk")  # /PS-IGNORE
 
 
 @when("I assign myself to the case")
