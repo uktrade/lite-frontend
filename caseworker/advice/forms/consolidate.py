@@ -59,7 +59,7 @@ class ConsolidateApprovalForm(PicklistAdviceForm):
     def __init__(self, approval_reason, proviso, **kwargs):
         super().__init__(**kwargs)
 
-        approval_choices, approval_text = self._picklist_to_choices(approval_reason, include_other=False)
+        approval_choices, approval_text = self._picklist_to_choices(approval_reason)
         self.approval_text = approval_text
         self.fields["approval_radios"].choices = approval_choices
 
