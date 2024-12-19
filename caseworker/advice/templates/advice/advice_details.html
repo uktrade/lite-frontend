@@ -129,7 +129,7 @@
 
                     {% if advice.0.proviso %}
                     <h2 class="govuk-heading-m">Licence condition</h2>
-                    <p class="govuk-body">{{ advice.0.proviso|linebreaks }}</p>
+                    <div class="govuk-body licence-condition">{{ advice.0.proviso|linebreaks }}</div>
                     {% endif %}
 
                     {% if advice.0.note %}
