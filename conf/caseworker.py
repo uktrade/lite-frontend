@@ -71,10 +71,6 @@ AUTHBROKER_PROFILE_URL = urljoin(AUTHBROKER_URL, "/api/v1/user/me/")
 
 AUTHENTICATION_BACKENDS = []
 
-# The maximum number of parameters that may be received via GET or POST
-# before a SuspiciousOperation (TooManyFields) is raised.
-# Increased due to potential of selecting all control list entries
-DATA_UPLOAD_MAX_NUMBER_FIELDS = 3500
 
 # static files
 SVG_DIRS = [
