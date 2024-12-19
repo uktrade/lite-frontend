@@ -3,7 +3,6 @@ from os import path, makedirs
 from re import search
 from time import sleep
 
-from allure import attach, attachment_type
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -45,11 +44,6 @@ def screen_path():
 def save_screenshot(driver, name):
     location = path.join(screen_path(), str(name) + ".png")
     driver.get_screenshot_as_file(location)
-    attach(
-        driver.get_screenshot_as_png(),
-        now,
-        attachment_type=attachment_type.PNG,
-    )
 
 
 def find_element(driver, by_type, locator):
