@@ -1,6 +1,7 @@
 from core.builtins import custom_tags
 
 from caseworker.core.constants import SLA_CIRCUMFERENCE
+from caseworker.letter_templates.templatetags.variable_highlight import variable_highlight
 
 import pytest
 
@@ -60,3 +61,20 @@ def test_sla_colour(remaining, unit, colour):
 def test_sla_colour_missing_unit():
     with pytest.raises(ValueError):
         custom_tags.sla_colour(10, "")
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    (
+        ("just text", "just text"),
+        ("with {{ variable }}", 'with <span class="lite-highlight">{{ variable }}</span>'),
+        (
+            "with {% another_variable %}",
+            'with <span class="lite-highlight lite-highlight--purple">{% another_variable %}</span>',
+        ),
+        ("<a onclick='javascript:alert()' href='javascript:alert()'>Link</a>", "<a>Link</a>"),
+        ("<script>alert()</script>", "&lt;script&gt;alert()&lt;/script&gt;"),
+    ),
+)
+def test_variable_highlight(input, expected):
+    assert variable_highlight(input) == expected
