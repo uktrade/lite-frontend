@@ -77,16 +77,10 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
 
     proviso = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
-        label="",
+        label="Licence condition",
         required=False,
     )
 
-    approval_radios = forms.ChoiceField(
-        label="What is your reason for approving?",
-        required=False,
-        widget=forms.RadioSelect,
-        choices=(),
-    )
     proviso_checkboxes = forms.MultipleChoiceField(
         label="",
         required=False,
@@ -102,27 +96,30 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
     def __init__(self, *args, **kwargs):
         proviso = kwargs.pop("proviso")
 
-        proviso_choices, proviso_text = self._picklist_to_choices(proviso)
-        self.proviso_text = proviso_text
+        self.proviso_choices, self.proviso_text = self._picklist_to_choices(proviso)
 
         self.conditional_checkbox_choices = (
-            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in self.proviso_choices
         )
 
         super().__init__(*args, **kwargs)
 
-        self.fields["proviso_checkboxes"].choices = proviso_choices
-        for choices in proviso_choices:
+        self.fields["proviso_checkboxes"].choices = self.proviso_choices
+        for choices in self.proviso_choices:
             self.fields[choices.value] = forms.CharField(
                 widget=forms.Textarea(attrs={"rows": 3, "class": "govuk-!-margin-top-4"}),
                 label="Description",
                 required=False,
-                initial=proviso_text[choices.value],
+                initial=self.proviso_text[choices.value],
             )
 
     def get_layout_fields(self):
 
-        return (ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),)
+        provisos_field = "proviso"
+        proviso_choices_exist = len(self.proviso_choices) > 0
+        if proviso_choices_exist:
+            provisos_field = ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices)
+        return (provisos_field,)
 
 
 class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
