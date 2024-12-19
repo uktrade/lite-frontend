@@ -1,0 +1,8 @@
+<a {% if id %}id="button-{{ id }}" {% endif %}href="{{ url }}{{ query_params }}" role="button" draggable="false" class="govuk-button {{ classes }}" data-module="govuk-button"{% if hidden %} style="display: none;"{% endif %}>
+    {% lcs text %}
+    {% if show_chevron %}
+        <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" viewBox="0 0 33 43" aria-hidden="true" focusable="false">
+            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+        </svg>
+    {% endif %}
+</a>

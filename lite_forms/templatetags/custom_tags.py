@@ -6,7 +6,6 @@ from django.template.defaulttags import register
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from core.builtins.custom_tags import get_const_string
 from lite_forms.helpers import flatten_data
 
 
@@ -199,27 +198,25 @@ def item_with_rating_exists(items, rating):
                 return True
 
 
-@register.simple_tag
-@mark_safe  # noqa: S308
+@register.inclusion_tag("govuk-link-button.html")
 def govuk_link_button(text, url, url_param=None, id="", classes="", query_params="", show_chevron=False, hidden=False):
-    text = get_const_string(text)
+    if not url_param:
+        url_param = []
+
     if isinstance(url_param, str):
         url_param = [url_param]
-    url = reverse(url, args=url_param if url_param else [])
-    id = f'id="button-{id}"' if id else ""
-    chevron = ""
-    if show_chevron:
-        chevron = (
-            '<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="13" height="15" '
-            'viewBox="0 0 33 43" aria-hidden="true" focusable="false">'
-            '<path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" /></svg>'
-        )
-    hidden = 'style="display: none;"' if hidden else ""
 
-    return (
-        f'<a {id} href="{url}{query_params}" role="button" draggable="false" class="govuk-button {classes}" {hidden} '
-        f'data-module="govuk-button">{text}{chevron}</a>'
-    )
+    url = reverse(url, args=url_param)
+
+    return {
+        "text": text,
+        "url": url,
+        "id": id,
+        "classes": classes,
+        "show_chevron": show_chevron,
+        "hidden": hidden,
+        "query_params": query_params,
+    }
 
 
 @register.filter()
