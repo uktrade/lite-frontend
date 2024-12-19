@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import uuid
 from django.urls import reverse
+from django.conf import settings
+
 from unittest.mock import patch
 import pytest
 
@@ -179,6 +181,55 @@ def test_update_serial_numbers_view(authorized_client, requests_mock):
     assert response.url == application_url
     assert mock_put.called_once
     assert mock_put.last_request.json() == {"serial_numbers": ["abcdef", "ghijkl"]}
+
+
+def test_update_serial_numbers_view_error_exceed_limit(authorized_client, requests_mock):
+    pk = str(uuid.uuid4())
+    good_on_application_pk = str(uuid.uuid4())
+    url = reverse(
+        "applications:update_serial_numbers", kwargs={"pk": pk, "good_on_application_pk": good_on_application_pk}
+    )
+    good_name = "Test good"
+
+    serial_numbers = [str(s) for s in list(range(0, settings.DATA_UPLOAD_MAX_NUMBER_FIELDS + 1))]
+
+    requests_mock.get(
+        f"/applications/{pk}/",
+        json={
+            "id": pk,
+            "status": {
+                "key": CaseStatusEnum.SUBMITTED,
+            },
+        },
+    )
+
+    requests_mock.get(
+        f"/applications/good-on-application/{good_on_application_pk}/",
+        json={
+            "firearm_details": {
+                "number_of_items": len(serial_numbers),
+                "serial_numbers": serial_numbers,
+            },
+            "good": {
+                "name": good_name,
+            },
+            "id": good_on_application_pk,
+        },
+    )
+
+    update_serial_numbers_dict = {}
+    for i, sn in enumerate(serial_numbers):
+        update_serial_numbers_dict[f"serial_numbers_{i}"] = sn
+
+    response = authorized_client.post(
+        url,
+        data=update_serial_numbers_dict,
+    )
+    assert response.status_code == 400
+    assert (
+        response.context.flatten()["exception_value"]
+        == "The number of GET/POST parameters exceeded settings.DATA_UPLOAD_MAX_NUMBER_FIELDS."
+    )
 
 
 def test_update_serial_numbers_view_error_response(authorized_client, requests_mock, good_pk):
