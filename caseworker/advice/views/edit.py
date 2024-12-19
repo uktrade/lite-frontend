@@ -1,16 +1,19 @@
-from caseworker.advice.forms.approval import FootnotesApprovalAdviceForm, RecommendAnApprovalForm
-from caseworker.advice.forms.edit import PicklistApprovalAdviceEditForm
-from caseworker.advice.views.approval import GiveApprovalAdviceView
+from caseworker.advice.forms.approval import (
+    FootnotesApprovalAdviceForm,
+    RecommendAnApprovalForm,
+    SimpleLicenceConditionsForm,
+)
+from caseworker.advice.views.approval import BaseApprovalAdviceView
 from caseworker.advice import services
 from caseworker.advice.constants import AdviceSteps
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist
 
 
-class EditAdviceView(GiveApprovalAdviceView):
+class EditAdviceView(BaseApprovalAdviceView):
 
     form_list = [
         (AdviceSteps.RECOMMEND_APPROVAL, RecommendAnApprovalForm),
-        (AdviceSteps.LICENCE_CONDITIONS, PicklistApprovalAdviceEditForm),
+        (AdviceSteps.LICENCE_CONDITIONS, SimpleLicenceConditionsForm),
         (AdviceSteps.LICENCE_FOOTNOTES, FootnotesApprovalAdviceForm),
     ]
 

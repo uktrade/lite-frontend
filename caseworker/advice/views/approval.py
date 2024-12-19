@@ -2,7 +2,8 @@ from http import HTTPStatus
 from caseworker.advice.conditionals import form_add_licence_conditions, is_desnz_team
 from caseworker.advice.forms.approval import (
     FootnotesApprovalAdviceForm,
-    LicenceConditionsForm,
+    PicklistLicenceConditionsForm,
+    SimpleLicenceConditionsForm,
     RecommendAnApprovalForm,
 )
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
@@ -19,19 +20,19 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 
-class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
-
-    form_list = [
-        (AdviceSteps.RECOMMEND_APPROVAL, RecommendAnApprovalForm),
-        (AdviceSteps.LICENCE_CONDITIONS, LicenceConditionsForm),
-        (AdviceSteps.LICENCE_FOOTNOTES, FootnotesApprovalAdviceForm),
-    ]
+class BaseApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
 
     condition_dict = {
         AdviceSteps.RECOMMEND_APPROVAL: C(is_desnz_team),
         AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
         AdviceSteps.LICENCE_FOOTNOTES: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
     }
+
+    form_list = [
+        (AdviceSteps.RECOMMEND_APPROVAL, RecommendAnApprovalForm),
+        (AdviceSteps.LICENCE_CONDITIONS, PicklistLicenceConditionsForm),
+        (AdviceSteps.LICENCE_FOOTNOTES, FootnotesApprovalAdviceForm),
+    ]
 
     step_kwargs = {
         AdviceSteps.RECOMMEND_APPROVAL: approval_picklist,
@@ -62,3 +63,18 @@ class GiveApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
         data = self.get_payload(form_dict)
         self.post_approval_advice(data)
         return redirect(self.get_success_url())
+
+
+class GiveApprovalAdviceView(BaseApprovalAdviceView):
+
+    def get_form(self, step=None, data=None, files=None):
+
+        if step == AdviceSteps.LICENCE_CONDITIONS:
+            picklist_form_kwargs = self.step_kwargs[AdviceSteps.LICENCE_CONDITIONS](self)
+            picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
+            if picklist_options_exist:
+                return PicklistLicenceConditionsForm(data=data, **picklist_form_kwargs)
+            else:
+                return SimpleLicenceConditionsForm(data=data)
+
+        return super().get_form(step, data, files)
