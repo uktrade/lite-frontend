@@ -70,7 +70,7 @@ class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
         )
 
 
-class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
+class PicklistLicenceConditionsForm(PicklistAdviceForm, BaseForm):
     class Layout:
         TITLE = "Add licence conditions (optional)"
 
@@ -119,7 +119,7 @@ class SimpleLicenceConditionsForm(BaseForm):
         TITLE = "Add licence conditions (optional)"
 
     proviso = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7}),
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
         label="Licence condition",
         required=False,
     )
