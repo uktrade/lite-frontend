@@ -33,7 +33,7 @@ class Locations:
 def which_location_form(application_id, application_type):
     return Form(
         title=goods.GoodsLocationForm.WHERE_ARE_YOUR_GOODS_LOCATED_TITLE,
-        description=goods.GoodsLocationForm.WHERE_ARE_YOUR_GOODS_LOCATED_DESCRIPTION,
+        description="",
         questions=[
             RadioButtons(
                 "choice",
@@ -97,7 +97,7 @@ def new_external_location_form(request, application_type=None, location_type=Non
 def location_type_form(request, application_type=None):
     return Form(
         title=LocationTypeForm.TITLE,
-        description=LocationTypeForm.DESCRIPTION,
+        description="",
         questions=[
             HiddenField("application_type", application_type),
             RadioButtons(
@@ -124,7 +124,7 @@ def new_location_form(request, application_type, location_type):
 
     return Form(
         title=NewLocationForm.TITLE,
-        description=NewLocationForm.DESCRIPTION,
+        description="",
         questions=[
             HiddenField(name="external_locations", value=""),
             TextInput(name="name", title=NewLocationForm.Name.TITLE),

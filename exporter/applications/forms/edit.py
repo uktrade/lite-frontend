@@ -8,7 +8,7 @@ from lite_forms.helpers import conditional
 def reference_name_form(application_id=None):
     return Form(
         title=applications.InitialApplicationQuestionsForms.ReferenceNameQuestion.TITLE,
-        description=applications.InitialApplicationQuestionsForms.ReferenceNameQuestion.DESCRIPTION,
+        description="Give the application a reference name so you can refer back to it when needed.",
         questions=[
             TextInput(name="name"),
         ],
@@ -20,7 +20,7 @@ def reference_name_form(application_id=None):
 def firearms_form(application_id=None):
     return Form(
         title=applications.GoodsCategories.TITLE,
-        description=applications.GoodsCategories.DESCRIPTION,
+        description="",
         questions=[
             RadioButtons(
                 name="contains_firearm_goods",
@@ -38,7 +38,7 @@ def firearms_form(application_id=None):
 def told_by_an_official_form(application_id=None):
     return Form(
         title=ExportLicenceQuestions.HaveYouBeenInformedQuestion.TITLE,
-        description=ExportLicenceQuestions.HaveYouBeenInformedQuestion.DESCRIPTION,
+        description="Give the application a reference name so you can refer back to it when needed.",
         questions=[
             RadioButtons(
                 name="have_you_been_informed",

@@ -1,10 +1,10 @@
 <ol class="app-step-list govuk-!-margin-bottom-9">
 	<li>
-		<p>{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Points.FIRST_POINT' %}</p>
+		<p>Ensure this open general licence is appropriate for your needs</p>
 		<dl class="govuk-summary-list govuk-summary-list--no-border">
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.DESCRIPTION' %}
+					Description
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ data.description }}
@@ -12,7 +12,7 @@
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.CONTROL_LIST_ENTRIES' %}
+					Control list entries
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{% include 'includes/control-list-entries.html' with control_list_entries=data.control_list_entries %}
@@ -20,7 +20,7 @@
 			</div>
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Summary.COUNTRIES' %}
+					Countries
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{% for country in data.countries %}
@@ -31,22 +31,23 @@
 		</dl>
 	</li>
 	<li>
-		<p>{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Points.SECOND_POINT' %}</p>
+		<p>Read the full text of the open general licence</p>
 		<span>{{ data.url|linkify }}</span>
 	</li>
 	<li>
-		<p>{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Points.THIRD_POINT' %}</p>
+		<p>Check that this open general licence is appropriate for your sites</p>
 		<ol class="govuk-list govuk-list--number">
 			{% for site in data.sites %}
 				<li>
 					{{ site.value }}
-					<p class="govuk-hint govuk-!-margin-top-0">{{ site.description|safe }}</p>
+					<p class="govuk-hint govuk-!-margin-top-0">{{ site.description }}</p>
 				</li>
 			{% endfor %}
 		</ol>
 		<span class="govuk-hint">
-			{% lcs 'applications.OpenGeneralLicenceQuestions.OpenGeneralLicenceDetail.Points.THIRD_POINT_NOTICE' as notice %}
-			{{ notice|markdown }}
+			If a site isn't listed, you can
+			<a class="govuk-link govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank" href="/organisation/sites/new/">add a site</a>
+			from your account home. Adding a site now means you'll have to start from the beginning to register this open general licence.
 		</span>
 	</li>
 </ol>

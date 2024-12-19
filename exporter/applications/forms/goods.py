@@ -9,7 +9,7 @@ from lite_forms import components
 def exhibition_item_type(request, good_id, application_id):
     return components.Form(
         title=AddGoodToApplicationForm.Exhibition.TITLE,
-        description=AddGoodToApplicationForm.Exhibition.DESCRIPTION,
+        description="",
         questions=[
             components.HiddenField(name="good_id", value=good_id),
             components.RadioButtons(title="", description="", name="item_type", options=get_item_types(request)),
