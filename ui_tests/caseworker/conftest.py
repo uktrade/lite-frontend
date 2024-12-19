@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from core.constants import CaseStatusEnum
+from tests_common.constants import WebDriverDelay
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, RecommendationsAndDecisionPage, TeamAdvicePage
 from ui_tests.caseworker.pages.case_page import CasePage, CaseTabs
 from ui_tests.caseworker.pages.teams_pages import TeamsPages
@@ -284,7 +285,7 @@ def prepare_case(api_test_client, nlr):  # noqa
 def submit_form(driver):  # noqa
     old_page = driver.find_element(by=By.TAG_NAME, value="html")
     Shared(driver).click_submit()
-    WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
+    WebDriverWait(driver, WebDriverDelay.FORTYFIVE).until(expected_conditions.staleness_of(old_page))
 
 
 @when(parsers.parse('I click the text "{text}"'))
@@ -295,7 +296,7 @@ def click_text(driver, text):  # noqa
 
 @when(parsers.parse('I click "{button_text}"'))
 def click_button_with_text(driver, button_text):  # noqa
-    WebDriverWait(driver, 20).until(
+    WebDriverWait(driver, WebDriverDelay.TWENTY).until(
         expected_conditions.presence_of_element_located(
             (
                 By.XPATH,
@@ -396,21 +397,28 @@ def case_list_page(driver, internal_url):  # noqa
 
 @when("I go to my profile page")  # noqa
 def get_profile_page(driver):  # noqa
-    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "link-profile"))).click()
+    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
+        expected_conditions.presence_of_element_located((By.ID, "link-profile"))
+    ).click()
 
 
 @when(parsers.parse('I change my team to "{team}" and default queue to "{queue}"'))  # noqa
 def go_to_team_edit_page(driver, team, queue):  # noqa
     # we should already be on the profile page
-    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "link-edit-team"))).click()
+    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
+        expected_conditions.presence_of_element_located((By.ID, "link-edit-team"))
+    ).click()
     teams_page = TeamsPages(driver)
     teams_page.select_team_from_dropdown(team)
     teams_page.select_default_queue_from_dropdown(queue)
     functions.click_submit(driver)
     # Ensure we return to the profile page
-    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "link-edit-team")))
+    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
+        expected_conditions.presence_of_element_located((By.ID, "link-edit-team"))
+    )
     # Check that the team/queue change was applied successfully
     assert driver.find_element(by=By.ID, value="user-team-name").text == team
+    WebDriverWait(driver, WebDriverDelay.THIRTY)
     assert driver.find_element(by=By.ID, value="user-default-queue").text == queue
 
 
@@ -432,7 +440,9 @@ def system_queue_shown_in_dropdown(driver, queue_name):  # noqa
 @when(parsers.parse('I switch to "{queue_name}" queue'))  # noqa
 def switch_to_queue(driver, queue_name):  # noqa
     driver.find_element(by=By.ID, value="link-queue").click()
-    WebDriverWait(driver, 30).until(expected_conditions.presence_of_element_located((By.ID, "filter-queues")))
+    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
+        expected_conditions.presence_of_element_located((By.ID, "filter-queues"))
+    )
     driver.find_element(by=By.ID, value="filter-queues").send_keys(queue_name)
     elements = [
         item
@@ -678,7 +688,7 @@ def click_edit_case_flags_link(driver, flag_name):
 
     old_page = driver.find_element(by=By.TAG_NAME, value="html")
     functions.click_submit(driver)
-    WebDriverWait(driver, 45).until(expected_conditions.staleness_of(old_page))
+    WebDriverWait(driver, WebDriverDelay.FORTYFIVE).until(expected_conditions.staleness_of(old_page))
 
 
 @given(parsers.parse('the status is set to "{status}"'))  # noqa
@@ -1005,7 +1015,7 @@ def approve_case_as_team(driver, team, queue, context, internal_url, internal_in
     recommendation_and_decisions_page.click_make_recommendation()
     recommendation_and_decisions_page.click_approve_all()
     Shared(driver).click_submit()
-    recommendation_and_decisions_page.enter_reasons_for_approving("approving")
+    recommendation_and_decisions_page.enter_approval_reasons("approving")
     functions.click_submit(driver)  # Submit recommmendation
     functions.click_submit(driver)  # Move case forward
     click_on_created_application(driver, context, internal_url)

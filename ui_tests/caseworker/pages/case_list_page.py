@@ -4,6 +4,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support.select import Select
 
+from tests_common.constants import WebDriverDelay
 from ui_tests.caseworker.pages.BasePage import BasePage
 from ui_tests.caseworker.pages.shared import Shared
 from tests_common import functions
@@ -154,7 +155,7 @@ class CaseListPage(BasePage):
         self.driver.find_element(by=By.ID, value=self.LINK_CHANGE_QUEUE_ID).click()
 
     def search_for_queue(self, queue_name):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, self.QUEUE_SEARCH_BOX))
         )
         self.driver.find_element(by=By.ID, value=self.QUEUE_SEARCH_BOX).send_keys(queue_name)
@@ -216,6 +217,6 @@ class CaseListPage(BasePage):
         return self.driver.find_element(by=By.ID, value=self.SHOW_TEAM_ECJU_AND_HIDDEN_CASES).click()
 
     def click_export_enforcement_xml(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
             expected_conditions.presence_of_element_located((By.ID, self.EXPORT_ENFORCEMENT_XML_BUTTON_ID))
         ).click()

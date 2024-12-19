@@ -10,6 +10,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException
 
+from tests_common.constants import WebDriverDelay
 import tests_common.tools.helpers as utils
 from ui_tests.exporter.fixtures.add_end_user_advisory import add_end_user_advisory  # noqa
 from ui_tests.exporter.fixtures.add_party import add_end_user_to_application  # noqa
@@ -1242,7 +1243,7 @@ def edit_good_details_in_application(driver, field_name, updated_value):  # noqa
 
 @when(parsers.parse('I click on "{link_text}"'))  # noqa
 def click_link_with_text(driver, link_text):  # noqa
-    WebDriverWait(driver, 30).until(
+    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
         expected_conditions.presence_of_element_located(
             (
                 By.LINK_TEXT,
