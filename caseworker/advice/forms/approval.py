@@ -71,22 +71,10 @@ class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
         )
 
 
-class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
+class PicklistLicenceConditionsForm(PicklistAdviceForm, BaseForm):
     class Layout:
         TITLE = "Add licence conditions (optional)"
 
-    proviso = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
-        label="",
-        required=False,
-    )
-
-    approval_radios = forms.ChoiceField(
-        label="What is your reason for approving?",
-        required=False,
-        widget=forms.RadioSelect,
-        choices=(),
-    )
     proviso_checkboxes = forms.MultipleChoiceField(
         label="",
         required=False,
@@ -96,14 +84,13 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        # only return proviso (text) for selected radios, nothing else matters, join by 2 newlines
+        # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
         return {"proviso": "\r\n\r\n".join([cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]])}
 
     def __init__(self, *args, **kwargs):
         proviso = kwargs.pop("proviso")
 
         proviso_choices, proviso_text = self._picklist_to_choices(proviso)
-        self.proviso_text = proviso_text
 
         self.conditional_checkbox_choices = (
             ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
@@ -121,8 +108,21 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
             )
 
     def get_layout_fields(self):
-
         return (ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),)
+
+
+class SimpleLicenceConditionsForm(BaseForm):
+    class Layout:
+        TITLE = "Add licence conditions (optional)"
+
+    proviso = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        label="Licence condition",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return ("proviso",)
 
 
 class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
