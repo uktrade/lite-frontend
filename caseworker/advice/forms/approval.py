@@ -3,8 +3,8 @@ from django import forms
 from core.common.forms import BaseForm
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit
-from crispy_forms_gds.choices import Choice
 
+from caseworker.advice.forms.forms import PicklistAdviceForm
 from core.forms.layouts import (
     ConditionalCheckboxes,
     ConditionalCheckboxesQuestion,
@@ -26,22 +26,6 @@ class SelectAdviceForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.add_input(Submit("submit", "Continue"))
-
-
-class PicklistAdviceForm(forms.Form):
-    def _picklist_to_choices(self, picklist_data):
-        reasons_choices = []
-        reasons_text = {"other": ""}
-
-        for result in picklist_data["results"]:
-            key = "_".join(result.get("name").lower().split())
-            choice = Choice(key, result.get("name"))
-            if result == picklist_data["results"][-1]:
-                choice = Choice(key, result.get("name"), divider="or")
-            reasons_choices.append(choice)
-            reasons_text[key] = result.get("text")
-        reasons_choices.append(Choice("other", "Other"))
-        return reasons_choices, reasons_text
 
 
 class MoveCaseForwardForm(forms.Form):
@@ -93,16 +77,10 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
 
     proviso = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
-        label="",
+        label="Licence condition",
         required=False,
     )
 
-    approval_radios = forms.ChoiceField(
-        label="What is your reason for approving?",
-        required=False,
-        widget=forms.RadioSelect,
-        choices=(),
-    )
     proviso_checkboxes = forms.MultipleChoiceField(
         label="",
         required=False,
@@ -118,27 +96,30 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
     def __init__(self, *args, **kwargs):
         proviso = kwargs.pop("proviso")
 
-        proviso_choices, proviso_text = self._picklist_to_choices(proviso)
-        self.proviso_text = proviso_text
+        self.proviso_choices, self.proviso_text = self._picklist_to_choices(proviso)
 
         self.conditional_checkbox_choices = (
-            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in self.proviso_choices
         )
 
         super().__init__(*args, **kwargs)
 
-        self.fields["proviso_checkboxes"].choices = proviso_choices
-        for choices in proviso_choices:
+        self.fields["proviso_checkboxes"].choices = self.proviso_choices
+        for choices in self.proviso_choices:
             self.fields[choices.value] = forms.CharField(
                 widget=forms.Textarea(attrs={"rows": 3, "class": "govuk-!-margin-top-4"}),
                 label="Description",
                 required=False,
-                initial=proviso_text[choices.value],
+                initial=self.proviso_text[choices.value],
             )
 
     def get_layout_fields(self):
 
-        return (ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),)
+        provisos_field = "proviso"
+        proviso_choices_exist = len(self.proviso_choices) > 0
+        if proviso_choices_exist:
+            provisos_field = ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices)
+        return (provisos_field,)
 
 
 class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
