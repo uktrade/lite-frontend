@@ -39,6 +39,11 @@ def click_refuse_all(driver):  # noqa
     RecommendationsAndDecisionPage(driver).click_refuse_all()
 
 
+@when("I click add licence condition")
+def click_add_licence_condition(driver):  # noqa
+    RecommendationsAndDecisionPage(driver).click_add_licence_condition()
+
+
 @when(parsers.parse('I select refusal criteria "{criteria}"'))
 def select_refusal_criteria(driver, criteria):  # noqa
     functions.select_multi_select_options(
@@ -62,6 +67,11 @@ def enter_reasons_for_approving(driver, reasons, context):  # noqa
     RecommendationsAndDecisionPage(driver).enter_reasons_for_approving(reasons)
 
 
+@when(parsers.parse('I enter "{reasons}" as the approval reasons'))
+def enter_approval_reasons(driver, reasons, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_approval_reasons(reasons)
+
+
 @when(parsers.parse('I enter "{reasons}" as the reasons for refusal'))
 def enter_reasons_for_refusal(driver, reasons, context):  # noqa
     RecommendationsAndDecisionPage(driver).enter_reasons_for_refusal(reasons)
@@ -72,19 +82,39 @@ def enter_refusal_note(driver, note, context):  # noqa
     RecommendationsAndDecisionPage(driver).enter_refusal_note(note)
 
 
-@when(parsers.parse('I enter "{licence_condition}" as the licence condition'))
-def enter_licence_condition(driver, licence_condition, context):  # noqa
-    RecommendationsAndDecisionPage(driver).enter_licence_condition(licence_condition)
+@when(parsers.parse('I enter "{licence_condition}" as the licence condition into the "{condition_selected}" checkbox'))
+def enter_licence_condition(driver, licence_condition, condition_selected, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_licence_condition(licence_condition, condition_selected)
 
 
-@when(parsers.parse('I enter "{instructions}" as the instructions for the exporter'))
+@when(parsers.parse('I enter "{licence_condition}" into the licence condition'))
+def enter_licence_condition_edit(driver, licence_condition, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_licence_condition_edit(licence_condition)
+
+
+@when(parsers.parse('I enter "{instructions}" as the instructions for the exporter on the instructions step'))
 def enter_instructions_for_exporter(driver, instructions, context):  # noqa
     RecommendationsAndDecisionPage(driver).enter_instructions_for_exporter(instructions)
 
 
-@when(parsers.parse('I enter "{footnote}" as the reporting footnote'))
+@when(parsers.parse('I enter "{footnote}" as the reporting footnote on the instructions step'))
 def enter_reporting_footnote(driver, footnote, context):  # noqa
     RecommendationsAndDecisionPage(driver).enter_reporting_footnote(footnote)
+
+
+@when(parsers.parse('I enter "{licence_condition}" as the licence condition'))
+def enter_licence_condition_legacy(driver, licence_condition, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_licence_condition_legacy(licence_condition)
+
+
+@when(parsers.parse('I enter "{instructions}" as the instructions for the exporter'))
+def enter_instructions_for_exporter_legacy(driver, instructions, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_instructions_for_exporter_legacy(instructions)
+
+
+@when(parsers.parse('I enter "{footnote}" as the reporting footnote'))
+def enter_reporting_footnote_legacy(driver, footnote, context):  # noqa
+    RecommendationsAndDecisionPage(driver).enter_reporting_footnote_legacy(footnote)
 
 
 @then(parsers.parse('I should see my recommendation for "{countries}" with "{reasons}"'))

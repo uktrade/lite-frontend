@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from caseworker.advice.forms.approval import MoveCaseForwardForm, SelectAdviceForm
+from caseworker.advice.forms.approval import MoveCaseForwardForm
 from caseworker.advice.forms.consolidate import (
     ConsolidateApprovalForm,
     LUConsolidateRefusalForm,
@@ -50,24 +50,6 @@ class CaseDetailView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "advice/case_detail_example.html"
 
 
-class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
-    template_name = "advice/select_advice.html"
-    form_class = SelectAdviceForm
-
-    def get_success_url(self):
-        recommendation = self.request.POST.get("recommendation")
-        if recommendation == "approve_all":
-            if self.caseworker["team"]["alias"] in services.DESNZ_TEAMS:
-                return reverse("cases:approve_all", kwargs=self.kwargs)
-            return reverse("cases:approve_all_legacy", kwargs=self.kwargs)
-        else:
-            return reverse("cases:refuse_all", kwargs=self.kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
-
-
 class GiveApprovalAdviceViewLegacy(LoginRequiredMixin, CaseContextMixin, FormView):
     """
     Form to recommend approval advice for all products on the application
@@ -76,13 +58,10 @@ class GiveApprovalAdviceViewLegacy(LoginRequiredMixin, CaseContextMixin, FormVie
     template_name = "advice/give-approval-advice.html"
 
     def get_form(self):
-        if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
-            return FCDOApprovalAdviceForm(
-                services.unadvised_countries(self.caseworker, self.case),
-                **self.get_form_kwargs(),
-            )
-        else:
-            return GiveApprovalAdviceForm(**self.get_form_kwargs())
+        return FCDOApprovalAdviceForm(
+            services.unadvised_countries(self.caseworker, self.case),
+            **self.get_form_kwargs(),
+        )
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

@@ -104,6 +104,11 @@ class RecommendationsAndDecisionPage(BasePage):
     def click_refuse_all(self):
         self.driver.find_element(by=By.XPATH, value="//input[@type='radio' and @value='refuse_all']").click()
 
+    def click_add_licence_condition(self):
+        self.driver.find_element(
+            by=By.XPATH, value="//input[@id='id_recommend_approval-add_licence_conditions']"
+        ).click()
+
     def select_country(self, country):
         self.driver.find_element(by=By.XPATH, value=f"//input[@type='checkbox' and @value='{country}']").click()
 
@@ -112,6 +117,11 @@ class RecommendationsAndDecisionPage(BasePage):
 
     def enter_reasons_for_approving(self, reasons):
         el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='approval_reasons']")
+        el.clear()
+        el.send_keys(reasons)
+
+    def enter_approval_reasons(self, reasons):
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='recommend_approval-approval_reasons']")
         el.clear()
         el.send_keys(reasons)
 
@@ -125,17 +135,42 @@ class RecommendationsAndDecisionPage(BasePage):
         el.clear()
         el.send_keys(note)
 
-    def enter_licence_condition(self, licence_condition):
-        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='proviso']")
+    def enter_licence_condition(self, licence_condition, condition_selected):
+        self.driver.find_element(
+            by=By.XPATH, value=f"//input[@type='checkbox' and @value='{condition_selected}']"
+        ).click()
+        el = self.driver.find_element(by=By.XPATH, value=f"//textarea[@name='licence_conditions-{condition_selected}']")
+        el.clear()
+        el.send_keys(licence_condition)
+
+    def enter_licence_condition_edit(self, licence_condition):
+        el = self.driver.find_element(by=By.XPATH, value=f"//textarea[@name='licence_conditions-proviso']")
         el.clear()
         el.send_keys(licence_condition)
 
     def enter_instructions_for_exporter(self, instructions):
-        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='instructions_to_exporter']")
+        el = self.driver.find_element(
+            by=By.XPATH, value="//textarea[@name='licence_footnotes-instructions_to_exporter']"
+        )
         el.clear()
         el.send_keys(instructions)
 
     def enter_reporting_footnote(self, footnote):
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='licence_footnotes-footnote_details']")
+        el.clear()
+        el.send_keys(footnote)
+
+    def enter_licence_condition_legacy(self, licence_condition):
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='proviso']")
+        el.clear()
+        el.send_keys(licence_condition)
+
+    def enter_instructions_for_exporter_legacy(self, instructions):
+        el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='instructions_to_exporter']")
+        el.clear()
+        el.send_keys(instructions)
+
+    def enter_reporting_footnote_legacy(self, footnote):
         el = self.driver.find_element(by=By.XPATH, value="//textarea[@name='footnote_details']")
         el.clear()
         el.send_keys(footnote)
