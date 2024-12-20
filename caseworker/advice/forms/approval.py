@@ -113,7 +113,11 @@ class LicenceConditionsForm(PicklistAdviceForm, BaseForm):
     def clean(self):
         cleaned_data = super().clean()
         # only return proviso (text) for selected radios, nothing else matters, join by 2 newlines
-        return {"proviso": "\r\n\r\n".join([cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]])}
+        return {
+            "proviso": "\n\n--------\n".join(
+                [cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]]
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         proviso = kwargs.pop("proviso")
