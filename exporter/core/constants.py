@@ -93,7 +93,6 @@ class NotificationType:
 APPLICATION_TYPE_STRINGS = {
     STANDARD: applications.ApplicationPage.Summary.Licence.STANDARD,
     HMRC: applications.ApplicationPage.Summary.Licence.HMRC,
-    OPEN: applications.ApplicationPage.Summary.Licence.OPEN,
     GIFTING: applications.ApplicationPage.Summary.Licence.GIFTING,
     F680: applications.ApplicationPage.Summary.Licence.F680,
     EXHIBITION: applications.ApplicationPage.Summary.Licence.EXHIBITION,

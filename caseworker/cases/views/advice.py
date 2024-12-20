@@ -24,7 +24,6 @@ from caseworker.cases.services import (
     get_final_decision_documents,
     get_licence,
     get_finalise_application_goods,
-    get_open_licence_decision,
 )
 from core.builtins.custom_tags import filter_advice_by_level
 from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, GenerateGoodsDecisionForm
@@ -149,13 +148,9 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
         approve = False
         all_nlr = False
-        is_case_open = case_type == CaseType.OPEN.value
 
-        if is_case_open:
-            approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
-        else:
-            approve = any([item == "approve" or item == "proviso" for item in advice_items_with_goods])
-            all_nlr = all(item == "no_licence_required" for item in advice_items_with_goods)
+        approve = any([item == "approve" or item == "proviso" for item in advice_items_with_goods])
+        all_nlr = all(item == "no_licence_required" for item in advice_items_with_goods)
 
         if approve:
             any_nlr = any([item == "no_licence_required" for item in advice_items_with_goods])

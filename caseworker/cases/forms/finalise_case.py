@@ -5,7 +5,7 @@ from lite_forms.components import Form, TextInput, BackLink, DateInput, Label, H
 from lite_forms.helpers import conditional
 
 
-def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, goods, goods_html):
+def approve_licence_form(queue_pk, case_id, editable_duration, goods, goods_html):
     return Form(
         title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.APPROVE_TITLE,
         questions=[

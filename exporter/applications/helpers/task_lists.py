@@ -34,8 +34,6 @@ from exporter.organisation.roles.services import get_user_permissions
 def _get_strings(application_type):
     if application_type == STANDARD:
         return applications.StandardApplicationTaskList
-    elif application_type == OPEN:
-        return applications.OpenApplicationTaskList
     elif application_type == HMRC:
         return applications.HMRCApplicationTaskList
     elif application_type == EXHIBITION:

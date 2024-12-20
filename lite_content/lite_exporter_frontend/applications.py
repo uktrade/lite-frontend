@@ -505,23 +505,6 @@ class StandardApplicationTaskList:
     NOTES = "Notes"
 
 
-class OpenApplicationTaskList:
-    ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
-    NEW_TITLE = "Open Individual Export Licence application"
-    EDIT_TITLE = "Edit the application"
-    GOODS = "Products"
-    GOODS_LOCATION = "Locations"
-    GOODS_DESTINATION = "Destinations"
-    COUNTRIES_WHERE_EACH_GOOD_IS_GOING = "Product destinations"
-    SUPPORTING_DOCUMENTS = "Supporting documents"
-    END_USE_DETAILS = "End use details"
-    TEMPORARY_EXPORT_DETAILS = "Temporary export details"
-    NOTES = "Notes"
-    ULTIMATE_END_USERS = "Ultimate end-users"
-    THIRD_PARTIES = "Third parties"
-    END_USER = "End user"
-
-
 class HMRCApplicationTaskList:
     ENTER_A_REFERENCE_NAME_SHORT_TITLE = "Your reference"
     GOODS = "Products"

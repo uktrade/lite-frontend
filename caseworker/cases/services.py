@@ -172,11 +172,6 @@ def clear_final_advice(request, case_pk):
     return data.json(), data.status_code
 
 
-def get_open_licence_decision(request, case_pk):
-    data = client.get(request, f"/cases/{case_pk}/open-licence-decision/")
-    return data.json()["decision"]
-
-
 def post_user_case_advice(request, pk, json):
     response = client.post(request, f"/cases/{pk}/user-advice/", json)
     return response.json(), response.status_code

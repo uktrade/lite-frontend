@@ -1,9 +1,8 @@
-from exporter.core.constants import STANDARD, OPEN
+from exporter.core.constants import STANDARD
 from lite_content.lite_exporter_frontend import generic, strings
 from lite_content.lite_exporter_frontend.applications import (
     EndUseDetails,
     StandardApplicationTaskList,
-    OpenApplicationTaskList,
 )
 from lite_forms.components import BackLink, Form, RadioButtons, FormGroup, Option, TextInput, TextArea
 from lite_forms.helpers import conditional
@@ -15,8 +14,6 @@ def end_use_details_form(application, request, back_link):
 
     if application.sub_type == STANDARD:
         caption = StandardApplicationTaskList.END_USE_DETAILS
-    elif application.sub_type == OPEN:
-        caption = OpenApplicationTaskList.END_USE_DETAILS
 
     return FormGroup(
         [

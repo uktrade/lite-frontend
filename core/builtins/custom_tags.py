@@ -775,7 +775,7 @@ def application_type_in_list(application_type, application_types):
 @register.filter()
 def get_end_use_details_status(application):
     fields = ["intended_end_use"]
-    if application.sub_type in [STANDARD, OPEN]:
+    if application.sub_type in [STANDARD]:
         fields += ["is_military_end_use_controls", "is_informed_wmd", "is_suspected_wmd"]
         if application.sub_type == STANDARD:
             fields.append("is_eu_military")
