@@ -72,6 +72,6 @@ def test_bookmarks_present(
     assert third["filter_json"] == {
         "flags": ["64cbcf98-9beb-41ad-8f5d-276dee768990", "8f02e308-9861-4284-a7f0-f05495efce31"]
     }
-    assert third["description"] == "Flags: AG Biological, AG Chemical"
+    assert third["description"] == "Show only cases with these flags: AG Biological, AG Chemical"
     assert "flags=64cbcf98-9beb-41ad-8f5d-276dee768990" in third["url"]
     assert "flags=8f02e308-9861-4284-a7f0-f05495efce31" in third["url"]
