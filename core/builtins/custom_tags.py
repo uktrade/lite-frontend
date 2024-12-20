@@ -178,13 +178,12 @@ def str_date_only(value):
         return localtime(parse(value)).strftime("%-d %B %Y")
 
 
-@register.simple_tag
-@mark_safe  # noqa: S308
+@register.inclusion_tag("inclusion_tags/hidden-field.html")
 def hidden_field(key, value):
     """
     Generates a hidden field from the given key and value
     """
-    return f'<input type="hidden" name="{key}" value="{value}">'
+    return {"key": key, "value": value}
 
 
 @register.filter()
