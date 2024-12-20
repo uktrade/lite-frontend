@@ -226,7 +226,6 @@ urlpatterns = [
         name="add_preexisting_external_location",
     ),
     path("<uuid:pk>/goods-locations/countries/", locations.Countries.as_view(), name="countries"),
-    path("<uuid:pk>/goods-locations/destinations/", locations.StaticDestinations.as_view(), name="static_destinations"),
     path(
         "<uuid:pk>/goods-locations/countries/contract-types/select/",
         locations.ChooseContractType.as_view(),

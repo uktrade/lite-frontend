@@ -20,7 +20,6 @@ from exporter.applications.forms.locations import (
     new_external_location_form,
 )
 from exporter.applications.forms import locations as location_forms
-from exporter.applications.helpers.check_your_answers import is_application_oiel_of_type
 from exporter.applications.helpers.countries import prettify_country_data
 from exporter.applications.helpers.task_list_sections import get_product_location_and_journey_details
 from exporter.applications.helpers.validators import (
@@ -306,7 +305,7 @@ class Countries(LoginRequiredMixin, SingleFormView):
         application = get_application(self.request, self.object_pk)
 
         # Only military OIELs and Open Trade Control Licences have contract types per destination
-        if not (is_application_oiel_of_type("military", application) or application.type_reference == CaseTypes.OICL):
+        if not (application.type_reference == CaseTypes.OICL):
             return reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
 
         countries_without_contract_type = [
