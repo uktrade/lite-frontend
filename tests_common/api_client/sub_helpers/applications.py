@@ -183,54 +183,10 @@ class Applications:
         draft_id = self.create_draft(draft)
         self.add_site(draft_id, is_hmrc=True)
         end_user = self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user)
-        self.goods.add_hmrc_goods_type(draft_id)
         additional_document_id = self.add_additional_document(draft_id=draft_id)
         self._assert_all_documents_are_processed(
             draft_id=draft_id,
             parties=[end_user],
-            additional_document_id=additional_document_id,
-        )
-
-        return draft_id
-
-    def add_open_draft(
-        self,
-        draft=None,
-        end_use_details=None,
-        route_of_goods=None,
-        ultimate_end_user=None,
-        end_user=None,
-        external_location=None,
-        has_external_location=None,
-        is_trade_control=None,
-    ):
-        draft_id = self.create_draft(draft)
-        self.api_client.add_to_context("open_draft_id", draft_id)
-        parties = []
-        if not is_trade_control:
-            parties.append(
-                self.parties.add_party(request_data_key="ultimate_end_user", draft_id=draft_id, party=ultimate_end_user)
-            )
-        if has_external_location:
-            site = self.organisations.add_external_site(
-                organisation_id=self.api_client.context["org_id"], data=external_location
-            )
-            self.add_external_site(site_id=site["id"], draft_id=draft_id)
-        else:
-            self.add_site(draft_id)
-        self.add_countries(draft_id)
-        self.add_contract_types_for_country(draft_id)
-        self.goods.add_open_draft_good(draft_id)
-        self.add_end_use_details(draft_id, end_use_details)
-        self.add_route_of_goods(draft_id, route_of_goods=route_of_goods)
-        if end_user:
-            parties.append(self.parties.add_party(request_data_key="end_user", draft_id=draft_id, party=end_user))
-
-        additional_document_id = self.add_additional_document(draft_id=draft_id)
-
-        self._assert_all_documents_are_processed(
-            draft_id=draft_id,
-            parties=parties,
             additional_document_id=additional_document_id,
         )
 

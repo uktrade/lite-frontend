@@ -30,10 +30,10 @@ class Case(Munch):
 
     @property
     def goods(self):
-        if "goods" not in self.data and "goods_types" not in self.data:
+        if "goods" not in self.data:
             return []
 
-        return self.data.get("goods", self.data.get("goods_types"))
+        return self.data.get("goods")
 
     @property
     def destinations(self):

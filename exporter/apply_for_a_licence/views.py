@@ -44,9 +44,7 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
 
     def on_submission(self, request, **kwargs):
         copied_req = request.POST.copy()
-        self.forms = export_licence_questions(
-            request, copied_req.get("application_type"), copied_req.get("goodstype_category")
-        )
+        self.forms = export_licence_questions(request, copied_req.get("application_type"))
 
     def get_success_url(self):
         if self.request.POST.get("application_type") == CaseTypes.OGEL:

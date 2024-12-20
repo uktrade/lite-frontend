@@ -9,7 +9,6 @@ from exporter.applications.views import (
     edit,
     told_by_an_official,
     optional_note,
-    goods_types,
     f680_details,
     clearance,
     questions,
@@ -200,30 +199,6 @@ urlpatterns = [
     # F680 details
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),
     path("<uuid:pk>/questions/", questions.AdditionalInformationFormView.as_view(), name="questions"),
-    # Goods Types
-    path("<uuid:pk>/goods-types/", goods_types.GoodsTypeList.as_view(), name="goods_types"),
-    path("<uuid:pk>/goods-types/countries/", goods_types.GoodsTypeCountries.as_view(), name="goods_countries"),
-    path("<uuid:pk>/goods-types/add/", goods_types.GoodsTypeAdd.as_view(), name="add_goods_type"),
-    path(
-        "<uuid:pk>/goods-types/remove/<uuid:goods_type_pk>/",
-        goods_types.GoodsTypeRemove.as_view(),
-        name="remove_goods_type",
-    ),
-    path(
-        "<uuid:pk>/goods-types/<uuid:obj_pk>/document/attach",
-        documents.AttachDocuments.as_view(),
-        name="goods_type_attach_document",
-    ),
-    path(
-        "<uuid:pk>/goods-types/<uuid:obj_pk>/document/download",
-        documents.DownloadDocument.as_view(),
-        name="goods_type_download_document",
-    ),
-    path(
-        "<uuid:pk>/goods-types/<uuid:obj_pk>/document/delete",
-        documents.DeleteDocument.as_view(),
-        name="goods_type_delete_document",
-    ),
     # Goods locations
     path("<uuid:pk>/goods-locations/", locations.GoodsLocationView.as_view(), name="location"),
     path("<uuid:pk>/goods-locations/edit/", locations.GoodsStartingPointFormView.as_view(), name="edit_location"),

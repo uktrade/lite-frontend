@@ -270,16 +270,6 @@
 			</dd>
 		</div>
 	{% endif %}
-	{% if case.data.goodstype_category %}
-		<div class="app-case__summary-list__row">
-			<dt class="app-case__summary-list__key">
-				{% lcs 'cases.CasePage.DetailsTab.GOODS_CATEGORY' %}
-			</dt>
-			<dd class="app-case__summary-list__value">
-				{{ case.data.goodstype_category.value }}
-			</dd>
-		</div>
-	{% endif %}
 	{% if case.data.trade_control_activity and case.case_type.reference.key == "oicl" or  case.case_type.reference.key == "sicl" %}
 		<div class="app-case__summary-list__row">
 			<dt class="app-case__summary-list__key">

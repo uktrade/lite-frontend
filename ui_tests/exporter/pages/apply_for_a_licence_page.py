@@ -19,8 +19,6 @@ class ApplyForALicencePage(BasePage):
     TRADE_CONTROL_ACTIVITY_OTHER_DETAILS_ID = "trade_control_activity_other"
     TRADE_CONTROL_PRODUCT_CATEGORY_A_ID = "Category-A"
 
-    OIEL_EXPORT_TYPE_RADIO_BUTTON_ID = "goodstype_category-"
-
     def enter_name_or_reference_for_application(self, name):
         element = self.driver.find_element(by=By.ID, value=self.NAME_OR_REFERENCE_INPUT_ID)
         element.clear()

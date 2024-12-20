@@ -30,7 +30,6 @@ from exporter.applications.helpers.validators import (
 )
 from exporter.applications.services import (
     get_application,
-    get_application_countries,
     post_application_countries,
     put_application_simple,
     put_contract_type_for_country,
@@ -432,25 +431,3 @@ class CountriesAndContractTypesSummary(LoginRequiredMixin, TemplateView):
         }
 
         return render(request, "applications/goods-locations/destinations-summary-list.html", context)
-
-
-class StaticDestinations(LoginRequiredMixin, TemplateView):
-    # To be used for OIELs where all countries are preselected and non-modifiable by the user
-    # The UKCS OIEL is a special case - this is the initial page displayed before prompting the user to select contract types
-    def get(self, request, **kwargs):
-        application_id = str(kwargs["pk"])
-        application = get_application(request, application_id)
-        goodstype_category = None
-
-        if application.get("goodstype_category"):
-            goodstype_category = application.get("goodstype_category").get("key")
-            goodstype_category_label = application.get("goodstype_category").get("value")
-
-        context = {
-            "application_id": application_id,
-            "countries": get_application_countries(request, application_id),
-            "goodstype_category": goodstype_category,
-            "goodstype_category_label": goodstype_category_label,
-        }
-
-        return render(request, "applications/goods-locations/static-all-destinations.html", context)

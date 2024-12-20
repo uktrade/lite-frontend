@@ -35,7 +35,6 @@ from ui_tests.caseworker.fixtures.add_a_picklist import (  # noqa
 from ui_tests.caseworker.pages.generate_decision_documents_page import GeneratedDecisionDocuments
 from ui_tests.caseworker.pages.generate_document_page import GeneratedDocument
 from ui_tests.caseworker.pages.give_advice_pages import GiveAdvicePages
-from ui_tests.caseworker.pages.good_country_matrix_page import GoodCountryMatrixPage
 from ui_tests.caseworker.pages.grant_licence_page import GrantLicencePage
 from ui_tests.caseworker.pages.letter_templates import LetterTemplates
 from ui_tests.caseworker.pages.shared import Shared
@@ -832,14 +831,6 @@ def template_with_decision(context, api_test_client):  # noqa
 @when("I generate a document for the decision")  # noqa
 def generate_decision_document(driver, context):  # noqa
     GeneratedDecisionDocuments(driver).click_generate_decision_document(context.advice_type)
-
-
-@when("I approve the good country combination")  # noqa
-def approve_good_country_combination(driver, context):  # noqa
-    GoodCountryMatrixPage(driver).select_good_country_option(
-        "approve", context.goods_type["id"], context.country["code"]
-    )
-    functions.click_submit(driver)
 
 
 @when("I click continue on the approve open licence page")  # noqa

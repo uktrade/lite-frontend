@@ -8,7 +8,6 @@ from django.views.generic import TemplateView
 
 from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.advice import (
-    finalise_goods_countries_form,
     generate_documents_form,
     reissue_finalise_form,
     finalise_form,
@@ -21,12 +20,10 @@ from caseworker.cases.services import (
     clear_final_advice,
     get_case,
     finalise_application,
-    get_good_countries_decisions,
     grant_licence,
     get_final_decision_documents,
     get_licence,
     get_finalise_application_goods,
-    post_good_countries_decisions,
     get_open_licence_decision,
 )
 from core.builtins.custom_tags import filter_advice_by_level
@@ -117,19 +114,6 @@ def create_mapping(goods):
             return_dict[good].append(country)
 
     return return_dict
-
-
-class FinaliseGoodsCountries(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.object_pk = kwargs["pk"]
-        self.context = {
-            "case": get_case(request, self.object_pk),
-            "goods_type_country_decisions": get_good_countries_decisions(request, self.object_pk),
-            "decisions": {"approve": "Approve", "refuse": "Reject"},
-        }
-        self.form = finalise_goods_countries_form(kwargs["pk"], kwargs["queue_pk"])
-        self.action = post_good_countries_decisions
-        self.success_url = reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
 
 
 class Finalise(LoginRequiredMixin, TemplateView):

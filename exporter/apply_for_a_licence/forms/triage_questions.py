@@ -1,17 +1,15 @@
 from django.urls import reverse
 from django.conf import settings
 
-from exporter.applications.forms.edit import firearms_form, reference_name_form, told_by_an_official_form
+from exporter.applications.forms.edit import reference_name_form, told_by_an_official_form
 from exporter.apply_for_a_licence.forms.trade_control_licence import (
     application_type_form,
     activity_form,
     product_category_form,
 )
-from core.constants import GoodsTypeCategory
 from exporter.core.constants import CaseTypes
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import (
-    ExportLicenceQuestions,
     MODQuestions,
     TranshipmentQuestions,
 )
@@ -148,56 +146,13 @@ def export_type_form():
     )
 
 
-def export_licence_questions(request, application_type, goodstype_category=None):
+def export_licence_questions(request, application_type):
     forms = [export_type_form()]
-
-    if application_type == CaseTypes.OIEL:
-        forms.append(goodstype_category_form())
-
-    if application_type != CaseTypes.OGEL:
-        forms.append(reference_name_form())
 
     if application_type == CaseTypes.SIEL:
         forms.append(told_by_an_official_form())
 
-    if goodstype_category in [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF]:
-        forms.append(firearms_form())
-
     return FormGroup(forms)
-
-
-def goodstype_category_form(application_id=None):
-    return Form(
-        title=ExportLicenceQuestions.OpenLicenceCategoryQuestion.TITLE,
-        questions=[
-            RadioButtons(
-                name="goodstype_category",
-                options=[
-                    Option(
-                        key="military",
-                        value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.MILITARY,
-                    ),
-                    Option(
-                        key="cryptographic",
-                        value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.CRYPTOGRAPHIC,
-                    ),
-                    Option(
-                        key="media",
-                        value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.MEDIA,
-                    ),
-                    Option(
-                        key="uk_continental_shelf",
-                        value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.UK_CONTINENTAL_SHELF,
-                    ),
-                    Option(
-                        key="dealer",
-                        value=ExportLicenceQuestions.OpenLicenceCategoryQuestion.DEALER,
-                    ),
-                ],
-            )
-        ],
-        default_button_name=conditional(application_id, generic.SAVE_AND_RETURN, generic.CONTINUE),
-    )
 
 
 def trade_control_licence_questions(request):

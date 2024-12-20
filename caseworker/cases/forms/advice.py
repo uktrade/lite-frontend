@@ -7,7 +7,7 @@ from caseworker.cases.forms.finalise_case import approve_licence_form
 from caseworker.cases.services import get_application_default_duration
 from caseworker.core.constants import Permission
 from caseworker.core import helpers
-from lite_content.lite_internal_frontend.advice import GoodsDecisionMatrixPage, GenerateGoodsDecisionForm
+from lite_content.lite_internal_frontend.advice import GenerateGoodsDecisionForm
 from lite_forms.components import (
     Form,
     BackLink,
@@ -34,17 +34,6 @@ def generate_documents_form(queue_pk, case_pk):
         back_link=BackLink(url=reverse("cases:finalise", kwargs={"queue_pk": queue_pk, "pk": case_pk})),
         container="case",
         default_button_name=GenerateGoodsDecisionForm.BUTTON,
-    )
-
-
-def finalise_goods_countries_form(case_pk, queue_pk):
-    return Form(
-        title=GoodsDecisionMatrixPage.TITLE,
-        questions=[Custom("components/finalise-goods-countries-table.html")],
-        back_link=BackLink(
-            url=reverse("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_pk, "tab": "final-advice"})
-        ),
-        container="case",
     )
 
 

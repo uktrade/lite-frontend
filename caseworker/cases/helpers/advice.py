@@ -8,7 +8,7 @@ from caseworker.core.constants import APPLICATION_CASE_TYPES, Permission, CLEARA
 from core.builtins.custom_tags import filter_advice_by_level, filter_advice_by_id, filter_advice_by_user
 
 SINGULAR_ENTITIES = ["end_user", "consignee"]
-PLURAL_ENTITIES = ["ultimate_end_user", "third_party", "country", "good", "goods_type"]
+PLURAL_ENTITIES = ["ultimate_end_user", "third_party", "country", "good"]
 ALL_ENTITIES = SINGULAR_ENTITIES + PLURAL_ENTITIES
 
 
@@ -37,8 +37,8 @@ def get_param_destinations(request, case: Case):
 
 
 def get_param_goods(request, case: Case):
-    selected_goods_ids = request.GET.getlist("goods", request.GET.getlist("goods_types"))
-    goods = case.data.get("goods", case.data.get("goods_types"))
+    selected_goods_ids = request.GET.getlist("goods")
+    goods = case.data.get("goods")
     return [good for good in goods if good["id"] in selected_goods_ids]
 
 
@@ -194,7 +194,7 @@ def order_grouped_advice(grouped_advice):
 
 
 def filter_advice_by_target(advice_list, target):
-    # filters a list of advice by the type of item it is for eg good, goods_type, country etc
+    # filters a list of advice by the type of item it is for eg good, country etc
     filtered = []
 
     for advice in advice_list:

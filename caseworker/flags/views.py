@@ -65,8 +65,8 @@ class FlagsList(LoginRequiredMixin, TemplateView):
 
 
 def perform_action(case, level, request, pk, json):
-    selected_goods_ids = request.GET.getlist("goods", request.GET.getlist("goods_types"))
-    goods = case.data.get("goods", case.data.get("goods_types"))
+    selected_goods_ids = request.GET.getlist("goods")
+    goods = case.data.get("goods")
     product_ids = [item["good"]["id"] for item in goods if item["id"] in selected_goods_ids]
     data = {
         "level": level,
@@ -76,7 +76,6 @@ def perform_action(case, level, request, pk, json):
                 request.GET.get("case"),
                 request.GET.get("organisation"),
                 *product_ids,
-                *request.GET.getlist("goods_types"),
                 *request.GET.getlist("countries"),
                 request.GET.get("end_user"),
                 request.GET.get("consignee"),
@@ -125,7 +124,7 @@ class AssignFlags(LoginRequiredMixin, SingleFormView):
             return FlagLevel.CASES
         elif self.request.GET.get("organisation"):
             return FlagLevel.ORGANISATIONS
-        elif self.request.GET.get("goods") or self.request.GET.get("goods_types"):
+        elif self.request.GET.get("goods"):
             return FlagLevel.GOODS
         else:
             return FlagLevel.DESTINATIONS

@@ -177,7 +177,6 @@ def test_goods_list_can_finalise(advice_types, can_finalise):
 
 advice_stub = {
     "good": None,
-    "goods_type": None,
     "country": None,
     "end_user": None,
     "ultimate_end_user": None,

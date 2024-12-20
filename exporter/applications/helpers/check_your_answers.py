@@ -137,7 +137,6 @@ def _convert_standard_application(application, editable=False, is_summary=False)
 def _convert_hmrc_query(application, editable=False):
     return {
         applications.ApplicationSummaryPage.ON_BEHALF_OF: application["organisation"]["name"],
-        applications.ApplicationSummaryPage.GOODS: _convert_goods_types(application["goods_types"]),
         applications.ApplicationSummaryPage.GOODS_LOCATIONS: conditional(
             application["have_goods_departed"],
             {applications.ApplicationSummaryPage.GOODS_DEPARTED: "Yes"},
@@ -273,18 +272,6 @@ def _get_security_approvals(application):
             security_details["Provide details of your written approval"] = application.other_security_approval_details
 
     return security_details
-
-
-def _convert_goods_types(goods_types):
-    return [
-        {
-            "Description": good["description"],
-            "Controlled": friendly_boolean(good["is_good_controlled"]),
-            "Control list entries": convert_control_list_entries(good["control_list_entries"]),
-            "Incorporated": friendly_boolean(good["is_good_incorporated"]),
-        }
-        for good in goods_types
-    ]
 
 
 def _convert_countries(countries):
@@ -646,26 +633,6 @@ def has_incorporated_goods_on_application(application):
             return True
 
     return False
-
-
-def has_incorporated_goods_types(application):
-    for goods_type in application["goods_types"]:
-        if goods_type["is_good_incorporated"]:
-            return True
-
-    return False
-
-
-def is_application_oiel_of_type(oiel_type, application):
-    return (
-        False
-        if not application.get("goodstype_category")
-        else (application.get("goodstype_category").get("key") == oiel_type)
-    )
-
-
-def _convert_goods_categories(goods_categories):
-    return (", ".join([x["value"] for x in goods_categories]),)
 
 
 def get_application_type_string(application):

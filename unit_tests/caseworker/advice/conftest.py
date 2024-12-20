@@ -7,7 +7,6 @@ def advice_base_fields():
     return {
         "proviso": None,
         "good": None,
-        "goods_type": None,
         "end_user": None,
         "ultimate_end_user": None,
         "consignee": None,

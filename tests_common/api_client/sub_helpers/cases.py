@@ -119,14 +119,6 @@ class Cases:
             body=data,
         )
 
-    def add_good_country_decisions(self, case_id, data):
-        self.api_client.make_request(
-            method="POST",
-            url="/cases/" + case_id + "/goods-countries-decisions/",
-            headers=self.api_client.gov_headers,
-            body=data,
-        )
-
     def create_team_advice(self, case_id, data):
         self.api_client.make_request(
             method="POST",

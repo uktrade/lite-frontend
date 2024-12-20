@@ -125,11 +125,6 @@ def validate_good_on_application(request, pk, json):
     return post_good_on_application(request, pk, post_data)
 
 
-def get_application_goods_types(request, pk):
-    data = client.get(request, f"/applications/{pk}/goodstypes/")
-    return data.json().get("goods") if data.status_code == HTTPStatus.OK else None
-
-
 def post_firearm_good_on_application(request, pk, good_id, json):
     # We have a default for `is_good_incorporated` however this may get overriden
     # from the json blob depending on the question asked in the firearm wizard
@@ -488,41 +483,6 @@ def add_document_data(request):
         data["description"] = request.POST.get("description")
 
     return data, None
-
-
-def get_goods_type(request, app_pk, good_pk):
-    data = client.get(request, f"/applications/{app_pk}/goodstype/{good_pk}/")
-    return data.json(), data.status_code
-
-
-def post_goods_type(request, app_pk, json):
-    data = client.post(request, f"/applications/{app_pk}/goodstypes/", json)
-    return data.json(), data.status_code
-
-
-def delete_goods_type(request, app_pk, good_pk):
-    data = client.delete(request, f"/applications/{app_pk}/goodstype/" + good_pk + "/")
-    return data.status_code
-
-
-def put_goods_type_countries(request, app_pk, json):
-    data = client.put(request, f"/applications/{app_pk}/goodstype/assign-countries/", json)
-    return data.json(), data.status_code
-
-
-def get_goods_type_document(request, pk, good_pk):
-    data = client.get(request, f"/applications/{pk}/goodstype/{good_pk}/document/")
-    return data.json(), data.status_code
-
-
-def post_goods_type_document(request, pk, good_pk, json):
-    data = client.post(request, f"/applications/{pk}/goodstype/{good_pk}/document/", json)
-    return data.json(), data.status_code
-
-
-def delete_goods_type_document(request, pk, good_pk):
-    data = client.delete(request, f"/applications/{pk}/goodstype/{good_pk}/document/")
-    return data.status_code
 
 
 def get_activity(request, pk):

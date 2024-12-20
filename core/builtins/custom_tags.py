@@ -29,7 +29,6 @@ from exporter.core.constants import (
     CASE_SECTIONS,
     PAGE_DATE_FORMAT,
     STANDARD,
-    OPEN,
     NOT_STARTED,
     DONE,
     IN_PROGRESS,
@@ -413,7 +412,7 @@ def filter_advice_by_id(advices, id):
     return_list = []
 
     for advice in advices:
-        for key in ["good", "goods_type", "country", "end_user", "ultimate_end_user", "consignee", "third_party"]:
+        for key in ["good", "country", "end_user", "ultimate_end_user", "consignee", "third_party"]:
             if key in advice and advice[key] == id:
                 return_list.append(advice)
 
@@ -430,7 +429,7 @@ def distinct_advice(advice_list, case):
         # Goods
         advice_item["token"] = convert_advice_item_to_base64(advice_item)
 
-        good = advice_item.get("good") or advice_item.get("goods_type")
+        good = advice_item.get("good")
         case_good = None
         for item in case.goods:
             if "good" in item:

@@ -12,9 +12,6 @@
 				<span class="lite-task-list__section-number">1. </span> Query details
 			</h2>
 			<ul class="lite-task-list__items">
-				{% url 'applications:goods_types' application.id as goods_url %}
-				{% include "includes/task-list-item.html" with id="goods" title=strings.GOODS url=goods_url status=application.goods_types|task_list_item_status %}
-
 				{% url 'applications:location' application.id as goods_location_url %}
 				{% include "includes/task-list-item.html" with id="location" title=strings.GOODS_LOCATION url=goods_location_url status=locations|task_list_item_status %}
 

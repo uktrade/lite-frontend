@@ -172,16 +172,6 @@ def clear_final_advice(request, case_pk):
     return data.json(), data.status_code
 
 
-def get_good_countries_decisions(request, case_pk):
-    data = client.get(request, f"/cases/{case_pk}/goods-countries-decisions/")
-    return data.json()
-
-
-def post_good_countries_decisions(request, pk, json):
-    response = client.post(request, f"/cases/{pk}/goods-countries-decisions/", json)
-    return response.json(), response.status_code
-
-
 def get_open_licence_decision(request, case_pk):
     data = client.get(request, f"/cases/{case_pk}/open-licence-decision/")
     return data.json()["decision"]
@@ -251,13 +241,6 @@ def get_good_on_application_document_detail(request, pk, good_pk, doc_pk):
 def get_good(request, pk):
     data = client.get(request, f"/goods/{pk}")
     return data.json(), data.status_code
-
-
-def get_goods_type(request, pk):
-    data = client.get(request, f"/goods-types/{pk}")
-    # API doesn't structure the endpoints in a way that flags (currently) works,
-    # so wrap data in dictionary
-    return {"good": data.json()}, data.status_code
 
 
 # Good Flags

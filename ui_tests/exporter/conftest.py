@@ -565,23 +565,6 @@ def click_my_end_user_advisory_link(driver):  # noqa
     ExporterHubPage(driver).click_end_user_advisories()
 
 
-@when(  # noqa
-    parsers.parse(
-        'I add a goods type with description "{description}" controlled "{controlled}" control code "{control_code}" incorporated "{incorporated}"'
-    )
-)
-def add_new_goods_type(driver, description, controlled, control_code, incorporated, context):  # noqa
-    OpenApplicationAddGoodsType(driver).enter_description(description)
-    OpenApplicationAddGoodsType(driver).select_is_your_good_controlled(controlled)
-    OpenApplicationAddGoodsType(driver).enter_control_list_entry(control_code)
-    OpenApplicationAddGoodsType(driver).select_is_your_good_incorporated(incorporated)
-
-    context.good_description = description
-    context.control_code = control_code
-
-    functions.click_submit(driver)
-
-
 @when("I add an existing good to the application")  # noqa
 def i_add_an_existing_good_to_the_application(driver, context):  # noqa
     goods_page = StandardApplicationGoodsPage(driver)

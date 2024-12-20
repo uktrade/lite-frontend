@@ -71,25 +71,6 @@ class Goods:
         good = next((item for item in goods if item["description"] == good_name), None)
         return good
 
-    def add_open_draft_good(self, draft_id):
-        data = self.request_data["good_type"]
-        data["application"] = draft_id
-        self.api_client.make_request(
-            method="POST",
-            url="/applications/" + draft_id + "/goodstypes/",
-            headers=self.api_client.exporter_headers,
-            body=data,
-        )
-
-    def add_hmrc_goods_type(self, hmrc_draft_id):
-        data = {"description": fake.bs()}
-        self.api_client.make_request(
-            method="POST",
-            url="/applications/" + hmrc_draft_id + "/goodstypes/",
-            headers=self.api_client.exporter_headers,
-            body=data,
-        )
-
     def update_good_clc(self, *, good_id, good_on_application_id, case_id, **kwargs):
         report_summary_subject = kwargs.get("report_summary_subject")
         if not report_summary_subject:

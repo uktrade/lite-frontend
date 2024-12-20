@@ -351,7 +351,6 @@ def apply_for_open_trade_control_application(api_test_client, context):
             "export_type": "permanent",
             "have_you_been_informed": "yes",
             "reference_number_on_information_form": "1234",
-            "goodstype_category": "military",
             "trade_control_activity": "transfer_of_goods",
             "trade_control_product_categories": ["category_a"],
         },
@@ -383,7 +382,6 @@ def apply_for_open_trade_control_application(api_test_client, context):
     data = api_test_client.applications.submit_application(draft_id)
     save_application_data_to_context(api_test_client, context)
     context.country = api_test_client.context["country"]
-    context.goods_type = data["application"]["goods_types"][0]
     timer.print_time("apply_for_open_trade_control_application")
 
 

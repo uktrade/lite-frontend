@@ -44,12 +44,6 @@ class StandardApplicationGoodsPage(BasePage):
     def get_remove_location_link(self):
         return self.driver.find_element(by=By.ID, value=self.REMOVE_LOCATION_LINK)
 
-    def find_remove_goods_type_link(self):
-        try:
-            return self.driver.find_element(by=By.CSS_SELECTOR, value=self.REMOVE_GOODS_TYPE_LINK)
-        except NoSuchElementException:
-            return None
-
     def goods_exist_on_the_application(self):
         return functions.element_with_css_selector_exists(self.driver, self.REMOVE_GOOD_LINK)
 

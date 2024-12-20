@@ -4,14 +4,6 @@ from collections import namedtuple
 RoleTuple = namedtuple("Role", "name id")
 
 
-class GoodsTypeCategory:
-    MILITARY = "military"
-    CRYPTOGRAPHIC = "cryptographic"
-    MEDIA = "media"
-    UK_CONTINENTAL_SHELF = "uk_continental_shelf"
-    DEALER = "dealer"
-
-
 class CaseStatusEnum:
     APPEAL_FINAL_REVIEW = "appeal_final_review"
     APPEAL_REVIEW = "appeal_review"
