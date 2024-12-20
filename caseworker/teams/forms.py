@@ -11,7 +11,7 @@ from lite_forms.components import Form, TextInput, BackLink, Option, RadioButton
 def add_team_form():
     return Form(
         title=AddTeamForm.TITLE,
-        description=AddTeamForm.DESCRIPTION,
+        description="",
         questions=[
             TextInput(title=AddTeamForm.Name.TITLE, description=AddTeamForm.Name.DESCRIPTION, name="name"),
             RadioButtons(

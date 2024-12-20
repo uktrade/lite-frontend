@@ -9,7 +9,7 @@ from caseworker.queues.services import get_queues
 def move_case_form(request: HttpRequest, queue, case: dict):
     return Form(
         title=Manage.MoveCase.TITLE,
-        description=Manage.MoveCase.DESCRIPTION,
+        description="",
         questions=[
             Filter(),
             Checkboxes("queues[]", get_queues(request, convert_to_options=True), filterable=True),

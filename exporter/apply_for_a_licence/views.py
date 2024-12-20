@@ -12,7 +12,6 @@ from exporter.apply_for_a_licence.forms.triage_questions import (
     export_licence_questions,
     MOD_questions,
     transhipment_questions,
-    trade_control_licence_questions,
 )
 from exporter.apply_for_a_licence.validators import validate_opening_question, validate_open_general_licences
 from exporter.core.constants import PERMANENT, CaseTypes
@@ -51,19 +50,6 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
     def get_success_url(self):
         if self.request.POST.get("application_type") == CaseTypes.OGEL:
             return reverse_lazy("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGEL})
-        else:
-            pk = self.get_validated_data()["id"]
-            return reverse_lazy("applications:task_list", kwargs={"pk": pk})
-
-
-class TradeControlLicenceQuestions(LoginRequiredMixin, MultiFormView):
-    def init(self, request, **kwargs):
-        self.forms = trade_control_licence_questions(request)
-        self.action = post_applications
-
-    def get_success_url(self):
-        if self.request.POST.get("application_type") == CaseTypes.OGTCL:
-            return reverse_lazy("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGTCL})
         else:
             pk = self.get_validated_data()["id"]
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})

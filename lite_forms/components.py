@@ -22,11 +22,9 @@ class _Component:
         classes: Optional[List] = None,
         extras=None,
     ):
-        from lite_forms.helpers import convert_to_markdown
-
         self.name = name
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.short_title = short_title or title
         self.accessible_description = accessible_description
         self.optional = optional
@@ -111,10 +109,8 @@ class Label:
         id: str = None,
         classes: Optional[List] = None,
     ):
-        from lite_forms.helpers import convert_to_markdown
-
         self.id = id
-        self.text = convert_to_markdown(text)
+        self.text = text
         self.classes = classes
         self.input_type = "label"
 
@@ -130,21 +126,6 @@ class EmptyLabel:
         self.text = ""
         self.classes = classes
         self.input_type = "label"
-
-
-class GroupWithLabel(_Component):
-    def __init__(
-        self,
-        text: str = None,
-        id: str = None,
-        components: Optional[List] = None,
-        classes: Optional[List] = None,
-    ):
-        super().__init__(text, classes)
-        self.id = id
-        self.components = [EmptyLabel()] + components
-        self.classes = classes
-        self.input_type = "group"
 
 
 class Form:
@@ -165,10 +146,10 @@ class Form:
         container: str = "two-pane",
         form_help=None,
     ):
-        from lite_forms.helpers import convert_to_markdown, heading_used_as_label
+        from lite_forms.helpers import heading_used_as_label
 
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.questions = questions
         self.caption = caption
         self.helpers = helpers
@@ -195,10 +176,8 @@ class Form:
 
 class DetailComponent:
     def __init__(self, title, description="", components=None):
-        from lite_forms.helpers import convert_to_markdown
-
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.components = components
         self.input_type = "detail"
 
@@ -212,10 +191,8 @@ class HiddenField:
 
 class HelpSection:
     def __init__(self, title, description, includes=None):
-        from lite_forms.helpers import convert_to_markdown
-
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.includes = includes
 
 
@@ -259,34 +236,6 @@ class EmailInput(_Component):
     ):
         super().__init__(name, title, description, short_title, accessible_description, optional, classes)
         self.input_type = "email_input"
-
-
-class NumberInput(_Component):
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-    ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
-        self.input_type = "number_input"
-
-
-class QuantityInput(_Component):
-    def __init__(
-        self,
-        name: str,
-        title: str = "",
-        description: str = "",
-        accessible_description: str = None,
-        optional: bool = False,
-        classes: Optional[List] = None,
-    ):
-        super().__init__(name, title, description, accessible_description, optional, classes)
-        self.input_type = "quantity_input"
 
 
 class CurrencyInput(_Component):
@@ -436,12 +385,11 @@ class Option:
         cannot_remove: bool = False,
         id=None,
     ):
-        from lite_forms.helpers import convert_to_markdown
 
         self.auto_check = auto_check
         self.key = key
         self.value = value
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.show_or = show_or
         self.img_url = img_url
         self.components = [component for component in components if component] if components else []
@@ -552,11 +500,9 @@ class DateInput:
         extras: Optional[List] = None,
         suffix: str = "",
     ):
-        from lite_forms.helpers import convert_to_markdown
-
         self.prefix = prefix
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.name = name
         self.optional = optional
         self.classes = classes
@@ -626,11 +572,10 @@ class TokenBar:
         such as an entity (person, place, or thing) or text. They enable user input and
         verify that input by converting text into chips.
         """
-        from lite_forms.helpers import convert_to_markdown
 
         self.name = name
         self.title = title
-        self.description = convert_to_markdown(description)
+        self.description = description
         self.options = options
         self.optional = optional
         self.classes = classes if classes else ["tokenfield-container"]

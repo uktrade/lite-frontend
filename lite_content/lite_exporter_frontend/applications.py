@@ -268,15 +268,6 @@ class OpenGeneralLicenceQuestions:
             "This {} doesn't require registration, however make sure you still meet the requirements."
         )
 
-        class Points:
-            FIRST_POINT = "Ensure this open general licence is appropriate for your needs"
-            SECOND_POINT = "Read the full text of the open general licence"
-            THIRD_POINT = "Check that this open general licence is appropriate for your sites"
-            THIRD_POINT_NOTICE = (
-                "If a site isn't listed, you can [add a site](/organisation/sites/new/) from your account home. Adding a site now means "
-                "you'll have to start from the beginning to register this open general licence."
-            )
-
         class Summary:
             DESCRIPTION = "Description"
             CONTROL_LIST_ENTRIES = "Control list entries"
@@ -302,84 +293,14 @@ class OpenGeneralLicenceQuestions:
         RETURN_TO_ACCOUNT_HOME_LINK = "Return to account home"
 
 
-class TradeControlLicenceQuestions:
-    class TradeControlLicenceQuestion:
-        TITLE = "Select the type of trade control licence you need"
-        DESCRIPTION = ""
-        BACK = "Back"
-        OPEN_GENERAL_TRADE_CONTROL_LICENCE = "Open General Trade Control Licence (OGTCL)"
-        OPEN_GENERAL_TRADE_CONTROL_LICENCE_DESCRIPTION = (
-            "Select to register a pre-published licence with set terms "
-            "and conditions. Being an OGTCL holder can benefit your "
-            "business by saving time and money."
-        )
-        STANDARD_LICENCE = "Standard licence"
-        STANDARD_LICENCE_DESCRIPTION = "Select a standard licence for a set quantity and set value of products."
-        OPEN_LICENCE = "Open licence"
-        OPEN_LICENCE_DESCRIPTION = (
-            "Select an open licence for multiple shipments of specific products to specific destinations. "
-            "Open licences cover long term projects and repeat business."
-        )
-
-    class ControlActivity:
-        TITLE = "Select the type of trade control activity you're providing"
-        DESCRIPTION = ""
-        OTHER_DESCRIPTION = "Provide details"
-
-    class ProductCategory:
-        TITLE = "Select a trade control product category"
-        DESCRIPTION = (
-            "Find out about [trade control product categories]("
-            "https://www.gov.uk/guidance/export-controls-military-goods-software-and-technology#trade"
-            "-controls-and-arranging-sales-or-movements)."
-        )
-        CATEGORY_A_HINT = (
-            "Category A products are specified in [Part 1 of Schedule 1 of the Export Control Order 2008, as amended]("
-            "http://www.legislation.gov.uk/uksi/2008/3231/schedule/1/made).\n"
-            "Certain security and paramilitary police equipment, restraints specially designed for restraining human "
-            "beings, and portable devices designed or modified for the purpose of riot control or self-protection by "
-            "the administration of an electric shock and components specially designed or modified for the devices "
-            "mentioned above and handheld, spiked batons and cluster munitions, explosive submunitions and explosive "
-            "bomblets."
-        )
-        CATEGORY_B_HINT = (
-            "Category B products are specified in [Part 2 of Schedule 1 of the Export Control Order 2008, as amended]("
-            "http://www.legislation.gov.uk/uksi/2014/702/article/2/made).\n"
-            "Small arms and light weapons within ML1 and ML2. Accessories and ammunition for small arms and light "
-            "weapons within ML1 and ML2. Light weapons within ML4. Ammunition for light weapons within ML4. Hand "
-            "grenades. Man-portable air defence systems (MANPADS) missiles for them, associated equipment and their "
-            "specially designed components, long-range missiles. Anti-vehicle landmines. Components for Category B "
-            "products."
-        )
-        CATEGORY_C_HINT = (
-            "Category C products are all other military products not specified in Schedule 1 of the Export Control "
-            "Order 2008, as amended.\n"
-            "Military products not otherwise specified. Portable devices for the purpose of riot control or "
-            "self-protection by the administration or dissemination of an incapacitating chemical substance. Pelargonic "
-            "acid vanillylamide and oleoresin capsicum."
-        )
-
-
 class TranshipmentQuestions:
     class TranshipmentLicenceQuestion:
         TITLE = "Select the type of transhipment licence you need"
         DESCRIPTION = ""
         BACK = "Back"
         OPEN_GENERAL_TRANSHIPMENT_LICENCE = "Open General Transhipment Licence (OGTL)"
-        OPEN_GENERAL_TRANSHIPMENT_LICENCE_DESCRIPTION = (
-            "Select to register a pre-published licence with set terms "
-            "and conditions. Being an OGTL holder can benefit your "
-            "business by saving time and money."
-        )
         STANDARD_LICENCE = "Standard Transhipment Licence"
-        STANDARD_LICENCE_DESCRIPTION = (
-            "Select a standard transhipment licence for a set quantity and set value of products."
-        )
         OPEN_LICENCE = "Open licence"
-        OPEN_LICENCE_DESCRIPTION = (
-            "Select an open licence for multiple shipments of specific products to specific destinations. "
-            "Open licences cover long term projects and repeat business."
-        )
 
     class ExportType:
         TITLE = "Select an export type"
