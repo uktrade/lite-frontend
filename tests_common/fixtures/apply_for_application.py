@@ -134,38 +134,6 @@ def apply_for_eua_query(driver, api_test_client, context):
     context.eua_reference_code = api_test_client.context["end_user_advisory_reference_code"]
 
 
-@fixture(scope="function")
-def apply_for_open_application(api_test_client, context):
-    timer = Timer()
-    api_test_client.api_client.auth_exporter_user(api_test_client.context["org_id"])
-
-    context.app_name = fake.bs()
-
-    draft_id = api_test_client.applications.add_open_draft(
-        draft={
-            "name": context.app_name,
-            "application_type": "oiel",
-            "export_type": "permanent",
-            "have_you_been_informed": "yes",
-            "reference_number_on_information_form": "1234",
-            "goodstype_category": "military",
-            "contains_firearm_goods": True,
-        },
-        end_use_details={
-            "intended_end_use": "intended end use",
-            "is_military_end_use_controls": False,
-            "is_informed_wmd": False,
-            "is_suspected_wmd": False,
-        },
-        route_of_goods={"is_shipped_waybill_or_lading": True},
-    )
-    data = api_test_client.applications.submit_application(draft_id)
-    save_application_data_to_context(api_test_client, context)
-    context.country = api_test_client.context["country"]
-    context.goods_type = data["application"]["goods_types"][0]
-    timer.print_time("apply_for_open_application")
-
-
 def _apply_for_mod_clearance(
     type, has_end_user, has_consignee, has_ultimate_end_user, has_third_party, has_location, api_test_client, context
 ):
