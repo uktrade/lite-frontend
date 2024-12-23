@@ -17,6 +17,17 @@
 		{% if not queue.is_system_queue %}
 			<div class="lite-app-bar__controls lite-buttons-row" >
 				<div data-enable-on-checkboxes="#table-cases">
+					<button
+						id="bulk-approve-button"
+						type="submit" class="govuk-button govuk-button--secondary"
+						form="form-cases"
+						formmethod="post"
+						formaction="{% url 'queues:bulk_approval' queue.id %}"
+					>
+						Approve directly
+					</button>
+				</div>
+				<div data-enable-on-checkboxes="#table-cases">
 					<button id="assign-users-button" form="form-cases" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ALLOCATE_CASE' %}</button>
 				</div>
 				{% if enforcement_check %}
@@ -66,6 +77,7 @@
                 </div>
 
 	            <form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
+					{% csrf_token %}
 	            	{% if not data.results.cases %}
 	            		{% if tab_data.my_cases.is_selected %}
 	            			{% include "includes/notice.html" with text='cases.CasesListPage.NO_CASES_ALLOCATED' %}
