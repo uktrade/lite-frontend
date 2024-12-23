@@ -31,7 +31,7 @@ class PicklistAdviceForm(forms.Form):
 
 class RecommendBulkApprovalForm(PicklistAdviceForm, BaseForm):
     class Layout:
-        TITLE = "Recommend an approval"
+        TITLE = "Recommend bulk approval"
         SUBMIT_BUTTON_TEXT = "Submit recommendation"
 
     approval_reasons = forms.CharField(

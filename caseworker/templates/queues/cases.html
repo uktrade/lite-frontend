@@ -17,6 +17,9 @@
 		{% if not queue.is_system_queue %}
 			<div class="lite-app-bar__controls lite-buttons-row" >
 				<div data-enable-on-checkboxes="#table-cases">
+					<button id="bulk-approve-button" form="form-bulk-approval" type="submit" class="govuk-button govuk-button--secondary">Approve all</button>
+				</div>
+				<div data-enable-on-checkboxes="#table-cases">
 					<button id="assign-users-button" form="form-cases" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ALLOCATE_CASE' %}</button>
 				</div>
 				{% if enforcement_check %}
@@ -64,6 +67,7 @@
                 <div class="customiser__header">
 	                {% include 'queues/search-tabs.html' %}
                 </div>
+	            <form id="form-bulk-approval" method="get" action="{% url 'queues:bulk_approval' queue.id %}">
 
 	            <form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
 	            	{% if not data.results.cases %}
@@ -118,6 +122,7 @@
                     </div>
 	            	{% endif %}
 	            </form>
+				</form>
             </div>
 
 	        {% pagination %}
