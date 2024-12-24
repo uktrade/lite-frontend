@@ -569,6 +569,23 @@ def unassessed_trigger_list_goods(case):
     ]
 
 
+def post_bulk_approval_recommendation(request, caseworker, queue_id, case_ids, advice_data):
+    data = {
+        "case_ids": case_ids,
+        "advice": {
+            "text": advice_data["approval_reasons"],
+            "proviso": advice_data.get("proviso", ""),
+            "note": advice_data.get("instructions_to_exporter", ""),
+            "footnote_required": True if advice_data.get("footnote_details") else False,
+            "footnote": advice_data.get("footnote_details", ""),
+            "team": str(caseworker["team"]["id"]),
+        },
+    }
+    response = client.post(request, f"/queues/{queue_id}/bulk-approval/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def get_advice_tab_context(case, caseworker, queue_id):
     """Get contextual information for the advice tab such as the tab's URL and
     button visibility, based off the case, the current user and current user's queue.

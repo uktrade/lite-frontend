@@ -10,11 +10,12 @@ from caseworker.advice.constants import AdviceType
 from core import client
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice import services
+from caseworker.advice.services import post_bulk_approval_recommendation
 from caseworker.advice.views.mixins import CaseContextMixin
 from caseworker.advice.forms.bulk_approval import RecommendBulkApprovalForm
 from caseworker.cases.services import get_case_basic_details
 from caseworker.picklists.services import get_picklists_list
+from caseworker.users.services import get_gov_user
 
 
 class BulkApprovalView(LoginRequiredMixin, FormView):
@@ -24,6 +25,15 @@ class BulkApprovalView(LoginRequiredMixin, FormView):
 
     template_name = "advice/bulk-approval.html"
     form_class = RecommendBulkApprovalForm
+
+    @property
+    def caseworker_id(self):
+        return str(self.request.session["lite_api_user_id"])
+
+    @property
+    def caseworker(self):
+        data, _ = get_gov_user(self.request, self.caseworker_id)
+        return data["user"]
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -47,10 +57,15 @@ class BulkApprovalView(LoginRequiredMixin, FormView):
         return cases_data
 
     def form_valid(self, form):
+        queue_id = self.kwargs["pk"]
+        case_ids = self.request.GET.getlist("cases", [])
+        advice_data = form.cleaned_data
+        post_bulk_approval_recommendation(self.request, self.caseworker, queue_id, case_ids, advice_data)
+
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:view_my_advice", kwargs=self.kwargs)
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
