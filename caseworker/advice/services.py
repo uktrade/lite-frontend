@@ -569,6 +569,12 @@ def unassessed_trigger_list_goods(case):
     ]
 
 
+def post_bulk_approval_recommendation(request, queue_id, data):
+    response = client.post(request, f"/queues/{queue_id}/bulk-approval/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def get_advice_tab_context(case, caseworker, queue_id):
     """Get contextual information for the advice tab such as the tab's URL and
     button visibility, based off the case, the current user and current user's queue.
