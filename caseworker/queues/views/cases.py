@@ -7,6 +7,7 @@ from django.http import Http404
 from django.utils.functional import cached_property
 from django.views.generic import FormView
 
+from caseworker.advice.views.bulk_approval import DESNZ_NUCLEAR_COUNTERSIGNING, FCDO_COUNTER_SIGNING
 from caseworker.bookmarks.services import fetch_bookmarks
 from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.core.constants import (
@@ -342,6 +343,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
                 "sla_circumference": SLA_CIRCUMFERENCE,
                 "data": self.data,
                 "queue": self.queue,  # Used for showing current queue
+                "ogd_countersigning_queue": self.queue["id"] in [DESNZ_NUCLEAR_COUNTERSIGNING, FCDO_COUNTER_SIGNING],
                 "is_filters_visible": self.is_filters_visible(),
                 "is_all_cases_queue": self.queue_pk == ALL_CASES_QUEUE_ID,
                 "enforcement_check": Permission.ENFORCEMENT_CHECK.value in get_user_permissions(self.request),
