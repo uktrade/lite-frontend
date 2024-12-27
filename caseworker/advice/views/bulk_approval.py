@@ -1,3 +1,5 @@
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -18,7 +20,7 @@ from caseworker.picklists.services import get_picklists_list
 from caseworker.users.services import get_gov_user
 
 
-class BulkApprovalView(LoginRequiredMixin, FormView):
+class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     """
     Form to recommend approval advice for all products on the application
     """
@@ -60,7 +62,13 @@ class BulkApprovalView(LoginRequiredMixin, FormView):
         queue_id = self.kwargs["pk"]
         case_ids = self.request.GET.getlist("cases", [])
         advice_data = form.cleaned_data
-        post_bulk_approval_recommendation(self.request, self.caseworker, queue_id, case_ids, advice_data)
+        response, status_code = post_bulk_approval_recommendation(
+            self.request, self.caseworker, queue_id, case_ids, advice_data
+        )
+
+        if status_code == 201:
+            num_cases = len(response["case_ids"])
+            messages.success(self.request, f"successfully approved {num_cases} case" + "s" if num_cases > 1 else "")
 
         return super().form_valid(form)
 
