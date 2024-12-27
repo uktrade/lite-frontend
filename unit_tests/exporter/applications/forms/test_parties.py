@@ -94,6 +94,17 @@ def test_consignee_name_form(data, valid, errors):
             False,
             {"name": [f"End user name should be 80 characters or less"]},
         ),
+        (
+            {"name": "\x02 control chars not allowed"},
+            False,
+            {"name": ["There's a invalid special charactor in this field."]},
+        ),
+        ({"name": "control \x1A is allowed"}, True, None),
+        (
+            {"name": "\x00 control chars not allowed"},
+            False,
+            {"name": ["There's a invalid special charactor in this field.", "Null characters are not allowed."]},
+        ),
     ),
 )
 def test_end_user_name_form(data, valid, errors):
@@ -168,6 +179,17 @@ def test_consignee_website_form(data, valid, errors):
         ({"address": "this\r\nis\r\ninvalid", "country": "aus"}, True, None),
         ({"address": "this_is_not", "country": "aus"}, True, None),
         ({"address": "this\w\ais\a\ainvalid", "country": "aus"}, True, None),
+        (
+            {"address": "\x02 control chars not allowed", "country": "aus"},
+            False,
+            {"address": ["There's a invalid special charactor in this field."]},
+        ),
+        ({"address": "control \x1A is allowed", "country": "aus"}, True, None),
+        (
+            {"address": "\x00 control chars not allowed", "country": "aus"},
+            False,
+            {"address": ["There's a invalid special charactor in this field.", "Null characters are not allowed."]},
+        ),
     ),
 )
 @patch("exporter.applications.forms.parties.get_countries")
@@ -193,6 +215,17 @@ def test_end_user_address_form(mock_get_countries, data, valid, errors):
         ({"address": "", "country": ""}, False, {"address": ["Enter an address"], "country": ["Select the country"]}),
         ({"address": "This-is-a-valid-address", "country": "aus"}, True, None),
         ({"address": "this\r\nis\r\ninvalid", "country": "aus"}, True, None),
+        (
+            {"address": "\x02 control chars not allowed", "country": "aus"},
+            False,
+            {"address": ["There's a invalid special charactor in this field."]},
+        ),
+        ({"address": "control \x1A is allowed", "country": "aus"}, True, None),
+        (
+            {"address": "\x00 control chars not allowed", "country": "aus"},
+            False,
+            {"address": ["There's a invalid special charactor in this field.", "Null characters are not allowed."]},
+        ),
     ),
 )
 @patch("exporter.applications.forms.parties.get_countries")

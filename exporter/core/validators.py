@@ -1,5 +1,6 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import re
 
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -52,3 +53,14 @@ class RelativeDeltaDateValidator:
     def __call__(self, value):
         if value > (date.today() + self.relativedelta):
             raise ValidationError(self.message)
+
+
+class SpecialCharacterStringValidator:
+    message = "There's a invalid special charactor in this field."
+    regex_string = r"^[\000-\031]"
+
+    def __call__(self, value):
+        if value:
+            match_regex = re.compile(self.regex_string)
+            if bool(match_regex.match(value)):
+                raise ValidationError(self.message)
