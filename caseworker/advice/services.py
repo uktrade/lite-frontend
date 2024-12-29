@@ -586,6 +586,20 @@ def post_bulk_approval_recommendation(request, caseworker, queue_id, case_ids, a
     return response.json(), response.status_code
 
 
+def post_bulk_countersign_approval_recommendation(request, caseworker, queue_id, case_ids, advice_data):
+    data = {
+        "case_ids": case_ids,
+        "advice": {
+            "countersign_comments": advice_data["approval_reasons"],
+            "countersigned_by": str(caseworker["id"]),
+            "team": str(caseworker["team"]["id"]),
+        },
+    }
+    response = client.put(request, f"/queues/{queue_id}/bulk-countersign-approval/", data)
+    response.raise_for_status()
+    return response.json(), response.status_code
+
+
 def get_advice_tab_context(case, caseworker, queue_id):
     """Get contextual information for the advice tab such as the tab's URL and
     button visibility, based off the case, the current user and current user's queue.

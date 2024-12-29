@@ -67,7 +67,7 @@
                 <div class="customiser__header">
 	                {% include 'queues/search-tabs.html' %}
                 </div>
-	            <form id="form-bulk-approval" method="get" action="{% url 'queues:bulk_approval' queue.id %}">
+	            <form id="form-bulk-approval" method="get" action={% if ogd_countersigning_queue %} "{% url 'queues:bulk_countersign_approval' queue.id %}" {% else %} "{% url 'queues:bulk_approval' queue.id %}" {% endif %}>
 
 	            <form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
 	            	{% if not data.results.cases %}

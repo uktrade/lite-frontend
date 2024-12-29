@@ -1,0 +1,40 @@
+{% extends 'layouts/base.html' %}
+
+{% load static custom_tags %}
+{% load crispy_forms_tags %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header app-table__header--skeleton" scope="col">Case reference</span></th>
+                            <th class="govuk-table__header app-table__header--skeleton" scope="col">Organisation</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="govuk-table__body" id="tbody-main">
+                        {% for case in cases_data %}
+                            <tr class="govuk-table__row" id="{{ case.id }}">
+                                <td class="govuk-table__cell">
+                                    {{ case.reference_code }}
+                                </td>
+                                <td class="govuk-table__cell">
+                                    {{ case.organisation.name }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% crispy form %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

@@ -12,12 +12,15 @@ from caseworker.advice.constants import AdviceType
 from core import client
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice.services import post_bulk_approval_recommendation
+from caseworker.advice.services import post_bulk_approval_recommendation, post_bulk_countersign_approval_recommendation
 from caseworker.advice.views.mixins import CaseContextMixin
-from caseworker.advice.forms.bulk_approval import RecommendBulkApprovalForm
+from caseworker.advice.forms.bulk_approval import RecommendBulkApprovalForm, RecommendBulkCountersignApprovalForm
 from caseworker.cases.services import get_case_basic_details
 from caseworker.picklists.services import get_picklists_list
 from caseworker.users.services import get_gov_user
+
+DESNZ_NUCLEAR_COUNTERSIGNING = "91213b45-f69f-492d-9d61-84e3a27cceb3"
+FCDO_COUNTER_SIGNING = "5e772575-9ae4-4a16-b55b-7e1476d810c4"
 
 
 class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
@@ -81,5 +84,56 @@ class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return {
             **context,
             "title": "Bulk approval",
+            "cases_data": cases_data,
+        }
+
+
+class BulkCountersignApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    """
+    Form to countersign multiple cases
+    """
+
+    form_class = RecommendBulkCountersignApprovalForm
+    template_name = "advice/bulk-countersign-approval.html"
+
+    @property
+    def caseworker_id(self):
+        return str(self.request.session["lite_api_user_id"])
+
+    @property
+    def caseworker(self):
+        data, _ = get_gov_user(self.request, self.caseworker_id)
+        return data["user"]
+
+    def get_cases_data(self):
+        case_ids = self.request.GET.getlist("cases", [])
+        cases_data = [get_case_basic_details(self.request, case_id) for case_id in case_ids]
+        return cases_data
+
+    def form_valid(self, form):
+        queue_id = self.kwargs["pk"]
+        case_ids = self.request.GET.getlist("cases", [])
+        advice_data = form.cleaned_data
+        response, status_code = post_bulk_countersign_approval_recommendation(
+            self.request, self.caseworker, queue_id, case_ids, advice_data
+        )
+
+        if status_code == 200:
+            num_cases = len(response["case_ids"])
+            messages.success(
+                self.request, f"successfully countersigned {num_cases} case" + "s" if num_cases > 1 else ""
+            )
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cases_data = self.get_cases_data()
+        return {
+            **context,
+            "title": "Bulk countersign approval",
             "cases_data": cases_data,
         }

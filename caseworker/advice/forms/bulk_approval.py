@@ -104,3 +104,18 @@ class RecommendBulkApprovalForm(PicklistAdviceForm, BaseForm):
                 summary_css_class="supplemental-approval-fields",
             ),
         )
+
+
+class RecommendBulkCountersignApprovalForm(BaseForm):
+    class Layout:
+        TITLE = "Recommend bulk countersign approval"
+        SUBMIT_BUTTON_TEXT = "Submit countersignature"
+
+    approval_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": "10"}),
+        label="Explain why you are agreeing with this recommendation",
+        error_messages={"required": "Enter why you agree with the recommendation"},
+    )
+
+    def get_layout_fields(self):
+        return ("approval_reasons",)
