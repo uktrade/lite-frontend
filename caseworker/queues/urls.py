@@ -1,6 +1,6 @@
 from django.urls import path
 
-from caseworker.advice.views.bulk_approval import BulkApprovalView, BulkCountersignApprovalView
+from caseworker.advice.views.bulk_approval import BulkApprovalView, BulkCountersignApprovalView, BulkApprovalNoConfirmationView
 from caseworker.queues.views import case_assignments, cases, enforcement, queues
 
 app_name = "queues"
@@ -41,4 +41,5 @@ urlpatterns = [
     path(
         "<uuid:pk>/bulk-countersign-approve/", BulkCountersignApprovalView.as_view(), name="bulk_countersign_approval"
     ),
+    path("<uuid:pk>/bulk-approve-no-confirm/", BulkApprovalNoConfirmationView.as_view(), name="bulk_approval_no_confirm"),
 ]

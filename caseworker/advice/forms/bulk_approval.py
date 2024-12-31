@@ -119,3 +119,7 @@ class RecommendBulkCountersignApprovalForm(BaseForm):
 
     def get_layout_fields(self):
         return ("approval_reasons",)
+
+
+class RecommendBulkApprovalFormNoConfirmation(forms.Form):
+    pass
