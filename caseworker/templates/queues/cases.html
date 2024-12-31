@@ -17,10 +17,10 @@
 		{% if not queue.is_system_queue %}
 			<div class="lite-app-bar__controls lite-buttons-row" >
 				<div data-enable-on-checkboxes="#table-cases">
-					<button id="bulk-approve-button-no-confirm" form="form-bulk-approval-no-confirm" type="submit" class="govuk-button govuk-button--secondary">Approve and submit</button>
+					<button id="bulk-approve-button-no-confirm" form="form-cases" formmethod="post" formaction={% if ogd_countersigning_queue %} "{% url 'queues:bulk_countersign_approval' queue.id %}" {% else %} "{% url 'queues:bulk_approval_no_confirm' queue.id %}" {% endif %} type="submit" class="govuk-button govuk-button--secondary">Approve directly</button>
 				</div>
 				<div data-enable-on-checkboxes="#table-cases">
-					<button id="bulk-approve-button" form="form-bulk-approval" type="submit" class="govuk-button govuk-button--secondary">Approve all</button>
+					<button id="bulk-approve-button" form="form-cases" formaction={% if ogd_countersigning_queue %} "{% url 'queues:bulk_countersign_approval' queue.id %}" {% else %} "{% url 'queues:bulk_approval' queue.id %}" {% endif %} type="submit" class="govuk-button govuk-button--secondary">Approve manually</button>
 				</div>
 				<div data-enable-on-checkboxes="#table-cases">
 					<button id="assign-users-button" form="form-cases" type="submit" class="govuk-button govuk-button--secondary">{% lcs 'cases.CasesListPage.ALLOCATE_CASE' %}</button>
@@ -70,8 +70,6 @@
                 <div class="customiser__header">
 	                {% include 'queues/search-tabs.html' %}
                 </div>
-	            <form id="form-bulk-approval-no-confirm" method="post" action={% if ogd_countersigning_queue %} "{% url 'queues:bulk_countersign_approval' queue.id %}" {% else %} "{% url 'queues:bulk_approval_no_confirm' queue.id %}" {% endif %}>
-				<form id="form-bulk-approval" method="get" action={% if ogd_countersigning_queue %} "{% url 'queues:bulk_countersign_approval' queue.id %}" {% else %} "{% url 'queues:bulk_approval' queue.id %}" {% endif %}>
 
 	            <form id="form-cases" method="get" action="{% url 'queues:case_assignment_select_role' queue.id %}">
 					{% csrf_token %}
