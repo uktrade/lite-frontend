@@ -592,7 +592,7 @@ def test_registered_firearms_dealer_form(data, valid, error_field, error_message
         assert form.errors[error_field][0] == error_message
 
 
-FUTURE_YEAR = str(datetime.date.today().year + 1)
+FUTURE_YEAR = datetime.date.today().year + 1
 
 
 @pytest.mark.parametrize(
