@@ -133,6 +133,11 @@ def should_see_licence_condition(driver, licence_condition, context):  # noqa
     assert RecommendationsAndDecisionPage(driver).get_licence_condition() == licence_condition
 
 
+@then(parsers.parse('I see "{licence_condition}" in the licence condition'))
+def should_see_licence_condition(driver, licence_condition, context):  # noqa
+    assert licence_condition in RecommendationsAndDecisionPage(driver).get_licence_condition()
+
+
 @then(parsers.parse('I see "{instructions}" as the instructions for the exporter'))
 def should_see_instructions_for_exporter(driver, instructions, context):  # noqa
     assert RecommendationsAndDecisionPage(driver).get_instructions_for_exporter() == instructions

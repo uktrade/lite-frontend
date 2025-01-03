@@ -1,6 +1,8 @@
 import datetime
 import pytest
 
+from pytest_django.asserts import assertHTMLEqual
+
 from decimal import Decimal
 
 from core.builtins import custom_tags
@@ -426,3 +428,33 @@ def test_pagination_params(url, page, expected):
 def test_pagination():
     with pytest.raises(ValueError):
         custom_tags.pagination({}, link_type="madeup")
+
+
+@pytest.mark.parametrize(
+    "input, context, expected",
+    [
+        (
+            "{% hidden_field 'test-key' 'test-value' %}",
+            {},
+            '<input name="test-key" type="hidden" value="test-value">',
+        ),
+        (
+            "{% hidden_field key value %}",
+            {
+                "key": "test-key",
+                "value": "test-value",
+            },
+            '<input name="test-key" type="hidden" value="test-value">',
+        ),
+        (
+            "{% hidden_field key value %}",
+            {
+                "key": '"><script>alert()</script><input type="hidden',
+                "value": '"><script>alert()</script><input type="hidden',
+            },
+            '<input type="hidden" name="&quot;&gt;&lt;script&gt;alert()&lt;/script&gt;&lt;input type=&quot;hidden" value="&quot;&gt;&lt;script&gt;alert()&lt;/script&gt;&lt;input type=&quot;hidden">',
+        ),
+    ],
+)
+def test_hidden_field(render_template_string, input, context, expected):
+    assertHTMLEqual(render_template_string(input, context), expected)

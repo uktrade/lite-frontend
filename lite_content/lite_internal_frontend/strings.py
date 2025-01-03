@@ -13,6 +13,7 @@ from lite_content.lite_internal_frontend import (  # noqa
     queues,  # noqa
     picklists,  # noqa
     routing_rules,  # noqa
+    tests,  # noqa
 )  # noqa
 
 # Buttons
