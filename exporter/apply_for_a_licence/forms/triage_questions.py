@@ -147,7 +147,7 @@ def export_type_form():
 
 
 def export_licence_questions(request, application_type):
-    forms = [export_type_form()]
+    forms = [export_type_form(), reference_name_form()]
 
     if application_type == CaseTypes.SIEL:
         forms.append(told_by_an_official_form())
