@@ -40,7 +40,7 @@ class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
         TITLE = "Recommend an approval"
 
     approval_reasons = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        widget=forms.Textarea(attrs={"rows": 7}),
         label="",
         error_messages={"required": "Enter a reason for approving"},
     )
@@ -105,7 +105,7 @@ class PicklistLicenceConditionsForm(PicklistAdviceForm, BaseForm):
         self.fields["proviso_checkboxes"].choices = proviso_choices
         for choices in proviso_choices:
             self.fields[choices.value] = forms.CharField(
-                widget=forms.Textarea(attrs={"rows": 3, "class": "govuk-!-margin-top-4"}),
+                widget=forms.Textarea(attrs={"rows": 3}),
                 label="Description",
                 required=False,
                 initial=proviso_text[choices.value],
@@ -120,7 +120,7 @@ class SimpleLicenceConditionsForm(BaseForm):
         TITLE = "Add licence conditions (optional)"
 
     proviso = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        widget=forms.Textarea(attrs={"rows": 7}),
         label="Licence condition",
         required=False,
     )
@@ -147,7 +147,7 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
         choices=(),
     )
     footnote_details = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 3, "class": "govuk-!-margin-top-4"}),
+        widget=forms.Textarea(attrs={"rows": 3}),
         label="",
         required=False,
     )
