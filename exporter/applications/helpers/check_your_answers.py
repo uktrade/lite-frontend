@@ -18,7 +18,7 @@ from exporter.core.constants import (
     APPLICATION_TYPE_STRINGS,
     PartyDocumentType,
 )
-from core.constants import GoodsTypeCategory, SecurityClassifiedApprovalsType
+from core.constants import SecurityClassifiedApprovalsType
 from core.builtins.custom_tags import (
     default_na,
     friendly_boolean,
@@ -46,8 +46,6 @@ def convert_application_to_check_your_answers(application, editable=False, summa
     sub_type = application.sub_type
     if sub_type == STANDARD:
         return _convert_standard_application(application, editable, is_summary=summary)
-    elif sub_type == OPEN:
-        return _convert_open_application(application, editable)
     elif sub_type == HMRC:
         return _convert_hmrc_query(application, editable)
     elif sub_type == EXHIBITION:
@@ -134,85 +132,6 @@ def _convert_standard_application(application, editable=False, is_summary=False)
         converted[strings.ULTIMATE_END_USERS] = ultimate_end_users
 
     return converted
-
-
-def _convert_open_application(application, editable=False):
-    return {
-        **(
-            {
-                applications.ApplicationSummaryPage.GOODS_CATEGORIES: _get_goods_categories(application),
-            }
-            if application.case_type["reference"]["key"] == CaseTypes.OIEL
-            and application.goodstype_category["key"]
-            in [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF]
-            else {}
-        ),
-        applications.ApplicationSummaryPage.GOODS: _convert_goods_types(application["goods_types"]),
-        **(
-            {
-                applications.ApplicationSummaryPage.END_USE_DETAILS: _get_end_use_details(application),
-            }
-            if not is_application_oiel_of_type("cryptographic", application)
-            else {}
-        ),
-        **(
-            {
-                applications.ApplicationSummaryPage.ROUTE_OF_GOODS: _get_route_of_goods(application),
-            }
-            if not is_application_oiel_of_type("cryptographic", application)
-            else {}
-        ),
-        **(
-            {
-                applications.ApplicationSummaryPage.TEMPORARY_EXPORT_DETAILS: _get_temporary_export_details(
-                    application
-                ),
-            }
-            if _is_application_export_type_temporary(application)
-            else {}
-        ),
-        **(
-            {
-                applications.ApplicationSummaryPage.GOODS_LOCATIONS: _convert_goods_locations(
-                    application["goods_locations"]
-                ),
-            }
-            if not is_application_oiel_of_type("cryptographic", application)
-            else {}
-        ),
-        **(
-            {
-                applications.ApplicationSummaryPage.END_USER: [
-                    convert_party(application["end_user"], application, editable)
-                ],
-            }
-            if is_open_application_with_end_user(application)
-            else {}
-        ),
-        applications.ApplicationSummaryPage.COUNTRIES: _convert_countries(application["destinations"]["data"]),
-        **(
-            {
-                applications.ApplicationSummaryPage.ULTIMATE_END_USERS: [
-                    convert_party(party, application, editable) for party in application["ultimate_end_users"]
-                ],
-            }
-            if has_incorporated_goods_types(application)
-            and application["goodstype_category"]["key"] == GoodsTypeCategory.MILITARY
-            else {}
-        ),
-        applications.ApplicationSummaryPage.SUPPORTING_DOCUMENTATION: _get_supporting_documentation(
-            application["additional_documents"], application["id"]
-        ),
-        **(
-            {
-                applications.ApplicationSummaryPage.THIRD_PARTIES: [
-                    convert_party(party, application, editable) for party in application["third_parties"]
-                ],
-            }
-            if is_application_oiel_of_type("cryptographic", application)
-            else {}
-        ),
-    }
 
 
 def _convert_hmrc_query(application, editable=False):
@@ -743,16 +662,6 @@ def is_application_oiel_of_type(oiel_type, application):
         if not application.get("goodstype_category")
         else (application.get("goodstype_category").get("key") == oiel_type)
     )
-
-
-def is_open_application_with_end_user(application):
-    if application.end_user:
-        if application.type_reference == application.type_reference or application.goodstype_category["key"] in [
-            GoodsTypeCategory.MILITARY,
-            GoodsTypeCategory.UK_CONTINENTAL_SHELF,
-        ]:
-            return True
-    return False
 
 
 def _convert_goods_categories(goods_categories):

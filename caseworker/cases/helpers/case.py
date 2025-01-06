@@ -65,7 +65,6 @@ class Slices:
     HMRC_NOTE = Slice("case/slices/hmrc-note.html", "HMRC note")
     END_USER_DETAILS = Slice("case/slices/end-user-details.html", "End user details")
     TEMPORARY_EXPORT_DETAILS = Slice("case/slices/temporary-export-details.html", "Temporary export details")
-    OPEN_APP_PARTIES = Slice("case/slices/open-app-parties.html")
     OPEN_GENERAL_LICENCE = Slice("case/slices/open-general-licence.html")
     COMPLIANCE_LICENCES = Slice("case/slices/compliance-licences.html")
     OPEN_LICENCE_RETURNS = Slice("case/slices/open-licence-returns.html", cases.OpenLicenceReturns.TITLE)
