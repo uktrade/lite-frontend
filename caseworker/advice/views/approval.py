@@ -73,8 +73,8 @@ class GiveApprovalAdviceView(BaseApprovalAdviceView):
             picklist_form_kwargs = self.step_kwargs[AdviceSteps.LICENCE_CONDITIONS](self)
             picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
             if picklist_options_exist:
-                return PicklistLicenceConditionsForm(data=data, **picklist_form_kwargs)
+                return PicklistLicenceConditionsForm(data=data, prefix=step, **picklist_form_kwargs)
             else:
-                return SimpleLicenceConditionsForm(data=data)
+                return SimpleLicenceConditionsForm(data=data, prefix=step)
 
         return super().get_form(step, data, files)
