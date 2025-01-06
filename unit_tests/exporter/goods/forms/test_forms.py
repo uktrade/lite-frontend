@@ -1,3 +1,5 @@
+import datetime
+
 from unittest.mock import patch
 
 import pytest
@@ -590,25 +592,28 @@ def test_registered_firearms_dealer_form(data, valid, error_field, error_message
         assert form.errors[error_field][0] == error_message
 
 
+FUTURE_YEAR = datetime.date.today().year + 1
+
+
 @pytest.mark.parametrize(
     "data, files, valid, error_field, error_message",
     (
         (
-            {"reference_code": "ref_code", "expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": 2025},
+            {"reference_code": "ref_code", "expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": FUTURE_YEAR},
             {"file": SimpleUploadedFile("test", b"test_content")},
             True,
             None,
             None,
         ),
         (
-            {"reference_code": "ref_code", "expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": 2025},
+            {"reference_code": "ref_code", "expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": FUTURE_YEAR},
             {"file": ""},
             False,
             "file",
             "Select certificate file to upload",
         ),
         (
-            {"reference_code": "", "expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": 2025},
+            {"reference_code": "", "expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": FUTURE_YEAR},
             {"file": SimpleUploadedFile("test", b"test_content")},
             False,
             "reference_code",
@@ -638,7 +643,7 @@ def test_attach_fiream_dealer_certificate_form(data, files, valid, error_field, 
     if valid:
         assert form.cleaned_data["expiry_date_day"] == "1"
         assert form.cleaned_data["expiry_date_month"] == "1"
-        assert form.cleaned_data["expiry_date_year"] == "2025"
+        assert form.cleaned_data["expiry_date_year"] == str(FUTURE_YEAR)
     else:
         assert form.errors[error_field][0] == error_message
 
