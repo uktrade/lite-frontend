@@ -1,8 +1,10 @@
 from http import HTTPStatus
 
-from django.shortcuts import redirect
+from django import forms
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import FormView
 
 
 from caseworker.advice.services import post_bulk_approval_recommendation
@@ -12,12 +14,17 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 
-class BulkApprovalView(LoginRequiredMixin, TemplateView):
+class BulkApprovalForm(forms.Form):
+    pass
+
+
+class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     """
     Submit approval recommendation for the selected cases
     """
 
     template_name = "core/form.html"
+    form_class = BulkApprovalForm
 
     @property
     def caseworker_id(self):
@@ -28,6 +35,9 @@ class BulkApprovalView(LoginRequiredMixin, TemplateView):
         data, _ = get_gov_user(self.request, self.caseworker_id)
         return data["user"]
 
+    def get_success_url(self):
+        return reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]})
+
     @expect_status(
         HTTPStatus.CREATED,
         "Error submitting bulk approval recommendation",
@@ -36,9 +46,9 @@ class BulkApprovalView(LoginRequiredMixin, TemplateView):
     def submit_bulk_approval_recommendation(self, queue_id, payload):
         return post_bulk_approval_recommendation(self.request, queue_id, payload)
 
-    def post(self, request, *args, **kwargs):
+    def form_valid(self, form):
         queue_id = self.kwargs["pk"]
-        case_ids = self.request.GET.getlist("cases", [])
+        case_ids = self.request.POST.getlist("cases", [])
         payload = {
             "case_ids": case_ids,
             "advice": {
@@ -53,4 +63,10 @@ class BulkApprovalView(LoginRequiredMixin, TemplateView):
 
         self.submit_bulk_approval_recommendation(queue_id, payload)
 
-        return redirect(reverse("queues:cases", kwargs={"queue_pk": self.kwargs["pk"]}))
+        num_cases = len(case_ids)
+        success_message = f"Successfully approved {num_cases} cases"
+        if num_cases == 1:
+            success_message = "Successfully approved 1 case"
+        messages.success(self.request, success_message)
+
+        return super().form_valid(form)
