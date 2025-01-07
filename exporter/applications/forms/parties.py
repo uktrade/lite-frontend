@@ -1,3 +1,4 @@
+from core.helpers import remove_non_printable_characters
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Layout, Submit, HTML
@@ -225,6 +226,10 @@ class PartyNameForm(BaseForm):
         ],
     )
 
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        return remove_non_printable_characters(name)
+
     def get_layout_fields(self):
         return ("name",)
 
@@ -314,6 +319,10 @@ class PartyAddressForm(BaseForm):
         countries = get_countries(request)
         country_choices = [(country["id"], country["name"]) for country in countries]
         self.fields["country"].choices += country_choices
+
+    def clean_address(self):
+        address = self.cleaned_data["address"]
+        return remove_non_printable_characters(address)
 
     def get_layout_fields(self):
         return (
