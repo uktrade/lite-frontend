@@ -73,7 +73,7 @@ def test_approval_advice_post_valid_add_conditional(
     soup = beautiful_soup(response.content)
     # redirected to next form
     header = soup.find("h1")
-    assert header.text == "Add licence conditions, instructions to exporter or footnotes (optional)"
+    assert header.text == "Add licence conditions (optional)"
 
     add_LC_response = post_to_step(
         AdviceSteps.LICENCE_CONDITIONS,
@@ -83,7 +83,7 @@ def test_approval_advice_post_valid_add_conditional(
     soup = beautiful_soup(add_LC_response.content)
     # redirected to next form
     header = soup.find("h1")
-    assert header.text == "Instructions for the exporter (optional)"
+    assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
 
     add_instructions_response = post_to_step(
         AdviceSteps.LICENCE_FOOTNOTES,
@@ -111,7 +111,7 @@ def test_approval_advice_post_valid_add_conditional_optional(
     soup = beautiful_soup(response.content)
     # redirected to next form
     header = soup.find("h1")
-    assert header.text == "Add licence conditions, instructions to exporter or footnotes (optional)"
+    assert header.text == "Add licence conditions (optional)"
 
     add_LC_response = post_to_step(
         AdviceSteps.LICENCE_CONDITIONS,
@@ -121,7 +121,7 @@ def test_approval_advice_post_valid_add_conditional_optional(
     soup = beautiful_soup(add_LC_response.content)
     # redirected to next form
     header = soup.find("h1")
-    assert header.text == "Instructions for the exporter (optional)"
+    assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
 
     add_instructions_response = post_to_step(
         AdviceSteps.LICENCE_FOOTNOTES,
