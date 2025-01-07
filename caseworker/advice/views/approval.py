@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from caseworker.advice.conditionals import form_add_licence_conditions, is_ogd_team
+from caseworker.advice.conditionals import form_add_licence_conditions, is_fcdo_team
 from caseworker.advice.forms.approval import (
     FootnotesApprovalAdviceForm,
     PicklistLicenceConditionsForm,
@@ -26,13 +26,16 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
     form_class = SelectAdviceForm
 
     def get_success_url(self):
-        recommendation = self.request.POST.get("recommendation")
-        if recommendation == "approve_all":
+        if self.recommendation == "approve_all":
             if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
                 return reverse("cases:approve_all_legacy", kwargs=self.kwargs)
             return reverse("cases:approve_all", kwargs=self.kwargs)
         else:
             return reverse("cases:refuse_all", kwargs=self.kwargs)
+
+    def form_valid(self, form):
+        self.recommendation = form.cleaned_data["recommendation"]
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,7 +45,7 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 class BaseApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
 
     condition_dict = {
-        AdviceSteps.RECOMMEND_APPROVAL: C(is_ogd_team),
+        AdviceSteps.RECOMMEND_APPROVAL: ~C(is_fcdo_team),
         AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
         AdviceSteps.LICENCE_FOOTNOTES: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
     }

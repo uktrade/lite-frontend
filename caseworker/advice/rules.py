@@ -34,7 +34,7 @@ def can_desnz_make_recommendation(user, case, queue_alias):
 
 
 def can_ogd_make_edit(team):
-    return not team == services.FCDO_TEAM
+    return team != services.FCDO_TEAM
 
 
 def case_has_approval_advice(advice):

@@ -13,7 +13,3 @@ def form_add_licence_conditions(step_name):
 
 def is_fcdo_team(wizard):
     return wizard.caseworker["team"]["alias"] == services.FCDO_TEAM
-
-
-def is_ogd_team(wizard):
-    return not is_fcdo_team(wizard)

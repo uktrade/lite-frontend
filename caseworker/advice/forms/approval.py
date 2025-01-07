@@ -40,7 +40,7 @@ class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
         TITLE = "Recommend an approval"
 
     approval_reasons = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4", "name": "approval_reasons"}),
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
         label="",
         error_messages={"required": "Enter a reason for approving"},
     )
