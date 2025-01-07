@@ -22,6 +22,7 @@ INSTALLED_APPS += [
     "caseworker.teams",
     "caseworker.cases",
     "caseworker.activities",
+    "caseworker.queues",
 ]
 
 MIDDLEWARE += [
