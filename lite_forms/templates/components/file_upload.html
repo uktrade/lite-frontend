@@ -27,4 +27,4 @@
 	</div>
 	<span class="govuk-hint">You can replace the uploaded file below:</span>
 {% endif %}
-<input id="{{ name }}" type="file" name="{{ name }}" accept='{{ accept|join:"," }}' />
+<input aria-labelledby="span--hint" id="{{ name }}" type="file" name="{{ name }}" accept='{{ accept|join:"," }}' />
