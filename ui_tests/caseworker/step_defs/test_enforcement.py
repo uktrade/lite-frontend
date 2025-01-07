@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from tests_common.constants import WebDriverDelay
+from django.conf import settings
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.case_list_page import CaseListPage
 from ui_tests.caseworker.pages.shared import Shared
@@ -147,9 +147,9 @@ def i_attach_updated_file(driver, enforcement_check_import_xml_file_path):  # no
     upload_btn = driver.find_element(by=By.XPATH, value="//button[@type='submit']")
     upload_btn.click()
 
-    WebDriverWait(driver, WebDriverDelay.THIRTY).until(expected_conditions.staleness_of(old_page))
+    WebDriverWait(driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(expected_conditions.staleness_of(old_page))
 
-    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
+    WebDriverWait(driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
         expected_conditions.text_to_be_present_in_element(
             (By.CSS_SELECTOR, ".app-snackbar__content"),
             "Enforcement XML imported successfully",
@@ -162,7 +162,7 @@ def i_attach_updated_file(driver, enforcement_check_import_xml_file_path):  # no
 @then(parsers.parse('the application is removed from "{queue}" queue'))
 def application_removed_from_queue(driver, queue):
     ASSIGNED_QUEUES_ID = "assigned-queues"
-    WebDriverWait(driver, WebDriverDelay.THIRTY).until(
+    WebDriverWait(driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
         expected_conditions.presence_of_element_located((By.ID, ASSIGNED_QUEUES_ID))
     ).is_enabled()
     queue_list = driver.find_element(by=By.ID, value=ASSIGNED_QUEUES_ID).text.split("\n")

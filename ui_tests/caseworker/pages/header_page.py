@@ -1,4 +1,4 @@
-from tests_common.constants import WebDriverDelay
+from django.conf import settings
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common.tools.wait import wait_until_page_is_loaded
 
@@ -22,7 +22,7 @@ class HeaderPage(BasePage):
         self.driver.find_element(by=By.ID, value=self.MENU_BUTTON).click()
 
     def click_organisations(self):
-        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
+        WebDriverWait(self.driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
             expected_conditions.presence_of_element_located((By.CSS_SELECTOR, self.ORGANISATIONS_LINK))
         ).click()
 

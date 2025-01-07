@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from tests_common import functions
-from tests_common.constants import WebDriverDelay
+from django.conf import settings
 from ui_tests.caseworker.pages.BasePage import BasePage
 
 
@@ -24,7 +24,7 @@ class ProductAssessmentPage(BasePage):
         ars_prefix_element = self.driver.find_element(by=By.ID, value="report_summary_prefix_container")
         ars_prefix_input = ars_prefix_element.find_element(by=By.ID, value="_report_summary_prefix")
         ars_prefix_input.send_keys(ars_prefix)
-        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
+        WebDriverWait(self.driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
             expected_conditions.presence_of_element_located((By.ID, "_report_summary_prefix__listbox"))
         )
 
@@ -40,7 +40,7 @@ class ProductAssessmentPage(BasePage):
         ars_subject_element = self.driver.find_element(by=By.ID, value="report_summary_subject_container")
         ars_subject_input = ars_subject_element.find_element(by=By.ID, value="_report_summary_subject")
         ars_subject_input.send_keys(ars_subject)
-        WebDriverWait(self.driver, WebDriverDelay.THIRTY).until(
+        WebDriverWait(self.driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
             expected_conditions.presence_of_element_located((By.ID, "_report_summary_subject__listbox"))
         )
 

@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from tests_common.constants import WebDriverDelay
+from django.conf import settings
 from ui_tests.caseworker.pages.application_page import ApplicationPage
 from ui_tests.caseworker.pages.attach_document_page import AttachDocumentPage
 from ui_tests.caseworker.pages.documents_page import DocumentsPage
@@ -29,7 +29,7 @@ def upload_a_file(driver, filename, description, tmp_path):
 
     old_page = driver.find_element(by=By.TAG_NAME, value="html")
     attach_document_page.click_submit_btn()
-    WebDriverWait(driver, WebDriverDelay.FORTYFIVE).until(expected_conditions.staleness_of(old_page))
+    WebDriverWait(driver, 45 * settings.E2E_WAIT_MULTIPLIER).until(expected_conditions.staleness_of(old_page))
 
 
 @then(parsers.parse('I see a file with filename "{filename}" is uploaded'))
