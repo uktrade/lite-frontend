@@ -4,6 +4,7 @@ from django.utils import timezone
 from pytest_bdd import given, when, then, parsers
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from core.constants import CaseStatusEnum
 from ui_tests.caseworker.pages.advice import FinalAdvicePage, RecommendationsAndDecisionPage, TeamAdvicePage
