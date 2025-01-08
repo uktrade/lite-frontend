@@ -7,6 +7,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
+from django.conf import settings
 
 
 def click_submit(driver: WebDriver):
