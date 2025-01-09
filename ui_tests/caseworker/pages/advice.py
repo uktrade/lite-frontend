@@ -165,8 +165,8 @@ class RecommendationsAndDecisionPage(BasePage):
 
     def get_licence_condition(self):
         return self.driver.find_element(
-            by=By.XPATH,
-            value="//p[preceding-sibling::*[self::h2 or self::h3][contains(text(), 'Licence condition')]][2]",
+            by=By.CLASS_NAME,
+            value="licence-condition",
         ).text
 
     def get_instructions_for_exporter(self):
