@@ -119,7 +119,7 @@ class SimpleLicenceConditionsForm(BaseForm):
         TITLE = "Add licence conditions (optional)"
 
     proviso = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4"}),
+        widget=forms.Textarea(attrs={"rows": 7}),
         label="Licence condition",
         required=False,
     )

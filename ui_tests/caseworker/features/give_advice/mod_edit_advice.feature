@@ -22,7 +22,7 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I enter "approval reason" as the approval reasons
     And I click add licence condition
     And I click continue
-    And I enter "licence condition" as the licence condition into the "other" checkbox
+    And I enter "licence condition" into the licence condition
     And I click continue
     And I enter "instruction for exporter" as the instructions for the exporter on the instructions step
     And I enter "reporting footnote" as the reporting footnote on the instructions step
