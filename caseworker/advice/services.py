@@ -570,7 +570,7 @@ def unassessed_trigger_list_goods(case):
 
 
 def post_bulk_approval_recommendation(request, queue_id, data):
-    response = client.post(request, f"/queues/{queue_id}/bulk-approval/", data)
+    response = client.post(request, f"/caseworker/queues/{queue_id}/bulk-approval/", data)
     response.raise_for_status()
     return response.json(), response.status_code
 

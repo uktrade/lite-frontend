@@ -48,9 +48,9 @@ class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
     def form_valid(self, form):
         queue_id = self.kwargs["pk"]
-        case_ids = self.request.POST.getlist("cases", [])
+        cases = self.request.POST.getlist("cases", [])
         payload = {
-            "case_ids": case_ids,
+            "cases": cases,
             "advice": {
                 "text": "Approved using bulk approval",
                 "proviso": "",
@@ -63,7 +63,7 @@ class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
         self.submit_bulk_approval_recommendation(queue_id, payload)
 
-        num_cases = len(case_ids)
+        num_cases = len(cases)
         success_message = f"Successfully approved {num_cases} cases"
         if num_cases == 1:
             success_message = "Successfully approved 1 case"
