@@ -12,7 +12,7 @@ from caseworker.queues.rules import BULK_APPROVE_ALLOWED_QUEUES
         ({"id": BULK_APPROVE_ALLOWED_QUEUES["MOD_DSR"]}, True),
         ({"id": BULK_APPROVE_ALLOWED_QUEUES["MOD_DSTL"]}, True),
         ({"id": "fake_queue"}, False),
-     ),
+    ),
 )
 def test_can_user_bulk_approve_cases(get_mock_request_user, queue, expected_result):
     assert caseworker_rules.can_user_bulk_approve_cases(get_mock_request_user(None), queue) is expected_result

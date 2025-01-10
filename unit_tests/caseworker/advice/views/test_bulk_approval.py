@@ -56,6 +56,13 @@ def mock_fcdo_queue_search_data(requests_mock, fcdo_queue_id):
     yield requests_mock.get(url=url, json={"results": {"cases": [], "filters": {"gov_users": []}}})
 
 
+@pytest.mark.parametrize(
+    "cases",
+    (
+        (["54725d74-e900-43b1-b2cb-2af44ae9182d", "2468bc19-979d-4ba3-a57c-b0ce253c6237"]),
+        (["54725d74-e900-43b1-b2cb-2af44ae9182d"]),
+    ),
+)
 def test_user_bulk_approval_success(
     authorized_client,
     requests_mock,
@@ -63,9 +70,10 @@ def test_user_bulk_approval_success(
     mod_bulk_approval_url,
     mock_gov_mod_capprot_user,
     mock_post_mod_bulk_approval_recommendation,
+    cases,
 ):
     data = {
-        "cases": ["54725d74-e900-43b1-b2cb-2af44ae9182d", "2468bc19-979d-4ba3-a57c-b0ce253c6237"],
+        "cases": cases,
         "advice": {
             "text": "Approved using bulk approval",
             "proviso": "",
