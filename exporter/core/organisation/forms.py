@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 from crispy_forms_gds.layout import HTML
 
-from core.common.forms import BaseForm, TextChoice
+from core.common.forms import BaseForm, FieldsetForm, TextChoice
 from exporter.core.services import get_countries
 from .validators import validate_phone
 from exporter.core.organisation.services import validate_registration_number
@@ -27,7 +27,7 @@ class RegistrationConfirmation(BaseForm):
         return ()
 
 
-class RegistrationTypeForm(BaseForm):
+class RegistrationTypeForm(FieldsetForm):
     class Layout:
         TITLE = "Select the type of organisation"
 

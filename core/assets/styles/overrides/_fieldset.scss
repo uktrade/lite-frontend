@@ -1,0 +1,11 @@
+fieldset {
+    .govuk-fieldset__legend--xl {
+        margin-bottom: 30px;
+    }
+
+    @media (min-width: 40.0625em) {
+        .govuk-fieldset__legend--xl {
+            margin-bottom: 50px;
+        }
+    }
+}
