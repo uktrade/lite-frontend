@@ -462,7 +462,7 @@ class FirearmSection5Form(BaseForm):
         return ("is_covered_by_section_5",)
 
 
-class FirearmMadeBefore1938Form(BaseForm):
+class FirearmMadeBefore1938Form(FieldsetForm):
     class Layout:
         TITLE = "Was the product made before 1938?"
 
@@ -503,7 +503,7 @@ class FirearmYearOfManufactureForm(BaseForm):
         return ("year_of_manufacture",)
 
 
-class FirearmIsDeactivatedForm(BaseForm):
+class FirearmIsDeactivatedForm(FieldsetForm):
     class Layout:
         TITLE = "Has the product been deactivated?"
 
@@ -599,7 +599,7 @@ class FirearmDeactivationDetailsForm(BaseForm):
         return cleaned_data
 
 
-class FirearmSerialIdentificationMarkingsForm(BaseForm):
+class FirearmSerialIdentificationMarkingsForm(FieldsetForm):
     class Layout:
         TITLE = "Will each product have a serial number or other identification marking?"
 
