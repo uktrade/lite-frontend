@@ -52,7 +52,7 @@ class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
         payload = {
             "cases": cases,
             "advice": {
-                "text": "Approved using bulk approval",
+                "text": "No concerns: Approved using bulk approval",
                 "proviso": "",
                 "note": "",
                 "footnote_required": False,

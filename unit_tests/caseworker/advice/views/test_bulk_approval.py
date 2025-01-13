@@ -75,7 +75,7 @@ def test_user_bulk_approval_success(
     data = {
         "cases": cases,
         "advice": {
-            "text": "Approved using bulk approval",
+            "text": "No concerns: Approved using bulk approval",
             "proviso": "",
             "note": "",
             "footnote_required": False,
