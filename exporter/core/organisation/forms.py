@@ -58,7 +58,7 @@ class RegistrationTypeForm(FieldsetForm):
         return ("type",)
 
 
-class RegistrationUKBasedForm(BaseForm):
+class RegistrationUKBasedForm(FieldsetForm):
     class Layout:
         TITLE = "Where is your organisation based?"
 
