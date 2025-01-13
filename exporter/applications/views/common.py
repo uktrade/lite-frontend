@@ -28,7 +28,6 @@ from exporter.applications.helpers.check_your_answers import (
     get_application_type_string,
 )
 from exporter.applications.helpers.summaries import draft_summary
-from exporter.applications.helpers.task_list_sections import get_reference_number_description
 from exporter.applications.helpers.task_lists import get_application_task_list
 from exporter.applications.helpers.validators import (
     validate_withdraw_application,
@@ -352,7 +351,7 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
                 "summary_page": True,
                 "application_type": get_application_type_string(self.application),
                 "notes": get_case_notes(self.request, self.case_id)["case_notes"],
-                "reference_code": get_reference_number_description(self.application),
+                # "reference_code": get_reference_number_description(self.application),
             }
         )
         return context
