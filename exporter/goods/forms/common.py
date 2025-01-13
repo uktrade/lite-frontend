@@ -120,7 +120,7 @@ class ProductControlListEntryForm(FieldsetForm):
         return cleaned_data
 
 
-class ProductPVGradingForm(BaseForm):
+class ProductPVGradingForm(FieldsetForm):
     class Layout:
         TITLE = "Does the product have a government security grading or classification?"
 
