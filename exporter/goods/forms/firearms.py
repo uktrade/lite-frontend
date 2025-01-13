@@ -192,7 +192,7 @@ class FirearmRFDValidityForm(BaseForm):
         )
 
 
-class FirearmRegisteredFirearmsDealerForm(BaseForm):
+class FirearmRegisteredFirearmsDealerForm(FieldsetForm):
     class Layout:
         TITLE = "Are you a registered firearms dealer?"
 
