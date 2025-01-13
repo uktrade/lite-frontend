@@ -1,5 +1,5 @@
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Field, Layout, Submit, HTML
+from crispy_forms_gds.layout import Field, Fieldset, Layout, Size, Submit, HTML
 from django.urls import reverse_lazy
 from django import forms
 
@@ -7,6 +7,9 @@ from core.forms.layouts import StarRadioSelect
 
 
 class HCSATminiform(forms.Form):
+    class Layout:
+        TITLE = "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?"
+
     RECOMMENDATION_CHOICES = [
         ("VERY_DISSATISFIED", "Very dissatisfied"),
         ("DISSATISFIED", "Dissatisfied"),
@@ -23,11 +26,19 @@ class HCSATminiform(forms.Form):
         error_messages={"required": "Star rating is required"},
     )
 
+    def get_title(self):
+        return self.Layout.TITLE
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            StarRadioSelect("satisfaction_rating"),
+            Fieldset(
+                StarRadioSelect("satisfaction_rating"),
+                legend=self.get_title(),
+                legend_size=Size.MEDIUM,
+                legend_tag="h2",
+            ),
             Submit("submit", "Submit and continue"),
         )
 
