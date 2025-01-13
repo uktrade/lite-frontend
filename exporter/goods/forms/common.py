@@ -148,7 +148,7 @@ class ProductPVGradingForm(FieldsetForm):
         )
 
 
-class ProductPVGradingDetailsForm(BaseForm):
+class ProductPVGradingDetailsForm(FieldsetForm):
     class Layout:
         TITLE = "What is the security grading or classification?"
 
