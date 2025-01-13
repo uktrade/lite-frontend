@@ -102,7 +102,10 @@ class GoodCommonMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = self.get_form().title
+        try:
+            context["title"] = self.get_form().Layout.TITLE
+        except AttributeError:
+            context["title"] = self.get_form().title
 
         return context
 
@@ -543,7 +546,7 @@ class EditFirearmProductTypeView(LoginRequiredMixin, GoodCommonMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form_title"] = self.form_class.title
+        context["form_title"] = self.form_class.Layout.TITLE
         return context
 
     def form_valid(self, form):
