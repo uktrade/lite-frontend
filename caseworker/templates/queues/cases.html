@@ -15,7 +15,7 @@
 				</a>
 		</div>
 		{% if not queue.is_system_queue %}
-			{% test_rule 'can_user_bulk_approve_cases' request queue as can_user_bulk_approve_cases %}
+			{% test_rule 'can_user_bulk_approve_cases' request queue.id as can_user_bulk_approve_cases %}
 			<div class="lite-app-bar__controls lite-buttons-row" >
 				{% if can_user_bulk_approve_cases %}
 					<div data-enable-on-checkboxes="#table-cases">

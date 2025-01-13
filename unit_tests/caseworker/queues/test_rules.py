@@ -15,4 +15,4 @@ from caseworker.queues.rules import BULK_APPROVE_ALLOWED_QUEUES
     ),
 )
 def test_can_user_bulk_approve_cases(get_mock_request_user, queue, expected_result):
-    assert caseworker_rules.can_user_bulk_approve_cases(get_mock_request_user(None), queue) is expected_result
+    assert caseworker_rules.can_user_bulk_approve_cases(get_mock_request_user(None), queue["id"]) is expected_result

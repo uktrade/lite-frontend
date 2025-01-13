@@ -1,8 +1,11 @@
+import rules
+
 from http import HTTPStatus
 
 from django import forms
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import Http404
 from django.urls import reverse
 from django.views.generic import FormView
 
@@ -25,6 +28,12 @@ class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
     template_name = "core/form.html"
     form_class = BulkApprovalForm
+
+    def dispatch(self, *args, **kwargs):
+
+        if not rules.test_rule("can_user_bulk_approve_cases", self.request, self.kwargs["pk"]):
+            raise Http404()
+        return super().dispatch(*args, **kwargs)
 
     @property
     def caseworker_id(self):
