@@ -16,7 +16,7 @@ from core.forms.layouts import (
 )
 from core.forms.utils import coerce_str_to_bool
 
-from core.common.forms import BaseForm, TextChoice
+from core.common.forms import BaseForm, FieldsetForm, TextChoice
 from exporter.core.forms import (
     CustomErrorDateInputField,
     PotentiallyUnsafeClearableFileInput,
@@ -100,7 +100,7 @@ class FirearmCalibreForm(BaseForm):
         return ("calibre",)
 
 
-class FirearmReplicaForm(BaseForm):
+class FirearmReplicaForm(FieldsetForm):
     class Layout:
         TITLE = "Is the product a replica firearm?"
 
