@@ -16,7 +16,7 @@ from core.forms.layouts import (
 )
 from core.forms.utils import coerce_str_to_bool
 
-from core.common.forms import BaseForm
+from core.common.forms import BaseForm, FieldsetForm
 from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.services import (
     get_control_list_entries,
@@ -52,7 +52,7 @@ class ProductNameForm(BaseForm):
         )
 
 
-class ProductControlListEntryForm(BaseForm):
+class ProductControlListEntryForm(FieldsetForm):
     class Layout:
         TITLE = "Do you know the product's control list entry?"
 
