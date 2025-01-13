@@ -267,7 +267,7 @@ class FirearmAttachRFDCertificate(BaseForm):
         )
 
 
-class FirearmFirearmAct1968Form(BaseForm):
+class FirearmFirearmAct1968Form(FieldsetForm):
     class Layout:
         TITLE = "Which section of the Firearms Act 1968 is the product covered by?"
 
