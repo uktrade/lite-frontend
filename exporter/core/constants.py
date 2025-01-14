@@ -247,3 +247,8 @@ class OrganisationStatus:
 
 class FileUploadFileTypes:
     UPLOAD_GUIDANCE_TEXT = "Upload a DOCX, DOC, PDF, PNG, JPEG or ODT file."
+
+
+class UserOrganisationStatus:
+    ACTIVE = "Active"
+    DEACTIVATED = "Deactivated"

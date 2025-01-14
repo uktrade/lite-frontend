@@ -13,21 +13,20 @@ from exporter.applications.services import (
     has_existing_applications_and_licences_and_nlrs,
 )
 from exporter.auth.services import authenticate_exporter_user
-
+from exporter.core.constants import UserOrganisationStatus
 from exporter.core.forms import RegisterNameForm
-
 from exporter.core.services import (
     get_notifications,
     get_organisation,
     get_signature_certificate,
 )
+from exporter.organisation.members.services import get_user
 
 from core.auth.utils import get_profile
 from lite_content.lite_exporter_frontend import generic
 from lite_forms.components import BackLink
 from lite_forms.generators import success_page
 from lite_forms.helpers import conditional
-from exporter.organisation.members.services import get_user
 from lite_forms.generators import error_page
 
 from core.auth.views import LoginRequiredMixin
@@ -48,8 +47,9 @@ class Home(TemplateView):
         except (JSONDecodeError, TypeError, KeyError):
             return redirect("auth:login")
 
-        if user["user_status"] == "Deactivated":
-            raise PermissionDenied("User is deactivated for this organistion please sign out")
+        if user["user_status"] == UserOrganisationStatus.DEACTIVATED:
+            raise PermissionDenied("User is deactivated for this organisation please sign out")
+
         notifications, _ = get_notifications(request)
         require_serials_count, require_serials_ids = self._applications_with_missing_serial_numbers(request)
         organisation = get_organisation(request, str(request.session["organisation"]))
