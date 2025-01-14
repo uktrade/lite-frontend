@@ -1,10 +1,11 @@
 from http import HTTPStatus
-from caseworker.advice.conditionals import form_add_licence_conditions, is_desnz_team
+from caseworker.advice.conditionals import form_add_licence_conditions, is_fcdo_team
 from caseworker.advice.forms.approval import (
     FootnotesApprovalAdviceForm,
     PicklistLicenceConditionsForm,
     SimpleLicenceConditionsForm,
     RecommendAnApprovalForm,
+    SelectAdviceForm,
 )
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
@@ -14,16 +15,37 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from caseworker.advice.views.mixins import CaseContextMixin
 from caseworker.advice import services
-
 from caseworker.advice.constants import AdviceSteps
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
+from django.views.generic import FormView
+
+
+class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "advice/select_advice.html"
+    form_class = SelectAdviceForm
+
+    def get_success_url(self):
+        if self.recommendation == "approve_all":
+            if self.caseworker["team"]["alias"] == services.FCDO_TEAM:
+                return reverse("cases:approve_all_legacy", kwargs=self.kwargs)
+            return reverse("cases:approve_all", kwargs=self.kwargs)
+        else:
+            return reverse("cases:refuse_all", kwargs=self.kwargs)
+
+    def form_valid(self, form):
+        self.recommendation = form.cleaned_data["recommendation"]
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return {**context, "security_approvals_classified_display": self.security_approvals_classified_display}
 
 
 class BaseApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
 
     condition_dict = {
-        AdviceSteps.RECOMMEND_APPROVAL: C(is_desnz_team),
+        AdviceSteps.RECOMMEND_APPROVAL: ~C(is_fcdo_team),
         AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
         AdviceSteps.LICENCE_FOOTNOTES: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
     }

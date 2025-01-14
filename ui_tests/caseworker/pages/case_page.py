@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
+from django.conf import settings
 from ui_tests.caseworker.pages.shared import Shared
 from ui_tests.caseworker.pages.BasePage import BasePage
 from tests_common import selectors
@@ -128,7 +129,9 @@ class CasePage(BasePage):
 
         self.driver.find_element(by=By.ID, value="candy-flags").click()
 
-        WebDriverWait(self.driver, 30).until(expected_conditions.presence_of_element_located((By.ID, POPUP_FLAGS_ID)))
+        WebDriverWait(self.driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
+            expected_conditions.presence_of_element_located((By.ID, POPUP_FLAGS_ID))
+        )
 
         return flag_name in self.driver.find_element(by=By.ID, value=POPUP_FLAGS_ID).text
 

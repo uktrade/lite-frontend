@@ -61,7 +61,7 @@ class GiveApprovalAdviceForm(PicklistAdviceForm):
     )
     instructions_to_exporter = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "3"}),
-        label="Add any instructions for the exporter (optional)",
+        label="Add instructions to the exporter, or a reporting footnote (optional)",
         help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
         required=False,
     )
