@@ -19,23 +19,26 @@ Feature: I want to record my user advice and any comments and conditions relatin
     And I click make recommendation
     And I click approve all
     And I click continue
-    And I enter "reason for approving" as the reasons for approving
-    And I click the text "Add a licence condition, instruction to exporter or footnote"
-    And I enter "licence condition" as the licence condition
-    And I enter "instruction for exporter" as the instructions for the exporter
-    And I enter "reporting footnote" as the reporting footnote
-    And I click submit recommendation
-    Then I see "reason for approving" as the reasons for approving
+    And I enter "approval reason" as the approval reasons
+    And I click add licence condition
+    And I click continue
+    And I enter "licence condition" into the licence condition
+    And I click continue
+    And I enter "instruction for exporter" as the instructions for the exporter on the instructions step
+    And I enter "reporting footnote" as the reporting footnote on the instructions step
+    And I click continue
+    Then I see "approval reason" as the reasons for approving
     And I see "licence condition" as the licence condition
     And I see "instruction for exporter" as the instructions for the exporter
     And I see "reporting footnote" as the reporting footnote
     When I click "Edit recommendation"
-    And I enter "reason for approving1" as the reasons for approving
-    And I click the text "Add a licence condition, instruction to exporter or footnote"
-    And I enter "licence condition1" as the licence condition
-    And I enter "instruction for exporter1" as the instructions for the exporter
-    And I enter "reporting footnote1" as the reporting footnote
-    And I click submit recommendation
+    And I enter "reason for approving1" as the approval reasons
+    And I click continue
+    And I enter "licence condition1" into the licence condition
+    And I click continue
+    And I enter "instruction for exporter1" as the instructions for the exporter on the instructions step
+    And I enter "reporting footnote1" as the reporting footnote on the instructions step
+    And I click continue
     Then I see "reason for approving1" as the reasons for approving
     And I see "licence condition1" as the licence condition
     And I see "instruction for exporter1" as the instructions for the exporter

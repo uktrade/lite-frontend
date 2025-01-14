@@ -33,8 +33,8 @@ def can_desnz_make_recommendation(user, case, queue_alias):
     return True
 
 
-def can_desnz_make_edit(team):
-    return team in services.DESNZ_TEAMS
+def can_ogd_make_edit(team):
+    return team != services.FCDO_TEAM
 
 
 def case_has_approval_advice(advice):
@@ -44,7 +44,7 @@ def case_has_approval_advice(advice):
 
 
 @rules.predicate
-def can_user_make_desnz_edit(request, case):
+def can_user_make_edit(request, case):
     try:
         user = request.lite_user
     except AttributeError:
@@ -52,7 +52,7 @@ def can_user_make_desnz_edit(request, case):
 
     team = user["team"]["alias"]
     advice = services.filter_current_user_advice(case.advice, user["id"])
-    return can_desnz_make_edit(team) and case_has_approval_advice(advice)
+    return can_ogd_make_edit(team) and case_has_approval_advice(advice)
 
 
 @rules.predicate
@@ -84,4 +84,4 @@ def can_user_make_recommendation(request, case):
 
 rules.add_rule("can_user_make_recommendation", is_user_allocated & can_user_make_recommendation)
 rules.add_rule("can_user_allocate_and_approve", can_user_make_recommendation)
-rules.add_rule("can_user_make_desnz_edit", can_user_make_desnz_edit)
+rules.add_rule("can_user_make_edit", can_user_make_edit)

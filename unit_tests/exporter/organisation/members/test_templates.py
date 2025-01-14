@@ -8,8 +8,8 @@ def test_pending_users_in_organisation():
     context["data"] = {
         "results": [
             {
-                "id": "11c74ddd-c119-48cc-8696-e096218ca583",
-                "email": "jane.doe@example.com",
+                "id": "11c74ddd-c119-48cc-8696-e096218ca583",  # /PS-IGNORE
+                "email": "jane.doe@example.com",  # /PS-IGNORE
                 "first_name": "",
                 "last_name": "",
                 "status": "Active",
@@ -18,8 +18,8 @@ def test_pending_users_in_organisation():
                 "phone_number": "",
             },
             {
-                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
-                "email": "john.smith@example.com",
+                "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
+                "email": "john.smith@example.com",  # /PS-IGNORE
                 "first_name": "John",
                 "last_name": "Smith",
                 "status": "Active",
@@ -33,8 +33,13 @@ def test_pending_users_in_organisation():
     soup = BeautifulSoup(html, "html.parser")
     rows = soup.find("tbody", {"class": "govuk-table__body"}).find_all("tr", recursive=False)
     assert rows[0].find(class_="govuk-tag govuk-tag--blue").text.strip() == "Pending"
-    assert rows[1].find(class_="govuk-table__header").text.strip() == "John Smith"
 
-    values_for_assert = ["john.smith@example.com", "Administrator", "Active", "View John Smith's profile"]
+    values_for_assert = [
+        "John Smith",
+        "john.smith@example.com",  # /PS-IGNORE
+        "Administrator",
+        "Active",
+        "View John Smith's profile",
+    ]
     for index, value in enumerate(rows[1].find_all(class_="govuk-table__cell")):
         assert values_for_assert[index] == value.text.strip()

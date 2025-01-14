@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
+from django.conf import settings
 from ui_tests.caseworker.pages.BasePage import BasePage
 
 
@@ -14,7 +15,7 @@ class AddDenialRecordsPage(BasePage):
     CSV_FILE_LOCATION = "/tmp/downloads/example-denials.csv"
 
     def download_example_csv_file(self):
-        WebDriverWait(self.driver, 30).until(
+        WebDriverWait(self.driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
             expected_conditions.presence_of_element_located((By.LINK_TEXT, "Download an example .csv file"))
         ).click()
 
