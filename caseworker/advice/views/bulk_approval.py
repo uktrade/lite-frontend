@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views import View
 
 
 from caseworker.advice.services import post_bulk_approval_recommendation
@@ -16,12 +16,10 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 
-class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, TemplateView):
+class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, View):
     """
     Submit approval recommendation for the selected cases
     """
-
-    template_name = "core/form.html"
 
     def dispatch(self, *args, **kwargs):
 

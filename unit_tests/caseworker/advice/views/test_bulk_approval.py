@@ -6,6 +6,7 @@ from pytest_django.asserts import assertTemplateUsed
 from urllib import parse
 from uuid import uuid4
 
+from django.contrib.messages import get_messages
 from django.urls import reverse
 
 from caseworker.advice.constants import (
@@ -135,6 +136,14 @@ def test_user_bulk_approval_success(
     bulk_approval_request = requests_mock.request_history.pop()
     assert bulk_approval_request.method == "POST"
     assert bulk_approval_request.json() == data
+
+    messages = list(get_messages(response.wsgi_request))
+    expected = f"Successfully approved {case_count} cases"
+    if case_count == 1:
+        expected = "Successfully approved 1 case"
+    assert len(messages) == 1
+    assert str(messages[0]) == expected
+    assert messages[0].tags == "success"
 
 
 @pytest.mark.parametrize(
