@@ -1,6 +1,7 @@
 from json import JSONDecodeError
 
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.http import Http404
 from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy
@@ -46,6 +47,9 @@ class Home(TemplateView):
             user_permissions = user["role"]["permissions"]
         except (JSONDecodeError, TypeError, KeyError):
             return redirect("auth:login")
+
+        if user["user_status"] == "Deactivated":
+            raise PermissionDenied("User is deactivated for this organistion please sign out")
         notifications, _ = get_notifications(request)
         require_serials_count, require_serials_ids = self._applications_with_missing_serial_numbers(request)
         organisation = get_organisation(request, str(request.session["organisation"]))
