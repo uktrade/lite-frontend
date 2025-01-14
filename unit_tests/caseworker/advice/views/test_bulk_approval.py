@@ -4,6 +4,7 @@ import re
 from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
 from urllib import parse
+from uuid import uuid4
 
 from django.urls import reverse
 
@@ -83,14 +84,15 @@ def OGD_team_user(gov_uk_user_id):
 
 
 @pytest.mark.parametrize(
-    "team_id, queue_id",
+    "team_id, queue_id, case_count",
     (
-        (MOD_CAPPROT_TEAM, MOD_CAPPROT_CASES_TO_REVIEW),
-        (MOD_DI_TEAM, MOD_DI_DIRECT_CASES_TO_REVIEW),
-        (MOD_DI_TEAM, MOD_DI_INDIRECT_CASES_TO_REVIEW),
-        (MOD_DSR_TEAM, MOD_DSR_CASES_TO_REVIEW),
-        (MOD_DSTL_TEAM, MOD_DSTL_CASES_TO_REVIEW),
-        (NCSC_TEAM, NCSC_CASES_TO_REVIEW),
+        (MOD_CAPPROT_TEAM, MOD_CAPPROT_CASES_TO_REVIEW, 10),
+        (MOD_DI_TEAM, MOD_DI_DIRECT_CASES_TO_REVIEW, 5),
+        (MOD_DI_TEAM, MOD_DI_INDIRECT_CASES_TO_REVIEW, 5),
+        (MOD_DSR_TEAM, MOD_DSR_CASES_TO_REVIEW, 5),
+        (MOD_DSTL_TEAM, MOD_DSTL_CASES_TO_REVIEW, 5),
+        (NCSC_TEAM, NCSC_CASES_TO_REVIEW, 5),
+        (NCSC_TEAM, NCSC_CASES_TO_REVIEW, 1),
     ),
 )
 def test_user_bulk_approval_success(
@@ -100,6 +102,7 @@ def test_user_bulk_approval_success(
     OGD_team_user,
     team_id,
     queue_id,
+    case_count,
 ):
     # setup mock requests
     # There are multiple fixtures that require parameterizing hence these cannot
@@ -115,7 +118,7 @@ def test_user_bulk_approval_success(
     requests_mock.get(url=re.compile(f"{url}{mock_gov_user['user']['id']}/"), json=mock_gov_user)
 
     data = {
-        "cases": ["54725d74-e900-43b1-b2cb-2af44ae9182d", "2468bc19-979d-4ba3-a57c-b0ce253c6237"],
+        "cases": [str(uuid4()) for _ in range(case_count)],
         "advice": {
             "text": "No concerns: Approved using bulk approval",
             "proviso": "",
