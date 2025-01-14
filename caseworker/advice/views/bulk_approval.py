@@ -2,12 +2,11 @@ import rules
 
 from http import HTTPStatus
 
-from django import forms
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import FormView
+from django.views.generic import TemplateView
 
 
 from caseworker.advice.services import post_bulk_approval_recommendation
@@ -17,17 +16,12 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 
-class BulkApprovalForm(forms.Form):
-    pass
-
-
-class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
+class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, TemplateView):
     """
     Submit approval recommendation for the selected cases
     """
 
     template_name = "core/form.html"
-    form_class = BulkApprovalForm
 
     def dispatch(self, *args, **kwargs):
 
@@ -55,7 +49,7 @@ class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def submit_bulk_approval_recommendation(self, queue_id, payload):
         return post_bulk_approval_recommendation(self.request, queue_id, payload)
 
-    def form_valid(self, form):
+    def post(self, request, *args, **kwargs):
         queue_id = self.kwargs["pk"]
         cases = self.request.POST.getlist("cases", [])
         payload = {
@@ -78,4 +72,4 @@ class BulkApprovalView(LoginRequiredMixin, SuccessMessageMixin, FormView):
             success_message = "Successfully approved 1 case"
         messages.success(self.request, success_message)
 
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
