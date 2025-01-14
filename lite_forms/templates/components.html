@@ -31,12 +31,12 @@
 	<!-- Error -->
 	{% if errors %}
 		{% if errors|key_value:question.name and question.input_type != "hidden" %}
-			<label id="error-{{ question.name }}" for="{{ question.name }}" class="govuk-error-message">
+			<span id="error-{{ question.name }}" class="govuk-error-message">
 				<span class="govuk-visually-hidden">Error:</span>
 				{% for error in errors|key_value:question.name %}
 					{{ error }}
 				{% endfor %}
-			</label>
+			</span>
 		{% endif %}
 	{% endif %}
 
