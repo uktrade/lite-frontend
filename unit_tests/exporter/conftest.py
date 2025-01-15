@@ -82,6 +82,7 @@ def mock_exporter_user_me(requests_mock, lite_api_user_id):
             "token": "foo",
             "lite_api_user_id": lite_api_user_id,
         },
+        "user_status": "Active",
         "role": {
             "id": "00000000-0000-0000-0000-000000000001",
             "permissions": [
