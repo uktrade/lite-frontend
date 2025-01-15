@@ -7,7 +7,8 @@
 						govuk-form-group--error
 					{% endif %}
 			{% endif %}">
-	{% if question.title %}
+	<!-- For date inputs the title is rendered in the date component for grouping -->
+	{% if question.title and question.input_type != "date" %}
 		<label class="govuk-label" for="{{ question.name }}">
 			{{ question.title }}
 			{% if question.optional %}
@@ -17,7 +18,8 @@
 			{% endif %}
 		</label>
 	{% endif %}
-	{% if question.description %}
+	<!-- For date inputs the description is rendered in the date component for grouping -->
+	{% if question.description and question.input_type != "date" %}
 		<span class="govuk-hint" for="{{ question.name }}">
 			<span>{{ question.description|safe }}</span>
 		</span>
