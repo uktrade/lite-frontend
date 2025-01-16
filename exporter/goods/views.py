@@ -102,10 +102,11 @@ class GoodCommonMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        try:
-            context["title"] = self.get_form().Layout.TITLE
-        except AttributeError:
-            context["title"] = self.get_form().title
+        form = self.get_form()
+        if hasattr(form, "Layout") and hasattr(form.Layout, "TITLE"):
+            context["title"] = form.Layout.TITLE
+        else:
+            context["title"] = form.title
 
         return context
 
