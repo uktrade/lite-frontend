@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="govuk-width-container">
+    <div>
 
         <div class="lite-app-bar">
             <div class="lite-app-bar__content">
@@ -258,7 +258,7 @@
         {% endif %}
     </div>
 
-    <div>
+    <div class="govuk-button-group">
         <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' pk %}">
             Save and continue
         </a>
