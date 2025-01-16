@@ -1,5 +1,6 @@
 from django.urls import path
 
+from caseworker.advice.views.bulk_approval import BulkApprovalView
 from caseworker.queues.views import case_assignments, cases, enforcement, queues
 
 app_name = "queues"
@@ -36,4 +37,5 @@ urlpatterns = [
     path(
         "<uuid:pk>/enforcement-xml-import/", enforcement.EnforcementXMLImport.as_view(), name="enforcement_xml_import"
     ),
+    path("<uuid:pk>/bulk-approve/", BulkApprovalView.as_view(), name="bulk_approval"),
 ]

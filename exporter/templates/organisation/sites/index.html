@@ -28,7 +28,7 @@
 		<tbody class="govuk-table__body">
 			{% for site in sites %}
 				<tr class="govuk-table__row">
-					<td class="govuk-table__header" scope="row">
+					<td class="govuk-table__cell">
 						{{ site.name }}
 						{% if site.id == organisation.primary_site.id %}
 							<span class="govuk-hint">(Registered office address)</span>

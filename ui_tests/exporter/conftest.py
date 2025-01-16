@@ -1242,7 +1242,7 @@ def edit_good_details_in_application(driver, field_name, updated_value):  # noqa
 
 @when(parsers.parse('I click on "{link_text}"'))  # noqa
 def click_link_with_text(driver, link_text):  # noqa
-    WebDriverWait(driver, 30).until(
+    WebDriverWait(driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
         expected_conditions.presence_of_element_located(
             (
                 By.LINK_TEXT,

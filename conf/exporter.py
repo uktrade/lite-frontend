@@ -129,3 +129,4 @@ SURVEY_URL = env.str("SURVEY_URL", "")
 # using it here as some browsers still don't support CSP_REPORT_TO which replaces it
 
 CSP_REPORT_URI = env.tuple("EXPORTER_CSP_REPORT_URI", default=("",))
+E2E_WAIT_MULTIPLIER = env.int("E2E_WAIT_MULTIPLIER", default=1)
