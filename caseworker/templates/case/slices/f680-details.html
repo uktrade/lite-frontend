@@ -37,7 +37,7 @@
     {% endif %}
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Do you believe the products are rated under the Missile Technology Control Regime (MTCR)</dt>
-        <dd class="govuk-summary-list__value">{{ case.data.product_mtcr_rating_type }}</dd>
+        <dd class="govuk-summary-list__value">{{ case.data.product_mtcr_rating_type|sentence_case }}</dd>
     </div>
     <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">Is there is a requirement to release UK MOD owned EW data or information in support of this export</dt>
