@@ -6,6 +6,7 @@ from django.shortcuts import render, redirect, resolve_url
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, FormView
 from django.http import HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
 
 from exporter.applications.services import (
     get_applications_require_serial_numbers,
@@ -46,6 +47,8 @@ class Home(TemplateView):
             user_permissions = user["role"]["permissions"]
         except (JSONDecodeError, TypeError, KeyError):
             return redirect("auth:login")
+        if user["user_status"] == "Deactivated":
+            raise PermissionDenied("User is deactivated for this organisation please sign out")
         notifications, _ = get_notifications(request)
         require_serials_count, require_serials_ids = self._applications_with_missing_serial_numbers(request)
         organisation = get_organisation(request, str(request.session["organisation"]))
