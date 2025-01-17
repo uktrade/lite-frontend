@@ -142,6 +142,13 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
     def application(self):
         return get_application(self.request, self.kwargs["pk"])
 
+    # back_link_url only needs to be set for the first question in the form wizard,
+    # for subsequent questions the back link is generated through another mechanism
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form, **kwargs)
+        context.update({"back_link_url": reverse("applications:add_end_user", kwargs=self.kwargs)})
+        return context
+
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
