@@ -3,7 +3,7 @@
 {% load svg %}
 
 {% block back_link %}
-	<a href="{% url 'applications:task_list' application.id %}#third-parties" id="back-link" class="govuk-back-link">Back to application overview</a>
+	<a href="{% url 'applications:task_list' application.id %}#third-parties" id="back-link" class="govuk-back-link">Back</a>
 {% endblock %}
 
 {% block body %}
@@ -13,7 +13,7 @@
 		</div>
 		{% if application.status.key in 'applicant_editing,draft' %}
 			<div class="lite-app-bar__controls">
-				<a href="{% url 'applications:add_third_party' application.id %}" class="govuk-button" draggable="false" role="button">
+				<a href="{% url 'applications:add_third_party' application.id %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">
 					{% lcs 'applications.ThirdPartiesPage.ADD' %}
 				</a>
 			</div>
@@ -105,4 +105,7 @@
 	{% else %}
 		{% include 'includes/notice.html' with text='applications.ThirdPartiesPage.NO_RESULTS' %}
 	{% endif %}
+	<a class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' application.id %}">
+		Save and continue
+	</a>
 {% endblock %}
