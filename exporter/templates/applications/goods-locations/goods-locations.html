@@ -73,7 +73,7 @@
 				{% for location in application.goods_locations.data %}
 					{% if application.goods_locations.type == 'sites' %}
 						<tr class="govuk-table__row">
-							<td class="govuk-table__header" scope="row">{{ location.name }}</td>
+							<td class="govuk-table__cell">{{ location.name }}</td>
 							<td class="govuk-table__cell">
 								{{ location|get_address }}
 							</td>
