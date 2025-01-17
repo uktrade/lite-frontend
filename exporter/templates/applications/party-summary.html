@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block body %}
-    <div class="govuk-width-container">
-    
+    <div>
+
         <div class="lite-app-bar">
             <div class="lite-app-bar__content">
                 <h1 class="govuk-heading-l">
@@ -258,9 +258,9 @@
         {% endif %}
     </div>
 
-    <div>
+    <div class="govuk-button-group">
         <a draggable="false" class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' pk %}">
-            Submit
+            Save and continue
         </a>
         <a draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'applications:remove_end_user' pk obj_pk %}">
             Remove end-user

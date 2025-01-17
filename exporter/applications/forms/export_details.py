@@ -135,7 +135,7 @@ def proposed_product_return_date_form():
         title=TemporaryExportDetails.PROPOSED_RETURN_DATE,
         questions=[
             DateInput(
-                title="",
+                title="Return to the UK date",
                 short_title=TemporaryExportDetails.SummaryList.PROPOSED_RETURN_DATE,
                 description=f"For example, 12 11 {datetime.datetime.now().year + 1}",
                 name="proposed_return_date",

@@ -1,13 +1,13 @@
 from django.urls import path
 
 from caseworker.advice.views import consolidate, views
-from caseworker.advice.views.approval import GiveApprovalAdviceView
+from caseworker.advice.views.approval import GiveApprovalAdviceView, SelectAdviceView
 from caseworker.advice.views.edit import EditAdviceView
 
 urlpatterns = [
     path("", views.AdviceView.as_view(), name="advice_view"),
     path("case-details/", views.CaseDetailView.as_view(), name="case_details"),
-    path("select-advice/", views.SelectAdviceView.as_view(), name="select_advice"),
+    path("select-advice/", SelectAdviceView.as_view(), name="select_advice"),
     path("approve-all-legacy/", views.GiveApprovalAdviceViewLegacy.as_view(), name="approve_all_legacy"),
     path("approve-all/", GiveApprovalAdviceView.as_view(), name="approve_all"),
     path("refuse-all/", views.RefusalAdviceView.as_view(), name="refuse_all"),
