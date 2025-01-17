@@ -78,7 +78,13 @@ class AddEndUserView(LoginRequiredMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form_title"] = self.form_class.Layout.TITLE
+        context.update(
+            {
+                "form_title": self.form_class.Layout.TITLE,
+                "back_link_text": "Back to application overview",
+                "back_link_url": reverse("applications:task_list", kwargs=self.kwargs),
+            }
+        )
         return context
 
     def form_valid(self, form):
