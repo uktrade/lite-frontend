@@ -46,8 +46,10 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, 
     )
 
 
-def deny_licence_form(queue_pk, case_id, is_open_licence, nlr):
-    if nlr:
+def deny_licence_form(queue_pk, case_id, is_open_licence, nlr, is_case_f680):
+    if is_case_f680:
+        description = "You'll be approving this F680 application"
+    elif nlr:
         description = "You'll be informing the exporter that no licence is required"
     else:
         description = "You'll be denying the case"
