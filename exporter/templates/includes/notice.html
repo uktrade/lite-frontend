@@ -5,9 +5,8 @@
 		{% lcs text %}
 	</p>
 </div>
-
-{% if help %}
-	<p class="lite-information-text__help">
+<p class="lite-information-text__help">
+	{% if help %}
 		{% lcs help %}
-	</p>
-{% endif %}
+	{% endif %}
+</p>
