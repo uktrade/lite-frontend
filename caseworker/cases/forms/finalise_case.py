@@ -47,6 +47,8 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, 
 
 
 def deny_licence_form(queue_pk, case_id, is_open_licence, nlr, is_case_f680):
+    # This F680 approval is a hack to show the corrent information to the user when using the bespoke F680 approval advice type
+    # as F680 is not a licence unsure as to to whether deny licence is the correct path for this eventually
     if is_case_f680:
         description = "You'll be approving this F680 application"
     elif nlr:
