@@ -70,7 +70,7 @@ def edit_product_sensitivity_url(application, good_on_application):
 @pytest.fixture(autouse=True)
 def product_document():
     return {
-        "product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle"),
+        "product_document": SimpleUploadedFile("data_sheet.pdf", b"This is a detailed spec of this Rifle"),
         "description": "product data sheet",
     }
 
@@ -302,7 +302,7 @@ def test_edit_product_document_upload_form(
     assert document_delete_request.matcher.called_once
 
     assert requests_mock.last_request.json() == [
-        {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": "product data sheet"}
+        {"name": "data_sheet.pdf", "s3_key": "data_sheet.pdf", "size": 0, "description": "product data sheet"}
     ]
 
 
@@ -353,7 +353,7 @@ def test_upload_new_product_document_to_replace_existing_one(
     assert document_delete_request.matcher.called_once
 
     assert requests_mock.request_history.pop().json() == [
-        {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": "product data sheet"}
+        {"name": "data_sheet.pdf", "s3_key": "data_sheet.pdf", "size": 0, "description": "product data sheet"}
     ]
 
     assert requests_mock.request_history.pop().json() == {"is_document_sensitive": False}
@@ -443,7 +443,7 @@ def test_edit_product_document_availability_upload_new_document(
     assert document_delete_request.matcher.called_once
 
     assert requests_mock.request_history.pop().json() == [
-        {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": "product data sheet"}
+        {"name": "data_sheet.pdf", "s3_key": "data_sheet.pdf", "size": 0, "description": "product data sheet"}
     ]
 
     assert requests_mock.request_history.pop().json() == {

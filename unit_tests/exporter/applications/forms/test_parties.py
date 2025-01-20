@@ -307,10 +307,24 @@ def test_party_documents_form(data, valid, errors):
     (
         (
             {"description": "test", "document_in_english": "True", "document_on_letterhead": "True"},
-            {"party_document": SimpleUploadedFile("test", b"test_content")},
+            {"party_document": SimpleUploadedFile("test.pdf", b"test_content")},
             False,
             True,
             None,
+        ),
+        (
+            {"description": "test", "document_in_english": "True", "document_on_letterhead": "True"},
+            {"party_document": SimpleUploadedFile("test.xml", b"test_content")},
+            False,
+            False,
+            {"party_document": ["The file type is not supported. Upload a supported file type"]},
+        ),
+        (
+            {"description": "test", "document_in_english": "True", "document_on_letterhead": "True"},
+            {"party_document": SimpleUploadedFile("test.obs", b"test_content")},
+            False,
+            False,
+            {"party_document": ["The file type is not supported. Upload a supported file type"]},
         ),
         (
             {"description": "test", "document_in_english": "True", "document_on_letterhead": "True"},
@@ -361,10 +375,17 @@ def test_party_document_upload_form(data, files, edit, valid, errors):
     (
         (
             {},
-            {"party_eng_translation_document": SimpleUploadedFile("test", b"test_content")},
+            {"party_eng_translation_document": SimpleUploadedFile("test.pdf", b"test_content")},
             False,
             True,
             None,
+        ),
+        (
+            {},
+            {"party_eng_translation_document": SimpleUploadedFile("test.pdd", b"test_content")},
+            False,
+            False,
+            {"party_eng_translation_document": ["The file type is not supported. Upload a supported file type"]},
         ),
         (
             {},
@@ -398,10 +419,17 @@ def test_party_english_translation_document_upload_form(data, files, edit, valid
     (
         (
             {},
-            {"party_letterhead_document": SimpleUploadedFile("test", b"test_content")},
+            {"party_letterhead_document": SimpleUploadedFile("test.pdf", b"test_content")},
             False,
             True,
             None,
+        ),
+        (
+            {},
+            {"party_letterhead_document": SimpleUploadedFile("test.ioi", b"test_content")},
+            False,
+            False,
+            {"party_letterhead_document": ["The file type is not supported. Upload a supported file type"]},
         ),
         (
             {},

@@ -173,7 +173,7 @@ def test_add_good_technology_end_to_end(
 
     response = post_to_step(
         AddGoodTechnologySteps.PRODUCT_DOCUMENT_UPLOAD,
-        {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
+        {"product_document": SimpleUploadedFile("data_sheet.pdf", b"This is a detailed spec of this Rifle")},
     )
 
     assert response.status_code == 200
@@ -223,7 +223,7 @@ def test_add_good_technology_end_to_end(
 
     assert post_good_document_matcher.called_once
     assert post_good_document_matcher.last_request.json() == [
-        {"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}
+        {"name": "data_sheet.pdf", "s3_key": "data_sheet.pdf", "size": 0, "description": ""}
     ]
 
 

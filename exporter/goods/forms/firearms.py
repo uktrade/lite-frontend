@@ -22,6 +22,7 @@ from exporter.core.forms import (
     PotentiallyUnsafeClearableFileInput,
 )
 from exporter.core.validators import (
+    FileExtensionValidator,
     FutureDateValidator,
     PastDateValidator,
     RelativeDeltaDateValidator,
@@ -223,6 +224,7 @@ class FirearmAttachRFDCertificate(BaseForm):
             "required": "Select a registered firearms dealer certificate",
         },
         widget=PotentiallyUnsafeClearableFileInput,
+        validators=[FileExtensionValidator()],
     )
 
     reference_code = forms.CharField(
@@ -333,6 +335,7 @@ class BaseAttachFirearmActCertificateForm(BaseForm):
         widget=PotentiallyUnsafeClearableFileInput(
             force_required=True,
         ),
+        validators=[FileExtensionValidator()],
     )
 
     section_certificate_number = forms.CharField(

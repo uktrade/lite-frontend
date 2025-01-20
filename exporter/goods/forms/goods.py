@@ -22,6 +22,7 @@ from exporter.core.constants import (
 )
 from exporter.core.helpers import convert_control_list_entries, str_to_bool, convert_control_list_entries_to_options
 from exporter.core.services import get_control_list_entries, get_pv_gradings, get_units
+from exporter.core.validators import FileExtensionValidator
 from exporter.goods.helpers import get_category_display_string, good_summary
 from core.common.forms import BaseForm
 from lite_content.lite_exporter_frontend.goods import (
@@ -1112,6 +1113,7 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
         error_messages={
             "required": "Select certificate file to upload",
         },
+        validators=[FileExtensionValidator()],
     )
 
     reference_code = forms.CharField(

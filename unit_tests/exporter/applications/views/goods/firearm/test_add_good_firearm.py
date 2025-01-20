@@ -255,7 +255,7 @@ def test_add_good_firearm_product_document_available_but_not_sensitive(
 
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
-        {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
+        {"product_document": SimpleUploadedFile("data_sheet.pdf", b"This is a detailed spec of this Rifle")},
     )
     assert response.status_code == 200
     assert isinstance(response.context["form"], FirearmCategoryForm)
@@ -452,7 +452,7 @@ def test_add_good_firearm_with_rfd_document_submission(
     )
     response = post_to_step(
         AddGoodFirearmSteps.PRODUCT_DOCUMENT_UPLOAD,
-        {"product_document": SimpleUploadedFile("data sheet", b"This is a detailed spec of this Rifle")},
+        {"product_document": SimpleUploadedFile("data_sheet.pdf", b"This is a detailed spec of this Rifle")},
     )
 
     assert response.status_code == 302
@@ -497,7 +497,9 @@ def test_add_good_firearm_with_rfd_document_submission(
 
     assert post_good_document_matcher.called_once
     good_doc_request = post_good_document_matcher.last_request
-    assert good_doc_request.json() == [{"name": "data sheet", "s3_key": "data sheet", "size": 0, "description": ""}]
+    assert good_doc_request.json() == [
+        {"name": "data_sheet.pdf", "s3_key": "data_sheet.pdf", "size": 0, "description": ""}
+    ]
 
     assert post_applications_document_matcher.called_once
     application_doc_request = post_applications_document_matcher.last_request
@@ -701,7 +703,7 @@ def test_add_good_firearm_without_rfd_document_submission_registered_firearms_de
         {"is_covered_by_section_5": "no"},
     )
     expiry_date = datetime.date.today() + datetime.timedelta(days=5)
-    file_name = "test"
+    file_name = "test.pdf"
     post_to_step(
         AddGoodFirearmSteps.ATTACH_RFD_CERTIFICATE,
         {

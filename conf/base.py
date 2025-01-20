@@ -201,6 +201,9 @@ ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
         "image/tiff",
     ),
 )
+ACCEPTED_FILE_UPLOAD_EXTENSIONS = env.list(
+    "ACCEPTED_FILE_UPLOAD_EXTENSIONS", default=["pdf", "doc", "docx", "jpg", "pnf", "odt", "txt"]
+)
 # AV is performed by the API, but these empty settings are required by django-chunk-s3-av-upload-handlers
 CLAM_AV_USERNAME = env.str("CLAM_AV_USERNAME", "")
 CLAM_AV_PASSWORD = env.str("CLAM_AV_PASSWORD", "")

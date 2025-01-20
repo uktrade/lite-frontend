@@ -23,7 +23,7 @@ from exporter.core.services import (
     get_pv_gradings_v2,
     get_units,
 )
-from exporter.core.validators import PastDateValidator
+from exporter.core.validators import FileExtensionValidator, PastDateValidator
 from exporter.core.constants import ProductSecurityFeatures, FileUploadFileTypes
 
 
@@ -363,6 +363,7 @@ class ProductDocumentUploadForm(BaseForm):
         error_messages={
             "required": "Select a document that shows what your product is designed to do",
         },
+        validators=[FileExtensionValidator()],
     )
     description = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),

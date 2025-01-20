@@ -320,7 +320,7 @@ def test_firearm_document_sensitivity_form_validation(data, is_valid, errors):
         ),
         (
             {"description": "product data sheet"},
-            {"product_document": SimpleUploadedFile("test", b"test content")},
+            {"product_document": SimpleUploadedFile("test.pdf", b"test content")},
             True,
             {},
         ),

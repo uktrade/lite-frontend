@@ -9,6 +9,7 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Submit, Layout, HTML
 
 from exporter.core.constants import FileUploadFileTypes
+from exporter.core.validators import FileExtensionValidator
 
 
 def validate_expiry_date(value):
@@ -28,6 +29,7 @@ class UploadSectionFiveCertificateForm(forms.Form):
         label="",
         help_text="The file must be smaller than 50MB",
         error_messages={"required": "Select certificate file to upload"},
+        validators=[FileExtensionValidator()],
     )
     reference_code = forms.CharField(
         label="Certificate number",
@@ -63,6 +65,7 @@ class UploadFirearmsCertificateForm(forms.Form):
         label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         help_text="The file must be smaller than 50MB",
         error_messages={"required": "Select certificate file to upload"},
+        validators=[FileExtensionValidator()],
     )
     reference_code = forms.CharField(
         label="Certificate number",

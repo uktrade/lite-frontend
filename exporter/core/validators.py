@@ -3,6 +3,8 @@ from dateutil.relativedelta import relativedelta
 
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.conf import settings
+from django.core.validators import FileExtensionValidator
 
 from exporter.applications.helpers.date_fields import format_date
 
@@ -52,3 +54,12 @@ class RelativeDeltaDateValidator:
     def __call__(self, value):
         if value > (date.today() + self.relativedelta):
             raise ValidationError(self.message)
+
+
+class FileExtensionValidator(FileExtensionValidator):
+
+    FILE_TYPE_ERROR_MSG = "The file type is not supported. Upload a supported file type"
+    ACCEPTED_FILE_UPLOAD_EXTENSIONS = settings.ACCEPTED_FILE_UPLOAD_EXTENSIONS
+
+    def __init__(self):
+        super().__init__(self.ACCEPTED_FILE_UPLOAD_EXTENSIONS, self.FILE_TYPE_ERROR_MSG)

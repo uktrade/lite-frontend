@@ -600,7 +600,7 @@ FUTURE_YEAR = datetime.date.today().year + 1
     (
         (
             {"reference_code": "ref_code", "expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": FUTURE_YEAR},
-            {"file": SimpleUploadedFile("test", b"test_content")},
+            {"file": SimpleUploadedFile("test.pdf", b"test_content")},
             True,
             None,
             None,
@@ -614,21 +614,21 @@ FUTURE_YEAR = datetime.date.today().year + 1
         ),
         (
             {"reference_code": "", "expiry_date_0": 1, "expiry_date_1": 1, "expiry_date_2": FUTURE_YEAR},
-            {"file": SimpleUploadedFile("test", b"test_content")},
+            {"file": SimpleUploadedFile("test.pdf", b"test_content")},
             False,
             "reference_code",
             "Enter the certificate number",
         ),
         (
             {"reference_code": "ref_code", "expiry_date_0": "", "expiry_date_1": "", "expiry_date_2": ""},
-            {"file": SimpleUploadedFile("test", b"test_content")},
+            {"file": SimpleUploadedFile("test.pdf", b"test_content")},
             False,
             "expiry_date",
             "Enter the day, month and year",
         ),
         (
             {"reference_code": "ref_code", "expiry_date_0": "1", "expiry_date_1": "1", "expiry_date_2": "2020"},
-            {"file": SimpleUploadedFile("test", b"test_content")},
+            {"file": SimpleUploadedFile("test.pdf", b"test_content")},
             False,
             "expiry_date",
             "Expiry date must be in the future",

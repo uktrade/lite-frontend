@@ -3,7 +3,7 @@ import logging
 import magic
 
 from django.conf import settings
-from django.core.files.uploadhandler import UploadFileException
+from django.core.files.uploadhandler import UploadFileException, SkipFile
 from django.http import StreamingHttpResponse
 
 from django_chunk_upload_handlers.s3 import S3FileUploadHandler
@@ -62,7 +62,10 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
             mime = magic.from_buffer(raw_data, mime=True)
             if mime not in self.ACCEPTED_FILE_UPLOAD_MIME_TYPES:
                 self.abort()
-                raise UnacceptableMimeTypeError(f"Unsupported file type: {mime}")
+                # Raise SkipFile signals the django multipartparser to exhaust the stream and stops the upload for this file.
+                exception = UnacceptableMimeTypeError(f"Unsupported file type: {mime}")
+                logger.error(exception)
+                raise exception
         super().receive_data_chunk(raw_data, start)
 
     def file_complete(self, *args, **kwargs):
@@ -82,7 +85,7 @@ class UploadFailed(UploadFileException):
     pass
 
 
-class UnacceptableMimeTypeError(UploadFailed):
+class UnacceptableMimeTypeError(SkipFile):
     pass
 
 
