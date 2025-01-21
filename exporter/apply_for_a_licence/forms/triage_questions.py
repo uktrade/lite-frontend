@@ -35,6 +35,14 @@ def opening_question():
             ),
         ),
         Option(
+            key="f680",
+            value="MOD F680",
+            description=(
+                "Select if you need approval to release security classified products or information to foreign entities."
+            ),
+            disabled=not settings.FEATURE_FLAG_F680,
+        ),
+        Option(
             key="transhipment",
             value="Transhipment licence",
             description=(

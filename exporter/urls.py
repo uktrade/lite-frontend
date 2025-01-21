@@ -53,3 +53,8 @@ if settings.FEATURE_DEBUG_TOOLBAR_ON:
     urlpatterns = [
         path("__debug__/", include(debug_toolbar.urls)),
     ] + urlpatterns
+
+if settings.FEATURE_FLAG_F680:
+    urlpatterns += [
+        path("f680/", include("exporter.f680.urls")),
+    ]
