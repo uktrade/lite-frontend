@@ -40,7 +40,7 @@ class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
         TITLE = "Recommend an approval"
 
     approval_reasons = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7}),
+        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4", "name": "approval_reasons"}),
         label="",
         error_messages={"required": "Enter a reason for approving"},
     )
@@ -61,7 +61,6 @@ class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
         approval_choices, approval_text = self._picklist_to_choices(approval_reason)
         self.approval_text = approval_text
         super().__init__(*args, **kwargs)
-
         self.fields["approval_radios"].choices = approval_choices
 
     def get_layout_fields(self):

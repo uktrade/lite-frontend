@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block body %}
-<div class="govuk-width-container">
-    <div class="govuk-width-container">
+<div>
+    <div>
         <div class="lite-app-bar">
             <div class="lite-app-bar__content">
                 <h1 class="govuk-heading-l">
@@ -98,9 +98,8 @@
             </div>
         {% endif %}
     </dl>
-    </div>
-</div>
     <div class="govuk-button-group">
 	<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Save and continue</a>
+    </div>
 </div>
 {% endblock %}

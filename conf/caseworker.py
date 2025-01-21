@@ -22,6 +22,7 @@ INSTALLED_APPS += [
     "caseworker.teams",
     "caseworker.cases",
     "caseworker.activities",
+    "caseworker.queues",
 ]
 
 MIDDLEWARE += [
@@ -134,3 +135,4 @@ CONFIG_ADMIN_USERS_LIST = env.list("CONFIG_ADMIN_USERS_LIST", default=[])
 # using it here as some browsers still don't support CSP_REPORT_TO which replaces it
 
 CSP_REPORT_URI = env.tuple("CASEWORKER_CSP_REPORT_URI", default=("",))
+E2E_WAIT_MULTIPLIER = env.int("E2E_WAIT_MULTIPLIER", default=1)

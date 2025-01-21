@@ -87,7 +87,7 @@ Feature: I want to indicate the standard licence I want
     And I select "yes" to permanently exported
     And I select "yes" to shipping air waybill or lading
     And I select "directly to the end-user" to who products are going
-    And I click on "Submit"
+    And I click on "Save and continue"
     And I click on "Do you have a security approval?"
     And I select "No" to if you are exporting classified products
     And I click save and continue link
@@ -99,7 +99,7 @@ Feature: I want to indicate the standard licence I want
     And I enter "123 Main Street" and "France" for end user address
     And I enter "Joe Bloggs" for signatory name
     And I select no and enter "reason" for end user document
-    And I click on "Submit"
+    And I click on "Save and continue"
     And I submit the application
     Then my answers are played back to me
     And I see "Standard Individual Export Licence" as the Licence
@@ -218,7 +218,7 @@ Feature: I want to indicate the standard licence I want
     And I select "yes" to permanently exported
     And I select "yes" to shipping air waybill or lading
     And I select "directly to the end-user" to who products are going
-    And I click on "Submit"
+    And I click on "Save and continue"
     And I click on "Do you have a security approval?"
     And I select "No" to if you are exporting classified products
     And I click save and continue link
@@ -230,7 +230,7 @@ Feature: I want to indicate the standard licence I want
     And I enter "123 Main Street" and "France" for end user address
     And I enter "Joe Bloggs" for signatory name
     And I select no and enter "reason" for end user document
-    And I click on "Submit"
+    And I click on "Save and continue"
     And I submit the application
     Then my answers are played back to me
     And I see "Standard Individual Export Licence" as the Licence
