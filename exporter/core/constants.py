@@ -217,6 +217,10 @@ class SetPartyFormSteps:
     PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD = "PARTY_COMPANY_LETTERHEAD_DOCUMENT_UPLOAD"
 
 
+class AddF680FormSteps:
+    F680INITIAL = "F680_INITIAL"
+
+
 class PartyDocumentType:
     SUPPORTING_DOCUMENT = "supporting_document"
     END_USER_UNDERTAKING_DOCUMENT = "end_user_undertaking_document"

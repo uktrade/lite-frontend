@@ -20,6 +20,11 @@ from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin
 
+from core.wizard.views import BaseSessionWizardView
+
+from exporter.applications.forms.f680 import f680InitialForm
+from exporter.core.constants import AddF680FormSteps
+
 
 class LicenceType(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
@@ -101,3 +106,13 @@ class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
 class OpenGeneralLicenceSubmit(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         return open_general_licence_submit_success_page(request, **kwargs)
+
+
+# Views which implement Django forms approach
+class AddF680(LoginRequiredMixin, BaseSessionWizardView):
+    form_list = [
+        (AddF680FormSteps.F680INITIAL, f680InitialForm),
+    ]
+
+    def get_form_kwargs(self, step=None):
+        return super().get_form_kwargs(step)

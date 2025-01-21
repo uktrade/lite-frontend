@@ -35,6 +35,15 @@ def opening_question():
             ),
         ),
         Option(
+            key="f680",
+            value="MOD f680 clearance",
+            description=(
+                "Select if you need to share information (an F680) or to go to an exhibition, or if you're gifting "
+                "surplus products."
+            ),
+            disabled=False,
+        ),
+        Option(
             key="transhipment",
             value="Transhipment licence",
             description=(
@@ -49,15 +58,6 @@ def opening_question():
             description=(
                 "Select if you’re arranging or brokering the sale or movement of controlled military products "
                 "located overseas."
-            ),
-            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
-        ),
-        Option(
-            key="mod",
-            value="MOD clearance",
-            description=(
-                "Select if you need to share information (an F680) or to go to an exhibition, or if you're gifting "
-                "surplus products."
             ),
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
