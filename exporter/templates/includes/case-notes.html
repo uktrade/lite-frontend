@@ -46,6 +46,8 @@
 {% else %}
 	{% include "includes/notice.html" with text="applications.CaseNotes.NO_NOTES" %}
 {% endif %}
-
+<a class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' application.id %}">
+	Save and continue
+</a>
 <script src="{% static 'javascripts/pluralize.js' %}"></script>
 <script src="{% static 'javascripts/case-notes.js' %}"></script>
