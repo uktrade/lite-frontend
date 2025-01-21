@@ -5,7 +5,7 @@ from django import forms
 class f680InitialForm(BaseForm):
     class Layout:
         TITLE = "Do you want an F680?"
-        # TITLE_AS_LABEL_FOR = "reuse_party"
+        TITLE_AS_LABEL_FOR = "f680"
 
     f680 = forms.ChoiceField(
         choices=(
