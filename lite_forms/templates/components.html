@@ -24,11 +24,6 @@
 			<span>{{ question.description|safe }}</span>
 		</label>
 	{% endif %}
-{% if question.description %}
-		<label class="govuk-hint" for="{{ question.name }}">
-			<span>{{ question.description|safe }}</span>
-		</label>
-	{% endif %}
 	{% if question.accessible_description %}
 		<label class="govuk-hint govuk-visually-hidden" for="{{ question.name }}">
 			{{ question.accessible_description }}
