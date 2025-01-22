@@ -2,8 +2,10 @@ from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.layout import (
     Div,
+    Fieldset,
     HTML,
     Layout,
+    Size,
     Submit,
 )
 from django import forms
@@ -60,6 +62,30 @@ class BaseForm(forms.Form):
         return [
             Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", submit_button_text)),
         ]
+
+
+class FieldsetForm(BaseForm):
+    """This is a suitable layout for a single question form. By using a
+    <fieldset> and <legend> it ensures that related inputs are grouped together
+    with a common label to enable users to easily identify the group, as
+    covered by WCAG Technique H71.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.helper.layout = Layout(
+            Fieldset(
+                *self.get_layout_fields(),
+                legend=self.get_title(),
+                legend_size=Size.EXTRA_LARGE,
+                legend_tag="h1",
+            ),
+            Div(
+                *self.get_layout_actions(),
+                css_class="govuk-button-group",
+            ),
+        )
 
 
 class MultipleFileInput(forms.ClearableFileInput):

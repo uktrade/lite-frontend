@@ -16,7 +16,7 @@ from core.forms.layouts import (
 )
 from core.forms.utils import coerce_str_to_bool
 
-from core.common.forms import BaseForm
+from core.common.forms import BaseForm, FieldsetForm
 from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.services import (
     get_control_list_entries,
@@ -52,7 +52,7 @@ class ProductNameForm(BaseForm):
         )
 
 
-class ProductControlListEntryForm(BaseForm):
+class ProductControlListEntryForm(FieldsetForm):
     class Layout:
         TITLE = "Do you know the product's control list entry?"
 
@@ -120,7 +120,7 @@ class ProductControlListEntryForm(BaseForm):
         return cleaned_data
 
 
-class ProductPVGradingForm(BaseForm):
+class ProductPVGradingForm(FieldsetForm):
     class Layout:
         TITLE = "Does the product have a government security grading or classification?"
 
@@ -148,7 +148,7 @@ class ProductPVGradingForm(BaseForm):
         )
 
 
-class ProductPVGradingDetailsForm(BaseForm):
+class ProductPVGradingDetailsForm(FieldsetForm):
     class Layout:
         TITLE = "What is the security grading or classification?"
 
@@ -275,7 +275,7 @@ class ProductPartNumberForm(BaseForm):
         return cleaned_data
 
 
-class ProductDocumentAvailabilityForm(BaseForm):
+class ProductDocumentAvailabilityForm(FieldsetForm):
     class Layout:
         TITLE = "Do you have a document that shows what your product is and what it's designed to do?"
 
@@ -324,7 +324,7 @@ class ProductDocumentAvailabilityForm(BaseForm):
         return cleaned_data
 
 
-class ProductDocumentSensitivityForm(BaseForm):
+class ProductDocumentSensitivityForm(FieldsetForm):
     class Layout:
         TITLE = "Is the document rated above Official-sensitive?"
 
@@ -354,7 +354,7 @@ class ProductDocumentSensitivityForm(BaseForm):
         )
 
 
-class ProductDocumentUploadForm(BaseForm):
+class ProductDocumentUploadForm(FieldsetForm):
     class Layout:
         TITLE = "Upload a document that shows what your product is designed to do"
 
@@ -404,7 +404,7 @@ class ProductDocumentUploadForm(BaseForm):
         return layout_fields
 
 
-class ProductOnwardExportedForm(BaseForm):
+class ProductOnwardExportedForm(FieldsetForm):
     class Layout:
         TITLE = "Is the product going to any ultimate end-users?"
 
@@ -431,7 +431,7 @@ class ProductOnwardExportedForm(BaseForm):
         )
 
 
-class ProductOnwardAlteredProcessedForm(BaseForm):
+class ProductOnwardAlteredProcessedForm(FieldsetForm):
     class Layout:
         TITLE = "Will the item be altered or processed before it is exported again?"
 
@@ -482,7 +482,7 @@ class ProductOnwardAlteredProcessedForm(BaseForm):
         return cleaned_data
 
 
-class ProductOnwardIncorporatedForm(BaseForm):
+class ProductOnwardIncorporatedForm(FieldsetForm):
     class Layout:
         TITLE = "Will the product be incorporated into another item before it is onward exported?"
 
