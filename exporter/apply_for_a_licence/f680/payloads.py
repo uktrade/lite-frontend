@@ -7,3 +7,7 @@ class AddF680PayloadBuilder(MergingPayloadBuilder):  # /PS-IGNORE
     payload_dict = {
         AddF680FormSteps.F680INITIAL: get_cleaned_data,  # /PS-IGNORE
     }
+
+    def build(self, form_dict):
+        payload = super().build(form_dict)
+        return {"data": payload}
