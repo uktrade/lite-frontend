@@ -1,4 +1,7 @@
 {% extends "layouts/base.html" %}
+
+{% load crispy_forms_tags %}
+
 {% block title %}Apply for an F680 Application{% endblock%}
 
 {% block body %}
@@ -25,6 +28,9 @@
                 </ul>
             </li>
         </ol>
+        <div class="app-submit-bar">
+            {% crispy form %}
+        </div>
     </div>
 </div>
 {% endblock %}

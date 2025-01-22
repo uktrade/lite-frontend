@@ -16,3 +16,12 @@ class ApplicationNameForm(BaseForm):
 
     def get_layout_fields(self):
         return ("name",)
+
+
+class ApplicationSubmissionForm(BaseForm):
+    class Layout:
+        TITLE = ""
+        SUBMIT_BUTTON_TEXT = "Submit"
+
+    def get_layout_fields(self):
+        return []
