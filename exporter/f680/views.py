@@ -1,9 +1,8 @@
 from http import HTTPStatus
 
-from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views import View
+from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -12,7 +11,10 @@ from core.wizard.views import BaseSessionWizardView
 from exporter.f680.constants import ApplicationFormSteps
 from exporter.f680.forms import ApplicationNameForm
 from exporter.f680.payloads import F680CreatePayloadBuilder
-from exporter.f680.services import post_f680_application
+from exporter.f680.services import (
+    get_680_application,
+    post_f680_application,
+)
 
 
 class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):
@@ -45,6 +47,12 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):
         return redirect(self.get_success_url(response_data["id"]))
 
 
-class F680ApplicationSummaryView(View):
-    def get(self, request, *args, **kwargs):
-        return HttpResponse("OK")
+class F680ApplicationSummaryView(LoginRequiredMixin, TemplateView):
+    template_name = "f680/summary.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        ctx["application"] = get_680_application(self.request, self.kwargs["pk"])["application"]
+
+        return ctx
