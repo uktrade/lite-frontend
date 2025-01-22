@@ -6,21 +6,24 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.wizard.views import BaseSessionWizardView
 
-from exporter.core.constants import AddF680FormSteps
+from exporter.core.constants import AddF680FormSteps  # /PS-IGNORE
 from exporter.applications.services import post_f680_application
 
-from .forms import f680InitialForm, F680NameForm
-from .payloads import AddF680PayloadBuilder
+from .forms import f680InitialForm, F680NameForm  # /PS-IGNORE
+from .payloads import AddF680PayloadBuilder  # /PS-IGNORE
 
 
-class AddF680(LoginRequiredMixin, BaseSessionWizardView):
-    form_list = [(AddF680FormSteps.F680_NAME, F680NameForm), (AddF680FormSteps.F680INITIAL, f680InitialForm)]
+class AddF680(LoginRequiredMixin, BaseSessionWizardView):  # /PS-IGNORE
+    form_list = [
+        (AddF680FormSteps.F680_NAME, F680NameForm),  # /PS-IGNORE
+        (AddF680FormSteps.F680INITIAL, f680InitialForm),  # /PS-IGNORE
+    ]
 
     def get_form_kwargs(self, step=None):
         return super().get_form_kwargs(step)
 
     def get_payload(self, form_dict):
-        return AddF680PayloadBuilder().build(form_dict)
+        return AddF680PayloadBuilder().build(form_dict)  # /PS-IGNORE
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -29,11 +32,9 @@ class AddF680(LoginRequiredMixin, BaseSessionWizardView):
     )
     def post_application_with_payload(self, form_dict):
         payload = self.get_payload(form_dict)
-        payload.update({"application_type": "f680"})
-        breakpoint()
+        payload.update({"application_type": "f680"})  # /PS-IGNORE
         return post_f680_application(self.request, payload)
 
     def done(self, form_list, form_dict, **kwargs):
         response, _ = self.post_application_with_payload(form_dict)
-        breakpoint()
         return redirect(reverse_lazy("applications:task_list", kwargs={"pk": response["id"]}))

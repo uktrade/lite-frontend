@@ -2,10 +2,10 @@ from core.common.forms import BaseForm
 from django import forms
 
 
-class F680NameForm(BaseForm):
+class F680NameForm(BaseForm):  # /PS-IGNORE
 
     class Layout:
-        TITLE = "F680 application name"
+        TITLE = "F680 application name"  # /PS-IGNORE
         TITLE_AS_LABEL_FOR = "name"
 
     name = forms.CharField(
@@ -17,10 +17,10 @@ class F680NameForm(BaseForm):
         return ("name",)
 
 
-class f680InitialForm(BaseForm):
+class f680InitialForm(BaseForm):  # /PS-IGNORE
     class Layout:
-        TITLE = "Do you want an F680?"
-        TITLE_AS_LABEL_FOR = "f680"
+        TITLE = "Do you want an F680?"  # /PS-IGNORE
+        TITLE_AS_LABEL_FOR = "f680"  # /PS-IGNORE
 
     f680 = forms.ChoiceField(
         choices=(
@@ -35,4 +35,4 @@ class f680InitialForm(BaseForm):
     )
 
     def get_layout_fields(self):
-        return ("f680",)
+        return ("f680",)  # /PS-IGNORE
