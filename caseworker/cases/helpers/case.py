@@ -34,6 +34,7 @@ from caseworker.users.services import get_gov_user
 
 TAU_ALIAS = "TAU"
 LU_ALIAS = "LICENSING_UNIT"
+FCDO_ALIAS = "FCO"
 LU_POST_CIRC_FINALISE_QUEUE_ALIAS = "LU_POST_CIRC_FINALISE"
 LU_PRE_CIRC_REVIEW_QUEUE_ALIAS = "LU_PRE_CIRC_REVIEW"
 
@@ -85,6 +86,9 @@ class CaseworkerMixin:
     def is_lu_user(self):
         return self.caseworker["team"]["alias"] == LU_ALIAS
 
+    def is_fcdo_user(self):
+        return self.caseworker["team"]["alias"] == FCDO_ALIAS
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         allocate_to_me_form = (
@@ -99,6 +103,12 @@ class CaseworkerMixin:
                 }
             )
         )
+        approve_all_url = reverse("cases:approve_all", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
+        if self.is_fcdo_user():
+            approve_all_url = reverse(
+                "cases:approve_all_legacy", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}
+            )
+
         allocate_and_approve_form = (
             None
             if self.queue["is_system_queue"]
@@ -108,7 +118,7 @@ class CaseworkerMixin:
                     "queue_id": self.queue_id,
                     "user_id": self.caseworker["id"],
                     "case_id": self.case_id,
-                    "return_to": reverse("cases:approve_all", kwargs={"queue_pk": self.queue_id, "pk": self.case_id}),
+                    "return_to": approve_all_url,
                 },
             )
         )
