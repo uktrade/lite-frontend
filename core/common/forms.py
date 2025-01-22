@@ -61,6 +61,12 @@ class BaseForm(forms.Form):
             Submit("submit", getattr(self.Layout, "SUBMIT_BUTTON", submit_button_text)),
         ]
 
+    def get_field_label(self, field_name):
+        title_as_label_for = getattr(self.Layout, "TITLE_AS_LABEL_FOR", None)
+        if title_as_label_for and title_as_label_for == field_name:
+            return self.get_title()
+        return self[field_name].label
+
 
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
