@@ -1,7 +1,11 @@
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from exporter.applications.services import post_applications, post_open_general_licences_applications
+from exporter.applications.services import (
+    post_applications,
+    post_open_general_licences_applications,
+    post_f680_application,
+)
 from exporter.apply_for_a_licence.forms.open_general_licences import (
     open_general_licence_forms,
     open_general_licence_submit_success_page,
@@ -24,6 +28,10 @@ from core.wizard.views import BaseSessionWizardView
 
 from exporter.applications.forms.f680 import f680InitialForm
 from exporter.core.constants import AddF680FormSteps
+from exporter.apply_for_a_licence.payloads import AddF680PayloadBuilder
+from core.decorators import expect_status
+from http import HTTPStatus
+from django.shortcuts import redirect
 
 
 class LicenceType(LoginRequiredMixin, SingleFormView):
@@ -116,3 +124,22 @@ class AddF680(LoginRequiredMixin, BaseSessionWizardView):
 
     def get_form_kwargs(self, step=None):
         return super().get_form_kwargs(step)
+
+    def get_payload(self, form_dict):
+        return AddF680PayloadBuilder().build(form_dict)
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding F680 application",
+        "Unexpected error adding adding F680 application",
+    )
+    def post_application_with_payload(self, form_dict):
+        payload = self.get_payload(form_dict)
+        payload.update({"application_type": "f680"})
+        breakpoint()
+        return post_f680_application(self.request, payload)
+
+    def done(self, form_list, form_dict, **kwargs):
+        response, _ = self.post_application_with_payload(form_dict)
+        breakpoint()
+        return redirect(reverse_lazy("applications:task_list", kwargs={"pk": response["id"]}))

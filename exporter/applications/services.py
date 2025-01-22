@@ -16,6 +16,12 @@ from core.helpers import convert_parameters_to_query_params
 from exporter.core.objects import Application
 
 
+# F680s
+def post_f680_application(request, json):
+    data = client.post(request, "/f680/", json)
+    return data.json(), data.status_code
+
+
 def get_applications(request, page: int = 1, **params):
     """
     Returns a list of applications
