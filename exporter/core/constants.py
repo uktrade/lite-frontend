@@ -218,6 +218,7 @@ class SetPartyFormSteps:
 
 
 class AddF680FormSteps:
+    F680_NAME = "F680_NAME"
     F680INITIAL = "F680_INITIAL"
 
 
