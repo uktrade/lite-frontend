@@ -1,9 +1,5 @@
 from caseworker.advice.constants import AdviceSteps
-from core.wizard.payloads import MergingPayloadBuilder
-
-
-def get_cleaned_data(form):
-    return form.cleaned_data
+from core.wizard.payloads import get_cleaned_data, MergingPayloadBuilder
 
 
 class GiveApprovalAdvicePayloadBuilder(MergingPayloadBuilder):

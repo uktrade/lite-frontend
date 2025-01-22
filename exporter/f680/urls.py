@@ -6,5 +6,6 @@ from . import views
 app_name = "f680"
 
 urlpatterns = [
-    path("apply/", views.ApplyView.as_view(), name="apply"),
+    path("apply/", views.F680ApplicationCreateView.as_view(), name="apply"),
+    path("<uuid:pk>/summary/", views.F680ApplicationSummaryView.as_view(), name="summary"),
 ]

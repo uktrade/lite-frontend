@@ -1,6 +1,10 @@
 from deepmerge import always_merger
 
 
+def get_cleaned_data(form):
+    return form.cleaned_data
+
+
 class MergingPayloadBuilder:
     def build(self, form_dict):
         payload = {}
