@@ -14,7 +14,10 @@ class Validation:
     UK_VAT_VALIDATION_REGEX = r"^(GB|XI)?([0-9]{9}([0-9]{3})?|(GD|HA)[0-9]{3})$"
     UK_EORI_STARTING_LETTERS_REGEX = r"^(GB|XI)"
     SIC_NUMBERs_ONLY_REGEX = r"^\d+$"
-    REGISTRATION_NUM_VALIDATION_REGEX = r"^((RC|NI)\d{6}|\d{8})$"
+
+    # English and Welsh companies have registration numbers that consist of 8 digits.  
+    # Companies registered in Scotland and Northern Ireland and those registered by the Financial Services Authority have a 1 or 2 character alphabetic prefix.
+    REGISTRATION_NUM_VALIDATION_REGEX = r"^((RC|NI|SC)\d{6}|\d{8})$"
 
     ADDRESS_LINE_MAX_LENGTH = 35
     UK_EORI_MAX_LENGTH = 17
@@ -45,3 +48,4 @@ class Validation:
     REGISTRATION_NUM_MAX_LENGTH_ERROR_MESSAGE = "The CRN or RC number is too long"
     REGISTRATION_NUM_SPECIAL_CHARS_ERROR_MESSAGE = "CRN and RC numbers can only include numbers and letters"
     REGISTRATION_NUM_VALIDATION_ERROR_MESSAGE = "Enter a CRN or RC number in the correct format"
+
