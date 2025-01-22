@@ -127,9 +127,9 @@ def set_end_user(url, authorized_client):
     assert not response.context["form"].errors
 
     content = BeautifulSoup(response.content, "html.parser")
-    heading_element = content.find("h1", class_="govuk-heading-xl")
+    heading_element = content.find("h1", class_="govuk-fieldset__heading")
 
-    assert heading_element.string == "Select the type of end user"
+    assert heading_element.string.strip() == "Select the type of end user"
 
     response = authorized_client.post(
         url,
@@ -457,6 +457,6 @@ def test_add_end_user_view(authorized_client, data_standard_case):
     url = reverse("applications:add_end_user", kwargs={"pk": application_id})
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
-    heading_element = soup.find("h1", class_="govuk-heading-xl")
+    heading_element = soup.find("h1", class_="govuk-fieldset__heading")
 
-    assert heading_element.string == "Do you want to reuse an existing party?"
+    assert heading_element.string.strip() == "Do you want to reuse an existing party?"

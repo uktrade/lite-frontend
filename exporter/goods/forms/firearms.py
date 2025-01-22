@@ -16,7 +16,7 @@ from core.forms.layouts import (
 )
 from core.forms.utils import coerce_str_to_bool
 
-from core.common.forms import BaseForm, TextChoice
+from core.common.forms import BaseForm, FieldsetForm, TextChoice
 from exporter.core.forms import (
     CustomErrorDateInputField,
     PotentiallyUnsafeClearableFileInput,
@@ -100,7 +100,7 @@ class FirearmCalibreForm(BaseForm):
         return ("calibre",)
 
 
-class FirearmReplicaForm(BaseForm):
+class FirearmReplicaForm(FieldsetForm):
     class Layout:
         TITLE = "Is the product a replica firearm?"
 
@@ -192,7 +192,7 @@ class FirearmRFDValidityForm(BaseForm):
         )
 
 
-class FirearmRegisteredFirearmsDealerForm(BaseForm):
+class FirearmRegisteredFirearmsDealerForm(FieldsetForm):
     class Layout:
         TITLE = "Are you a registered firearms dealer?"
 
@@ -267,7 +267,7 @@ class FirearmAttachRFDCertificate(BaseForm):
         )
 
 
-class FirearmFirearmAct1968Form(BaseForm):
+class FirearmFirearmAct1968Form(FieldsetForm):
     class Layout:
         TITLE = "Which section of the Firearms Act 1968 is the product covered by?"
 
@@ -462,7 +462,7 @@ class FirearmSection5Form(BaseForm):
         return ("is_covered_by_section_5",)
 
 
-class FirearmMadeBefore1938Form(BaseForm):
+class FirearmMadeBefore1938Form(FieldsetForm):
     class Layout:
         TITLE = "Was the product made before 1938?"
 
@@ -503,7 +503,7 @@ class FirearmYearOfManufactureForm(BaseForm):
         return ("year_of_manufacture",)
 
 
-class FirearmIsDeactivatedForm(BaseForm):
+class FirearmIsDeactivatedForm(FieldsetForm):
     class Layout:
         TITLE = "Has the product been deactivated?"
 
@@ -599,7 +599,7 @@ class FirearmDeactivationDetailsForm(BaseForm):
         return cleaned_data
 
 
-class FirearmSerialIdentificationMarkingsForm(BaseForm):
+class FirearmSerialIdentificationMarkingsForm(FieldsetForm):
     class Layout:
         TITLE = "Will each product have a serial number or other identification marking?"
 
