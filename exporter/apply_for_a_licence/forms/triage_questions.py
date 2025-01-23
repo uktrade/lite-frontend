@@ -36,10 +36,11 @@ def opening_question():
         ),
         Option(
             key="f680",
-            value="MOD f680 clearance",
+            value="Security Approval",
             description=(
-                "Select if you need to share information (an F680) or to go to an exhibition, or if you're gifting "
-                "surplus products."
+                "Select if you need approval to give classified products or information to non-UK organisations, "
+                "governments and individuals. This includes F680 approval. You should apply for security approval"
+                " before you apply for a licence."
             ),
             disabled=False,
         ),
