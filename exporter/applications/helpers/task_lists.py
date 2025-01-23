@@ -151,5 +151,4 @@ def get_application_task_list(request, application, errors=None):
 
     if is_f680:
         context["goods"] = get_application_goods(request, application["id"])
-    breakpoint()
     return render(request, "applications/task-list.html", context)

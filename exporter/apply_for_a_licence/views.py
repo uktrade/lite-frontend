@@ -31,7 +31,6 @@ class LicenceType(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         licence_type = self.get_validated_data()["licence_type"]
-        breakpoint()
         if licence_type == "f680":
             return reverse_lazy("f680:add_f680")
         return reverse_lazy(f"apply_for_a_licence:{licence_type}_questions")
