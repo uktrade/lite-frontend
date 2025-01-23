@@ -22,6 +22,13 @@ def post_f680_application(request, json):
     return data.json(), data.status_code
 
 
+def get_f680_application(request, pk) -> Application:
+    response = client.get(request, f"/f680/{pk}")
+    response.raise_for_status()
+    app = Application(response.json())
+    return app
+
+
 def get_applications(request, page: int = 1, **params):
     """
     Returns a list of applications

@@ -57,7 +57,10 @@ def _get_strings(application_type):
 
 def get_application_task_list(request, application, errors=None):
     user_permissions = get_user_permissions(request)
-    additional_documents, _ = get_additional_documents(request, application["id"])
+    is_f680 = application.sub_type == "f680_clearance"
+    if not is_f680:
+        additional_documents, _ = get_additional_documents(request, application["id"])
+        context["supporting_documents"] = additional_documents["documents"]
     application_type = application.sub_type
     is_editing, edit_type = get_edit_type(application)
 
@@ -87,7 +90,7 @@ def get_application_task_list(request, application, errors=None):
         return render(request, "applications/hmrc-application.html", context)
 
     context["can_submit"] = Permissions.SUBMIT_LICENCE_APPLICATION in user_permissions
-    context["supporting_documents"] = additional_documents["documents"]
+
     context["locations"] = get_product_location_and_journey_details(application)
     context["notes"] = get_case_notes(request, application["id"])["case_notes"]
 
@@ -145,5 +148,8 @@ def get_application_task_list(request, application, errors=None):
         context["ultimate_end_users_required"] = any(
             good.get("is_onward_exported") or good.get("is_good_incorporated") for good in context["goods"]
         )
+
+    if is_f680:
+        context["goods"] = get_application_goods(request, application["id"])
 
     return render(request, "applications/task-list.html", context)

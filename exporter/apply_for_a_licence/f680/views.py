@@ -1,13 +1,16 @@
 from http import HTTPStatus
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+from django.views.generic import TemplateView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.wizard.views import BaseSessionWizardView
 
 from exporter.core.constants import AddF680FormSteps  # /PS-IGNORE
-from exporter.applications.services import post_f680_application
+from exporter.applications.constants import ApplicationStatus
+from exporter.applications.helpers.task_lists import get_application_task_list
+from exporter.applications.services import post_f680_application, get_f680_application
 
 from .forms import f680InitialForm, F680NameForm  # /PS-IGNORE
 from .payloads import AddF680PayloadBuilder  # /PS-IGNORE
@@ -37,4 +40,12 @@ class AddF680(LoginRequiredMixin, BaseSessionWizardView):  # /PS-IGNORE
 
     def done(self, form_list, form_dict, **kwargs):
         response, _ = self.post_application_with_payload(form_dict)
-        return redirect(reverse_lazy("applications:task_list", kwargs={"pk": response["id"]}))
+        return redirect(reverse_lazy("apply_for_a_licence:f680_task_list", kwargs={"pk": response["id"]}))
+
+
+class GetF680Application(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        application = get_f680_application(request, kwargs["pk"])
+        if application["status"]["key"] not in [ApplicationStatus.DRAFT, ApplicationStatus.APPLICANT_EDITING]:
+            return redirect(reverse("applications:application", kwargs={"pk": kwargs["pk"]}))
+        return get_application_task_list(request, application)
