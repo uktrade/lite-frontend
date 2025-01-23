@@ -14,6 +14,7 @@ urlpatterns = [
     path("", include("exporter.core.urls")),
     path("applications/", include("exporter.applications.urls")),
     path("apply-for-a-licence/", include("exporter.apply_for_a_licence.urls")),
+    path("apply-for-mod-clearance/", include("exporter.applications.f680.urls")),
     path("auth/", include("exporter.auth.urls")),
     path("end-users/", include("exporter.end_users.urls")),
     path("product-list/", include("exporter.goods.urls")),
