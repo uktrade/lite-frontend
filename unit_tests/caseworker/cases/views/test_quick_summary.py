@@ -1,3 +1,4 @@
+import re
 from decimal import Decimal
 import pytest
 from bs4 import BeautifulSoup
@@ -6,11 +7,12 @@ from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
+from core import client
+
 
 @pytest.fixture(autouse=True)
 def setup(
     settings,
-    mock_queue,
     mock_gov_lu_user,
     mock_case,
     mock_standard_case_activity_filters,
@@ -24,7 +26,37 @@ def setup(
     pass
 
 
-def test_case_summary_activated(authorized_client, data_queue, data_standard_case):
+@pytest.fixture
+def mock_gov_fcdo_ogd_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, gov_uk_user_id):
+    mock_gov_user["user"]["team"] = {
+        "id": "521154de-f39e-45bf-9922-baaaaaa",
+        "name": "FCDO",
+        "alias": "FCO",
+    }
+
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
+
+
+@pytest.fixture
+def data_ogd_queue():
+    return {
+        "id": "00000000-0000-0000-0000-000000000002",
+        "alias": None,
+        "name": "Some OGD",
+        "is_system_queue": False,
+        "countersigning_queue": None,
+    }
+
+
+@pytest.fixture
+def mock_ogd_queue(requests_mock, data_ogd_queue):
+    url = client._build_absolute_uri("/queues/")
+    yield requests_mock.get(url=re.compile(f"{url}.*/"), json=data_ogd_queue)
+
+
+def test_case_summary_activated(authorized_client, data_queue, data_standard_case, mock_queue):
     url = reverse(
         "cases:case",
         kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"], "tab": "quick-summary"},
@@ -33,7 +65,35 @@ def test_case_summary_activated(authorized_client, data_queue, data_standard_cas
     assertTemplateUsed(response, "case/tabs/quick-summary.html")
 
 
-def test_case_summary_data(authorized_client, data_queue, data_standard_case):
+def test_case_summary_allocate_and_approve(authorized_client, data_ogd_queue, data_standard_case, mock_ogd_queue):
+    url = reverse(
+        "cases:case",
+        kwargs={"queue_pk": data_ogd_queue["id"], "pk": data_standard_case["case"]["id"], "tab": "quick-summary"},
+    )
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "case/tabs/quick-summary.html")
+    assert "allocate_and_approve_form" in response.context
+    assert response.context["allocate_and_approve_form"].initial["return_to"] == reverse(
+        "cases:approve_all", kwargs={"queue_pk": data_ogd_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
+
+
+def test_case_summary_allocate_and_approve_fcdo(
+    authorized_client, data_ogd_queue, data_standard_case, mock_ogd_queue, mock_gov_fcdo_ogd_user
+):
+    url = reverse(
+        "cases:case",
+        kwargs={"queue_pk": data_ogd_queue["id"], "pk": data_standard_case["case"]["id"], "tab": "quick-summary"},
+    )
+    response = authorized_client.get(url)
+    assertTemplateUsed(response, "case/tabs/quick-summary.html")
+    assert "allocate_and_approve_form" in response.context
+    assert response.context["allocate_and_approve_form"].initial["return_to"] == reverse(
+        "cases:approve_all_legacy", kwargs={"queue_pk": data_ogd_queue["id"], "pk": data_standard_case["case"]["id"]}
+    )
+
+
+def test_case_summary_data(authorized_client, data_queue, data_standard_case, mock_queue):
     gov_user = {
         "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
         "email": "govuser@example.com",
@@ -158,6 +218,7 @@ def test_case_summary_data(authorized_client, data_queue, data_standard_case):
 def test_case_summary_sub_status(
     data_standard_case,
     data_queue,
+    mock_queue,
     authorized_client,
     value,
     expected,
