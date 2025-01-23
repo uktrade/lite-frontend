@@ -13,7 +13,7 @@ from core.constants import ComponentAccessoryChoices, ProductCategories
 from core.forms.layouts import ConditionalRadiosQuestion, ConditionalRadios, summary_list
 from core.forms.utils import coerce_str_to_bool
 
-from core.common.forms import TextChoice
+from core.common.forms import FieldsetForm, TextChoice
 from exporter.core.constants import (
     ProductSecurityFeatures,
     ProductDeclaredAtCustoms,
@@ -332,8 +332,9 @@ def has_valid_section_five_certificate(application):
     return False
 
 
-class GroupTwoProductTypeForm(forms.Form):
-    title = CreateGoodForm.FirearmGood.ProductType.TITLE
+class GroupTwoProductTypeForm(FieldsetForm):
+    class Layout:
+        TITLE = CreateGoodForm.FirearmGood.ProductType.TITLE
 
     type = forms.TypedChoiceField(
         choices=(
@@ -352,20 +353,13 @@ class GroupTwoProductTypeForm(forms.Form):
         label="",
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.helper = FormHelper()
-        self.helper.layout = Layout(
-            HTML.h1(self.title),
-            "type",
-            Submit("submit", CreateGoodForm.SUBMIT_BUTTON),
-        )
-
     def clean(self):
         cleaned_data = super().clean()
         cleaned_data["product_type_step"] = True
         return cleaned_data
+
+    def get_layout_fields(self):
+        return ("type",)
 
 
 class FirearmsNumberOfItemsForm(forms.Form):
