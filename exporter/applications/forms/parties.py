@@ -8,6 +8,7 @@ from django.core.validators import MaxLengthValidator, URLValidator
 from django.urls import reverse_lazy
 
 from core.common.forms import BaseForm, FieldsetForm
+from core.file_handler import validate_mime_type
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
 from exporter.core.constants import CaseTypes, FileUploadFileTypes
@@ -433,6 +434,9 @@ class PartyDocumentUploadForm(forms.Form):
         error_messages={
             "required": "Select an end-user document",
         },
+        validators=[
+            validate_mime_type,
+        ],
     )
     product_differences_note = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),
@@ -492,6 +496,9 @@ class PartyEnglishTranslationDocumentUploadForm(forms.Form):
         error_messages={
             "required": "Select an English translation",
         },
+        validators=[
+            validate_mime_type,
+        ],
     )
 
     def __init__(self, edit, *args, **kwargs):
@@ -520,6 +527,9 @@ class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
         error_messages={
             "required": "Select a document on company letterhead",
         },
+        validators=[
+            validate_mime_type,
+        ],
     )
 
     def __init__(self, edit, *args, **kwargs):
@@ -543,7 +553,13 @@ class PartyCompanyLetterheadDocumentUploadForm(forms.Form):
 
 class PartyEC3DocumentUploadForm(forms.Form):
     title = "Upload an EC3 form (optional)"
-    party_ec3_document = forms.FileField(label="", required=False)
+    party_ec3_document = forms.FileField(
+        label="",
+        required=False,
+        validators=[
+            validate_mime_type,
+        ],
+    )
     ec3_missing_reason = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),
         label="",
