@@ -1,5 +1,6 @@
 class ApplicationFormSteps:
     APPLICATION_NAME = "APPLICATION_NAME"
+    PREVIOUS_APPLICATION = "PREVIOUS_APPLICATION"
 
 
 class ProductFormSteps:

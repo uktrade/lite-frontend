@@ -19,6 +19,7 @@ def get_cleaned_data_with_label(form):
 class F680CreatePayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
         ApplicationFormSteps.APPLICATION_NAME: get_cleaned_data_with_label,
+        ApplicationFormSteps.PREVIOUS_APPLICATION: get_cleaned_data_with_label,
     }
 
     def build(self, form_dict):

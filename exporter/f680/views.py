@@ -16,6 +16,7 @@ from exporter.f680.constants import (
 )
 from exporter.f680.forms import (
     ApplicationNameForm,
+    ApplicationPreviousApplicationForm,
     ApplicationSubmissionForm,
     ProductNameAndDescriptionForm,
 )
@@ -32,6 +33,7 @@ from exporter.f680.services import (
 class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):
     form_list = [
         (ApplicationFormSteps.APPLICATION_NAME, ApplicationNameForm),
+        (ApplicationFormSteps.PREVIOUS_APPLICATION, ApplicationPreviousApplicationForm),
     ]
 
     @expect_status(
