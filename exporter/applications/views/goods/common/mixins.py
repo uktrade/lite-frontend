@@ -4,6 +4,7 @@ from django.http import Http404
 
 from exporter.applications.services import get_application
 from exporter.goods.services import get_good, get_good_on_application
+from exporter.exporter_answers.services import get_exporter_answer_set
 
 
 class GoodOnApplicationMixin:
@@ -39,5 +40,10 @@ class ApplicationMixin:
             self.application = get_application(request, kwargs["pk"])
         except requests.exceptions.HTTPError:
             raise Http404(f"Couldn't get application {kwargs['pk']}")
+
+        exporter_answers, _ = get_exporter_answer_set(request, kwargs["pk"])
+        self.exporter_answers = {}
+        for answer_set in exporter_answers["results"]:
+            self.exporter_answers[answer_set["section"]] = answer_set["answers"]
 
         return super().dispatch(request, *args, **kwargs)
