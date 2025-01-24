@@ -1,10 +1,5 @@
 from core.wizard.payloads import MergingPayloadBuilder
 
-from exporter.f680.constants import (
-    ApplicationFormSteps,
-    ProductFormSteps,
-)
-
 
 def get_cleaned_data_with_label(form):
     return {
@@ -16,22 +11,21 @@ def get_cleaned_data_with_label(form):
     }
 
 
-class F680CreatePayloadBuilder(MergingPayloadBuilder):
-    payload_dict = {
-        ApplicationFormSteps.APPLICATION_NAME: get_cleaned_data_with_label,
-        ApplicationFormSteps.PREVIOUS_APPLICATION: get_cleaned_data_with_label,
-    }
+class BasePayloadBuilder(MergingPayloadBuilder):
+    def __init__(self, wizard_view):
+        self.wizard_view = wizard_view
 
+    def get_payload_dict(self):
+        return {step_name: get_cleaned_data_with_label for step_name in self.wizard_view.steps.all}
+
+
+class F680CreatePayloadBuilder(BasePayloadBuilder):
     def build(self, form_dict):
         payload = super().build(form_dict)
         return {"application": {"application": payload}}
 
 
-class F680CreateProductPayloadBuilder(MergingPayloadBuilder):
-    payload_dict = {
-        ProductFormSteps.NAME_AND_DESCRIPTION: get_cleaned_data_with_label,
-    }
-
+class F680CreateProductPayloadBuilder(BasePayloadBuilder):
     def build(self, form_dict, initial_payload):
         payload = super().build(form_dict)
         initial_payload["application"]["products"].append(payload)

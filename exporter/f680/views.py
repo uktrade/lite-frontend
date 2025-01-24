@@ -53,7 +53,7 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):
         )
 
     def get_payload(self, form_dict):
-        return F680CreatePayloadBuilder().build(form_dict)
+        return F680CreatePayloadBuilder(self).build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
@@ -142,7 +142,7 @@ class F680ApplicationProductsView(LoginRequiredMixin, BaseSessionWizardView):
         )
 
     def get_payload(self, form_dict):
-        return F680CreateProductPayloadBuilder().build(
+        return F680CreateProductPayloadBuilder(self).build(
             form_dict,
             {
                 "application": {

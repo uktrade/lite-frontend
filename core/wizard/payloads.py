@@ -6,12 +6,16 @@ def get_cleaned_data(form):
 
 
 class MergingPayloadBuilder:
+    def get_payload_dict(self):
+        return self.payload_dict
+
     def build(self, form_dict, initial_payload=None):
         payload = {}
         if initial_payload:
             payload = initial_payload
 
-        for step_name, payload_func in self.payload_dict.items():
+        payload_dict = self.get_payload_dict()
+        for step_name, payload_func in payload_dict.items():
             form = form_dict.get(step_name)
             if form:
                 always_merger.merge(payload, payload_func(form))
