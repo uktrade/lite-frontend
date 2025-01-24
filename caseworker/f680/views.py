@@ -1,6 +1,7 @@
 from django.views.generic import TemplateView
 
 from caseworker.cases.services import get_case
+from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 
 
@@ -48,7 +49,7 @@ class ApplicationDetails:
         return sections
 
 
-class CaseDetailView(TemplateView):
+class CaseDetailView(CaseworkerMixin, TemplateView):
     template_name = "f680/case/detail.html"
 
     def setup(self, request, *args, **kwargs):
