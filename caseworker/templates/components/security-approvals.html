@@ -43,3 +43,15 @@
         {% endif %}
    {% endif %}
 </dl>
+
+{% for exporter_answer_set in exporter_answers %}
+<h2 class="govuk-heading-m">{{exporter_answer_set.section}}</h2>
+<dl class="govuk-summary-list">
+    {% for field in exporter_answer_set.answer_fields %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{exporter_answer_set.questions|getitem:field}}</dt>
+        <dd class="govuk-summary-list__value">{{exporter_answer_set.answers|getitem:field|to_display}}</dd>
+    </div>
+    {% endfor %}
+</dl>
+{% endfor %}

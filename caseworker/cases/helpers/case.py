@@ -28,6 +28,7 @@ from caseworker.core.objects import Tab
 from caseworker.core.services import get_user_permissions, get_status_properties, get_permissible_statuses
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import CasePage, ApplicationPage
+from caseworker.exporter_answers.services import get_exporter_answer_set
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
 
@@ -199,6 +200,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             if rules.test_rule("can_licence_status_be_changed", self.request, licence):
                 show_actions_column = True
                 break
+        exporter_answers, _ = get_exporter_answer_set(self.request, self.case_id)
 
         return {
             **context,
@@ -207,6 +209,7 @@ class CaseView(CaseworkerMixin, TemplateView):
             "slices": [Slices.SUMMARY, *self.slices],
             "case": self.case,
             "queue": self.queue,
+            "exporter_answers": exporter_answers["results"],
             "is_system_queue": self.queue["is_system_queue"],
             "goods_summary": self.get_goods_summary(),
             "destination_countries": self.get_destination_countries(),
