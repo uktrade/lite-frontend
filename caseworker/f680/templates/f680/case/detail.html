@@ -1,5 +1,9 @@
 {% extends 'layouts/case.html' %}
 {% block details %}
+<section class="govuk-!-margin-top-8">
+    <h1 class="govuk-visually-hidden">Case Summary</h1>
+    {% include "f680/case/summary.html" %}
+</section>
 {% for section in application_details.sections %}
     <section class="govuk-!-margin-top-8">
         <h2 class="govuk-heading-l">{{ section.title|title }}</h2>
