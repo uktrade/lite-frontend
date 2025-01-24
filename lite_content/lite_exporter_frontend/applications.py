@@ -490,7 +490,7 @@ class F680ClearanceTaskList:
     NOTICE_TEXT = ""
     NEW_TITLE = "MOD Form 680 application"
     EDIT_TITLE = "Edit the application"
-    F680_DETAILS = "Clearance types"
+    F680_DETAILS = "Approval types"
     ADDITIONAL_INFORMATION = "Additional information"
     GOODS = "Products"
     GOODS_LOCATION = "Locations"
