@@ -57,7 +57,6 @@ def _get_strings(application_type):
 
 def get_application_task_list(request, application, errors=None):
     user_permissions = get_user_permissions(request)
-    is_f680 = application.sub_type == "f680_clearance"
 
     application_type = application.sub_type
     is_editing, edit_type = get_edit_type(application)
@@ -72,9 +71,8 @@ def get_application_task_list(request, application, errors=None):
         "errors": errors,
     }
 
-    if not is_f680:
-        additional_documents, _ = get_additional_documents(request, application["id"])
-        context["supporting_documents"] = additional_documents["documents"]
+    additional_documents, _ = get_additional_documents(request, application["id"])
+    context["supporting_documents"] = additional_documents["documents"]
     require_ec3 = party_requires_ec3_document(application)
     end_user = application.get("end_user", {})
     ec3_details_available = False
@@ -150,6 +148,5 @@ def get_application_task_list(request, application, errors=None):
             good.get("is_onward_exported") or good.get("is_good_incorporated") for good in context["goods"]
         )
 
-    if is_f680:
-        context["goods"] = get_application_goods(request, application["id"])
+    context["goods"] = get_application_goods(request, application["id"])
     return render(request, "applications/task-list.html", context)
