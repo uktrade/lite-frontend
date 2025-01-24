@@ -5,7 +5,7 @@
         <h2 class="govuk-heading-l">{{ section.title|title }}</h2>
         {% if section.multi %}
             {% for item in section.items %}
-                <h3 class="govuk-heading-m">Product {{ forloop.counter }}</h3>
+                <h3 class="govuk-heading-m">{{ item.title|title }}</h3>
                 <table class="govuk-table app-table application-table">
                     <tbody class="govuk-table__body">
                         {% for field in item.details %}

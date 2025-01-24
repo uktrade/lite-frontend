@@ -28,7 +28,7 @@ class MultiItemSection(Section):
         self._items = items
 
     def items(self):
-        return [ItemSection(f"{self.title} {i}", item) for i, item in enumerate(self._items)]
+        return [ItemSection(f"{self.title} {i}", item) for i, item in enumerate(self._items, start=1)]
 
 
 class ApplicationDetails:
