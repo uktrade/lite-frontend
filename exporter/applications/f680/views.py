@@ -44,6 +44,14 @@ class F680ApprovalQuestions(LoginRequiredMixin, BaseSessionWizardView):  # /PS-I
         (AddF680FormSteps.F680INITIAL, f680InitialForm),  # /PS-IGNORE
     ]
 
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        application = get_f680_application(self.request, self.kwargs["pk"])
+        if self.steps.current == AddF680FormSteps.F680INITIAL:
+            form.initial = application.data
+
+        return context
+
     def get_form_kwargs(self, step=None):
         return super().get_form_kwargs(step)
 
