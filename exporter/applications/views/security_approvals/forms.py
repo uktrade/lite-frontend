@@ -125,11 +125,12 @@ class F1686DetailsForm(BaseForm):
     f1686_reference_number = forms.CharField(
         required=False,
         widget=forms.TextInput,
-        label="Reference number (optional)",
+        label="What is the F1686 reference number?",
+        help_text="Reference number (optional)",
     )
 
     f1686_approval_date = CustomErrorDateInputField(
-        label="Approval date",
+        label="When was the F1686 approved?",
         require_all_fields=False,
         help_text=f"For example, 20 2 {datetime.now().year-2}",
         error_messages={
