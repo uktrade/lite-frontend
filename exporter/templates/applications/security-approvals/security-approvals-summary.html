@@ -17,6 +17,7 @@
 
         <p class="govuk-body">Review your answers below and make any amends you need to. Click 'Save and continue' to save your progress.</p>
 
+
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">Do you have an MOD security approval, such as F680 or F1686?</dt>
@@ -101,5 +102,17 @@
     <div class="govuk-button-group">
 	<a id="submit" href="{% url 'applications:task_list' application.id %}" class="govuk-button" data-module="govuk-button">Save and continue</a>
     </div>
+    <dl class="govuk-summary-list">
+        {% for field_name, field_label in security_approval_questions.items %}
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{{field_label}}</dt>
+            <dd class="govuk-summary-list__value">{{ security_approval_answers|getitem:field_name|to_display }}</dd>
+            <dd class="govuk-summary-list__actions">
+            <a id="mod-approval-status" class="govuk-link govuk-link--no-visited-state"
+               href="{% url 'applications:edit_security_approvals_details' application.id %}">Change</a>
+            </dd>
+        </div>
+        {% endfor %}
+    </dl>
 </div>
 {% endblock %}

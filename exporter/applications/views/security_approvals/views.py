@@ -108,6 +108,7 @@ class SecurityApprovalsSummaryView(LoginRequiredMixin, ApplicationMixin, Templat
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["security_approval_answers"] = self.exporter_answers.get("security_approvals")
+        context["security_approval_questions"] = self.exporter_questions.get("security_approvals")
         context["application"] = self.application
         context["back_link_url"] = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
         context["security_classified_approvals_types"] = SecurityClassifiedApprovalsType
