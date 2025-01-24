@@ -123,6 +123,10 @@ urlpatterns = [
     path("good/<uuid:good_pk>/", goods.GoodDetails.as_view(), name="good"),
     path("denials/", denials.Denials.as_view(), name="denials"),
     path("activities/", include("caseworker.activities.urls")),
+    path(
+        "f680/",
+        include("caseworker.f680.case_urls"),
+    ),
     # tabs
     path("<str:tab>/", main.CaseDetail.as_view(), name="case", kwargs={"disable_queue_lookup": True}),
     # Finalisation actions

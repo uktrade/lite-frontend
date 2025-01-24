@@ -25,3 +25,22 @@ class ApplicationSubmissionForm(BaseForm):
 
     def get_layout_fields(self):
         return []
+
+
+class ProductNameAndDescriptionForm(BaseForm):
+    class Layout:
+        TITLE = "Add a product"
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    name = forms.CharField(
+        label="Give the product a descriptive name",
+        help_text="Try to match the name as closely as possible to any documentation, like the technical specification",
+    )
+    description = forms.CharField(
+        label="Description",
+        help_text="Provide a description of the product you are seeking approval to release. Include any detailed technical specifications.",
+        widget=forms.Textarea(),
+    )
+
+    def get_layout_fields(self):
+        return ("name", "description")

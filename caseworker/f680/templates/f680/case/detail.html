@@ -1,0 +1,42 @@
+{% extends 'layouts/case.html' %}
+{% block details %}
+{% for section in application_details.sections %}
+    <section class="govuk-!-margin-top-8">
+        <h2 class="govuk-heading-l">{{ section.title|title }}</h2>
+        {% if section.multi %}
+            {% for item in section.items %}
+                <h3 class="govuk-heading-m">Product {{ forloop.counter }}</h3>
+                <table class="govuk-table app-table application-table">
+                    <tbody class="govuk-table__body">
+                        {% for field in item.details %}
+                            <tr class="govuk-table__row app-table__row" id="application-{{ section }}-{{ field.name }}">
+                                <th scope="row" class="govuk-table__header application-table__row-header">
+                                    {{ field.label }}
+                                </th>
+                                <td class="govuk-table__cell application-table__row-value">
+                                    {{ field.value }}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endfor %}
+        {% else %}
+            <table class="govuk-table app-table application-table">
+                <tbody class="govuk-table__body">
+                    {% for field in section.details %}
+                        <tr class="govuk-table__row app-table__row" id="application-{{ section }}-{{ field.name }}">
+                            <th scope="row" class="govuk-table__header application-table__row-header">
+                                {{ field.label }}
+                            </th>
+                            <td class="govuk-table__cell application-table__row-value">
+                                {{ field.value }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </section>
+{% endfor %}
+{% endblock %}

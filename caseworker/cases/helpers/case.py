@@ -2,7 +2,7 @@ import rules
 from dateutil.parser import parse
 from decimal import Decimal
 
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.functional import cached_property
@@ -12,6 +12,7 @@ from caseworker.cases.helpers.licence import get_latest_licence_status
 from caseworker.queues.forms import CaseAssignmentsAllocateToMeForm
 from core.constants import CaseStatusEnum, SecurityClassifiedApprovalsType
 
+from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.cases.objects import Slice, Case
@@ -243,6 +244,10 @@ class CaseView(CaseworkerMixin, TemplateView):
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
+
+        if self.case["case_type"]["sub_type"]["key"] == CaseType.F680.value:
+            return redirect("cases:f680:details", pk=self.case_id, queue_pk=self.queue_id)
+
         self.permissions = get_user_permissions(self.request)
 
         self._transform_data()

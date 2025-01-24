@@ -1,6 +1,9 @@
 from core.wizard.payloads import MergingPayloadBuilder
 
-from exporter.f680.constants import ApplicationFormSteps
+from exporter.f680.constants import (
+    ApplicationFormSteps,
+    ProductFormSteps,
+)
 
 
 def get_cleaned_data_with_label(form):
@@ -20,4 +23,15 @@ class F680CreatePayloadBuilder(MergingPayloadBuilder):
 
     def build(self, form_dict):
         payload = super().build(form_dict)
-        return {"application": payload}
+        return {"application": {"application": payload}}
+
+
+class F680CreateProductPayloadBuilder(MergingPayloadBuilder):
+    payload_dict = {
+        ProductFormSteps.NAME_AND_DESCRIPTION: get_cleaned_data_with_label,
+    }
+
+    def build(self, form_dict, initial_payload):
+        payload = super().build(form_dict)
+        initial_payload["application"]["products"].append(payload)
+        return initial_payload

@@ -11,7 +11,8 @@
         <ol class="lite-task-list">
             <li>
                 <h2 class="lite-task-list__section">
-                    <span class="lite-task-list__section-number">1. </span>Create Application
+                    <span class="lite-task-list__section-number">1. </span>
+                    Create Application
                 </h2>
                 <ul class="lite-task-list__items">
                     <li class="lite-task-list__item">
@@ -22,10 +23,34 @@
                             </div>
                         </div>
                         <div class="lite-task-list__item-details govuk-caption-m">
-                            {{ application.name.value }}
+                            {{ application.application.application.name.value }}
                         </div>
                     </li>
                 </ul>
+                <li>
+                    <h2 class="lite-task-list__section">
+                        <span class="lite-task-list__section-number">2. </span>
+                        Tell us about the products
+                    </h2>
+                    <ul class="lite-task-list__items">
+                        <li class="lite-task-list__item">
+                            <div class="lite-task-list__item-header">
+                                <a class="govuk-link govuk-link--no-visited" href="{% url 'f680:products' pk=application.id %}">
+                                    Describe how the product will be used
+                                </a>
+                                {% if not application.application.products %}
+                                    <div class="lite-tag">
+                                        Not started
+                                    </div>
+                                {% else %}
+                                    <div class="lite-tag lite-tag--blue">
+                                        Saved
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </li>
+                    </ul>
+                </li>
             </li>
         </ol>
         <div class="app-submit-bar">
