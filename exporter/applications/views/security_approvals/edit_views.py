@@ -25,7 +25,7 @@ from .conditionals import (
     is_f1686_approval_changed_and_selected,
     is_other_approval_changed_and_selected,
 )
-from .payloads import get_f1686_data, SecurityApprovalStepsPayloadBuilder
+from .payloads import get_f1686_data
 from .constants import SecurityApprovalSteps
 from .initial import (
     get_initial_security_classified_details,

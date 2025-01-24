@@ -6,6 +6,15 @@ def get_cleaned_data(form):
     return form.cleaned_data
 
 
+def get_questions_data(form):
+    if not form.cleaned_data:
+        return {}
+    questions = {}
+    for field_name, field in form.declared_fields.items():
+        questions[field_name] = field.label
+    return questions
+
+
 def get_pv_grading_payload(form):
     return {
         "is_pv_graded": "yes" if form.cleaned_data["is_pv_graded"] else "no",

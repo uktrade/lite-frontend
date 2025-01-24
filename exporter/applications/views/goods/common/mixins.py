@@ -43,7 +43,9 @@ class ApplicationMixin:
 
         exporter_answers, _ = get_exporter_answer_set(request, kwargs["pk"])
         self.exporter_answers = {}
+        self.exporter_questions = {}
         for answer_set in exporter_answers["results"]:
             self.exporter_answers[answer_set["section"]] = answer_set["answers"]
+            self.exporter_questions[answer_set["section"]] = answer_set["questions"]
 
         return super().dispatch(request, *args, **kwargs)

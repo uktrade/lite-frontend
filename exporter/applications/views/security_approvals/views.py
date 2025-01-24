@@ -23,7 +23,7 @@ from .forms import (
 
 from .constants import SecurityApprovalSteps
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
-from .payloads import SecurityApprovalStepsPayloadBuilder
+from .payloads import SecurityApprovalStepsAnswerPayloadBuilder, SecurityApprovalStepsQuestionPayloadBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +65,12 @@ class SecurityApprovals(
 
         return ctx
 
-    def get_payload(self, form_dict):
-        export_details_payload = SecurityApprovalStepsPayloadBuilder().build(form_dict)
+    def get_answers_payload(self, form_dict):
+        export_details_payload = SecurityApprovalStepsAnswerPayloadBuilder().build(form_dict)
+        return export_details_payload
+
+    def get_questions_payload(self, form_dict):
+        export_details_payload = SecurityApprovalStepsQuestionPayloadBuilder().build(form_dict)
         return export_details_payload
 
     def get_success_url(self):
@@ -81,7 +85,8 @@ class SecurityApprovals(
         "Unexpected error updating export details",
     )
     def submit_answers(self, form_dict):
-        answers_payload = self.get_payload(form_dict)
+        answers_payload = self.get_answers_payload(form_dict)
+        questions_payload = self.get_questions_payload(form_dict)
         return post_exporter_answer_set(
             self.request,
             "application",
@@ -89,6 +94,7 @@ class SecurityApprovals(
             "standardapplication",
             self.application["id"],
             answers_payload,
+            questions_payload,
         )
 
     def done(self, form_list, form_dict, **kwargs):
