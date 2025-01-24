@@ -1,7 +1,7 @@
 from http import HTTPStatus
 from django.shortcuts import redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -16,9 +16,31 @@ from .forms import f680InitialForm, F680NameForm  # /PS-IGNORE
 from .payloads import AddF680PayloadBuilder  # /PS-IGNORE
 
 
-class AddF680(LoginRequiredMixin, BaseSessionWizardView):  # /PS-IGNORE
+class F680Create(LoginRequiredMixin, FormView):
+    template_name = "core/form.html"
+    form_class = F680NameForm
+
+    def form_valid(self, form):
+        self.name = form.cleaned_data["name"]
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        data = {"name": self.name, "data": {}}
+        response, _ = post_f680_application(self.request, data)
+        return reverse_lazy("f680:f680_task_list", kwargs={"pk": response["id"]})
+
+
+class GetF680Application(LoginRequiredMixin, TemplateView):
+    def get(self, request, **kwargs):
+        application = get_f680_application(request, kwargs["pk"])
+
+        if application["status"]["key"] not in [ApplicationStatus.DRAFT, ApplicationStatus.APPLICANT_EDITING]:
+            return redirect(reverse("applications:application", kwargs={"pk": kwargs["pk"]}))
+        return get_application_task_list(request, application)
+
+
+class F680ApprovalQuestions(LoginRequiredMixin, BaseSessionWizardView):  # /PS-IGNORE
     form_list = [
-        (AddF680FormSteps.F680_NAME, F680NameForm),  # /PS-IGNORE
         (AddF680FormSteps.F680INITIAL, f680InitialForm),  # /PS-IGNORE
     ]
 
@@ -35,17 +57,8 @@ class AddF680(LoginRequiredMixin, BaseSessionWizardView):  # /PS-IGNORE
     )
     def post_application_with_payload(self, form_dict):
         payload = self.get_payload(form_dict)
-        payload.update({"application_type": "f680"})  # /PS-IGNORE
         return post_f680_application(self.request, payload)
 
     def done(self, form_list, form_dict, **kwargs):
         response, _ = self.post_application_with_payload(form_dict)
         return redirect(reverse_lazy("f680:f680_task_list", kwargs={"pk": response["id"]}))
-
-
-class GetF680Application(LoginRequiredMixin, TemplateView):
-    def get(self, request, **kwargs):
-        application = get_f680_application(request, kwargs["pk"])
-        if application["status"]["key"] not in [ApplicationStatus.DRAFT, ApplicationStatus.APPLICANT_EDITING]:
-            return redirect(reverse("applications:application", kwargs={"pk": kwargs["pk"]}))
-        return get_application_task_list(request, application)
