@@ -10,7 +10,7 @@ from core.wizard.views import BaseSessionWizardView
 from exporter.core.constants import AddF680FormSteps  # /PS-IGNORE
 from exporter.applications.constants import ApplicationStatus
 from exporter.applications.helpers.task_lists import get_application_task_list
-from exporter.applications.services import post_f680_application, get_f680_application
+from exporter.applications.services import post_f680_application, put_f680_application, get_f680_application
 
 from .forms import f680InitialForm, F680NameForm  # /PS-IGNORE
 from .payloads import AddF680PayloadBuilder  # /PS-IGNORE
@@ -51,14 +51,14 @@ class F680ApprovalQuestions(LoginRequiredMixin, BaseSessionWizardView):  # /PS-I
         return AddF680PayloadBuilder().build(form_dict)  # /PS-IGNORE
 
     @expect_status(
-        HTTPStatus.CREATED,
-        "Error adding F680 application",
-        "Unexpected error adding adding F680 application",
+        HTTPStatus.OK,
+        "Error updating F680 application",
+        "Unexpected error updating F680 application",
     )
-    def post_application_with_payload(self, form_dict):
+    def update_application_with_payload(self, form_dict):
         payload = self.get_payload(form_dict)
-        return post_f680_application(self.request, payload)
+        return put_f680_application(self.request, self.kwargs["pk"], payload)
 
     def done(self, form_list, form_dict, **kwargs):
-        response, _ = self.post_application_with_payload(form_dict)
-        return redirect(reverse_lazy("f680:f680_task_list", kwargs={"pk": response["id"]}))
+        response, _ = self.update_application_with_payload(form_dict)
+        return redirect(reverse_lazy("f680:f680_task_list", kwargs={"pk": response["pk"]}))

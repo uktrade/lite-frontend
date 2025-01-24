@@ -22,6 +22,11 @@ def post_f680_application(request, json):
     return data.json(), data.status_code
 
 
+def put_f680_application(request, pk, json):
+    data = client.put(request, f"/f680/{pk}", json)
+    return data.json(), data.status_code
+
+
 def get_f680_application(request, pk) -> Application:
     response = client.get(request, f"/f680/{pk}")
     response.raise_for_status()
