@@ -64,3 +64,48 @@ class ProductNameAndDescriptionForm(BaseForm):
 
     def get_layout_fields(self):
         return ("name", "description")
+
+
+class EndUserNameForm(BaseForm):
+    party_type = ""
+
+    class Layout:
+        TITLE = "Name of the application"
+        TITLE_AS_LABEL_FOR = "name"
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    name = forms.CharField(
+        label="",
+        help_text="Give the application a reference name so you can refer back to it when needed",
+    )
+
+    def get_layout_fields(self):
+        return ("name",)
+
+
+# class PartyNameForm(BaseForm):
+#     class Layout():
+#         party_type = "party"
+#         party_type_var = party_type.replace(" ", "_")
+#         TITLE = f"Name of the {party_type}"
+#         TITLE_AS_LABEL_FOR = f"{party_type_var}_name"
+#         SUBMIT_BUTTON_TEXT = "Continue"
+
+#     layout_field_name = Layout.party_type.replace(" ", "_") + "_name"
+#     str(layout_field_name) = forms.CharField(
+#         label="",
+#         help_text=f"Give the name of the {Layout.party_type}",
+#     )
+
+#     def get_layout_fields(self):
+#         return (self.layout_field_name,)
+
+
+# class EndUserNameForm(PartyNameForm):
+#     party_type = "end user"
+#     class Layout:
+#         party_type = "end user"
+#         party_type_var = party_type.replace(" ", "_")
+#         TITLE = f"Name of the {party_type}"
+#         TITLE_AS_LABEL_FOR = f"{party_type_var}_name"
+#         SUBMIT_BUTTON_TEXT = "Continue"

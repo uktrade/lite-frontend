@@ -19,14 +19,21 @@ class BasePayloadBuilder(MergingPayloadBuilder):
         return {step_name: get_cleaned_data_with_label for step_name in self.wizard_view.steps.all}
 
 
-class F680CreatePayloadBuilder(BasePayloadBuilder):
+class F680CreatePayloadBuilder(BasePayloadBuilder):  # PS-IGNORE
     def build(self, form_dict):
         payload = super().build(form_dict)
         return {"application": {"application": payload}}
 
 
-class F680CreateProductPayloadBuilder(BasePayloadBuilder):
+class F680CreateProductPayloadBuilder(BasePayloadBuilder):  # PS-IGNORE
     def build(self, form_dict, initial_payload):
         payload = super().build(form_dict)
         initial_payload["application"]["products"].append(payload)
+        return initial_payload
+
+
+class F680CreateEndUserPayloadBuilder(BasePayloadBuilder):  # PS-IGNORE
+    def build(self, form_dict, initial_payload):
+        payload = super().build(form_dict)
+        initial_payload["application"]["end_user"].append(payload)
         return initial_payload

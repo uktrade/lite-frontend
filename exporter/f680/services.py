@@ -1,7 +1,7 @@
 from core import client
 
 
-def get_680_application(request, application_id):
+def get_f680_application(request, application_id):
     data = client.get(request, f"/exporter/f680/{application_id}/")
     return data.json()
 

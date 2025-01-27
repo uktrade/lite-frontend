@@ -5,3 +5,11 @@ class ApplicationFormSteps:
 
 class ProductFormSteps:
     NAME_AND_DESCRIPTION = "NAME_AND_DESCRIPTION"
+
+
+class EndUserFormSteps:
+    END_USER_NAME = "END_USER_NAME"
+
+
+class ConsigneeFormSteps:
+    CONSIGNEE_NAME = "CONSIGNEE_NAME"
