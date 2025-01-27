@@ -173,6 +173,7 @@ def test_cases_home_page_view_context(authorized_client):
         "is_nca_applicable",
         "is_trigger_list",
         "return_to",
+        "sort_by",
         "product_name",
         "includes_refusal_recommendation_from_ogd",
     ]
