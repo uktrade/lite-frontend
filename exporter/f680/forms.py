@@ -67,20 +67,27 @@ class ProductNameAndDescriptionForm(BaseForm):
 
 
 class EndUserNameForm(BaseForm):
-    party_type = ""
+    party_type = "John"
+    party_type_readable = party_type.replace("_", " ")
+    title = f"Name of the {party_type_readable}"
+    help_text = f"Give the {party_type_readable} a name"
 
-    class Layout:
-        TITLE = "Name of the application"
-        TITLE_AS_LABEL_FOR = "name"
-        SUBMIT_BUTTON_TEXT = "Continue"
-
-    name = forms.CharField(
+    party_name_field = forms.CharField(
         label="",
-        help_text="Give the application a reference name so you can refer back to it when needed",
+        help_text=help_text,
     )
 
+    class Layout:
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    def get_title(self):
+        return self.title
+
+    def get_field_label(self, field_name):
+        return super().get_field_label(field_name)
+
     def get_layout_fields(self):
-        return ("name",)
+        return ("party_name_field",)
 
 
 # class PartyNameForm(BaseForm):
