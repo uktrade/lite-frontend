@@ -201,7 +201,7 @@ class F680ApplicationEndUserView(F680ApplicationPartyView):  # PS-IGNORE
     form_list = [
         (EndUserFormSteps.END_USER_NAME, EndUserNameForm),
     ]
-    party_type = "end_user"
+
     payload_builder_class = F680CreateEndUserPayloadBuilder  # PS-IGNORE
 
 
