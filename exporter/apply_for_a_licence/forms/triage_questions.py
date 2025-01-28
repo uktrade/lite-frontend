@@ -35,6 +35,16 @@ def opening_question():
             ),
         ),
         Option(
+            key="f680",  # PS-IGNORE
+            value="Security Approval",
+            description=(
+                "Select if you need approval to give classified products or information to non-UK organisations, "
+                "governments and individuals. This includes F680 approval. You should apply for security approval"  # PS-IGNORE
+                " before you apply for a licence."
+            ),
+            disabled=not settings.FEATURE_FLAG_F680,  # PS-IGNORE
+        ),
+        Option(
             key="transhipment",
             value="Transhipment licence",
             description=(
@@ -49,15 +59,6 @@ def opening_question():
             description=(
                 "Select if you’re arranging or brokering the sale or movement of controlled military products "
                 "located overseas."
-            ),
-            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
-        ),
-        Option(
-            key="mod",
-            value="MOD clearance",
-            description=(
-                "Select if you need to share information (an F680) or to go to an exhibition, or if you're gifting "
-                "surplus products."
             ),
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
