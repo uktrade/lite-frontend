@@ -18,7 +18,7 @@ from exporter.core.constants import PERMANENT, CaseTypes
 from exporter.core.services import post_open_general_licence_cases
 from lite_forms.views import SingleFormView, MultiFormView
 
-from core.auth.views import LoginRequiredMixin, RedirectView
+from core.auth.views import LoginRequiredMixin
 
 
 class LicenceType(LoginRequiredMixin, SingleFormView):
@@ -101,8 +101,3 @@ class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
 class OpenGeneralLicenceSubmit(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         return open_general_licence_submit_success_page(request, **kwargs)
-
-
-class F680Questions(LoginRequiredMixin, RedirectView):  # /PS-IGNORE
-    def get_redirect_url(self, *args, **kwargs):
-        return reverse("f680:apply")  # /PS-IGNORE
