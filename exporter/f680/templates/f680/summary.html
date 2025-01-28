@@ -70,54 +70,6 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            {% comment %} <li class="lite-task-list__item">
-                                <div class="lite-task-list__item-header">
-                                    <a class="govuk-link govuk-link--no-visited" href="{% url 'f680:add_consingee' pk=application.id %}">
-                                        Add a consignee
-                                    </a>
-                                    {% if not application.application.products %}
-                                        <div class="lite-tag">
-                                            Not started
-                                        </div>
-                                    {% else %}
-                                        <div class="lite-tag lite-tag--blue">
-                                            Saved
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </li>
-                            <li class="lite-task-list__item">
-                                <div class="lite-task-list__item-header">
-                                    <a class="govuk-link govuk-link--no-visited" href="{% url 'f680:add_third_party' pk=application.id %}">
-                                        Add third parties
-                                    </a>
-                                    {% if not application.application.products %}
-                                        <div class="lite-tag">
-                                            Not started
-                                        </div>
-                                    {% else %}
-                                        <div class="lite-tag lite-tag--blue">
-                                            Saved
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </li>
-                            <li class="lite-task-list__item">
-                                <div class="lite-task-list__item-header">
-                                    <a class="govuk-link govuk-link--no-visited" href="{% url 'f680:add_ultimate_end_user' pk=application.id %}">
-                                        Add an ultimate end user
-                                    </a>
-                                    {% if not application.application.products %}
-                                        <div class="lite-tag">
-                                            Not started
-                                        </div>
-                                    {% else %}
-                                        <div class="lite-tag lite-tag--blue">
-                                            Saved
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </li> {% endcomment %}
                         </li>
                     </ul>
                 </li>
