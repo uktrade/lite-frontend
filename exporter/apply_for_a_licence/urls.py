@@ -19,7 +19,7 @@ if not settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
         path("<str:ogl>/<uuid:pk>/", views.OpenGeneralLicenceSubmit.as_view(), name="ogl_submit"),
     ]
 
-if settings.FEATURE_FLAG_ALLOW_F680:
+if settings.FEATURE_FLAG_ALLOW_F680:  # /PS-IGNORE
     urlpatterns += [
         path("f680/", views.F680Questions.as_view(), name="f680_questions"),  # /PS-IGNORE
     ]
