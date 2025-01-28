@@ -8,6 +8,8 @@ from django.views import View
 from django.views.generic import FormView
 
 from core.file_handler import (
+    UnacceptableMimeTypeError,
+    UnacceptableMimeTypeFile,
     s3_client,
     S3Wrapper,
     validate_mime_type,
@@ -80,6 +82,15 @@ def test_invalid_mime_type(file_upload_handler_settings, client):
 
     assert not response.form.is_valid()
     assert response.form.errors == {"upload_file": ["The file type is not supported. Upload a supported file type"]}
+
+
+@pytest.mark.parametrize("func_name", ["open", "chunks", "multiple_chunks", "__iter__", "__enter__", "obj"])
+def test_unacceptable_mime_type_file_function_raises_errors(func_name):
+    unacceptable_mime_file = UnacceptableMimeTypeFile("bad_file")
+
+    with pytest.raises(UnacceptableMimeTypeError):
+        func = getattr(unacceptable_mime_file, func_name)
+        func()
 
 
 def test_s3_wrapper_get_client(settings, mocker):
