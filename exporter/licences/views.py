@@ -60,7 +60,7 @@ class AbstractListView(LoginRequiredMixin, TemplateView):
             name=self.request.GET.get("name", ""),
             row_limit=3,
             tabs=tabs,
-            FEATURE_FLAG_ONLY_ALLOW_SIEL=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
+            FEATURE_FLAG_ALLOW_SIEL=settings.FEATURE_FLAG_ALLOW_SIEL,
             **kwargs,
         )
 
