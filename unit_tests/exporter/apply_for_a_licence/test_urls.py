@@ -10,7 +10,7 @@ from unit_tests.helpers import reload_urlconf
 
 def test_url_respects_feature_flag_off(settings):
     # given the feature is turned on
-    settings.FEATURE_FLAG_ONLY_ALLOW_SIEL = True
+    settings.FEATURE_FLAG_ALLOW_SIEL = True
     reload_urlconf(["exporter.apply_for_a_licence.urls", settings.ROOT_URLCONF])
 
     # when urls are looked up
@@ -29,7 +29,7 @@ def test_url_respects_feature_flag_off(settings):
 
 def test_url_respects_feature_flag_on(settings):
     # given the feature is not turned on
-    settings.FEATURE_FLAG_ONLY_ALLOW_SIEL = False
+    settings.FEATURE_FLAG_ALLOW_SIEL = False
     reload_urlconf(["exporter.apply_for_a_licence.urls", settings.ROOT_URLCONF])
 
     # when urls are looked up
