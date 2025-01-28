@@ -249,7 +249,7 @@ def test_case_details_sub_status(
     dt = html.find("dt", string=re.compile("Sub-status"))
     assert dt
     dd = dt.find_next()
-    assert dd.get_text().replace("\n", "").replace("\t", "") == expected
+    assert dd.get_text().replace("\n", "").replace("\t", "").strip() == expected
 
 
 @pytest.mark.parametrize(
