@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -12,20 +13,20 @@ from .constants import (
 )
 from .forms import (
     ApplicationNameForm,
-    ApplicationPreviousApplicationForm,
+    ApplicationSubmissionForm,
 )
 from .payloads import (
     F680CreatePayloadBuilder,  # PS-IGNORE
 )
 from .services import (
-    post_f680_application,
+    post_f680_application,  # PS-IGNORE
+    get_f680_application,
 )
 
 
 class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # PS-IGNORE
     form_list = [
         (ApplicationFormSteps.APPLICATION_NAME, ApplicationNameForm),
-        (ApplicationFormSteps.PREVIOUS_APPLICATION, ApplicationPreviousApplicationForm),
     ]
 
     @expect_status(
@@ -45,9 +46,28 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # P
         )
 
     def get_payload(self, form_dict):
-        return F680CreatePayloadBuilder(self).build(form_dict)  # PS-IGNORE
+        return F680CreatePayloadBuilder().build(form_dict)  # /PS-IGNORE
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
         response_data, _ = self.post_f680_application(data)  # PS-IGNORE
         return redirect(self.get_success_url(response_data["id"]))
+
+
+class F680ApplicationSummaryView(LoginRequiredMixin, FormView):
+    form_class = ApplicationSubmissionForm
+    template_name = "f680/summary.html"
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
+        self.application = get_f680_application(request, kwargs["pk"])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["application"] = self.application
+
+        return context
+
+    def get_success_url(self):
+        return reverse("f680:summary", kwargs={"pk": self.application["id"]})

@@ -1,0 +1,37 @@
+{% extends "layouts/base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Apply for an F680 Application{% endblock%}
+
+{% block body %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-2">F680 Application</h1>
+        <ol class="lite-task-list">
+            <li>
+                <h2 class="lite-task-list__section">
+                    <span class="lite-task-list__section-number">1. </span>
+                    Create Application
+                </h2>
+                <ul class="lite-task-list__items">
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            Your reference
+                            <div class="lite-tag lite-tag--blue">
+                                Saved
+                            </div>
+                        </div>
+                        <div class="lite-task-list__item-details govuk-caption-m">
+                            {{ application.application.application.name.value }}
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <div class="app-submit-bar">
+            {% crispy form %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -18,21 +18,10 @@ class ApplicationNameForm(BaseForm):
         return ("name",)
 
 
-class ApplicationPreviousApplicationForm(BaseForm):
+class ApplicationSubmissionForm(BaseForm):
     class Layout:
-        TITLE = "Have you made a previous application?"
-        TITLE_AS_LABEL_FOR = "previous_application"
-        SUBMIT_BUTTON_TEXT = "Save"
-
-    previous_application = forms.ChoiceField(
-        label="",
-        help_text="Some help text",
-        widget=forms.RadioSelect,
-        choices=(
-            ("Yes", "Yes"),
-            ("No", "No"),
-        ),
-    )
+        TITLE = ""
+        SUBMIT_BUTTON_TEXT = "Submit"
 
     def get_layout_fields(self):
-        return ("previous_application",)
+        return []
