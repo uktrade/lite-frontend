@@ -203,11 +203,3 @@ class F680ApplicationEndUserView(F680ApplicationPartyView):  # PS-IGNORE
     ]
 
     payload_builder_class = F680CreateEndUserPayloadBuilder  # PS-IGNORE
-
-
-# class F680ApplicationConsigneeView(F680ApplicationPartyView):
-#     form_list = [
-#         (ConsigneeFormSteps.CONSIGNEE_NAME, ConsigneeNameForm),
-#     ]
-#     party_type = "consignee"
-#     payload_builder_class = F680CreateConsigneePayloadBuilder
