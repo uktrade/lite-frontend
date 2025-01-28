@@ -12,9 +12,11 @@ def test_edit_button(
     authorized_client,
     data_standard_case,
     mock_application_get,
+    mock_application_history_get,
     mock_status_properties,
     can_invoke_major_editable,
 ):
+
     pk = data_standard_case["case"]["id"]
     mock_status_properties["can_invoke_major_editable"] = can_invoke_major_editable
 
@@ -27,7 +29,11 @@ def test_edit_button(
 
 
 def test_appeal_refusal_decision_button(
-    authorized_client, data_standard_case, mock_refused_application_get, mock_status_properties
+    authorized_client,
+    data_standard_case,
+    mock_refused_application_get,
+    mock_application_history_get,
+    mock_status_properties,
 ):
     pk = data_standard_case["case"]["id"]
 
@@ -41,6 +47,7 @@ def test_appeal_button_not_shown_for_successful_application(
     authorized_client,
     data_standard_case,
     mock_application_get,
+    mock_application_history_get,
 ):
     pk = data_standard_case["case"]["id"]
 
@@ -62,6 +69,7 @@ def test_appeal_deadline_date_format(
     authorized_client,
     data_standard_case,
     mock_application_get,
+    mock_application_history_get,
     date_string,
 ):
     data_standard_case["case"]["data"]["status"] = {
@@ -82,6 +90,7 @@ def test_user_id_hidden_field(
     authorized_client,
     data_standard_case,
     mock_application_get,
+    mock_application_history_get,
     mock_exporter_user,
 ):
     pk = data_standard_case["case"]["id"]
@@ -89,3 +98,36 @@ def test_user_id_hidden_field(
     response = authorized_client.get(application_url)
     soup = BeautifulSoup(response.content, "html.parser")
     assert soup.find(id="user_id")["value"] == mock_exporter_user["user"]["lite_api_user_id"]
+
+
+def test_application_history_details(
+    authorized_client,
+    data_standard_case,
+    mock_application_get,
+    mock_application_history_get,
+    mock_exporter_user,
+    beautiful_soup,
+):
+    pk = data_standard_case["case"]["id"]
+    application_url = reverse("applications:application", kwargs={"pk": pk})
+    response = authorized_client.get(application_url)
+    soup = beautiful_soup(response.content)
+
+    application_history_table = soup.find("table", attrs={"id": "table-application-history"})
+    body = application_history_table.find("tbody")
+
+    hist_application_1 = body.find_all("tr")[0].find_all("td")
+    hist_application_2 = body.find_all("tr")[1].find_all("td")
+
+    assert hist_application_1[0].text.strip() == "GBSIEL/2020/0002687/T"
+    assert hist_application_1[1].text.strip() == "4:57pm 01 October 2020"
+    assert hist_application_1[2].text.strip() == "Submitted"
+    assert hist_application_1[3].text.strip() == ""
+
+    assert hist_application_2[0].a["href"] == "/applications/caba228c-b4c8-41ea-804a-c1bc6ba816c7/"
+    assert hist_application_2[0].a.text.strip() == "GBSIEL/2025/0000333/T"
+
+    assert hist_application_2[1].text.strip() == "4:36pm 27 January 2025"
+    assert hist_application_2[2].text.strip() == "Superseded by exporter edit"
+    assert hist_application_2[3].a["href"] == "/applications/caba228c-b4c8-41ea-804a-c1bc6ba816c7/ecju-queries/"
+    assert hist_application_2[3].a.text.strip() == "3"

@@ -24,13 +24,13 @@ def application_url(requests_mock, data_standard_case):
 
 
 @pytest.fixture()
-def rendered_ecju_closed_queries(authorized_client, url):
+def rendered_ecju_closed_queries(authorized_client, url, mock_application_history_get):
     response = authorized_client.get(url)
     return BeautifulSoup(response.content, "html.parser").find_all(id="closed-ecju-query")
 
 
 @pytest.fixture()
-def rendered_ecju_queries(authorized_client, url):
+def rendered_ecju_queries(authorized_client, url, mock_application_history_get):
     response = authorized_client.get(url)
     return BeautifulSoup(response.content, "html.parser").find_all(id="open-ecju-query")
 

@@ -37,6 +37,7 @@ from exporter.applications.helpers.validators import (
 )
 from exporter.applications.services import (
     get_activity,
+    get_application_history,
     get_applications,
     get_case_notes,
     get_case_generated_documents,
@@ -295,6 +296,7 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
 
     def get(self, request, **kwargs):
         status_props, _ = get_status_properties(request, self.application["status"]["key"])
+
         context = {
             "case_id": self.application_id,
             "application": self.application,
@@ -304,6 +306,7 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
             "errors": kwargs.get("errors"),
             "text": kwargs.get("text", ""),
             "activity": get_activity(request, self.application_id) or {},
+            "application_history": get_application_history(self.request, self.application_id),
         }
 
         if self.application.sub_type != HMRC:
