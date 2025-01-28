@@ -51,7 +51,7 @@ def opening_question():
                 "Select if you're shipping something from overseas through the UK on to another country. "
                 "If the products will be in the UK for 30 days or more, apply for an export licence."
             ),
-            disabled=not settings.FEATURE_FLAG_ALLOW_SIEL,
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
         Option(
             key="trade_control_licence",
@@ -60,10 +60,10 @@ def opening_question():
                 "Select if you’re arranging or brokering the sale or movement of controlled military products "
                 "located overseas."
             ),
-            disabled=not settings.FEATURE_FLAG_ALLOW_SIEL,
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
     ]
-    if settings.FEATURE_FLAG_ALLOW_SIEL:
+    if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
         description = render_to_string("applications/use-spire-triage.html")
     else:
         description = ""
@@ -116,7 +116,7 @@ def export_type_form():
                 "and conditions. Being an OGEL holder can benefit your business "
                 "by saving time and money."
             ),
-            disabled=settings.FEATURE_FLAG_ALLOW_SIEL,
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
         Option(
             key=CaseTypes.OIEL,
@@ -125,10 +125,10 @@ def export_type_form():
                 "Select to apply for a licence to export multiple shipments of specific products to specific "
                 "destinations. OIELs cover long term projects and repeat business."
             ),
-            disabled=settings.FEATURE_FLAG_ALLOW_SIEL,
+            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),
     ]
-    if settings.FEATURE_FLAG_ALLOW_SIEL:
+    if settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
         description = render_to_string("applications/use-spire-application-type.html")
     else:
         description = ""

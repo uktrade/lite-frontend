@@ -238,7 +238,7 @@ class GoodsDetail(LoginRequiredMixin, TemplateView):
             "type": self.view_type,
             "error": kwargs.get("error"),
             "text": kwargs.get("text", ""),
-            "FEATURE_FLAG_ALLOW_SIEL": settings.FEATURE_FLAG_ALLOW_SIEL,
+            "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
             "from_preexisting_url": from_preexisting_url,
             "application_id": application_id,
         }

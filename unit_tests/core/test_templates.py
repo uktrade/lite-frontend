@@ -9,7 +9,7 @@ def test_clc_query_and_pv_grading_application_links():
         "notifications": [],
         "existing": False,
         "user_permissions": [],
-        "FEATURE_FLAG_ALLOW_SIEL": True,
+        "FEATURE_FLAG_ONLY_ALLOW_SIEL": True,
     }
 
     html = render_to_string("core/hub.html", context)

@@ -59,7 +59,7 @@ class Home(TemplateView):
             "missing_serials_id": require_serials_ids[0] if require_serials_ids else None,
             "existing": existing,
             "user_permissions": user_permissions,
-            "FEATURE_FLAG_ALLOW_SIEL": settings.FEATURE_FLAG_ALLOW_SIEL,
+            "FEATURE_FLAG_ONLY_ALLOW_SIEL": settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
             "FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING": settings.FEATURE_FLAG_ALLOW_CLC_QUERY_AND_PV_GRADING,
             "SURVEY_URL": settings.SURVEY_URL,
         }

@@ -11,7 +11,7 @@ urlpatterns = [
     path("export/", views.ExportLicenceQuestions.as_view(), name="export_licence_questions"),
 ]
 
-if not settings.FEATURE_FLAG_ALLOW_SIEL:
+if not settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
     urlpatterns += [
         path("transhipment/", views.TranshipmentQuestions.as_view(), name="transhipment_questions"),
         path("mod/", views.MODClearanceQuestions.as_view(), name="mod_questions"),
