@@ -27,4 +27,4 @@ class SetClearanceLevel(LoginRequiredMixin, SingleFormView):
         self.action = put_application
         self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})
         application = get_application(request, self.object_pk)
-        self.data = {"clearance_level": application["clearance_level"]}
+        self.data = {"clearance_level": application["case_type"]["sub_type"]["key"]}

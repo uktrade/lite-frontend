@@ -1,7 +1,10 @@
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView
 
-from exporter.applications.services import post_applications, post_open_general_licences_applications
+from exporter.applications.services import (
+    post_applications,
+    post_open_general_licences_applications,
+)
 from exporter.apply_for_a_licence.forms.open_general_licences import (
     open_general_licence_forms,
     open_general_licence_submit_success_page,
@@ -28,6 +31,8 @@ class LicenceType(LoginRequiredMixin, SingleFormView):
 
     def get_success_url(self):
         licence_type = self.get_validated_data()["licence_type"]
+        if licence_type == "f680":
+            return reverse_lazy("f680:add_f680")
         return reverse_lazy(f"apply_for_a_licence:{licence_type}_questions")
 
 

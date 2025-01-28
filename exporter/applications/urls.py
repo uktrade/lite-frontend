@@ -10,7 +10,6 @@ from exporter.applications.views import (
     told_by_an_official,
     optional_note,
     goods_types,
-    f680_details,
     clearance,
     questions,
     end_use_details,
@@ -53,6 +52,7 @@ from exporter.goods.views import (
 )
 from exporter.applications.views.hcsat import HCSATApplicationPage
 
+from exporter.applications.f680 import views as f680_questions
 
 app_name = "applications"
 urlpatterns = [
@@ -198,7 +198,8 @@ urlpatterns = [
         name="is_material_substance",
     ),
     # F680 details
-    path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),
+    # path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),
+    path("<uuid:pk>/f680-details/", f680_questions.F680ApprovalQuestions.as_view(), name="f680_details"),
     path("<uuid:pk>/questions/", questions.AdditionalInformationFormView.as_view(), name="questions"),
     # Goods Types
     path("<uuid:pk>/goods-types/", goods_types.GoodsTypeList.as_view(), name="goods_types"),
