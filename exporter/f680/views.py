@@ -35,7 +35,6 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # P
         "Unexpected error creating F680 application",
     )
     def post_f680_application(self, data):
-        breakpoint()
         return post_f680_application(self.request, data)  # PS-IGNORE
 
     def get_success_url(self, application_id):

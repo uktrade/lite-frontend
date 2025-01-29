@@ -5,14 +5,6 @@ from django.urls import reverse
 
 from core import client
 
-from exporter.f680.constants import (
-    ApplicationFormSteps,
-)
-from exporter.f680.forms import (
-    ApplicationNameForm,
-    ApplicationSubmissionForm,
-)
-
 
 @pytest.fixture
 def authorized_client(authorized_client_factory, mock_exporter_user):
@@ -31,12 +23,6 @@ def mock_f680_application_get(requests_mock, data_f680_case):  # PS-IGNORE
     return requests_mock.get(url=url, json=data_f680_case)
 
 
-# @pytest.fixture
-# def mock_f680_application_post(requests_mock, data_f680_case):
-#     url = client._build_absolute_uri(f'/exporter/f680/application/{data_f680_case["id"]}/')
-#     return requests_mock.post(url=url, json=data_f680_case)
-
-
 @pytest.fixture(autouse=True)
 def set_f680_fetaure_flag(settings):  # PS-IGNORE
     settings.FEATURE_FLAG_ALLOW_F680 = True  # PS-IGNORE
@@ -50,7 +36,17 @@ def test_apply_f680_view(authorized_client):  # PS-IGNORE
     assert "Name of the application" in soup.find("h1").text
 
 
-def test_apply_flow(authorized_client, f680_summary_url_with_application, mock_f680_application_get):
+def test_f680_summary_view_with_form(
+    f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock
+):
+
+    response = application_flow(f680_summary_url_with_application, authorized_client, mock_f680_application_get)
+
+    assert response.status_code == 302
+    assert response.url == f680_summary_url_with_application
+
+
+def application_flow(f680_summary_url_with_application, authorized_client, mock_f680_application_get):
 
     response = authorized_client.get(f680_summary_url_with_application)
     assert not response.context["form"].errors
@@ -64,7 +60,7 @@ def test_apply_flow(authorized_client, f680_summary_url_with_application, mock_f
         data={"application": {"name": "F680 Test 3"}},
     )
 
-    assert response.status_code == 302
+    return response
 
 
 def test_f680_summary_view(
