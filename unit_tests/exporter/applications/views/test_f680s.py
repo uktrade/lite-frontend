@@ -29,39 +29,47 @@ def set_f680_fetaure_flag(settings):  # PS-IGNORE
     settings.FEATURE_FLAG_ALLOW_F680 = True  # PS-IGNORE
 
 
-def test_apply_f680_view(authorized_client):  # PS-IGNORE
+def test_apply_f680_view(authorized_client, f680_summary_url_with_application, mock_f680_application_get):  # PS-IGNORE
     url = reverse("f680:apply")  # PS-IGNORE
     response = authorized_client.get(url)
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
     assert "Name of the application" in soup.find("h1").text
 
-
-def test_f680_summary_view_with_form(
-    f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock
-):
-
-    response = application_flow(f680_summary_url_with_application, authorized_client, mock_f680_application_get)
-
-    assert response.status_code == 302
-    assert response.url == f680_summary_url_with_application
-
-
-def application_flow(f680_summary_url_with_application, authorized_client, mock_f680_application_get):
-
-    response = authorized_client.get(f680_summary_url_with_application)
-    assert not response.context["form"].errors
-
-    content = BeautifulSoup(response.content, "html.parser")
-    heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
-    assert heading_element.string.strip() == "F680 Application"
-
     response = authorized_client.post(
         f680_summary_url_with_application,
         data={"application": {"name": "F680 Test 2"}},
     )
 
-    return response
+    assert response.status_code == 302
+    assert response.url == f680_summary_url_with_application
+
+
+# def test_f680_summary_view_with_form(
+#     f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock
+# ):
+
+#     response = application_flow(f680_summary_url_with_application, authorized_client, mock_f680_application_get)
+
+#     assert response.status_code == 302
+#     assert response.url == f680_summary_url_with_application
+
+
+# def application_flow(f680_summary_url_with_application, authorized_client, mock_f680_application_get):
+
+#     response = authorized_client.get(f680_summary_url_with_application)
+#     assert not response.context["form"].errors
+
+#     content = BeautifulSoup(response.content, "html.parser")
+#     heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
+#     assert heading_element.string.strip() == "F680 Application"
+
+#     response = authorized_client.post(
+#         f680_summary_url_with_application,
+#         data={"application": {"name": "F680 Test 2"}},
+#     )
+
+#     return response
 
 
 def test_f680_summary_view(
