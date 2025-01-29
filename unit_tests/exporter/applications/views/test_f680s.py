@@ -24,7 +24,7 @@ def set_f680_fetaure_flag(settings):
 
 
 def test_apply_f680_view(authorized_client, set_f680_fetaure_flag):
-    url = reverse("exporter:f680:apply")
+    url = reverse("f680:apply")
 
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -34,7 +34,7 @@ def test_apply_f680_view(authorized_client, set_f680_fetaure_flag):
 
 
 def test_f680_summary_view(authorized_client, data_f680_case, set_f680_fetaure_flag, mock_f680_application_get):
-    url = reverse("exporter:f680:summary", kwargs={"pk": data_f680_case["id"]})
+    url = reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
     response = authorized_client.get(url)
     breakpoint()
     assert response.status_code == 200
