@@ -2,6 +2,7 @@ import pytest
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
+from pytest_django.asserts import assertTemplateUsed
 
 from core import client
 
@@ -57,7 +58,7 @@ def application_flow(f680_summary_url_with_application, authorized_client, mock_
 
     response = authorized_client.post(
         f680_summary_url_with_application,
-        data={"application": {"name": "F680 Test 3"}},
+        data={"application": {"name": "F680 Test 2"}},
     )
 
     return response
@@ -70,3 +71,4 @@ def test_f680_summary_view(
 ):
     response = authorized_client.get(f680_summary_url_with_application)
     assert response.status_code == 200
+    assertTemplateUsed(response, "f680/summary.html")
