@@ -69,17 +69,17 @@ class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
-class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
-    def init(self, request, **kwargs):
-        self.forms = MOD_questions(None)
-        self.action = post_applications
+# class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
+#     def init(self, request, **kwargs):
+#         self.forms = MOD_questions(None)
+#         self.action = post_applications
 
-    def on_submission(self, request, **kwargs):
-        self.forms = MOD_questions(request.POST.copy().get("application_type"))
+#     def on_submission(self, request, **kwargs):
+#         self.forms = MOD_questions(request.POST.copy().get("application_type"))
 
-    def get_success_url(self):
-        pk = self.get_validated_data()["id"]
-        return reverse_lazy("applications:task_list", kwargs={"pk": pk})
+#     def get_success_url(self):
+#         pk = self.get_validated_data()["id"]
+#         return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
 class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
