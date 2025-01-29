@@ -5,6 +5,13 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
+from exporter.f680.constants import (
+    ApplicationFormSteps,
+)
+from exporter.f680.forms import (
+    ApplicationNameForm,
+    ApplicationSubmissionForm,
+)
 
 
 @pytest.fixture
@@ -24,23 +31,35 @@ def mock_f680_application_get(requests_mock, data_f680_case):  # PS-IGNORE
     return requests_mock.get(url=url, json=data_f680_case)
 
 
+@pytest.fixture
+def post_to_step(post_to_step_factory, f680_summary_url_with_application):
+    return post_to_step_factory(f680_summary_url_with_application)
+
+
 @pytest.fixture(autouse=True)
-def set_f680_fetaure_flag(settings):  # PS-IGNORE
+def set_f680_feature_flag(settings):  # PS-IGNORE
     settings.FEATURE_FLAG_ALLOW_F680 = True  # PS-IGNORE
 
 
-def test_apply_f680_view(authorized_client, f680_summary_url_with_application, mock_f680_application_get):  # PS-IGNORE
+def test_apply_f680_view(
+    authorized_client, f680_summary_url_with_application, mock_f680_application_get, post_to_step
+):  # PS-IGNORE
     url = reverse("f680:apply")  # PS-IGNORE
     response = authorized_client.get(url)
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
     assert "Name of the application" in soup.find("h1").text
 
-    response = authorized_client.post(
-        f680_summary_url_with_application,
-        data={"application": {"name": "F680 Test 2"}},
-    )
+    # response = authorized_client.post(
+    #     f680_summary_url_with_application,
+    #     data={"application": {"name": "F680 Test 2"}},
+    # )
 
+    response = post_to_step(
+        ApplicationFormSteps.APPLICATION_NAME,
+        {"application": {"name": "F680 Test 2"}},
+    )
+    breakpoint()
     assert response.status_code == 302
     assert response.url == f680_summary_url_with_application
 
