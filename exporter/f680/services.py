@@ -2,6 +2,7 @@ from core import client
 
 
 def post_f680_application(request, json):
+    breakpoint()
     data = client.post(request, "/exporter/f680/application/", json)
     return data.json(), data.status_code
 

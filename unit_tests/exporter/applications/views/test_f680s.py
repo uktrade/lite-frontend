@@ -5,6 +5,14 @@ from django.urls import reverse
 
 from core import client
 
+from exporter.f680.constants import (
+    ApplicationFormSteps,
+)
+from exporter.f680.forms import (
+    ApplicationNameForm,
+    ApplicationSubmissionForm,
+)
+
 
 @pytest.fixture
 def authorized_client(authorized_client_factory, mock_exporter_user):
@@ -12,8 +20,8 @@ def authorized_client(authorized_client_factory, mock_exporter_user):
 
 
 @pytest.fixture
-def f680_apply_url_with_application(data_f680_case):
-    return reverse("f680:apply", kwargs={"pk": data_f680_case["id"]})
+def f680_summary_url_with_application(data_f680_case):
+    return reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
 
 
 @pytest.fixture
@@ -21,6 +29,12 @@ def mock_f680_application_get(requests_mock, data_f680_case):  # PS-IGNORE
     application_id = data_f680_case["id"]  # PS-IGNORE
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")  # PS-IGNORE
     return requests_mock.get(url=url, json=data_f680_case)
+
+
+# @pytest.fixture
+# def mock_f680_application_post(requests_mock, data_f680_case):
+#     url = client._build_absolute_uri(f'/exporter/f680/application/{data_f680_case["id"]}/')
+#     return requests_mock.post(url=url, json=data_f680_case)
 
 
 @pytest.fixture(autouse=True)
@@ -36,16 +50,27 @@ def test_apply_f680_view(authorized_client):  # PS-IGNORE
     assert "Name of the application" in soup.find("h1").text
 
 
-# def test_apply_flow(authorized_client, f680_apply_url_with_application):
-#     current_step_key = "set_end_user_view-current_step"
-#     response = authorized_client.get(f680_apply_url_with_application)
+def test_apply_flow(authorized_client, f680_summary_url_with_application, mock_f680_application_get):
+
+    response = authorized_client.get(f680_summary_url_with_application)
+    assert not response.context["form"].errors
+
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
+    assert heading_element.string.strip() == "F680 Application"
+
+    response = authorized_client.post(
+        f680_summary_url_with_application,
+        data={"application": {"name": "F680 Test 3"}},
+    )
+
+    assert response.status_code == 302
 
 
 def test_f680_summary_view(
     authorized_client,
-    data_f680_case,  # PS-IGNORE
+    f680_summary_url_with_application,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
 ):
-    url = reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})  # PS-IGNORE
-    response = authorized_client.get(url)
+    response = authorized_client.get(f680_summary_url_with_application)
     assert response.status_code == 200
