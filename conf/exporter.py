@@ -131,4 +131,3 @@ SURVEY_URL = env.str("SURVEY_URL", "")
 
 CSP_REPORT_URI = env.tuple("EXPORTER_CSP_REPORT_URI", default=("",))
 E2E_WAIT_MULTIPLIER = env.int("E2E_WAIT_MULTIPLIER", default=1)
-FEATURE_FLAG_ALLOW_F680 = env.bool("FEATURE_FLAG_ALLOW_F680", default=False)  # PS-IGNORE
