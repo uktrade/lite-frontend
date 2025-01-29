@@ -18,12 +18,12 @@ def mock_f680_application_get(requests_mock, data_f680_case):
     return requests_mock.get(url=url, json=application)
 
 
+@pytest.fixture(autouse=True)
 def set_f680_fetaure_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = True
-    return settings
 
 
-def test_apply_f680_view(authorized_client, set_f680_fetaure_flag):
+def test_apply_f680_view(authorized_client, settings):
     url = reverse("f680:apply")
 
     response = authorized_client.get(url)
