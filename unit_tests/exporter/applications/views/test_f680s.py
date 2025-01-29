@@ -19,7 +19,7 @@ def mock_f680_application_get(requests_mock, data_f680_case):
 
 
 def test_apply_f680_view(authorized_client):
-    url = reverse("f680:apply")
+    url = reverse("exporter:f680:apply")
 
     response = authorized_client.get(url)
     assert response.status_code == 200
@@ -29,7 +29,7 @@ def test_apply_f680_view(authorized_client):
 
 
 def test_f680_summary_view(authorized_client, data_f680_case, mock_f680_application_get):
-    url = reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
+    url = reverse("exporter:f680:summary", kwargs={"pk": data_f680_case["id"]})
     response = authorized_client.get(url)
     breakpoint()
     assert response.status_code == 200
