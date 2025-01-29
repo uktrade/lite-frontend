@@ -75,35 +75,35 @@ def test_apply_f680_view(
     # assert response.url == f680_summary_url_with_application
 
 
-# def test_f680_summary_view_with_form(
-#     f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock, post_to_step
-# ):
+def test_f680_summary_view_with_form(
+    f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock
+):
 
-#     response = application_flow(
-#         f680_summary_url_with_application, authorized_client, mock_f680_application_get, post_to_step
-#     )
+    response = application_flow(f680_summary_url_with_application, authorized_client, mock_f680_application_get)
 
-#     assert response.status_code == 302
-#     assert response.url == f680_summary_url_with_application
+    assert response.status_code == 302
+    assert response.url == f680_summary_url_with_application
 
 
-# def application_flow(
-#     f680_summary_url_with_application, authorized_client, mock_f680_application_get, post_to_step, mock_application_post
-# ):
+def application_flow(
+    f680_summary_url_with_application,
+    authorized_client,
+    mock_f680_application_get,
+):
 
-#     response = authorized_client.get(f680_summary_url_with_application)
-#     assert not response.context["form"].errors
+    response = authorized_client.get(f680_summary_url_with_application)
+    assert not response.context["form"].errors
 
-#     content = BeautifulSoup(response.content, "html.parser")
-#     heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
-#     assert heading_element.string.strip() == "F680 Application"
+    content = BeautifulSoup(response.content, "html.parser")
+    heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
+    assert heading_element.string.strip() == "F680 Application"
 
-#     response = post_to_step(
-#         ApplicationFormSteps.APPLICATION_NAME,
-#         {"application": {"name": "F680 Test 2"}},
-#     )
+    response = authorized_client.post(
+        f680_summary_url_with_application,
+        data={"application": {"name": "F680 Test 2"}},
+    )
 
-#     return response
+    return response
 
 
 def test_f680_summary_view(
