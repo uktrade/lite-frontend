@@ -20,7 +20,7 @@ from .payloads import (
 )
 from .services import (
     post_f680_application,  # PS-IGNORE
-    get_f680_application,
+    get_f680_application,  # PS-IGNORE
 )
 
 
@@ -32,7 +32,7 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # P
     @expect_status(
         HTTPStatus.CREATED,
         "Error creating F680 application",  # PS-IGNORE
-        "Unexpected error creating F680 application",
+        "Unexpected error creating F680 application",  # PS-IGNORE
     )
     def post_f680_application(self, data):  # PS-IGNORE
         return post_f680_application(self.request, data)  # PS-IGNORE
@@ -50,13 +50,15 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # P
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
+        breakpoint()
         response_data, _ = self.post_f680_application(data)  # PS-IGNORE
+        breakpoint()
         return redirect(self.get_success_url(response_data["id"]))
 
 
-class F680ApplicationSummaryView(LoginRequiredMixin, FormView):
+class F680ApplicationSummaryView(LoginRequiredMixin, FormView):  # PS-IGNORE
     form_class = ApplicationSubmissionForm
-    template_name = "f680/summary.html"
+    template_name = "f680/summary.html"  # PS-IGNORE
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -69,5 +71,7 @@ class F680ApplicationSummaryView(LoginRequiredMixin, FormView):
 
         return context
 
+    # This method currently just redirects back to the app summary but this will eventually
+    # submit the clearnace application.
     def get_success_url(self):
-        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
+        return reverse("f680:summary", kwargs={"pk": self.application["id"]})  # PS-IGNORE

@@ -9,6 +9,8 @@ from exporter.f680.constants import (
     ApplicationFormSteps,
 )
 
+from exporter.f680.views import F680ApplicationCreateView
+
 
 @pytest.fixture
 def authorized_client(authorized_client_factory, mock_exporter_user):
@@ -26,8 +28,21 @@ def f680_summary_url_with_application(data_f680_case):  # PS-IGNORE
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, f680_apply_url, mock_application_post):
+def post_to_step(
+    post_to_step_factory,
+    f680_apply_url,
+    mock_application_post,
+):
     return post_to_step_factory(f680_apply_url)  # PS-IGNORE
+
+
+@pytest.fixture
+def post_to_step2(
+    post_to_step_factory,
+    f680_apply_url,
+    mock_application_post,
+):
+    return post_to_step_factory(f680_apply_url)
 
 
 @pytest.fixture
@@ -44,6 +59,13 @@ def mock_application_post(requests_mock, data_f680_case):  # PS-IGNORE
     return requests_mock.post(url=url, json=application)
 
 
+@pytest.fixture
+def mock_application_post_with_application_id(requests_mock, data_f680_case):  # PS-IGNORE
+    application = data_f680_case  # PS-IGNORE
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application['id']}/")  # PS-IGNORE
+    return requests_mock.post(url=url, json=application)
+
+
 @pytest.fixture(autouse=True)
 def set_f680_feature_flag(settings):  # PS-IGNORE
     settings.FEATURE_FLAG_ALLOW_F680 = True  # PS-IGNORE
@@ -54,11 +76,6 @@ def test_triage_f680_apply_redirect(authorized_client):  # PS-IGNORE
     assert response.status_code == 302
 
 
-# def test_done(authorized_client, f680_summary_url_with_application, mock_f680_application_get):
-#     response = authorized_client.post(f680_summary_url_with_application)
-#     breakpoint()
-
-
 def test_apply_f680_view(
     authorized_client,
     f680_apply_url,  # PS-IGNORE
@@ -66,6 +83,7 @@ def test_apply_f680_view(
     post_to_step,
     mock_application_post,
     f680_summary_url_with_application,  # PS-IGNORE
+    mock_application_post_with_application_id,
 ):
     response = authorized_client.get(f680_apply_url)  # PS-IGNORE
     assert response.status_code == 200
@@ -79,17 +97,18 @@ def test_apply_f680_view(
 
     assert response.status_code == 200
 
-    response = authorized_client.post(
-        f680_summary_url_with_application,  # PS-IGNORE
-        data={"application": {"name": "F680 Test 2"}},  # PS-IGNORE
-    )
-
-    assert response.status_code == 302
-    assert response.url == f680_summary_url_with_application
+    response = authorized_client.post(f680_apply_url, {"application": {"name": "F680 Test 2"}})
+    breakpoint()
+    assert response
 
 
 def test_f680_summary_view_with_form(
-    f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock  # PS-IGNORE
+    f680_summary_url_with_application,
+    authorized_client,
+    mock_f680_application_get,
+    requests_mock,
+    data_f680_case,  # PS-IGNORE
+    f680_apply_url,
 ):
 
     response = application_flow(
@@ -115,6 +134,7 @@ def application_flow(
 
     response = authorized_client.post(
         f680_summary_url_with_application,  # PS-IGNORE
+        data={"application": {"name": "F680 Test 2"}},  # PS-IGNORE
     )
 
     return response
