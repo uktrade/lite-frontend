@@ -17,7 +17,6 @@ from django.utils.cache import add_never_cache_headers
 from django.http import HttpResponseForbidden
 
 from core.file_handler import UploadFailed
-from lite_content.lite_internal_frontend.strings import cases
 from lite_forms.generators import error_page
 from json import JSONDecodeError
 
@@ -37,7 +36,10 @@ class UploadFailedMiddleware:
         if not isinstance(exception, UploadFailed):
             return None
 
-        return error_page(request, cases.Manage.Documents.AttachDocuments.FILE_TOO_LARGE)
+        return error_page(
+            request,
+            exception.message,
+        )
 
 
 class SessionTimeoutMiddleware:
