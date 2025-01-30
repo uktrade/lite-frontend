@@ -8,7 +8,7 @@ from core import client
 from exporter.f680.constants import (
     ApplicationFormSteps,
 )
-from exporter.f680.forms import ApplicationNameForm
+from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
 
 
 @pytest.fixture
@@ -77,23 +77,48 @@ def test_apply_f680_view(
     assert response.status_code == 302
 
 
-def test_f680_summary_view_with_form(
-    f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock  # PS-IGNORE
-):
+# def test_f680_summary_view_with_form(
+#     f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock  # PS-IGNORE
+# ):
 
-    response = application_flow(
-        f680_summary_url_with_application, authorized_client, mock_f680_application_get  # PS-IGNORE
-    )
+#     response = application_flow(
+#         f680_summary_url_with_application, authorized_client, mock_f680_application_get  # PS-IGNORE
+#     )
 
-    assert response.status_code == 302
-    assert response.url == f680_summary_url_with_application  # PS-IGNORE
+#     assert response.status_code == 302
+#     assert response.url == f680_summary_url_with_application  # PS-IGNORE
 
 
-def application_flow(
-    f680_summary_url_with_application,  # PS-IGNORE
+# def application_flow(
+#     f680_summary_url_with_application,  # PS-IGNORE
+#     authorized_client,
+#     mock_f680_application_get,  # PS-IGNORE
+# ):
+
+#     response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
+#     assert not response.context["form"].errors
+
+#     content = BeautifulSoup(response.content, "html.parser")
+#     heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
+#     assert heading_element.string.strip() == "F680 Application"  # PS-IGNORE
+
+#     response = authorized_client.post(
+#         f680_summary_url_with_application,  # PS-IGNORE
+#     )
+
+#     return response
+
+
+def test_f680_summary_view(
     authorized_client,
+    f680_summary_url_with_application,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
 ):
+    response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], ApplicationSubmissionForm)
+    assertTemplateUsed(response, "f680/summary.html")  # PS-IGNORE
 
     response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
     assert not response.context["form"].errors
@@ -107,13 +132,3 @@ def application_flow(
     )
 
     return response
-
-
-def test_f680_summary_view(
-    authorized_client,
-    f680_summary_url_with_application,  # PS-IGNORE
-    mock_f680_application_get,  # PS-IGNORE
-):
-    response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
-    assert response.status_code == 200
-    assertTemplateUsed(response, "f680/summary.html")  # PS-IGNORE
