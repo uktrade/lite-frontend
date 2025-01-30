@@ -3,6 +3,17 @@ import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
+from core import client
+
+
+@pytest.fixture
+def mock_application_history_with_draft(requests_mock, application_history):
+    application_history["amendment_history"][0]["status"] = {"status": "draft", "status_display": "draft"}
+    application_history["amendment_history"][0]["submitted_at"] = None
+    application_history["amendment_history"][0]["reference_code"] = None
+    url = client._build_absolute_uri(f'/exporter/applications/{application_history["id"]}/history')
+    return requests_mock.get(url=url, json=application_history)
+
 
 @pytest.mark.parametrize(
     "can_invoke_major_editable",
@@ -122,6 +133,40 @@ def test_application_history_details(
     assert hist_application_1[0].text.strip() == "GBSIEL/2020/0002687/T"
     assert hist_application_1[1].text.strip() == "4:57pm 01 October 2020"
     assert hist_application_1[2].text.strip() == "Submitted"
+    assert hist_application_1[3].text.strip() == ""
+
+    assert hist_application_2[0].a["href"] == "/applications/caba228c-b4c8-41ea-804a-c1bc6ba816c7/"
+    assert hist_application_2[0].a.text.strip() == "GBSIEL/2025/0000333/T"
+
+    assert hist_application_2[1].text.strip() == "4:36pm 27 January 2025"
+    assert hist_application_2[2].text.strip() == "Superseded by exporter edit"
+    assert hist_application_2[3].a["href"] == "/applications/caba228c-b4c8-41ea-804a-c1bc6ba816c7/ecju-queries/"
+    assert hist_application_2[3].a.text.strip() == "3"
+
+
+def test_application_history_detail_with_draft(
+    authorized_client,
+    data_standard_case,
+    mock_application_get,
+    mock_application_history_with_draft,
+    mock_exporter_user,
+    beautiful_soup,
+):
+    pk = data_standard_case["case"]["id"]
+    application_url = reverse("applications:application", kwargs={"pk": pk})
+    response = authorized_client.get(application_url)
+    soup = beautiful_soup(response.content)
+
+    application_history_table = soup.find("table", attrs={"id": "table-application-history"})
+    body = application_history_table.find("tbody")
+
+    hist_application_1 = body.find_all("tr")[0].find_all("td")
+    hist_application_2 = body.find_all("tr")[1].find_all("td")
+
+    assert hist_application_1[0].a.text == "Draft"
+    assert hist_application_1[0].a["href"] == "/applications/8fb76bed-fd45-4293-95b8-eda9468aa254/task-list/"
+    assert hist_application_1[1].text == ""
+    assert hist_application_1[2].text.strip() == "draft"
     assert hist_application_1[3].text.strip() == ""
 
     assert hist_application_2[0].a["href"] == "/applications/caba228c-b4c8-41ea-804a-c1bc6ba816c7/"

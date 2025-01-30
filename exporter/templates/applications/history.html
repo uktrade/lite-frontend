@@ -11,20 +11,29 @@
 	<tbody class="govuk-table__body">
 		{% for prev_application in application_history.amendment_history %}
 			<tr class="govuk-table__row">
+				{% if prev_application.status.status == "draft" %}
+					<td class="govuk-table__cell">
+						<a  href="{% url 'applications:task_list' prev_application.id %}" >{{ prev_application.status.status_display|capfirst }}</a>
+					</td>
+					<td class="govuk-table__cell"/>
+					<td class="govuk-table__cell" id="label-application-status-{{ forloop.counter }}"> <div class="govuk-tag govuk-tag--grey govuk-!-margin-0">{{ prev_application.status.status_display }}</div></td>
+					<td class="govuk-table__cell"/>
+				{% else %}
 					<td class="govuk-table__cell">
 					{% if  prev_application.id == application.id %}
 						{{ prev_application.reference_code }}
-					{% else  %}
+					{% else %}
 						<a href="{% url 'applications:application' prev_application.id %}">{{ prev_application.reference_code }}</a>
 					{% endif %}
 					</td>
 					<td class="govuk-table__cell">{{ prev_application.submitted_at|str_date }}</td>
-					<td class="govuk-table__cell"> <div class="govuk-tag govuk-tag--grey govuk-!-margin-0">{{ prev_application.status.status_display }}</div></td>
+					<td class="govuk-table__cell" id="label-application-status-{{ forloop.counter }}"> <div class="govuk-tag govuk-tag--grey govuk-!-margin-0">{{ prev_application.status.status_display }}</div></td>
 					<td class="govuk-table__cell">
-					{% if  prev_application.ecju_query_count > 0 %}
-						<a href="{% url 'applications:application' prev_application.id 'ecju-queries' %}">{{ prev_application.ecju_query_count }}</a>
-					{% endif %}
+						{% if  prev_application.ecju_query_count > 0 %}
+							<a href="{% url 'applications:application' prev_application.id 'ecju-queries' %}">{{ prev_application.ecju_query_count }}</a>
+						{% endif %}
 					</td>
+				{% endif %}
 			</tr>
 		{% endfor %}
 	</tbody>
