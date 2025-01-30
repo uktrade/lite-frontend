@@ -50,9 +50,10 @@ def set_f680_feature_flag(settings):  # PS-IGNORE
     settings.FEATURE_FLAG_ALLOW_F680 = True  # PS-IGNORE
 
 
-def test_triage_f680_apply_redirect(authorized_client):  # PS-IGNORE
+def test_triage_f680_apply_redirect(authorized_client, f680_apply_url):  # PS-IGNORE
     response = authorized_client.post(reverse("apply_for_a_licence:f680_questions"))  # PS-IGNORE
     assert response.status_code == 302
+    assert response.url == f680_apply_url
 
 
 def test_apply_f680_view(
@@ -61,7 +62,7 @@ def test_apply_f680_view(
     mock_f680_application_get,  # PS-IGNORE
     post_to_step,
     mock_application_post,
-    f680_summary_url_with_application,  # PS-IGNORE
+    f680_summary_url_with_application,
 ):
     response = authorized_client.get(f680_apply_url)  # PS-IGNORE
     assert response.status_code == 200
@@ -75,38 +76,7 @@ def test_apply_f680_view(
     )
 
     assert response.status_code == 302
-
-
-# def test_f680_summary_view_with_form(
-#     f680_summary_url_with_application, authorized_client, mock_f680_application_get, requests_mock  # PS-IGNORE
-# ):
-
-#     response = application_flow(
-#         f680_summary_url_with_application, authorized_client, mock_f680_application_get  # PS-IGNORE
-#     )
-
-#     assert response.status_code == 302
-#     assert response.url == f680_summary_url_with_application  # PS-IGNORE
-
-
-# def application_flow(
-#     f680_summary_url_with_application,  # PS-IGNORE
-#     authorized_client,
-#     mock_f680_application_get,  # PS-IGNORE
-# ):
-
-#     response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
-#     assert not response.context["form"].errors
-
-#     content = BeautifulSoup(response.content, "html.parser")
-#     heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
-#     assert heading_element.string.strip() == "F680 Application"  # PS-IGNORE
-
-#     response = authorized_client.post(
-#         f680_summary_url_with_application,  # PS-IGNORE
-#     )
-
-#     return response
+    assert response.url == f680_summary_url_with_application
 
 
 def test_f680_summary_view(
@@ -115,6 +85,7 @@ def test_f680_summary_view(
     mock_f680_application_get,  # PS-IGNORE
 ):
     response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
+
     assert response.status_code == 200
     assert not response.context["form"].errors
     assert isinstance(response.context["form"], ApplicationSubmissionForm)
@@ -131,4 +102,5 @@ def test_f680_summary_view(
         f680_summary_url_with_application,  # PS-IGNORE
     )
 
-    return response
+    assert response.status_code == 302
+    assert response.url == f680_summary_url_with_application  # PS-IGNORE
