@@ -40,7 +40,7 @@
 
 	{# case info #}
 	<td class="govuk-table__cell">
-		<a class="govuk-link govuk-link--no-visited-state" id="case-{{ case.id }}" href="{% url 'cases:case' queue.id case.id %}">
+		<a class="govuk-link govuk-link--no-visited-state" id="case-{{ case.id }}" href="{% if case.case_type.sub_type.key == "f680_clearance" %}{% url 'cases:f680:details' queue.id case.id %}{% else %}{% url 'cases:case' queue.id case.id %}{% endif %}">
 			<span class="govuk-visually-hidden">View</span> {{ case.reference_code }}
 		</a>
 		<address>
