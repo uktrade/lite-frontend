@@ -43,6 +43,7 @@ class SelectAdviceView(LoginRequiredMixin, CaseContextMixin, FormView):
 
 
 class BaseApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
+    template_name = "advice/form_wizard.html"
 
     condition_dict = {
         AdviceSteps.RECOMMEND_APPROVAL: ~C(is_fcdo_team),
