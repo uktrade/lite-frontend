@@ -8,6 +8,7 @@ from core import client
 from exporter.f680.constants import (
     ApplicationFormSteps,
 )
+from exporter.f680.forms import ApplicationNameForm
 
 
 @pytest.fixture
@@ -41,7 +42,7 @@ def mock_f680_application_get(requests_mock, data_f680_case):  # PS-IGNORE
 def mock_application_post(requests_mock, data_f680_case):  # PS-IGNORE
     application = data_f680_case  # PS-IGNORE
     url = client._build_absolute_uri(f"/exporter/f680/application/")  # PS-IGNORE
-    return requests_mock.post(url=url, json=application)
+    return requests_mock.post(url=url, json=application, status_code=201)
 
 
 @pytest.fixture(autouse=True)
@@ -66,21 +67,14 @@ def test_apply_f680_view(
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
     assert "Name of the application" in soup.find("h1").text
+    assert isinstance(response.context["form"], ApplicationNameForm)
 
     response = post_to_step(
         ApplicationFormSteps.APPLICATION_NAME,
-        {"name": "F680 Test 2"},  # PS-IGNORE
+        {"name": "F680 Test"},  # PS-IGNORE
     )
 
-    assert response.status_code == 200
-
-    # response = authorized_client.post(
-    #     f680_summary_url_with_application,  # PS-IGNORE
-    #     data={"application": {"name": "F680 Test 2"}},  # PS-IGNORE
-    # )
-
-    # assert response.status_code == 302
-    # assert response.url == f680_summary_url_with_application
+    assert response.status_code == 302
 
 
 def test_f680_summary_view_with_form(
