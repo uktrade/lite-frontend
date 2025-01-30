@@ -56,7 +56,7 @@ def test_triage_f680_apply_redirect(authorized_client, f680_apply_url):  # PS-IG
     assert response.url == f680_apply_url
 
 
-def test_apply_f680_view(
+def test_create_f680_view(
     authorized_client,
     f680_apply_url,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
