@@ -54,26 +54,38 @@ def test_triage_f680_apply_redirect(authorized_client):  # PS-IGNORE
     assert response.status_code == 302
 
 
+# def test_done(authorized_client, f680_summary_url_with_application, mock_f680_application_get):
+#     response = authorized_client.post(f680_summary_url_with_application)
+#     breakpoint()
+
+
 def test_apply_f680_view(
-    authorized_client, f680_apply_url, mock_f680_application_get, post_to_step, mock_application_post  # PS-IGNORE
+    authorized_client,
+    f680_apply_url,  # PS-IGNORE
+    mock_f680_application_get,  # PS-IGNORE
+    post_to_step,
+    mock_application_post,
+    f680_summary_url_with_application,  # PS-IGNORE
 ):
-    response = authorized_client.get(f680_apply_url)
+    response = authorized_client.get(f680_apply_url)  # PS-IGNORE
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
     assert "Name of the application" in soup.find("h1").text
 
-    # response = authorized_client.post(
-    #     f680_summary_url_with_application,
-    #     data={"application": {"name": "F680 Test 2"}},
-    # )
-
     response = post_to_step(
         ApplicationFormSteps.APPLICATION_NAME,
-        {"name": "F680 Test 2"},
+        {"name": "F680 Test 2"},  # PS-IGNORE
     )
 
     assert response.status_code == 200
-    # assert response.url == f680_summary_url_with_application
+
+    response = authorized_client.post(
+        f680_summary_url_with_application,  # PS-IGNORE
+        data={"application": {"name": "F680 Test 2"}},  # PS-IGNORE
+    )
+
+    assert response.status_code == 302
+    assert response.url == f680_summary_url_with_application
 
 
 def test_f680_summary_view_with_form(
@@ -102,8 +114,7 @@ def application_flow(
     assert heading_element.string.strip() == "F680 Application"  # PS-IGNORE
 
     response = authorized_client.post(
-        f680_summary_url_with_application,
-        data={"application": {"name": "F680 Test 2"}},  # PS-IGNORE
+        f680_summary_url_with_application,  # PS-IGNORE
     )
 
     return response
