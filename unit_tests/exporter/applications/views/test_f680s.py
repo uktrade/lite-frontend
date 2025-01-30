@@ -11,8 +11,6 @@ from exporter.f680.constants import (
 
 from exporter.f680.forms import ApplicationNameForm
 
-from exporter.f680.views import F680ApplicationCreateView
-
 
 @pytest.fixture
 def authorized_client(authorized_client_factory, mock_exporter_user):
@@ -84,15 +82,12 @@ def test_apply_f680_view(
     assert "Name of the application" in soup.find("h1").text
     assert isinstance(response.context["form"], ApplicationNameForm)
 
-    breakpoint()
-
     response = post_to_step(
         ApplicationFormSteps.APPLICATION_NAME,
         {"application": {"name": "F680 Test 2"}},  # PS-IGNORE
     )
 
     assert response.status_code == 200
-    breakpoint()
     response = authorized_client.post(f680_apply_url, {"application": {"name": "F680 Test 2"}})
 
     assert response
