@@ -98,7 +98,7 @@ def test_apply_f680_view(
     assert response.status_code == 200
 
     response = authorized_client.post(f680_apply_url, {"application": {"name": "F680 Test 2"}})
-    breakpoint()
+
     assert response
 
 
