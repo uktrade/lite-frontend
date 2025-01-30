@@ -10,7 +10,6 @@ from exporter.apply_for_a_licence.forms.open_general_licences import (
 from exporter.apply_for_a_licence.forms.triage_questions import (
     opening_question,
     export_licence_questions,
-    MOD_questions,
     transhipment_questions,
 )
 from exporter.apply_for_a_licence.validators import validate_opening_question, validate_open_general_licences
