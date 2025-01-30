@@ -613,6 +613,15 @@ def mock_gov_fcdo_user(requests_mock, mock_notifications, mock_case_statuses, mo
 
 
 @pytest.fixture
+def mock_gov_mod_capprot_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user, MOD_team1_user):
+    mock_gov_user["user"]["team"] = MOD_team1_user["team"]
+
+    url = client._build_absolute_uri("/gov-users/")
+    requests_mock.get(url=f"{url}me/", json=mock_gov_user)
+    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=mock_gov_user)
+
+
+@pytest.fixture
 def mock_gov_desnz_nuclear_user(requests_mock, mock_notifications, mock_case_statuses, mock_gov_user):
     mock_gov_user["user"]["team"] = {
         "id": "521154de-f39e-45bf-9922-baaaaaa",

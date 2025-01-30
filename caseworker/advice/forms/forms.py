@@ -31,7 +31,7 @@ def get_approval_advice_form_factory(advice, approval_reason, proviso, footnote_
 class PicklistAdviceForm(forms.Form):
     def _picklist_to_choices(self, picklist_data, include_other=True):
         reasons_choices = []
-        reasons_text = {"other": ""}
+        reasons_text = {}
 
         for result in picklist_data["results"]:
             key = "_".join(result.get("name").lower().split())
@@ -40,7 +40,9 @@ class PicklistAdviceForm(forms.Form):
                 choice = Choice(key, result.get("name"), divider="or")
             reasons_choices.append(choice)
             reasons_text[key] = result.get("text")
-        if include_other:
+        picklist_choices = len(reasons_choices) > 0
+        if include_other and picklist_choices:
+            reasons_text["other"] = ""
             reasons_choices.append(Choice("other", "Other"))
         return reasons_choices, reasons_text
 
@@ -59,7 +61,7 @@ class GiveApprovalAdviceForm(PicklistAdviceForm):
     )
     instructions_to_exporter = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "3"}),
-        label="Add any instructions for the exporter (optional)",
+        label="Add instructions to the exporter, or a reporting footnote (optional)",
         help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
         required=False,
     )

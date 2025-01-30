@@ -1,12 +1,13 @@
+from core.helpers import remove_non_printable_characters
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Layout, Submit, HTML
+from crispy_forms_gds.layout import Fieldset, Layout, Size, Submit, HTML
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxLengthValidator, URLValidator
 from django.urls import reverse_lazy
 
-from core.common.forms import BaseForm
+from core.common.forms import BaseForm, FieldsetForm
 from core.forms.layouts import ConditionalRadios, ConditionalRadiosQuestion
 from core.forms.widgets import Autocomplete
 from exporter.core.constants import CaseTypes, FileUploadFileTypes
@@ -132,10 +133,9 @@ def new_party_form_group(request, application, strings, back_url, clearance_opti
     return FormGroup(forms)
 
 
-class PartyReuseForm(BaseForm):
+class PartyReuseForm(FieldsetForm):
     class Layout:
         TITLE = "Do you want to reuse an existing party?"
-        TITLE_AS_LABEL_FOR = "reuse_party"
 
     reuse_party = forms.ChoiceField(
         choices=(
@@ -153,7 +153,7 @@ class PartyReuseForm(BaseForm):
         return ("reuse_party",)
 
 
-class PartySubTypeSelectForm(BaseForm):
+class PartySubTypeSelectForm(FieldsetForm):
     """
     This form needs to be instantiated with a Layout.TITLE for the type of party whose data is being set
     as per the BaseForm.
@@ -199,13 +199,11 @@ class PartySubTypeSelectForm(BaseForm):
 class EndUserSubTypeSelectForm(PartySubTypeSelectForm):
     class Layout:
         TITLE = "Select the type of end user"
-        TITLE_AS_LABEL_FOR = "sub_type"
 
 
 class ConsigneeSubTypeSelectForm(PartySubTypeSelectForm):
     class Layout:
         TITLE = "Select the type of consignee"
-        TITLE_AS_LABEL_FOR = "sub_type"
 
 
 class PartyNameForm(BaseForm):
@@ -224,6 +222,10 @@ class PartyNameForm(BaseForm):
             ),
         ],
     )
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        return remove_non_printable_characters(name)
 
     def get_layout_fields(self):
         return ("name",)
@@ -315,6 +317,10 @@ class PartyAddressForm(BaseForm):
         country_choices = [(country["id"], country["name"]) for country in countries]
         self.fields["country"].choices += country_choices
 
+    def clean_address(self):
+        address = self.cleaned_data["address"]
+        return remove_non_printable_characters(address)
+
     def get_layout_fields(self):
         return (
             "address",
@@ -386,15 +392,19 @@ class PartyDocumentsForm(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            HTML.h1(self.title),
-            HTML.p(self.text_p1),
-            HTML.p(self.text_p2),
-            HTML.p(self.text_p3),
-            HTML.p(self.text_p4),
-            ConditionalRadios(
-                "end_user_document_available",
-                "Yes",
-                ConditionalRadiosQuestion("No", "end_user_document_missing_reason"),
+            Fieldset(
+                HTML.p(self.text_p1),
+                HTML.p(self.text_p2),
+                HTML.p(self.text_p3),
+                HTML.p(self.text_p4),
+                ConditionalRadios(
+                    "end_user_document_available",
+                    "Yes",
+                    ConditionalRadiosQuestion("No", "end_user_document_missing_reason"),
+                ),
+                legend=self.title,
+                legend_size=Size.EXTRA_LARGE,
+                legend_tag="h1",
             ),
             Submit("submit", "Continue"),
         )

@@ -22,7 +22,7 @@
 		<tbody class="govuk-table__body">
 			{% for user in data.results %}
 				<tr class="govuk-table__row">
-					<td class="govuk-table__header" scope="row">
+					<td class="govuk-table__cell">
 						{% if not user.pending %}
 							{{ user.first_name }} {{ user.last_name }}
 						{% else %}

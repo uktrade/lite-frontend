@@ -85,6 +85,26 @@ def test_consignee_name_form(data, valid, errors):
 
 
 @pytest.mark.parametrize(
+    "data, expected",
+    (
+        ({"name": "\x02 test1"}, " test1"),
+        ({"name": "\x02test2"}, "test2"),
+        ({"name": "this is \n test3"}, "this is \n test3"),
+        ({"name": "this is \t test4"}, "this is \t test4"),
+        ({"name": "this is \r test5"}, "this is \r test5"),
+        ({"name": "namé 6"}, "namé 6"),
+        ({"name": "namé's"}, "namé's"),
+        ({"name": "test 8"}, "test 8"),
+    ),
+)
+def test_consignee_name_removes_non_printable(data, expected):
+    form = parties.ConsigneeNameForm(data=data)
+
+    form.is_valid()
+    assert form.cleaned_data["name"] == expected
+
+
+@pytest.mark.parametrize(
     "data, valid, errors",
     (
         ({"name": "test"}, True, None),
@@ -184,6 +204,31 @@ def test_end_user_address_form(mock_get_countries, data, valid, errors):
 
     if not valid:
         assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, expected",
+    (
+        ({"address": "1 somewhere", "country": "aus"}, "1 somewhere"),
+        ({"address": "1 \x02 somewhere", "country": "aus"}, "1 somewhere"),
+        ({"address": "1 \x02 \n somewhere's", "country": "aus"}, "1 \n somewhere's"),
+        ({"address": "1 \x01somewhere", "country": "aus"}, "somewhere"),
+        ({"address": "1 \x03 \n somewhere", "country": "aus"}, "1  somewhere"),
+        ({"address": "1 \x03 \n ô somewhere", "country": "aus"}, "1  ô somewhere"),
+        ({"address": "1 \x02 \r somewhere's", "country": "aus"}, "1 \r somewhere's"),
+        ({"address": "1 \x02 \t somewhere's", "country": "aus"}, "1 \t somewhere's"),
+    ),
+)
+@patch("exporter.applications.forms.parties.get_countries")
+def test_end_user_address_removes_non_printable(mock_get_countries, data, expected):
+    class Request:
+        csp_nonce = "test"
+
+    request = Request()
+    mock_get_countries.return_value = [{"id": "aus", "name": "Austria"}, {"id": "fr", "name": "France"}]
+    form = parties.EndUserAddressForm(request=request, data=data)
+
+    form.is_valid()
 
 
 @pytest.mark.parametrize(

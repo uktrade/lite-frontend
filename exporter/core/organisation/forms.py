@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 
 from crispy_forms_gds.layout import HTML
 
-from core.common.forms import BaseForm, TextChoice
+from core.common.forms import BaseForm, FieldsetForm, TextChoice
 from exporter.core.services import get_countries
 from .validators import validate_phone
 from exporter.core.organisation.services import validate_registration_number
@@ -27,7 +27,7 @@ class RegistrationConfirmation(BaseForm):
         return ()
 
 
-class RegistrationTypeForm(BaseForm):
+class RegistrationTypeForm(FieldsetForm):
     class Layout:
         TITLE = "Select the type of organisation"
 
@@ -58,7 +58,7 @@ class RegistrationTypeForm(BaseForm):
         return ("type",)
 
 
-class RegistrationUKBasedForm(BaseForm):
+class RegistrationUKBasedForm(FieldsetForm):
     class Layout:
         TITLE = "Where is your organisation based?"
 
@@ -261,33 +261,31 @@ class RegisterAddressDetailsUKCommercialForm(RegisterAddressDetailsBaseForm):
     )
 
     address_line_1 = AddressLineField(
-        label="Building and street",
+        label="Address line 1",
         error_messages={
-            "required": "Enter a real building and street name",
+            "required": "Enter address line 1, typically the building and street",
         },
     )
     address_line_2 = AddressLineField(
-        label="",
+        label="Address line 2 (optional)",
         required=False,
     )
 
     city = AddressLineField(
         label="Town or city",
         error_messages={
-            "required": "Enter a real city",
+            "required": "Enter town or city",
         },
     )
     region = AddressLineField(
-        label="County or state",
-        error_messages={
-            "required": "Enter a county or state",
-        },
+        label="County (optional)",
+        required=False,
     )
 
     postcode = forms.CharField(
         label="Postcode",
         error_messages={
-            "required": "Enter a real postcode",
+            "required": "Enter postcode",
         },
     )
 

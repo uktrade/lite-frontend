@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from caseworker.advice import services
 from caseworker.advice.constants import AdviceSteps
+from core import client
 
 
 @pytest.fixture(autouse=True)
@@ -20,17 +21,113 @@ def url(data_queue, data_standard_case):
     )
 
 
+@pytest.fixture
+def url_approve(data_queue, data_standard_case):
+    return reverse("cases:approve_all", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
+
+
+@pytest.fixture
+def post_to_step(post_to_step_factory, url_approve):
+    return post_to_step_factory(url_approve)
+
+
 def test_give_approval_advice_get(authorized_client, url):
     response = authorized_client.get(url)
     assert response.status_code == 200
 
 
-def test_select_advice_post(authorized_client, requests_mock, data_standard_case, url):
-    requests_mock.post(f"/cases/{data_standard_case['case']['id']}/user-advice/", json={})
-
-    data = {"approval_reasons": "meets the requirements", "instructions_to_exporter": "no specific instructions"}
-    response = authorized_client.post(url, data=data)
+def test_approval_advice_post_valid(
+    authorized_client,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso,
+    mock_footnote_details,
+    mock_post_advice,
+    post_to_step,
+    beautiful_soup,
+):
+    response = post_to_step(
+        AdviceSteps.RECOMMEND_APPROVAL,
+        {"approval_reasons": "Data"},
+    )
     assert response.status_code == 302
+
+
+def test_approval_advice_post_valid_add_conditional(
+    authorized_client,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso,
+    mock_footnote_details,
+    mock_post_advice,
+    post_to_step,
+    beautiful_soup,
+):
+    response = post_to_step(
+        AdviceSteps.RECOMMEND_APPROVAL,
+        {"approval_reasons": "reason", "add_licence_conditions": True},
+    )
+    assert response.status_code == 200
+    soup = beautiful_soup(response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add licence conditions (optional)"
+
+    add_LC_response = post_to_step(
+        AdviceSteps.LICENCE_CONDITIONS,
+        {"proviso": "proviso"},
+    )
+    assert add_LC_response.status_code == 200
+    soup = beautiful_soup(add_LC_response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
+
+    add_instructions_response = post_to_step(
+        AdviceSteps.LICENCE_FOOTNOTES,
+        {"instructions_to_exporter": "instructions", "footnote_details": "footnotes"},
+    )
+    assert add_instructions_response.status_code == 302
+
+
+def test_approval_advice_post_valid_add_conditional_optional(
+    authorized_client,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso,
+    mock_footnote_details,
+    mock_post_advice,
+    post_to_step,
+    beautiful_soup,
+):
+    response = post_to_step(
+        AdviceSteps.RECOMMEND_APPROVAL,
+        {"approval_reasons": "reason", "add_licence_conditions": True},
+    )
+    assert response.status_code == 200
+    soup = beautiful_soup(response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add licence conditions (optional)"
+
+    add_LC_response = post_to_step(
+        AdviceSteps.LICENCE_CONDITIONS,
+        {},
+    )
+    assert add_LC_response.status_code == 200
+    soup = beautiful_soup(add_LC_response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
+
+    add_instructions_response = post_to_step(
+        AdviceSteps.LICENCE_FOOTNOTES,
+        {},
+    )
+    assert add_instructions_response.status_code == 302
 
 
 @mock.patch("caseworker.advice.views.mixins.get_gov_user")
@@ -117,16 +214,6 @@ def test_fcdo_give_approval_advice_post(
     assert response.status_code == expected_status_code
 
 
-@pytest.fixture
-def url_desnz(data_queue, data_standard_case):
-    return reverse("cases:approve_all", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]})
-
-
-@pytest.fixture
-def post_to_step(post_to_step_factory, url_desnz):
-    return post_to_step_factory(url_desnz)
-
-
 @mock.patch("caseworker.advice.views.mixins.get_gov_user")
 def test_DESNZ_give_approval_advice_post_valid(
     mock_get_gov_user,
@@ -210,6 +297,135 @@ def test_DESNZ_give_approval_advice_post_valid_add_conditional(
         {"instructions_to_exporter": "instructions", "footnote_details": "footnotes"},
     )
     assert add_instructions_response.status_code == 302
+
+
+@pytest.fixture
+def mock_proviso_multiple(requests_mock):
+    url = client._build_absolute_uri("/picklist/?type=proviso&page=1&disable_pagination=True&show_deactivated=False")
+    data = {
+        "results": [
+            {"name": "condition 1", "text": "condition 1 text"},
+            {"name": "condition 2", "text": "condition 2 text"},
+            {"name": "condition 3", "text": "condition 3 text"},
+        ]
+    }
+    return requests_mock.get(url=url, json=data)
+
+
+@mock.patch("caseworker.advice.views.mixins.get_gov_user")
+def test_DESNZ_give_approval_advice_post_valid_multiple_conditions(
+    mock_get_gov_user,
+    authorized_client,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_proviso_multiple,
+    mock_footnote_details,
+    mock_post_advice,
+    post_to_step,
+    beautiful_soup,
+):
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "DESNZ Chemical",
+                    "alias": services.DESNZ_CHEMICAL,
+                }
+            }
+        },
+        None,
+    )
+    response = post_to_step(
+        AdviceSteps.RECOMMEND_APPROVAL,
+        {"approval_reasons": "reason", "add_licence_conditions": True},
+    )
+    assert response.status_code == 200
+    soup = beautiful_soup(response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add licence conditions (optional)"
+    add_LC_response = post_to_step(
+        AdviceSteps.LICENCE_CONDITIONS,
+        {
+            "proviso_checkboxes": ["condition_1", "condition_3"],
+            "condition_1": "condition 1 abc",
+            "condition_3": "condition 3 xyz",
+        },
+    )
+    assert add_LC_response.status_code == 200
+    soup = beautiful_soup(add_LC_response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
+    add_instructions_response = post_to_step(
+        AdviceSteps.LICENCE_FOOTNOTES,
+        {},
+    )
+    assert add_instructions_response.status_code == 302
+    assert len(mock_post_advice.request_history) == 1
+    assert mock_post_advice.request_history[0].json()[0]["proviso"] == "condition 1 abc\n\n--------\ncondition 3 xyz"
+
+
+@pytest.fixture
+def mock_no_provisos(requests_mock):
+    url = client._build_absolute_uri("/picklist/?type=proviso&page=1&disable_pagination=True&show_deactivated=False")
+    data = {"results": []}
+    return requests_mock.get(url=url, json=data)
+
+
+@mock.patch("caseworker.advice.views.mixins.get_gov_user")
+def test_DESNZ_give_approval_advice_post_valid_no_provisos(
+    mock_get_gov_user,
+    authorized_client,
+    data_standard_case,
+    url,
+    mock_approval_reason,
+    mock_no_provisos,
+    mock_footnote_details,
+    mock_post_advice,
+    post_to_step,
+    beautiful_soup,
+):
+    mock_get_gov_user.return_value = (
+        {
+            "user": {
+                "team": {
+                    "id": "56273dd4-4634-4ad7-a782-e480f85a85a9",
+                    "name": "DESNZ Chemical",
+                    "alias": services.DESNZ_CHEMICAL,
+                }
+            }
+        },
+        None,
+    )
+    response = post_to_step(
+        AdviceSteps.RECOMMEND_APPROVAL,
+        {"approval_reasons": "reason", "add_licence_conditions": True},
+    )
+    assert response.status_code == 200
+    soup = beautiful_soup(response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add licence conditions (optional)"
+
+    add_LC_response = post_to_step(
+        AdviceSteps.LICENCE_CONDITIONS,
+        {"proviso": "proviso"},
+    )
+    assert add_LC_response.status_code == 200
+    soup = beautiful_soup(add_LC_response.content)
+    # redirected to next form
+    header = soup.find("h1")
+    assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
+
+    add_instructions_response = post_to_step(
+        AdviceSteps.LICENCE_FOOTNOTES,
+        {"instructions_to_exporter": "instructions", "footnote_details": "footnotes"},
+    )
+    assert add_instructions_response.status_code == 302
+    assert len(mock_post_advice.request_history) == 1
 
 
 @mock.patch("caseworker.advice.views.mixins.get_gov_user")

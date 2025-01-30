@@ -354,7 +354,10 @@ class AddGood(LoginRequiredMixin, BaseSessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
-        context["title"] = form.title
+        if hasattr(form, "Layout") and hasattr(form.Layout, "TITLE"):
+            context["title"] = form.Layout.TITLE
+        else:
+            context["title"] = form.title
         # The back_link_url is used for the first form in the sequence. For subsequent forms,
         # the wizard automatically generates the back link to the previous form.
         context["back_link_url"] = reverse("applications:goods", kwargs={"pk": self.kwargs["pk"]})

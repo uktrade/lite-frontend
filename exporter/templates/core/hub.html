@@ -146,6 +146,9 @@
 					</span>
 				</h2>
 				<div class="app-tile__body">
+					 <a class="govuk-link" href="{% url 'exporter-help-support' %}" target="_blank">Get help with your application.</a>
+				</div>
+				<div class="app-tile__body">
 					{% comment %}/PS-IGNORE{% endcomment %}For support with this service, contact <a class="govuk-link" href="mailto:LITE.support@businessandtrade.gov.uk">LITE.support@businessandtrade.gov.uk</a>
 					or call +44(0)20 7215 4595 (select option 2).
 				</div>
@@ -192,7 +195,7 @@
 			</ul>
 		</div>
 
-		<div class="app-tiles" aria-label="Content currently unavailable">
+		<div id="compliance-open-licence-app-tiles" class="app-tiles" aria-label="Content currently unavailable">
 			{# Compliance licence tile #}
 			<div class="app-tile app-tile__disabled">
 				<h2 class="govuk-!-margin-top-0">

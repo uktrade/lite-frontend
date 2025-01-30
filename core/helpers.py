@@ -72,3 +72,9 @@ def stream_document_response(api_response):
     ]:
         response.headers[header_to_copy] = api_response.headers[header_to_copy]
     return response
+
+
+def remove_non_printable_characters(str):
+    # Given a string this will remove all non_printable_characters from ascii table
+    # Chars 9(/h), 10 (/n), 13(/r) are maintained
+    return "".join([c for c in str if ord(c) > 31 or ord(c) in [9, 10, 13]])

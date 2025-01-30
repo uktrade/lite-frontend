@@ -2602,12 +2602,29 @@ def mock_s3_files(settings):
     return _create_files
 
 
-@pytest.fixture
+@pytest.fixture()
+def authorized_client(client):
+    return client
+
+
+@pytest.fixture()
 def mock_request(rf, authorized_client):
     request = rf.get("/")
     request.session = authorized_client.session
     request.requests_session = requests.Session()
-    yield request
+    return request
+
+
+@pytest.fixture()
+def render_template_string(mock_request):
+    def _render_template_string(template_string, context=None):
+        if not context:
+            context = {}
+        template = Template(template_string)
+        context = RequestContext(mock_request, context)
+        return template.render(context)
+
+    return _render_template_string
 
 
 @pytest.fixture()
