@@ -54,11 +54,6 @@ def test_triage_f680_apply_redirect(authorized_client):  # PS-IGNORE
     assert response.status_code == 302
 
 
-# def test_done(authorized_client, f680_summary_url_with_application, mock_f680_application_get):
-#     response = authorized_client.post(f680_summary_url_with_application)
-#     breakpoint()
-
-
 def test_apply_f680_view(
     authorized_client,
     f680_apply_url,  # PS-IGNORE
@@ -79,6 +74,7 @@ def test_apply_f680_view(
 
     assert response.status_code == 200
 
+    breakpoint()
     response = authorized_client.post(
         f680_summary_url_with_application,  # PS-IGNORE
         data={"application": {"name": "F680 Test 2"}},  # PS-IGNORE
