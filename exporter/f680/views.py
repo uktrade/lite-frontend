@@ -50,7 +50,6 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # P
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
-        breakpoint()
         response_data, _ = self.post_f680_application(data)  # PS-IGNORE
         return redirect(self.get_success_url(response_data["id"]))
 
