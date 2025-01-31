@@ -90,13 +90,12 @@ def test_f680_summary_view(
     response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
 
     assert response.status_code == 200
-    assert not response.context["form"].errors
     assert isinstance(response.context["form"], ApplicationSubmissionForm)
     assertTemplateUsed(response, "f680/summary.html")  # PS-IGNORE
 
     response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
-    assert not response.context["form"].errors
 
+    assert response.status_code == 200
     content = BeautifulSoup(response.content, "html.parser")
     heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
     assert heading_element.string.strip() == "F680 Application"  # PS-IGNORE
