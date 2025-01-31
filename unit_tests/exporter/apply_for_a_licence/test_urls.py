@@ -22,7 +22,6 @@ def test_url_respects_siel_only_feature_flag_off(settings):
     # but non SIEL urls are not found
     with pytest.raises(NoReverseMatch):
         reverse("apply_for_a_licence:transhipment_questions")
-        # reverse("apply_for_a_licence:mod_questions")
         reverse("apply_for_a_licence:ogl_questions", kwargs={"ogl": "foo"})
         reverse("apply_for_a_licence:ogl_submit", kwargs={"ogl": "foo", "pk": uuid4()})
 
@@ -40,7 +39,6 @@ def test_url_respects_siel_only_feature_flag_on(settings):
 
     # and non SIEL urls are not found
     reverse("apply_for_a_licence:transhipment_questions")
-    # reverse("apply_for_a_licence:mod_questions")
     reverse("apply_for_a_licence:ogl_questions", kwargs={"ogl": "foo"})
     reverse("apply_for_a_licence:ogl_submit", kwargs={"ogl": "foo", "pk": uuid4()})
 

@@ -54,6 +54,11 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
+class F680Questions(LoginRequiredMixin, RedirectView):  # /PS-IGNORE
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse("f680:apply")  # /PS-IGNORE
+
+
 class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = transhipment_questions(request)
@@ -66,19 +71,6 @@ class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
         else:
             pk = self.get_validated_data()["id"]
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
-
-
-# class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
-#     def init(self, request, **kwargs):
-#         self.forms = MOD_questions(None)
-#         self.action = post_applications
-
-#     def on_submission(self, request, **kwargs):
-#         self.forms = MOD_questions(request.POST.copy().get("application_type"))
-
-#     def get_success_url(self):
-#         pk = self.get_validated_data()["id"]
-#         return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
 class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
@@ -100,8 +92,3 @@ class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
 class OpenGeneralLicenceSubmit(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         return open_general_licence_submit_success_page(request, **kwargs)
-
-
-class F680Questions(LoginRequiredMixin, RedirectView):  # /PS-IGNORE
-    def get_redirect_url(self, *args, **kwargs):
-        return reverse("f680:apply")  # /PS-IGNORE
