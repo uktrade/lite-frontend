@@ -2,6 +2,7 @@ import pytest
 
 from exporter.apply_for_a_licence.forms import triage_questions
 from exporter.core.constants import CaseTypes
+from unit_tests.helpers import reload_urlconf
 
 
 @pytest.mark.parametrize(
@@ -17,6 +18,7 @@ def test_opening_question_feature_flags(settings, siel_only_allowed, f680_allowe
     # given the flag is set or unset
     settings.FEATURE_FLAG_ONLY_ALLOW_SIEL = siel_only_allowed
     settings.FEATURE_FLAG_ALLOW_F680 = f680_allowed
+    reload_urlconf(["exporter.apply_for_a_licence.urls", settings.ROOT_URLCONF])
 
     # when the form is created
     form = triage_questions.opening_question()
@@ -36,6 +38,7 @@ def test_opening_question_feature_flags(settings, siel_only_allowed, f680_allowe
 def test_export_type_form_feature_flag(settings, value, expect_enabled, expect_disabled):
     # given the flag is set or unset
     settings.FEATURE_FLAG_ONLY_ALLOW_SIEL = value
+    reload_urlconf(["exporter.apply_for_a_licence.urls", settings.ROOT_URLCONF])
 
     # when the form is created
     form = triage_questions.export_type_form()

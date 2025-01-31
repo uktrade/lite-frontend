@@ -5,10 +5,11 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
-from exporter.f680.constants import (
+from ..constants import (
     ApplicationFormSteps,
 )
-from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
+from ..forms import ApplicationNameForm, ApplicationSubmissionForm
+from unit_tests.helpers import reload_urlconf
 
 
 @pytest.fixture
@@ -48,6 +49,8 @@ def mock_application_post(requests_mock, data_f680_case):  # PS-IGNORE
 @pytest.fixture(autouse=True)
 def set_f680_feature_flag(settings):  # PS-IGNORE
     settings.FEATURE_FLAG_ALLOW_F680 = True  # PS-IGNORE
+    reload_urlconf(["exporter.f680.urls", settings.ROOT_URLCONF])
+    reload_urlconf(["exporter.apply_for_a_licence.urls", settings.ROOT_URLCONF])
 
 
 def test_triage_f680_apply_redirect(authorized_client, f680_apply_url):  # PS-IGNORE
