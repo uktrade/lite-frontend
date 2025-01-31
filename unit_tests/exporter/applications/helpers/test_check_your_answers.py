@@ -23,6 +23,13 @@ def mock_application_get(requests_mock, data_standard_case):
     return requests_mock.get(url=url, json=application)
 
 
+@pytest.fixture
+def mock_application_history_get(requests_mock, data_standard_case):
+    application = data_standard_case["case"]["data"]
+    url = client._build_absolute_uri(f'/exporter/applications/{application["id"]}/history')
+    return requests_mock.get(url=url, json={})
+
+
 def test_convert_goods_on_application_no_answers(application, data_good_on_application):
     # given the canonical good does not have is_good_controlled set
     data_good_on_application["is_good_controlled"] = None
@@ -239,12 +246,14 @@ def test_convert_standard_application_has_security_approvals(application, settin
     assert "Do you have a security approval?" in actual.keys()
 
 
-def test_application_detail_shows_correct_cles(authorized_client, mock_application_get, application):
+def test_application_detail_shows_correct_cles(
+    authorized_client, mock_application_get, mock_application_history_get, application
+):
     url = reverse("applications:application", kwargs={"pk": application["id"]})
     response = authorized_client.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
 
-    products_table = soup.find_all("table", attrs={"class": "govuk-table"})[0]
+    products_table = soup.find("table", attrs={"id": "table-application-products"})
     products_cles = []
     body = products_table.find("tbody")
     rows = body.find_all("tr")
