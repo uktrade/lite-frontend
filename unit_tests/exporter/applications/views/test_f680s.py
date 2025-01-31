@@ -5,10 +5,10 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
-from ..constants import (
+from exporter.f680.constants import (
     ApplicationFormSteps,
 )
-from ..forms import ApplicationNameForm, ApplicationSubmissionForm
+from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
 from unit_tests.helpers import reload_urlconf
 
 
