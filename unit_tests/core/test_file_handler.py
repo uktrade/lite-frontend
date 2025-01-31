@@ -1,64 +1,96 @@
+import os
 import pytest
 
-from unittest import mock
-from os import path
-
-from django.core.files.uploadhandler import UploadFileException
+from django import forms
+from django.http import HttpResponse
+from django.urls import path, reverse
+from django.views import View
+from django.views.generic import FormView
 
 from core.file_handler import (
-    s3_client,
-    SafeS3FileUploadHandler,
-    S3Wrapper,
     UnacceptableMimeTypeError,
+    UnacceptableMimeTypeFile,
+    s3_client,
+    S3Wrapper,
+    validate_mime_type,
 )
 
 
-TEST_FILES_PATH = path.join(path.dirname(__file__), "test_file_handler_files")
+TEST_FILES_PATH = os.path.join(os.path.dirname(__file__), "test_file_handler_files")
 
 
-@pytest.fixture
-def mock_handler():
-    with mock.patch("django_chunk_upload_handlers.s3.boto3_client"):
-        handler = SafeS3FileUploadHandler()
-        handler.new_file(field_name="test", file_name="test", content_type="test/test", content_length=0)
-        handler.file = mock.Mock()
-        handler.client = mock.Mock()
-        handler.executor = mock.Mock()
-        handler.bucket_name = "test"
-        handler.s3_key = "test"
-        handler.upload_id = "test"
-        yield handler
+class FileForm(forms.Form):
+    upload_file = forms.FileField(
+        validators=[
+            validate_mime_type,
+        ]
+    )
 
 
-def test_valid_file_upload(mock_handler):
+class OKView(View):
+    def get(self, request, *args, **kwargs):
+        return HttpResponse("OK")
+
+
+class FileUploadFormView(FormView):
+    form_class = FileForm
+
+    def form_invalid(self, form):
+        response = HttpResponse("Not OK")
+        response.form = form
+        return response
+
+    def get_success_url(self):
+        return reverse("ok")
+
+
+urlpatterns = [
+    path("file-upload/", FileUploadFormView.as_view(), name="file-upload"),
+    path("ok/", OKView.as_view(), name="ok"),
+]
+
+
+@pytest.fixture()
+def file_upload_handler_settings(settings):
+    settings.FILE_UPLOAD_HANDLERS = ["core.file_handler.SafeS3FileUploadHandler"]
+    settings.ACCEPTED_FILE_UPLOAD_MIME_TYPES = "text/plain"
+    settings.MIDDLEWARE = []
+
+
+@pytest.mark.urls(__name__)
+def test_valid_file(file_upload_handler_settings, client):
     with open(f"{TEST_FILES_PATH}/valid.txt", "rb") as f:
-        content = f.read()
-        mock_handler.abort = mock.Mock()
-        mock_handler.receive_data_chunk(content, 0)
-        mock_handler.abort.assert_not_called()
-        # set start to be anything but 0
-        mock_handler.receive_data_chunk(content, 1)
-        mock_handler.abort.assert_not_called()
+        response = client.post(reverse("file-upload"), {"upload_file": f})
+
+    assert response.status_code == 302
+    assert response.url == reverse("ok")
 
 
-def test_invalid_file_type_upload(mock_handler):
+@pytest.mark.urls(__name__)
+def test_invalid_file_type(file_upload_handler_settings, client):
     with open(f"{TEST_FILES_PATH}/invalid_type.zip", "rb") as f:
-        content = f.read()
-        mock_handler.abort = mock.Mock()
-        with pytest.raises(UnacceptableMimeTypeError, match="Unsupported file type: application/zip") as e:
-            mock_handler.receive_data_chunk(content, 0)
-        assert isinstance(e.value, UploadFileException)
-        mock_handler.abort.assert_called_once()
+        response = client.post(reverse("file-upload"), {"upload_file": f})
+
+    assert not response.form.is_valid()
+    assert response.form.errors == {"upload_file": ["The file type is not supported. Upload a supported file type"]}
 
 
-def test_invalid_file_mime_type_upload(mock_handler):
+@pytest.mark.urls(__name__)
+def test_invalid_mime_type(file_upload_handler_settings, client):
     with open(f"{TEST_FILES_PATH}/invalid_mime.txt", "rb") as f:
-        content = f.read()
-        mock_handler.abort = mock.Mock()
-        with pytest.raises(UnacceptableMimeTypeError, match="Unsupported file type: application/zip") as e:
-            mock_handler.receive_data_chunk(content, 0)
-        assert isinstance(e.value, UploadFileException)
-        mock_handler.abort.assert_called_once()
+        response = client.post(reverse("file-upload"), {"upload_file": f})
+
+    assert not response.form.is_valid()
+    assert response.form.errors == {"upload_file": ["The file type is not supported. Upload a supported file type"]}
+
+
+@pytest.mark.parametrize("func_name", ["open", "chunks", "multiple_chunks", "__iter__", "__enter__", "obj"])
+def test_unacceptable_mime_type_file_function_raises_errors(func_name):
+    unacceptable_mime_file = UnacceptableMimeTypeFile("bad_file")
+
+    with pytest.raises(UnacceptableMimeTypeError):
+        func = getattr(unacceptable_mime_file, func_name)
+        func()
 
 
 def test_s3_wrapper_get_client(settings, mocker):
