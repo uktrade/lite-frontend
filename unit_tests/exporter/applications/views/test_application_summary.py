@@ -101,6 +101,7 @@ def test_application_summary_view(
     response = authorized_client.get(summary_url)
 
     assert response.status_code == 200
+
     soup = BeautifulSoup(response.content, "html.parser")
     headings_govuk_heading_m = soup.find_all("h2", class_="govuk-heading-m")
     headings_govuk_heading_m_text = [heading.text for heading in headings_govuk_heading_m]
