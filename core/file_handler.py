@@ -3,7 +3,9 @@ import logging
 import magic
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.files.uploadhandler import UploadFileException
+from django.core.files.uploadedfile import UploadedFile
 from django.http import StreamingHttpResponse
 
 from django_chunk_upload_handlers.s3 import S3FileUploadHandler
@@ -45,6 +47,39 @@ def s3_client():
     return S3Wrapper.get_client()
 
 
+def validate_mime_type(file):
+    if isinstance(file, UnacceptableMimeTypeFile):
+        raise ValidationError(
+            "The file type is not supported. Upload a supported file type",
+            code="invalid_mime_type",
+        )
+
+
+class UnacceptableMimeTypeFile(UploadedFile):
+    def __init__(self, field_name):
+        super().__init__(file="unacceptable-mime-type", name="unacceptable-mime-type", size="unacceptable-mime-type")
+        self.field_name = field_name
+
+    def open(self, mode=None):
+        raise UnacceptableMimeTypeError()
+
+    def chunks(self, chunk_size=None):
+        raise UnacceptableMimeTypeError()
+
+    def multiple_chunks(self, chunk_size=None):
+        raise UnacceptableMimeTypeError()
+
+    def __iter__(self):
+        raise UnacceptableMimeTypeError()
+
+    def __enter__(self):
+        raise UnacceptableMimeTypeError()
+
+    @property
+    def obj(self):
+        raise UnacceptableMimeTypeError()
+
+
 class SafeS3FileUploadHandler(S3FileUploadHandler):
     """
     S3FileUploadHandler with mime-type validation.
@@ -62,8 +97,9 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
             mime = magic.from_buffer(raw_data, mime=True)
             if mime not in self.ACCEPTED_FILE_UPLOAD_MIME_TYPES:
                 self.abort()
-                raise UnacceptableMimeTypeError(f"Unsupported file type: {mime}")
-        super().receive_data_chunk(raw_data, start)
+                self.failed_mime_type = True
+                return None
+        return super().receive_data_chunk(raw_data, start)
 
     def file_complete(self, *args, **kwargs):
         """Override `file_complete` to ensure that all necessary attributes
@@ -72,6 +108,9 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
         Some frameworks, e.g. formtools' SessionWizardView will fall over
         if these attributes aren't present.
         """
+        if getattr(self, "failed_mime_type", False):
+            return UnacceptableMimeTypeFile(self.field_name)
+
         file = super().file_complete(*args, **kwargs)
         file.charset = self.charset
 
@@ -79,11 +118,11 @@ class SafeS3FileUploadHandler(S3FileUploadHandler):
 
 
 class UploadFailed(UploadFileException):
-    pass
+    message = "File upload failed."
 
 
 class UnacceptableMimeTypeError(UploadFailed):
-    pass
+    message = "Invalid file type uploaded."
 
 
 def generate_file(result):

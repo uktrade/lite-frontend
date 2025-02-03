@@ -31,9 +31,42 @@ def post_to_step(post_to_step_factory, url_approve):
     return post_to_step_factory(url_approve)
 
 
-def test_give_approval_advice_get(authorized_client, url):
+def test_give_approval_advice_legacy_get(authorized_client, url, beautiful_soup):
     response = authorized_client.get(url)
     assert response.status_code == 200
+    soup = beautiful_soup(response.content)
+    header = soup.find("h1", {"class": "govuk-heading-xl"})
+    assert header.text == "Recommend an approval"
+
+    summary_header = soup.find("h2", {"class": "govuk-heading-m"})
+    assert summary_header.text == "Case details"
+
+    details = soup.find_all("span", {"class": "govuk-details__summary-text"})
+    assert {detail.text.strip() for detail in details} == {
+        "Add a licence condition, instruction to exporter or footnote",
+        "Products",
+        "Destinations",
+        "View serial numbers",
+    }
+
+
+def test_give_approval_advice_get(
+    authorized_client,
+    beautiful_soup,
+    url_approve,
+):
+    response = authorized_client.get(url_approve)
+    assert response.status_code == 200
+
+    soup = beautiful_soup(response.content)
+    header = soup.find("h1", {"class": "govuk-heading-xl"})
+    assert header.text == "Recommend an approval"
+
+    summary_header = soup.find("h2", {"class": "govuk-heading-m"})
+    assert summary_header.text == "Case details"
+
+    details = soup.find_all("span", {"class": "govuk-details__summary-text"})
+    assert {detail.text.strip() for detail in details} == {"Products", "Destinations", "View serial numbers"}
 
 
 def test_approval_advice_post_valid(
@@ -74,6 +107,12 @@ def test_approval_advice_post_valid_add_conditional(
     # redirected to next form
     header = soup.find("h1")
     assert header.text == "Add licence conditions (optional)"
+
+    summary_header = soup.find("h2", {"class": "govuk-heading-m"})
+    assert summary_header.text == "Case details"
+
+    details = soup.find_all("span", {"class": "govuk-details__summary-text"})
+    assert {detail.text.strip() for detail in details} == {"Products", "Destinations", "View serial numbers"}
 
     add_LC_response = post_to_step(
         AdviceSteps.LICENCE_CONDITIONS,

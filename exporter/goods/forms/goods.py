@@ -10,6 +10,7 @@ from django.db import models
 
 from core.builtins.custom_tags import default_na, linkify
 from core.constants import ComponentAccessoryChoices, ProductCategories
+from core.file_handler import validate_mime_type
 from core.forms.layouts import ConditionalRadiosQuestion, ConditionalRadios, summary_list
 from core.forms.utils import coerce_str_to_bool
 
@@ -1106,6 +1107,9 @@ class AttachFirearmsDealerCertificateForm(forms.Form):
         error_messages={
             "required": "Select certificate file to upload",
         },
+        validators=[
+            validate_mime_type,
+        ],
     )
 
     reference_code = forms.CharField(

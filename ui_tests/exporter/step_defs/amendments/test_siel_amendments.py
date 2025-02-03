@@ -199,9 +199,9 @@ def cannot_edit_application(driver, context):
     assert edit_url not in [item.get_property("href") for item in all_links]
 
 
-@then(parsers.parse('the application status is "{status}"'))
-def confirm_editing_application(driver, status):
-    assert driver.find_element(by=By.ID, value="label-application-status").text == status
+@then(parsers.parse('the application history status is "{status}" for row {row}'))
+def confirm_editing_application(driver, status, row):
+    assert driver.find_element(by=By.ID, value=f"label-application-status-{row}").text == status
 
 
 @then("I see new application ready for amendments under drafts")

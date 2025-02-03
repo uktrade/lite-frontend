@@ -59,6 +59,7 @@ def test_edit_button_points_to_amend_by_copy(
     application_detail_url,
     application_major_edit_confirm_url,
     mock_status_properties,
+    mock_application_history_get,
 ):
     mock_status_properties["can_invoke_major_editable"] = True
 
