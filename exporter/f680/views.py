@@ -1,9 +1,11 @@
 from http import HTTPStatus
 
+from django.contrib.auth.mixins import AccessMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView
 
+from conf import base as settings
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.wizard.views import BaseSessionWizardView
@@ -22,6 +24,19 @@ from .services import (
     post_f680_application,  # PS-IGNORE
     get_f680_application,
 )
+
+
+class F680FeatureRequiredMixin(AccessMixin):  # PS-IGNORE
+    raise_exception = True
+
+    def dispatch(self, request, *args, **kwargs):
+        if not settings.FEATURE_FLAG_ALLOW_F680:  # PS-IGNORE
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_permission_denied_message(self):
+        self.permission_denied_message = "You are not authorised to use this feature"
+        return self.permission_denied_message
 
 
 class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # PS-IGNORE
@@ -54,14 +69,14 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # P
         return redirect(self.get_success_url(response_data["id"]))
 
 
-class F680ApplicationSummaryView(LoginRequiredMixin, FormView):
+class F680ApplicationSummaryView(LoginRequiredMixin, FormView):  # PS-IGNORE
     form_class = ApplicationSubmissionForm
-    template_name = "f680/summary.html"
+    template_name = "f680/summary.html"  # PS-IGNORE
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
 
-        self.application = get_f680_application(request, kwargs["pk"])
+        self.application = get_f680_application(request, kwargs["pk"])  # PS-IGNORE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -70,4 +85,4 @@ class F680ApplicationSummaryView(LoginRequiredMixin, FormView):
         return context
 
     def get_success_url(self):
-        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
+        return reverse("f680:summary", kwargs={"pk": self.application["id"]})  # PS-IGNORE
