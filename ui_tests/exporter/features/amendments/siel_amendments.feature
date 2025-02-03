@@ -39,7 +39,8 @@ Feature: I want to submit SIEL applications and be able to make major amendments
     And I click the "Archived" tab
     And I click on the application previously submitted
     Then the application cannot be opened for editing
-    And the application status is "Superseded by exporter edit"
+    And the application history status is "DRAFT" for row 1
+    And the application history status is "SUPERSEDED BY EXPORTER EDIT" for row 2
     When I go to my list of applications
     Then I see new application ready for amendments under drafts
     #

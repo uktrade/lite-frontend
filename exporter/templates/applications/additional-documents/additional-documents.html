@@ -12,7 +12,7 @@
 			<h1 class="govuk-heading-l">{% block title %}{% lcs 'AdditionalDocuments.TITLE'%}{% endblock %}</h1>
 		</div>
 		<div class="lite-app-bar__controls">
-			<a href="{% url 'applications:attach_additional_document' application_id %}" class="govuk-button" draggable="false" role="button">
+			<a href="{% url 'applications:attach_additional_document' application_id %}" class="govuk-button govuk-button--secondary" draggable="false" role="button">
 				{% lcs 'AdditionalDocuments.ADD' %}
 			</a>
 		</div>
@@ -65,5 +65,9 @@
 				{% lcs 'AdditionalDocuments.NO_RESULTS' %}
 			</p>
 		</div>
+		<div class="lite-information-text__help"></div>
 	{% endif %}
+	<a class="govuk-button govuk-button--primary" href="{% url 'applications:task_list' application_id %}">
+        Save and continue
+    </a>
 {% endblock %}
