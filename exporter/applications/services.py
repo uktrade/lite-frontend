@@ -587,3 +587,9 @@ def get_survey(request, survey_id):
 def update_survey_feedback(request, survey_id, json):
     data = client.put(request, f"/survey/{survey_id}/", json)
     return data.json(), data.status_code
+
+
+def get_application_history(request, application_id):
+    response = client.get(request, f"/exporter/applications/{application_id}/history")
+    response.raise_for_status()
+    return response.json()
