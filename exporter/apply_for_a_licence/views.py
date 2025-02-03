@@ -1,5 +1,8 @@
 from django.urls import reverse_lazy, reverse
-from django.views.generic import TemplateView
+from django.views.generic import (
+    RedirectView,
+    TemplateView,
+)
 
 from exporter.applications.services import post_applications, post_open_general_licences_applications
 from exporter.apply_for_a_licence.forms.open_general_licences import (
@@ -101,3 +104,8 @@ class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
 class OpenGeneralLicenceSubmit(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         return open_general_licence_submit_success_page(request, **kwargs)
+
+
+class F680Questions(LoginRequiredMixin, RedirectView):  # /PS-IGNORE
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse("f680:apply")

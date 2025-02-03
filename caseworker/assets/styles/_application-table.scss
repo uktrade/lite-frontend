@@ -1,0 +1,9 @@
+.application-table {
+    &__row-header {
+        white-space: nowrap;
+    }
+
+    &__row-value {
+        width: 100%;
+    }
+}
