@@ -1,11 +1,11 @@
 from http import HTTPStatus
 
+from django.conf import settings
 from django.contrib.auth.mixins import AccessMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView
 
-from conf import base as settings
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.wizard.views import BaseSessionWizardView
