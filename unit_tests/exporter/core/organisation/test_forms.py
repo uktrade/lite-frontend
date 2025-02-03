@@ -423,6 +423,13 @@ def test_register_details_form_field_validation(
             True,
             None,
         ),
+        (
+            {
+                "registration_number": "SC123456",
+            },
+            True,
+            None,
+        ),
     ),
 )
 def test_register_number_form_field_validation(
@@ -593,14 +600,12 @@ def test_register_non_uk_address_details_form(data, valid, error, mock_request, 
 
 
 def test_select_organisation_form_invalid(data_organisations):
-
     form = forms.SelectOrganisationForm(organisations=data_organisations, data={})
     assert not form.is_valid()
     assert form.errors == {"organisation": ["Select an organisation"]}
 
 
 def test_select_organisation_form_valid(data_organisations):
-
     form = forms.SelectOrganisationForm(
         organisations=data_organisations, data={"organisation": data_organisations[0]["id"]}
     )
