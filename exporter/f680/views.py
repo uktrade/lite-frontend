@@ -25,24 +25,28 @@ from .services import (
     get_f680_application,
 )
 
+from django.core.exceptions import PermissionDenied
+
+
+class F680FeatureDenied(PermissionDenied):
+    pass
+
 
 class F680FeatureRequiredMixin(AccessMixin):  # PS-IGNORE
-    raise_exception = True
 
-    def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_ALLOW_F680:  # PS-IGNORE
-            return self.handle_no_permission()
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_permission_denied_message(self):
-        self.permission_denied_message = "You are not authorised to use this feature"
-        return self.permission_denied_message
+    def handle_no_permission(self):
+        if not settings.FEATURE_FLAG_ALLOW_F680:
+            raise F680FeatureDenied("You are not authorised to use the F680 Security Clearance application feature")
 
 
-class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # PS-IGNORE
+class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView, F680FeatureRequiredMixin):  # PS-IGNORE
     form_list = [
         (ApplicationFormSteps.APPLICATION_NAME, ApplicationNameForm),
     ]
+
+    def dispatch(self, request, *args, **kwargs):
+        self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -69,13 +73,13 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView):  # P
         return redirect(self.get_success_url(response_data["id"]))
 
 
-class F680ApplicationSummaryView(LoginRequiredMixin, FormView):  # PS-IGNORE
+class F680ApplicationSummaryView(LoginRequiredMixin, FormView, F680FeatureRequiredMixin):  # PS-IGNORE
     form_class = ApplicationSubmissionForm
     template_name = "f680/summary.html"  # PS-IGNORE
 
     def setup(self, request, *args, **kwargs):
+        self.handle_no_permission()
         super().setup(request, *args, **kwargs)
-
         self.application = get_f680_application(request, kwargs["pk"])  # PS-IGNORE
 
     def get_context_data(self, **kwargs):

@@ -18,6 +18,7 @@ from exporter.core.services import post_open_general_licence_cases
 from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin, RedirectView
+from exporter.f680.views import F680FeatureRequiredMixin
 
 
 class LicenceType(LoginRequiredMixin, SingleFormView):
@@ -54,7 +55,7 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
-class F680Questions(LoginRequiredMixin, RedirectView):  # /PS-IGNORE
+class F680Questions(LoginRequiredMixin, RedirectView, F680FeatureRequiredMixin):  # /PS-IGNORE
     def get_redirect_url(self, *args, **kwargs):
         return reverse("f680:apply")  # /PS-IGNORE
 
