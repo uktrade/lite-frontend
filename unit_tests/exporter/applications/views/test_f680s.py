@@ -9,7 +9,6 @@ from exporter.f680.constants import (
     ApplicationFormSteps,
 )
 from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
-from exporter.f680.views import F680FeatureDenied
 
 
 @pytest.fixture
