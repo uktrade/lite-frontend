@@ -166,6 +166,7 @@ class TestF680ApplicationSummaryView:
         self,
         authorized_client,
         f680_summary_url_with_application,  # PS-IGNORE
+        mock_f680_application_get,
     ):
         response = authorized_client.post(
             f680_summary_url_with_application,  # PS-IGNORE

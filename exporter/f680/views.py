@@ -28,9 +28,11 @@ from .services import (
 
 class F680FeatureRequiredMixin(AccessMixin):  # PS-IGNORE
     def dispatch(self, request, *args, **kwargs):
-        self.raise_exception = True
-        self.permission_denied_message = "You are not authorised to use the F680 Security Clearance application feature"
         if not settings.FEATURE_FLAG_ALLOW_F680:
+            self.raise_exception = True
+            self.permission_denied_message = (
+                "You are not authorised to use the F680 Security Clearance application feature"
+            )
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
 
