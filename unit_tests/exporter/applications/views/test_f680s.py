@@ -9,6 +9,7 @@ from exporter.f680.constants import (
     ApplicationFormSteps,
 )
 from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
+from exporter.f680.views import F680FeatureDenied
 
 
 @pytest.fixture
@@ -45,7 +46,7 @@ def mock_application_post(requests_mock, data_f680_case):  # PS-IGNORE
     return requests_mock.post(url=url, json=application, status_code=201)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def set_f680_feature_flag(settings):  # PS-IGNORE
     settings.FEATURE_FLAG_ALLOW_F680 = True  # PS-IGNORE
 
@@ -56,7 +57,23 @@ def test_triage_f680_apply_redirect(authorized_client, f680_apply_url):  # PS-IG
     assert response.url == f680_apply_url
 
 
-def test_create_f680_view(
+def test_get_create_f680_view(
+    authorized_client,
+    f680_apply_url,  # PS-IGNORE
+    mock_f680_application_get,  # PS-IGNORE
+    post_to_step,
+    mock_application_post,
+    f680_summary_url_with_application,
+    set_f680_feature_flag,
+):
+    response = authorized_client.get(f680_apply_url)  # PS-IGNORE
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    assert "Name of the application" in soup.find("h1").text
+    assert isinstance(response.context["form"], ApplicationNameForm)
+
+
+def test_get_create_f680_with_feature_flag_off(
     authorized_client,
     f680_apply_url,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
@@ -66,10 +83,22 @@ def test_create_f680_view(
 ):
     response = authorized_client.get(f680_apply_url)  # PS-IGNORE
     assert response.status_code == 200
-    soup = BeautifulSoup(response.content, "html.parser")
-    assert "Name of the application" in soup.find("h1").text
-    assert isinstance(response.context["form"], ApplicationNameForm)
+    assert response.context[0].get("title") == "Forbidden"
+    assert (
+        "You are not authorised to use the F680 Security Clearance application feature"
+        in response.context[0].get("description").args
+    )
 
+
+def test_post_to_create_f680_name_step(
+    authorized_client,
+    f680_apply_url,  # PS-IGNORE
+    mock_f680_application_get,  # PS-IGNORE
+    post_to_step,
+    mock_application_post,
+    f680_summary_url_with_application,
+    set_f680_feature_flag,
+):
     response = post_to_step(
         ApplicationFormSteps.APPLICATION_NAME,
         {"name": "F680 Test"},  # PS-IGNORE
@@ -79,10 +108,11 @@ def test_create_f680_view(
     assert response.url == f680_summary_url_with_application
 
 
-def test_f680_summary_view(
+def test_get_f680_summary_view(
     authorized_client,
     f680_summary_url_with_application,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
+    set_f680_feature_flag,
 ):
     response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
 
@@ -90,13 +120,17 @@ def test_f680_summary_view(
     assert isinstance(response.context["form"], ApplicationSubmissionForm)
     assertTemplateUsed(response, "f680/summary.html")  # PS-IGNORE
 
-    response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
-
-    assert response.status_code == 200
     content = BeautifulSoup(response.content, "html.parser")
     heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
     assert heading_element.string.strip() == "F680 Application"  # PS-IGNORE
 
+
+def test_post_f680_submission_form(
+    authorized_client,
+    f680_summary_url_with_application,  # PS-IGNORE
+    mock_f680_application_get,  # PS-IGNORE
+    set_f680_feature_flag,
+):
     response = authorized_client.post(
         f680_summary_url_with_application,  # PS-IGNORE
     )
