@@ -41,18 +41,3 @@ def test_url_respects_siel_only_feature_flag_on(settings):
     reverse("apply_for_a_licence:transhipment_questions")
     reverse("apply_for_a_licence:ogl_questions", kwargs={"ogl": "foo"})
     reverse("apply_for_a_licence:ogl_submit", kwargs={"ogl": "foo", "pk": uuid4()})
-
-
-# def test_url_respects_f680_feature_flag_on(settings):
-#     settings.FEATURE_FLAG_ALLOW_F680 = True
-#     reload_urlconf(["exporter.apply_for_a_licence.urls", settings.ROOT_URLCONF])
-
-#     assert reverse("apply_for_a_licence:f680_questions") == "/apply-for-a-licence/f680/"
-
-
-# def test_url_respects_f680_feature_flag_off(settings):
-#     settings.FEATURE_FLAG_ALLOW_F680 = False
-#     reload_urlconf(["exporter.apply_for_a_licence.urls", settings.ROOT_URLCONF])
-
-#     with pytest.raises(NoReverseMatch):
-#         reverse("apply_for_a_licence:f680_questions")
