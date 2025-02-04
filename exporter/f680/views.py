@@ -2,7 +2,6 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django.contrib.auth.mixins import AccessMixin
-from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView
@@ -28,19 +27,18 @@ from .services import (
 
 
 class F680FeatureRequiredMixin(AccessMixin):  # PS-IGNORE
-    def handle_no_permission(self):
+    def dispatch(self, request, *args, **kwargs):
+        self.raise_exception = True
+        self.permission_denied_message = "You are not authorised to use the F680 Security Clearance application feature"
         if not settings.FEATURE_FLAG_ALLOW_F680:
-            raise PermissionDenied("You are not authorised to use the F680 Security Clearance application feature")
+            return self.handle_no_permission()
+        return super().dispatch(request, *args, **kwargs)
 
 
-class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView, F680FeatureRequiredMixin):  # PS-IGNORE
+class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, BaseSessionWizardView):  # PS-IGNORE
     form_list = [
         (ApplicationFormSteps.APPLICATION_NAME, ApplicationNameForm),
     ]
-
-    def dispatch(self, request, *args, **kwargs):
-        self.handle_no_permission()
-        return super().dispatch(request, *args, **kwargs)
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -67,12 +65,11 @@ class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView, F680F
         return redirect(self.get_success_url(response_data["id"]))
 
 
-class F680ApplicationSummaryView(LoginRequiredMixin, FormView, F680FeatureRequiredMixin):  # PS-IGNORE
+class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, FormView):  # PS-IGNORE
     form_class = ApplicationSubmissionForm
     template_name = "f680/summary.html"  # PS-IGNORE
 
     def setup(self, request, *args, **kwargs):
-        self.handle_no_permission()
         super().setup(request, *args, **kwargs)
         self.application = get_f680_application(request, kwargs["pk"])  # PS-IGNORE
 
