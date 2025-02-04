@@ -50,19 +50,16 @@ def set_f680_feature_flag(settings):  # PS-IGNORE
     settings.FEATURE_FLAG_ALLOW_F680 = True  # PS-IGNORE
 
 
-def test_triage_f680_apply_redirect(authorized_client, f680_apply_url):  # PS-IGNORE
+def test_triage_f680_apply_redirect_success(authorized_client, f680_apply_url):  # PS-IGNORE
     response = authorized_client.post(reverse("apply_for_a_licence:f680_questions"))  # PS-IGNORE
     assert response.status_code == 302
     assert response.url == f680_apply_url
 
 
-def test_get_create_f680_view(
+def test_get_create_f680_view_success(
     authorized_client,
     f680_apply_url,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
-    post_to_step,
-    mock_application_post,
-    f680_summary_url_with_application,
     set_f680_feature_flag,
 ):
     response = authorized_client.get(f680_apply_url)  # PS-IGNORE
@@ -72,16 +69,12 @@ def test_get_create_f680_view(
     assert isinstance(response.context["form"], ApplicationNameForm)
 
 
-def test_get_create_f680_with_feature_flag_off(
+def test_get_create_f680_view_fail_with_feature_flag_off(
     authorized_client,
     f680_apply_url,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
-    post_to_step,
-    mock_application_post,
-    f680_summary_url_with_application,
 ):
     response = authorized_client.get(f680_apply_url)  # PS-IGNORE
-    assert response.status_code == 200
     assert response.context[0].get("title") == "Forbidden"
     assert (
         "You are not authorised to use the F680 Security Clearance application feature"
@@ -89,12 +82,10 @@ def test_get_create_f680_with_feature_flag_off(
     )
 
 
-def test_post_to_create_f680_name_step(
+def test_post_to_create_f680_name_step_success(
     authorized_client,
     f680_apply_url,  # PS-IGNORE
-    mock_f680_application_get,  # PS-IGNORE
     post_to_step,
-    mock_application_post,
     f680_summary_url_with_application,
     set_f680_feature_flag,
 ):
@@ -107,7 +98,23 @@ def test_post_to_create_f680_name_step(
     assert response.url == f680_summary_url_with_application
 
 
-def test_get_f680_summary_view(
+def test_post_to_create_f680_name_step_invalid_data(
+    authorized_client,
+    f680_apply_url,  # PS-IGNORE
+    post_to_step,
+    set_f680_feature_flag,
+):
+    response = post_to_step(
+        ApplicationFormSteps.APPLICATION_NAME,
+        {"name": ""},  # PS-IGNORE
+    )
+
+    assert isinstance(response.context["form"], ApplicationNameForm)
+    assert response.context["form"].errors
+    assert response.context["form"].errors.get("name")[0] == "This field is required."
+
+
+def test_get_f680_summary_view_success(
     authorized_client,
     f680_summary_url_with_application,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
@@ -124,7 +131,21 @@ def test_get_f680_summary_view(
     assert heading_element.string.strip() == "F680 Application"  # PS-IGNORE
 
 
-def test_post_f680_submission_form(
+def test_get_f680_summary_view_fail_with_feature_flag_off(
+    authorized_client,
+    f680_summary_url_with_application,  # PS-IGNORE
+    mock_f680_application_get,  # PS-IGNORE
+):
+    response = authorized_client.get(f680_summary_url_with_application)  # PS-IGNORE
+    assert response.status_code == 200
+    assert response.context[0].get("title") == "Forbidden"
+    assert (
+        "You are not authorised to use the F680 Security Clearance application feature"
+        in response.context[0].get("description").args
+    )
+
+
+def test_post_f680_submission_form_success(
     authorized_client,
     f680_summary_url_with_application,  # PS-IGNORE
     mock_f680_application_get,  # PS-IGNORE
@@ -136,3 +157,18 @@ def test_post_f680_submission_form(
 
     assert response.status_code == 302
     assert response.url == f680_summary_url_with_application  # PS-IGNORE
+
+
+def test_post_f680_submission_form_fail_with_feature_flag_off(
+    authorized_client,
+    f680_summary_url_with_application,  # PS-IGNORE
+):
+    response = authorized_client.post(
+        f680_summary_url_with_application,  # PS-IGNORE
+    )
+    assert response.status_code == 200
+    assert response.context[0].get("title") == "Forbidden"
+    assert (
+        "You are not authorised to use the F680 Security Clearance application feature"
+        in response.context[0].get("description").args
+    )

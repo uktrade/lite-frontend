@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from django.conf import settings
 from django.contrib.auth.mixins import AccessMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView
@@ -25,18 +26,11 @@ from .services import (
     get_f680_application,
 )
 
-from django.core.exceptions import PermissionDenied
-
-
-class F680FeatureDenied(PermissionDenied):
-    pass
-
 
 class F680FeatureRequiredMixin(AccessMixin):  # PS-IGNORE
-
     def handle_no_permission(self):
         if not settings.FEATURE_FLAG_ALLOW_F680:
-            raise F680FeatureDenied("You are not authorised to use the F680 Security Clearance application feature")
+            raise PermissionDenied("You are not authorised to use the F680 Security Clearance application feature")
 
 
 class F680ApplicationCreateView(LoginRequiredMixin, BaseSessionWizardView, F680FeatureRequiredMixin):  # PS-IGNORE
