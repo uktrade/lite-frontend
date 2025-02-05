@@ -522,13 +522,13 @@ class F680Questions:
         TITLE = "Do you believe the products are rated under the Missile Technology Control Regime (MTCR)"
 
         class Categories:
-            ONE = "Yes, Category 1"
-            TWO = "Yes, Category 2"
+            ONE = "Yes - MTCR Cat 1"
+            TWO = "Yes - MTCR Cat 2"
             NO = "No"
-            I_DONT_KNOW = "I don't know"
+            I_DONT_KNOW = "Don't know"
 
     class EWRequirement:
-        TITLE = "Is there is a requirement to release UK MOD owned electronic warfare (EW) data or information in support of this export"
+        TITLE = "Is there is a requirement to release UK MOD owned EW data or information in support of this export"
         ATTACHMENT = (
             "You need to complete part A of the MOD EW Data Release Capture Form "
             "and attach it to the application in the supporting documents section."
@@ -540,8 +540,8 @@ class F680Questions:
         PROVIDE_DETAILS_OPTIONAL = "Provide details (optional)"
 
         class Types:
-            MOD_FUNDED = "MOD funded"
-            MOD_VENTURE_FUNDED = "Part MOD funded / part private venture"
+            MOD_FUNDED = "MOD"
+            MOD_VENTURE_FUNDED = "Part MOD"
             PRIVATE_VENTURE = "Private venture"
 
     class ProspectValue:

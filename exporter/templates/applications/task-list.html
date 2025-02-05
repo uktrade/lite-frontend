@@ -63,7 +63,7 @@
 					{% if not is_editing or edit_type == 'major_edit' %}
 						{% url 'applications:f680_details' application.id as f680_details_url %}
 						{% tld f680detail 'f680detail' 'f680details' as f680_details %}
-						{% include "includes/task-list-item.html" with id='types' title=strings.F680_DETAILS url=f680_details_url status=application.types|task_list_item_status description=f680_details %}
+						{% include "includes/task-list-item.html" with id='types' title=strings.F680_DETAILS url=f680_details_url status=application.clearances|task_list_item_status description=f680_details %}
 					{% endif %}
 				{% endif %}
 

@@ -166,6 +166,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
         approve = False
         all_nlr = False
         is_case_open = case_type == CaseType.OPEN.value
+        is_case_f680 = case_type == "f680_clearance"
 
         if is_case_open:
             approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
@@ -203,6 +204,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
                     case_id,
                     is_case_open,
                     all_nlr,
+                    is_case_f680,
                 ),
             )
 

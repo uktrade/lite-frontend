@@ -99,7 +99,7 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
             "filtering_by": list(self.request.GET.keys()),
             "queue": self.queue,
             "team_filters": self.get_team_filters(),
-            "tabs": self.get_standard_application_tabs(),
+            "tabs": self.get_tabs_by_case_type(self.case.sub_type),
             "current_tab": "cases:activities:notes-and-timeline",
             "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
         }

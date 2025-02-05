@@ -220,5 +220,7 @@ def _add_team_decisions(grouped_advice):
                 team_advice["decision"] = constants.TEAM_DECISION_PROVISO
             elif decisions == {"Refuse"}:
                 team_advice["decision"] = constants.TEAM_DECISION_REFUSED
+            elif decisions == {"F680"}:
+                team_advice["decision"] = constants.TEAM_DECISION_APPROVED_F680
             else:
                 team_advice["decision"] = constants.TEAM_DECISION_APPROVED_REFUSED

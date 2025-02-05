@@ -10,15 +10,7 @@ from lite_content.lite_exporter_frontend.applications import (
     MODQuestions,
     TranshipmentQuestions,
 )
-from lite_forms.components import (
-    Form,
-    RadioButtons,
-    Option,
-    Breadcrumbs,
-    BackLink,
-    FormGroup,
-    Label,
-)
+from lite_forms.components import Form, RadioButtons, Option, Breadcrumbs, BackLink, FormGroup, Label
 from lite_forms.helpers import conditional
 
 from django.template.loader import render_to_string
@@ -33,6 +25,14 @@ def opening_question():
                 "Select if you’re sending products from the UK to another country. You need an export licence "
                 "before you provide access to controlled technology, software or data."
             ),
+        ),
+        Option(
+            key="f680",
+            value="MOD F680",
+            description=(
+                "Select if you need approval to release security classified products or information to foreign entities."
+            ),
+            disabled=False,
         ),
         Option(
             key="transhipment",
@@ -158,6 +158,12 @@ def export_licence_questions(request, application_type, goodstype_category=None)
     if goodstype_category in [GoodsTypeCategory.MILITARY, GoodsTypeCategory.UK_CONTINENTAL_SHELF]:
         forms.append(firearms_form())
 
+    return FormGroup(forms)
+
+
+def f680_licence_questions(request, application_type, goodstype_category=None):
+    forms = []
+    forms.append(reference_name_form())
     return FormGroup(forms)
 
 

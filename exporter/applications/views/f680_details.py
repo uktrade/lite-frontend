@@ -13,5 +13,6 @@ class F680Details(LoginRequiredMixin, SingleFormView):
         application = get_application(request, self.object_pk)
         self.form = f680_details_form(request, self.object_pk)
         self.action = put_application_with_clearance_types
-        self.data = {"types": [f680_clearance_type["name"]["key"] for f680_clearance_type in application["types"]]}
+        clearances = application["clearances"] or []
+        self.data = {"clearances": [f680_clearance_type["key"] for f680_clearance_type in clearances]}
         self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk})

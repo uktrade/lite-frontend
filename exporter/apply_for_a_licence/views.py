@@ -12,6 +12,7 @@ from exporter.apply_for_a_licence.forms.triage_questions import (
     export_licence_questions,
     MOD_questions,
     transhipment_questions,
+    f680_licence_questions,
 )
 from exporter.apply_for_a_licence.validators import validate_opening_question, validate_open_general_licences
 from exporter.core.constants import PERMANENT, CaseTypes
@@ -53,6 +54,23 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
         else:
             pk = self.get_validated_data()["id"]
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
+
+
+class F680LicenceQuestions(LoginRequiredMixin, MultiFormView):
+    def init(self, request, **kwargs):
+        self.forms = f680_licence_questions(request, None)
+        self.action = post_applications
+        self.data = {"application_type": CaseTypes.F680}
+
+    def on_submission(self, request, **kwargs):
+        copied_req = request.POST.copy()
+        self.forms = f680_licence_questions(
+            request, copied_req.get("application_type"), copied_req.get("goodstype_category")
+        )
+
+    def get_success_url(self):
+        pk = self.get_validated_data()["id"]
+        return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
 class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):

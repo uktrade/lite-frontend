@@ -298,7 +298,7 @@ class AdviceView(LoginRequiredMixin, CaseTabsMixin, CaseContextMixin, DESNZNucle
             "security_approvals_classified_display": self.security_approvals_classified_display,
             "assessed_trigger_list_goods": self.assessed_trigger_list_goods,
             "unassessed_trigger_list_goods": self.unassessed_trigger_list_goods,
-            "tabs": self.get_standard_application_tabs(),
+            "tabs": self.get_tabs_by_case_type(self.case.sub_type),
             "current_tab": "cases:advice_view",
             **services.get_advice_tab_context(
                 self.case,
@@ -665,6 +665,10 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
 
         lu_countersign_required = False
         finalise_case = False
+
+        # Hack to ensure that F680 cases can be finalised by MOD-ECJU
+        if user_team_alias == services.MOD_ECJU_TEAM and self.case.case_type["reference"]["key"] == "f680":
+            finalise_case = True
 
         if user_team_alias == services.LICENSING_UNIT_TEAM:
             rejected_lu_countersignature = self.rejected_countersign_advice()

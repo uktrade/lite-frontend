@@ -3,8 +3,8 @@ from exporter.core.constants import APPLICANT_EDITING
 
 
 def get_reference_number_description(application):
-    have_you_been_informed = application["have_you_been_informed"]
     reference_number_on_information_form = application["reference_number_on_information_form"]
+    have_you_been_informed = application["have_you_been_informed"]
     if have_you_been_informed == "yes":
         if not reference_number_on_information_form:
             reference_number_on_information_form = "not provided"

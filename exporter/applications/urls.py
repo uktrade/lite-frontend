@@ -198,6 +198,7 @@ urlpatterns = [
         name="is_material_substance",
     ),
     # F680 details
+    path("<uuid:pk>/f680/good-details/", include("exporter.applications.views.goods.f680.urls")),
     path("<uuid:pk>/f680-details/", f680_details.F680Details.as_view(), name="f680_details"),
     path("<uuid:pk>/questions/", questions.AdditionalInformationFormView.as_view(), name="questions"),
     # Goods Types
