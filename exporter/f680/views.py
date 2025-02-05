@@ -59,6 +59,7 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Ba
         )
 
     def get_payload(self, form_dict):
+
         return F680CreatePayloadBuilder().build(form_dict)  # /PS-IGNORE
 
     def done(self, form_list, form_dict, **kwargs):

@@ -146,7 +146,6 @@ class TestF680ApplicationSummaryView:
         self, authorized_client, set_f680_feature_flag, mock_f680_application_get_404
     ):
         response = authorized_client.get(str(uuid4))  # PS-IGNORE
-        breakpoint()
         assert response.status_code == 404
 
     def test_get_f680_summary_view_fail_with_feature_flag_off(
