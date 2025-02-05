@@ -11,13 +11,14 @@ from exporter.f680.payloads import F680PatchPayloadBuilder
 from exporter.f680.views import F680FeatureRequiredMixin
 
 from .constants import FormSteps
-from .forms import ApplicationNameForm, ExceptionalCircumstancesForm
+from .forms import ApplicationNameForm, ExceptionalCircumstancesForm, ExplainExceptionalCircumstancesForm
 
 
 class GeneralApplicationDetailsView(LoginRequiredMixin, F680FeatureRequiredMixin, BaseSessionWizardView):
     form_list = [
         (FormSteps.APPLICATION_NAME, ApplicationNameForm),
         (FormSteps.EXCEPTIONAL_CIRCUMSTANCES, ExceptionalCircumstancesForm),
+        (FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS, ExplainExceptionalCircumstancesForm),
     ]
 
     def setup(self, request, *args, **kwargs):

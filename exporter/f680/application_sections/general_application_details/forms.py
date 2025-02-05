@@ -1,4 +1,8 @@
 from django import forms
+from django.template.loader import render_to_string
+
+from crispy_forms_gds.fields import DateInputField
+from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm
 
@@ -34,4 +38,35 @@ class ExceptionalCircumstancesForm(BaseForm):
     )
 
     def get_layout_fields(self):
-        return ("is_exceptional_circumstances",)
+        return (
+            "is_exceptional_circumstances",
+            HTML.details(
+                "Help with exceptional circumstances",
+                render_to_string("f680/forms/help_exceptional_circumstances.html"),
+            ),
+        )
+
+
+class ExplainExceptionalCircumstancesForm(BaseForm):
+    class Layout:
+        TITLE = "Explain your exceptional circumstances"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    exceptional_circumstances_date = DateInputField(
+        label="When do you need your F680 approval?",
+    )
+    exceptional_circumstances_reason = forms.CharField(
+        label="Why do you need approval in less than 30 days?",
+        widget=forms.Textarea(attrs={"rows": "5"}),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        cleaned_data["exceptional_circumstances_date"] = cleaned_data["exceptional_circumstances_date"].isoformat()
+        return cleaned_data
+
+    def get_layout_fields(self):
+        return (
+            "exceptional_circumstances_date",
+            "exceptional_circumstances_reason",
+        )
