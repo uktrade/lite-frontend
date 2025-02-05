@@ -59,7 +59,7 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Ba
         )
 
     def get_payload(self, form_dict):
-        return F680CreatePayloadBuilder().build(form_dict)  # /PS-IGNORE
+        return F680CreatePayloadBuilder(self).build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
