@@ -26,7 +26,7 @@ from .services import (
 )
 
 
-class F680FeatureRequiredMixin(AccessMixin):  # PS-IGNORE
+class F680FeatureRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_ALLOW_F680:
             self.raise_exception = True
