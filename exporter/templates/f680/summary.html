@@ -17,13 +17,27 @@
                 <ul class="lite-task-list__items">
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
-                            Your reference
+                            Application type
                             <div class="lite-tag lite-tag--blue">
-                                Saved
+                                Completed
                             </div>
                         </div>
                         <div class="lite-task-list__item-details govuk-caption-m">
-                            {{ application.application.name }}
+                            F680
+                        </div>
+                    </li>
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:general_application_details:wizard" pk=application.id %}">General application details</a>
+                            {% if application.application.general_application_details %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Not Started
+                            </div>
+                            {% endif %}
                         </div>
                     </li>
                 </ul>
