@@ -18,7 +18,7 @@ from exporter.core.constants import PERMANENT, CaseTypes
 from exporter.core.services import post_open_general_licence_cases
 from lite_forms.views import SingleFormView, MultiFormView
 
-from core.auth.views import LoginRequiredMixin
+from core.auth.views import LoginRequiredMixin, RedirectView
 
 
 class LicenceType(LoginRequiredMixin, SingleFormView):
@@ -69,17 +69,17 @@ class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
-class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
-    def init(self, request, **kwargs):
-        self.forms = MOD_questions(None)
-        self.action = post_applications
+# class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
+#     def init(self, request, **kwargs):
+#         self.forms = MOD_questions(None)
+#         self.action = post_applications
 
-    def on_submission(self, request, **kwargs):
-        self.forms = MOD_questions(request.POST.copy().get("application_type"))
+#     def on_submission(self, request, **kwargs):
+#         self.forms = MOD_questions(request.POST.copy().get("application_type"))
 
-    def get_success_url(self):
-        pk = self.get_validated_data()["id"]
-        return reverse_lazy("applications:task_list", kwargs={"pk": pk})
+#     def get_success_url(self):
+#         pk = self.get_validated_data()["id"]
+#         return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
 class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
@@ -101,3 +101,8 @@ class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
 class OpenGeneralLicenceSubmit(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         return open_general_licence_submit_success_page(request, **kwargs)
+
+
+class F680Questions(LoginRequiredMixin, RedirectView):  # /PS-IGNORE
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse("f680:apply")  # /PS-IGNORE
