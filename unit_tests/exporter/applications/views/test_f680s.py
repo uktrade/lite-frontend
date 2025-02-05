@@ -1,4 +1,5 @@
 import pytest
+from uuid import uuid4
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
@@ -36,6 +37,13 @@ def mock_f680_application_get(requests_mock, data_f680_case):  # PS-IGNORE
     application_id = data_f680_case["id"]  # PS-IGNORE
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")  # PS-IGNORE
     return requests_mock.get(url=url, json=data_f680_case)  # PS-IGNORE
+
+
+@pytest.fixture
+def mock_f680_application_get_404(requests_mock, data_f680_case):  # PS-IGNORE
+    application_id = str(uuid4)
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")  # PS-IGNORE
+    return requests_mock.get(url=url, json={}, status_code=404)  # PS-IGNORE
 
 
 @pytest.fixture
@@ -133,6 +141,13 @@ class TestF680ApplicationSummaryView:
         content = BeautifulSoup(response.content, "html.parser")
         heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
         assert heading_element.string.strip() == "F680 Application"  # PS-IGNORE
+
+    def test_get_f680_summary_view_case_not_found(
+        self, authorized_client, set_f680_feature_flag, mock_f680_application_get_404
+    ):
+        response = authorized_client.get(str(uuid4))  # PS-IGNORE
+        breakpoint()
+        assert response.status_code == 404
 
     def test_get_f680_summary_view_fail_with_feature_flag_off(
         self,
