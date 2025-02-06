@@ -78,7 +78,8 @@ class ExplainExceptionalCircumstancesForm(BaseForm):
     def clean(self):
         # We have to do some coercion from datetime object to string here due to JSON serialization
         cleaned_data = super().clean()
-        cleaned_data["exceptional_circumstances_date"] = cleaned_data["exceptional_circumstances_date"].isoformat()
+        if "exceptional_circumstances_date" in cleaned_data:
+            cleaned_data["exceptional_circumstances_date"] = cleaned_data["exceptional_circumstances_date"].isoformat()
         return cleaned_data
 
     def get_layout_fields(self):
