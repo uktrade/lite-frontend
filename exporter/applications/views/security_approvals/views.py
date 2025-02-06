@@ -10,7 +10,7 @@ from core.decorators import expect_status
 from core.constants import SecurityClassifiedApprovalsType
 
 from core.wizard.views import BaseSessionWizardView
-from exporter.applications.services import put_application
+from exporter.exporter_answers.services import post_exporter_answer_set
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
 
 from .forms import (
@@ -23,7 +23,7 @@ from .forms import (
 
 from .constants import SecurityApprovalSteps
 from .conditionals import is_f680_approval, is_f1686_approval, is_other_approval
-from .payloads import SecurityApprovalStepsPayloadBuilder
+from .payloads import SecurityApprovalStepsAnswerPayloadBuilder, SecurityApprovalStepsQuestionPayloadBuilder
 
 logger = logging.getLogger(__name__)
 
@@ -65,8 +65,12 @@ class SecurityApprovals(
 
         return ctx
 
-    def get_payload(self, form_dict):
-        export_details_payload = SecurityApprovalStepsPayloadBuilder().build(form_dict)
+    def get_answers_payload(self, form_dict):
+        export_details_payload = SecurityApprovalStepsAnswerPayloadBuilder().build(form_dict)
+        return export_details_payload
+
+    def get_questions_payload(self, form_dict):
+        export_details_payload = SecurityApprovalStepsQuestionPayloadBuilder().build(form_dict)
         return export_details_payload
 
     def get_success_url(self):
@@ -76,20 +80,25 @@ class SecurityApprovals(
         )
 
     @expect_status(
-        HTTPStatus.OK,
+        HTTPStatus.CREATED,
         "Error updating export details",
         "Unexpected error updating export details",
     )
-    def update_application(self, form_dict):
-        payload = self.get_payload(form_dict)
-        return put_application(
+    def submit_answers(self, form_dict):
+        answers_payload = self.get_answers_payload(form_dict)
+        questions_payload = self.get_questions_payload(form_dict)
+        return post_exporter_answer_set(
             self.request,
+            "application",
+            "security_approvals",
+            "standardapplication",
             self.application["id"],
-            payload,
+            answers_payload,
+            questions_payload,
         )
 
     def done(self, form_list, form_dict, **kwargs):
-        self.update_application(form_dict)
+        self.submit_answers(form_dict)
         return redirect(self.get_success_url())
 
 
@@ -98,6 +107,8 @@ class SecurityApprovalsSummaryView(LoginRequiredMixin, ApplicationMixin, Templat
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
+        context["security_approval_answers"] = self.exporter_answers.get("security_approvals")
+        context["security_approval_questions"] = self.exporter_questions.get("security_approvals")
         context["application"] = self.application
         context["back_link_url"] = reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]})
         context["security_classified_approvals_types"] = SecurityClassifiedApprovalsType

@@ -18,7 +18,7 @@ from dateutil.relativedelta import relativedelta
 from django import template
 from django.conf import settings
 from django.http import QueryDict
-from django.template.defaultfilters import stringfilter, safe, capfirst
+from django.template.defaultfilters import stringfilter, safe, capfirst, yesno
 from django.templatetags.tz import localtime
 from django.utils.html import escape
 from django.utils.safestring import mark_safe, SafeString
@@ -1060,3 +1060,12 @@ def pagination(context, *args, link_type="anchor", form_id=None, **kwargs):
     context["paging_form_id"] = form_id
 
     return context
+
+
+@register.filter
+def to_display(value):
+    if type(value) == bool:
+        return capfirst(yesno(value))
+    if type(value) == list:
+        return ", ".join(value)
+    return value

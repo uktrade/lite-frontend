@@ -20,11 +20,6 @@ class SecurityClassifiedDetailsForm(BaseForm):
     class Layout:
         TITLE = "If you are exporting security classified products, you may need a Ministry of Defence (MOD) approval"
 
-    label = """
-    This includes the release of United States ITAR (International Traffic in Arms regulations) material.<br><br>
-    Do you have an MOD security approval, such as F680 or F1686?
-    """
-
     security_approvals = forms.MultipleChoiceField(
         choices=SecurityClassifiedApprovalsType.choices,
         label="What type of approval do you have?",
@@ -38,7 +33,8 @@ class SecurityClassifiedDetailsForm(BaseForm):
             (False, "No"),
         ),
         coerce=coerce_str_to_bool,
-        label=label,
+        label="Do you have an MOD security approval, such as F680 or F1686?",
+        help_text="This includes the release of United States ITAR (International Traffic in Arms regulations) material.",
         error_messages={
             "required": "Select no if you do not have an MOD security approval",
         },
@@ -75,7 +71,7 @@ class SubjectToITARControlsForm(BaseForm):
     class Layout:
         TITLE = "Are any products on this application subject to ITAR controls?"
 
-    label = """
+    help_text = """
     We need to know if this export involves any defence articles including technical data that are
     subject to controls under the United States (US) International Traffic in Arms regulations (ITAR).
     """
@@ -87,7 +83,8 @@ class SubjectToITARControlsForm(BaseForm):
         ),
         coerce=coerce_str_to_bool,
         widget=forms.RadioSelect,
-        label=label,
+        label="Are any products on this application subject to ITAR controls?",
+        help_text=help_text,
         error_messages={
             "required": "Select no if the products are not subject to ITAR controls",
         },
@@ -103,7 +100,7 @@ class F680ReferenceNumberForm(BaseForm):
 
     f680_reference_number = forms.CharField(
         widget=forms.TextInput,
-        label="",
+        label="What is the F680 reference number?",
         error_messages={
             "required": " Enter the F680 reference number",
         },
@@ -128,11 +125,12 @@ class F1686DetailsForm(BaseForm):
     f1686_reference_number = forms.CharField(
         required=False,
         widget=forms.TextInput,
-        label="Reference number (optional)",
+        label="What is the F1686 reference number?",
+        help_text="Reference number (optional)",
     )
 
     f1686_approval_date = CustomErrorDateInputField(
-        label="Approval date",
+        label="When was the F1686 approved?",
         require_all_fields=False,
         help_text=f"For example, 20 2 {datetime.now().year-2}",
         error_messages={
@@ -169,8 +167,7 @@ class SecurityOtherDetailsForm(BaseForm):
 
     other_security_approval_details = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 5}),
-        label="",
-        help_text="Enter any details you have about the MOD contracting authority, reference numbers, "
+        label="Enter any details you have about the MOD contracting authority, reference numbers, "
         "the signatory of the approval, or the Project Security Instruction.",
         error_messages={
             "required": "Enter the details of your written approval",
