@@ -59,8 +59,7 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Ba
         )
 
     def get_payload(self, form_dict):
-
-        return F680CreatePayloadBuilder().build(form_dict)  # /PS-IGNORE
+        return F680CreatePayloadBuilder().build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
@@ -72,9 +71,18 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
     form_class = ApplicationSubmissionForm
     template_name = "f680/summary.html"  # PS-IGNORE
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error getting F680 application",  # PS-IGNORE
+        "Unexpected error getting F680 application",
+        reraise_404=True,
+    )
+    def get_f680_application(self, application_id):  # PS-IGNORE
+        return get_f680_application(self.request, application_id)  # PS-IGNORE
+
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        application, _ = get_f680_application(request, kwargs["pk"])
+        application, _ = self.get_f680_application(kwargs["pk"])
         self.application = application  # PS-IGNORE
 
     def get_context_data(self, **kwargs):
