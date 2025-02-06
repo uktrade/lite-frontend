@@ -40,13 +40,6 @@ def mock_f680_application_get(requests_mock, data_f680_case):  # PS-IGNORE
 
 
 @pytest.fixture
-def mock_f680_application_get_404(requests_mock, data_f680_case):  # PS-IGNORE
-    application_id = str(uuid4)
-    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")  # PS-IGNORE
-    return requests_mock.get(url=url, json={}, status_code=404)  # PS-IGNORE
-
-
-@pytest.fixture
 def mock_application_post(requests_mock, data_f680_case):  # PS-IGNORE
     application = data_f680_case  # PS-IGNORE
     url = client._build_absolute_uri(f"/exporter/f680/application/")  # PS-IGNORE
@@ -143,9 +136,18 @@ class TestF680ApplicationSummaryView:
         assert heading_element.string.strip() == "F680 Application"  # PS-IGNORE
 
     def test_get_f680_summary_view_case_not_found(
-        self, authorized_client, set_f680_feature_flag, mock_f680_application_get_404
+        self,
+        authorized_client,
+        requests_mock,
+        set_f680_feature_flag,
     ):
-        response = authorized_client.get(str(uuid4))  # PS-IGNORE
+
+        app_pk = str(uuid4())
+        client_uri = client._build_absolute_uri(f"/exporter/f680/application/{app_pk}/")
+
+        requests_mock.get(client_uri, json={}, status_code=404)
+
+        response = authorized_client.get(reverse("f680:summary", kwargs={"pk": app_pk}))
         assert response.status_code == 404
 
     def test_get_f680_summary_view_fail_with_feature_flag_off(
