@@ -28,6 +28,7 @@ class GeneralApplicationDetailsView(LoginRequiredMixin, F680FeatureRequiredMixin
     condition_dict = {
         FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS: is_exceptional_circumstances,
     }
+    section = "general_application_details"
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -41,6 +42,9 @@ class GeneralApplicationDetailsView(LoginRequiredMixin, F680FeatureRequiredMixin
     def patch_f680_application(self, data):
         return patch_f680_application(self.request, self.application["id"], data)
 
+    def get_form_initial(self, step):
+        return self.application.get("application", {}).get("general_application_details", {}).get("answers", {})
+
     def get_success_url(self, application_id):
         return reverse(
             "f680:summary",
@@ -50,9 +54,8 @@ class GeneralApplicationDetailsView(LoginRequiredMixin, F680FeatureRequiredMixin
         )
 
     def get_payload(self, form_dict):
-        section = "general_application_details"
-        current_application = self.application["application"]
-        return F680PatchPayloadBuilder().build(section, current_application, form_dict)
+        current_application = self.application.get("application", {})
+        return F680PatchPayloadBuilder().build(self.section, current_application, form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
