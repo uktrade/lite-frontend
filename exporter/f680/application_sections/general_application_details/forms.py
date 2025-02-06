@@ -14,7 +14,7 @@ class ApplicationNameForm(BaseForm):
         SUBMIT_BUTTON_TEXT = "Continue"
 
     name = forms.CharField(
-        label="",
+        label=Layout.TITLE,
         help_text="Give the application a reference name so you can refer back to it when needed",
     )
 
@@ -33,7 +33,7 @@ class ExceptionalCircumstancesForm(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        label="",
+        label="Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
         widget=forms.RadioSelect,
     )
 
