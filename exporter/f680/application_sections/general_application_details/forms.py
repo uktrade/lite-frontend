@@ -1,3 +1,4 @@
+from datetime import datetime
 from django import forms
 from django.template.loader import render_to_string
 
@@ -5,6 +6,7 @@ from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm
+from core.forms.utils import coerce_str_to_bool
 
 
 class ApplicationNameForm(BaseForm):
@@ -35,6 +37,7 @@ class ExceptionalCircumstancesForm(BaseForm):
         ),
         label="Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
         widget=forms.RadioSelect,
+        coerce=coerce_str_to_bool,
     )
 
     def get_layout_fields(self):
@@ -60,7 +63,20 @@ class ExplainExceptionalCircumstancesForm(BaseForm):
         widget=forms.Textarea(attrs={"rows": "5"}),
     )
 
+    def __init__(self, *args, **kwargs):
+        # We have to do some coercion from string to datetime object here due to JSON serialization
+        if (
+            "initial" in kwargs
+            and "exceptional_circumstances_date" in kwargs["initial"]
+            and isinstance(kwargs["initial"]["exceptional_circumstances_date"], str)
+        ):
+            kwargs["initial"]["exceptional_circumstances_date"] = datetime.fromisoformat(
+                kwargs["initial"]["exceptional_circumstances_date"]
+            )
+        return super().__init__(*args, **kwargs)
+
     def clean(self):
+        # We have to do some coercion from datetime object to string here due to JSON serialization
         cleaned_data = super().clean()
         cleaned_data["exceptional_circumstances_date"] = cleaned_data["exceptional_circumstances_date"].isoformat()
         return cleaned_data
