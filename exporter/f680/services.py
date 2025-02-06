@@ -8,7 +8,7 @@ def post_f680_application(request, json):
 
 def get_f680_application(request, application_id):
     data = client.get(request, f"/exporter/f680/application/{application_id}/")
-    return data.json()
+    return data.json(), data.status_code
 
 
 def patch_f680_application(request, application_id, json):

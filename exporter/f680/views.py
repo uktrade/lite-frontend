@@ -73,7 +73,7 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.application = get_f680_application(request, kwargs["pk"])  # PS-IGNORE
+        self.application, _ = get_f680_application(request, kwargs["pk"])  # PS-IGNORE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
