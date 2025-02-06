@@ -32,7 +32,16 @@ class GeneralApplicationDetailsView(LoginRequiredMixin, F680FeatureRequiredMixin
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.application = get_f680_application(request, kwargs["pk"])
+        self.application, _ = self.get_f680_application(kwargs["pk"])
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error retrieving F680 application",
+        "Unexpected error retrieving F680 application",
+        reraise_404=True,
+    )
+    def get_f680_application(self, pk):
+        return get_f680_application(self.request, pk)
 
     @expect_status(
         HTTPStatus.OK,
@@ -43,7 +52,7 @@ class GeneralApplicationDetailsView(LoginRequiredMixin, F680FeatureRequiredMixin
         return patch_f680_application(self.request, self.application["id"], data)
 
     def get_form_initial(self, step):
-        return self.application.get("application", {}).get("general_application_details", {}).get("answers", {})
+        return self.application.get("application", {}).get(self.section, {}).get("answers", {})
 
     def get_success_url(self, application_id):
         return reverse(
