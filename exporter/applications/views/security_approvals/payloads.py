@@ -1,7 +1,7 @@
 from core.wizard.payloads import MergingPayloadBuilder
 
 from .constants import SecurityApprovalSteps
-from exporter.applications.views.goods.common.payloads import get_cleaned_data
+from core.wizard.payloads import get_cleaned_data
 
 
 def get_f1686_data(form):
