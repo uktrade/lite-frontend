@@ -9,3 +9,7 @@ class MergingPayloadBuilder:
             if form:
                 always_merger.merge(payload, payload_func(form))
         return payload
+
+
+def get_cleaned_data(form):
+    return form.cleaned_data
