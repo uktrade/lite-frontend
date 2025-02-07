@@ -73,7 +73,7 @@ class ExplainExceptionalCircumstancesForm(BaseForm):
             kwargs["initial"]["exceptional_circumstances_date"] = datetime.fromisoformat(
                 kwargs["initial"]["exceptional_circumstances_date"]
             )
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clean(self):
         # We have to do some coercion from datetime object to string here due to JSON serialization
