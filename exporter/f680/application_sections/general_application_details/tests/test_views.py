@@ -71,7 +71,9 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
         "general_application_details": {
             "answers": {
                 "name": "my first F680",
-                "is_exceptional_circumstances": False,
+                "is_exceptional_circumstances": True,
+                "exceptional_circumstances_date": "2090-01-01",
+                "exceptional_circumstances_reason": "some reason",
             },
             "questions": {
                 "name": "What is the name of the application?",
