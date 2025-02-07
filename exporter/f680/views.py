@@ -18,15 +18,15 @@ from .forms import (
     ApplicationSubmissionForm,
 )
 from .payloads import (
-    F680CreatePayloadBuilder,  # PS-IGNORE
+    F680CreatePayloadBuilder,
 )
 from .services import (
-    post_f680_application,  # PS-IGNORE
+    post_f680_application,
     get_f680_application,
 )
 
 
-class F680FeatureRequiredMixin(AccessMixin):  # PS-IGNORE
+class F680FeatureRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
         if not settings.FEATURE_FLAG_ALLOW_F680:
             self.raise_exception = True
@@ -37,22 +37,22 @@ class F680FeatureRequiredMixin(AccessMixin):  # PS-IGNORE
         return super().dispatch(request, *args, **kwargs)
 
 
-class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, BaseSessionWizardView):  # PS-IGNORE
+class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, BaseSessionWizardView):
     form_list = [
         (ApplicationFormSteps.APPLICATION_NAME, ApplicationNameForm),
     ]
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error creating F680 application",  # PS-IGNORE
+        "Error creating F680 application",
         "Unexpected error creating F680 application",
     )
-    def post_f680_application(self, data):  # PS-IGNORE
-        return post_f680_application(self.request, data)  # PS-IGNORE
+    def post_f680_application(self, data):
+        return post_f680_application(self.request, data)
 
     def get_success_url(self, application_id):
         return reverse(
-            "f680:summary",  # PS-IGNORE
+            "f680:summary",
             kwargs={
                 "pk": application_id,
             },
@@ -63,27 +63,27 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Ba
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
-        response_data, _ = self.post_f680_application(data)  # PS-IGNORE
+        response_data, _ = self.post_f680_application(data)
         return redirect(self.get_success_url(response_data["id"]))
 
 
-class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, FormView):  # PS-IGNORE
+class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, FormView):
     form_class = ApplicationSubmissionForm
-    template_name = "f680/summary.html"  # PS-IGNORE
+    template_name = "f680/summary.html"
 
     @expect_status(
         HTTPStatus.OK,
-        "Error getting F680 application",  # PS-IGNORE
+        "Error getting F680 application",
         "Unexpected error getting F680 application",
         reraise_404=True,
     )
-    def get_f680_application(self, application_id):  # PS-IGNORE
-        return get_f680_application(self.request, application_id)  # PS-IGNORE
+    def get_f680_application(self, application_id):
+        return get_f680_application(self.request, application_id)
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         application, _ = self.get_f680_application(kwargs["pk"])
-        self.application = application  # PS-IGNORE
+        self.application = application
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -92,4 +92,4 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
         return context
 
     def get_success_url(self):
-        return reverse("f680:summary", kwargs={"pk": self.application["id"]})  # PS-IGNORE
+        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
