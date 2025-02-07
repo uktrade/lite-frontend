@@ -266,7 +266,7 @@ jobs:
     environment:
       <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: tests.exporter.env
-      PYTEST_ADDOPTS: unit_tests/core --capture=no --nomigrations
+      PYTEST_ADDOPTS: core unit_tests/core --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - backend_unit_tests:
