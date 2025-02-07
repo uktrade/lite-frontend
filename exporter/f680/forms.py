@@ -2,7 +2,7 @@ from django import forms
 from crispy_forms_gds.choices import Choice
 
 from core.common.forms import BaseForm, FieldsetForm
-from core.forms.layouts import ConditionalCheckboxes
+from core.forms.layouts import ConditionalCheckboxes, ConditionalCheckboxesQuestion
 
 
 class ApplicationNameForm(BaseForm):
@@ -49,6 +49,7 @@ class ApprovalTypeForm(FieldsetForm):
         approval_text = {}
 
         approval_list = choice_list
+        breakpoint()
         for result in approval_list:
             key = "_".join(result.lower().split())
             choice = Choice(key, result)
@@ -56,6 +57,7 @@ class ApprovalTypeForm(FieldsetForm):
                 choice = Choice(key, result, divider="or")
             approval_choices.append(choice)
             approval_text[key] = result.capitalize()
+        breakpoint()
         return approval_choices, approval_text
 
     approval_choices = forms.MultipleChoiceField(
@@ -65,5 +67,25 @@ class ApprovalTypeForm(FieldsetForm):
         choices=(),
     )
 
+    def __init__(self, *args, **kwargs):
+
+        approval_choices, approval_text = self._get_choices(self.choice_list)
+
+        self.conditional_checkbox_choices = (
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in approval_choices
+        )
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["approval_choices"].choices = approval_choices
+        for choices in approval_choices:
+            self.fields[choices.value] = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3}),
+                label="Description",
+                required=False,
+                initial=approval_text[choices.value],
+            )
+
     def get_layout_fields(self):
+
         return (ConditionalCheckboxes("approval_choices", *self.conditional_checkbox_choices),)
