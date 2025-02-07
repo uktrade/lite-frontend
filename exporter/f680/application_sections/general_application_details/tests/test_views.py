@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 
 from django.urls import reverse
 
@@ -71,7 +72,9 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
         "general_application_details": {
             "answers": {
                 "name": "my first F680",
-                "is_exceptional_circumstances": False,
+                "is_exceptional_circumstances": True,
+                "exceptional_circumstances_date": "2090-01-01",
+                "exceptional_circumstances_reason": "some reason",
             },
             "questions": {
                 "name": "What is the name of the application?",
@@ -237,13 +240,34 @@ class TestGeneralApplicationDetailsView:
             }
         }
 
+    @pytest.mark.parametrize(
+        "step, expected_form, expected_initial",
+        (
+            (FormSteps.APPLICATION_NAME, ApplicationNameForm, {"name": "my first F680"}),
+            (FormSteps.EXCEPTIONAL_CIRCUMSTANCES, ExceptionalCircumstancesForm, {"is_exceptional_circumstances": True}),
+            (
+                FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS,
+                ExplainExceptionalCircumstancesForm,
+                {
+                    "exceptional_circumstances_date": datetime.fromisoformat("2090-01-01"),
+                    "exceptional_circumstances_reason": "some reason",
+                },
+            ),
+        ),
+    )
     def test_GET_with_existing_data_success(
         self,
+        step,
+        expected_form,
+        expected_initial,
         authorized_client,
         mock_f680_application_get_existing_data,
         f680_application_wizard_url,
+        goto_step,
+        force_exceptional_circumstances,
     ):
-        response = authorized_client.get(f680_application_wizard_url)
+        response = goto_step(step)
         assert response.status_code == 200
-        assert isinstance(response.context["form"], ApplicationNameForm)
-        assert response.context["form"]["name"].initial == "my first F680"
+        assert isinstance(response.context["form"], expected_form)
+        for key, expected_value in expected_initial.items():
+            assert response.context["form"][key].initial == expected_value
