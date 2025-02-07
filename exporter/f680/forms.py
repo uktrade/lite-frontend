@@ -49,7 +49,6 @@ class ApprovalTypeForm(FieldsetForm):
         approval_text = {}
 
         approval_list = choice_list
-        breakpoint()
         for result in approval_list:
             key = "_".join(result.lower().split())
             choice = Choice(key, result)
@@ -57,7 +56,6 @@ class ApprovalTypeForm(FieldsetForm):
                 choice = Choice(key, result, divider="or")
             approval_choices.append(choice)
             approval_text[key] = result.capitalize()
-        breakpoint()
         return approval_choices, approval_text
 
     approval_choices = forms.MultipleChoiceField(
