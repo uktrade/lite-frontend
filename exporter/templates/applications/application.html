@@ -177,27 +177,12 @@
 					</dd>
 				</div>
 			{% endif %}
-			{% if not summary_page %}
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs 'applications.ApplicationSummaryPage.STATUS' %}
-					</dt>
-					<dd id="label-application-status" class="govuk-summary-list__value">
-						{{ application.status.value }}
-					</dd>
-				</div>
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs 'applications.ApplicationSummaryPage.SUBMITTED_AT' %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{{ application.submitted_at|str_date }}
-					</dd>
-				</div>
-			{% endif %}
 		</dl>
 	</div>
 	{% if not summary_page %}
+		<div id="application-history">
+			{% include "applications/history.html" %}
+		</div>
 		<div class="lite-tabs__container">
 			<div class="lite-tabs">
 				<a href="{% url 'applications:application' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">

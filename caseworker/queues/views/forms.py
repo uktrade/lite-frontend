@@ -138,6 +138,17 @@ class CasesFiltersForm(forms.Form):
         country_choices = [(country["id"], country["name"]) for country in countries]
         assigned_queues_choices = [(queue["id"], f"{queue['team']['name']}: {queue['name']}") for queue in queues]
 
+        sort_options = [
+            ("-submitted_at", "Submitted (newest to oldest)"),
+            ("submitted_at", "Submitted (oldest to newest)"),
+        ]
+        self.fields["sort_by"] = forms.ChoiceField(
+            choices=sort_options,
+            label="Sort by",
+            required=False,
+        )
+        self.fields["sort_by"].initial = sort_options[0]
+
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
             label="Case status",
@@ -249,6 +260,7 @@ class CasesFiltersForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
             "return_to",
+            "sort_by",
             Accordion(
                 AccordionSection(
                     "Case",

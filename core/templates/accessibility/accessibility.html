@@ -44,22 +44,12 @@
                     Parts of this service are not fully accessible. For example:
                 </p>
                 <ul class="govuk-list govuk-list--bullet">
-                    <li>it times out users after a set amount of time, which cannot be extended</li>
-                    <li>individual pages in the service do not have titles describing their purpose</li>
-                    <li>some questions and answer boxes do not have clear titles or accessible
-                        names for those using screen readers</li>
-                    <li>there is non-text content across the service (like progress bars and greyed out
-                        boxes) which does not have clear text alternatives</li>
-                    <li>there are links which don't clearly explain where they lead or what they do</li>
-                    <li>some links open in a new tab without making that clear</li>
-                    <li>there are 2 tables in the service with incorrect row or column attributes for
-                        those using screen readers</li>
+                    <li>some individual pages in the service do not have titles describing their purpose</li>
+                    <li>some summary pages contain change buttons that aren't clearly labelled</li>
+                    <li>a table in the service has an invisible, empty column that is picked up by screen readers</li>
                     <li>the service uses a star rating to gather feedback that does not have visual
                         labels, visual instructions or a focus indicator for keyboard users</li>
-                    <li>it's not possible to use your browser's autocomplete options to enter
-                        information</li>
-                    <li>some links, buttons and labels throughout the service do not have enough
-                        colour contrast for low vision users</li>
+                    <li>you cannot use your browser's autocomplete options to enter information</li>
                 </ul>
                 <h2 class="govuk-heading-m">What to do if you have difficulty using the apply for a SIEL service</h2>
                 <p class="govuk-body">
@@ -101,44 +91,14 @@
                         Titled).
                     </li>
                     <li>
-                        Questions with radio buttons lack legends explaining the group of options.
-                        This fails WCAG 2.2 success criterion 1.3.1 (Info and Relationships).
-                    </li>
-                    <li>
-                        Questions asking for dates do not give users of screen readers context about
-                        what date they have to give. This fails WCAG 2.2 success criterion 1.3.1 (Info
-                        and Relationships).
-                    </li>
-                    <li>
-                        Some free text questions have 2 rows of text boxes for responses. The
-                        second row does not have an accessible name. This fails WCAG 2.2 success
-                        criterion 1.3.1 (Info and Relationships), 3.3.2 (Labels or Instructions) and 4.1.2
-                        (Name, Role, Value).
-                    </li>
-                    <li>
-                        Some pages do not have the correct hierarchy of headings for users of screen
-                        readers. This fails WCAG 2.2 success criterion 1.3.1 (Info and Relationships).
-                    </li>
-                    <li>
-                        Non-text content (such as progress bars) does not have a text alternative.
-                        This fails WCAG 2.2 success criterion 1.1.1 (Non-text Content) and 1.3.1 (Info
-                        and Relationships).
-                    </li>
-                    <li>
-                        There is an animated progress bar at the top of a page that cannot be
-                        paused, stopped or hidden. This fails WCAG 2.2 success criterion 2.2.2
-                        (Pause, Stop, Hide).
-                    </li>
-                    <li>
-                        The homepage of the service has sections that are visually greyed out, but
-                        they are not disabled clearly for users of screen readers. This fails WCAG 2.2
-                        success criterion 1.3.1 (Info and Relationships) and 4.1.2 (Name, Role,
-                        Value).
-                    </li>
-                    <li>
                         Some headings and questions throughout the service have unclear or
                         incorrect labels that do not relate to the text on the screen. This fails WCAG
                         success criterion 4.1.2 (Name, Role, Value).
+                    </li>
+                    <li>
+                        Some tables for checking answers contain several 'change' links which all have
+                        the same visually hidden text of 'name'. This fails WCAG 2.2 success
+                        criterion 2.4.4 (Link Purpose (In Context)).
                     </li>
                     <li>
                         When users try to return to edit a question they already answered, the
@@ -146,40 +106,14 @@
                         criterion 3.3.7 (Redundant Entry).
                     </li>
                     <li>
-                        Some free text answer boxes do not have an accessible name. This fails
-                        WCAG success criterion 1.3.1 (Info and Relationships) and 4.1.2 (Name,
-                        Role, Value).
-                    </li>
-                    <li>
-                        The service contains links whose purposes or destinations are not accurately
-                        described. This fails WCAG success criterion 2.4.4 (Link Purpose (In
-                        Context)) and 2.4.9 (Link Purpose (Link Only)).
-                    </li>
-                    <li>
-                        The table of 'Users' contains an incorrect row attribute which causes issues
-                        for screen readers. This fails WCAG success criterion 1.3.1 (Info and
-                        Relationships) and 4.1.2 (Name, Role, Value).
-                    </li>
-                    <li>
-                        When entering a registered office address, the page has optional and required
-                        fields which are not appropriately labelled. This fails WCAG success criterion
-                        3.3.2 (Labels or Instructions).
-                    </li>
-                    <li>
                         At the end of the application there is a star rating component which is not
-                        accessible to all users. The stars do not have visual labels or instructions.
+                        accessible to all users. The stars do not have visible labels or instructions.
                         This fails WCAG success criterion 3.3.2 (Labels or Instructions).
                     </li>
                     <li>
                         The 'Product list' page has a table with an empty invisible column that screen
                         readers announce as 'blank'. This fails WCAG success criterion 4.1.2 (Name,
                         Role, Value).
-                    </li>
-                    <li>
-                        The service times users out after a certain amount of time. Users do not get a
-                        warning about the timeout, and the length of the session cannot be extended.
-                        This fails WCAG success criterion 2.2.1 (Timing Adjustable) and 2.2.6
-                        (Timeouts).
                     </li>
                 </ol>
                 <h3 class="govuk-heading-s">Level AA</h3>
@@ -203,26 +137,10 @@
                         focus indicator for keyboard users. This fails WCAG success criterion 2.4.7
                         (Focus Visible).
                     </li>
-                    <li>
-                        Throughout the service, there are links which open new tabs. The link texts do
-                        not make this clear to users. This fails WCAG success criterion 3.2.5 (Change
-                        on Request).
-                    </li>
-                    <li>
-                        Tables in the service contain multiple rows with the same links. The links are
-                        not labelled to show which questions they relate to, which causes issues for
-                        users when browsing out of context. This fails WCAG success criterion 2.4.9
-                        (Link Purpose (Link Only)).
-                    </li>
-                    <li>
-                        Some links and buttons throughout the service do not have sufficient colour
-                        contrast for low vision users. This fails to meet WCAG success criterion 1.4.6
-                        (Contrast (Enhanced)).
-                    </li>
                 </ol>
                 <h2 class="govuk-heading-m">What we're doing to improve accessibility</h2>
                 <p class="govuk-body">
-                    We have committed to updating at least all A level issues by the end of January
+                    We have committed to updating at least all A and AA level issues by the end of August
                     2025.
                 </p>
                 <p class="govuk-body">
@@ -231,8 +149,8 @@
                 </p>
                 <h2 class="govuk-heading-m">Preparation of this accessibility statement</h2>
                 <p class="govuk-body">
-                    This statement was prepared on 2 February 2024. It was last reviewed on 15
-                    October 2024.
+                    This statement was prepared on 2 February 2024. It was last updated on 31
+                    January 2025.
                 </p>
                 <p class="govuk-body">
                     This website was last tested on 31 May 2024 and was checked for compliance with
