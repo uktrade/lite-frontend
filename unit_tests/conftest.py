@@ -556,6 +556,23 @@ def data_open_case():
 
 
 @pytest.fixture
+def data_f680_case(data_organisation):
+    return {
+        "id": "6cf7b401-62dc-4577-ad1d-4282f2aabc96",
+        "application": {"name": "F680 Test 1"},
+        "reference_code": None,
+        "organisation": {
+            "id": "3913ff20-5a2b-468a-bf5d-427228459b06",
+            "name": "Archway Communications",
+            "type": "commercial",
+            "status": "active",
+        },
+        "submitted_at": None,
+        "submitted_by": None,
+    }
+
+
+@pytest.fixture
 def data_standard_case(
     data_organisation,
     wassenaar_regime_entry,
