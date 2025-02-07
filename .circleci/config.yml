@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  browser-tools: circleci/browser-tools@1.4.7
+  browser-tools: circleci/browser-tools@1.4.7 # /PS-IGNORE
 
 parameters:
   run_ui_tests:
@@ -131,7 +131,7 @@ commands:
       - run:
           name: Clone API
           command: |
-            git clone git@github.com:uktrade/lite-api.git
+            git clone git@github.com:uktrade/lite-api.git # /PS-IGNORE
             cd lite-api
             git checkout $(python ../which_branch.py <<parameters.api_branch>>)
       - run:
@@ -252,7 +252,7 @@ jobs:
     environment:
       <<: *common_env_vars
       PIPENV_DOTENV_LOCATION: tests.exporter.env
-      PYTEST_ADDOPTS: unit_tests/exporter --capture=no --nomigrations
+      PYTEST_ADDOPTS:  exporter unit_tests/exporter --capture=no --nomigrations
       FILE_UPLOAD_HANDLERS: django.core.files.uploadhandler.MemoryFileUploadHandler,django.core.files.uploadhandler.TemporaryFileUploadHandler
     steps:
       - backend_unit_tests:
