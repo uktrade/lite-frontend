@@ -249,7 +249,6 @@ def test_case_details_sub_status(
     dt = html.find("dt", string=re.compile("Sub-status"))
     assert dt
     dd = dt.find_next()
-    print(dd.get_text())
     assert dd.get_text().replace("\n", "").replace("\t", "").strip() == expected
 
 
