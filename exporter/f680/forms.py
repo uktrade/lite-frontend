@@ -1,6 +1,5 @@
 from django import forms
 from crispy_forms_gds.layout import HTML
-from crispy_forms_gds.choices import Choice
 
 from core.common.forms import BaseForm, TextChoice
 from core.forms.layouts import ConditionalCheckboxes, ConditionalCheckboxesQuestion
@@ -72,11 +71,13 @@ class ApprovalTypeForm(BaseForm):
     demonstration_in_uk = forms.CharField(
         label="Explain what you are demonstrating and why",
         widget=forms.Textarea(attrs={"rows": 5}),
+        required=False,
     )
 
     demonstration_overseas = forms.CharField(
         label="Explain what you are demonstrating and why",
         widget=forms.Textarea(attrs={"rows": 5}),
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
