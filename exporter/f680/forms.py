@@ -31,7 +31,7 @@ class ApplicationSubmissionForm(BaseForm):
         return []
 
 
-class ApprovalTypeForm(FieldsetForm):
+class ApprovalTypeForm(BaseForm):
     class Layout:
         TITLE = "Select the types of approvals you need"
         TITLE_AS_LABEL_FOR = "approval_choices"
@@ -65,30 +65,14 @@ class ApprovalTypeForm(FieldsetForm):
         widget=forms.CheckboxSelectMultiple(),
     )
 
-    demonstration_in_uk_text = forms.MultipleChoiceField(
+    demonstration_in_uk_text = forms.CharField(
         label="Explain what you are demonstrating and why",
-        choices=(),  # set in __init__
-        required=False,
-        # setting id for javascript to use
-        widget=forms.SelectMultiple(
-            attrs={
-                "id": "demonstration_in_uk_text",
-                "data-module": "multi-select",
-            }
-        ),
+        widget=forms.Textarea(attrs={"rows": 5}),
     )
 
-    demonstration_overseas_text = forms.MultipleChoiceField(
+    demonstration_overseas_text = forms.CharField(
         label="Explain what you are demonstrating and why",
-        choices=(),  # set in __init__
-        required=False,
-        # setting id for javascript to use
-        widget=forms.SelectMultiple(
-            attrs={
-                "id": "demonstration_text",
-                "data-module": "multi-select",
-            }
-        ),
+        widget=forms.Textarea(attrs={"rows": 5}),
     )
 
     def get_layout_fields(self):
