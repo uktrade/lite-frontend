@@ -1,10 +1,10 @@
 from django import forms
+from django.db.models import TextChoices
+from django.template.loader import render_to_string
 from crispy_forms_gds.layout import HTML
 
 from core.common.forms import BaseForm, TextChoice
 from core.forms.layouts import ConditionalCheckboxes, ConditionalCheckboxesQuestion
-from django.db.models import TextChoices
-from django.template.loader import render_to_string
 
 
 class ApplicationNameForm(BaseForm):
@@ -39,22 +39,22 @@ class ApprovalTypeForm(BaseForm):
 
     class ApprovalTypeChoices(TextChoices):
         INITIAL_DISCUSSIONS_OR_PROMOTING = (
-            "INITIAL_DISCUSSIONS_OR_PROMOTING",
+            "initial_discussion_or_promoting",
             "Initial discussions or promoting products",
         )
-        demonstration_in_uk = (
+        DEMONSTRATION_IN_THE_UK = (
             "demonstration_in_uk",
             "Demonstration in the United Kingdom to overseas customers",
         )
-        demonstration_overseas = "demonstration_overseas", "Demonstration overseas"
-        TRAINING = "TRAINING", "Training"
-        THROUGH_LIFE_SUPPORT = "THROUGH_LIFE_SUPPORT", "Through life support"
-        SUPPLY = "SUPPLY", "Supply"
+        DEMONSTRATION_OVERSEAS = "demonstration_overseas", "Demonstration overseas"
+        TRAINING = "training", "Training"
+        THROUGH_LIFE_SUPPORT = "through_life_support", "Through life support"
+        SUPPLY = "supply", "Supply"
 
     ApprovalTypeChoices = (
         TextChoice(ApprovalTypeChoices.INITIAL_DISCUSSIONS_OR_PROMOTING),
-        TextChoice(ApprovalTypeChoices.demonstration_in_uk),
-        TextChoice(ApprovalTypeChoices.demonstration_overseas),
+        TextChoice(ApprovalTypeChoices.DEMONSTRATION_IN_THE_UK),
+        TextChoice(ApprovalTypeChoices.DEMONSTRATION_OVERSEAS),
         TextChoice(ApprovalTypeChoices.TRAINING),
         TextChoice(ApprovalTypeChoices.THROUGH_LIFE_SUPPORT),
         TextChoice(ApprovalTypeChoices.SUPPLY),
