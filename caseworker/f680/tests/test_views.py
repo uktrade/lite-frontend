@@ -109,6 +109,15 @@ class TestCaseDetailView:
         soup = BeautifulSoup(response.content, "html.parser")
         assert f680_reference_code in soup.find("h1").text
 
+    def test_GET_not_logged_in(
+        self, client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_f680_case
+    ):
+        url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        expected_redirect_location = reverse("auth:login")
+        response = client.get(url)
+        assert response.status_code == 302
+        assert response.url.startswith(expected_redirect_location)
+
     def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
         with pytest.raises(HTTPError, match="404"):

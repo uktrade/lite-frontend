@@ -1,11 +1,13 @@
 from django.views.generic import TemplateView
 
+from core.auth.views import LoginRequiredMixin
+
 from caseworker.cases.services import get_case
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 
 
-class CaseDetailView(CaseworkerMixin, TemplateView):
+class CaseDetailView(LoginRequiredMixin, CaseworkerMixin, TemplateView):
     template_name = "f680/case/detail.html"
 
     def setup(self, request, *args, **kwargs):
