@@ -12,10 +12,12 @@ from core.wizard.views import BaseSessionWizardView
 
 from .constants import (
     ApplicationFormSteps,
+    ApprovalTypeSteps,
 )
 from .forms import (
     ApplicationNameForm,
     ApplicationSubmissionForm,
+    ApprovalTypeForm,
 )
 from .payloads import (
     F680CreatePayloadBuilder,  # PS-IGNORE
@@ -66,6 +68,12 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Ba
         data = self.get_payload(form_dict)
         response_data, _ = self.post_f680_application(data)  # PS-IGNORE
         return redirect(self.get_success_url(response_data["id"]))
+
+
+class F680ApprovalTypeView(LoginRequiredMixin, F680FeatureRequiredMixin, BaseSessionWizardView):  # PS-IGNORE
+    form_list = [
+        (ApprovalTypeSteps.APPROVAL_TYPE, ApprovalTypeForm),
+    ]
 
 
 class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, FormView):  # PS-IGNORE
