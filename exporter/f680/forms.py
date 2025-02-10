@@ -1,8 +1,9 @@
 from django import forms
 from crispy_forms_gds.layout import HTML
 
-from core.common.forms import BaseForm
+from core.common.forms import BaseForm, FieldsetForm, TextChoice
 from core.forms.layouts import ConditionalCheckboxes, ConditionalCheckboxesQuestion
+from django.db.models import TextChoices
 from django.template.loader import render_to_string
 
 
@@ -36,16 +37,28 @@ class ApprovalTypeForm(BaseForm):
         TITLE_AS_LABEL_FOR = "approval_choices"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    APPROVAL_CHOICES = [
-        ("INITIAL_DISCUSSIONS_OR_PROMOTING", "Initial discussions or promoting products"),
-        ("DEMO_IN_UK_TO_OVERSEAS", "Demonstration in the United Kingdom to overseas customers"),
-        ("DEMO_OVERSEAS", "Demonstration overseas"),
-        ("TRAINING", "Training"),
-        ("THROUGH_LIFE_SUPPORT", "Through life support"),
-        ("SUPPLY", "Supply"),
-    ]
+    class ApprovalTypeChoices(TextChoices):
+        INITIAL_DISCUSSIONS_OR_PROMOTING = (
+            "INITIAL_DISCUSSIONS_OR_PROMOTING",
+            "Initial discussions or promoting products",
+        )
+        DEMO_IN_UK_TO_OVERSEAS = "DEMO_IN_UK_TO_OVERSEAS", "Demonstration in the United Kingdom to overseas customers"
+        DEMO_OVERSEAS = "DEMO_OVERSEAS", "Demonstration overseas"
+        TRAINING = "TRAINING", "Training"
+        THROUGH_LIFE_SUPPORT = "THROUGH_LIFE_SUPPORT", "Through life support"
+        SUPPLY = "SUPPLY", "Supply"
+
+    ApprovalTypeChoices = (
+        TextChoice(ApprovalTypeChoices.INITIAL_DISCUSSIONS_OR_PROMOTING),
+        TextChoice(ApprovalTypeChoices.DEMO_IN_UK_TO_OVERSEAS),
+        TextChoice(ApprovalTypeChoices.DEMO_OVERSEAS),
+        TextChoice(ApprovalTypeChoices.TRAINING),
+        TextChoice(ApprovalTypeChoices.THROUGH_LIFE_SUPPORT),
+        TextChoice(ApprovalTypeChoices.SUPPLY),
+    )
+
     approval_choices = forms.MultipleChoiceField(
-        choices=APPROVAL_CHOICES,
+        choices=ApprovalTypeChoices,
         error_messages={
             "required": 'Select an approval choice"',
         },
