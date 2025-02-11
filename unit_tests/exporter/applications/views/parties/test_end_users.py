@@ -48,6 +48,14 @@ def mock_post_party_document(requests_mock, data_standard_case):
     yield requests_mock.post(url=url, status_code=201, json={})
 
 
+@pytest.fixture
+def mock_get_existing_party(requests_mock, data_standard_case):
+    url = client._build_absolute_uri(
+        f'/applications/{data_standard_case["case"]["id"]}/existing-parties/?party_type=end_user'
+    )
+    yield requests_mock.get(url=url, status_code=200, json={})
+
+
 @pytest.fixture(autouse=True)
 def setup(
     mock_countries,
@@ -56,6 +64,7 @@ def setup(
     mock_party_get,
     mock_party_put,
     mock_post_party_document,
+    mock_get_existing_party,
     no_op_storage,
 ):
     yield
@@ -451,7 +460,7 @@ def test_edit_end_user_ec3_document(requests_mock, authorized_client, data_stand
     }
 
 
-def test_add_end_user_view(authorized_client, data_standard_case):
+def test_get_add_end_user_view(authorized_client, data_standard_case):
     application_id = data_standard_case["case"]["id"]
 
     url = reverse("applications:add_end_user", kwargs={"pk": application_id})
@@ -460,3 +469,35 @@ def test_add_end_user_view(authorized_client, data_standard_case):
     heading_element = soup.find("h1", class_="govuk-fieldset__heading")
 
     assert heading_element.string.strip() == "Do you want to reuse an existing party?"
+
+
+def test_error_add_end_user_view(authorized_client, data_standard_case):
+    application_id = data_standard_case["case"]["id"]
+
+    url = reverse("applications:add_end_user", kwargs={"pk": application_id})
+    response = authorized_client.post(url, data={})
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    heading_element = soup.find("h2", id="error-summary-title")
+    assert heading_element.string.strip() == "There is a problem"
+
+    error_msg = soup.find("a", href="#id_reuse_party")
+    assert error_msg.string.strip() == "Select yes if you want to reuse an existing party"
+
+
+@pytest.mark.parametrize(
+    "reuse_party,heading_class,expected_heading",
+    (
+        (True, "govuk-heading-l", "Select a party"),
+        (False, "govuk-fieldset__heading", "Select the type of end user"),
+    ),
+)
+def test_add_end_user_view(authorized_client, data_standard_case, reuse_party, heading_class, expected_heading):
+    application_id = data_standard_case["case"]["id"]
+
+    url = reverse("applications:add_end_user", kwargs={"pk": application_id})
+    response = authorized_client.post(url, data={"reuse_party": reuse_party}, follow=True)
+    assert response.status_code == 200
+    soup = BeautifulSoup(response.content, "html.parser")
+    heading_element = soup.find("h1", class_=heading_class)
+    assert heading_element.string.strip() == expected_heading
