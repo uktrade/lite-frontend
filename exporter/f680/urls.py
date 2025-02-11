@@ -13,4 +13,8 @@ urlpatterns = [
         "<uuid:pk>/general-application-details/",
         include("exporter.f680.application_sections.general_application_details.urls"),
     ),
+    path(
+        "<uuid:pk>/approval-details/",
+        include("exporter.f680.application_sections.approval_details.urls"),
+    ),
 ]

@@ -41,6 +41,26 @@
                         </div>
                     </li>
                 </ul>
+                <h2 class="lite-task-list__section">
+                    <span class="lite-task-list__section-number">2. </span>
+                    Complete approval details
+                </h2>
+                <ul class="lite-task-list__items">
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:type_wizard" pk=application.id %}">Approval type</a>
+                            {% if application.application.approval_details %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Not Started
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                </ul>
             </li>
         </ol>
         <div class="app-submit-bar">

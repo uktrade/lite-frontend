@@ -1,34 +1,11 @@
 from django import forms
 from django.db.models import TextChoices
 from django.template.loader import render_to_string
-from crispy_forms_gds.layout import HTML
+
+from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm, TextChoice
 from core.forms.layouts import ConditionalCheckboxes, ConditionalCheckboxesQuestion
-
-
-class ApplicationNameForm(BaseForm):
-    class Layout:
-        TITLE = "Name of the application"
-        TITLE_AS_LABEL_FOR = "name"
-        SUBMIT_BUTTON_TEXT = "Continue"
-
-    name = forms.CharField(
-        label="",
-        help_text="Give the application a reference name so you can refer back to it when needed",
-    )
-
-    def get_layout_fields(self):
-        return ("name",)
-
-
-class ApplicationSubmissionForm(BaseForm):
-    class Layout:
-        TITLE = ""
-        SUBMIT_BUTTON_TEXT = "Submit"
-
-    def get_layout_fields(self):
-        return []
 
 
 class ApprovalTypeForm(BaseForm):
@@ -63,7 +40,7 @@ class ApprovalTypeForm(BaseForm):
     approval_choices = forms.MultipleChoiceField(
         choices=(),
         error_messages={
-            "required": "Select an approval choice",
+            "required": 'Select an approval choice"',
         },
         widget=forms.CheckboxSelectMultiple(),
     )
