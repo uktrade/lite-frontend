@@ -37,6 +37,7 @@ pylint-celery = "==0.3"
 pylint-flask = "==0.6"
 pylint-plugin-utils = "==0.7"
 pytest-circleci-parallelized = "*"
+freezegun = "*"
 
 [packages]
 beautifulsoup4 = "~=4.8.2"

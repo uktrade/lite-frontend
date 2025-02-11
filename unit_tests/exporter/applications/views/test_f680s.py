@@ -12,6 +12,11 @@ from exporter.f680.constants import (
 from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
 
 
+@pytest.fixture(autouse=True)
+def setup(settings):
+    settings.FEATURE_FLAG_ALLOW_F680 = True
+
+
 @pytest.fixture
 def authorized_client(authorized_client_factory, mock_exporter_user):
     return authorized_client_factory(mock_exporter_user["user"])
@@ -47,8 +52,8 @@ def mock_application_post(requests_mock, data_f680_case):
 
 
 @pytest.fixture()
-def set_f680_feature_flag(settings):
-    settings.FEATURE_FLAG_ALLOW_F680 = True
+def unset_f680_feature_flag(settings):
+    settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
 class TestApplyForLicenceQuestionsClass:
@@ -64,7 +69,6 @@ class TestF680ApplicationCreateView:
         authorized_client,
         f680_apply_url,
         mock_f680_application_get,
-        set_f680_feature_flag,
     ):
         response = authorized_client.get(f680_apply_url)
 
@@ -77,6 +81,7 @@ class TestF680ApplicationCreateView:
         authorized_client,
         f680_apply_url,
         mock_f680_application_get,
+        unset_f680_feature_flag,
     ):
         response = authorized_client.get(f680_apply_url)
         assert response.context[0].get("title") == "Forbidden"
@@ -91,7 +96,6 @@ class TestF680ApplicationCreateView:
         f680_apply_url,
         post_to_step,
         f680_summary_url_with_application,
-        set_f680_feature_flag,
     ):
         response = post_to_step(
             ApplicationFormSteps.APPLICATION_NAME,
@@ -106,7 +110,6 @@ class TestF680ApplicationCreateView:
         authorized_client,
         f680_apply_url,
         post_to_step,
-        set_f680_feature_flag,
     ):
         response = post_to_step(
             ApplicationFormSteps.APPLICATION_NAME,
@@ -124,7 +127,6 @@ class TestF680ApplicationSummaryView:
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
-        set_f680_feature_flag,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
 
@@ -139,7 +141,6 @@ class TestF680ApplicationSummaryView:
         self,
         authorized_client,
         requests_mock,
-        set_f680_feature_flag,
     ):
 
         app_pk = str(uuid4())
@@ -155,6 +156,7 @@ class TestF680ApplicationSummaryView:
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
+        unset_f680_feature_flag,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
         assert response.status_code == 200
@@ -169,7 +171,6 @@ class TestF680ApplicationSummaryView:
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
-        set_f680_feature_flag,
     ):
         response = authorized_client.post(
             f680_summary_url_with_application,
@@ -183,6 +184,7 @@ class TestF680ApplicationSummaryView:
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
+        unset_f680_feature_flag,
     ):
         response = authorized_client.post(
             f680_summary_url_with_application,
