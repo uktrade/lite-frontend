@@ -1,7 +1,8 @@
 import pytest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.urls import reverse
+from freezegun import freeze_time
 
 from core import client
 
@@ -11,6 +12,10 @@ from exporter.f680.application_sections.general_application_details.forms import
     ExplainExceptionalCircumstancesForm,
 )
 from exporter.f680.application_sections.general_application_details.constants import FormSteps
+
+
+DATETIME_10_DAYS_AGO = datetime.now() - timedelta(days=10)
+DATETIME_IN_1_YEAR = datetime.now() + timedelta(days=365)
 
 
 @pytest.fixture()
@@ -177,6 +182,30 @@ class TestGeneralApplicationDetailsView:
                     "exceptional_circumstances_reason": ["This field is required."],
                 },
             ),
+            (
+                FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS,
+                {
+                    "exceptional_circumstances_reason": "because",
+                    "exceptional_circumstances_date_0": DATETIME_10_DAYS_AGO.day,
+                    "exceptional_circumstances_date_1": DATETIME_10_DAYS_AGO.month,
+                    "exceptional_circumstances_date_2": DATETIME_10_DAYS_AGO.year,
+                },
+                {
+                    "exceptional_circumstances_date": ["Date must be in the future"],
+                },
+            ),
+            (
+                FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS,
+                {
+                    "exceptional_circumstances_reason": "because",
+                    "exceptional_circumstances_date_0": DATETIME_IN_1_YEAR.day,
+                    "exceptional_circumstances_date_1": DATETIME_IN_1_YEAR.month,
+                    "exceptional_circumstances_date_2": DATETIME_IN_1_YEAR.year,
+                },
+                {
+                    "exceptional_circumstances_date": ["Date must be within 30 days"],
+                },
+            ),
         ),
     )
     def test_POST_to_step_validation_error(
@@ -198,6 +227,7 @@ class TestGeneralApplicationDetailsView:
         for field_name, error in expected_errors.items():
             assert response.context["form"][field_name].errors == error
 
+    @freeze_time("2026-11-30")
     def test_POST_submit_wizard_success(
         self, post_to_step, goto_step, mock_f680_application_get, mock_patch_f680_application
     ):

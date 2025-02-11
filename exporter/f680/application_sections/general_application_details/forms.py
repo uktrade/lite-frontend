@@ -8,6 +8,11 @@ from crispy_forms_gds.layout.content import HTML
 from core.common.forms import BaseForm
 from core.forms.utils import coerce_str_to_bool
 
+from exporter.core.validators import (
+    FutureDateValidator,
+    RelativeDeltaDateValidator,
+)
+
 
 class ApplicationNameForm(BaseForm):
     class Layout:
@@ -57,6 +62,10 @@ class ExplainExceptionalCircumstancesForm(BaseForm):
 
     exceptional_circumstances_date = DateInputField(
         label="When do you need your F680 approval?",
+        validators=[
+            FutureDateValidator("Date must be in the future"),
+            RelativeDeltaDateValidator("Date must be within 30 days", days=30),
+        ],
     )
     exceptional_circumstances_reason = forms.CharField(
         label="Why do you need approval in less than 30 days?",
