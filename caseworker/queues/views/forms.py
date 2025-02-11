@@ -13,6 +13,8 @@ from crispy_forms_gds.layout import (
 
 from django import forms
 from django.urls import reverse
+
+from caseworker.advice.constants import CASE_PROGRESSION_QUEUES
 from core.constants import LicenceStatusEnum
 
 
@@ -142,6 +144,15 @@ class CasesFiltersForm(forms.Form):
             ("-submitted_at", "Submitted (newest to oldest)"),
             ("submitted_at", "Submitted (oldest to newest)"),
         ]
+
+        if queue["id"] in CASE_PROGRESSION_QUEUES:
+            sort_options.extend(
+                [
+                    ("-time_on_queue", "Time on queue (newest to oldest)"),
+                    ("time_on_queue", "Time on queue (oldest to newest)"),
+                ]
+            )
+
         self.fields["sort_by"] = forms.ChoiceField(
             choices=sort_options,
             label="Sort by",
