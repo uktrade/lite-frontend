@@ -9,7 +9,7 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 from exporter.applications.views.goods.common.mixins import ApplicationMixin
-from exporter.applications.views.goods.common.payloads import get_cleaned_data
+from core.wizard.payloads import get_cleaned_data
 from exporter.applications.services import put_application
 from core.wizard.views import BaseSessionWizardView
 
