@@ -343,3 +343,4 @@ NOTIFY_FEEDBACK_EMAIL = env.str("NOTIFY_FEEDBACK_EMAIL")
 GTM_ID = env.str("GTM_ID", default="")
 
 GIT_COMMIT = env.str("GIT_COMMIT", default="")
+FEATURE_FLAG_ALLOW_F680 = env.bool("FEATURE_FLAG_ALLOW_F680", default=False)
