@@ -37,8 +37,6 @@ class BaseConditionalQuestion(TemplateNameMixin):
 
         conditional_content = ""
         for field in self.fields:
-            if field not in form.declared_fields:
-                continue
             conditional_content += render_field(field, form, form_style, context, template_pack=template_pack, **kwargs)
 
         context.update(
@@ -92,8 +90,35 @@ class ConditionalCheckboxesQuestion(BaseConditionalQuestion):
     template = "%s/layout/conditional_checkboxes_question.html"
 
 
+class F680ConditionalCheckboxesQuestion(ConditionalCheckboxesQuestion):
+    def render(self, bound_field, form, form_style, context, template_pack=TEMPLATE_PACK, **kwargs):
+        template = self.get_template_name(template_pack)
+
+        mapped_choices = {choice[1]: choice for choice in bound_field.field.choices}
+        value = self.value
+        choice = mapped_choices[value]
+        position = list(mapped_choices.keys()).index(self.value)
+
+        conditional_content = ""
+        for field in self.fields:
+            if field not in form.declared_fields:
+                continue
+            conditional_content += render_field(field, form, form_style, context, template_pack=template_pack, **kwargs)
+
+        context.update(
+            {"choice": choice, "field": bound_field, "position": position, "conditional_content": conditional_content}
+        )
+
+        return render_to_string(template, context.flatten())
+
+
 class ConditionalCheckboxes(BaseConditional):
     question_class = ConditionalCheckboxesQuestion
+    template = "%s/layout/conditional_checkboxes.html"
+
+
+class F680ConditionalCheckboxes(BaseConditional):
+    question_class = F680ConditionalCheckboxesQuestion
     template = "%s/layout/conditional_checkboxes.html"
 
 

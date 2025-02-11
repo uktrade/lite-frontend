@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm, TextChoice
-from core.forms.layouts import ConditionalCheckboxes, ConditionalCheckboxesQuestion
+from core.forms.layouts import F680ConditionalCheckboxes, F680ConditionalCheckboxesQuestion
 
 
 class ApprovalTypeForm(BaseForm):
@@ -59,14 +59,14 @@ class ApprovalTypeForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         self.conditional_checkbox_choices = (
-            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in self.ApprovalTypeChoices
+            F680ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in self.ApprovalTypeChoices
         )
         super().__init__(*args, **kwargs)
         self.fields["approval_choices"].choices = self.ApprovalTypeChoices
 
     def get_layout_fields(self):
         return (
-            ConditionalCheckboxes("approval_choices", *self.conditional_checkbox_choices),
+            F680ConditionalCheckboxes("approval_choices", *self.conditional_checkbox_choices),
             HTML.details(
                 "Help with exceptional circumstances",
                 render_to_string("f680/forms/help_with_approval_type.html"),
