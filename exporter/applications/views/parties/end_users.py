@@ -82,7 +82,7 @@ class AddEndUserView(LoginRequiredMixin, FormView):
             {
                 "form_title": self.form_class.Layout.TITLE,
                 "back_link_text": "Back to application overview",
-                "back_link_url": reverse("applications:task_list", kwargs=self.kwargs),
+                "back_link_url": reverse("applications:task_list", kwargs={"pk": self.kwargs["pk"]}),
             }
         )
         return context
@@ -90,9 +90,9 @@ class AddEndUserView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         reuse_party = str_to_bool(form.cleaned_data.get("reuse_party"))
         if reuse_party:
-            success_url = reverse("applications:end_users_copy", kwargs=self.kwargs)
+            success_url = reverse("applications:end_users_copy", kwargs={"pk": self.kwargs["pk"]})
         else:
-            success_url = reverse("applications:set_end_user", kwargs=self.kwargs)
+            success_url = reverse("applications:set_end_user", kwargs={"pk": self.kwargs["pk"]})
 
         return HttpResponseRedirect(success_url)
 
@@ -146,7 +146,7 @@ class SetPartyView(LoginRequiredMixin, BaseSessionWizardView):
     # for subsequent questions the back link is generated through another mechanism
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form, **kwargs)
-        context.update({"back_link_url": reverse("applications:add_end_user", kwargs=self.kwargs)})
+        context.update({"back_link_url": reverse("applications:add_end_user", kwargs={"pk": self.kwargs["pk"]})})
         return context
 
     def get_form_kwargs(self, step=None):

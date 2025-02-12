@@ -1,9 +1,5 @@
 from exporter.applications.views.goods.common import constants
-from core.wizard.payloads import MergingPayloadBuilder
-
-
-def get_cleaned_data(form):
-    return form.cleaned_data
+from core.wizard.payloads import MergingPayloadBuilder, get_cleaned_data
 
 
 def get_pv_grading_payload(form):
