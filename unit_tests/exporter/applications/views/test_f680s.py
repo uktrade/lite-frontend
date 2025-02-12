@@ -55,7 +55,8 @@ def mock_application_post(requests_mock, data_f680_case):
 def set_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = True
 
-    @pytest.fixture()
+
+@pytest.fixture()
 def unset_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
