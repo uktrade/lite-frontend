@@ -1,8 +1,4 @@
 import pytest
-
-
-from django.urls import reverse
-
 from datetime import datetime, timedelta
 
 from django.urls import reverse
@@ -231,7 +227,6 @@ class TestGeneralApplicationDetailsView:
         for field_name, error in expected_errors.items():
             assert response.context["form"][field_name].errors == error
 
-
     @freeze_time("2026-11-30")
     def test_POST_submit_wizard_success(
         self, post_to_step, goto_step, mock_f680_application_get, mock_patch_f680_application
@@ -275,7 +270,6 @@ class TestGeneralApplicationDetailsView:
             }
         }
 
-
     @pytest.mark.parametrize(
         "step, expected_form, expected_initial",
         (
@@ -307,4 +301,3 @@ class TestGeneralApplicationDetailsView:
         assert isinstance(response.context["form"], expected_form)
         for key, expected_value in expected_initial.items():
             assert response.context["form"][key].initial == expected_value
-
