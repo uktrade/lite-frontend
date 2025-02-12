@@ -35,14 +35,14 @@ def opening_question():
             ),
         ),
         Option(
-            key="f680",  # PS-IGNORE
+            key="f680",
             value="Security Approval",
             description=(
                 "Select if you need approval to give classified products or information to non-UK organisations, "
-                "governments and individuals. This includes F680 approval. You should apply for security approval"  # PS-IGNORE
+                "governments and individuals. This includes F680 approval. You should apply for security approval"
                 " before you apply for a licence."
             ),
-            disabled=not settings.FEATURE_FLAG_ALLOW_F680,  # PS-IGNORE
+            disabled=not settings.FEATURE_FLAG_ALLOW_F680,
         ),
         Option(
             key="transhipment",

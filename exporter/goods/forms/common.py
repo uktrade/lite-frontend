@@ -14,6 +14,7 @@ from core.forms.layouts import (
     ConditionalCheckbox,
     Prefixed,
 )
+from core.file_handler import validate_mime_type
 from core.forms.utils import coerce_str_to_bool
 
 from core.common.forms import BaseForm, FieldsetForm
@@ -363,6 +364,9 @@ class ProductDocumentUploadForm(FieldsetForm):
         error_messages={
             "required": "Select a document that shows what your product is designed to do",
         },
+        validators=[
+            validate_mime_type,
+        ],
     )
     description = forms.CharField(
         widget=forms.Textarea(attrs={"rows": "5"}),

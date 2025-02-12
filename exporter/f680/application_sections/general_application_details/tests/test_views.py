@@ -1,6 +1,12 @@
 import pytest
 
+
 from django.urls import reverse
+
+from datetime import datetime, timedelta
+
+from django.urls import reverse
+from freezegun import freeze_time
 
 from core import client
 
@@ -10,6 +16,10 @@ from exporter.f680.application_sections.general_application_details.forms import
     ExplainExceptionalCircumstancesForm,
 )
 from exporter.f680.application_sections.general_application_details.constants import FormSteps
+
+
+DATETIME_10_DAYS_AGO = datetime.now() - timedelta(days=10)
+DATETIME_IN_1_YEAR = datetime.now() + timedelta(days=365)
 
 
 @pytest.fixture()
@@ -176,6 +186,30 @@ class TestGeneralApplicationDetailsView:
                     "exceptional_circumstances_reason": ["This field is required."],
                 },
             ),
+            (
+                FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS,
+                {
+                    "exceptional_circumstances_reason": "because",
+                    "exceptional_circumstances_date_0": DATETIME_10_DAYS_AGO.day,
+                    "exceptional_circumstances_date_1": DATETIME_10_DAYS_AGO.month,
+                    "exceptional_circumstances_date_2": DATETIME_10_DAYS_AGO.year,
+                },
+                {
+                    "exceptional_circumstances_date": ["Date must be in the future"],
+                },
+            ),
+            (
+                FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS,
+                {
+                    "exceptional_circumstances_reason": "because",
+                    "exceptional_circumstances_date_0": DATETIME_IN_1_YEAR.day,
+                    "exceptional_circumstances_date_1": DATETIME_IN_1_YEAR.month,
+                    "exceptional_circumstances_date_2": DATETIME_IN_1_YEAR.year,
+                },
+                {
+                    "exceptional_circumstances_date": ["Date must be within 30 days"],
+                },
+            ),
         ),
     )
     def test_POST_to_step_validation_error(
@@ -197,6 +231,8 @@ class TestGeneralApplicationDetailsView:
         for field_name, error in expected_errors.items():
             assert response.context["form"][field_name].errors == error
 
+
+    @freeze_time("2026-11-30")
     def test_POST_submit_wizard_success(
         self, post_to_step, goto_step, mock_f680_application_get, mock_patch_f680_application
     ):
@@ -239,13 +275,36 @@ class TestGeneralApplicationDetailsView:
             }
         }
 
+
+    @pytest.mark.parametrize(
+        "step, expected_form, expected_initial",
+        (
+            (FormSteps.APPLICATION_NAME, ApplicationNameForm, {"name": "my first F680"}),
+            (FormSteps.EXCEPTIONAL_CIRCUMSTANCES, ExceptionalCircumstancesForm, {"is_exceptional_circumstances": True}),
+            (
+                FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS,
+                ExplainExceptionalCircumstancesForm,
+                {
+                    "exceptional_circumstances_date": datetime.fromisoformat("2090-01-01"),
+                    "exceptional_circumstances_reason": "some reason",
+                },
+            ),
+        ),
+    )
     def test_GET_with_existing_data_success(
         self,
+        step,
+        expected_form,
+        expected_initial,
         authorized_client,
         mock_f680_application_get_existing_data,
         f680_application_wizard_url,
+        goto_step,
+        force_exceptional_circumstances,
     ):
-        response = authorized_client.get(f680_application_wizard_url)
+        response = goto_step(step)
         assert response.status_code == 200
-        assert isinstance(response.context["form"], ApplicationNameForm)
-        assert response.context["form"]["name"].initial == "my first F680"
+        assert isinstance(response.context["form"], expected_form)
+        for key, expected_value in expected_initial.items():
+            assert response.context["form"][key].initial == expected_value
+

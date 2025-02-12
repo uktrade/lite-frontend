@@ -55,9 +55,9 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
-class F680Questions(LoginRequiredMixin, RedirectView, F680FeatureRequiredMixin):  # /PS-IGNORE
+class F680Questions(LoginRequiredMixin, RedirectView, F680FeatureRequiredMixin):
     def get_redirect_url(self, *args, **kwargs):
-        return reverse("f680:apply")  # /PS-IGNORE
+        return reverse("f680:apply")
 
 
 class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
