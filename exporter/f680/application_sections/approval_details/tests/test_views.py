@@ -55,18 +55,6 @@ def mock_f680_application_get(requests_mock, data_f680_case):
 @pytest.fixture
 def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
     data_f680_case["application"] = {
-        "general_application_details": {
-            "answers": {
-                "name": "my first F680",
-                "is_exceptional_circumstances": True,
-                "exceptional_circumstances_date": "2090-01-01",
-                "exceptional_circumstances_reason": "some reason",
-            },
-            "questions": {
-                "name": "What is the name of the application?",
-                "is_exceptional_circumstances": "Are there exceptional circumstances?",
-            },
-        },
         "approval_details": {
             "answers": {
                 "approval_choices": [
@@ -141,6 +129,33 @@ class TestApprovalDetailsView:
         assert response.status_code == 200
         assert response.context["title"] == "Forbidden"
 
+    def test_POST_approval_type_and_submit_wizard_success(
+        self, post_to_step, goto_step, mock_f680_application_get, mock_patch_f680_application
+    ):
+        response = post_to_step(
+            FormSteps.APPROVAL_TYPE,
+            {"approval_choices": ["training", "supply"]},
+        )
+        assert response.status_code == 302
+        assert mock_patch_f680_application.called_once
+        assert mock_patch_f680_application.last_request.json() == {
+            "application": {
+                "name": "F680 Test 1",
+                "approval_details": {
+                    "answers": {
+                        "approval_choices": ["training", "supply"],
+                        "demonstration_in_uk": "",
+                        "demonstration_overseas": "",
+                    },
+                    "questions": {
+                        "approval_choices": None,
+                        "demonstration_in_uk": "Explain what you are demonstrating and why",
+                        "demonstration_overseas": "Explain what you are demonstrating and why",
+                    },
+                },
+            }
+        }
+
     def test_POST_to_step_validation_error(
         self,
         post_to_step,
@@ -174,30 +189,3 @@ class TestApprovalDetailsView:
         ]
         assert response.context["form"]["demonstration_in_uk"].initial == "Test text 1"
         assert response.context["form"]["demonstration_overseas"].initial == "Test text 2"
-
-    def test_POST_approval_type_and_submit_wizard_success(
-        self, post_to_step, goto_step, mock_f680_application_get, mock_patch_f680_application
-    ):
-        response = post_to_step(
-            FormSteps.APPROVAL_TYPE,
-            {"approval_choices": ["training", "supply"]},
-        )
-        assert response.status_code == 302
-        assert mock_patch_f680_application.called_once
-        assert mock_patch_f680_application.last_request.json() == {
-            "application": {
-                "name": "F680 Test 1",
-                "approval_details": {
-                    "answers": {
-                        "approval_choices": ["training", "supply"],
-                        "demonstration_in_uk": "",
-                        "demonstration_overseas": "",
-                    },
-                    "questions": {
-                        "approval_choices": None,
-                        "demonstration_in_uk": "Explain what you are demonstrating and why",
-                        "demonstration_overseas": "Explain what you are demonstrating and why",
-                    },
-                },
-            }
-        }
