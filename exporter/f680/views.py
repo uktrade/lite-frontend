@@ -4,13 +4,12 @@ from django.conf import settings
 from django.contrib.auth.mixins import AccessMixin
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, RedirectView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 from .forms import ApplicationSubmissionForm
-from .payloads import F680CreatePayloadBase
 
 from .services import (
     post_f680_application,
@@ -29,7 +28,7 @@ class F680FeatureRequiredMixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, TemplateView):
+class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, RedirectView):
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -47,9 +46,10 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Te
             },
         )
 
-    def dispatch(self, request, *args, **kwargs):
-        # Dispatch is overriden to create a dummpy application
-        data = F680CreatePayloadBase().build()
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+        # Data required to create a base application
+        data = {"application": {}}
         response_data, _ = self.post_f680_application(data)
         return redirect(self.get_success_url(response_data["id"]))
 

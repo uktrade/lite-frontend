@@ -3,11 +3,6 @@ from deepmerge import always_merger
 from core.wizard.payloads import get_cleaned_data, get_questions_data
 
 
-class F680CreatePayloadBase:
-    def build(self, application_data={}):
-        return {"application": application_data}
-
-
 class F680PatchPayloadBuilder:
     def build(self, section, application_data, form_dict):
         answer_payload = {}
