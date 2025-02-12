@@ -49,7 +49,7 @@
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:additional_information:notes_wizard" pk=application.id %}">Notes for case officers</a>
-                            {% if application.application.general_application_details %}
+                            {% if application.application.additional_information.answers.note %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
                             </div>
