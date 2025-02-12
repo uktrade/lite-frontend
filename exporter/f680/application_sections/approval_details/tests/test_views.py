@@ -141,40 +141,6 @@ class TestApprovalDetailsView:
         assert response.status_code == 200
         assert response.context["title"] == "Forbidden"
 
-    # def test_POST_to_step_success(
-    #     self,
-    #     post_to_step,
-    #     goto_step,
-    #     mock_f680_application_get,
-    # ):
-    #     goto_step(FormSteps.APPROVAL_TYPE)
-    #     response = post_to_step(
-    #         FormSteps.APPROVAL_TYPE,
-    #         {
-    #             "approval_details": {
-    #                 "answers": {
-    #                     "approval_choices": [
-    #                         "initial_discussion_or_promoting",
-    #                         "demonstration_in_uk",
-    #                         "demonstration_overseas",
-    #                         "training",
-    #                         "through_life_support",
-    #                         "supply",
-    #                     ],
-    #                     "demonstration_in_uk": "Test Text",
-    #                     "demonstration_overseas": "Test Text",
-    #                 },
-    #                 "questions": {
-    #                     "approval_choices": None,
-    #                     "demonstration_in_uk": "Explain what you are demonstrating and why",
-    #                     "demonstration_overseas": "Explain what you are demonstrating and why",
-    #                 },
-    #             },
-    #         },
-    #     )
-    #     assert response.status_code == 200
-    #     assert isinstance(response.context["form"], ApprovalTypeForm)
-
     def test_POST_to_step_validation_error(
         self,
         post_to_step,
