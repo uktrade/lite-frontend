@@ -13,6 +13,7 @@ from exporter.core.validators import (
     RelativeDeltaDateValidator,
 )
 
+
 class ApplicationNameForm(BaseForm):
     class Layout:
         TITLE = "Name the application"
