@@ -52,11 +52,6 @@ def mock_application_post(requests_mock, data_f680_case):
 
 
 @pytest.fixture()
-def set_f680_feature_flag(settings):
-    settings.FEATURE_FLAG_ALLOW_F680 = True
-
-
-@pytest.fixture()
 def unset_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
@@ -74,7 +69,6 @@ class TestF680ApplicationCreateView:
         authorized_client,
         f680_apply_url,
         mock_f680_application_get,
-        set_f680_feature_flag,
     ):
         response = authorized_client.get(f680_apply_url)
 
@@ -133,7 +127,6 @@ class TestF680ApplicationSummaryView:
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
-        set_f680_feature_flag,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
 
@@ -148,7 +141,6 @@ class TestF680ApplicationSummaryView:
         self,
         authorized_client,
         requests_mock,
-        set_f680_feature_flag,
     ):
 
         app_pk = str(uuid4())
@@ -179,7 +171,6 @@ class TestF680ApplicationSummaryView:
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
-        set_f680_feature_flag,
     ):
         response = authorized_client.post(
             f680_summary_url_with_application,
