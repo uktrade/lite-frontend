@@ -40,7 +40,7 @@ class ApprovalTypeForm(BaseForm):
     approval_choices = forms.MultipleChoiceField(
         choices=(),
         error_messages={
-            "required": 'Select an approval choice"',
+            "required": "Select an approval choice",
         },
         widget=forms.CheckboxSelectMultiple(),
     )
