@@ -4,22 +4,14 @@ from django.conf import settings
 from django.contrib.auth.mixins import AccessMixin
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
-from core.wizard.views import BaseSessionWizardView
 
-from .constants import (
-    ApplicationFormSteps,
-)
-from .forms import (
-    ApplicationNameForm,
-    ApplicationSubmissionForm,
-)
-from .payloads import (
-    F680CreatePayloadBuilder,
-)
+from .forms import ApplicationSubmissionForm
+from .payloads import F680CreatePayloadBase
+
 from .services import (
     post_f680_application,
     get_f680_application,
@@ -37,10 +29,7 @@ class F680FeatureRequiredMixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, BaseSessionWizardView):
-    form_list = [
-        (ApplicationFormSteps.APPLICATION_NAME, ApplicationNameForm),
-    ]
+class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, TemplateView):
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -58,11 +47,9 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Ba
             },
         )
 
-    def get_payload(self, form_dict):
-        return F680CreatePayloadBuilder().build(form_dict)
-
-    def done(self, form_list, form_dict, **kwargs):
-        data = self.get_payload(form_dict)
+    def dispatch(self, request, *args, **kwargs):
+        # Dispatch is overriden to create a dummpy application
+        data = F680CreatePayloadBase().build()
         response_data, _ = self.post_f680_application(data)
         return redirect(self.get_success_url(response_data["id"]))
 
