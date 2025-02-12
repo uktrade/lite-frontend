@@ -3,6 +3,10 @@ from django import forms
 from core.common.forms import BaseForm
 
 
+class NoteWidget(forms.Textarea):
+    template_name = "applications/f680case-notes.html"  # /PS-IGNORE
+
+
 class NotesForCaseOfficerForm(BaseForm):
     class Layout:
         TITLE = "Notes"
@@ -10,7 +14,7 @@ class NotesForCaseOfficerForm(BaseForm):
 
     note = forms.CharField(
         label="Add note",
-        widget=forms.Textarea(attrs={"cols": "80"}),
+        widget=NoteWidget(attrs={"cols": "80"}),
     )
 
     def get_context(self):
