@@ -1,15 +1,46 @@
-from deepmerge import always_merger
-
-from core.wizard.payloads import get_cleaned_data, get_questions_data
+from datetime import date
 
 
 class F680PatchPayloadBuilder:
-    def build(self, section, application_data, form_dict):
-        answer_payload = {}
-        question_payload = {}
+    def serialize(self, value):
+        if isinstance(value, bool):
+            return value, "boolean"
+        elif isinstance(value, date):
+            return value.isoformat(), "date"
+        elif isinstance(value, str):
+            return value, "string"
+        else:
+            raise NotImplementedError(f"Must implement serialization for value {value} of type {type(value)}")
+
+    def get_fields(self, form):
+        fields = []
+        for field_name, value in form.cleaned_data.items():
+            serialized_answer, datatype = self.serialize(value)
+            answer = serialized_answer
+            if hasattr(form.fields[field_name], "choices"):
+                answer = dict(form.fields[field_name].choices)[answer]
+            fields.append(
+                {
+                    "key": field_name,
+                    "answer": answer,
+                    "raw_answer": serialized_answer,
+                    "question": form[field_name].label,
+                    "datatype": datatype,
+                }
+            )
+        return fields
+
+    def build(self, section, section_label, application_data, form_dict):
+        fields = []
         for form in form_dict.values():
-            if form:
-                always_merger.merge(answer_payload, get_cleaned_data(form))
-                always_merger.merge(question_payload, get_questions_data(form))
-        application_data[section] = {"answers": answer_payload, "questions": question_payload}
+            fields.extend(self.get_fields(form))
+
+        section_payload = {
+            "label": section_label,
+            "fields": fields,
+        }
+        try:
+            application_data["sections"][section] = section_payload
+        except KeyError:
+            application_data["sections"] = {section: section_payload}
         return {"application": application_data}

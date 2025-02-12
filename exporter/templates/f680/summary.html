@@ -29,7 +29,7 @@
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:general_application_details:wizard" pk=application.id %}">General application details</a>
-                            {% if application.application.general_application_details %}
+                            {% if application.application.sections.general_application_details %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
                             </div>

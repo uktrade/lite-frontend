@@ -74,16 +74,39 @@ def force_exceptional_circumstances(goto_step, post_to_step):
 @pytest.fixture
 def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
     data_f680_case["application"] = {
-        "general_application_details": {
-            "answers": {
-                "name": "my first F680",
-                "is_exceptional_circumstances": True,
-                "exceptional_circumstances_date": "2090-01-01",
-                "exceptional_circumstances_reason": "some reason",
-            },
-            "questions": {
-                "name": "What is the name of the application?",
-                "is_exceptional_circumstances": "Are there exceptional circumstances?",
+        "sections": {
+            "general_application_details": {
+                "label": "General application details",
+                "fields": [
+                    {
+                        "key": "name",
+                        "answer": "my first F680",
+                        "raw_answer": "my first F680",
+                        "question": "What is the name of the application?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "is_exceptional_circumstances",
+                        "answer": "Yes",
+                        "raw_answer": True,
+                        "question": "Are there exceptional circumstances?",
+                        "datatype": "boolean",
+                    },
+                    {
+                        "key": "exceptional_circumstances_date",
+                        "answer": "2090-01-01",
+                        "raw_answer": "2090-01-01",
+                        "question": "What date do you need it?",
+                        "datatype": "date",
+                    },
+                    {
+                        "key": "exceptional_circumstances_reason",
+                        "answer": "some reason",
+                        "raw_answer": "some reason",
+                        "question": "What makes the circumstances exceptional?",
+                        "datatype": "string",
+                    },
+                ],
             },
         }
     }
@@ -253,18 +276,39 @@ class TestGeneralApplicationDetailsView:
         assert mock_patch_f680_application.last_request.json() == {
             "application": {
                 "name": "F680 Test 1",
-                "general_application_details": {
-                    "answers": {
-                        "name": "some test app",
-                        "is_exceptional_circumstances": True,
-                        "exceptional_circumstances_date": "2026-12-01",
-                        "exceptional_circumstances_reason": "because",
-                    },
-                    "questions": {
-                        "name": "Name the application",
-                        "is_exceptional_circumstances": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
-                        "exceptional_circumstances_date": "When do you need your F680 approval?",
-                        "exceptional_circumstances_reason": "Why do you need approval in less than 30 days?",
+                "sections": {
+                    "general_application_details": {
+                        "label": "General application details",
+                        "fields": [
+                            {
+                                "key": "name",
+                                "answer": "some test app",
+                                "raw_answer": "some test app",
+                                "question": "Name the application",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_exceptional_circumstances",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "exceptional_circumstances_date",
+                                "answer": "2026-12-01",
+                                "raw_answer": "2026-12-01",
+                                "question": "When do you need your F680 approval?",
+                                "datatype": "date",
+                            },
+                            {
+                                "key": "exceptional_circumstances_reason",
+                                "answer": "because",
+                                "raw_answer": "because",
+                                "question": "Why do you need approval in less than 30 days?",
+                                "datatype": "string",
+                            },
+                        ],
                     },
                 },
             }
