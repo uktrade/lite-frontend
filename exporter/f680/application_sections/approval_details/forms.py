@@ -57,6 +57,12 @@ class ApprovalTypeForm(BaseForm):
         required=False,
     )
 
+    approval_details_text = forms.CharField(
+        label="Provide details about what you're seeking approval to do",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        required=False,
+    )
+
     def __init__(self, *args, **kwargs):
         self.conditional_checkbox_choices = (
             F680ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in self.ApprovalTypeChoices
@@ -67,6 +73,7 @@ class ApprovalTypeForm(BaseForm):
     def get_layout_fields(self):
         return (
             F680ConditionalCheckboxes("approval_choices", *self.conditional_checkbox_choices),
+            "approval_details_text",
             HTML.details(
                 "Help with exceptional circumstances",
                 render_to_string("f680/forms/help_with_approval_type.html"),

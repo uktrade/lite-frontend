@@ -146,11 +146,13 @@ class TestApprovalDetailsView:
                         "approval_choices": ["training", "supply"],
                         "demonstration_in_uk": "",
                         "demonstration_overseas": "",
+                        "approval_details_text": "",
                     },
                     "questions": {
                         "approval_choices": None,
                         "demonstration_in_uk": "Explain what you are demonstrating and why",
                         "demonstration_overseas": "Explain what you are demonstrating and why",
+                        "approval_details_text": "Provide details about what you're seeking approval to do",
                     },
                 },
             }
