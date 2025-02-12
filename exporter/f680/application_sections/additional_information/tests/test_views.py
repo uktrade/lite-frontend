@@ -79,7 +79,7 @@ def goto_step(goto_step_factory, f680_application_wizard_url):
     return goto_step_factory(f680_application_wizard_url)
 
 
-class TestApprovalDetailsView:
+class TestAdditionalInformationView:
 
     def test_GET_no_application_404(
         self,
