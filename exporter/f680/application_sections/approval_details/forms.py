@@ -47,12 +47,14 @@ class ApprovalTypeForm(BaseForm):
 
     demonstration_in_uk = forms.CharField(
         label="Explain what you are demonstrating and why",
+        help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
         required=False,
     )
 
     demonstration_overseas = forms.CharField(
         label="Explain what you are demonstrating and why",
+        help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
         required=False,
     )
