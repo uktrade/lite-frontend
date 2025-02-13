@@ -2,7 +2,14 @@ from exporter.core.services import get_countries
 from exporter.f680.application_sections.views import F680MultipleItemApplicationSectionWizard
 
 from .constants import FormSteps
-from .forms import EntityTypeForm, EndUserNameForm, EndUserAddressForm, SecurityGradingForm, EndUserIntendedEndUseForm
+from .forms import (
+    EntityTypeForm,
+    EndUserNameForm,
+    EndUserAddressForm,
+    SecurityGradingForm,
+    EndUserIntendedEndUseForm,
+    EndUserAssembleManufactureForm,
+)
 
 
 class UserInformationView(F680MultipleItemApplicationSectionWizard):
@@ -12,6 +19,7 @@ class UserInformationView(F680MultipleItemApplicationSectionWizard):
         (FormSteps.END_USER_ADDRESS, EndUserAddressForm),
         (FormSteps.SECURITY_GRADING, SecurityGradingForm),
         (FormSteps.INTENDED_END_USE, EndUserIntendedEndUseForm),
+        (FormSteps.ASSEMBLE_MANUFACTURE, EndUserAssembleManufactureForm),
     ]
     section = "user_information"
     section_label = "User Information"

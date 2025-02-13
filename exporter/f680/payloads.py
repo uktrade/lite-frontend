@@ -10,8 +10,15 @@ class F680PatchPayloadBuilder:
             return value.isoformat(), "date"
         elif isinstance(value, str):
             return value, "string"
+        elif isinstance(value, list):
+            return value, "list"
         else:
             raise NotImplementedError(f"Must implement serialization for value {value} of type {type(value)}")
+
+    def get_display_answer(self, form, field_name, answer):
+        if isinstance(answer, list):
+            return [self.get_display_answer(form, field_name, answer_value) for answer_value in answer]
+        return dict(form.fields[field_name].choices)[answer]
 
     def get_fields(self, form):
         fields = []
@@ -19,7 +26,7 @@ class F680PatchPayloadBuilder:
             serialized_answer, datatype = self.serialize(value)
             answer = serialized_answer
             if hasattr(form.fields[field_name], "choices"):
-                answer = dict(form.fields[field_name].choices)[answer]
+                answer = self.get_display_answer(form, field_name, answer)
             fields.append(
                 {
                     "key": field_name,

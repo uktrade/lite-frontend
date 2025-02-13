@@ -3,6 +3,7 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
 
 from core.common.forms import BaseForm
+from core.forms.layouts import ConditionalCheckboxes, ConditionalCheckboxesQuestion
 
 
 class EntityTypeForm(BaseForm):
@@ -145,3 +146,39 @@ class EndUserIntendedEndUseForm(BaseForm):
 
     def get_layout_fields(self):
         return ("end_user_intended_end_use",)
+
+
+class EndUserAssembleManufactureForm(BaseForm):
+    class Layout:
+        TITLE = "Does this end-user need to assemble or manufacture any of the products?"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    assemble_manufacture_choices = (
+        Choice("assemble", "Yes, assembled"),
+        Choice("manufacture", "Yes, manufactured"),
+        Choice("no", "No"),
+    )
+
+    assemble_manufacture = forms.MultipleChoiceField(
+        choices=assemble_manufacture_choices,
+        label=Layout.TITLE,
+    )
+    assemble = forms.CharField(
+        label="Describe what assembly is needed.",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+    )
+    manufacture = forms.CharField(
+        label="Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 5}),
+    )
+
+    def __init__(self, *args, **kwargs):
+        self.conditional_checkbox_choices = (
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in self.assemble_manufacture_choices
+        )
+        super().__init__(*args, **kwargs)
+
+    def get_layout_fields(self):
+        return (ConditionalCheckboxes("assemble_manufacture", *self.conditional_checkbox_choices),)
