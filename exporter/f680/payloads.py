@@ -1,3 +1,4 @@
+from uuid import uuid4
 from datetime import date
 
 
@@ -30,17 +31,48 @@ class F680PatchPayloadBuilder:
             )
         return fields
 
-    def build(self, section, section_label, application_data, form_dict):
+    def get_all_fields(self, forms):
         fields = []
-        for form in form_dict.values():
+        for form in forms:
             fields.extend(self.get_fields(form))
+        return fields
 
+    def build(self, section, section_label, application_data, form_dict):
+        fields = self.get_all_fields(form_dict.values())
         section_payload = {
             "label": section_label,
             "fields": fields,
+            "type": "single",
         }
         try:
             application_data["sections"][section] = section_payload
         except KeyError:
             application_data["sections"] = {section: section_payload}
+        return {"application": application_data}
+
+
+class F680AppendingPayloadBuilder(F680PatchPayloadBuilder):
+    def build(self, section, section_label, application_data, form_dict, item_id=None):
+        if not item_id:
+            item_id = str(uuid4())
+
+        fields = self.get_all_fields(form_dict.values())
+
+        all_items = {}
+        if application_data.get("sections", {}).get(section, {}).get("items"):
+            flat_items = application_data["sections"][section]["items"]
+            all_items = {item["id"]: item for item in flat_items}
+        item = {"id": item_id, "fields": fields}
+        all_items[item["id"]] = item
+
+        section_payload = {
+            "label": section_label,
+            "items": list(all_items.values()),
+            "type": "multiple",
+        }
+        try:
+            application_data["sections"][section] = section_payload
+        except KeyError:
+            application_data["sections"] = {section: section_payload}
+
         return {"application": application_data}
