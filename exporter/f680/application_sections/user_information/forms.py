@@ -38,6 +38,51 @@ class EntityTypeForm(BaseForm):
         return ("entity_type",)
 
 
+class ThirdPartyRoleForm(BaseForm):
+    class Layout:
+        TITLE = "Select the role of the third party"
+        TITLE_AS_LABEL_FOR = "third_party_role"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    third_party_role = forms.ChoiceField(
+        choices=(
+            Choice(
+                "agent-or-broker",
+                "Agent or broker",
+            ),
+            Choice(
+                "intermediate-consignee",
+                "Intermediate consignee",
+            ),
+            Choice(
+                "authorised-submitter",
+                "Authorised submitter",
+            ),
+            Choice(
+                "consultant",
+                "Consultant",
+            ),
+            Choice(
+                "contact",
+                "Contact",
+            ),
+            Choice(
+                "exporter",
+                "Exporter",
+            ),
+            Choice(
+                "other",
+                "Other",
+            ),
+        ),
+        label=Layout.TITLE,
+        widget=forms.RadioSelect,
+    )
+
+    def get_layout_fields(self):
+        return ("third_party_role",)
+
+
 class EndUserNameForm(BaseForm):
     class Layout:
         TITLE = "End-user name"
