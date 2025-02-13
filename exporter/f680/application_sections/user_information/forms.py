@@ -1,4 +1,6 @@
 from django import forms
+from crispy_forms_gds.choices import Choice
+from crispy_forms_gds.fields import DateInputField
 
 from core.common.forms import BaseForm
 
@@ -11,9 +13,21 @@ class EntityTypeForm(BaseForm):
 
     entity_type = forms.ChoiceField(
         choices=(
-            ("end-user", "End user"),
-            ("ultimate-end-user", "Ultimate end-user"),
-            ("third-party", "Third party"),
+            Choice(
+                "end-user",
+                "End user",
+                hint="An end-user receives the products in the destination country. They either use the products themselves, resell from stock, or export them again to another country.",
+            ),
+            Choice(
+                "ultimate-end-user",
+                "Ultimate end-user",
+                hint="Ultimate end-users receive products or information from end-users. They can be the same products or information that you shared with the end-user. Or the end-user can change the products or information before sharing them with the ultimate end-user.",
+            ),
+            Choice(
+                "third-party",
+                "Third party",
+                hint="A third party is involved in sharing products or information, but doesn't use them. They are not an end-user or ultimate end-user. They may be an agent, broker, consultant or distributor.",
+            ),
         ),
         label="Select type of entity",
         widget=forms.RadioSelect,
@@ -21,3 +35,106 @@ class EntityTypeForm(BaseForm):
 
     def get_layout_fields(self):
         return ("entity_type",)
+
+
+class EndUserNameForm(BaseForm):
+    class Layout:
+        TITLE = "End-user name"
+        TITLE_AS_LABEL_FOR = "end_user_name"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    end_user_name = forms.CharField(
+        label="End-user name",
+        help_text="Name or organisation or individual",
+    )
+
+    def get_layout_fields(self):
+        return ("end_user_name",)
+
+
+class EndUserAddressForm(BaseForm):
+    class Layout:
+        TITLE = "End-user address"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    address = forms.CharField(
+        label="Address",
+        widget=forms.Textarea(attrs={"rows": "5"}),
+    )
+    country = forms.CharField(
+        label="Country",
+    )
+
+    def get_layout_fields(self):
+        return ("address", "country")
+
+
+class SecurityGradingForm(BaseForm):
+    class Layout:
+        TITLE = "What is the security grading of the information or products you want to release to this end-user"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    prefix = forms.CharField(
+        label="Enter a prefix (optional)",
+        required=False,
+    )
+    security_classification = forms.ChoiceField(
+        choices=(
+            Choice("unclassified", "Unclassified"),
+            Choice("official", "Official"),
+            Choice("official-sensitive", "Official-Sensitive"),
+            Choice("restricted", "Restricted"),
+            Choice("confidential", "Confidential"),
+            Choice("secret", "Secret"),
+            Choice("top-secret", "Top Secret", divider="Or"),
+            Choice("other", "Other"),
+        ),
+        label="Select security classification",
+        widget=forms.RadioSelect,
+    )
+    other_security_classification = forms.CharField(
+        label="Enter the security classification",
+        required=False,
+    )
+    suffix = forms.CharField(
+        label="Enter a suffix (optional)",
+        help_text="For example, UK eyes only",
+        required=False,
+    )
+    issuing_authority_name_address = forms.CharField(
+        label="Name and address of the issuing authority",
+        widget=forms.Textarea(attrs={"rows": "5"}),
+    )
+    reference = forms.CharField(
+        label="Reference",
+    )
+    date_of_issue = DateInputField(
+        label="Date of issue",
+        help_text="For example, 27 3 2025",
+    )
+
+    def get_layout_fields(self):
+        return (
+            "prefix",
+            "security_classification",
+            "other_security_classification",
+            "suffix",
+            "issuing_authority_name_address",
+            "reference",
+            "date_of_issue",
+        )
+
+
+class EndUserIntendedEndUseForm(BaseForm):
+    class Layout:
+        TITLE = "How does the end-user intend to use this product"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    end_user_intended_end_use = forms.CharField(
+        label="How does the end-user intend to use this product",
+        widget=forms.Textarea(attrs={"rows": "5"}),
+        help_text="Include as much information as you can. We need to know if they will integrate it into other equipment, involve any third parties, etc.",
+    )
+
+    def get_layout_fields(self):
+        return ("end_user_intended_end_use",)
