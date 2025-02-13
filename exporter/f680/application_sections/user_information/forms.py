@@ -61,9 +61,16 @@ class EndUserAddressForm(BaseForm):
         label="Address",
         widget=forms.Textarea(attrs={"rows": "5"}),
     )
-    country = forms.CharField(
+    country = forms.ChoiceField(
         label="Country",
+        choices=[],
+        widget=forms.widgets.Select(attrs={"data-module": "autocomplete-select"}),
     )
+
+    def __init__(self, *args, countries=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        country_choices = [("", "")] + [(country["id"], country["name"]) for country in countries]
+        self.fields["country"].choices = country_choices
 
     def get_layout_fields(self):
         return ("address", "country")
