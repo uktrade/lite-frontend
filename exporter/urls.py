@@ -38,6 +38,7 @@ urlpatterns = [
         exporter.core.views.HelpSupportView.as_view(),
         name="exporter-help-support",
     ),
+    path("f680/", include("exporter.f680.urls")),
 ]
 
 if settings.MOCK_SSO_ACTIVATE_ENDPOINTS:

@@ -10,7 +10,6 @@ from exporter.apply_for_a_licence.forms.open_general_licences import (
 from exporter.apply_for_a_licence.forms.triage_questions import (
     opening_question,
     export_licence_questions,
-    MOD_questions,
     transhipment_questions,
 )
 from exporter.apply_for_a_licence.validators import validate_opening_question, validate_open_general_licences
@@ -18,7 +17,8 @@ from exporter.core.constants import PERMANENT, CaseTypes
 from exporter.core.services import post_open_general_licence_cases
 from lite_forms.views import SingleFormView, MultiFormView
 
-from core.auth.views import LoginRequiredMixin
+from core.auth.views import LoginRequiredMixin, RedirectView
+from exporter.f680.views import F680FeatureRequiredMixin
 
 
 class LicenceType(LoginRequiredMixin, SingleFormView):
@@ -55,6 +55,11 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
+class F680Questions(LoginRequiredMixin, RedirectView, F680FeatureRequiredMixin):
+    def get_redirect_url(self, *args, **kwargs):
+        return reverse("f680:apply")
+
+
 class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
         self.forms = transhipment_questions(request)
@@ -67,19 +72,6 @@ class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
         else:
             pk = self.get_validated_data()["id"]
             return reverse_lazy("applications:task_list", kwargs={"pk": pk})
-
-
-class MODClearanceQuestions(LoginRequiredMixin, MultiFormView):
-    def init(self, request, **kwargs):
-        self.forms = MOD_questions(None)
-        self.action = post_applications
-
-    def on_submission(self, request, **kwargs):
-        self.forms = MOD_questions(request.POST.copy().get("application_type"))
-
-    def get_success_url(self):
-        pk = self.get_validated_data()["id"]
-        return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
 class OpenGeneralLicenceQuestions(LoginRequiredMixin, MultiFormView):
