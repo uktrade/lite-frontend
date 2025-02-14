@@ -1151,3 +1151,13 @@ def test_product_search_is_visible_to_specific_users_only(
     soup = BeautifulSoup(response.content, "html.parser")
     is_product_search_visible = "Search for products" in str(soup.find(id="link-product-search"))
     assert is_product_search_visible == expected
+
+
+def test_queue_view_sort_params_persist(authorized_client):
+    response = authorized_client.get(reverse("core:index"))
+    assert response.status_code == 200
+    assert authorized_client.session["case_search_sort_by"] == "submitted_at"
+
+    authorized_client.get(reverse("core:index") + "?sort_by=-submitted_at")
+    assert response.status_code == 200
+    assert authorized_client.session["case_search_sort_by"] == "-submitted_at"

@@ -139,10 +139,15 @@ class CaseDataMixin:
         if not params.get("sort_by"):
             # There is a default sort on the API side but we're overriding this
             # here so that we control the sorting on the frontend
-            if self.queue_pk == ALL_CASES_QUEUE_ID:
+            session_sort_by = self.request.session.get("case_search_sort_by")
+            if session_sort_by:
+                params["sort_by"] = session_sort_by
+            elif self.queue_pk == ALL_CASES_QUEUE_ID:
                 params["sort_by"] = "submitted_at"
             else:
                 params["sort_by"] = "-submitted_at"
+
+        self.request.session["case_search_sort_by"] = params["sort_by"]
 
         return params
 
