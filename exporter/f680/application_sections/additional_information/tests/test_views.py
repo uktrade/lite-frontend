@@ -139,7 +139,7 @@ class TestAdditionalInformationView:
             {},
         )
         assert response.status_code == 200
-        assert "This field is required." in response.context["form"]["note"].errors
+        assert response.context["form"]["note"].errors == ["This field is required."]
 
     def test_GET_with_existing_data_success(
         self,
