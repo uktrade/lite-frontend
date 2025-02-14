@@ -54,10 +54,11 @@ class ProductClassification(BaseForm):
     class Layout:
         TITLE = "Does the item have a UK government security grading or classification"
         ITLE_AS_LABEL_FOR = "product_classification"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
 
     product_classification = forms.TypedChoiceField(
         choices=(
-            (True, "Yes"),
+            (True, "Yes (includes unclassified)"),
             (False, "No"),
         ),
         help_text="If the item has multiple security gradings, we need to know the highest one.",
