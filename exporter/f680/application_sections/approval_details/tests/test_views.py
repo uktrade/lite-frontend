@@ -149,7 +149,7 @@ class TestApprovalDetailsView:
                         "approval_details_text": "",
                     },
                     "questions": {
-                        "approval_choices": None,
+                        "approval_choices": "Select the types of approvals you need",
                         "demonstration_in_uk": "Explain what you are demonstrating and why",
                         "demonstration_overseas": "Explain what you are demonstrating and why",
                         "approval_details_text": "Provide details about what you're seeking approval to do",

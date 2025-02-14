@@ -11,7 +11,6 @@ from core.forms.layouts import F680ConditionalCheckboxes, F680ConditionalCheckbo
 class ApprovalTypeForm(BaseForm):
     class Layout:
         TITLE = "Select the types of approvals you need"
-        TITLE_AS_LABEL_FOR = "approval_choices"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     class ApprovalTypeChoices(TextChoices):
