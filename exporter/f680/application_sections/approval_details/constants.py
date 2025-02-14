@@ -1,2 +1,3 @@
 class FormSteps:
     APPROVAL_TYPE = "APPROVAL_TYPE"
+    PRODUCT_NAME = "PRODUCT_NAME"
