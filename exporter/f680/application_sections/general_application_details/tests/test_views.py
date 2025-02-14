@@ -77,6 +77,7 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
         "sections": {
             "general_application_details": {
                 "label": "General application details",
+                "type": "single",
                 "fields": [
                     {
                         "key": "name",
@@ -279,6 +280,7 @@ class TestGeneralApplicationDetailsView:
                 "sections": {
                     "general_application_details": {
                         "label": "General application details",
+                        "type": "single",
                         "fields": [
                             {
                                 "key": "name",
