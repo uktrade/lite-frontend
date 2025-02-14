@@ -129,15 +129,15 @@ def test_case_filters_licence(
 
 ALL_CASES_QUEUE = "00000000-0000-0000-0000-000000000001"
 all_cases_sort_options = [
-    ("-submitted_at", "Submitted (newest to oldest)"),
     ("submitted_at", "Submitted (oldest to newest)"),
+    ("-submitted_at", "Submitted (newest to oldest)"),
 ]
 
 ogd_queue_sort_options = [
-    ("-submitted_at", "Submitted (newest to oldest)"),
     ("submitted_at", "Submitted (oldest to newest)"),
-    ("-time_on_queue", "Time on queue (newest to oldest)"),
+    ("-submitted_at", "Submitted (newest to oldest)"),
     ("time_on_queue", "Time on queue (oldest to newest)"),
+    ("-time_on_queue", "Time on queue (newest to oldest)"),
 ]
 
 
