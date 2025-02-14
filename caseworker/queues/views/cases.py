@@ -136,6 +136,14 @@ class CaseDataMixin:
         if params.get("return_to"):
             del params["return_to"]
 
+        if not params.get("sort_by"):
+            # There is a default sort on the API side but we're overriding this
+            # here so that we control the sorting on the frontend
+            if self.queue_pk == ALL_CASES_QUEUE_ID:
+                params["sort_by"] = "submitted_at"
+            else:
+                params["sort_by"] = "-submitted_at"
+
         return params
 
     def _set_is_hidden(self, tab_name, is_hidden_by_form):

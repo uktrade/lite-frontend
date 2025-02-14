@@ -19,6 +19,7 @@ default_params = {
     "queue_id": ["00000000-0000-0000-0000-000000000001"],
     "selected_tab": ["all_cases"],
     "hidden": ["true"],
+    "sort_by": ["submitted_at"],
 }
 
 
@@ -312,6 +313,7 @@ def test_cases_queue_page_assigned_queues(authorized_client, mock_cases_search_t
         "queue_id": [queue_pk],
         "selected_tab": ["all_cases"],
         "hidden": ["false"],
+        "sort_by": ["-submitted_at"],
     }
 
 
@@ -618,6 +620,7 @@ def test_tabs_with_all_cases_default(authorized_client, mock_cases_search, mock_
             "page": ["1"],
             "queue_id": ["00000000-0000-0000-0000-000000000001"],
             "selected_tab": [tab],
+            "sort_by": ["submitted_at"],
         } in head_request_history
 
 
@@ -652,6 +655,7 @@ def test_tabs_on_all_cases_queue(authorized_client, mock_cases_search, tab_name,
         "page": ["1"],
         "queue_id": ["00000000-0000-0000-0000-000000000001"],
         "selected_tab": [tab_name],
+        "sort_by": ["submitted_at"],
     }
 
 
@@ -680,6 +684,7 @@ def test_tabs_on_team_queue(
         "page": ["1"],
         "queue_id": [queue_pk],
         "selected_tab": [tab_name],
+        "sort_by": ["-submitted_at"],
     }
     head_request_history = [x.qs for x in mock_cases_search_head.request_history]
     assert {
@@ -687,6 +692,7 @@ def test_tabs_on_team_queue(
         "page": ["1"],
         "queue_id": [queue_pk],
         "selected_tab": ["all_cases"],
+        "sort_by": ["-submitted_at"],
     } in head_request_history
 
     tabs_with_hidden_param = ("my_cases", "open_queries")
@@ -696,6 +702,7 @@ def test_tabs_on_team_queue(
             "page": ["1"],
             "queue_id": [queue_pk],
             "selected_tab": [tab],
+            "sort_by": ["-submitted_at"],
         } in head_request_history
 
 
@@ -710,6 +717,7 @@ def test_tabs_on_team_queue_with_hidden_param(
         "page": ["1"],
         "queue_id": [queue_pk],
         "selected_tab": ["all_cases"],
+        "sort_by": ["-submitted_at"],
     }
     head_request_history = [x.qs for x in mock_cases_search_head.request_history]
     tabs_with_hidden_param = ("all_cases", "my_cases", "open_queries")
@@ -719,6 +727,7 @@ def test_tabs_on_team_queue_with_hidden_param(
             "page": ["1"],
             "queue_id": [queue_pk],
             "selected_tab": [tab],
+            "sort_by": ["-submitted_at"],
         } in head_request_history
 
 
