@@ -3,7 +3,6 @@ import os
 from environ import Env
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
-from django_log_formatter_ecs import ECSFormatter
 from django_log_formatter_asim import ASIMFormatter
 from dbt_copilot_python.utility import is_copilot
 
@@ -165,10 +164,7 @@ HAWK_RECEIVER_NONCE_EXPIRY_SECONDS = 60
 
 LOGIN_URL = reverse_lazy("auth:login")
 
-if IS_ENV_DBT_PLATFORM:
-    DATA_DIR = BASE_DIR
-else:
-    DATA_DIR = os.path.dirname(BASE_DIR)
+DATA_DIR = BASE_DIR
 
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -228,11 +224,6 @@ if IS_ENV_DBT_PLATFORM:
     LOGGING.update({"formatters": {"asim_formatter": {"()": ASIMFormatter}}})
     LOGGING.update({"handlers": {"asim": {"class": "logging.StreamHandler", "formatter": "asim_formatter"}}})
     LOGGING.update({"root": {"handlers": ["asim"], "level": LOG_LEVEL}})
-elif IS_ENV_GOV_PAAS:
-    REDIS_URL = VCAP_SERVICES["redis"][0]["credentials"]["uri"]
-    LOGGING.update({"formatters": {"ecs_formatter": {"()": ECSFormatter}}})
-    LOGGING.update({"handlers": {"ecs": {"class": "logging.StreamHandler", "formatter": "ecs_formatter"}}})
-    LOGGING.update({"root": {"handlers": ["ecs"], "level": LOG_LEVEL}})
 else:
     # Local configurations and CircleCI
     REDIS_URL = env.str("REDIS_URL", "")
