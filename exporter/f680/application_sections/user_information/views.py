@@ -46,7 +46,7 @@ class UserInformationView(F680MultipleItemApplicationSectionWizard):
     section = "user_information"
     section_label = "User Information"
 
-    def get_form_kwargs(self, step):
+    def get_form_kwargs(self, step, *args, **kwargs):
         if step == FormSteps.END_USER_ADDRESS:
             countries = get_countries(self.request, False, ["GB"])
             return {"countries": countries}

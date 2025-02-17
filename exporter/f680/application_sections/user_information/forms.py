@@ -17,17 +17,28 @@ class EntityTypeForm(BaseForm):
             Choice(
                 "end-user",
                 "End user",
-                hint="An end-user receives the products in the destination country. They either use the products themselves, resell from stock, or export them again to another country.",
+                hint=(
+                    "An end-user receives the products in the destination country. They either "
+                    "use the products themselves, resell from stock, or export them again to another country."
+                ),
             ),
             Choice(
                 "ultimate-end-user",
                 "Ultimate end-user",
-                hint="Ultimate end-users receive products or information from end-users. They can be the same products or information that you shared with the end-user. Or the end-user can change the products or information before sharing them with the ultimate end-user.",
+                hint=(
+                    "Ultimate end-users receive products or information from end-users. They can "
+                    "be the same products or information that you shared with the end-user. Or the "
+                    "end-user can change the products or information before sharing them with the ultimate end-user."
+                ),
             ),
             Choice(
                 "third-party",
                 "Third party",
-                hint="A third party is involved in sharing products or information, but doesn't use them. They are not an end-user or ultimate end-user. They may be an agent, broker, consultant or distributor.",
+                hint=(
+                    "A third party is involved in sharing products or information, but "
+                    "doesn't use them. They are not an end-user or ultimate end-user. They may be an agent, "
+                    "broker, consultant or distributor."
+                ),
             ),
         ),
         label="Select type of entity",
