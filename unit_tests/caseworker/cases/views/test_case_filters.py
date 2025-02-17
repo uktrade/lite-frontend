@@ -1,11 +1,14 @@
 import pytest
+
 from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
 from urllib import parse
 
 from django.urls import reverse
 
+from caseworker.advice.constants import CASE_PROGRESSION_QUEUES
 from caseworker.queues.views.forms import CasesFiltersForm
+from core import client
 
 
 @pytest.fixture(autouse=True)
@@ -122,3 +125,73 @@ def test_case_filters_licence(
         "cancelled",
         "draft",
     ]
+
+
+ALL_CASES_QUEUE = "00000000-0000-0000-0000-000000000001"
+all_cases_sort_options = [
+    ("submitted_at", "Submitted (oldest to newest)"),
+    ("-submitted_at", "Submitted (newest to oldest)"),
+]
+
+ogd_queue_sort_options = [
+    ("submitted_at", "Submitted (oldest to newest)"),
+    ("-submitted_at", "Submitted (newest to oldest)"),
+    ("time_on_queue", "Time on queue (oldest to newest)"),
+    ("-time_on_queue", "Time on queue (newest to oldest)"),
+]
+
+
+@pytest.mark.parametrize(
+    "queue_id, expected_sort_options",
+    [
+        (ALL_CASES_QUEUE, all_cases_sort_options),
+    ]
+    + [(item, ogd_queue_sort_options) for item in CASE_PROGRESSION_QUEUES],
+)
+def test_time_on_queue_availability_on_queues(
+    authorized_client_factory,
+    mock_queues_list,
+    mock_cases,
+    mock_cases_head,
+    mock_no_bookmarks,
+    mock_notifications,
+    mock_new_mentions_count,
+    mock_gov_user,
+    gov_uk_user_id,
+    requests_mock,
+    queue_id,
+    expected_sort_options,
+):
+    requests_mock.get(client._build_absolute_uri(f"/queues/{queue_id}"), json={"id": queue_id, "is_system_queue": True})
+    requests_mock.get(
+        client._build_absolute_uri(f"/cases/?queue_id={queue_id}&page=1&selected_tab=all_cases&hidden=True"),
+        json={"results": {"queues": [], "cases": [], "filters": {"gov_users": []}}},
+    )
+    requests_mock.head(
+        client._build_absolute_uri(f"/cases/?queue_id={queue_id}&page=1&selected_tab=all_cases&hidden=True"),
+        headers={"Resource-Count": ""},
+    )
+    requests_mock.head(
+        client._build_absolute_uri(f"/cases/?queue_id={queue_id}&page=1&selected_tab=my_cases&hidden=True"),
+        headers={"Resource-Count": ""},
+    )
+    requests_mock.head(
+        client._build_absolute_uri(f"/cases/?queue_id={queue_id}&page=1&selected_tab=open_queries&hidden=True"),
+        headers={"Resource-Count": ""},
+    )
+
+    user = {
+        "id": gov_uk_user_id,
+        "email": "govuser@example.com",
+        "first_name": "Foo",
+        "last_name": "Bar",
+        "status": "Active",
+        "default_queue": {"id": queue_id, "name": "All cases"},
+    }
+
+    authorized_client = authorized_client_factory(user)
+
+    response = authorized_client.get(reverse("core:index"))
+    assertTemplateUsed(response, "queues/cases.html")
+    assert isinstance(response.context["form"], CasesFiltersForm)
+    assert response.context["form"].fields["sort_by"].choices == expected_sort_options

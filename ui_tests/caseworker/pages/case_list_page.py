@@ -59,6 +59,7 @@ class CaseListPage(BasePage):
     PARTY_ADDRESS_ID = "party_address"
     GOODS_RELATED_DESCRIPTION_ID = "goods_related_description"
     CONTROL_LIST_ENTRY_ID = "control_list_entry"
+    SORT_BY_ID = "id_sort_by"
 
     ADVANCED_FILTERS = [
         CASE_REFERENCE_ID,
@@ -220,3 +221,6 @@ class CaseListPage(BasePage):
         WebDriverWait(self.driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
             expected_conditions.presence_of_element_located((By.ID, self.EXPORT_ENFORCEMENT_XML_BUTTON_ID))
         ).click()
+
+    def set_sort_by(self, value):
+        Select(self.driver.find_element(by=By.ID, value=self.SORT_BY_ID)).select_by_value(value)
