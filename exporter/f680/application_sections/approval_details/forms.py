@@ -2,6 +2,7 @@ from django import forms
 from django.db.models import TextChoices
 from django.template.loader import render_to_string
 
+from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm, TextChoice
@@ -269,19 +270,19 @@ class ProductIncludeCryptography(BaseForm):
         )
 
 
-class ProductRatedUnderMCTR(BaseForm):
+class ProductRatedUnderMTCR(BaseForm):
     class Layout:
         TITLE = "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_rated_under_mctr = forms.ChoiceField(
         choices=(
-            ("yes_mtcr_1", "Yes, the product is MTCR Category 1"),
-            ("yes_mtcr_2", "Yes, the product is MTCR Category 2"),
-            ("no_but_supports_mtcr_1", "No, but the item supports a MTCR Category 1 item"),
-            ("no_but_supports_mtcr_2", "No, but the item supports a MTCR Category 2 item"),
-            ("no", "No"),
-            ("dont_know", "Don't know"),
+            Choice("yes_mtcr_1", "Yes, the product is MTCR Category 1"),
+            Choice("yes_mtcr_2", "Yes, the product is MTCR Category 2"),
+            Choice("no_but_supports_mtcr_1", "No, but the item supports a MTCR Category 1 item"),
+            Choice("no_but_supports_mtcr_2", "No, but the item supports a MTCR Category 2 item"),
+            Choice("no", "No", divider="Or"),
+            Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
         label="Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
@@ -304,9 +305,9 @@ class ProductMANPADs(BaseForm):
 
     is_item_manpad = forms.ChoiceField(
         choices=(
-            ("Yes", "Yes, the product is a MANPAD"),
-            ("No", "No, the product is not a MANPAD"),
-            ("Don't Know", "Don't know"),
+            Choice("yes", "Yes, the product is a MANPAD"),
+            Choice("no", "No, the product is not a MANPAD", divider="Or"),
+            Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
         label="Do you believe the item is a man-portable air defence system (MANPAD)?",
@@ -330,9 +331,9 @@ class ProductElectronicMODData(BaseForm):
 
     is_MOD_electronic_data_shared = forms.ChoiceField(
         choices=(
-            ("Yes", "Yes"),
-            ("No", "No"),
-            ("Don't Know", "Don't know"),
+            Choice("yes", "Yes"),
+            Choice("no", "No"),
+            Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
         label=Layout.TITLE,
@@ -365,9 +366,9 @@ class ProductFunding(BaseForm):
 
     funding_source = forms.ChoiceField(
         choices=(
-            ("MOD", "MOD"),
-            ("Part MOD", "Part MOD"),
-            ("Private venture", "Private venture"),
+            Choice("mod", "MOD"),
+            Choice("part_mo", "Part MOD"),
+            Choice("private_venture", "Private venture"),
         ),
         widget=forms.RadioSelect,
         label="Who is funding the item?",
