@@ -37,8 +37,6 @@ class BaseConditionalQuestion(TemplateNameMixin):
 
         conditional_content = ""
         for field in self.fields:
-            if not field in form.fields:
-                continue
             conditional_content += render_field(field, form, form_style, context, template_pack=template_pack, **kwargs)
 
         context.update(
