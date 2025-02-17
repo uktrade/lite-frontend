@@ -429,6 +429,12 @@ def get_my_case_list(driver):  # noqa
     """
     driver.find_element(by=By.ID, value="link-menu").click()
     driver.find_element(by=By.LINK_TEXT, value="Cases").click()
+    current_sort_by = driver.find_element(by=By.ID, value="id_sort_by").get_attribute("value")
+    if current_sort_by != "-submitted_at":
+        case_list_page = CaseListPage(driver)
+        functions.open_case_filters(driver)
+        case_list_page.set_sort_by("-submitted_at")
+        functions.click_apply_filters(driver)
 
 
 @when(parsers.parse('I click on the "{queue_name}" queue in dropdown'))  # noqa
