@@ -13,9 +13,15 @@ def unset_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
+@pytest.fixture()
+def unset_f680_allowed_organisation(settings):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = []
+
+
 @pytest.fixture(autouse=True)
-def setup(mock_exporter_user_me, settings):
+def setup(mock_exporter_user_me, settings, organisation_pk):
     settings.FEATURE_FLAG_ALLOW_F680 = True
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = [organisation_pk]
 
 
 @pytest.fixture
@@ -124,6 +130,17 @@ class TestApprovalDetailsView:
         mock_f680_application_get,
         f680_application_wizard_url,
         unset_f680_feature_flag,
+    ):
+        response = authorized_client.get(f680_application_wizard_url)
+        assert response.status_code == 200
+        assert response.context["title"] == "Forbidden"
+
+    def test_GET_no_organisation_allowed(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_application_wizard_url,
+        unset_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_application_wizard_url)
         assert response.status_code == 200

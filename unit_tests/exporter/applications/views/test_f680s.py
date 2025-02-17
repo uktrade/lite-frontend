@@ -15,14 +15,12 @@ from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
 @pytest.fixture(autouse=True)
 def setup(settings, organisation_pk):
     settings.FEATURE_FLAG_ALLOW_F680 = True
-    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATION = [organisation_pk]
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = [organisation_pk]
 
 
 @pytest.fixture
 def authorized_client(authorized_client_factory, mock_exporter_user):
-    client = authorized_client_factory(mock_exporter_user["user"])
-
-    return client
+    return authorized_client_factory(mock_exporter_user["user"])
 
 
 @pytest.fixture
@@ -61,7 +59,7 @@ def unset_f680_feature_flag(settings):
 
 @pytest.fixture()
 def unset_f680_allowed_organisation(settings):
-    settings.FEATURE_FLAG_ALLOW_F680 = []
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = []
 
 
 class TestApplyForLicenceQuestionsClass:
