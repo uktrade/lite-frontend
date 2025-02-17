@@ -1,11 +1,8 @@
 from django import forms
-
 from django.db.models import TextChoices
-
 from django.template.loader import render_to_string
 
 from crispy_forms_gds.layout.content import HTML
-
 
 from core.common.forms import BaseForm, TextChoice
 from core.forms.layouts import F680ConditionalCheckboxes, F680ConditionalCheckboxesQuestion
