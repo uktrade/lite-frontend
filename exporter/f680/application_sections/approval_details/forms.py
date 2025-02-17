@@ -50,28 +50,21 @@ class ProductDescription(BaseForm):
         )
 
 
-class ProductClassification(BaseForm):
+class ForeignTechOrSharedInformation(BaseForm):
     class Layout:
-        TITLE = "Does the item have a UK government security grading or classification"
-        ITLE_AS_LABEL_FOR = "product_classification"
+        TITLE = "Will any foreign technology or information be shared with the item?"
+        ITLE_AS_LABEL_FOR = "foreign_or_shared_information"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    product_classification = forms.TypedChoiceField(
+    foreign_or_shared_information = forms.TypedChoiceField(
         choices=(
-            (True, "Yes (includes unclassified)"),
+            (True, "Yes"),
             (False, "No"),
         ),
-        help_text="If the item has multiple security gradings, we need to know the highest one.",
         label=Layout.TITLE,
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
 
     def get_layout_fields(self):
-        return (
-            "product_classification",
-            HTML.details(
-                "Help with security grading",
-                render_to_string("f680/forms/help_security_grading.html"),
-            ),
-        )
+        return ("foreign_or_shared_information",)
