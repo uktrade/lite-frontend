@@ -590,7 +590,6 @@ class TestUserInformationView:
         step,
         expected_form,
         expected_initial,
-        authorized_client,
         mock_f680_application_get_existing_data,
         goto_edit_step,
     ):
@@ -599,3 +598,71 @@ class TestUserInformationView:
         assert isinstance(response.context["form"], expected_form)
         for key, expected_value in expected_initial.items():
             assert response.context["form"][key].initial == expected_value
+
+
+@pytest.fixture
+def f680_user_information_summary_url(data_f680_case):
+    return reverse(
+        "f680:user_information:summary",
+        kwargs={"pk": data_f680_case["id"]},
+    )
+
+
+@pytest.fixture
+def missing_f680_user_information_summary_url(missing_application_id):
+    return reverse(
+        "f680:user_information:summary",
+        kwargs={"pk": missing_application_id},
+    )
+
+
+class TestUserInformationSummaryView:
+
+    def test_GET_with_existing_data_success(
+        self,
+        authorized_client,
+        f680_user_information_summary_url,
+        mock_f680_application_get_existing_data,
+        data_item_id,
+    ):
+        response = authorized_client.get(f680_user_information_summary_url)
+        assert response.status_code == 200
+        assert response.context["user_entities"] == {
+            data_item_id: {
+                "entity_type": "End user",
+                "end_user_name": "some end user name",
+                "address": "some address",
+                "country": "United States",
+                "prefix": "some prefix",
+                "security_classification": "Unclassified",
+                "other_security_classification": "",
+                "suffix": "some suffix",
+                "issuing_authority_name_address": "some name and address",
+                "reference": "some reference",
+                "date_of_issue": "2024-01-01",
+                "end_user_intended_end_use": "some end use",
+                "assemble_manufacture": ["Yes, assembled", "Yes, manufactured"],
+                "assemble": "some assembly",
+                "manufacture": "some manufacture",
+            }
+        }
+
+    def test_GET_no_application_404(
+        self,
+        authorized_client,
+        missing_f680_user_information_summary_url,
+        mock_f680_application_get_404,
+    ):
+        response = authorized_client.get(missing_f680_application_wizard_url)
+        assert response.status_code == 404
+
+    def test_GET_no_feature_flag_forbidden(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_user_information_summary_url,
+        unset_f680_feature_flag,
+    ):
+        response = authorized_client.get(f680_user_information_summary_url)
+        assert response.status_code == 200
+        assert response.context["title"] == "Forbidden"
