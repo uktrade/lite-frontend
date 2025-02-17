@@ -128,7 +128,7 @@ class ProductDescription(BaseForm):
         )
 
 
-class ForeignTechOrSharedInformation(BaseForm):
+class ProductForeignTechOrSharedInformation(BaseForm):
     class Layout:
         TITLE = "Will any foreign technology or information be shared with the item?"
         TITLE_AS_LABEL_FOR = "is_foreign_tech_or_information_shared"
@@ -148,7 +148,7 @@ class ForeignTechOrSharedInformation(BaseForm):
         return ("is_foreign_tech_or_information_shared",)
 
 
-class ControlledUnderItar(BaseForm):
+class ProductControlledUnderItar(BaseForm):
     class Layout:
         TITLE = (
             "Is the technology or information controlled under the US International Traffic in Arms Regulations (ITAR)?"
@@ -191,7 +191,7 @@ class ControlledUnderItar(BaseForm):
         )
 
 
-class AboutControlledUnderItar(BaseForm):
+class ProductControlledUnderItarDetails(BaseForm):
     class Layout:
         TITLE = "Tell us about the technology or information controlled under ITAR"
         SUBMIT_BUTTON_TEXT = "Save and continue"
@@ -232,7 +232,7 @@ class AboutControlledUnderItar(BaseForm):
         )
 
 
-class IncludeCryptography(BaseForm):
+class ProductIncludeCryptography(BaseForm):
     class Layout:
         TITLE = "Does the item include cryptography or other information security features?"
         TITLE_AS_LABEL_FOR = "is_including_cryptography_or_security_features"
@@ -269,19 +269,19 @@ class IncludeCryptography(BaseForm):
         )
 
 
-class ItemRatedUnderMCTR(BaseForm):
+class ProductRatedUnderMCTR(BaseForm):
     class Layout:
         TITLE = "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_rated_under_mctr = forms.ChoiceField(
         choices=(
-            ("Yes, the product is MTCR Category 1", "Yes, the product is MTCR Category 1"),
-            ("Yes, the product is MTCR Category 2", "Yes, the product is MTCR Category 2"),
-            ("No, but the item supports a MTCR Category 1 item", "No, but the item supports a MTCR Category 1 item"),
-            ("No, but the item supports a MTCR Category 2 item", "No, but the item supports a MTCR Category 2 item"),
-            ("No", "No"),
-            ("Don't Know", "Don't know"),
+            ("yes_mtcr_1", "Yes, the product is MTCR Category 1"),
+            ("yes_mtcr_2", "Yes, the product is MTCR Category 2"),
+            ("no_but_supports_mtcr_1", "No, but the item supports a MTCR Category 1 item"),
+            ("no_but_supports_mtcr_2", "No, but the item supports a MTCR Category 2 item"),
+            ("no", "No"),
+            ("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
         label="Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
@@ -297,35 +297,7 @@ class ItemRatedUnderMCTR(BaseForm):
         )
 
 
-class ItemRatedUnderMCTR(BaseForm):
-    class Layout:
-        TITLE = "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)"
-        SUBMIT_BUTTON_TEXT = "Save and continue"
-
-    is_item_rated_under_mctr = forms.ChoiceField(
-        choices=(
-            ("Yes, the product is MTCR Category 1", "Yes, the product is MTCR Category 1"),
-            ("Yes, the product is MTCR Category 2", "Yes, the product is MTCR Category 2"),
-            ("No, but the item supports a MTCR Category 1 item", "No, but the item supports a MTCR Category 1 item"),
-            ("No, but the item supports a MTCR Category 2 item", "No, but the item supports a MTCR Category 2 item"),
-            ("No", "No"),
-            ("Don't Know", "Don't know"),
-        ),
-        widget=forms.RadioSelect,
-        label="Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
-    )
-
-    def get_layout_fields(self):
-        return (
-            "is_item_rated_under_mctr",
-            HTML.details(
-                "Help with MTCR categories",
-                render_to_string("f680/forms/help_mctr_categories.html"),
-            ),
-        )
-
-
-class MANPADs(BaseForm):
+class ProductMANPADs(BaseForm):
     class Layout:
         TITLE = "Do you believe the item is a man-portable air defence system (MANPAD)?"
         SUBMIT_BUTTON_TEXT = "Save and continue"
@@ -350,7 +322,7 @@ class MANPADs(BaseForm):
         )
 
 
-class ElectronicMODData(BaseForm):
+class ProductElectronicMODData(BaseForm):
     class Layout:
         TITLE = "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?"
         TITLE_AS_LABEL_FOR = "is_MOD_electronic_data_shared"
@@ -381,5 +353,57 @@ class ElectronicMODData(BaseForm):
             HTML.details(
                 "Help with electronic warfare data",
                 render_to_string("f680/forms/help_electronic_warfare_data.html"),
+            ),
+        )
+
+
+class ProductFunding(BaseForm):
+    class Layout:
+        TITLE = "Who is funding the item?"
+        TITLE_AS_LABEL_FOR = "funding_source"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    funding_source = forms.ChoiceField(
+        choices=(
+            ("MOD", "MOD"),
+            ("Part MOD", "Part MOD"),
+            ("Private venture", "Private venture"),
+        ),
+        widget=forms.RadioSelect,
+        label="Who is funding the item?",
+    )
+
+    def get_layout_fields(self):
+        return ("funding_source",)
+
+
+class ProductUsedByUKArmedForces(BaseForm):
+    class Layout:
+        TITLE = "Will the item be used by the UK Armed Forces?"
+        TITLE_AS_LABEL_FOR = "is_used_by_uk_armed_forces"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    is_used_by_uk_armed_forces = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label=Layout.TITLE,
+        widget=forms.RadioSelect,
+        coerce=coerce_str_to_bool,
+    )
+
+    used_by_uk_armed_forces_info = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 5}),
+        label="Explain how it will be used",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_used_by_uk_armed_forces",
+                ConditionalRadiosQuestion("Yes", "used_by_uk_armed_forces_info"),
+                "No",
             ),
         )
