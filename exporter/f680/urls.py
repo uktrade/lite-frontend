@@ -15,5 +15,7 @@ urlpatterns = [
     path(
         "<uuid:pk>/approval-details/",
         include("exporter.f680.application_sections.approval_details.urls"),
+        "<uuid:pk>/additional-information/",
+        include("exporter.f680.application_sections.additional_information.urls"),
     ),
 ]
