@@ -326,10 +326,10 @@ class ProductMANPADs(BaseForm):
 class ProductElectronicMODData(BaseForm):
     class Layout:
         TITLE = "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?"
-        TITLE_AS_LABEL_FOR = "is_MOD_electronic_data_shared"
+        TITLE_AS_LABEL_FOR = "is_mod_electronic_data_shared"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    is_MOD_electronic_data_shared = forms.ChoiceField(
+    is_mod_electronic_data_shared = forms.ChoiceField(
         choices=(
             Choice("yes", "Yes"),
             Choice("no", "No"),
@@ -342,7 +342,7 @@ class ProductElectronicMODData(BaseForm):
     def get_layout_fields(self):
         return (
             ConditionalRadios(
-                "is_MOD_electronic_data_shared",
+                "is_mod_electronic_data_shared",
                 ConditionalRadiosQuestion(
                     "Yes",
                     HTML.p(
