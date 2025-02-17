@@ -5,7 +5,12 @@ from django.template.loader import render_to_string
 from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm, TextChoice
-from core.forms.layouts import F680ConditionalCheckboxes, F680ConditionalCheckboxesQuestion
+from core.forms.layouts import (
+    F680ConditionalCheckboxes,
+    F680ConditionalCheckboxesQuestion,
+    ConditionalRadios,
+    ConditionalRadiosQuestion,
+)
 from core.forms.utils import coerce_str_to_bool
 
 
@@ -162,9 +167,23 @@ class ControlledUnderItar(BaseForm):
         coerce=coerce_str_to_bool,
     )
 
+    controlled_info = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 5}),
+        label=(
+            "Explain how the technology or information is controlled."
+            "Include countries classification levels and reference numbers."
+            "  You can upload supporting documents later in your application"
+        ),
+        required=False,
+    )
+
     def get_layout_fields(self):
         return (
-            "is_controlled_under_itar",
+            ConditionalRadios(
+                "is_controlled_under_itar",
+                ConditionalRadiosQuestion("Yes, it's controlled under  ITAR", "controlled_info"),
+                "No",
+            ),
             HTML.details(
                 "Help with ITAR",
                 render_to_string("f680/forms/help_ITAR.html"),
