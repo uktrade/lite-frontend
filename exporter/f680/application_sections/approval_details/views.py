@@ -12,6 +12,7 @@ from .forms import (
     IncludeCryptography,
     ItemRatedUnderMCTR,
     MANPADs,
+    ElectronicMODData,
 )
 
 
@@ -42,6 +43,7 @@ class ProductInformationView(F680ApplicationSectionWizard):
         (FormSteps.INCLUDE_CRYPTOGRAPHY, IncludeCryptography),
         (FormSteps.RATED_UNDER_MCTR, ItemRatedUnderMCTR),
         (FormSteps.MANPAD, MANPADs),
+        (FormSteps.ELECTRONICMODDATA, ElectronicMODData),
     ]
     section = "approval_details"
     condition_dict = {

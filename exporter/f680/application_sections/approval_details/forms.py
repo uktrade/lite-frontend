@@ -348,3 +348,38 @@ class MANPADs(BaseForm):
                 render_to_string("f680/forms/help_manpads.html"),
             ),
         )
+
+
+class ElectronicMODData(BaseForm):
+    class Layout:
+        TITLE = "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?"
+        TITLE_AS_LABEL_FOR = "is_MOD_electronic_data_shared"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    is_MOD_electronic_data_shared = forms.ChoiceField(
+        choices=(
+            ("Yes", "Yes"),
+            ("No", "No"),
+            ("Don't Know", "Don't know"),
+        ),
+        widget=forms.RadioSelect,
+        label=Layout.TITLE,
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_MOD_electronic_data_shared",
+                ConditionalRadiosQuestion(
+                    "Yes",
+                    HTML.p(
+                        "You need to complete part A off the MOD EW Data Release Capture Form and attach it to the application in the supporting documents section"
+                    ),
+                ),
+                "No",
+            ),
+            HTML.details(
+                "Help with electronic warfare data",
+                render_to_string("f680/forms/help_electronic_warfare_data.html"),
+            ),
+        )
