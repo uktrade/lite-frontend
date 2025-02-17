@@ -11,6 +11,7 @@ from .forms import (
     AboutControlledUnderItar,
     IncludeCryptography,
     ItemRatedUnderMCTR,
+    MANPADs,
 )
 
 
@@ -40,6 +41,7 @@ class ProductInformationView(F680ApplicationSectionWizard):
         (FormSteps.ABOUT_CONTROLLED_UNDER_ITAR, AboutControlledUnderItar),
         (FormSteps.INCLUDE_CRYPTOGRAPHY, IncludeCryptography),
         (FormSteps.RATED_UNDER_MCTR, ItemRatedUnderMCTR),
+        (FormSteps.MANPAD, MANPADs),
     ]
     section = "approval_details"
     condition_dict = {

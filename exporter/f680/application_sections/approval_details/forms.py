@@ -323,3 +323,28 @@ class ItemRatedUnderMCTR(BaseForm):
                 render_to_string("f680/forms/help_mctr_categories.html"),
             ),
         )
+
+
+class MANPADs(BaseForm):
+    class Layout:
+        TITLE = "Do you believe the item is a man-portable air defence system (MANPAD)?"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    is_item_manpad = forms.ChoiceField(
+        choices=(
+            ("Yes", "Yes, the product is a MANPAD"),
+            ("No", "No, the product is not a MANPAD"),
+            ("Don't Know", "Don't know"),
+        ),
+        widget=forms.RadioSelect,
+        label="Do you believe the item is a man-portable air defence system (MANPAD)?",
+    )
+
+    def get_layout_fields(self):
+        return (
+            "is_item_manpad",
+            HTML.details(
+                "Help with MANPADs",
+                render_to_string("f680/forms/help_manpads.html"),
+            ),
+        )
