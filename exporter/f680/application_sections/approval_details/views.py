@@ -8,6 +8,7 @@ from .forms import (
     ProductDescription,
     ForeignTechOrSharedInformation,
     ControlledUnderItar,
+    AboutControlledUnderItar,
 )
 
 
@@ -34,8 +35,10 @@ class ProductInformationView(F680ApplicationSectionWizard):
         (FormSteps.PRODUCT_DESCRIPTION, ProductDescription),
         (FormSteps.FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED, ForeignTechOrSharedInformation),
         (FormSteps.CONTROLLED_UNDER_ITAR, ControlledUnderItar),
+        (FormSteps.ABOUT_CONTROLLED_UNDER_ITAR, AboutControlledUnderItar),
     ]
     section = "approval_details"
     condition_dict = {
         FormSteps.CONTROLLED_UNDER_ITAR: is_foreign_tech_or_information_shared,
+        FormSteps.ABOUT_CONTROLLED_UNDER_ITAR: is_controlled_under_itar,
     }

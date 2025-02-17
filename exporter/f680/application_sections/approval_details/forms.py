@@ -189,3 +189,44 @@ class ControlledUnderItar(BaseForm):
                 render_to_string("f680/forms/help_ITAR.html"),
             ),
         )
+
+
+class AboutControlledUnderItar(BaseForm):
+    class Layout:
+        TITLE = "Tell us about the technology or information controlled under ITAR"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    controlled_information = forms.CharField(
+        label="What is the ITAR controlled technology or information?",
+        widget=forms.Textarea(attrs={"rows": 5}),
+    )
+
+    itar_reference_number = forms.CharField(
+        label="ITAR reference number",
+        help_text="You can find this on the licence, agreement or authorisation you received from the US",
+    )
+
+    usml_categories = forms.CharField(
+        label="What are the United States Munitions List (USML) categories listed on your ITAR approval?",
+        help_text="You can find this on the licence, agreement or authorisation you received from the US",
+    )
+
+    itar_approval_scope = forms.CharField(
+        label="Describe the scope of your ITAR approval",
+        help_text="You can find this on the licence, agreement or authorisation you received from the US",
+        widget=forms.Textarea(attrs={"rows": 5}),
+    )
+
+    expected_time_in_possession = forms.CharField(
+        label="How long do you expect the technology or information that is controlled under the US ITAR to be in your possession?",
+        help_text="For example, 10 years",
+    )
+
+    def get_layout_fields(self):
+        return (
+            "controlled_information",
+            "itar_reference_number",
+            "usml_categories",
+            "itar_approval_scope",
+            "expected_time_in_possession",
+        )
