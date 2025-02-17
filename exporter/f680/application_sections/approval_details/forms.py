@@ -295,3 +295,31 @@ class ItemRatedUnderMCTR(BaseForm):
                 render_to_string("f680/forms/help_mctr_categories.html"),
             ),
         )
+
+
+class ItemRatedUnderMCTR(BaseForm):
+    class Layout:
+        TITLE = "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    is_item_rated_under_mctr = forms.ChoiceField(
+        choices=(
+            ("Yes, the product is MTCR Category 1", "Yes, the product is MTCR Category 1"),
+            ("Yes, the product is MTCR Category 2", "Yes, the product is MTCR Category 2"),
+            ("No, but the item supports a MTCR Category 1 item", "No, but the item supports a MTCR Category 1 item"),
+            ("No, but the item supports a MTCR Category 2 item", "No, but the item supports a MTCR Category 2 item"),
+            ("No", "No"),
+            ("Don't Know", "Don't know"),
+        ),
+        widget=forms.RadioSelect,
+        label="Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
+    )
+
+    def get_layout_fields(self):
+        return (
+            "is_item_rated_under_mctr",
+            HTML.details(
+                "Help with MTCR categories",
+                render_to_string("f680/forms/help_mctr_categories.html"),
+            ),
+        )
