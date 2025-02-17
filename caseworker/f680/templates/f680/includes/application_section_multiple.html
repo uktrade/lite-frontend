@@ -1,0 +1,5 @@
+<h2 class="govuk-heading-m">{{section.label}}</h2>
+
+{% for item in section.items %}
+    {% include "f680/includes/application_section_fields.html" with item=item %}
+{% endfor %}

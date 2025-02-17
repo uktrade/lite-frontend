@@ -4,4 +4,13 @@
     <h1 class="govuk-visually-hidden">Case Summary</h1>
     {% include "f680/case/summary.html" %}
 </section>
+
+{% for section in case.data.application.sections.values %}
+    {% if section.type == "single" %}
+        {% include "f680/includes/application_section_single.html" with section=section %}
+    {% else %}
+        {% include "f680/includes/application_section_multiple.html" with section=section %}
+    {% endif %}
+{% endfor %}
+
 {% endblock %}
