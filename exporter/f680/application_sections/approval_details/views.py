@@ -9,6 +9,7 @@ from .forms import (
     ForeignTechOrSharedInformation,
     ControlledUnderItar,
     AboutControlledUnderItar,
+    IncludeCryptography,
 )
 
 
@@ -36,6 +37,7 @@ class ProductInformationView(F680ApplicationSectionWizard):
         (FormSteps.FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED, ForeignTechOrSharedInformation),
         (FormSteps.CONTROLLED_UNDER_ITAR, ControlledUnderItar),
         (FormSteps.ABOUT_CONTROLLED_UNDER_ITAR, AboutControlledUnderItar),
+        (FormSteps.INCLUDE_CRYPTOGRAPHY, IncludeCryptography),
     ]
     section = "approval_details"
     condition_dict = {

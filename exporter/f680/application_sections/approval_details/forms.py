@@ -230,3 +230,40 @@ class AboutControlledUnderItar(BaseForm):
             "itar_approval_scope",
             "expected_time_in_possession",
         )
+
+
+class IncludeCryptography(BaseForm):
+    class Layout:
+        TITLE = "Does the item include cryptography or other information security features?"
+        TITLE_AS_LABEL_FOR = "is_including_cryptography_or_security_features"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    is_including_cryptography_or_security_features = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        help_text="We need to know about any items classified as Defence Articles or Technical Data.",
+        label=Layout.TITLE,
+        widget=forms.RadioSelect,
+        coerce=coerce_str_to_bool,
+    )
+
+    cryptography_or_security_feature_info = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 5}),
+        label="Provide full details",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            ConditionalRadios(
+                "is_including_cryptography_or_security_features",
+                ConditionalRadiosQuestion("Yes", "cryptography_or_security_feature_info"),
+                "No",
+            ),
+            HTML.details(
+                "Help with security features",
+                render_to_string("f680/forms/help_security_features.html"),
+            ),
+        )
