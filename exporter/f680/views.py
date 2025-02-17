@@ -1,4 +1,5 @@
 from http import HTTPStatus
+import rules
 
 from django.conf import settings
 from django.contrib.auth.mixins import AccessMixin
@@ -28,7 +29,9 @@ from .services import (
 
 class F680FeatureRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_ALLOW_F680:
+        if not settings.FEATURE_FLAG_ALLOW_F680 or not rules.test_rule(
+            "exporter_in_organisation_list", self.request, settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATION
+        ):
             self.raise_exception = True
             self.permission_denied_message = (
                 "You are not authorised to use the F680 Security Clearance application feature"
