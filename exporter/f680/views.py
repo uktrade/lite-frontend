@@ -14,6 +14,7 @@ from .forms import ApplicationSubmissionForm
 from .services import (
     post_f680_application,
     get_f680_application,
+    submit_f680_application,
 )
 
 
@@ -74,8 +75,21 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["application"] = self.application
-
         return context
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error submitting F680 application",
+        "Unexpected error submitting F680 application",
+        reraise_404=True,
+    )
+    def submit_f680_application(self, application_id):
+        return submit_f680_application(self.request, application_id)
+
+    def form_valid(self, form):
+        # TODO: Validate application payload before allowing submit
+        self.submit_f680_application(self.application["id"])
+        return super().form_valid(form)
+
     def get_success_url(self):
-        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
+        return reverse("core:home")
