@@ -49,7 +49,7 @@
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:type_wizard" pk=application.id %}">Approval type</a>
-                            {% if application.application.approval_details %}
+                            {% if application.application.sections.approval_type %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
                             </div>
@@ -69,7 +69,7 @@
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:additional_information:notes_wizard" pk=application.id %}">Notes for case officers</a>
-                            {% if application.application.additional_information.answers.note %}
+                            {% if application.application.sections.notes_for_case_officers %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
                             </div>
