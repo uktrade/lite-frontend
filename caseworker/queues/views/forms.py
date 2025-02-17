@@ -141,15 +141,15 @@ class CasesFiltersForm(forms.Form):
         assigned_queues_choices = [(queue["id"], f"{queue['team']['name']}: {queue['name']}") for queue in queues]
 
         sort_options = [
-            ("-submitted_at", "Submitted (newest to oldest)"),
             ("submitted_at", "Submitted (oldest to newest)"),
+            ("-submitted_at", "Submitted (newest to oldest)"),
         ]
 
         if queue["id"] in CASE_PROGRESSION_QUEUES:
             sort_options.extend(
                 [
-                    ("-time_on_queue", "Time on queue (newest to oldest)"),
                     ("time_on_queue", "Time on queue (oldest to newest)"),
+                    ("-time_on_queue", "Time on queue (newest to oldest)"),
                 ]
             )
 
