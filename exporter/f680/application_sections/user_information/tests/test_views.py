@@ -656,6 +656,15 @@ class TestUserInformationSummaryView:
         response = authorized_client.get(missing_f680_application_wizard_url)
         assert response.status_code == 404
 
+    def test_GET_no_user_entities_redirects(
+        self,
+        authorized_client,
+        f680_user_information_summary_url,
+        mock_f680_application_get,
+    ):
+        response = authorized_client.get(f680_user_information_summary_url)
+        assert response.status_code == 302
+
     def test_GET_no_feature_flag_forbidden(
         self,
         authorized_client,

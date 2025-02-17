@@ -1,5 +1,6 @@
 from http import HTTPStatus
 
+from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.urls import reverse
 
@@ -75,6 +76,19 @@ class UserInformationSummaryView(F680FeatureRequiredMixin, TemplateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.application, _ = self.get_f680_application(kwargs["pk"])
+        self.user_entities = self.get_user_entities()
+
+    def get(self, request, *args, **kwargs):
+        if not self.user_entities:
+            return redirect(
+                reverse(
+                    "f680:user_information:wizard",
+                    kwargs={
+                        "pk": self.application["id"],
+                    },
+                )
+            )
+        return super().get(request, *args, **kwargs)
 
     def get_user_entities(self):
         if not self.application.get("application", {}).get("sections", {}).get("user_information", {}).get("items"):
@@ -86,8 +100,7 @@ class UserInformationSummaryView(F680FeatureRequiredMixin, TemplateView):
         return user_entities
 
     def get_context_data(self, pk, **kwargs):
-
         return {
             "application": self.application,
-            "user_entities": self.get_user_entities(),
+            "user_entities": self.user_entities,
         }

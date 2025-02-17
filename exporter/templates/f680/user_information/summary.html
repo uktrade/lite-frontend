@@ -7,9 +7,7 @@
 {% block body %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l govuk-!-margin-bottom-2">User information</h1>
-        {% if application.application.sections.user_information %}
-        <a href="{% url 'f680:user_information:wizard' application.id %}" role='button' draggable='false' class='govuk-button govuk-button--secondary'>Add user information</a>
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-2">Tell us about the entity</h1>
 
 		<table class="govuk-table">
 			<thead class="govuk-table__head">
@@ -37,10 +35,10 @@
 				{% endfor %}
 			</tbody>
 		</table>
-        <a href="{% url "f680:summary" application.id %}" role='button' draggable='false' class='govuk-button'>Continue</a>
-        {% else %}
-        <a href="{% url 'f680:user_information:wizard' application.id %}" role='button' draggable='false' class='govuk-button'>Add user information</a>
-        {% endif %}
+        <a href="{% url 'f680:user_information:wizard' application.id %}" role='button' draggable='false' class='govuk-button'>Add a new entity</a>
+        <p>
+            <a href="{% url "f680:summary" application.id %}" role='button' draggable='false' class='govuk-link govuk-link--no-visited-state'>Save and continue</a>
+        </p>
 
     </div>
 </div>
