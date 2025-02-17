@@ -41,6 +41,8 @@
                         </div>
                     </li>
                 </ul>
+            </li>
+            </li>
                 <h2 class="lite-task-list__section">
                     <span class="lite-task-list__section-number">2. </span>
                     Complete approval details
@@ -50,26 +52,6 @@
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:type_wizard" pk=application.id %}">Approval type</a>
                             {% if application.application.sections.approval_type %}
-                            <div class="lite-tag lite-tag--blue">
-                                Completed
-                            </div>
-                            {% else %}
-                            <div class="lite-tag lite-tag--grey">
-                                Not Started
-                            </div>
-                            {% endif %}
-                        </div>
-                    </li>
-                </ul>
-                <h2 class="lite-task-list__section">
-                    <span class="lite-task-list__section-number">4. </span>
-                    Additional Information
-                </h2>
-                <ul class="lite-task-list__items">
-                    <li class="lite-task-list__item">
-                        <div class="lite-task-list__item-header">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:additional_information:notes_wizard" pk=application.id %}">Notes for case officers</a>
-                            {% if application.application.sections.notes_for_case_officers %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
                             </div>
@@ -92,6 +74,28 @@
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:user_information:summary" pk=application.id %}">User information</a>
                             {% if application.application.sections.user_information %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Not Started
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <h2 class="lite-task-list__section">
+                    <span class="lite-task-list__section-number">4. </span>
+                    Additional Information
+                </h2>
+                <ul class="lite-task-list__items">
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:additional_information:notes_wizard" pk=application.id %}">Notes for case officers</a>
+                            {% if application.application.sections.notes_for_case_officers %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
                             </div>
