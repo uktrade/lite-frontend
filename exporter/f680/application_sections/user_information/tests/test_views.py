@@ -547,6 +547,209 @@ class TestUserInformationView:
             }
         }
 
+    @freeze_time("2026-11-30")
+    def test_POST_submit_wizard_existing_user_information_success(
+        self,
+        post_to_step,
+        goto_step,
+        mock_f680_application_get_existing_data,
+        mock_patch_f680_application,
+        data_item_id,
+    ):
+        response = post_to_step(
+            FormSteps.ENTITY_TYPE,
+            {"entity_type": "third-party"},
+        )
+        assert response.status_code == 200
+        assert type(response.context["form"]) == forms.ThirdPartyRoleForm
+
+        response = post_to_step(
+            FormSteps.THIRD_PARTY_ROLE,
+            {"third_party_role": "consultant"},
+        )
+        assert response.status_code == 200
+        assert type(response.context["form"]) == forms.EndUserNameForm
+
+        response = post_to_step(
+            FormSteps.END_USER_NAME,
+            {
+                "end_user_name": "some end user name",
+            },
+        )
+        assert response.status_code == 200
+        assert type(response.context["form"]) == forms.EndUserAddressForm
+
+        response = post_to_step(
+            FormSteps.END_USER_ADDRESS,
+            {
+                "address": "some end user address",
+                "country": "US",
+            },
+        )
+        assert response.status_code == 200
+        assert type(response.context["form"]) == forms.SecurityGradingForm
+
+        response = post_to_step(
+            FormSteps.SECURITY_GRADING,
+            {
+                "prefix": "some prefix",
+                "security_classification": "secret",
+                "suffix": "some suffix",
+                "issuing_authority_name_address": "some name address",
+                "reference": "some ref",
+                "date_of_issue_0": "1",
+                "date_of_issue_1": "1",
+                "date_of_issue_2": "2024",
+            },
+        )
+        assert response.status_code == 200
+        assert type(response.context["form"]) == forms.EndUserIntendedEndUseForm
+
+        response = post_to_step(
+            FormSteps.INTENDED_END_USE,
+            {
+                "end_user_intended_end_use": "some end use",
+            },
+        )
+        assert response.status_code == 200
+        assert type(response.context["form"]) == forms.EndUserAssembleManufactureForm
+
+        response = post_to_step(
+            FormSteps.ASSEMBLE_MANUFACTURE,
+            {
+                "assemble_manufacture": ["assemble", "manufacture"],
+                "assemble": "some assemble reason",
+                "manufacture": "some manufacture reason",
+            },
+        )
+        assert response.status_code == 302
+        assert mock_patch_f680_application.called_once
+        api_patch_payload = mock_patch_f680_application.last_request.json()
+        generated_uuid = mock_patch_f680_application.last_request.json()["application"]["sections"]["user_information"][
+            "items"
+        ][1]["id"]
+        # existing record still present
+        assert api_patch_payload["application"]["sections"]["user_information"]["items"][0]["id"] == data_item_id
+
+        # New record also present
+        assert api_patch_payload["application"]["sections"]["user_information"]["items"][1] == {
+            "id": generated_uuid,
+            "fields": [
+                {
+                    "key": "entity_type",
+                    "answer": "Third party",
+                    "raw_answer": "third-party",
+                    "question": "Select type of entity",
+                    "datatype": "string",
+                },
+                {
+                    "key": "third_party_role",
+                    "answer": "Consultant",
+                    "raw_answer": "consultant",
+                    "question": "Select the role of the third party",
+                    "datatype": "string",
+                },
+                {
+                    "key": "end_user_name",
+                    "answer": "some end user name",
+                    "raw_answer": "some end user name",
+                    "question": "End-user name",
+                    "datatype": "string",
+                },
+                {
+                    "key": "address",
+                    "answer": "some end user address",
+                    "raw_answer": "some end user address",
+                    "question": "Address",
+                    "datatype": "string",
+                },
+                {
+                    "key": "country",
+                    "answer": "United States",
+                    "raw_answer": "US",
+                    "question": "Country",
+                    "datatype": "string",
+                },
+                {
+                    "key": "prefix",
+                    "answer": "some prefix",
+                    "raw_answer": "some prefix",
+                    "question": "Enter a prefix (optional)",
+                    "datatype": "string",
+                },
+                {
+                    "key": "security_classification",
+                    "answer": "Secret",
+                    "raw_answer": "secret",
+                    "question": "Select security classification",
+                    "datatype": "string",
+                },
+                {
+                    "key": "other_security_classification",
+                    "answer": "",
+                    "raw_answer": "",
+                    "question": "Enter the security classification",
+                    "datatype": "string",
+                },
+                {
+                    "key": "suffix",
+                    "answer": "some suffix",
+                    "raw_answer": "some suffix",
+                    "question": "Enter a suffix (optional)",
+                    "datatype": "string",
+                },
+                {
+                    "key": "issuing_authority_name_address",
+                    "answer": "some name address",
+                    "raw_answer": "some name address",
+                    "question": "Name and address of the issuing authority",
+                    "datatype": "string",
+                },
+                {
+                    "key": "reference",
+                    "answer": "some ref",
+                    "raw_answer": "some ref",
+                    "question": "Reference",
+                    "datatype": "string",
+                },
+                {
+                    "key": "date_of_issue",
+                    "answer": "2024-01-01",
+                    "raw_answer": "2024-01-01",
+                    "question": "Date of issue",
+                    "datatype": "date",
+                },
+                {
+                    "key": "end_user_intended_end_use",
+                    "answer": "some end use",
+                    "raw_answer": "some end use",
+                    "question": "How does the end-user intend to use this product",
+                    "datatype": "string",
+                },
+                {
+                    "key": "assemble_manufacture",
+                    "answer": ["Yes, assembled", "Yes, manufactured"],
+                    "raw_answer": ["assemble", "manufacture"],
+                    "question": "Does this end-user need to assemble or manufacture any of the products?",
+                    "datatype": "list",
+                },
+                {
+                    "key": "assemble",
+                    "answer": "some assemble reason",
+                    "raw_answer": "some assemble reason",
+                    "question": "Describe what assembly is needed.",
+                    "datatype": "string",
+                },
+                {
+                    "key": "manufacture",
+                    "answer": "some manufacture reason",
+                    "raw_answer": "some manufacture reason",
+                    "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
+                    "datatype": "string",
+                },
+            ],
+        }
+
     @pytest.mark.parametrize(
         "step, expected_form, expected_initial",
         (
