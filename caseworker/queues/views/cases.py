@@ -143,9 +143,11 @@ class CaseDataMixin:
             if session_sort_by:
                 params["sort_by"] = session_sort_by
             elif self.queue_pk == ALL_CASES_QUEUE_ID:
-                params["sort_by"] = "submitted_at"
-            else:
+                # newest to oldest
                 params["sort_by"] = "-submitted_at"
+            else:
+                # oldest to newest
+                params["sort_by"] = "submitted_at"
 
         self.request.session["case_search_sort_by"] = params["sort_by"]
 
