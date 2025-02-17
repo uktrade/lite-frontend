@@ -89,12 +89,7 @@ class ProductNameForm(BaseForm):
     class Layout:
         TITLE = "Give the item a descriptive name"
         TITLE_AS_LABEL_FOR = "product_name"
-        SUBTITLE = (
-            '<p class="govuk-body">We need to understand what you will be sharing with non-uk entities.  '
-            'This includes: <br><ul class="govuk-body"><li>physical products</li>'
-            "<li>substitute products</li><li>agreements</li><li>brochures</li><li>manuals</li>"
-            "<li>training guides</li></ul></p>"
-        )
+        SUBTITLE = render_to_string("f680/forms/subtitle_product_name.html")
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     product_name = forms.CharField(
@@ -131,10 +126,10 @@ class ProductDescription(BaseForm):
 class ForeignTechOrSharedInformation(BaseForm):
     class Layout:
         TITLE = "Will any foreign technology or information be shared with the item?"
-        ITLE_AS_LABEL_FOR = "foreign_or_shared_information"
+        TITLE_AS_LABEL_FOR = "is_foreign_tech_or_information_shared"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    foreign_or_shared_information = forms.TypedChoiceField(
+    is_foreign_tech_or_information_shared = forms.TypedChoiceField(
         choices=(
             (True, "Yes"),
             (False, "No"),
@@ -145,4 +140,33 @@ class ForeignTechOrSharedInformation(BaseForm):
     )
 
     def get_layout_fields(self):
-        return ("foreign_or_shared_information",)
+        return ("is_foreign_tech_or_information_shared",)
+
+
+class ControlledUnderItar(BaseForm):
+    class Layout:
+        TITLE = (
+            "Is the technology or information controlled under the US International Traffic in Arms Regulations (ITAR)?"
+        )
+        TITLE_AS_LABEL_FOR = "is_controlled_under_itar"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    is_controlled_under_itar = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes, it's controlled under  ITAR"),
+            (False, "No"),
+        ),
+        help_text="We need to know about any items classified as Defence Articles or Technical Data.",
+        label=Layout.TITLE,
+        widget=forms.RadioSelect,
+        coerce=coerce_str_to_bool,
+    )
+
+    def get_layout_fields(self):
+        return (
+            "is_controlled_under_itar",
+            HTML.details(
+                "Help with ITAR",
+                render_to_string("f680/forms/help_ITAR.html"),
+            ),
+        )
