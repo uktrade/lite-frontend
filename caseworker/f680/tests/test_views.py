@@ -120,6 +120,13 @@ def mock_f680_case(f680_case_id, requests_mock, data_f680_case):
     return requests_mock.get(url=url, json=data_f680_case)
 
 
+@pytest.fixture
+def mock_f680_case_with_submitted_by(f680_case_id, requests_mock, data_f680_case):
+    data_f680_case["case"]["data"]["submitted_by"] = {"first_name": "foo", "last_name": "bar"}
+    url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
+    return requests_mock.get(url=url, json=data_f680_case)
+
+
 class TestCaseDetailView:
 
     def test_GET_success(
@@ -139,6 +146,19 @@ class TestCaseDetailView:
             "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?" in table_text
         )
         assert "some name" in table_text
+
+    def test_GET_success_transformed_submitted_by(
+        self,
+        authorized_client,
+        data_queue,
+        mock_f680_case_with_submitted_by,
+        f680_case_id,
+        f680_reference_code,
+        data_f680_case,
+    ):
+        url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        response = authorized_client.get(url)
+        assert response.status_code == 200
 
     def test_GET_not_logged_in(
         self, client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_f680_case
