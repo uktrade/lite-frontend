@@ -337,11 +337,6 @@ class TestProductInformationViews:
                 forms.ProductForeignTechOrSharedInformation,
             ),
             (
-                FormSteps.PRODUCT_DESCRIPTION,
-                {"product_description": "Does a thing"},
-                forms.ProductForeignTechOrSharedInformation,
-            ),
-            (
                 FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
                 {"is_foreign_tech_or_information_shared": True},
                 forms.ProductControlledUnderItar,
@@ -407,3 +402,86 @@ class TestProductInformationViews:
         )
         assert response.status_code == 200
         assert isinstance(response.context["form"], expected_next_form)
+
+    @pytest.mark.parametrize(
+        "step, data, expected_errors",
+        (
+            (FormSteps.PRODUCT_NAME, {"product_name": ""}, {"product_name": ["This field is required."]}),
+            (
+                FormSteps.PRODUCT_DESCRIPTION,
+                {"product_description": ""},
+                {"product_description": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+                {},
+                {"is_foreign_tech_or_information_shared": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                {},
+                {"is_including_cryptography_or_security_features": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_RATED_UNDER_MTCR,
+                {"is_item_rated_under_mctr": ""},
+                {"is_item_rated_under_mctr": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_MANPAD,
+                {"is_item_manpad": ""},
+                {"is_item_manpad": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_ELECTRONICMODDATA,
+                {"is_mod_electronic_data_shared": ""},
+                {"is_mod_electronic_data_shared": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_FUNDING,
+                {"funding_source": ""},
+                {"funding_source": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                {},
+                {"is_controlled_under_itar": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+                {
+                    "controlled_information": "",
+                    "itar_reference_number": "",
+                    "usml_categories": "",
+                    "itar_approval_scope": "",
+                    "expected_time_in_possession": "",
+                },
+                {
+                    "controlled_information": ["This field is required."],
+                    "itar_reference_number": ["This field is required."],
+                    "usml_categories": ["This field is required."],
+                    "itar_approval_scope": ["This field is required."],
+                    "expected_time_in_possession": ["This field is required."],
+                },
+            ),
+        ),
+    )
+    def test_POST_to_step_validation_error(
+        self,
+        step,
+        data,
+        expected_errors,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        goto_product_step(step)
+        response = post_to_product_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+        for field_name, error in expected_errors.items():
+            assert response.context["form"][field_name].errors == error
