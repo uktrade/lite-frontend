@@ -349,7 +349,8 @@ class ProductElectronicMODData(BaseForm):
                 ConditionalRadiosQuestion(
                     "Yes",
                     HTML.p(
-                        "You need to complete part A off the MOD EW Data Release Capture Form and attach it to the application in the supporting documents section"
+                        "You need to complete part A off the MOD EW Data Release Capture Form and attach "
+                        "it to the application in the supporting documents section"
                     ),
                 ),
                 "No",

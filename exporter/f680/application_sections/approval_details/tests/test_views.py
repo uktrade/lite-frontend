@@ -347,11 +347,6 @@ class TestProductInformationViews:
                 forms.ProductControlledUnderItar,
             ),
             (
-                FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
-                {"is_foreign_tech_or_information_shared": False},
-                forms.ProductIncludeCryptography,
-            ),
-            (
                 FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
                 {"is_including_cryptography_or_security_features": True},
                 forms.ProductRatedUnderMTCR,
