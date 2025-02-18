@@ -485,3 +485,205 @@ class TestProductInformationViews:
         assert response.status_code == 200
         for field_name, error in expected_errors.items():
             assert response.context["form"][field_name].errors == error
+
+    def test_POST_submit_wizard_success(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        mock_patch_f680_application,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        response = post_to_product_step(
+            FormSteps.PRODUCT_NAME,
+            {"product_name": "Test Name"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_DESCRIPTION,
+            {"product_description": "Does a thing"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+            {"is_foreign_tech_or_information_shared": True},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+            {"is_controlled_under_itar": True, "controlled_info": ""},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+            {
+                "controlled_information": "secret stuff",
+                "itar_reference_number": "123456",
+                "usml_categories": "none",
+                "itar_approval_scope": "no scope",
+                "expected_time_in_possession": "10 years",
+            },
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+            {"is_including_cryptography_or_security_features": True},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_RATED_UNDER_MTCR,
+            {"is_item_rated_under_mctr": "yes_mtcr_1"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_MANPAD,
+            {"is_item_manpad": "no"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_ELECTRONICMODDATA,
+            {"is_mod_electronic_data_shared": "no"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_FUNDING,
+            {"funding_source": "mod"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
+            {"is_used_by_uk_armed_forces": True},
+        )
+
+        assert response.status_code == 302
+        assert mock_patch_f680_application.called_once
+        assert mock_patch_f680_application.last_request.json() == {
+            "application": {
+                "name": "F680 Test 1",
+                "sections": {
+                    "product_information": {
+                        "label": "Product information",
+                        "fields": [
+                            {
+                                "key": "product_name",
+                                "answer": "Test Name",
+                                "raw_answer": "Test Name",
+                                "question": "Give the item a descriptive name",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "product_description",
+                                "answer": "Does a thing",
+                                "raw_answer": "Does a thing",
+                                "question": "Describe the item",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_foreign_tech_or_information_shared",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Will any foreign technology or information be shared with the item?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "is_controlled_under_itar",
+                                "answer": "Yes, it's controlled under  ITAR",
+                                "raw_answer": True,
+                                "question": "Is the technology or information controlled under the US International Traffic in Arms Regulations (ITAR)?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "controlled_info",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Explain how the technology or information is controlled.Include countries classification levels and reference numbers.  You can upload supporting documents later in your application",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "controlled_information",
+                                "answer": "secret stuff",
+                                "raw_answer": "secret stuff",
+                                "question": "What is the ITAR controlled technology or information?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "itar_reference_number",
+                                "answer": "123456",
+                                "raw_answer": "123456",
+                                "question": "ITAR reference number",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "usml_categories",
+                                "answer": "none",
+                                "raw_answer": "none",
+                                "question": "What are the United States Munitions List (USML) categories listed on your ITAR approval?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "itar_approval_scope",
+                                "answer": "no scope",
+                                "raw_answer": "no scope",
+                                "question": "Describe the scope of your ITAR approval",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "expected_time_in_possession",
+                                "answer": "10 years",
+                                "raw_answer": "10 years",
+                                "question": "How long do you expect the technology or information that is controlled under the US ITAR to be in your possession?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_including_cryptography_or_security_features",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Does the item include cryptography or other information security features?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "cryptography_or_security_feature_info",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Provide full details",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_item_rated_under_mctr",
+                                "answer": "Yes, the product is MTCR Category 1",
+                                "raw_answer": "yes_mtcr_1",
+                                "question": "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_item_manpad",
+                                "answer": "No, the product is not a MANPAD",
+                                "raw_answer": "no",
+                                "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_mod_electronic_data_shared",
+                                "answer": "No",
+                                "raw_answer": "no",
+                                "question": "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "funding_source",
+                                "answer": "MOD",
+                                "raw_answer": "mod",
+                                "question": "Who is funding the item?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_used_by_uk_armed_forces",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Will the item be used by the UK Armed Forces?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "used_by_uk_armed_forces_info",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Explain how it will be used",
+                                "datatype": "string",
+                            },
+                        ],
+                        "type": "single",
+                    }
+                },
+            }
+        }
