@@ -59,6 +59,10 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
     form_class = ApplicationSubmissionForm
     template_name = "f680/summary.html"
 
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.application, _ = self.get_f680_application(kwargs["pk"])
+
     @expect_status(
         HTTPStatus.OK,
         "Error getting F680 application",
@@ -67,10 +71,6 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
     )
     def get_f680_application(self, application_id):
         return get_f680_application(self.request, application_id)
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.application, _ = self.get_f680_application(kwargs["pk"])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -86,7 +86,26 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
     def submit_f680_application(self, application_id):
         return submit_f680_application(self.request, application_id)
 
+    def all_sections_complete(self):
+        # TODO: Think more about pre-submit validation as this is very barebones right now
+        complete_sections = set(self.application["application"].get("sections", {}).keys())
+        required_sections = set(
+            [
+                "general_application_details",
+                "approval_type",
+                "user_information",
+            ]
+        )
+        missing_sections = required_sections - complete_sections
+        return len(missing_sections) == 0, missing_sections
+
     def form_valid(self, form):
+        is_sections_completed, incomplete_sections = self.all_sections_complete()
+        if not is_sections_completed:
+            context_data = self.get_context_data(form=form)
+            context_data["errors"] = {"missing_sections": ["Please complete all required sections"]}
+            return self.render_to_response(context_data)
+
         self.submit_f680_application(self.application["id"])
         return super().form_valid(form)
 
