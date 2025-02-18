@@ -6,10 +6,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
-from exporter.f680.constants import (
-    ApplicationFormSteps,
-)
-from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
+from exporter.f680.forms import ApplicationSubmissionForm
 
 
 @pytest.fixture(autouse=True)
@@ -68,13 +65,14 @@ class TestF680ApplicationCreateView:
         self,
         authorized_client,
         f680_apply_url,
-        mock_f680_application_get,
+        f680_summary_url_with_application,
+        mock_application_post,
     ):
         response = authorized_client.get(f680_apply_url)
-
-        assert isinstance(response.context["form"], ApplicationNameForm)
-        soup = BeautifulSoup(response.content, "html.parser")
-        assert "Name of the application" in soup.find("h1").text
+        assert response.status_code == 302
+        assert response.url == f680_summary_url_with_application
+        assert mock_application_post.called_once
+        assert mock_application_post.last_request.json() == {"application": {}}
 
     def test_get_create_f680_view_fail_with_feature_flag_off(
         self,
@@ -89,36 +87,6 @@ class TestF680ApplicationCreateView:
             "You are not authorised to use the F680 Security Clearance application feature"
             in response.context[0].get("description").args
         )
-
-    def test_post_to_create_f680_name_step_success(
-        self,
-        authorized_client,
-        f680_apply_url,
-        post_to_step,
-        f680_summary_url_with_application,
-    ):
-        response = post_to_step(
-            ApplicationFormSteps.APPLICATION_NAME,
-            {"name": "F680 Test"},
-        )
-
-        assert response.status_code == 302
-        assert response.url == f680_summary_url_with_application
-
-    def test_post_to_create_f680_name_step_invalid_data(
-        self,
-        authorized_client,
-        f680_apply_url,
-        post_to_step,
-    ):
-        response = post_to_step(
-            ApplicationFormSteps.APPLICATION_NAME,
-            {"name": ""},
-        )
-
-        assert isinstance(response.context["form"], ApplicationNameForm)
-        assert response.context["form"].errors
-        assert response.context["form"].errors.get("name")[0] == "This field is required."
 
 
 class TestF680ApplicationSummaryView:

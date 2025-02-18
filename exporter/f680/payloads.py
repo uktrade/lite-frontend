@@ -1,17 +1,6 @@
 from deepmerge import always_merger
 
-from core.wizard.payloads import MergingPayloadBuilder, get_cleaned_data, get_questions_data
-from .constants import ApplicationFormSteps
-
-
-class F680CreatePayloadBuilder(MergingPayloadBuilder):
-    payload_dict = {
-        ApplicationFormSteps.APPLICATION_NAME: get_cleaned_data,
-    }
-
-    def build(self, form_dict):
-        payload = super().build(form_dict)
-        return {"application": payload}
+from core.wizard.payloads import get_cleaned_data, get_questions_data
 
 
 class F680PatchPayloadBuilder:
