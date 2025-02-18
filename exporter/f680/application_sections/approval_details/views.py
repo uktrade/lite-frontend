@@ -54,3 +54,5 @@ class ProductInformationView(F680ApplicationSectionWizard):
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR: is_foreign_tech_or_information_shared,
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS: is_controlled_under_itar,
     }
+    section = "approval_type"
+    section_label = "Approval type"

@@ -18,21 +18,6 @@ DATETIME_10_DAYS_AGO = datetime.now() - timedelta(days=10)
 DATETIME_IN_1_YEAR = datetime.now() + timedelta(days=365)
 
 
-@pytest.fixture()
-def unset_f680_feature_flag(settings):
-    settings.FEATURE_FLAG_ALLOW_F680 = False
-
-
-@pytest.fixture(autouse=True)
-def setup(mock_exporter_user_me, settings):
-    settings.FEATURE_FLAG_ALLOW_F680 = True
-
-
-@pytest.fixture
-def missing_application_id():
-    return "6bb0828c-1520-4624-b729-7f3e6e5b9f5d"
-
-
 @pytest.fixture
 def missing_f680_application_wizard_url(missing_application_id):
     return reverse(
@@ -50,19 +35,6 @@ def f680_application_wizard_url(data_f680_case):
 
 
 @pytest.fixture
-def mock_f680_application_get_404(requests_mock, missing_application_id):
-    url = client._build_absolute_uri(f"/exporter/f680/application/{missing_application_id}/")
-    return requests_mock.get(url=url, json={}, status_code=404)
-
-
-@pytest.fixture
-def mock_f680_application_get(requests_mock, data_f680_case):
-    application_id = data_f680_case["id"]
-    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
-    return requests_mock.get(url=url, json=data_f680_case)
-
-
-@pytest.fixture
 def force_exceptional_circumstances(goto_step, post_to_step):
     goto_step(FormSteps.EXCEPTIONAL_CIRCUMSTANCES)
     post_to_step(
@@ -74,29 +46,46 @@ def force_exceptional_circumstances(goto_step, post_to_step):
 @pytest.fixture
 def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
     data_f680_case["application"] = {
-        "general_application_details": {
-            "answers": {
-                "name": "my first F680",
-                "is_exceptional_circumstances": True,
-                "exceptional_circumstances_date": "2090-01-01",
-                "exceptional_circumstances_reason": "some reason",
-            },
-            "questions": {
-                "name": "What is the name of the application?",
-                "is_exceptional_circumstances": "Are there exceptional circumstances?",
+        "sections": {
+            "general_application_details": {
+                "label": "General application details",
+                "type": "single",
+                "fields": [
+                    {
+                        "key": "name",
+                        "answer": "my first F680",
+                        "raw_answer": "my first F680",
+                        "question": "What is the name of the application?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "is_exceptional_circumstances",
+                        "answer": "Yes",
+                        "raw_answer": True,
+                        "question": "Are there exceptional circumstances?",
+                        "datatype": "boolean",
+                    },
+                    {
+                        "key": "exceptional_circumstances_date",
+                        "answer": "2090-01-01",
+                        "raw_answer": "2090-01-01",
+                        "question": "What date do you need it?",
+                        "datatype": "date",
+                    },
+                    {
+                        "key": "exceptional_circumstances_reason",
+                        "answer": "some reason",
+                        "raw_answer": "some reason",
+                        "question": "What makes the circumstances exceptional?",
+                        "datatype": "string",
+                    },
+                ],
             },
         }
     }
     application_id = data_f680_case["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
     return requests_mock.get(url=url, json=data_f680_case)
-
-
-@pytest.fixture
-def mock_patch_f680_application(requests_mock, data_f680_case):
-    application_id = data_f680_case["id"]
-    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
-    return requests_mock.patch(url=url, json=data_f680_case)
 
 
 @pytest.fixture
@@ -253,18 +242,40 @@ class TestGeneralApplicationDetailsView:
         assert mock_patch_f680_application.last_request.json() == {
             "application": {
                 "name": "F680 Test 1",
-                "general_application_details": {
-                    "answers": {
-                        "name": "some test app",
-                        "is_exceptional_circumstances": True,
-                        "exceptional_circumstances_date": "2026-12-01",
-                        "exceptional_circumstances_reason": "because",
-                    },
-                    "questions": {
-                        "name": "Name the application",
-                        "is_exceptional_circumstances": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
-                        "exceptional_circumstances_date": "When do you need your F680 approval?",
-                        "exceptional_circumstances_reason": "Why do you need approval in less than 30 days?",
+                "sections": {
+                    "general_application_details": {
+                        "label": "General application details",
+                        "type": "single",
+                        "fields": [
+                            {
+                                "key": "name",
+                                "answer": "some test app",
+                                "raw_answer": "some test app",
+                                "question": "Name the application",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_exceptional_circumstances",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "exceptional_circumstances_date",
+                                "answer": "2026-12-01",
+                                "raw_answer": "2026-12-01",
+                                "question": "When do you need your F680 approval?",
+                                "datatype": "date",
+                            },
+                            {
+                                "key": "exceptional_circumstances_reason",
+                                "answer": "because",
+                                "raw_answer": "because",
+                                "question": "Why do you need approval in less than 30 days?",
+                                "datatype": "string",
+                            },
+                        ],
                     },
                 },
             }
