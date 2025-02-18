@@ -5,11 +5,11 @@
     {% include "f680/case/summary.html" %}
 </section>
 
-{% for section in case.data.application.sections.values %}
+{% for section_key, section in case.data.application.sections.items %}
     {% if section.type == "single" %}
-        {% include "f680/includes/application_section_single.html" with section=section %}
+        {% include "f680/includes/application_section_single.html" with section=section section_key=section_key %}
     {% else %}
-        {% include "f680/includes/application_section_multiple.html" with section=section %}
+        {% include "f680/includes/application_section_multiple.html" with section=section section_key=section_key %}
     {% endif %}
 {% endfor %}
 

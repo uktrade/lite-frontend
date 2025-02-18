@@ -61,7 +61,30 @@ def data_f680_case(f680_case_id, f680_reference_code):
             "copy_of": None,
             "countersign_advice": [],
             "data": {
-                "application": {"some": "json"},
+                "application": {
+                    "sections": {
+                        "general_application_details": {
+                            "label": "General application details",
+                            "type": "single",
+                            "fields": [
+                                {
+                                    "key": "name",
+                                    "answer": "some name",
+                                    "datatype": "string",
+                                    "question": "Name the application",
+                                    "raw_answer": "casdc",
+                                },
+                                {
+                                    "key": "is_exceptional_circumstances",
+                                    "answer": "No",
+                                    "datatype": "boolean",
+                                    "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
+                                    "raw_answer": False,
+                                },
+                            ],
+                        },
+                    }
+                },
                 "id": f680_case_id,
                 "organisation": {
                     "id": "1363b104-9669-4c53-8602-8fc3717b07cd",  # /PS-IGNORE
@@ -108,6 +131,14 @@ class TestCaseDetailView:
         assert dict(response.context["case"]) == data_f680_case["case"]
         soup = BeautifulSoup(response.content, "html.parser")
         assert f680_reference_code in soup.find("h1").text
+        assert "General application details" in soup.find("h2").text
+        table_elems = soup.find_all("table", {"class": "application-section-general_application_details"})
+        assert len(table_elems) == 1
+        table_text = table_elems[0].text
+        assert (
+            "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?" in table_text
+        )
+        assert "some name" in table_text
 
     def test_GET_not_logged_in(
         self, client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_f680_case
