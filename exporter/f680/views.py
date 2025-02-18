@@ -87,9 +87,8 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
         return submit_f680_application(self.request, application_id)
 
     def form_valid(self, form):
-        # TODO: Validate application payload before allowing submit
         self.submit_f680_application(self.application["id"])
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("core:home")
+        return reverse("applications:success_page", kwargs={"pk": self.application["id"]})
