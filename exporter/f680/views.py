@@ -100,7 +100,7 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
         return len(missing_sections) == 0, missing_sections
 
     def form_valid(self, form):
-        is_sections_completed, incomplete_sections = self.all_sections_complete()
+        is_sections_completed, _ = self.all_sections_complete()
         if not is_sections_completed:
             context_data = self.get_context_data(form=form)
             context_data["errors"] = {"missing_sections": ["Please complete all required sections"]}
