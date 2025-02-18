@@ -13,9 +13,8 @@ from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
 
 
 @pytest.fixture(autouse=True)
-def setup(settings, organisation_pk):
+def setup(mock_exporter_user_me, settings):
     settings.FEATURE_FLAG_ALLOW_F680 = True
-    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = [organisation_pk]
 
 
 @pytest.fixture
@@ -58,8 +57,15 @@ def unset_f680_feature_flag(settings):
 
 
 @pytest.fixture()
-def unset_f680_allowed_organisation(settings):
-    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = []
+def unset_f680_allowed_organisation(settings, organisation_pk):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = ["12345"]
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
+@pytest.fixture()
+def set_f680_allowed_organisation(settings, organisation_pk):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = [organisation_pk]
+    settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
 class TestApplyForLicenceQuestionsClass:
@@ -78,6 +84,18 @@ class TestF680ApplicationCreateView:
     ):
         response = authorized_client.get(f680_apply_url)
 
+        assert isinstance(response.context["form"], ApplicationNameForm)
+        soup = BeautifulSoup(response.content, "html.parser")
+        assert "Name of the application" in soup.find("h1").text
+
+    def test_get_create_f680_view_success_allowed_organisation(
+        self,
+        authorized_client,
+        f680_apply_url,
+        mock_f680_application_get,
+        set_f680_allowed_organisation,
+    ):
+        response = authorized_client.get(f680_apply_url)
         assert isinstance(response.context["form"], ApplicationNameForm)
         soup = BeautifulSoup(response.content, "html.parser")
         assert "Name of the application" in soup.find("h1").text

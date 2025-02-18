@@ -29,7 +29,7 @@ from .services import (
 
 class F680FeatureRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_ALLOW_F680 or not rules.test_rule(
+        if not settings.FEATURE_FLAG_ALLOW_F680 and not rules.test_rule(
             "exporter_in_organisation_list", self.request, settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS
         ):
             self.raise_exception = True
