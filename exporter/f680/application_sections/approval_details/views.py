@@ -25,6 +25,7 @@ class ApprovalTypeView(F680ApplicationSectionWizard):
     section = "approval_type"
     section_label = "Approval type"
 
+
 def is_foreign_tech_or_information_shared(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED) or {}
     return cleaned_data.get("is_foreign_tech_or_information_shared", False)
