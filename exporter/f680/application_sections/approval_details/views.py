@@ -22,7 +22,8 @@ class ApprovalTypeView(F680ApplicationSectionWizard):
     form_list = [
         (FormSteps.APPROVAL_TYPE, ApprovalTypeForm),
     ]
-    section = "approval_details"
+    section = "approval_type"
+    section_label = "Approval type"
 
 
 def is_foreign_tech_or_information_shared(wizard):
@@ -54,5 +55,5 @@ class ProductInformationView(F680ApplicationSectionWizard):
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR: is_foreign_tech_or_information_shared,
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS: is_controlled_under_itar,
     }
-    section = "approval_type"
-    section_label = "Approval type"
+    section = "product_information"
+    section_label = "Product information"
