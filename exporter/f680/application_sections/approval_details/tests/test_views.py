@@ -119,7 +119,139 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                         "raw_answer": "some details",
                     },
                 ],
-            }
+            },
+            "product_information": {
+                "label": "Product information",
+                "fields": [
+                    {
+                        "key": "product_name",
+                        "answer": "Test Info",
+                        "raw_answer": "Test Info",
+                        "question": "Give the item a descriptive name",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "product_description",
+                        "answer": "It does things",
+                        "raw_answer": "It does things",
+                        "question": "Describe the item",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "is_foreign_tech_or_information_shared",
+                        "answer": "Yes",
+                        "raw_answer": True,
+                        "question": "Will any foreign technology or information be shared with the item?",
+                        "datatype": "boolean",
+                    },
+                    {
+                        "key": "is_controlled_under_itar",
+                        "answer": "Yes, it's controlled under  ITAR",
+                        "raw_answer": True,
+                        "question": "Is the technology or information controlled under the US International Traffic in Arms Regulations (ITAR)?",
+                        "datatype": "boolean",
+                    },
+                    {
+                        "key": "controlled_info",
+                        "answer": "It just is",
+                        "raw_answer": "It just is",
+                        "question": "Explain how the technology or information is controlled.Include countries classification levels and reference numbers.  You can upload supporting documents later in your application",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "controlled_information",
+                        "answer": "Some info",
+                        "raw_answer": "Some info",
+                        "question": "What is the ITAR controlled technology or information?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "itar_reference_number",
+                        "answer": "123456",
+                        "raw_answer": "123456",
+                        "question": "ITAR reference number",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "usml_categories",
+                        "answer": "cat 1",
+                        "raw_answer": "cat 1",
+                        "question": "What are the United States Munitions List (USML) categories listed on your ITAR approval?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "itar_approval_scope",
+                        "answer": "no scope",
+                        "raw_answer": "no scope",
+                        "question": "Describe the scope of your ITAR approval",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "expected_time_in_possession",
+                        "answer": "10 years",
+                        "raw_answer": "10 years",
+                        "question": "How long do you expect the technology or information that is controlled under the US ITAR to be in your possession?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "is_including_cryptography_or_security_features",
+                        "answer": "Yes",
+                        "raw_answer": True,
+                        "question": "Does the item include cryptography or other information security features?",
+                        "datatype": "boolean",
+                    },
+                    {
+                        "key": "cryptography_or_security_feature_info",
+                        "answer": "some",
+                        "raw_answer": "some",
+                        "question": "Provide full details",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "is_item_rated_under_mctr",
+                        "answer": "Yes, the product is MTCR Category 1",
+                        "raw_answer": "yes_mtcr_1",
+                        "question": "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "is_item_manpad",
+                        "answer": "No, the product is not a MANPAD",
+                        "raw_answer": "no",
+                        "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "is_mod_electronic_data_shared",
+                        "answer": "No",
+                        "raw_answer": "no",
+                        "question": "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "funding_source",
+                        "answer": "MOD",
+                        "raw_answer": "mod",
+                        "question": "Who is funding the item?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "is_used_by_uk_armed_forces",
+                        "answer": "No",
+                        "raw_answer": False,
+                        "question": "Will the item be used by the UK Armed Forces?",
+                        "datatype": "boolean",
+                    },
+                    {
+                        "key": "used_by_uk_armed_forces_info",
+                        "answer": "",
+                        "raw_answer": "",
+                        "question": "Explain how it will be used",
+                        "datatype": "string",
+                    },
+                ],
+                "type": "single",
+            },
         }
     }
     application_id = data_f680_case["id"]
@@ -687,6 +819,85 @@ class TestProductInformationViews:
                 },
             }
         }
+
+    @pytest.mark.parametrize(
+        "step, expected_form, expected_initial",
+        (
+            (FormSteps.PRODUCT_NAME, forms.ProductNameForm, {"product_name": "Test Info"}),
+            (
+                FormSteps.PRODUCT_DESCRIPTION,
+                forms.ProductDescription,
+                {"product_description": "It does things"},
+            ),
+            (
+                FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+                forms.ProductForeignTechOrSharedInformation,
+                {"is_foreign_tech_or_information_shared": True},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                forms.ProductControlledUnderItar,
+                {"is_controlled_under_itar": True},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+                forms.ProductControlledUnderItarDetails,
+                {
+                    "controlled_information": "Some info",
+                    "itar_reference_number": "123456",
+                    "usml_categories": "cat 1",
+                    "itar_approval_scope": "no scope",
+                    "expected_time_in_possession": "10 years",
+                },
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                forms.ProductIncludeCryptography,
+                {"is_including_cryptography_or_security_features": True},
+            ),
+            (
+                FormSteps.PRODUCT_RATED_UNDER_MTCR,
+                forms.ProductRatedUnderMTCR,
+                {"is_item_rated_under_mctr": "yes_mtcr_1"},
+            ),
+            (
+                FormSteps.PRODUCT_MANPAD,
+                forms.ProductMANPADs,
+                {"is_item_manpad": "no"},
+            ),
+            (
+                FormSteps.PRODUCT_ELECTRONICMODDATA,
+                forms.ProductElectronicMODData,
+                {"is_mod_electronic_data_shared": "no"},
+            ),
+            (
+                FormSteps.PRODUCT_FUNDING,
+                forms.ProductFunding,
+                {"funding_source": "mod"},
+            ),
+            (
+                FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
+                forms.ProductUsedByUKArmedForces,
+                {"is_used_by_uk_armed_forces": False},
+            ),
+        ),
+    )
+    def test_GET_with_existing_data_success(
+        self,
+        step,
+        expected_form,
+        post_to_product_step,
+        goto_product_step,
+        expected_initial,
+        mock_f680_application_get_existing_data,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        response = goto_product_step(step)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], expected_form)
+        for key, expected_value in expected_initial.items():
+            assert response.context["form"][key].initial == expected_value
 
     def test_is_foreign_tech_or_information_shared_false_displays_correct_form(
         self,
