@@ -219,7 +219,10 @@ class ProductControlledUnderItarDetails(BaseForm):
     )
 
     expected_time_in_possession = forms.CharField(
-        label="How long do you expect the technology or information that is controlled under the US ITAR to be in your possession?",
+        label=(
+            "How long do you expect the technology or information that is controlled under the US ITAR "
+            "to be in your possession?"
+        ),
         help_text="For example, 10 years",
     )
 
