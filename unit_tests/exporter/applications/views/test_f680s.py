@@ -6,10 +6,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
-from exporter.f680.constants import (
-    ApplicationFormSteps,
-)
-from exporter.f680.forms import ApplicationNameForm, ApplicationSubmissionForm
+from exporter.f680.forms import ApplicationSubmissionForm
 
 
 @pytest.fixture(autouse=True)
@@ -80,13 +77,14 @@ class TestF680ApplicationCreateView:
         self,
         authorized_client,
         f680_apply_url,
-        mock_f680_application_get,
+        f680_summary_url_with_application,
+        mock_application_post,
     ):
         response = authorized_client.get(f680_apply_url)
-
-        assert isinstance(response.context["form"], ApplicationNameForm)
-        soup = BeautifulSoup(response.content, "html.parser")
-        assert "Name of the application" in soup.find("h1").text
+        assert response.status_code == 302
+        assert response.url == f680_summary_url_with_application
+        assert mock_application_post.called_once
+        assert mock_application_post.last_request.json() == {"application": {}}
 
     def test_get_create_f680_view_success_allowed_organisation(
         self,
