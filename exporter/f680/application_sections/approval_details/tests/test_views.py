@@ -252,8 +252,6 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                 ],
                 "type": "single",
             },
-            }
-
         }
     }
     application_id = data_f680_case["id"]
@@ -427,6 +425,7 @@ class TestApprovalDetailsView:
         assert response.context["form"]["demonstration_in_uk"].initial == "some UK demonstration reason"
         assert response.context["form"]["demonstration_overseas"].initial == "some overseas demonstration reason"
         assert response.context["form"]["approval_details_text"].initial == "some details"
+
 
 class TestProductInformationViews:
 
@@ -930,4 +929,3 @@ class TestProductInformationViews:
         )
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
-
