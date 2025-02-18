@@ -367,6 +367,22 @@ class TestProductInformationViews:
                 {"funding_source": "private_venture"},
                 forms.ProductUsedByUKArmedForces,
             ),
+            # (
+            #     FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+            #     {"is_controlled_under_itar": True},
+            #     forms.ProductIncludeCryptography,
+            # ),
+            # (
+            #     FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+            #     {
+            #         "controlled_information": "info",
+            #         "itar_reference_number": "123456",
+            #         "usml_categories": "cat 1",
+            #         "itar_approval_scope": "no scope",
+            #         "expected_time_in_possession": "10 years",
+            #     },
+            #     forms.ProductControlledUnderItarDetails,
+            # ),
         ),
     )
     def test_POST_to_step_success(
