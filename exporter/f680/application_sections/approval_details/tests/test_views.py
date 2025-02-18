@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from core import client
 
-from ..forms import ApprovalTypeForm
+from .. import forms
 from ..constants import FormSteps
 
 
@@ -48,7 +48,7 @@ def missing_f680_product_wizard_url(missing_application_id):
 
 
 @pytest.fixture
-def f680_user_information_wizard_url(data_f680_case):
+def f680_product_wizard_url(data_f680_case):
     return reverse(
         "f680:approval_details:product_wizard",
         kwargs={"pk": data_f680_case["id"]},
@@ -135,13 +135,32 @@ def mock_patch_f680_application(requests_mock, data_f680_case):
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, f680_approval_type_wizard_url):
+def post_to_approval_type_step(post_to_step_factory, f680_approval_type_wizard_url):
     return post_to_step_factory(f680_approval_type_wizard_url)
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, f680_approval_type_wizard_url):
+def goto_approval_type_step(goto_step_factory, f680_approval_type_wizard_url):
     return goto_step_factory(f680_approval_type_wizard_url)
+
+
+@pytest.fixture
+def post_to_product_step(post_to_step_factory, f680_product_wizard_url):
+    return post_to_step_factory(f680_product_wizard_url)
+
+
+@pytest.fixture
+def goto_product_step(goto_step_factory, f680_product_wizard_url):
+    return goto_step_factory(f680_product_wizard_url)
+
+
+@pytest.fixture
+def force_product_under_itar(goto_step, post_to_product_step):
+    goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
+    post_to_product_step(
+        FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+        {"is_controlled_under_itar": True},
+    )
 
 
 class TestApprovalDetailsView:
@@ -163,7 +182,7 @@ class TestApprovalDetailsView:
     ):
         response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
-        assert isinstance(response.context["form"], ApprovalTypeForm)
+        assert isinstance(response.context["form"], forms.ApprovalTypeForm)
 
     def test_GET_no_feature_flag_forbidden(
         self,
@@ -177,9 +196,13 @@ class TestApprovalDetailsView:
         assert response.context["title"] == "Forbidden"
 
     def test_POST_approval_type_and_submit_wizard_success(
-        self, post_to_step, goto_step, mock_f680_application_get, mock_patch_f680_application
+        self,
+        post_to_approval_type_step,
+        goto_approval_type_step,
+        mock_f680_application_get,
+        mock_patch_f680_application,
     ):
-        response = post_to_step(
+        response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
             {"approval_choices": ["training", "supply"]},
         )
@@ -229,12 +252,12 @@ class TestApprovalDetailsView:
 
     def test_POST_to_step_validation_error(
         self,
-        post_to_step,
-        goto_step,
+        post_to_approval_type_step,
+        goto_approval_type_step,
         mock_f680_application_get,
     ):
-        goto_step(FormSteps.APPROVAL_TYPE)
-        response = post_to_step(
+        goto_approval_type_step(FormSteps.APPROVAL_TYPE)
+        response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
             {},
         )
@@ -249,7 +272,7 @@ class TestApprovalDetailsView:
     ):
         response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
-        assert isinstance(response.context["form"], ApprovalTypeForm)
+        assert isinstance(response.context["form"], forms.ApprovalTypeForm)
         assert response.context["form"]["approval_choices"].initial == [
             "initial_discussion_or_promoting",
             "demonstration_in_uk",
@@ -273,3 +296,92 @@ class TestProductInformationViews:
     ):
         response = authorized_client.get(missing_f680_product_wizard_url)
         assert response.status_code == 404
+
+    def test_GET_success(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_product_wizard_url,
+    ):
+        response = authorized_client.get(f680_product_wizard_url)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductNameForm)
+
+    def test_GET_no_feature_flag_forbidden(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_product_wizard_url,
+        unset_f680_feature_flag,
+    ):
+        response = authorized_client.get(f680_product_wizard_url)
+        assert response.status_code == 200
+        assert response.context["title"] == "Forbidden"
+
+    @pytest.mark.parametrize(
+        "step, data, expected_next_form",
+        (
+            (FormSteps.PRODUCT_NAME, {"product_name": "Test Name"}, forms.ProductDescription),
+            (
+                FormSteps.PRODUCT_DESCRIPTION,
+                {"product_description": "Does a thing"},
+                forms.ProductForeignTechOrSharedInformation,
+            ),
+            (
+                FormSteps.PRODUCT_DESCRIPTION,
+                {"product_description": "Does a thing"},
+                forms.ProductForeignTechOrSharedInformation,
+            ),
+            (
+                FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+                {"is_foreign_tech_or_information_shared": True},
+                forms.ProductControlledUnderItar,
+            ),
+            (
+                FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+                {"is_foreign_tech_or_information_shared": False},
+                forms.ProductIncludeCryptography,
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                {"is_including_cryptography_or_security_features": True},
+                forms.ProductRatedUnderMTCR,
+            ),
+            (
+                FormSteps.PRODUCT_RATED_UNDER_MTCR,
+                {"is_item_rated_under_mctr": "yes_mtcr_1"},
+                forms.ProductMANPADs,
+            ),
+            (
+                FormSteps.PRODUCT_MANPAD,
+                {"is_item_manpad": "no"},
+                forms.ProductElectronicMODData,
+            ),
+            (
+                FormSteps.PRODUCT_ELECTRONICMODDATA,
+                {"is_mod_electronic_data_shared": "no"},
+                forms.ProductFunding,
+            ),
+            (
+                FormSteps.PRODUCT_FUNDING,
+                {"funding_source": "private_venture"},
+                forms.ProductUsedByUKArmedForces,
+            ),
+        ),
+    )
+    def test_POST_to_step_success(
+        self,
+        step,
+        data,
+        expected_next_form,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+    ):
+        goto_product_step(step)
+        response = post_to_product_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], expected_next_form)
