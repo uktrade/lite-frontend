@@ -1,12 +1,16 @@
 import rules
+from django.conf import settings
 
 
 @rules.predicate
-def is_exporter_in_organisation_list(request, organisation_list):
-    return request.session["organisation"] in organisation_list
+def can_exporter_use_f680s(request):
+    return (
+        request.session["organisation"] in settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS
+        or settings.FEATURE_FLAG_ALLOW_F680
+    )
 
 
 rules.add_rule(
-    "exporter_in_organisation_list",
-    is_exporter_in_organisation_list,
+    "can_exporter_use_f680s",
+    can_exporter_use_f680s,
 )
