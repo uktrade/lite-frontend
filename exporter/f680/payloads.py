@@ -1,19 +1,6 @@
 from uuid import uuid4
 from datetime import date
 
-from core.wizard.payloads import MergingPayloadBuilder, get_cleaned_data
-from .constants import ApplicationFormSteps
-
-
-class F680CreatePayloadBuilder(MergingPayloadBuilder):
-    payload_dict = {
-        ApplicationFormSteps.APPLICATION_NAME: get_cleaned_data,
-    }
-
-    def build(self, form_dict):
-        payload = super().build(form_dict)
-        return {"application": payload}
-
 
 class F680PatchPayloadBuilder:
     def serialize(self, value):
