@@ -55,25 +55,56 @@ def mock_f680_application_get(requests_mock, data_f680_case):
 @pytest.fixture
 def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
     data_f680_case["application"] = {
-        "approval_details": {
-            "answers": {
-                "approval_choices": [
-                    "initial_discussion_or_promoting",
-                    "demonstration_in_uk",
-                    "demonstration_overseas",
-                    "training",
-                    "through_life_support",
-                    "supply",
+        "sections": {
+            "approval_type": {
+                "type": "single",
+                "label": "Approval type",
+                "fields": [
+                    {
+                        "key": "approval_choices",
+                        "answer": [
+                            "Initial discussions or promoting products",
+                            "Demonstration in the United Kingdom to overseas customers",
+                            "Demonstration overseas",
+                            "Training",
+                            "Through life support",
+                            "Supply",
+                        ],
+                        "datatype": "list",
+                        "question": "Select the types of approvals you need",
+                        "raw_answer": [
+                            "initial_discussion_or_promoting",
+                            "demonstration_in_uk",
+                            "demonstration_overseas",
+                            "training",
+                            "through_life_support",
+                            "supply",
+                        ],
+                    },
+                    {
+                        "key": "demonstration_in_uk",
+                        "answer": "some UK demonstration reason",
+                        "datatype": "string",
+                        "question": "Explain what you are demonstrating and why",
+                        "raw_answer": "some UK demonstration reason",
+                    },
+                    {
+                        "key": "demonstration_overseas",
+                        "answer": "some overseas demonstration reason",
+                        "datatype": "string",
+                        "question": "Explain what you are demonstrating and why",
+                        "raw_answer": "some overseas demonstration reason",
+                    },
+                    {
+                        "key": "approval_details_text",
+                        "answer": "some details",
+                        "datatype": "string",
+                        "question": "Provide details about what you're seeking approval to do",
+                        "raw_answer": "some details",
+                    },
                 ],
-                "demonstration_in_uk": "Test text 1",
-                "demonstration_overseas": "Test text 2",
-            },
-            "questions": {
-                "approval_choices": None,
-                "demonstration_in_uk": "Explain what you are demonstrating and why",
-                "demonstration_overseas": "Explain what you are demonstrating and why",
-            },
-        },
+            }
+        }
     }
     application_id = data_f680_case["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
@@ -141,19 +172,41 @@ class TestApprovalDetailsView:
         assert mock_patch_f680_application.last_request.json() == {
             "application": {
                 "name": "F680 Test 1",
-                "approval_details": {
-                    "answers": {
-                        "approval_choices": ["training", "supply"],
-                        "demonstration_in_uk": "",
-                        "demonstration_overseas": "",
-                        "approval_details_text": "",
-                    },
-                    "questions": {
-                        "approval_choices": "Select the types of approvals you need",
-                        "demonstration_in_uk": "Explain what you are demonstrating and why",
-                        "demonstration_overseas": "Explain what you are demonstrating and why",
-                        "approval_details_text": "Provide details about what you're seeking approval to do",
-                    },
+                "sections": {
+                    "approval_type": {
+                        "label": "Approval type",
+                        "fields": [
+                            {
+                                "key": "approval_choices",
+                                "answer": ["Training", "Supply"],
+                                "raw_answer": ["training", "supply"],
+                                "question": "Select the types of approvals you need",
+                                "datatype": "list",
+                            },
+                            {
+                                "key": "demonstration_in_uk",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Explain what you are demonstrating and why",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "demonstration_overseas",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Explain what you are demonstrating and why",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "approval_details_text",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Provide details about what you're seeking approval to do",
+                                "datatype": "string",
+                            },
+                        ],
+                        "type": "single",
+                    }
                 },
             }
         }
@@ -189,5 +242,6 @@ class TestApprovalDetailsView:
             "through_life_support",
             "supply",
         ]
-        assert response.context["form"]["demonstration_in_uk"].initial == "Test text 1"
-        assert response.context["form"]["demonstration_overseas"].initial == "Test text 2"
+        assert response.context["form"]["demonstration_in_uk"].initial == "some UK demonstration reason"
+        assert response.context["form"]["demonstration_overseas"].initial == "some overseas demonstration reason"
+        assert response.context["form"]["approval_details_text"].initial == "some details"

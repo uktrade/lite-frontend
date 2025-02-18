@@ -55,7 +55,21 @@ def mock_f680_application_get(requests_mock, data_f680_case):
 @pytest.fixture
 def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
     data_f680_case["application"] = {
-        "additional_information": {"answers": {"note": "Some note text"}, "questions": {"note": "Add note"}}
+        "sections": {
+            "notes_for_case_officers": {
+                "type": "single",
+                "label": "Notes for case officers",
+                "fields": [
+                    {
+                        "key": "note",
+                        "answer": "Some note text",
+                        "datatype": "string",
+                        "question": "Add note",
+                        "raw_answer": "Some note text",
+                    }
+                ],
+            }
+        }
     }
     application_id = data_f680_case["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
@@ -123,7 +137,21 @@ class TestAdditionalInformationView:
         assert mock_patch_f680_application.last_request.json() == {
             "application": {
                 "name": "F680 Test 1",
-                "additional_information": {"answers": {"note": "Some information"}, "questions": {"note": "Add note"}},
+                "sections": {
+                    "notes_for_case_officers": {
+                        "label": "Notes for case officers",
+                        "fields": [
+                            {
+                                "key": "note",
+                                "answer": "Some information",
+                                "raw_answer": "Some information",
+                                "question": "Add note",
+                                "datatype": "string",
+                            }
+                        ],
+                        "type": "single",
+                    }
+                },
             }
         }
 

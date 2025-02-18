@@ -8,4 +8,5 @@ class NotesForCaseOfficersView(F680ApplicationSectionWizard):
     form_list = [
         (FormSteps.NOTES_FOR_CASEWORKER, NotesForCaseOfficerForm),
     ]
-    section = "additional_information"
+    section = "notes_for_case_officers"
+    section_label = "Notes for case officers"
