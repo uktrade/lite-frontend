@@ -342,6 +342,22 @@ class TestProductInformationViews:
                 forms.ProductControlledUnderItar,
             ),
             (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                {"is_controlled_under_itar": True, "controlled_info": ""},
+                forms.ProductControlledUnderItarDetails,
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+                {
+                    "controlled_information": "secret stuff",
+                    "itar_reference_number": "123456",
+                    "usml_categories": "none",
+                    "itar_approval_scope": "no scope",
+                    "expected_time_in_possession": "10 years",
+                },
+                forms.ProductIncludeCryptography,
+            ),
+            (
                 FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
                 {"is_including_cryptography_or_security_features": True},
                 forms.ProductRatedUnderMTCR,
@@ -365,22 +381,6 @@ class TestProductInformationViews:
                 FormSteps.PRODUCT_FUNDING,
                 {"funding_source": "private_venture"},
                 forms.ProductUsedByUKArmedForces,
-            ),
-            (
-                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-                {"is_controlled_under_itar": True, "controlled_info": ""},
-                forms.ProductControlledUnderItarDetails,
-            ),
-            (
-                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
-                {
-                    "controlled_information": "secret stuff",
-                    "itar_reference_number": "123456",
-                    "usml_categories": "none",
-                    "itar_approval_scope": "no scope",
-                    "expected_time_in_possession": "10 years",
-                },
-                forms.ProductIncludeCryptography,
             ),
         ),
     )
@@ -687,3 +687,34 @@ class TestProductInformationViews:
                 },
             }
         }
+
+    def test_is_foreign_tech_or_information_shared_false_displays_correct_form(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+    ):
+
+        goto_product_step(FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED)
+        response = post_to_product_step(
+            FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+            {"is_foreign_tech_or_information_shared": False},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
+
+    def test_is_controlled_under_itar_false_displays_correct_form(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_foreign_tech,
+    ):
+
+        goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
+        response = post_to_product_step(
+            FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+            {"is_controlled_under_itar": False},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
