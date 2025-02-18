@@ -10,7 +10,7 @@ from exporter.f680.forms import ApplicationSubmissionForm
 
 
 @pytest.fixture(autouse=True)
-def setup(mock_exporter_user_me, settings):
+def setup(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = True
 
 
@@ -90,13 +90,15 @@ class TestF680ApplicationCreateView:
         self,
         authorized_client,
         f680_apply_url,
-        mock_f680_application_get,
+        f680_summary_url_with_application,
+        mock_application_post,
         set_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_apply_url)
-        assert isinstance(response.context["form"], ApplicationNameForm)
-        soup = BeautifulSoup(response.content, "html.parser")
-        assert "Name of the application" in soup.find("h1").text
+        assert response.status_code == 302
+        assert response.url == f680_summary_url_with_application
+        assert mock_application_post.called_once
+        assert mock_application_post.last_request.json() == {"application": {}}
 
     def test_get_create_f680_view_fail_with_feature_flag_off(
         self,
@@ -112,7 +114,7 @@ class TestF680ApplicationCreateView:
             in response.context[0].get("description").args
         )
 
-    def test_get_create_f680_view_fail_with_feature_organisation_not_allowed(
+    def test_get_create_f680_view_fail_with_feature_organidation_not_allowed(
         self,
         authorized_client,
         f680_apply_url,
@@ -126,36 +128,6 @@ class TestF680ApplicationCreateView:
             in response.context[0].get("description").args
         )
 
-    def test_post_to_create_f680_name_step_success(
-        self,
-        authorized_client,
-        f680_apply_url,
-        post_to_step,
-        f680_summary_url_with_application,
-    ):
-        response = post_to_step(
-            ApplicationFormSteps.APPLICATION_NAME,
-            {"name": "F680 Test"},
-        )
-
-        assert response.status_code == 302
-        assert response.url == f680_summary_url_with_application
-
-    def test_post_to_create_f680_name_step_invalid_data(
-        self,
-        authorized_client,
-        f680_apply_url,
-        post_to_step,
-    ):
-        response = post_to_step(
-            ApplicationFormSteps.APPLICATION_NAME,
-            {"name": ""},
-        )
-
-        assert isinstance(response.context["form"], ApplicationNameForm)
-        assert response.context["form"].errors
-        assert response.context["form"].errors.get("name")[0] == "This field is required."
-
 
 class TestF680ApplicationSummaryView:
     def test_get_f680_summary_view_success(
@@ -163,6 +135,22 @@ class TestF680ApplicationSummaryView:
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
+    ):
+        response = authorized_client.get(f680_summary_url_with_application)
+
+        assert isinstance(response.context["form"], ApplicationSubmissionForm)
+        assertTemplateUsed(response, "f680/summary.html")
+
+        content = BeautifulSoup(response.content, "html.parser")
+        heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
+        assert heading_element.string.strip() == "F680 Application"
+
+    def test_get_f680_summary_view_success_organisation_allowed(
+        self,
+        authorized_client,
+        f680_summary_url_with_application,
+        mock_f680_application_get,
+        set_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
 
@@ -230,6 +218,20 @@ class TestF680ApplicationSummaryView:
         assert response.status_code == 302
         assert response.url == f680_summary_url_with_application
 
+    def test_post_f680_submission_form_success_organisation_allowed(
+        self,
+        authorized_client,
+        f680_summary_url_with_application,
+        mock_f680_application_get,
+        set_f680_allowed_organisation,
+    ):
+        response = authorized_client.post(
+            f680_summary_url_with_application,
+        )
+
+        assert response.status_code == 302
+        assert response.url == f680_summary_url_with_application
+
     def test_post_f680_submission_form_fail_with_feature_flag_off(
         self,
         authorized_client,
@@ -247,7 +249,7 @@ class TestF680ApplicationSummaryView:
             in response.context[0].get("description").args
         )
 
-    def test_post_f680_submission_form_fail_with_feature_organisation_not_allowed(
+    def test_post_f680_submission_form_fail_with_organisation_not_allowed(
         self,
         authorized_client,
         f680_summary_url_with_application,
