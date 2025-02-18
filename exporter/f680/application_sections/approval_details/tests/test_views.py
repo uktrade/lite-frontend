@@ -155,7 +155,7 @@ def goto_product_step(goto_step_factory, f680_product_wizard_url):
 
 
 @pytest.fixture
-def force_product_under_itar(goto_product_step, post_to_product_step):
+def force_product_under_itar(goto_step, post_to_product_step):
     goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
     post_to_product_step(
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
@@ -328,6 +328,11 @@ class TestProductInformationViews:
                 forms.ProductForeignTechOrSharedInformation,
             ),
             (
+                FormSteps.PRODUCT_DESCRIPTION,
+                {"product_description": "Does a thing"},
+                forms.ProductForeignTechOrSharedInformation,
+            ),
+            (
                 FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
                 {"is_foreign_tech_or_information_shared": True},
                 forms.ProductControlledUnderItar,
@@ -362,22 +367,6 @@ class TestProductInformationViews:
                 {"funding_source": "private_venture"},
                 forms.ProductUsedByUKArmedForces,
             ),
-            # (
-            #     FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-            #     {"is_controlled_under_itar": True, "controlled_info": ""},
-            #     forms.ProductControlledUnderItarDetails,
-            # ),
-            # (
-            #     FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
-            #     {
-            #         "controlled_information": "secret stuff",
-            #         "itar_reference_number": "123456",
-            #         "usml_categories": "none",
-            #         "itar_approval_scope": "no scope",
-            #         "expected_time_in_possession": "10 years",
-            #     },
-            #     forms.ProductIncludeCryptography,
-            # ),
         ),
     )
     def test_POST_to_step_success(
@@ -387,7 +376,6 @@ class TestProductInformationViews:
         expected_next_form,
         post_to_product_step,
         goto_product_step,
-        force_product_under_itar,
         mock_f680_application_get,
     ):
         goto_product_step(step)
