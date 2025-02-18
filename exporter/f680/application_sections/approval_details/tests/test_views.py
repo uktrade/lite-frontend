@@ -24,7 +24,7 @@ def missing_application_id():
 
 
 @pytest.fixture
-def missing_f680_application_wizard_url(missing_application_id):
+def missing_f680_approval_type_wizard_url(missing_application_id):
     return reverse(
         "f680:approval_details:type_wizard",
         kwargs={"pk": missing_application_id},
@@ -32,9 +32,25 @@ def missing_f680_application_wizard_url(missing_application_id):
 
 
 @pytest.fixture
-def f680_application_wizard_url(data_f680_case):
+def f680_approval_type_wizard_url(data_f680_case):
     return reverse(
         "f680:approval_details:type_wizard",
+        kwargs={"pk": data_f680_case["id"]},
+    )
+
+
+@pytest.fixture
+def missing_f680_product_wizard_url(missing_application_id):
+    return reverse(
+        "f680:approval_details:product_wizard",
+        kwargs={"pk": missing_application_id},
+    )
+
+
+@pytest.fixture
+def f680_user_information_wizard_url(data_f680_case):
+    return reverse(
+        "f680:approval_details:product_wizard",
         kwargs={"pk": data_f680_case["id"]},
     )
 
@@ -119,13 +135,13 @@ def mock_patch_f680_application(requests_mock, data_f680_case):
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, f680_application_wizard_url):
-    return post_to_step_factory(f680_application_wizard_url)
+def post_to_step(post_to_step_factory, f680_approval_type_wizard_url):
+    return post_to_step_factory(f680_approval_type_wizard_url)
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, f680_application_wizard_url):
-    return goto_step_factory(f680_application_wizard_url)
+def goto_step(goto_step_factory, f680_approval_type_wizard_url):
+    return goto_step_factory(f680_approval_type_wizard_url)
 
 
 class TestApprovalDetailsView:
@@ -133,19 +149,19 @@ class TestApprovalDetailsView:
     def test_GET_no_application_404(
         self,
         authorized_client,
-        missing_f680_application_wizard_url,
+        missing_f680_approval_type_wizard_url,
         mock_f680_application_get_404,
     ):
-        response = authorized_client.get(missing_f680_application_wizard_url)
+        response = authorized_client.get(missing_f680_approval_type_wizard_url)
         assert response.status_code == 404
 
     def test_GET_success(
         self,
         authorized_client,
         mock_f680_application_get,
-        f680_application_wizard_url,
+        f680_approval_type_wizard_url,
     ):
-        response = authorized_client.get(f680_application_wizard_url)
+        response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
         assert isinstance(response.context["form"], ApprovalTypeForm)
 
@@ -153,10 +169,10 @@ class TestApprovalDetailsView:
         self,
         authorized_client,
         mock_f680_application_get,
-        f680_application_wizard_url,
+        f680_approval_type_wizard_url,
         unset_f680_feature_flag,
     ):
-        response = authorized_client.get(f680_application_wizard_url)
+        response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
         assert response.context["title"] == "Forbidden"
 
@@ -229,9 +245,9 @@ class TestApprovalDetailsView:
         self,
         authorized_client,
         mock_f680_application_get_existing_data,
-        f680_application_wizard_url,
+        f680_approval_type_wizard_url,
     ):
-        response = authorized_client.get(f680_application_wizard_url)
+        response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
         assert isinstance(response.context["form"], ApprovalTypeForm)
         assert response.context["form"]["approval_choices"].initial == [
@@ -245,3 +261,15 @@ class TestApprovalDetailsView:
         assert response.context["form"]["demonstration_in_uk"].initial == "some UK demonstration reason"
         assert response.context["form"]["demonstration_overseas"].initial == "some overseas demonstration reason"
         assert response.context["form"]["approval_details_text"].initial == "some details"
+
+
+class TestProductInformationViews:
+
+    def test_GET_no_application_404(
+        self,
+        authorized_client,
+        missing_f680_product_wizard_url,
+        mock_f680_application_get_404,
+    ):
+        response = authorized_client.get(missing_f680_product_wizard_url)
+        assert response.status_code == 404
