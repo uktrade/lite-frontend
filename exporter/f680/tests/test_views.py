@@ -232,6 +232,18 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
     return requests_mock.get(url=url, json=data_f680_case)
 
 
+def data_f680_case_complete_application(data_f680_case):
+    data_f680_case["application"] = {
+        "sections": {
+            "general_application_details": {},
+            "approval_type": {},
+            "user_information": {},
+            "product_information": {},
+        }
+    }
+    return data_f680_case
+
+
 @pytest.fixture
 def f680_summary_url_with_application(data_f680_case):
     return reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
@@ -250,10 +262,24 @@ def mock_f680_application_get(requests_mock, data_f680_case):
 
 
 @pytest.fixture
+def mock_f680_application_get_application_complete(requests_mock, data_f680_case_complete_application):
+    application_id = data_f680_case_complete_application["id"]
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
+    return requests_mock.get(url=url, json=data_f680_case_complete_application)
+
+
+@pytest.fixture
 def mock_application_post(requests_mock, data_f680_case):
     application = data_f680_case
     url = client._build_absolute_uri(f"/exporter/f680/application/")
     return requests_mock.post(url=url, json=application, status_code=201)
+
+
+@pytest.fixture
+def mock_f680_application_submit(requests_mock, data_f680_case_complete_application):
+    application_id = data_f680_case_complete_application["id"]
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/submit/")
+    return requests_mock.post(url=url, json=data_f680_case_complete_application)
 
 
 @pytest.fixture()
@@ -413,7 +439,7 @@ class TestF680ApplicationSummaryView:
             in response.context[0].get("description").args
         )
 
-    def test_post_f680_submission_form_success(
+    def test_post_f680_submission_form_missing_sections_returns_errors(
         self,
         authorized_client,
         f680_summary_url_with_application,
@@ -423,8 +449,25 @@ class TestF680ApplicationSummaryView:
             f680_summary_url_with_application,
         )
 
+        assert response.status_code == 200
+        assert response.context["errors"] == {"missing_sections": ["Please complete all required sections"]}
+
+    def test_post_f680_submission_form_success(
+        self,
+        authorized_client,
+        f680_summary_url_with_application,
+        mock_f680_application_get_application_complete,
+        mock_f680_application_submit,
+        data_f680_case_complete_application,
+    ):
+        response = authorized_client.post(
+            f680_summary_url_with_application,
+        )
+
         assert response.status_code == 302
-        assert response.url == f680_summary_url_with_application
+        assert response.url == reverse(
+            "applications:success_page", kwargs={"pk": data_f680_case_complete_application["id"]}
+        )
 
     def test_post_f680_submission_form_success_organisation_allowed(
         self,
