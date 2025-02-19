@@ -36,49 +36,36 @@ headers = [
 ]
 
 
-def base_application_data(index):
+def standard_application_subtype_dict():
+    return {"key": "standard", "value": "Standard Licence"}
+
+
+def f680_application_subtype_dict():
+    return {"key": "f680_clearance", "value": "MOD F680 Clearance"}
+
+
+def base_application_data(index, subtype):
     return {
         "id": str(uuid4()),
         "name": f"Application{index}",
         "export_type": {"key": "permanent", "value": "Permanent"},
         "exporter_user_notification_count": 0,
-        "case_type": {"sub_type": {"key": "standard", "value": "Standard Licence"}},
+        "case_type": {"sub_type": subtype},
     }
 
 
-def base_f680_application_data():
-    return {
-        "id": str(uuid4()),
-        "name": f"F680 Application",
-        "export_type": {"key": "permanent", "value": "Permanent"},
-        "exporter_user_notification_count": 0,
-        "case_type": {"sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"}},
-    }
-
-
-def draft_applications():
-    draft_applications = [
+def draft_applications(subtype):
+    return [
         {
             "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "Draft"},
             "reference_code": "",
             "submitted_by": "",
             "submitted_at": None,
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index),
+            **base_application_data(index, subtype),
         }
         for index in range(5)
     ]
-    draft_applications.append(
-        {
-            "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "Draft"},
-            "reference_code": "",
-            "submitted_by": "",
-            "submitted_at": None,
-            "updated_at": datetime.now().isoformat(),
-            **base_f680_application_data(),
-        }
-    )
-    return draft_applications
 
 
 def submitted_applications():
@@ -89,7 +76,7 @@ def submitted_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(0),
+            **base_application_data(0, standard_application_subtype_dict()),
         },
         {
             "status": {
@@ -101,7 +88,7 @@ def submitted_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(1),
+            **base_application_data(1, standard_application_subtype_dict()),
         },
         {
             "status": {"id": "00000000-0000-0000-0000-000000000002", "key": "under_review", "value": "Under review"},
@@ -109,7 +96,7 @@ def submitted_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(2),
+            **base_application_data(2, standard_application_subtype_dict()),
         },
         {
             "status": {"id": "00000000-0000-0000-0000-000000000001", "key": "ogd_advice", "value": "OGD Advice"},
@@ -117,7 +104,7 @@ def submitted_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(3),
+            **base_application_data(3, standard_application_subtype_dict()),
         },
     ]
 
@@ -130,7 +117,7 @@ def finalised_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index),
+            **base_application_data(index, standard_application_subtype_dict()),
         }
         for index in range(8)
     ]
@@ -148,7 +135,7 @@ def archived_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index),
+            **base_application_data(index, standard_application_subtype_dict()),
         }
         for index in range(4)
     ]
@@ -156,7 +143,7 @@ def archived_applications():
 
 @pytest.fixture
 def mock_get_draft_applications(requests_mock):
-    drafts = draft_applications()
+    drafts = draft_applications(standard_application_subtype_dict())
 
     return requests_mock.get(
         f"/applications/?selected_filter=draft_applications",
@@ -167,6 +154,18 @@ def mock_get_draft_applications(requests_mock):
         },
     )
 
+@pytest.fixture
+def mock_get_draft_f680_applications(requests_mock):
+    drafts = draft_applications(f680_application_subtype_dict())
+
+    return requests_mock.get(
+        f"/applications/?selected_filter=draft_applications",
+        json={
+            "count": len(drafts),
+            "total_pages": 1,
+            "results": drafts,
+        },
+    )
 
 @pytest.fixture
 def mock_get_submitted_applications(requests_mock):
@@ -267,8 +266,17 @@ def test_get_draft_applications(authorized_client, mock_get_draft_applications):
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, draft_headers, draft_applications())
+    verify_application_data(response, draft_headers, draft_applications(standard_application_subtype_dict()))
 
+def test_get_draft_f680_applications(authorized_client, mock_get_draft_f680_applications):
+    query_params = {"selected_filter": "draft_applications"}
+    url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    assertTemplateUsed(response, "applications/applications.html")
+    verify_application_data(response, draft_headers, draft_applications(f680_application_subtype_dict()))
 
 def test_get_submitted_applications(authorized_client, mock_get_submitted_applications):
     query_params = {"selected_filter": "submitted_applications"}
