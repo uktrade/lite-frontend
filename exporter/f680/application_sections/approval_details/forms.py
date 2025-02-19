@@ -117,6 +117,7 @@ class ProductDescription(BaseForm):
     product_description = forms.CharField(
         label=Layout.TITLE,
         help_text="Where possible include the make, model and type of the item",
+        widget=forms.Textarea(attrs={"rows": 5}),
     )
 
     def get_layout_fields(self):
@@ -280,10 +281,10 @@ class ProductRatedUnderMTCR(BaseForm):
 
     is_item_rated_under_mctr = forms.ChoiceField(
         choices=(
-            Choice("yes_mtcr_1", "Yes, the product is MTCR Category 1"),
-            Choice("yes_mtcr_2", "Yes, the product is MTCR Category 2"),
-            Choice("no_but_supports_mtcr_1", "No, but the item supports a MTCR Category 1 item"),
-            Choice("no_but_supports_mtcr_2", "No, but the item supports a MTCR Category 2 item"),
+            Choice("mtcr_1", "Yes, the product is MTCR Category 1"),
+            Choice("mtcr_2", "Yes, the product is MTCR Category 2"),
+            Choice("supports_mtcr_1", "No, but the item supports a MTCR Category 1 item"),
+            Choice("supports_mtcr_2", "No, but the item supports a MTCR Category 2 item"),
             Choice("no", "No", divider="Or"),
             Choice("dont_know", "Don't know"),
         ),

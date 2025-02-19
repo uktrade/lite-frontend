@@ -62,6 +62,21 @@
                             {% endif %}
                         </div>
                     </li>
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:product_wizard" pk=application.id %}">Product information</a>
+                            {% if application.application.sections.product_information %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Not Started
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                </li>
                 </ul>
             </li>
             <li>
@@ -83,43 +98,6 @@
                             </div>
                             {% endif %}
                         </div>
-                        <li class="lite-task-list__item">
-                            <div class="lite-task-list__item-header">
-                                <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:product_wizard" pk=application.id %}">Product information</a>
-                                {% if application.application.sections.product_information %}
-                                <div class="lite-tag lite-tag--blue">
-                                    Completed
-                                </div>
-                                {% else %}
-                                <div class="lite-tag lite-tag--grey">
-                                    Not Started
-                                </div>
-                                {% endif %}
-                            </div>
-                        </li>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <h2 class="lite-task-list__section">
-                    <span class="lite-task-list__section-number">3. </span>
-                    Tell us who is involved
-                </h2>
-                <ul class="lite-task-list__items">
-                    <li class="lite-task-list__item">
-                        <div class="lite-task-list__item-header">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:user_information:summary" pk=application.id %}">User information</a>
-                            {% if application.application.sections.user_information %}
-                            <div class="lite-tag lite-tag--blue">
-                                Completed
-                            </div>
-                            {% else %}
-                            <div class="lite-tag lite-tag--grey">
-                                Not Started
-                            </div>
-                            {% endif %}
-                        </div>
-                    </li>
                 </ul>
             </li>
             <li>
