@@ -210,7 +210,7 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                     {
                         "key": "is_item_rated_under_mctr",
                         "answer": "Yes, the product is MTCR Category 1",
-                        "raw_answer": "yes_mtcr_1",
+                        "raw_answer": "mtcr_1",
                         "question": "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
                         "datatype": "string",
                     },
@@ -496,7 +496,7 @@ class TestProductInformationViews:
             ),
             (
                 FormSteps.PRODUCT_RATED_UNDER_MTCR,
-                {"is_item_rated_under_mctr": "yes_mtcr_1"},
+                {"is_item_rated_under_mctr": "mtcr_1"},
                 forms.ProductMANPADs,
             ),
             (
@@ -659,7 +659,7 @@ class TestProductInformationViews:
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_RATED_UNDER_MTCR,
-            {"is_item_rated_under_mctr": "yes_mtcr_1"},
+            {"is_item_rated_under_mctr": "mtcr_1"},
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_MANPAD,
@@ -774,7 +774,7 @@ class TestProductInformationViews:
                             {
                                 "key": "is_item_rated_under_mctr",
                                 "answer": "Yes, the product is MTCR Category 1",
-                                "raw_answer": "yes_mtcr_1",
+                                "raw_answer": "mtcr_1",
                                 "question": "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
                                 "datatype": "string",
                             },
@@ -858,7 +858,7 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_RATED_UNDER_MTCR,
                 forms.ProductRatedUnderMTCR,
-                {"is_item_rated_under_mctr": "yes_mtcr_1"},
+                {"is_item_rated_under_mctr": "mtcr_1"},
             ),
             (
                 FormSteps.PRODUCT_MANPAD,
