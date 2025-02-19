@@ -69,44 +69,28 @@ def draft_applications(subtype):
 
 
 def submitted_applications():
-    return [
-        {
-            "status": {"id": "00000000-0000-0000-0000-000000000004", "key": "submitted", "value": "Submitted"},
-            "reference_code": "GBSIEL/2024/0000004/P",
-            "submitted_by": "Exporter user",
-            "submitted_at": datetime.now().isoformat(),
-            "updated_at": datetime.now().isoformat(),
-            **base_application_data(0, standard_application_subtype_dict()),
-        },
-        {
-            "status": {
-                "id": "00000000-0000-0000-0000-000000000003",
-                "key": "initial_checks",
-                "value": "Initial checks",
-            },
-            "reference_code": "GBSIEL/2024/0000003/P",
-            "submitted_by": "Exporter user",
-            "submitted_at": datetime.now().isoformat(),
-            "updated_at": datetime.now().isoformat(),
-            **base_application_data(1, standard_application_subtype_dict()),
-        },
-        {
-            "status": {"id": "00000000-0000-0000-0000-000000000002", "key": "under_review", "value": "Under review"},
-            "reference_code": "GBSIEL/2024/0000002/P",
-            "submitted_by": "Exporter user",
-            "submitted_at": datetime.now().isoformat(),
-            "updated_at": datetime.now().isoformat(),
-            **base_application_data(2, standard_application_subtype_dict()),
-        },
-        {
-            "status": {"id": "00000000-0000-0000-0000-000000000001", "key": "ogd_advice", "value": "OGD Advice"},
-            "reference_code": "GBSIEL/2024/0000001/P",
-            "submitted_by": "Exporter user",
-            "submitted_at": datetime.now().isoformat(),
-            "updated_at": datetime.now().isoformat(),
-            **base_application_data(3, standard_application_subtype_dict()),
-        },
+    status_list = [
+        {"id": "00000000-0000-0000-0000-000000000004", "key": "submitted", "value": "Submitted"},
+        {"id": "00000000-0000-0000-0000-000000000003", "key": "initial_checks", "value": "Initial checks"},
+        {"id": "00000000-0000-0000-0000-000000000002", "key": "under_review", "value": "Under review"},
+        {"id": "00000000-0000-0000-0000-000000000001", "key": "ogd_advice", "value": "OGD Advice"},
     ]
+    submitted_applications = []
+    for status in status_list:
+        index = 1
+        submitted_applications.append(
+            {
+                "status": status,
+                "reference_code": "GBSIEL/2024/000000{index}/P",
+                "submitted_by": "Exporter user",
+                "submitted_at": datetime.now().isoformat(),
+                "updated_at": datetime.now().isoformat(),
+                **base_application_data(index, standard_application_subtype_dict()),
+            }
+        )
+        index += 1
+
+    return submitted_applications
 
 
 def finalised_applications():
