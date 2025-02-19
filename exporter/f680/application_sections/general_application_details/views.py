@@ -19,3 +19,4 @@ class GeneralApplicationDetailsView(F680ApplicationSectionWizard):
         FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS: is_exceptional_circumstances,
     }
     section = "general_application_details"
+    section_label = "General application details"

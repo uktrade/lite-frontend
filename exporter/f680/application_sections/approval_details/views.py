@@ -7,4 +7,5 @@ class ApprovalTypeView(F680ApplicationSectionWizard):
     form_list = [
         (FormSteps.APPROVAL_TYPE, ApprovalTypeForm),
     ]
-    section = "approval_details"
+    section = "approval_type"
+    section_label = "Approval type"
