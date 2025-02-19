@@ -371,7 +371,7 @@ class ProductFunding(BaseForm):
     funding_source = forms.ChoiceField(
         choices=(
             Choice("mod", "MOD"),
-            Choice("part_mo", "Part MOD"),
+            Choice("part_mod", "Part MOD"),
             Choice("private_venture", "Private venture"),
         ),
         widget=forms.RadioSelect,
