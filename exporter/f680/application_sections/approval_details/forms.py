@@ -336,7 +336,6 @@ class ProductElectronicMODData(BaseForm):
         choices=(
             Choice("yes", "Yes"),
             Choice("no", "No"),
-            Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
         label=Layout.TITLE,
