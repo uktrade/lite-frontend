@@ -45,6 +45,7 @@ def base_application_data(index):
         "case_type": {"sub_type": {"key": "standard", "value": "Standard Licence"}},
     }
 
+
 def base_f680_application_data():
     return {
         "id": str(uuid4()),
@@ -78,6 +79,7 @@ def draft_applications():
         }
     )
     return draft_applications
+
 
 def submitted_applications():
     return [
@@ -164,6 +166,7 @@ def mock_get_draft_applications(requests_mock):
             "results": drafts,
         },
     )
+
 
 @pytest.fixture
 def mock_get_submitted_applications(requests_mock):
