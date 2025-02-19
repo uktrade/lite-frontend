@@ -154,6 +154,7 @@ def mock_get_draft_applications(requests_mock):
         },
     )
 
+
 @pytest.fixture
 def mock_get_draft_f680_applications(requests_mock):
     drafts = draft_applications(f680_application_subtype_dict())
@@ -166,6 +167,7 @@ def mock_get_draft_f680_applications(requests_mock):
             "results": drafts,
         },
     )
+
 
 @pytest.fixture
 def mock_get_submitted_applications(requests_mock):
@@ -268,6 +270,7 @@ def test_get_draft_applications(authorized_client, mock_get_draft_applications):
     assertTemplateUsed(response, "applications/applications.html")
     verify_application_data(response, draft_headers, draft_applications(standard_application_subtype_dict()))
 
+
 def test_get_draft_f680_applications(authorized_client, mock_get_draft_f680_applications):
     query_params = {"selected_filter": "draft_applications"}
     url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
@@ -277,6 +280,7 @@ def test_get_draft_f680_applications(authorized_client, mock_get_draft_f680_appl
 
     assertTemplateUsed(response, "applications/applications.html")
     verify_application_data(response, draft_headers, draft_applications(f680_application_subtype_dict()))
+
 
 def test_get_submitted_applications(authorized_client, mock_get_submitted_applications):
     query_params = {"selected_filter": "submitted_applications"}
