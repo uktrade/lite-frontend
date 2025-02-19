@@ -53,6 +53,18 @@ def unset_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
+@pytest.fixture()
+def unset_f680_allowed_organisation(settings, organisation_pk):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = ["12345"]
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
+@pytest.fixture()
+def set_f680_allowed_organisation(settings, organisation_pk):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = [organisation_pk]
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
 class TestApplyForLicenceQuestionsClass:
     def test_triage_f680_apply_redirect_success(self, authorized_client, f680_apply_url):
         response = authorized_client.post(reverse("apply_for_a_licence:f680_questions"))
@@ -74,12 +86,40 @@ class TestF680ApplicationCreateView:
         assert mock_application_post.called_once
         assert mock_application_post.last_request.json() == {"application": {}}
 
+    def test_get_create_f680_view_success_allowed_organisation(
+        self,
+        authorized_client,
+        f680_apply_url,
+        f680_summary_url_with_application,
+        mock_application_post,
+        set_f680_allowed_organisation,
+    ):
+        response = authorized_client.get(f680_apply_url)
+        assert response.status_code == 302
+        assert response.url == f680_summary_url_with_application
+        assert mock_application_post.called_once
+        assert mock_application_post.last_request.json() == {"application": {}}
+
     def test_get_create_f680_view_fail_with_feature_flag_off(
         self,
         authorized_client,
         f680_apply_url,
         mock_f680_application_get,
         unset_f680_feature_flag,
+    ):
+        response = authorized_client.get(f680_apply_url)
+        assert response.context[0].get("title") == "Forbidden"
+        assert (
+            "You are not authorised to use the F680 Security Clearance application feature"
+            in response.context[0].get("description").args
+        )
+
+    def test_get_create_f680_view_fail_with_feature_organidation_not_allowed(
+        self,
+        authorized_client,
+        f680_apply_url,
+        mock_f680_application_get,
+        unset_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_apply_url)
         assert response.context[0].get("title") == "Forbidden"
@@ -95,6 +135,22 @@ class TestF680ApplicationSummaryView:
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
+    ):
+        response = authorized_client.get(f680_summary_url_with_application)
+
+        assert isinstance(response.context["form"], ApplicationSubmissionForm)
+        assertTemplateUsed(response, "f680/summary.html")
+
+        content = BeautifulSoup(response.content, "html.parser")
+        heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
+        assert heading_element.string.strip() == "F680 Application"
+
+    def test_get_f680_summary_view_success_organisation_allowed(
+        self,
+        authorized_client,
+        f680_summary_url_with_application,
+        mock_f680_application_get,
+        set_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
 
@@ -134,11 +190,40 @@ class TestF680ApplicationSummaryView:
             in response.context[0].get("description").args
         )
 
+    def test_get_f680_summary_view_fail_with_feature_organisation_not_allowed(
+        self,
+        authorized_client,
+        f680_summary_url_with_application,
+        mock_f680_application_get,
+        unset_f680_allowed_organisation,
+    ):
+        response = authorized_client.get(f680_summary_url_with_application)
+        assert response.status_code == 200
+        assert response.context[0].get("title") == "Forbidden"
+        assert (
+            "You are not authorised to use the F680 Security Clearance application feature"
+            in response.context[0].get("description").args
+        )
+
     def test_post_f680_submission_form_success(
         self,
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
+    ):
+        response = authorized_client.post(
+            f680_summary_url_with_application,
+        )
+
+        assert response.status_code == 302
+        assert response.url == f680_summary_url_with_application
+
+    def test_post_f680_submission_form_success_organisation_allowed(
+        self,
+        authorized_client,
+        f680_summary_url_with_application,
+        mock_f680_application_get,
+        set_f680_allowed_organisation,
     ):
         response = authorized_client.post(
             f680_summary_url_with_application,
@@ -153,6 +238,23 @@ class TestF680ApplicationSummaryView:
         f680_summary_url_with_application,
         mock_f680_application_get,
         unset_f680_feature_flag,
+    ):
+        response = authorized_client.post(
+            f680_summary_url_with_application,
+        )
+
+        assert response.context[0].get("title") == "Forbidden"
+        assert (
+            "You are not authorised to use the F680 Security Clearance application feature"
+            in response.context[0].get("description").args
+        )
+
+    def test_post_f680_submission_form_fail_with_organisation_not_allowed(
+        self,
+        authorized_client,
+        f680_summary_url_with_application,
+        mock_f680_application_get,
+        unset_f680_allowed_organisation,
     ):
         response = authorized_client.post(
             f680_summary_url_with_application,

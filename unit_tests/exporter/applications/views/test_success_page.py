@@ -76,6 +76,12 @@ def test_success_view(
     assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Submit and continue"
 
 
+def test_apply_for_licence_start_view(authorized_client, application_start_url):
+    response = authorized_client.get(application_start_url)
+
+    assert response.status_code == 200
+
+
 def test_post_survey_feedback(authorized_client, success_url, application_pk, survey_id, mock_post_survey):
     response = authorized_client.post(success_url, data={"satisfaction_rating": "NEITHER"})
     assert response.status_code == 302

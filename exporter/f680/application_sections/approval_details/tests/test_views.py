@@ -13,6 +13,18 @@ def unset_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
+@pytest.fixture()
+def set_f680_allowed_organisation(settings, organisation_pk):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = [organisation_pk]
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
+@pytest.fixture()
+def unset_f680_allowed_organisation(settings, organisation_pk):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = ["12345"]
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
 @pytest.fixture(autouse=True)
 def setup(mock_exporter_user_me, settings):
     settings.FEATURE_FLAG_ALLOW_F680 = True
@@ -134,12 +146,34 @@ class TestApprovalDetailsView:
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ApprovalTypeForm)
 
+    def test_GET_success_with_organisation_set(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_approval_type_wizard_url,
+        set_f680_allowed_organisation,
+    ):
+        response = authorized_client.get(f680_approval_type_wizard_url)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ApprovalTypeForm)
+
     def test_GET_no_feature_flag_forbidden(
         self,
         authorized_client,
         mock_f680_application_get,
         f680_approval_type_wizard_url,
         unset_f680_feature_flag,
+    ):
+        response = authorized_client.get(f680_approval_type_wizard_url)
+        assert response.status_code == 200
+        assert response.context["title"] == "Forbidden"
+
+    def test_GET_no_feature_organisation_allowed(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_approval_type_wizard_url,
+        unset_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
@@ -257,12 +291,34 @@ class TestProductInformationViews:
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductNameForm)
 
+    def test_GET_success_with_organisation_set(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_product_wizard_url,
+        set_f680_allowed_organisation,
+    ):
+        response = authorized_client.get(f680_product_wizard_url)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductNameForm)
+
     def test_GET_no_feature_flag_forbidden(
         self,
         authorized_client,
         mock_f680_application_get,
         f680_product_wizard_url,
         unset_f680_feature_flag,
+    ):
+        response = authorized_client.get(f680_product_wizard_url)
+        assert response.status_code == 200
+        assert response.context["title"] == "Forbidden"
+
+    def test_GET_no_feature_organisation_allowed(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_product_wizard_url,
+        unset_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_product_wizard_url)
         assert response.status_code == 200
