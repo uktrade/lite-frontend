@@ -55,6 +55,17 @@ def data_f680_case_complete_application(data_f680_case):
 
 
 @pytest.fixture
+def data_f680_case_partially_complete_application(data_f680_case):
+    data_f680_case["application"] = {
+        "sections": {
+            "general_application_details": {},
+            "user_information": {},
+        }
+    }
+    return data_f680_case
+
+
+@pytest.fixture
 def f680_summary_url_with_application(data_f680_case):
     return reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
 
@@ -76,6 +87,15 @@ def mock_f680_application_get_application_complete(requests_mock, data_f680_case
     application_id = data_f680_case_complete_application["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
     return requests_mock.get(url=url, json=data_f680_case_complete_application)
+
+
+@pytest.fixture
+def mock_f680_application_get_application_partially_complete(
+    requests_mock, data_f680_case_partially_complete_application
+):
+    application_id = data_f680_case_partially_complete_application["id"]
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
+    return requests_mock.get(url=url, json=data_f680_case_partially_complete_application)
 
 
 @pytest.fixture
@@ -249,11 +269,24 @@ class TestF680ApplicationSummaryView:
             in response.context[0].get("description").args
         )
 
-    def test_post_f680_submission_form_missing_sections_returns_errors(
+    def test_post_f680_submission_form_missing_all_sections_returns_errors(
         self,
         authorized_client,
         f680_summary_url_with_application,
         mock_f680_application_get,
+    ):
+        response = authorized_client.post(
+            f680_summary_url_with_application,
+        )
+
+        assert response.status_code == 200
+        assert response.context["errors"] == {"missing_sections": ["Please complete all required sections"]}
+
+    def test_post_f680_submission_form_partially_complete_returns_errors(
+        self,
+        authorized_client,
+        f680_summary_url_with_application,
+        mock_f680_application_get_application_partially_complete,
     ):
         response = authorized_client.post(
             f680_summary_url_with_application,

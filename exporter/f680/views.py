@@ -94,6 +94,7 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
                 "general_application_details",
                 "approval_type",
                 "user_information",
+                "product_information",
             ]
         )
         missing_sections = required_sections - complete_sections
