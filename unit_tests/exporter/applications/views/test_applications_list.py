@@ -45,9 +45,18 @@ def base_application_data(index):
         "case_type": {"sub_type": {"key": "standard", "value": "Standard Licence"}},
     }
 
+def base_f680_application_data():
+    return {
+        "id": str(uuid4()),
+        "name": f"F680 Application",
+        "export_type": {"key": "permanent", "value": "Permanent"},
+        "exporter_user_notification_count": 0,
+        "case_type": {"sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"}},
+    }
+
 
 def draft_applications():
-    return [
+    draft_applications = [
         {
             "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "Draft"},
             "reference_code": "",
@@ -58,7 +67,17 @@ def draft_applications():
         }
         for index in range(5)
     ]
-
+    draft_applications.append(
+        {
+            "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "Draft"},
+            "reference_code": "",
+            "submitted_by": "",
+            "submitted_at": None,
+            "updated_at": datetime.now().isoformat(),
+            **base_f680_application_data(),
+        }
+    )
+    return draft_applications
 
 def submitted_applications():
     return [
@@ -145,7 +164,6 @@ def mock_get_draft_applications(requests_mock):
             "results": drafts,
         },
     )
-
 
 @pytest.fixture
 def mock_get_submitted_applications(requests_mock):

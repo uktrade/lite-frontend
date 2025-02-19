@@ -70,13 +70,15 @@
 								{% if application.status.key == "draft" or application.status.key == "applicant_editing" %}
 									{% if application.case_type.sub_type.key == "f680_clearance" %}
 									href="{% url 'f680:summary' application.id %}">
+									{{ application.name|default:application.reference_code }}
 									{% else %}
 									href="{% url 'applications:task_list' application.id %}">
+									{{ application.name|default:application.reference_code }}
 									{% endif %}
 								{% else %}
 									href="{% url 'applications:application' application.id %}">
+									{{ application.name|default:application.reference_code }}
 								{% endif %}
-								{{ application.name|default:application.reference_code }}
 							</a>
 						</td>
 						<td class="govuk-table__cell">
