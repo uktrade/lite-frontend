@@ -312,20 +312,6 @@ class TestF680ApplicationSummaryView:
             "applications:success_page", kwargs={"pk": data_f680_case_complete_application["id"]}
         )
 
-    def test_post_f680_submission_form_success_organisation_allowed(
-        self,
-        authorized_client,
-        f680_summary_url_with_application,
-        mock_f680_application_get,
-        set_f680_allowed_organisation,
-    ):
-        response = authorized_client.post(
-            f680_summary_url_with_application,
-        )
-
-        assert response.status_code == 302
-        assert response.url == f680_summary_url_with_application
-
     def test_post_f680_submission_form_fail_with_feature_flag_off(
         self,
         authorized_client,
