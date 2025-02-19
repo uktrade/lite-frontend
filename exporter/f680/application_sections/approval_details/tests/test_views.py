@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from core import client
 
-from ..forms import ApprovalTypeForm
+from .. import forms
 from ..constants import FormSteps
 
 
@@ -24,7 +24,7 @@ def missing_application_id():
 
 
 @pytest.fixture
-def missing_f680_application_wizard_url(missing_application_id):
+def missing_f680_approval_type_wizard_url(missing_application_id):
     return reverse(
         "f680:approval_details:type_wizard",
         kwargs={"pk": missing_application_id},
@@ -32,9 +32,25 @@ def missing_f680_application_wizard_url(missing_application_id):
 
 
 @pytest.fixture
-def f680_application_wizard_url(data_f680_case):
+def f680_approval_type_wizard_url(data_f680_case):
     return reverse(
         "f680:approval_details:type_wizard",
+        kwargs={"pk": data_f680_case["id"]},
+    )
+
+
+@pytest.fixture
+def missing_f680_product_wizard_url(missing_application_id):
+    return reverse(
+        "f680:approval_details:product_wizard",
+        kwargs={"pk": missing_application_id},
+    )
+
+
+@pytest.fixture
+def f680_product_wizard_url(data_f680_case):
+    return reverse(
+        "f680:approval_details:product_wizard",
         kwargs={"pk": data_f680_case["id"]},
     )
 
@@ -53,65 +69,6 @@ def mock_f680_application_get(requests_mock, data_f680_case):
 
 
 @pytest.fixture
-def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
-    data_f680_case["application"] = {
-        "sections": {
-            "approval_type": {
-                "type": "single",
-                "label": "Approval type",
-                "fields": [
-                    {
-                        "key": "approval_choices",
-                        "answer": [
-                            "Initial discussions or promoting products",
-                            "Demonstration in the United Kingdom to overseas customers",
-                            "Demonstration overseas",
-                            "Training",
-                            "Through life support",
-                            "Supply",
-                        ],
-                        "datatype": "list",
-                        "question": "Select the types of approvals you need",
-                        "raw_answer": [
-                            "initial_discussion_or_promoting",
-                            "demonstration_in_uk",
-                            "demonstration_overseas",
-                            "training",
-                            "through_life_support",
-                            "supply",
-                        ],
-                    },
-                    {
-                        "key": "demonstration_in_uk",
-                        "answer": "some UK demonstration reason",
-                        "datatype": "string",
-                        "question": "Explain what you are demonstrating and why",
-                        "raw_answer": "some UK demonstration reason",
-                    },
-                    {
-                        "key": "demonstration_overseas",
-                        "answer": "some overseas demonstration reason",
-                        "datatype": "string",
-                        "question": "Explain what you are demonstrating and why",
-                        "raw_answer": "some overseas demonstration reason",
-                    },
-                    {
-                        "key": "approval_details_text",
-                        "answer": "some details",
-                        "datatype": "string",
-                        "question": "Provide details about what you're seeking approval to do",
-                        "raw_answer": "some details",
-                    },
-                ],
-            }
-        }
-    }
-    application_id = data_f680_case["id"]
-    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
-    return requests_mock.get(url=url, json=data_f680_case)
-
-
-@pytest.fixture
 def mock_patch_f680_application(requests_mock, data_f680_case):
     application_id = data_f680_case["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
@@ -119,13 +76,41 @@ def mock_patch_f680_application(requests_mock, data_f680_case):
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, f680_application_wizard_url):
-    return post_to_step_factory(f680_application_wizard_url)
+def post_to_approval_type_step(post_to_step_factory, f680_approval_type_wizard_url):
+    return post_to_step_factory(f680_approval_type_wizard_url)
 
 
 @pytest.fixture
-def goto_step(goto_step_factory, f680_application_wizard_url):
-    return goto_step_factory(f680_application_wizard_url)
+def goto_approval_type_step(goto_step_factory, f680_approval_type_wizard_url):
+    return goto_step_factory(f680_approval_type_wizard_url)
+
+
+@pytest.fixture
+def post_to_product_step(post_to_step_factory, f680_product_wizard_url):
+    return post_to_step_factory(f680_product_wizard_url)
+
+
+@pytest.fixture
+def goto_product_step(goto_step_factory, f680_product_wizard_url):
+    return goto_step_factory(f680_product_wizard_url)
+
+
+@pytest.fixture
+def force_foreign_tech(goto_product_step, post_to_product_step):
+    goto_product_step(FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED)
+    post_to_product_step(
+        FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+        {"is_foreign_tech_or_information_shared": True},
+    )
+
+
+@pytest.fixture
+def force_product_under_itar(goto_product_step, post_to_product_step):
+    goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
+    post_to_product_step(
+        FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+        {"is_controlled_under_itar": True},
+    )
 
 
 class TestApprovalDetailsView:
@@ -133,37 +118,41 @@ class TestApprovalDetailsView:
     def test_GET_no_application_404(
         self,
         authorized_client,
-        missing_f680_application_wizard_url,
+        missing_f680_approval_type_wizard_url,
         mock_f680_application_get_404,
     ):
-        response = authorized_client.get(missing_f680_application_wizard_url)
+        response = authorized_client.get(missing_f680_approval_type_wizard_url)
         assert response.status_code == 404
 
     def test_GET_success(
         self,
         authorized_client,
         mock_f680_application_get,
-        f680_application_wizard_url,
+        f680_approval_type_wizard_url,
     ):
-        response = authorized_client.get(f680_application_wizard_url)
+        response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
-        assert isinstance(response.context["form"], ApprovalTypeForm)
+        assert isinstance(response.context["form"], forms.ApprovalTypeForm)
 
     def test_GET_no_feature_flag_forbidden(
         self,
         authorized_client,
         mock_f680_application_get,
-        f680_application_wizard_url,
+        f680_approval_type_wizard_url,
         unset_f680_feature_flag,
     ):
-        response = authorized_client.get(f680_application_wizard_url)
+        response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
         assert response.context["title"] == "Forbidden"
 
     def test_POST_approval_type_and_submit_wizard_success(
-        self, post_to_step, goto_step, mock_f680_application_get, mock_patch_f680_application
+        self,
+        post_to_approval_type_step,
+        goto_approval_type_step,
+        mock_f680_application_get,
+        mock_patch_f680_application,
     ):
-        response = post_to_step(
+        response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
             {"approval_choices": ["training", "supply"]},
         )
@@ -213,12 +202,12 @@ class TestApprovalDetailsView:
 
     def test_POST_to_step_validation_error(
         self,
-        post_to_step,
-        goto_step,
+        post_to_approval_type_step,
+        goto_approval_type_step,
         mock_f680_application_get,
     ):
-        goto_step(FormSteps.APPROVAL_TYPE)
-        response = post_to_step(
+        goto_approval_type_step(FormSteps.APPROVAL_TYPE)
+        response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
             {},
         )
@@ -229,11 +218,11 @@ class TestApprovalDetailsView:
         self,
         authorized_client,
         mock_f680_application_get_existing_data,
-        f680_application_wizard_url,
+        f680_approval_type_wizard_url,
     ):
-        response = authorized_client.get(f680_application_wizard_url)
+        response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
-        assert isinstance(response.context["form"], ApprovalTypeForm)
+        assert isinstance(response.context["form"], forms.ApprovalTypeForm)
         assert response.context["form"]["approval_choices"].initial == [
             "initial_discussion_or_promoting",
             "demonstration_in_uk",
@@ -245,3 +234,507 @@ class TestApprovalDetailsView:
         assert response.context["form"]["demonstration_in_uk"].initial == "some UK demonstration reason"
         assert response.context["form"]["demonstration_overseas"].initial == "some overseas demonstration reason"
         assert response.context["form"]["approval_details_text"].initial == "some details"
+
+
+class TestProductInformationViews:
+
+    def test_GET_no_application_404(
+        self,
+        authorized_client,
+        missing_f680_product_wizard_url,
+        mock_f680_application_get_404,
+    ):
+        response = authorized_client.get(missing_f680_product_wizard_url)
+        assert response.status_code == 404
+
+    def test_GET_success(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_product_wizard_url,
+    ):
+        response = authorized_client.get(f680_product_wizard_url)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductNameForm)
+
+    def test_GET_no_feature_flag_forbidden(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_product_wizard_url,
+        unset_f680_feature_flag,
+    ):
+        response = authorized_client.get(f680_product_wizard_url)
+        assert response.status_code == 200
+        assert response.context["title"] == "Forbidden"
+
+    @pytest.mark.parametrize(
+        "step, data, expected_next_form",
+        (
+            (FormSteps.PRODUCT_NAME, {"product_name": "Test Name"}, forms.ProductDescription),
+            (
+                FormSteps.PRODUCT_DESCRIPTION,
+                {"product_description": "Does a thing"},
+                forms.ProductForeignTechOrSharedInformation,
+            ),
+            (
+                FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+                {"is_foreign_tech_or_information_shared": True},
+                forms.ProductControlledUnderItar,
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                {"is_controlled_under_itar": True, "controlled_info": ""},
+                forms.ProductControlledUnderItarDetails,
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+                {
+                    "controlled_information": "secret stuff",
+                    "itar_reference_number": "123456",
+                    "usml_categories": "none",
+                    "itar_approval_scope": "no scope",
+                    "expected_time_in_possession": "10 years",
+                },
+                forms.ProductIncludeCryptography,
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                {"is_including_cryptography_or_security_features": True},
+                forms.ProductRatedUnderMTCR,
+            ),
+            (
+                FormSteps.PRODUCT_RATED_UNDER_MTCR,
+                {"is_item_rated_under_mctr": "mtcr_1"},
+                forms.ProductMANPADs,
+            ),
+            (
+                FormSteps.PRODUCT_MANPAD,
+                {"is_item_manpad": "no"},
+                forms.ProductElectronicMODData,
+            ),
+            (
+                FormSteps.PRODUCT_ELECTRONICMODDATA,
+                {"is_mod_electronic_data_shared": "no"},
+                forms.ProductFunding,
+            ),
+            (
+                FormSteps.PRODUCT_FUNDING,
+                {"funding_source": "private_venture"},
+                forms.ProductUsedByUKArmedForces,
+            ),
+        ),
+    )
+    def test_POST_to_step_success(
+        self,
+        step,
+        data,
+        expected_next_form,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        goto_product_step(step)
+        response = post_to_product_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], expected_next_form)
+
+    @pytest.mark.parametrize(
+        "step, data, expected_errors",
+        (
+            (FormSteps.PRODUCT_NAME, {"product_name": ""}, {"product_name": ["This field is required."]}),
+            (
+                FormSteps.PRODUCT_DESCRIPTION,
+                {"product_description": ""},
+                {"product_description": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+                {},
+                {"is_foreign_tech_or_information_shared": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                {},
+                {"is_including_cryptography_or_security_features": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_RATED_UNDER_MTCR,
+                {"is_item_rated_under_mctr": ""},
+                {"is_item_rated_under_mctr": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_MANPAD,
+                {"is_item_manpad": ""},
+                {"is_item_manpad": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_ELECTRONICMODDATA,
+                {"is_mod_electronic_data_shared": ""},
+                {"is_mod_electronic_data_shared": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_FUNDING,
+                {"funding_source": ""},
+                {"funding_source": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                {},
+                {"is_controlled_under_itar": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+                {
+                    "controlled_information": "",
+                    "itar_reference_number": "",
+                    "usml_categories": "",
+                    "itar_approval_scope": "",
+                    "expected_time_in_possession": "",
+                },
+                {
+                    "controlled_information": ["This field is required."],
+                    "itar_reference_number": ["This field is required."],
+                    "usml_categories": ["This field is required."],
+                    "itar_approval_scope": ["This field is required."],
+                    "expected_time_in_possession": ["This field is required."],
+                },
+            ),
+        ),
+    )
+    def test_POST_to_step_validation_error(
+        self,
+        step,
+        data,
+        expected_errors,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        goto_product_step(step)
+        response = post_to_product_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+        for field_name, error in expected_errors.items():
+            assert response.context["form"][field_name].errors == error
+
+    def test_POST_submit_wizard_success(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        mock_patch_f680_application,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        response = post_to_product_step(
+            FormSteps.PRODUCT_NAME,
+            {"product_name": "Test Name"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_DESCRIPTION,
+            {"product_description": "Does a thing"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+            {"is_foreign_tech_or_information_shared": True},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+            {"is_controlled_under_itar": True, "controlled_info": ""},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+            {
+                "controlled_information": "secret stuff",
+                "itar_reference_number": "123456",
+                "usml_categories": "none",
+                "itar_approval_scope": "no scope",
+                "expected_time_in_possession": "10 years",
+            },
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+            {"is_including_cryptography_or_security_features": True},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_RATED_UNDER_MTCR,
+            {"is_item_rated_under_mctr": "mtcr_1"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_MANPAD,
+            {"is_item_manpad": "no"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_ELECTRONICMODDATA,
+            {"is_mod_electronic_data_shared": "no"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_FUNDING,
+            {"funding_source": "mod"},
+        )
+        response = post_to_product_step(
+            FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
+            {"is_used_by_uk_armed_forces": True},
+        )
+
+        assert response.status_code == 302
+        assert mock_patch_f680_application.called_once
+        assert mock_patch_f680_application.last_request.json() == {
+            "application": {
+                "name": "F680 Test 1",
+                "sections": {
+                    "product_information": {
+                        "label": "Product information",
+                        "fields": [
+                            {
+                                "key": "product_name",
+                                "answer": "Test Name",
+                                "raw_answer": "Test Name",
+                                "question": "Give the item a descriptive name",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "product_description",
+                                "answer": "Does a thing",
+                                "raw_answer": "Does a thing",
+                                "question": "Describe the item",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_foreign_tech_or_information_shared",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Will any foreign technology or information be shared with the item?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "is_controlled_under_itar",
+                                "answer": "Yes, it's controlled under  ITAR",
+                                "raw_answer": True,
+                                "question": "Is the technology or information controlled under the US International Traffic in Arms Regulations (ITAR)?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "controlled_info",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Explain how the technology or information is controlled.Include countries classification levels and reference numbers.  You can upload supporting documents later in your application",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "controlled_information",
+                                "answer": "secret stuff",
+                                "raw_answer": "secret stuff",
+                                "question": "What is the ITAR controlled technology or information?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "itar_reference_number",
+                                "answer": "123456",
+                                "raw_answer": "123456",
+                                "question": "ITAR reference number",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "usml_categories",
+                                "answer": "none",
+                                "raw_answer": "none",
+                                "question": "What are the United States Munitions List (USML) categories listed on your ITAR approval?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "itar_approval_scope",
+                                "answer": "no scope",
+                                "raw_answer": "no scope",
+                                "question": "Describe the scope of your ITAR approval",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "expected_time_in_possession",
+                                "answer": "10 years",
+                                "raw_answer": "10 years",
+                                "question": "How long do you expect the technology or information that is controlled under the US ITAR to be in your possession?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_including_cryptography_or_security_features",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Does the item include cryptography or other information security features?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "cryptography_or_security_feature_info",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Provide full details",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_item_rated_under_mctr",
+                                "answer": "Yes, the product is MTCR Category 1",
+                                "raw_answer": "mtcr_1",
+                                "question": "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_item_manpad",
+                                "answer": "No, the product is not a MANPAD",
+                                "raw_answer": "no",
+                                "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_mod_electronic_data_shared",
+                                "answer": "No",
+                                "raw_answer": "no",
+                                "question": "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "funding_source",
+                                "answer": "MOD",
+                                "raw_answer": "mod",
+                                "question": "Who is funding the item?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "is_used_by_uk_armed_forces",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Will the item be used by the UK Armed Forces?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "used_by_uk_armed_forces_info",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Explain how it will be used",
+                                "datatype": "string",
+                            },
+                        ],
+                        "type": "single",
+                    }
+                },
+            }
+        }
+
+    @pytest.mark.parametrize(
+        "step, expected_form, expected_initial",
+        (
+            (FormSteps.PRODUCT_NAME, forms.ProductNameForm, {"product_name": "Test Info"}),
+            (
+                FormSteps.PRODUCT_DESCRIPTION,
+                forms.ProductDescription,
+                {"product_description": "It does things"},
+            ),
+            (
+                FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+                forms.ProductForeignTechOrSharedInformation,
+                {"is_foreign_tech_or_information_shared": True},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                forms.ProductControlledUnderItar,
+                {"is_controlled_under_itar": True},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
+                forms.ProductControlledUnderItarDetails,
+                {
+                    "controlled_information": "Some info",
+                    "itar_reference_number": "123456",
+                    "usml_categories": "cat 1",
+                    "itar_approval_scope": "no scope",
+                    "expected_time_in_possession": "10 years",
+                },
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                forms.ProductIncludeCryptography,
+                {"is_including_cryptography_or_security_features": True},
+            ),
+            (
+                FormSteps.PRODUCT_RATED_UNDER_MTCR,
+                forms.ProductRatedUnderMTCR,
+                {"is_item_rated_under_mctr": "mtcr_1"},
+            ),
+            (
+                FormSteps.PRODUCT_MANPAD,
+                forms.ProductMANPADs,
+                {"is_item_manpad": "no"},
+            ),
+            (
+                FormSteps.PRODUCT_ELECTRONICMODDATA,
+                forms.ProductElectronicMODData,
+                {"is_mod_electronic_data_shared": "no"},
+            ),
+            (
+                FormSteps.PRODUCT_FUNDING,
+                forms.ProductFunding,
+                {"funding_source": "mod"},
+            ),
+            (
+                FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
+                forms.ProductUsedByUKArmedForces,
+                {"is_used_by_uk_armed_forces": False},
+            ),
+        ),
+    )
+    def test_GET_with_existing_data_success(
+        self,
+        step,
+        expected_form,
+        post_to_product_step,
+        goto_product_step,
+        expected_initial,
+        mock_f680_application_get_existing_data,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        response = goto_product_step(step)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], expected_form)
+        for key, expected_value in expected_initial.items():
+            assert response.context["form"][key].initial == expected_value
+
+    def test_is_foreign_tech_or_information_shared_false_displays_correct_form(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+    ):
+
+        goto_product_step(FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED)
+        response = post_to_product_step(
+            FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
+            {"is_foreign_tech_or_information_shared": False},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
+
+    def test_is_controlled_under_itar_false_displays_correct_form(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_foreign_tech,
+    ):
+
+        goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
+        response = post_to_product_step(
+            FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+            {"is_controlled_under_itar": False},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
