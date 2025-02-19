@@ -50,7 +50,6 @@ class ProductInformationView(F680ApplicationSectionWizard):
         (FormSteps.PRODUCT_FUNDING, ProductFunding),
         (FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES, ProductUsedByUKArmedForces),
     ]
-    section = "approval_details"
     condition_dict = {
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR: is_foreign_tech_or_information_shared,
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS: is_controlled_under_itar,
