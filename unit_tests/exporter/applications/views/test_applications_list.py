@@ -68,7 +68,7 @@ def draft_applications(subtype):
     ]
 
 
-def submitted_applications():
+def submitted_applications(subtype):
     status_list = [
         {"id": "00000000-0000-0000-0000-000000000004", "key": "submitted", "value": "Submitted"},
         {"id": "00000000-0000-0000-0000-000000000003", "key": "initial_checks", "value": "Initial checks"},
@@ -82,7 +82,7 @@ def submitted_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, standard_application_subtype_dict()),
+            **base_application_data(index, subtype),
         }
         for index in range(len(status_list))
     ]
@@ -150,7 +150,20 @@ def mock_get_draft_f680_applications(requests_mock):
 
 @pytest.fixture
 def mock_get_submitted_applications(requests_mock):
-    submitted = submitted_applications()
+    submitted = submitted_applications(standard_application_subtype_dict())
+
+    return requests_mock.get(
+        f"/applications/?selected_filter=submitted_applications",
+        json={
+            "count": len(submitted),
+            "total_pages": 1,
+            "results": submitted,
+        },
+    )
+
+@pytest.fixture
+def mock_get_submitted_f680_applications(requests_mock):
+    submitted = submitted_applications(f680_application_subtype_dict())
 
     return requests_mock.get(
         f"/applications/?selected_filter=submitted_applications",
@@ -236,7 +249,7 @@ def test_get_applications(authorized_client, mock_get_submitted_applications):
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    assert len(get_applications(response)) == len(submitted_applications())
+    assert len(get_applications(response)) == len(submitted_applications(standard_application_subtype_dict()))
 
 
 def test_get_draft_applications(authorized_client, mock_get_draft_applications):
@@ -269,7 +282,17 @@ def test_get_submitted_applications(authorized_client, mock_get_submitted_applic
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, submitted_applications())
+    verify_application_data(response, headers, submitted_applications(standard_application_subtype_dict()))
+
+def test_get_submitted_f680_applications(authorized_client, mock_get_submitted_f680_applications):
+    query_params = {"selected_filter": "submitted_applications"}
+    url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
+
+    response = authorized_client.get(url)
+    assert response.status_code == 200
+
+    assertTemplateUsed(response, "applications/applications.html")
+    verify_application_data(response, headers, submitted_applications(f680_application_subtype_dict()))
 
 
 def test_get_finalised_applications(authorized_client, mock_get_finalised_applications):
