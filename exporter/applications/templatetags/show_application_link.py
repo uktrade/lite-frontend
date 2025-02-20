@@ -23,6 +23,6 @@ def show_application_link(application, template="application_link.html"):
     else:
         link_target = reverse("applications:application", kwargs={"pk": application["id"]})
 
-    return mark_safe(
+    return mark_safe( # /PS-IGNORE
         f'<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{link_target}">{application_display_text}</a>'
     )
