@@ -5,11 +5,14 @@ from django.urls import reverse
 
 register = template.Library()
 
+
 @register.simple_tag
 def show_application_link(application, template="application_link.html"):
-    is_f680_application = application['case_type']['sub_type']['key'] == 'f680_clearance'
-    is_draft_or_editiable = application['status']['key'] == "draft" or application['status']['key'] == "applicant_editing"
-    application_display_text = application['name']
+    is_f680_application = application["case_type"]["sub_type"]["key"] == "f680_clearance"
+    is_draft_or_editiable = (
+        application["status"]["key"] == "draft" or application["status"]["key"] == "applicant_editing"
+    )
+    application_display_text = application["name"]
 
     if is_f680_application and is_draft_or_editiable:
         link_target = reverse("f680:summary", kwargs={"pk": application["id"]})
@@ -20,4 +23,6 @@ def show_application_link(application, template="application_link.html"):
     else:
         link_target = reverse("applications:application", kwargs={"pk": application["id"]})
 
-    return mark_safe(f'<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{link_target}">{application_display_text}</a>')
+    return mark_safe(
+        f'<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="{link_target}">{application_display_text}</a>'
+    )

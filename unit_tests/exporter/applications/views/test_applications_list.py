@@ -161,6 +161,7 @@ def mock_get_submitted_applications(requests_mock):
         },
     )
 
+
 @pytest.fixture
 def mock_get_submitted_f680_applications(requests_mock):
     submitted = submitted_applications(f680_application_subtype_dict())
@@ -283,6 +284,7 @@ def test_get_submitted_applications(authorized_client, mock_get_submitted_applic
 
     assertTemplateUsed(response, "applications/applications.html")
     verify_application_data(response, headers, submitted_applications(standard_application_subtype_dict()))
+
 
 def test_get_submitted_f680_applications(authorized_client, mock_get_submitted_f680_applications):
     query_params = {"selected_filter": "submitted_applications"}
