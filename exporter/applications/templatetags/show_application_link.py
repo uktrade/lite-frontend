@@ -15,6 +15,7 @@ def show_application_link(application, template="show_application_link.html"):
     )
     application_display_text = application["name"]
 
+
     if is_f680_application and is_draft_or_editiable:
         link_target = reverse("f680:summary", kwargs={"pk": application["id"]})
     elif is_f680_application and not is_draft_or_editiable:
