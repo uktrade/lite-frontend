@@ -75,22 +75,17 @@ def submitted_applications():
         {"id": "00000000-0000-0000-0000-000000000002", "key": "under_review", "value": "Under review"},
         {"id": "00000000-0000-0000-0000-000000000001", "key": "ogd_advice", "value": "OGD Advice"},
     ]
-    submitted_applications = []
-    for status in status_list:
-        index = 1
-        submitted_applications.append(
-            {
-                "status": status,
-                "reference_code": "GBSIEL/2024/000000{index}/P",
-                "submitted_by": "Exporter user",
-                "submitted_at": datetime.now().isoformat(),
-                "updated_at": datetime.now().isoformat(),
-                **base_application_data(index, standard_application_subtype_dict()),
-            }
-        )
-        index += 1
-
-    return submitted_applications
+    return [
+        {
+            "status": status_list[index],
+            "reference_code": "GBSIEL/2024/000000{index}/P",
+            "submitted_by": "Exporter user",
+            "submitted_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat(),
+            **base_application_data(index, standard_application_subtype_dict()),
+        }
+        for index in range(len(status_list))
+    ]
 
 
 def finalised_applications():
