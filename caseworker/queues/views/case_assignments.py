@@ -73,7 +73,7 @@ class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
         if case.case_type['sub_type']['key'] == 'f680_clearance':
             return reverse("cases:f680:details", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
         
-        return super().get_success_url()
+        return reverse("cases:case", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
 class CaseAssignmentsCaseOfficer(LoginRequiredMixin, CaseContextBasicMixin, SuccessMessageMixin, FormView):
     template_name = "core/form.html"

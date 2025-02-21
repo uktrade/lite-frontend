@@ -186,7 +186,6 @@ def test_case_assign_me_button_when_user_is_not_assigned(
     assert needs_allocation.find(id="allocate-case-link").text == "Allocate case"
     if not is_system_queue:
         assert needs_allocation.find(id="allocate-to-me-button").text == "Allocate to me"
-        assert banner_form.find(id="id_return_to").get("value") == f"http://testserver{case_url}"
         assert banner_form.find(id="id_case_id").get("value") == data_standard_case["case"]["id"]
         assert banner_form.find(id="id_user_id").get("value") == mock_gov_user["user"]["id"]
 
@@ -286,7 +285,6 @@ def test_case_details_sub_status_change_displayed(
     response = authorized_client.get(case_url)
 
     html = BeautifulSoup(response.content, "html.parser")
-
     assert len(html.find_all(id="link-case-sub-status-change")) == expected
 
 

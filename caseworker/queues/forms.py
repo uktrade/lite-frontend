@@ -266,4 +266,3 @@ class CaseAssignmentsAllocateToMeForm(forms.Form):
     queue_id = forms.CharField(widget=HiddenInput)
     user_id = forms.CharField(widget=HiddenInput)
     case_id = forms.CharField(widget=HiddenInput)
-    return_to = forms.CharField(widget=HiddenInput)
