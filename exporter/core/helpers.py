@@ -262,7 +262,7 @@ def has_organisation_firearm_act_document(application, document_type):
 
 
 def get_organisation_firearm_act_document(application, document_type):
-    documents = get_organisation_documents(application)
+    documents = 33(application)
     return documents[document_type]
 
 
