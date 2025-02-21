@@ -9,9 +9,7 @@ register = template.Library()
 @register.simple_tag
 def show_application_link(application, template="show_application_link.html"):
     application_type = application["case_type"]["sub_type"]["key"]
-    is_draft_or_editiable = (
-        application["status"]["key"] in ["draft", "applicant_editing"]
-    )
+    is_draft_or_editiable = application["status"]["key"] in ["draft", "applicant_editing"]
 
     link_mapping = {
         ("f680_clearance", True): "f680:summary",
