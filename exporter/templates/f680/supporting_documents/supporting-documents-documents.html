@@ -1,0 +1,68 @@
+{% extends 'layouts/base.html' %}
+
+{% load additional_documents svg %}
+
+{% block back_link %}
+	<a href="">Back</a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">Supporting Documents</h1>
+		</div>
+	</div>
+	<a class="govuk-button govuk-button--primary" href="{% url "f680:supporting_documents:attach" pk=application.id %}">
+        Add a document
+    </a>
+	{% if additional_documents %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+					<th class="govuk-table__header" scope="col">Description</th>
+					<th class="govuk-table__header" scope="col">Message</th>
+					<th class="govuk-table__header" scope="col">Action</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for additional_document in additional_documents %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">{{ additional_document.name }}</td>
+					<td class="govuk-table__cell">
+						{{ additional_document.description|default_na }}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">
+						{% if additional_document.safe == True %}
+							<a href="{% url 'applications:download_additional_document' application_id additional_document.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
+								{% lcs 'AdditionalDocuments.Documents.DOWNLOAD_DOCUMENT' %}
+							</a>
+						{% elif additional_document.safe == False %}
+							{% lcs 'AdditionalDocuments.Documents.VIRUS' %}
+						{% else %}
+							{% lcs 'AdditionalDocuments.Documents.PROCESSING' %}
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">
+						{% if editable and not additional_document|is_system_document %}
+							<a href="{% url 'applications:delete_additional_document' application_id additional_document.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
+								Delete
+							</a>
+						{% endif %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				NO Docs
+			</p>
+		</div>
+		<div class="lite-information-text__help"></div>
+	{% endif %}
+
+{% endblock %}
