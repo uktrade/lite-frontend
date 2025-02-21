@@ -10,7 +10,7 @@ register = template.Library()
 def show_application_link(application, template="show_application_link.html"):
     application_type = application["case_type"]["sub_type"]["key"]
     is_draft_or_editiable = (
-        application["status"]["key"] == "draft" or application["status"]["key"] == "applicant_editing"
+        application["status"]["key"] in ["draft", "applicant_editing"]
     )
 
     link_mapping = {
