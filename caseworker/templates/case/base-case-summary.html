@@ -67,11 +67,13 @@
                 <span class="govuk-hint govuk-!-margin-0">No sub-status set</span>
             {% endif %}
         </dd>
+        {% if case.data.sub_status %}
         {% test_rule 'can_user_change_sub_status' request case as can_user_change_sub_status %}
-        {% if can_user_change_sub_status %}
-            <dd class="app-case__summary-list__actions">
-                <a id="link-case-sub-status-change" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:change_sub_status' queue.id case.id  %}">Change</a>
-            </dd>
+            {% if can_user_change_sub_status %}
+                <dd class="app-case__summary-list__actions">
+                    <a id="link-case-sub-status-change" class="govuk-link govuk-link--no-visited-state" href="{% url 'cases:change_sub_status' queue.id case.id  %}">Change</a>
+                </dd>
+            {% endif %}
         {% endif %}
     </div>
     <div class="app-case__summary-list__row">

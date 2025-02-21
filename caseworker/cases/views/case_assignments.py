@@ -52,9 +52,12 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
         return context
 
     def get_success_url(self):
+        case = self.get_case()
+        if case.case_type['sub_type']['key'] == 'f680_clearance':
+            return reverse("cases:f680:details", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
         return reverse(
-            "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "tab": "details"}
-        )
+                "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "tab": "details"}
+            )
 
     def get_initial(self):
         return {"assignment_id": self.request.GET.get("assignment_id")}
