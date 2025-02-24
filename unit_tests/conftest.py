@@ -555,8 +555,6 @@ def data_open_case():
     }
 
 
-
-
 @pytest.fixture
 def data_standard_case(
     data_organisation,
