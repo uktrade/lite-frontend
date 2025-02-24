@@ -1,3 +1,4 @@
+import rules
 from django.urls import reverse
 from django.conf import settings
 
@@ -24,7 +25,7 @@ from lite_forms.helpers import conditional
 from django.template.loader import render_to_string
 
 
-def opening_question():
+def opening_question(request):
     options = [
         Option(
             key="export_licence",
@@ -42,7 +43,7 @@ def opening_question():
                 "governments and individuals. This includes F680 approval. You should apply for security approval"
                 " before you apply for a licence."
             ),
-            disabled=not settings.FEATURE_FLAG_ALLOW_F680,
+            disabled=not rules.test_rule("can_exporter_use_f680s", request),
         ),
         Option(
             key="transhipment",
