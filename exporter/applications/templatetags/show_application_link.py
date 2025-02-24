@@ -11,9 +11,11 @@ def show_application_link(application, template="show_application_link.html"):
     application_type = application["case_type"]["sub_type"]["key"]
     is_draft_or_editable = application["status"]["key"] in ["draft", "applicant_editing"]
 
-    destination = "task_list" if is_draft_or_editable else "application"
+    destination = "task_list" if is_draft_or_editable and application_type else "application"
 
-    breakpoint()
+    if application_type == "standard":
+        application_type = "applications"
+
     try:
         url = reverse(f"{application_type}:{destination}", kwargs={"pk": application["id"]})
     except NoReverseMatch:
