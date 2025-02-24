@@ -18,7 +18,7 @@ INSTALLED_APPS += [
     "exporter.applications",
     "exporter.organisation",
     "exporter.goods",
-    "exporter.f680",
+    "exporter.f680_clearance",
 ]
 
 if MOCK_SSO_ACTIVATE_ENDPOINTS:

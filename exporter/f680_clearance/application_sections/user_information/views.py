@@ -7,10 +7,10 @@ from django.urls import reverse
 from core.decorators import expect_status
 
 from exporter.core.services import get_countries
-from exporter.f680.views import F680FeatureRequiredMixin
-from exporter.f680.services import get_f680_application
+from exporter.f680_clearance.views import F680FeatureRequiredMixin
+from exporter.f680_clearance.services import get_f680_application
 
-from exporter.f680.application_sections.views import F680MultipleItemApplicationSectionWizard
+from exporter.f680_clearance.application_sections.views import F680MultipleItemApplicationSectionWizard
 
 
 from .constants import FormSteps

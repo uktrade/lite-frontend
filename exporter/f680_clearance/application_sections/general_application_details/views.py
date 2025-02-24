@@ -1,4 +1,4 @@
-from exporter.f680.application_sections.views import F680ApplicationSectionWizard
+from exporter.f680_clearance.application_sections.views import F680ApplicationSectionWizard
 
 from .constants import FormSteps
 from .forms import ApplicationNameForm, ExceptionalCircumstancesForm, ExplainExceptionalCircumstancesForm

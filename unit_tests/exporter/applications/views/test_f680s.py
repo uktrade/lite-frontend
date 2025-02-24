@@ -6,7 +6,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
-from exporter.f680.forms import ApplicationSubmissionForm
+from exporter.f680_clearance.forms import ApplicationSubmissionForm
 
 
 @pytest.fixture(autouse=True)

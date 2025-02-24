@@ -6,12 +6,12 @@ from freezegun import freeze_time
 
 from core import client
 
-from exporter.f680.application_sections.general_application_details.forms import (
+from exporter.f680_clearance.application_sections.general_application_details.forms import (
     ApplicationNameForm,
     ExceptionalCircumstancesForm,
     ExplainExceptionalCircumstancesForm,
 )
-from exporter.f680.application_sections.general_application_details.constants import FormSteps
+from exporter.f680_clearance.application_sections.general_application_details.constants import FormSteps
 
 
 DATETIME_10_DAYS_AGO = datetime.now() - timedelta(days=10)

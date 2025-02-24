@@ -6,8 +6,8 @@ from freezegun import freeze_time
 
 from core import client
 
-from exporter.f680.application_sections.user_information import forms
-from exporter.f680.application_sections.user_information.constants import FormSteps
+from exporter.f680_clearance.application_sections.user_information import forms
+from exporter.f680_clearance.application_sections.user_information.constants import FormSteps
 
 
 @pytest.fixture(autouse=True)

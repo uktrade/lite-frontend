@@ -18,7 +18,7 @@ from exporter.core.services import post_open_general_licence_cases
 from lite_forms.views import SingleFormView, MultiFormView
 
 from core.auth.views import LoginRequiredMixin, RedirectView
-from exporter.f680.views import F680FeatureRequiredMixin
+from exporter.f680_clearance.views import F680FeatureRequiredMixin
 
 
 class LicenceType(LoginRequiredMixin, SingleFormView):

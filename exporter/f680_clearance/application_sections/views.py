@@ -8,9 +8,9 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 from core.wizard.views import BaseSessionWizardView
 
-from exporter.f680.services import patch_f680_application, get_f680_application
-from exporter.f680.payloads import F680PatchPayloadBuilder, F680AppendingPayloadBuilder
-from exporter.f680.views import F680FeatureRequiredMixin
+from exporter.f680_clearance.services import patch_f680_application, get_f680_application
+from exporter.f680_clearance.payloads import F680PatchPayloadBuilder, F680AppendingPayloadBuilder
+from exporter.f680_clearance.views import F680FeatureRequiredMixin
 
 
 class F680ApplicationSectionWizard(LoginRequiredMixin, F680FeatureRequiredMixin, BaseSessionWizardView):
