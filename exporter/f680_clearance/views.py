@@ -40,7 +40,7 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Re
 
     def get_success_url(self, application_id):
         return reverse(
-            "f680:summary",
+            "f680_clearance:task_list",
             kwargs={
                 "pk": application_id,
             },
@@ -78,4 +78,4 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
         return context
 
     def get_success_url(self):
-        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
+        return reverse("f680_clearance:task_list", kwargs={"pk": self.application["id"]})

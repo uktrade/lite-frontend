@@ -21,12 +21,12 @@ def authorized_client(authorized_client_factory, mock_exporter_user):
 
 @pytest.fixture
 def f680_apply_url():
-    return reverse("f680:apply")
+    return reverse("f680_clearance:apply")
 
 
 @pytest.fixture
 def f680_summary_url_with_application(data_f680_case):
-    return reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
+    return reverse("f680_clearance:task_list", kwargs={"pk": data_f680_case["id"]})
 
 
 @pytest.fixture
@@ -161,7 +161,7 @@ class TestF680ApplicationSummaryView:
         heading_element = content.find("h1", class_="govuk-heading-l govuk-!-margin-bottom-2")
         assert heading_element.string.strip() == "F680 Application"
 
-    def test_get_f680_summary_view_case_not_found(
+    def test_get_f680_task_list_view_case_not_found(
         self,
         authorized_client,
         requests_mock,
@@ -172,7 +172,7 @@ class TestF680ApplicationSummaryView:
 
         requests_mock.get(client_uri, json={}, status_code=404)
 
-        response = authorized_client.get(reverse("f680:summary", kwargs={"pk": app_pk}))
+        response = authorized_client.get(reverse("f680_clearance:task_list", kwargs={"pk": app_pk}))
         assert response.status_code == 404
 
     def test_get_f680_summary_view_fail_with_feature_flag_off(

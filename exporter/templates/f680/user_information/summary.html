@@ -2,7 +2,7 @@
 
 {% block title %}F680 User information{% endblock%}
 
-{% block back_link_url %}{% url "f680:summary" application.id %}{% endblock %}
+{% block back_link_url %}{% url "f680_clearance:task_list" application.id %}{% endblock %}
 
 {% block body %}
 <div class="govuk-grid-row">
@@ -37,7 +37,7 @@
 		</table>
         <a href="{% url 'f680:user_information:wizard' application.id %}" role='button' draggable='false' class='govuk-button'>Add a new entity</a>
         <p>
-            <a href="{% url "f680:summary" application.id %}" role='button' draggable='false' class='govuk-link govuk-link--no-visited-state'>Save and continue</a>
+            <a href="{% url "f680_clearance:task_list" application.id %}" role='button' draggable='false' class='govuk-link govuk-link--no-visited-state'>Save and continue</a>
         </p>
 
     </div>

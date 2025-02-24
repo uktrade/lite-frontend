@@ -28,7 +28,7 @@
                     </li>
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:general_application_details:wizard" pk=application.id %}">General application details</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680_clearance:general_application_details:wizard" pk=application.id %}">General application details</a>
                             {% if application.application.sections.general_application_details %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
@@ -50,7 +50,7 @@
                 <ul class="lite-task-list__items">
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:type_wizard" pk=application.id %}">Approval type</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680_clearance:approval_details:type_wizard" pk=application.id %}">Approval type</a>
                             {% if application.application.sections.approval_type %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
@@ -64,7 +64,7 @@
                     </li>
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:product_wizard" pk=application.id %}">Product information</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680_clearance:approval_details:product_wizard" pk=application.id %}">Product information</a>
                             {% if application.application.sections.product_information %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
@@ -87,7 +87,7 @@
                 <ul class="lite-task-list__items">
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:user_information:summary" pk=application.id %}">User information</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680_clearance:user_information:summary" pk=application.id %}">User information</a>
                             {% if application.application.sections.user_information %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
@@ -108,7 +108,7 @@
                 <ul class="lite-task-list__items">
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
-                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:additional_information:notes_wizard" pk=application.id %}">Notes for case officers</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680_clearance:additional_information:notes_wizard" pk=application.id %}">Notes for case officers</a>
                             {% if application.application.sections.notes_for_case_officers %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed

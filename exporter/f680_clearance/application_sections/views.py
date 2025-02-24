@@ -59,7 +59,7 @@ class F680ApplicationSectionWizard(LoginRequiredMixin, F680FeatureRequiredMixin,
 
     def get_success_url(self, application_id):
         return reverse(
-            "f680:summary",
+            "f680_clearance:summary",
             kwargs={
                 "pk": application_id,
             },

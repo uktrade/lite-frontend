@@ -290,11 +290,10 @@ def test_get_submitted_f680_applications(authorized_client, mock_get_submitted_f
     query_params = {"selected_filter": "submitted_applications"}
     url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
 
-    response = authorized_client.get(url)
-    assert response.status_code == 200
+    with pytest.raises(Exception) as err:
+        authorized_client.get(url)
 
-    assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, submitted_applications(f680_application_subtype_dict()))
+    assert str(err.value) == "You need to create a view with the url f680_clearance:application"
 
 
 def test_get_finalised_applications(authorized_client, mock_get_finalised_applications):

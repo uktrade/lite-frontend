@@ -57,7 +57,7 @@ class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
 
 class F680Questions(LoginRequiredMixin, RedirectView, F680FeatureRequiredMixin):
     def get_redirect_url(self, *args, **kwargs):
-        return reverse("f680:apply")
+        return reverse("f680_clearance:apply")
 
 
 class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
