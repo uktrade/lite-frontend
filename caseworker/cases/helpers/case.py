@@ -168,9 +168,6 @@ class CaseView(CaseworkerMixin, TemplateView):
 
     def get_destination_countries(self):
         destination_countries = set()
-        application_type = self.case.case_type['sub_type']['key']
-        if application_type == 'f680_clearance':
-            return destination_countries
         all_parties = self.case.data["ultimate_end_users"] + self.case.data["third_parties"]
         if self.case.data["end_user"]:
             all_parties.append(self.case.data["end_user"])
