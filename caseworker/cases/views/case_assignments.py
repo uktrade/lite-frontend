@@ -51,10 +51,6 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
 
         return context
 
-    def get_success_url(self):
-        case = self.get_case()
-        return get_case_detail_url(case, self.kwargs["queue_pk"])
-
     def get_initial(self):
         return {"assignment_id": self.request.GET.get("assignment_id")}
 
@@ -70,6 +66,10 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
             )
 
         return super().form_valid(form)
+
+    def get_success_url(self):
+        case = self.get_case()
+        return get_case_detail_url(case, self.kwargs["queue_pk"])
 
 
 class CaseOfficerRemove(LoginRequiredMixin, FormView):
