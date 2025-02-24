@@ -259,3 +259,14 @@ class CaseView(CaseworkerMixin, TemplateView):
         else:
             getattr(self, "get_" + self.case.sub_type)()
         return render(request, "case/case.html", self.get_context())
+
+
+def get_case_detail_url(case, queue_id):
+    url_names = {
+        "f680_clearance": "cases:f680:details",
+        "standard": "cases:case",
+    }
+    case_type = case.case_type["sub_type"]["key"]
+    url_name = url_names[case_type]
+
+    return reverse(url_name, kwargs={"queue_pk": queue_id, "pk": case.id})

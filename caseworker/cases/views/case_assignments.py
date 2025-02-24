@@ -7,7 +7,7 @@ from django.views.generic.edit import FormView
 
 from core.auth.views import LoginRequiredMixin
 from caseworker.cases.forms import case_assignment as forms
-
+from caseworker.cases.helpers.case import get_case_detail_url
 from caseworker.cases.services import delete_case_assignment, delete_case_officer
 from caseworker.cases.services import get_case
 
@@ -53,11 +53,7 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         case = self.get_case()
-        if case.case_type['sub_type']['key'] == 'f680_clearance':
-            return reverse("cases:f680:details", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]})
-        return reverse(
-                "cases:case", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"], "tab": "details"}
-            )
+        return get_case_detail_url(case, self.kwargs["queue_pk"])
 
     def get_initial(self):
         return {"assignment_id": self.request.GET.get("assignment_id")}

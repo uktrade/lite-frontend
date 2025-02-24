@@ -18,6 +18,7 @@ from caseworker.queues.services import (
 )
 from caseworker.users.services import get_gov_user
 from caseworker.queues.conditionals import is_queue_in_url_system_queue
+from caseworker.cases.helpers.case import get_case_detail_url
 from caseworker.cases.services import update_case_officer_on_cases, get_case
 from caseworker.queues.forms import SelectAllocateRole
 
@@ -53,8 +54,8 @@ class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
         data = form.cleaned_data
         self.allocate_to_me(data)
         messages.success(self.request, f"You have been successfully added as case adviser")
-        self.queue_id = data["queue_id"]
         self.case_id = data["case_id"]
+        self.queue_id = data["queue_id"]
 
         return super().form_valid(form)
 
@@ -67,13 +68,11 @@ class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
         return put_queue_case_assignments(
             self.request, data["queue_id"], [data["case_id"]], [data["user_id"]], "Allocated self to the case"
         )
-    
+
     def get_success_url(self):
         case = get_case(self.request, self.case_id)
-        if case.case_type['sub_type']['key'] == 'f680_clearance':
-            return reverse("cases:f680:details", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
-        
-        return reverse("cases:case", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
+        return get_case_detail_url(case, self.queue_id)
+
 
 class CaseAssignmentsCaseOfficer(LoginRequiredMixin, CaseContextBasicMixin, SuccessMessageMixin, FormView):
     template_name = "core/form.html"
