@@ -18,6 +18,7 @@ INSTALLED_APPS += [
     "exporter.applications",
     "exporter.organisation",
     "exporter.goods",
+    "exporter.f680",
 ]
 
 if MOCK_SSO_ACTIVATE_ENDPOINTS:
@@ -130,3 +131,4 @@ SURVEY_URL = env.str("SURVEY_URL", "")
 
 CSP_REPORT_URI = env.tuple("EXPORTER_CSP_REPORT_URI", default=("",))
 E2E_WAIT_MULTIPLIER = env.int("E2E_WAIT_MULTIPLIER", default=1)
+FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = env.list("FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS", default=[])

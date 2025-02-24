@@ -8,6 +8,8 @@ from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import Submit, Layout, HTML
 
+from core.file_handler import validate_mime_type
+
 from exporter.core.constants import FileUploadFileTypes
 
 
@@ -28,6 +30,9 @@ class UploadSectionFiveCertificateForm(forms.Form):
         label="",
         help_text="The file must be smaller than 50MB",
         error_messages={"required": "Select certificate file to upload"},
+        validators=[
+            validate_mime_type,
+        ],
     )
     reference_code = forms.CharField(
         label="Certificate number",
@@ -63,6 +68,9 @@ class UploadFirearmsCertificateForm(forms.Form):
         label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         help_text="The file must be smaller than 50MB",
         error_messages={"required": "Select certificate file to upload"},
+        validators=[
+            validate_mime_type,
+        ],
     )
     reference_code = forms.CharField(
         label="Certificate number",

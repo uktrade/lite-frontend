@@ -1,0 +1,152 @@
+{% extends "layouts/base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}Apply for an F680 Application{% endblock%}
+
+{% block body %}
+{% if errors %}
+	<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="error-summary">
+		<h2 class="govuk-error-summary__title" id="error-summary-title">
+			{% lcs 'applications.EditApplicationPage.ERRORS' %}
+		</h2>
+		<div class="govuk-error-summary__body">
+			<ul class="govuk-list govuk-error-summary__list">
+				{% for key, values in errors.items %}
+					{% for value in values %}
+						<li>
+							<a href="#{{ key }}">
+								{{ value }}
+							</a>
+						</li>
+					{% endfor %}
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+{% endif %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-2">F680 Application</h1>
+        <ol class="lite-task-list">
+            <li>
+                <h2 class="lite-task-list__section">
+                    <span class="lite-task-list__section-number">1. </span>
+                    Create Application
+                </h2>
+                <ul class="lite-task-list__items">
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            Application type
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                        </div>
+                        <div class="lite-task-list__item-details govuk-caption-m">
+                            F680
+                        </div>
+                    </li>
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:general_application_details:wizard" pk=application.id %}">General application details</a>
+                            {% if application.application.sections.general_application_details %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Not Started
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            </li>
+                <h2 class="lite-task-list__section">
+                    <span class="lite-task-list__section-number">2. </span>
+                    Complete approval details
+                </h2>
+                <ul class="lite-task-list__items">
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:type_wizard" pk=application.id %}">Approval type</a>
+                            {% if application.application.sections.approval_type %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Not Started
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:approval_details:product_wizard" pk=application.id %}">Product information</a>
+                            {% if application.application.sections.product_information %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Not Started
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                </li>
+                </ul>
+            </li>
+            <li>
+                <h2 class="lite-task-list__section">
+                    <span class="lite-task-list__section-number">3. </span>
+                    Tell us who is involved
+                </h2>
+                <ul class="lite-task-list__items">
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:user_information:summary" pk=application.id %}">User information</a>
+                            {% if application.application.sections.user_information %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Not Started
+                            </div>
+                            {% endif %}
+                        </div>
+                </ul>
+            </li>
+            <li>
+                <h2 class="lite-task-list__section">
+                    <span class="lite-task-list__section-number">4. </span>
+                    Additional Information
+                </h2>
+                <ul class="lite-task-list__items">
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:additional_information:notes_wizard" pk=application.id %}">Notes for case officers</a>
+                            {% if application.application.sections.notes_for_case_officers %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Optional
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ol>
+        <div class="app-submit-bar">
+            {% crispy form %}
+        </div>
+    </div>
+</div>
+{% endblock %}

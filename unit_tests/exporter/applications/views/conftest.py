@@ -30,6 +30,36 @@ def mock_application_get(requests_mock, data_standard_case):
 
 
 @pytest.fixture
+def application_history(data_standard_case):
+    return {
+        "id": data_standard_case["case"]["data"]["id"],
+        "reference_code": data_standard_case["case"]["data"]["reference_code"],
+        "amendment_history": [
+            {
+                "status": {"status": "submitted", "status_display": "Submitted"},
+                "ecju_query_count": 0,
+                "reference_code": data_standard_case["case"]["data"]["reference_code"],
+                "submitted_at": data_standard_case["case"]["data"]["submitted_at"],
+                "id": data_standard_case["case"]["data"]["id"],  # /PS-IGNORE
+            },
+            {
+                "status": {"status": "superseded_by_exporter_edit", "status_display": "Superseded by exporter edit"},
+                "ecju_query_count": 3,
+                "reference_code": "GBSIEL/2025/0000333/T",
+                "submitted_at": "2025-01-27T16:36:27.185326Z",
+                "id": "caba228c-b4c8-41ea-804a-c1bc6ba816c7",  # /PS-IGNORE
+            },
+        ],
+    }
+
+
+@pytest.fixture
+def mock_application_history_get(requests_mock, application_history):
+    url = client._build_absolute_uri(f'/exporter/applications/{application_history["id"]}/history')
+    return requests_mock.get(url=url, json=application_history)
+
+
+@pytest.fixture
 def mock_refused_application_get(requests_mock, data_standard_case):
     application = data_standard_case["case"]["data"]
     application = {

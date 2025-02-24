@@ -8,7 +8,9 @@ from django.conf import settings
 from django.urls import clear_url_caches
 
 
-def reload_urlconf(urlconfs=[settings.ROOT_URLCONF]):
+def reload_urlconf(urlconfs=None):
+    if not urlconfs:
+        urlconfs = [settings.ROOT_URLCONF]
     clear_url_caches()
     for urlconf in urlconfs:
         if urlconf in sys.modules:

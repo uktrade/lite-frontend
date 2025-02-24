@@ -9,6 +9,7 @@ from core.constants import (
     FirearmsActSections,
     SerialChoices,
 )
+from core.file_handler import validate_mime_type
 from core.forms.layouts import (
     ConditionalCheckbox,
     ConditionalRadiosQuestion,
@@ -222,6 +223,9 @@ class FirearmAttachRFDCertificate(BaseForm):
         error_messages={
             "required": "Select a registered firearms dealer certificate",
         },
+        validators=[
+            validate_mime_type,
+        ],
         widget=PotentiallyUnsafeClearableFileInput,
     )
 
@@ -330,6 +334,9 @@ class BaseAttachFirearmActCertificateForm(BaseForm):
     file = forms.FileField(
         label="",
         required=False,
+        validators=[
+            validate_mime_type,
+        ],
         widget=PotentiallyUnsafeClearableFileInput(
             force_required=True,
         ),

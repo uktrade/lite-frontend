@@ -1,0 +1,2 @@
+class FormSteps:
+    NOTES_FOR_CASEWORKER = "NOTES_FOR_CASEWORKER"

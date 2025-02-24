@@ -1,3 +1,4 @@
+import rules
 from django.urls import reverse
 from django.conf import settings
 
@@ -24,7 +25,7 @@ from lite_forms.helpers import conditional
 from django.template.loader import render_to_string
 
 
-def opening_question():
+def opening_question(request):
     options = [
         Option(
             key="export_licence",
@@ -33,6 +34,16 @@ def opening_question():
                 "Select if you’re sending products from the UK to another country. You need an export licence "
                 "before you provide access to controlled technology, software or data."
             ),
+        ),
+        Option(
+            key="f680",
+            value="Security Approval",
+            description=(
+                "Select if you need approval to give classified products or information to non-UK organisations, "
+                "governments and individuals. This includes F680 approval. You should apply for security approval"
+                " before you apply for a licence."
+            ),
+            disabled=not rules.test_rule("can_exporter_use_f680s", request),
         ),
         Option(
             key="transhipment",
@@ -49,15 +60,6 @@ def opening_question():
             description=(
                 "Select if you’re arranging or brokering the sale or movement of controlled military products "
                 "located overseas."
-            ),
-            disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
-        ),
-        Option(
-            key="mod",
-            value="MOD clearance",
-            description=(
-                "Select if you need to share information (an F680) or to go to an exhibition, or if you're gifting "
-                "surplus products."
             ),
             disabled=settings.FEATURE_FLAG_ONLY_ALLOW_SIEL,
         ),

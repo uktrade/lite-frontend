@@ -1,5 +1,4 @@
-from exporter.applications.views.goods.common.payloads import get_cleaned_data
-from core.wizard.payloads import MergingPayloadBuilder
+from core.wizard.payloads import MergingPayloadBuilder, get_cleaned_data
 
 from .constants import RegistrationSteps
 from .forms import RegisterAddressDetailsUKIndividualForm, RegisterAddressDetailsUKCommercialForm
