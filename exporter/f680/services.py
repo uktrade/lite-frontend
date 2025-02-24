@@ -14,3 +14,8 @@ def get_f680_application(request, application_id):
 def patch_f680_application(request, application_id, json):
     data = client.patch(request, f"/exporter/f680/application/{application_id}/", json)
     return data.json(), data.status_code
+
+
+def submit_f680_application(request, application_id):
+    data = client.post(request, f"/exporter/f680/application/{application_id}/submit")
+    return data.json(), data.status_code
