@@ -46,10 +46,10 @@ class CaseContextMixin:
 
     @property
     def goods(self):
-        for index, good_on_application in enumerate(self.case["data"]["goods"], start=1):
+        for index, good_on_application in enumerate(self.case["data"].get("goods", []), start=1):
             good_on_application["line_number"] = index
 
-        return self.case["data"]["goods"]
+        return self.case["data"].get("goods", [])
 
     def get_context(self, **kwargs):
         return {}
