@@ -431,6 +431,12 @@ def mock_standard_case(requests_mock, data_standard_case):
 
 
 @pytest.fixture
+def mock_f680_case(requests_mock, data_submitted_f680_case):
+    url = client._build_absolute_uri(f"/cases/{data_submitted_f680_case['case']['id']}/")
+    yield requests_mock.get(url=url, json=data_submitted_f680_case)
+
+
+@pytest.fixture
 def mock_finalise_advice_documents(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice-documents/")
     yield requests_mock.get(url=url, json={"documents": {"refusal": {}, "approval": {}}})

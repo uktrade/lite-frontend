@@ -301,6 +301,49 @@ def test_case_assign_me(
 
     response = authorized_client.post(url, data=data, follow=True)
     assert response.status_code == 200
+    assert (
+        response.wsgi_request.path
+        == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/details/"
+    )
+
+    html = BeautifulSoup(response.content, "html.parser")
+    success_message = html.find(class_="app-snackbar__content")
+    assert "You have been successfully added as case adviser" in success_message.text
+
+
+def test_f680_case_assign_me(
+    authorized_client,
+    data_queue,
+    data_submitted_f680_case,
+    data_assignment,
+    mock_gov_user,
+    mock_add_assignment,
+    mock_f680_case,
+    mock_standard_case_ecju_queries,
+    mock_standard_case_documents,
+    mock_standard_case_additional_contacts,
+    mock_standard_case_activity_filters,
+    mock_queue,
+    mock_standard_case_assigned_queues,
+):
+    url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
+    case_url = reverse(
+        "cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]}
+    )
+    data = {
+        "queue_id": data_queue["id"],
+        "user_id": mock_gov_user["user"]["id"],
+        "case_id": data_submitted_f680_case["case"]["id"],
+        "return_to": case_url,
+    }
+
+    response = authorized_client.post(url, data=data, follow=True)
+
+    assert response.status_code == 200
+    assert (
+        response.wsgi_request.path
+        == "/queues/00000000-0000-0000-0000-000000000001/cases/67271217-7e55-4345-9db4-31de1bfe4067/f680/"
+    )
 
     html = BeautifulSoup(response.content, "html.parser")
     success_message = html.find(class_="app-snackbar__content")
