@@ -1,0 +1,31 @@
+{% extends 'layouts/case.html' %}
+{% block details %}
+<section class="govuk-!-margin-top-8">
+    <h1 class="govuk-visually-hidden">Case Documents</h1>
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Name</th>
+                <th scope="col" class="govuk-table__header">Added by</th>
+                <th scope="col" class="govuk-table__header">Date</th>
+                <th scope="col" class="govuk-table__header"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">F680 Aproval</td>
+                        <td class="govuk-table__cell">{{ document.user.first_name }} {{ document.user.last_name }}</td>
+                        <td class="govuk-table__cell">{{ document.created_at|str_date }}</td>
+                        <td class="govuk-table__cell">
+                            <a class="govuk-link" href="{% url 'cases:document' queue.id case.id document.id %}">
+                                View
+                            </a>
+
+                        </td>
+                </tr>
+        </tbody>
+    </table>
+
+
+</section>
+{% endblock %}

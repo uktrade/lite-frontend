@@ -152,6 +152,11 @@ def get_final_decision_documents(request, case_pk):
     return data.json(), data.status_code
 
 
+def get_f680_final_decision_documents(request, case_pk):
+    data = client.get(request, f"/cases/{case_pk}/f680-final-advice-documents/")
+    return data.json(), data.status_code
+
+
 def grant_licence(request, case_pk, json):
     response = client.put(request, f"/cases/{case_pk}/finalise/", json)
     return response.json(), response.status_code

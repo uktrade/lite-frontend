@@ -4,4 +4,6 @@
     <h1 class="govuk-visually-hidden">Case Summary</h1>
     {% include "f680/case/summary.html" %}
 </section>
+<a  class="govuk-button govuk-button--primary" href="{% url 'cases:f680:generate_document_preview' queue_pk case.id %}">Generate Approval Document</a>
+
 {% endblock %}

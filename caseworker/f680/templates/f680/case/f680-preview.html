@@ -1,0 +1,25 @@
+{% extends 'layouts/base.html' %}
+
+{% block body %}
+	<div class="app-letter-preview__container">
+		<div class="lite-app-bar">
+			<div class="lite-app-bar__content">
+				<h1 class="govuk-heading-l">{% block title %}Generate Document{% endblock %}</h1>
+			</div>
+			<div class="lite-app-bar__controls">
+				<form action="{% url 'cases:f680:generate_document_create' queue.id kwargs.pk %}" method="post">
+				{% csrf_token %}
+				<input name="text" type="hidden" value="{{ text }}">
+				{% if return_url %}
+					<input name="return_url" type="hidden" value="{{ return_url }}">
+                {% endif %}
+				<input name="addressee" type="hidden" value="{{ addressee }}">
+				<button class="govuk-button" type="submit">Generate</button>
+				</form>
+			</div>
+		</div>
+		<div class="app-letter-preview__page" id="preview">
+			{{ preview|safe }}
+		</div>
+	</div>
+{% endblock %}
