@@ -144,6 +144,11 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                         "raw_answer": "It just is",
                         "question": "Explain how the technology or information is controlled.Include countries classification levels and "
                         "reference numbers.  You can upload supporting documents later in your application",
+
+                        "question": (
+                            "Explain how the technology or information is controlled.Include countries classification levels and "
+                            "reference numbers. You can upload supporting documents later in your application"
+                        ),
                         "datatype": "string",
                     },
                     {
