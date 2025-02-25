@@ -6,11 +6,13 @@
 </section>
 
 {% for section_key, section in case.data.application.sections.items %}
+    <div class="application-section">
     {% if section.type == "single" %}
         {% include "f680/includes/application_section_single.html" with section=section section_key=section_key %}
     {% else %}
         {% include "f680/includes/application_section_multiple.html" with section=section section_key=section_key %}
     {% endif %}
+    </div>
 {% endfor %}
 
 {% endblock %}
