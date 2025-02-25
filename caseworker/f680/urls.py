@@ -11,4 +11,9 @@ urlpatterns = [
         views.CaseDetailView.as_view(),
         name="details",
     ),
+    path(
+        "recommendation/",
+        views.CaseRecommendationView.as_view(),
+        name="recommendation",
+    ),
 ]

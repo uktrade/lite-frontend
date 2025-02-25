@@ -77,6 +77,8 @@ class BaseApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
         "Unexpected error adding approval advice",
     )
     def post_approval_advice(self, data):
+        if self.case['case_type']['reference']['key'] == 'f680':
+            return services.post_f680_approval_advice(self.request, self.case, data)
         return services.post_approval_advice(self.request, self.case, data)
 
     def get_payload(self, form_dict):
