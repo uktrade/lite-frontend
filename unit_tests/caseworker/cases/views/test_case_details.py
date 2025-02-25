@@ -286,6 +286,7 @@ def test_case_details_sub_status_change_displayed(
     response = authorized_client.get(case_url)
 
     html = BeautifulSoup(response.content, "html.parser")
+
     assert len(html.find_all(id="link-case-sub-status-change")) == expected
 
 
