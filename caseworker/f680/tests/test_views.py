@@ -127,6 +127,21 @@ def mock_f680_case_with_submitted_by(f680_case_id, requests_mock, data_f680_case
     return requests_mock.get(url=url, json=data_f680_case)
 
 
+@pytest.fixture
+def mock_f680_case_with_assigned_user(f680_case_id, requests_mock, data_f680_case, data_queue, mock_gov_user):
+    data_f680_case["case"]["assigned_users"] = {data_queue["name"]: [mock_gov_user["user"]]}
+    url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
+    return requests_mock.get(url=url, json=data_f680_case)
+
+
+@pytest.fixture
+def mock_put_assigned_queues(f680_case_id, requests_mock, data_queue):
+    queue_pk = data_queue["id"]
+    return requests_mock.put(
+        client._build_absolute_uri(f"/cases/{f680_case_id}/assigned-queues/"), json={"queues": [queue_pk]}
+    )
+
+
 class TestCaseDetailView:
 
     def test_GET_success(
@@ -173,3 +188,19 @@ class TestCaseDetailView:
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
         with pytest.raises(HTTPError, match="404"):
             authorized_client.get(url)
+
+
+class TestMoveCaseForwardView:
+
+    def test_POST_no_permisison(self, authorized_client, data_queue, mock_f680_case, f680_case_id):
+        url = reverse("cases:f680:move_case_forward", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        response = authorized_client.post(url)
+        assert response.status_code == 403
+
+    def test_POST_success(
+        self, authorized_client, data_queue, mock_f680_case_with_assigned_user, f680_case_id, mock_put_assigned_queues
+    ):
+        url = reverse("cases:f680:move_case_forward", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        response = authorized_client.post(url)
+        assert response.status_code == 302
+        assert response.url == reverse("queues:cases", kwargs={"queue_pk": data_queue["id"]})
