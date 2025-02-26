@@ -1,10 +1,12 @@
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.safestring import mark_safe
 from django.views.generic import TemplateView, View
 
 from core.auth.views import LoginRequiredMixin
 
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.cases.services import get_case
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.helpers.case import CaseworkerMixin
@@ -38,6 +40,12 @@ class MoveCaseForward(LoginRequiredMixin, View):
         case_pk = str(pk)
         case = get_case(request, case_pk)
         move_case_forward(request, case_pk, queue_pk)
-        messages.success(self.request, f"{case.reference_code} was successfully moved forward")
+        all_cases_queue_url = reverse("cases:f680:details", kwargs={"queue_pk": ALL_CASES_QUEUE_ID, "pk": case_pk})
+        success_message = (
+            mark_safe(
+                f"<a href='{all_cases_queue_url}' class='govuk-link govuk-link--inverse'>{case.reference_code}</a>&nbsp;was successfully moved forward"
+            )
+        )
+        messages.success(self.request, success_message, extra_tags="safe")
         queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
         return redirect(queue_url)
