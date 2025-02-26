@@ -330,6 +330,7 @@ def test_case_assign_me(
     mock_standard_case_activity_filters,
     mock_queue,
     mock_standard_case_assigned_queues,
+    requests_mock,
 ):
     case = data_standard_case
     url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
@@ -357,7 +358,7 @@ def test_f680_case_assign_me(
     authorized_client,
     data_queue,
     data_submitted_f680_case,
-    data_assignment,
+    data_f680_assignment,
     mock_gov_user,
     mock_add_assignment,
     mock_f680_case,
@@ -367,6 +368,7 @@ def test_f680_case_assign_me(
     mock_standard_case_activity_filters,
     mock_queue,
     mock_standard_case_assigned_queues,
+    requests_mock,
 ):
     url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
     case_url = reverse(
