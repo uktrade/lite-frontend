@@ -19,7 +19,7 @@ from caseworker.f680.recommendation.forms.forms import (
     SimpleLicenceConditionsForm,
 )
 from caseworker.f680.recommendation.mixins import CaseContextMixin
-from caseworker.f680.recommendation.services import post_approval_recommendation
+from caseworker.f680.recommendation.services import get_current_user_recommendation, post_approval_recommendation
 from caseworker.queues.services import get_queue
 from core.decorators import expect_status
 from core.wizard.conditionals import C
@@ -41,6 +41,24 @@ class CaseRecommendationView(LoginRequiredMixin, CaseworkerMixin, TemplateView):
         context_data = super().get_context_data(**kwargs)
         context_data["case"] = self.case
         return context_data
+
+
+class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+    template_name = "f680/case/recommendation/view_my_recommendation.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
+        recommendation = get_current_user_recommendation(
+            self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
+        )
+        recommendation = recommendation.get(self.caseworker_id)
+
+        return {
+            **context,
+            "title": title,
+            "recommendation": recommendation[0] if recommendation else None,
+        }
 
 
 class SelectRecommendationTypeView(LoginRequiredMixin, CaseContextMixin, FormView):
@@ -76,7 +94,7 @@ class BaseApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
     }
 
     def get_success_url(self):
-        return reverse("cases:f680:recommendation", kwargs=self.kwargs)
+        return reverse("cases:f680:view_my_recommendation", kwargs=self.kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

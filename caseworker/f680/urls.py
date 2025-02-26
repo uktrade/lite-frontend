@@ -22,5 +22,6 @@ urlpatterns = [
         recommendation_views.SelectRecommendationTypeView.as_view(),
         name="select_recommendation_type",
     ),
+    path("view-my-recommendation/", recommendation_views.MyRecommendationView.as_view(), name="view_my_recommendation"),
     path("approve-all/", recommendation_views.GiveApprovalAdviceView.as_view(), name="approve_all"),
 ]
