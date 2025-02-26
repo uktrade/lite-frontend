@@ -74,8 +74,7 @@ class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
         case = get_case(self.request, self.case_id)
         url = get_case_detail_url(case, self.queue_id)
 
-        if self.success_url != f"{url}details/":
-            return url
+        return url if self.success_url != url else self.success_url
 
 
 class CaseAssignmentsCaseOfficer(LoginRequiredMixin, CaseContextBasicMixin, SuccessMessageMixin, FormView):
