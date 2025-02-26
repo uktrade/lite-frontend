@@ -22,4 +22,5 @@ urlpatterns = [
         recommendation_views.SelectRecommendationTypeView.as_view(),
         name="select_recommendation_type",
     ),
+    path("approve-all/", recommendation_views.GiveApprovalAdviceView.as_view(), name="approve_all"),
 ]
