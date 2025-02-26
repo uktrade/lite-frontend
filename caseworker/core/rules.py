@@ -35,6 +35,8 @@ def get_logged_in_caseworker(request):
 
 @rules.predicate
 def has_available_sub_statuses(request, case):
+    if case.reference != "siel":
+        return False
     return bool(get_case_sub_statuses(request, case["id"]))
 
 
