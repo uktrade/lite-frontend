@@ -1,8 +1,10 @@
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.views.generic import TemplateView, View
+import rules
 
 from core.auth.views import LoginRequiredMixin
 
@@ -39,7 +41,11 @@ class MoveCaseForward(LoginRequiredMixin, View):
         queue_pk = str(queue_pk)
         case_pk = str(pk)
         case = get_case(request, case_pk)
+        if not rules.test_rule("can_user_move_case_forward", self.request, case):
+            raise PermissionDenied("Cannot move case forward")
+
         move_case_forward(request, case_pk, queue_pk)
+
         all_cases_queue_url = reverse("cases:f680:details", kwargs={"queue_pk": ALL_CASES_QUEUE_ID, "pk": case_pk})
         success_message = (
             mark_safe(
