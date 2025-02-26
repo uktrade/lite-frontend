@@ -1,9 +1,30 @@
 {% extends 'layouts/case.html' %}
-{% block details %}
+{% load rules %}
+{% block full_width %}
+
+
 <section class="govuk-!-margin-top-8">
     <h1 class="govuk-visually-hidden">Case Summary</h1>
     {% include "f680/case/summary.html" %}
 </section>
+
+{% test_rule 'can_user_move_case_forward' request case as can_user_move_case_forward %}
+{% if can_user_move_case_forward and not is_all_cases_queue  %}
+<div class="govuk-width-container govuk-!-margin-top-5">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds"><br/></div>
+      <div class="govuk-grid-column-one-third">
+        <div class="govuk-grid-column-full" style="text-align: right">
+            <form action="{% url 'cases:f680:move_case_forward' queue.id case.id %}" method="POST">
+                {% csrf_token %}
+                <input class="govuk-button" type="submit" value="Move case forward">
+            </form>
+        </div>
+      </div>
+    </div>
+</div>
+{% endif %}
+
 
 {% for section_key, section in case.data.application.sections.items %}
     <div class="application-section">

@@ -1,8 +1,12 @@
-from django.views.generic import TemplateView
+from django.contrib import messages
+from django.shortcuts import redirect
+from django.urls import reverse
+from django.views.generic import TemplateView, View
 
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.cases.services import get_case
+from caseworker.advice.services import move_case_forward
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 
@@ -25,3 +29,15 @@ class CaseDetailView(LoginRequiredMixin, CaseworkerMixin, TemplateView):
             self.case["data"]["submitted_by"] = " ".join([submitted_by["first_name"], submitted_by["last_name"]])
         context_data["case"] = self.case
         return context_data
+
+
+class MoveCaseForward(LoginRequiredMixin, View):
+
+    def post(self, request, queue_pk, pk):
+        queue_pk = str(queue_pk)
+        case_pk = str(pk)
+        case = get_case(request, case_pk)
+        move_case_forward(request, case_pk, queue_pk)
+        messages.success(self.request, f"{case.reference_code} was successfully moved forward")
+        queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
+        return redirect(queue_url)
