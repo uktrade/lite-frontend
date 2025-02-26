@@ -1,9 +1,12 @@
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
+from django.urls import reverse
 
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.cases.services import get_case
 from caseworker.cases.helpers.case import CaseworkerMixin
+from caseworker.f680.recommendation.forms.forms import SelectRecommendationTypeForm
+from caseworker.f680.recommendation.mixins import CaseContextMixin
 from caseworker.queues.services import get_queue
 
 
@@ -23,3 +26,14 @@ class CaseRecommendationView(LoginRequiredMixin, CaseworkerMixin, TemplateView):
         context_data["case"] = self.case
         return context_data
 
+
+class SelectRecommendationTypeView(LoginRequiredMixin, CaseContextMixin, FormView):
+    template_name = "f680/case/recommendation/select_recommendation_type.html"
+    form_class = SelectRecommendationTypeForm
+
+    def get_success_url(self):
+        return reverse("cases:approve_all", kwargs=self.kwargs)
+
+    def form_valid(self, form):
+        self.recommendation = form.cleaned_data["recommendation"]
+        return super().form_valid(form)

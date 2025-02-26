@@ -17,4 +17,9 @@ urlpatterns = [
         recommendation_views.CaseRecommendationView.as_view(),
         name="recommendation",
     ),
+    path(
+        "select-recommendation-type/",
+        recommendation_views.SelectRecommendationTypeView.as_view(),
+        name="select_recommendation_type",
+    ),
 ]
