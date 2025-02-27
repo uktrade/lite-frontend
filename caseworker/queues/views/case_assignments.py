@@ -18,8 +18,7 @@ from caseworker.queues.services import (
 )
 from caseworker.users.services import get_gov_user
 from caseworker.queues.conditionals import is_queue_in_url_system_queue
-from caseworker.cases.helpers.case import get_case_detail_url
-from caseworker.cases.services import update_case_officer_on_cases, get_case
+from caseworker.cases.services import update_case_officer_on_cases
 from caseworker.queues.forms import SelectAllocateRole
 
 
