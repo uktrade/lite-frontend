@@ -73,7 +73,7 @@ class SelectRecommendationTypeView(LoginRequiredMixin, CaseContextMixin, FormVie
         return super().form_valid(form)
 
 
-class BaseApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
+class BaseApprovalRecommendationView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
     template_name = "f680/case/recommendation/form_wizard.html"
 
     condition_dict = {
@@ -118,7 +118,7 @@ class BaseApprovalAdviceView(LoginRequiredMixin, CaseContextMixin, BaseSessionWi
         return redirect(self.get_success_url())
 
 
-class GiveApprovalAdviceView(BaseApprovalAdviceView):
+class GiveApprovalRecommendationView(BaseApprovalRecommendationView):
 
     def get_form(self, step=None, data=None, files=None):
 

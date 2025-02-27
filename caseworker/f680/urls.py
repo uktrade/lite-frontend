@@ -18,10 +18,16 @@ urlpatterns = [
         name="recommendation",
     ),
     path(
-        "select-recommendation-type/",
+        "recommendation/select-recommendation-type/",
         recommendation_views.SelectRecommendationTypeView.as_view(),
         name="select_recommendation_type",
     ),
-    path("view-my-recommendation/", recommendation_views.MyRecommendationView.as_view(), name="view_my_recommendation"),
-    path("approve-all/", recommendation_views.GiveApprovalAdviceView.as_view(), name="approve_all"),
+    path(
+        "recommendation/view-my-recommendation/",
+        recommendation_views.MyRecommendationView.as_view(),
+        name="view_my_recommendation",
+    ),
+    path(
+        "recommendation/approve-all/", recommendation_views.GiveApprovalRecommendationView.as_view(), name="approve_all"
+    ),
 ]
