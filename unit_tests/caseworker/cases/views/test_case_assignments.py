@@ -356,17 +356,12 @@ def test_f680_case_assign_me(
     mock_gov_user,
     mock_add_assignment,
     mock_f680_case,
-    mock_standard_case_ecju_queries,
-    mock_standard_case_documents,
-    mock_standard_case_additional_contacts,
-    mock_standard_case_activity_filters,
     mock_queue,
-    mock_standard_case_assigned_queues,
     requests_mock,
 ):
     url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
     case_url = reverse(
-        "cases:case", kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]}
+        "cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]}
     )
     data = {
         "queue_id": data_queue["id"],
