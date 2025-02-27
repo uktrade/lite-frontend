@@ -140,7 +140,10 @@ def test_case_assignments_POST_remove_user_success(
     response = authorized_client.post(url, data={"assignment_id": str(data_assignment["id"])}, follow=True)
 
     assert response.status_code == 200
-    assert response.redirect_chain[-1][0] == f"/queues/{data_queue['id']}/cases/{data_standard_case['case']['id']}/"
+    assert (
+        response.redirect_chain[-1][0]
+        == f"/queues/{data_queue['id']}/cases/{data_standard_case['case']['id']}/details/"
+    )
     messages = [str(msg) for msg in response.context["messages"]]
     expected_message = "some user was successfully removed as case adviser"
     assert messages == [expected_message]
@@ -174,7 +177,10 @@ def test_case_assignments_remove_user_POST_error(
     url = reverse("cases:remove-case-assignment", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
     response = authorized_client.post(url, data={"assignment_id": str(data_assignment["id"])}, follow=True)
     assert response.status_code == 200
-    assert response.redirect_chain[-1][0] == f"/queues/{data_queue['id']}/cases/{data_standard_case['case']['id']}/"
+    assert (
+        response.redirect_chain[-1][0]
+        == f"/queues/{data_queue['id']}/cases/{data_standard_case['case']['id']}/details/"
+    )
     messages = [str(msg) for msg in response.context["messages"]]
     expected_message = "An error occurred when removing some user as case adviser. Please try again later"
     assert messages == [expected_message]

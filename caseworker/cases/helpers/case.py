@@ -264,7 +264,7 @@ class CaseView(CaseworkerMixin, TemplateView):
 def get_case_detail_url(case, queue_id):
     destinations = {
         "f680_clearance": {"url": "cases:f680:details", "kwargs": {"queue_pk": queue_id, "pk": case.id}},
-        "standard": {"url": "cases:case", "kwargs": {"queue_pk": queue_id, "pk": case.id}},
+        "standard": {"url": "cases:case", "kwargs": {"queue_pk": queue_id, "pk": case.id, "tab": "details"}},
     }
 
     case_type = case.case_type["sub_type"]["key"]
