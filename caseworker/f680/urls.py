@@ -11,4 +11,9 @@ urlpatterns = [
         views.CaseDetailView.as_view(),
         name="details",
     ),
+    path(
+        "move-case-forward",
+        views.MoveCaseForward.as_view(),
+        name="move_case_forward",
+    ),
 ]
