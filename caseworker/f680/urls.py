@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from caseworker.f680 import views
 
@@ -11,4 +11,5 @@ urlpatterns = [
         views.CaseDetailView.as_view(),
         name="details",
     ),
+    path("document/", include("caseworker.f680.document.urls")),
 ]
