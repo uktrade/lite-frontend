@@ -41,7 +41,10 @@ class MoveCaseForward(LoginRequiredMixin, View):
         queue_pk = str(queue_pk)
         case_pk = str(pk)
         case = get_case(request, case_pk)
-        if not rules.test_rule("can_user_move_case_forward", self.request, case):
+        user_can_move_case = rules.test_rule("can_user_move_case_forward", self.request, case)
+        user_can_modify_f680 = rules.test_rule("can_user_modify_f680", self.request)
+        permission_granted = user_can_move_case and user_can_modify_f680
+        if not permission_granted:
             raise PermissionDenied("Cannot move case forward")
 
         move_case_forward(request, case_pk, queue_pk)

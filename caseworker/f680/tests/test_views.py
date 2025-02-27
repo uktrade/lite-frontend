@@ -17,7 +17,9 @@ def setup(
     mock_denial_reasons,
     mock_proviso,
     mock_footnote_details,
+    settings,
 ):
+    settings.FEATURE_FLAG_ALLOW_F680 = True
     return
 
 
@@ -142,6 +144,11 @@ def mock_put_assigned_queues(f680_case_id, requests_mock, data_queue):
     )
 
 
+@pytest.fixture
+def f680_feature_flag_disabled(settings):
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
 class TestCaseDetailView:
 
     def test_GET_success(
@@ -192,7 +199,14 @@ class TestCaseDetailView:
 
 class TestMoveCaseForwardView:
 
-    def test_POST_no_permisison(self, authorized_client, data_queue, mock_f680_case, f680_case_id):
+    def test_POST_not_assigned_permisison_denied(self, authorized_client, data_queue, mock_f680_case, f680_case_id):
+        url = reverse("cases:f680:move_case_forward", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        response = authorized_client.post(url)
+        assert response.status_code == 403
+
+    def test_POST_no_f680_feature_flag_permission_denied(
+        self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_feature_flag_disabled
+    ):
         url = reverse("cases:f680:move_case_forward", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.post(url)
         assert response.status_code == 403
