@@ -30,4 +30,9 @@ urlpatterns = [
     path(
         "recommendation/approve-all/", recommendation_views.GiveApprovalRecommendationView.as_view(), name="approve_all"
     ),
+    path(
+        "move-case-forward",
+        views.MoveCaseForward.as_view(),
+        name="move_case_forward",
+    ),
 ]
