@@ -69,7 +69,8 @@ class CaseAssignmentRemove(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         case = self.get_case()
-        return get_case_detail_url(case.id, case.case_type, self.kwargs["queue_pk"])
+        case_type = case.case_type["sub_type"]["key"]
+        return get_case_detail_url(case.id, case_type, self.kwargs["queue_pk"])
 
 
 class CaseOfficerRemove(LoginRequiredMixin, FormView):

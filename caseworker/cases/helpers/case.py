@@ -267,8 +267,6 @@ def get_case_detail_url(case_id, case_type, queue_id):
         "standard": {"url": "cases:case", "kwargs": {"queue_pk": queue_id, "pk": case_id, "tab": "details"}},
     }
 
-    case_type = case_type["sub_type"]["key"]
     url_name = destinations[case_type]["url"]
     kwargs = destinations[case_type]["kwargs"]
-
     return reverse(url_name, kwargs=kwargs)
