@@ -54,8 +54,6 @@ class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
         data = form.cleaned_data
         self.allocate_to_me(data)
         messages.success(self.request, f"You have been successfully added as case adviser")
-        self.case_id = data["case_id"]
-        self.queue_id = data["queue_id"]
         self.success_url = data["return_to"]
 
         return super().form_valid(form)
@@ -69,14 +67,6 @@ class CaseAssignmentAllocateToMe(LoginRequiredMixin, FormView):
         return put_queue_case_assignments(
             self.request, data["queue_id"], [data["case_id"]], [data["user_id"]], "Allocated self to the case"
         )
-
-    def get_success_url(self):
-        case = get_case(self.request, self.case_id)
-        url = get_case_detail_url(case, self.queue_id)
-
-        if self.success_url != url:
-            return url
-        return self.success_url
 
 
 class CaseAssignmentsCaseOfficer(LoginRequiredMixin, CaseContextBasicMixin, SuccessMessageMixin, FormView):
