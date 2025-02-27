@@ -11,6 +11,7 @@ from caseworker.f680.recommendation.forms.forms import (
     PicklistLicenceConditionsForm,
     RecommendAnApprovalForm,
     SelectRecommendationTypeForm,
+    SimpleLicenceConditionsForm,
 )
 from core import client
 
@@ -21,7 +22,6 @@ def setup(
     mock_case,
     mock_approval_reason,
     mock_denial_reasons,
-    mock_proviso,
     mock_footnote_details,
 ):
     return
@@ -192,6 +192,54 @@ class TestF680GiveApprovalRecommendationView:
         assert header.text == "Add licence conditions (optional)"
 
         add_LC_response = post_to_step(AdviceSteps.LICENCE_CONDITIONS, {"proviso": "proviso"})
+        assert add_LC_response.status_code == 200
+        soup = beautiful_soup(add_LC_response.content)
+        # redirected to next form
+        form = add_LC_response.context["form"]
+        assert isinstance(form, FootnotesApprovalAdviceForm)
+        header = soup.find("h1")
+        assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
+
+        add_instructions_response = post_to_step(
+            AdviceSteps.LICENCE_FOOTNOTES,
+            {"instructions_to_exporter": "instructions", "footnote_details": "footnotes"},
+        )
+        assert add_instructions_response.status_code == 302
+        assert (
+            add_instructions_response.url
+            == f'/queues/{data_queue["id"]}/cases/{f680_case_id}/f680/recommendation/view-my-recommendation/'
+        )
+
+    def test_approval_advice_post_valid_add_conditional_optional(
+        self,
+        authorized_client,
+        data_queue,
+        f680_case_id,
+        data_f680_case,
+        url_approve,
+        mock_f680_case,
+        mock_approval_reason,
+        mock_footnote_details,
+        mock_post_recommendation,
+        mock_proviso_no_results,
+        post_to_step,
+        beautiful_soup,
+    ):
+        response = post_to_step(
+            AdviceSteps.RECOMMEND_APPROVAL,
+            {"approval_reasons": "reason", "add_licence_conditions": True},
+        )
+        assert response.status_code == 200
+
+        soup = beautiful_soup(response.content)
+        # redirected to next form
+        form = response.context["form"]
+        assert isinstance(form, SimpleLicenceConditionsForm)
+
+        header = soup.find("h1")
+        assert header.text == "Add licence conditions (optional)"
+
+        add_LC_response = post_to_step(AdviceSteps.LICENCE_CONDITIONS, {})
         assert add_LC_response.status_code == 200
         soup = beautiful_soup(add_LC_response.content)
         # redirected to next form

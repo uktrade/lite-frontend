@@ -99,3 +99,9 @@ def mock_f680_case(f680_case_id, requests_mock, data_f680_case):
 def mock_post_recommendation(requests_mock, data_f680_case):
     user_recommendation_create_url = f"/cases/{data_f680_case['case']['id']}/user-advice/"
     return requests_mock.post(user_recommendation_create_url, json={}, status_code=201)
+
+
+@pytest.fixture
+def mock_proviso_no_results(requests_mock):
+    url = client._build_absolute_uri("/picklist/?type=proviso&page=1&disable_pagination=True&show_deactivated=False")
+    return requests_mock.get(url=url, json={"results": []})
