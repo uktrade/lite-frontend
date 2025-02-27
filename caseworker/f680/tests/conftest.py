@@ -93,3 +93,9 @@ def f680_reference_code():
 def mock_f680_case(f680_case_id, requests_mock, data_f680_case):
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
     return requests_mock.get(url=url, json=data_f680_case)
+
+
+@pytest.fixture
+def mock_post_recommendation(requests_mock, data_f680_case):
+    user_recommendation_create_url = f"/cases/{data_f680_case['case']['id']}/user-advice/"
+    return requests_mock.post(user_recommendation_create_url, json={}, status_code=201)
