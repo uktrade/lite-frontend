@@ -47,11 +47,11 @@ class MoveCaseForward(LoginRequiredMixin, View):
         move_case_forward(request, case_pk, queue_pk)
 
         all_cases_queue_url = reverse("cases:f680:details", kwargs={"queue_pk": ALL_CASES_QUEUE_ID, "pk": case_pk})
-        success_message = (
-            mark_safe(
-                f"<a href='{all_cases_queue_url}' class='govuk-link govuk-link--inverse'>{case.reference_code}</a>&nbsp;"
-                "was successfully moved forward"
-            )
+        # WARNING: When changing this message be aware that the content is marked
+        #   as safe. No user-supplied string should be injected in to it
+        success_message = mark_safe(  # noqa: S308
+            f"<a href='{all_cases_queue_url}' class='govuk-link govuk-link--inverse'>{case.reference_code}</a>&nbsp;"
+            "was successfully moved forward"
         )
         messages.success(self.request, success_message, extra_tags="safe")
         queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
