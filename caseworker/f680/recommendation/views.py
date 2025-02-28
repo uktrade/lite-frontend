@@ -26,10 +26,25 @@ from core.wizard.views import BaseSessionWizardView
 class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "f680/case/recommendation/recommendation.html"
 
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.title = (
+            f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
+        )
+        self.recommendation = None
+        if recommendation := get_current_user_recommendation(
+            self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
+        ):
+            self.recommendation = recommendation[0] if recommendation else None
+
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data["case"] = self.case
-        return context_data
+        return {
+            **context_data,
+            "case": self.case,
+            "title": self.title,
+            "recommendation": self.recommendation,
+        }
 
 
 class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
@@ -41,7 +56,6 @@ class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         recommendation = get_current_user_recommendation(
             self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
         )
-        recommendation = recommendation.get(self.caseworker_id)
 
         return {
             **context,

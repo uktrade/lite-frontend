@@ -70,9 +70,17 @@ def recommendation(current_user, admin_team):
 class TestF680RecommendationView:
 
     def test_GET_recommendation_success(
-        self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_f680_case
+        self,
+        authorized_client,
+        f680_cases_to_review,
+        current_user,
+        mock_f680_case,
+        f680_case_id,
+        f680_reference_code,
+        data_f680_case,
     ):
-        url = reverse("cases:f680:recommendation", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        url = reverse("cases:f680:recommendation", kwargs={"queue_pk": f680_cases_to_review["id"], "pk": f680_case_id})
+        data_f680_case["case"]["assigned_users"] = {f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
         response = authorized_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
@@ -84,7 +92,7 @@ class TestF680RecommendationView:
         assert make_recommendation_button
         assert (
             make_recommendation_button["href"]
-            == f'/queues/{data_queue["id"]}/cases/{f680_case_id}/f680/recommendation/select-recommendation-type/'
+            == f'/queues/{f680_cases_to_review["id"]}/cases/{f680_case_id}/f680/recommendation/select-recommendation-type/'
         )
 
 
