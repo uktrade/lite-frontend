@@ -1,10 +1,15 @@
 <table class="govuk-table application-section-{{section_key}}">
     <tbody class="govuk-table__body">
+        <colgroup>
+            <col span="1" class="application-questions"/>
+        </colgroup>
         {% for field in item.fields %}
-        <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header">{{field.question}}</th>
-            <td class="govuk-table__cell">{{field.answer}}</td>
-        </tr>
+            {% if field.answer %}
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">{{field.question}}</th>
+                <td class="govuk-table__cell">{% include "f680/includes/answer.html" with field=field %}</td>
+            </tr>
+            {% endif %}
         {% endfor %}
     </tbody>
 </table>
