@@ -15,9 +15,7 @@ from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 
 
-class CaseDetailView(LoginRequiredMixin, CaseworkerMixin, TemplateView):
-    template_name = "f680/case/detail.html"
-
+class F680CaseworkerMixin(LoginRequiredMixin, CaseworkerMixin):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
 
@@ -28,10 +26,18 @@ class CaseDetailView(LoginRequiredMixin, CaseworkerMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
+        context_data["case"] = self.case
+        return context_data
+
+
+class CaseDetailView(F680CaseworkerMixin, TemplateView):
+    template_name = "f680/case/detail.html"
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
         submitted_by = self.case["data"]["submitted_by"]
         if submitted_by and "first_name" in submitted_by:
             self.case["data"]["submitted_by"] = " ".join([submitted_by["first_name"], submitted_by["last_name"]])
-        context_data["case"] = self.case
         return context_data
 
 

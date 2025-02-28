@@ -1,0 +1,17 @@
+{% extends 'layouts/case.html' %}
+{% load crispy_forms_tags %}
+
+{% block full_width %}
+	<div class="app-letter-preview__container">
+		<div class="lite-app-bar">
+			<div class="lite-app-bar__content">
+				<h1 class="govuk-heading-l">{% block title %}Generate Document{% endblock %}</h1>
+			</div>
+		</div>
+        {% crispy form %}
+		<div class="app-letter-preview__page" id="preview">
+			{{ preview|safe }}
+		</div>
+	</div>
+
+{% endblock %}

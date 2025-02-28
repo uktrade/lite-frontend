@@ -11,4 +11,9 @@ urlpatterns = [
         views.DocumentGenerationView.as_view(),
         name="all",
     ),
+    path(
+        "<uuid:template_id>/generate/",
+        views.F680GenerateDocument.as_view(),
+        name="generate",
+    ),
 ]

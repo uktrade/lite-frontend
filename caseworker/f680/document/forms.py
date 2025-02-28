@@ -1,7 +1,8 @@
-from crispy_forms_gds.layout import HTML
+from crispy_forms_gds.layout import Button, HTML
+from django import forms
+from django.template.loader import render_to_string
 
 from core.common.forms import BaseForm
-from django.template.loader import render_to_string
 
 
 class DocumentGenerationForm(BaseForm):
@@ -19,6 +20,28 @@ class DocumentGenerationForm(BaseForm):
             render_to_string("f680/document/document-generation.html", {"approval_templates": self.approval_templates})
         )
         return (document_table,)
+
+    def get_layout_actions(self):
+        # Prevent the standard submit button being shown
+        return []
+
+
+class GenerateDocumentForm(BaseForm):
+    class Layout:
+        TITLE = "Generate document"
+
+    text = forms.CharField(
+        label="Customisation text",
+        widget=forms.Textarea(attrs={"rows": 3}),
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return (
+            "text",
+            Button(name="preview", value="Preview"),
+            Button(name="generate", value="Generate"),
+        )
 
     def get_layout_actions(self):
         # Prevent the standard submit button being shown
