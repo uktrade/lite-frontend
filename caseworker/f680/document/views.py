@@ -8,7 +8,7 @@ from django.views.generic import FormView
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
-from caseworker.cases.services import get_generated_document_preview
+from caseworker.cases.services import get_generated_document_preview, post_generated_document
 from caseworker.letter_templates.services import get_letter_templates_list
 from caseworker.cases.services import get_case
 
@@ -69,11 +69,32 @@ class F680GenerateDocument(F680CaseworkerMixin, FormView):
             self.request, self.case_id, template=template_id, text=text, addressee=None
         )
 
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error generating document",
+        "Unexpected error generating document",
+    )
+    def generate_document(self, template_id, text):
+        # TODO: Use of get_generated_document_preview service helper should
+        #   be replaced with something that doesn't require text to be quoted
+        return None, post_generated_document(
+            self.request,
+            self.case_id,
+            {
+                "template": template_id,
+                "text": text,
+                "addressee": None,
+                "visible_to_exporter": False,
+            },
+        )
+
     def form_valid(self, form):
         if "generate" not in self.request.POST:
             # Just show the preview screen again if the user has clicked preview
             return self.form_invalid(form)
-        # TODO: Actually generate the document..
+
+        # TODO: Think about a payload builder
+        self.generate_document(str(self.kwargs["template_id"]), self.get_text(form))
         success_message = "Generated document successfully"
         messages.success(self.request, success_message)
         return super().form_valid(form)
@@ -82,14 +103,17 @@ class F680GenerateDocument(F680CaseworkerMixin, FormView):
         # TODO: Redirect the user to the landing screen when we have a document
         return reverse("cases:f680:details", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
-    def get_context_data(self, *args, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-        template_id = str(self.kwargs["template_id"])
-        case_id = str(self.kwargs["pk"])
-        form = context_data["form"]
+    def get_text(self, form):
         text = None
         if form.is_bound:
             text = quote(form.cleaned_data.get("text", ""))
+        return text
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        template_id = str(self.kwargs["template_id"])
+        form = context_data["form"]
+        text = self.get_text(form)
         preview_response, _ = self.get_generated_document_preview(template_id=template_id, text=text)
         context_data.update(
             {
