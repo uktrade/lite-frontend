@@ -9,8 +9,6 @@ from caseworker.advice.constants import AdviceSteps
 from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
-from caseworker.cases.services import get_case
-from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.f680.recommendation.forms.forms import (
     FootnotesApprovalAdviceForm,
     PicklistLicenceConditionsForm,
@@ -20,22 +18,13 @@ from caseworker.f680.recommendation.forms.forms import (
 )
 from caseworker.f680.recommendation.mixins import CaseContextMixin
 from caseworker.f680.recommendation.services import get_current_user_recommendation, post_approval_recommendation
-from caseworker.queues.services import get_queue
 from core.decorators import expect_status
 from core.wizard.conditionals import C
 from core.wizard.views import BaseSessionWizardView
 
 
-class CaseRecommendationView(LoginRequiredMixin, CaseworkerMixin, TemplateView):
+class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     template_name = "f680/case/recommendation/recommendation.html"
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-
-        self.case_id = str(kwargs["pk"])
-        self.case = get_case(request, self.case_id)
-        self.queue_id = kwargs["queue_pk"]
-        self.queue = get_queue(request, self.queue_id)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)

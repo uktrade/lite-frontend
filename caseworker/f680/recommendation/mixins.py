@@ -1,6 +1,6 @@
-from django.utils.functional import cached_property
 
 from caseworker.cases.services import get_case
+from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
 
 
@@ -10,22 +10,16 @@ class CaseContextMixin:
     in the context.
     """
 
-    @property
-    def case_id(self):
-        return str(self.kwargs["pk"])
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
 
-    @cached_property
-    def case(self):
-        return get_case(self.request, self.case_id)
-
-    @property
-    def caseworker_id(self):
-        return str(self.request.session["lite_api_user_id"])
-
-    @property
-    def caseworker(self):
+        self.case_id = str(kwargs["pk"])
+        self.case = get_case(request, self.case_id)
+        self.queue_id = kwargs["queue_pk"]
+        self.queue = get_queue(request, self.queue_id)
+        self.caseworker_id = str(self.request.session["lite_api_user_id"])
         data, _ = get_gov_user(self.request, self.caseworker_id)
-        return data["user"]
+        self.caseworker = data["user"]
 
     def get_context(self, **kwargs):
         return {}
@@ -37,6 +31,6 @@ class CaseContextMixin:
             **context,
             **self.get_context(case=self.case),
             "case": self.case,
-            "queue_pk": self.kwargs["queue_pk"],
+            "queue_pk": self.queue_id,
             "caseworker": self.caseworker,
         }
