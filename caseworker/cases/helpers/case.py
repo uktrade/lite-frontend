@@ -168,10 +168,10 @@ class CaseView(CaseworkerMixin, TemplateView):
 
     def get_destination_countries(self):
         destination_countries = set()
-        all_parties = self.case.data.get("ultimate_end_users", {}) + self.case.data.get("third_parties", {})
-        if self.case.data.get("end_user", {}):
+        all_parties = self.case.data.get("ultimate_end_users", []) + self.case.data.get("third_parties", [])
+        if self.case.data.get("end_user"):
             all_parties.append(self.case.data["end_user"])
-        if self.case.data.get("consignee", {}):
+        if self.case.data.get("consignee"):
             all_parties.append(self.case.data["consignee"])
         for party in all_parties:
             destination_countries.add(party["country"]["name"])

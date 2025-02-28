@@ -1,4 +1,3 @@
-
 from caseworker.cases.services import get_case
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
