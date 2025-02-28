@@ -8,7 +8,9 @@
 				<h1 class="govuk-heading-l">{% block title %}Generate Document{% endblock %}</h1>
 			</div>
 		</div>
+
         {% crispy form %}
+
 		<div class="app-letter-preview__page" id="preview">
 			{{ preview|safe }}
 		</div>

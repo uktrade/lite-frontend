@@ -15,7 +15,7 @@ from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 
 
-class F680CaseworkerMixin(LoginRequiredMixin, CaseworkerMixin):
+class F680CaseworkerMixin(CaseworkerMixin):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
 
@@ -30,7 +30,7 @@ class F680CaseworkerMixin(LoginRequiredMixin, CaseworkerMixin):
         return context_data
 
 
-class CaseDetailView(F680CaseworkerMixin, TemplateView):
+class CaseDetailView(F680CaseworkerMixin, LoginRequiredMixin, TemplateView):
     template_name = "f680/case/detail.html"
 
     def get_context_data(self, **kwargs):
