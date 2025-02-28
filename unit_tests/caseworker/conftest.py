@@ -431,6 +431,12 @@ def mock_standard_case(requests_mock, data_standard_case):
 
 
 @pytest.fixture
+def mock_f680_case(requests_mock, data_submitted_f680_case):
+    url = client._build_absolute_uri(f"/cases/{data_submitted_f680_case['case']['id']}/")
+    yield requests_mock.get(url=url, json=data_submitted_f680_case)
+
+
+@pytest.fixture
 def mock_finalise_advice_documents(requests_mock, data_standard_case):
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/final-advice-documents/")
     yield requests_mock.get(url=url, json={"documents": {"refusal": {}, "approval": {}}})
@@ -2740,6 +2746,24 @@ def data_assignment(data_standard_case, data_queue):
 
 
 @pytest.fixture
+def data_f680_assignment(data_submitted_f680_case, data_queue):
+    assignment_id = "4ccc09d8-04e1-426d-a69d-eda2d3854788"
+    user_id = "9ac96323-d519-4781-8424-84b9c7cc3186"
+    return {
+        "case": data_submitted_f680_case["case"]["id"],
+        "id": assignment_id,
+        "queue": data_queue["id"],
+        "user": {
+            "email": "example@example.net",
+            "first_name": "some",
+            "id": user_id,
+            "last_name": "user",
+            "team": "The A Team",
+        },
+    }
+
+
+@pytest.fixture
 def mock_standard_case_with_assignments(requests_mock, data_standard_case, data_assignment, data_queue):
     url = client._build_absolute_uri(f"/cases/{data_standard_case['case']['id']}/")
     data_standard_case["case"]["assigned_users"] = {
@@ -2754,6 +2778,23 @@ def mock_standard_case_with_assignments(requests_mock, data_standard_case, data_
         ]
     }
     return requests_mock.get(url=url, json=data_standard_case)
+
+
+@pytest.fixture
+def mock_f680_case_with_assignments(requests_mock, data_submitted_f680_case, data_f680_assignment, data_queue):
+    url = client._build_absolute_uri(f"/cases/{data_submitted_f680_case['case']['id']}/")
+    data_submitted_f680_case["case"]["assigned_users"] = {
+        data_queue["name"]: [
+            {
+                "id": data_f680_assignment["user"]["id"],
+                "first_name": data_f680_assignment["user"]["first_name"],
+                "last_name": data_f680_assignment["user"]["last_name"],
+                "email": data_f680_assignment["user"]["email"],
+                "assignment_id": data_f680_assignment["id"],
+            }
+        ]
+    }
+    return requests_mock.get(url=url, json=data_submitted_f680_case)
 
 
 @pytest.fixture
