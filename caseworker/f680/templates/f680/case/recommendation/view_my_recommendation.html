@@ -1,0 +1,35 @@
+{% extends 'layouts/case.html' %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block body %}
+<div class="govuk-width-container">
+    <main class="govuk-main-wrapper">
+        {% for error in form.non_field_errors %}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+          <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+          </h2>
+          <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+              <li>
+                {{ error }}
+              </li>
+            </ul>
+          </div>
+        </div>
+        {% endfor %}
+        <div class="govuk-grid-row">
+          <br>
+            <div class="govuk-grid-column-three-quarters">
+              <h1 class="govuk-heading-xl">View recommendation</h1>
+              {% if recommendation %}
+                  {% include "f680/case/recommendation/recommendation_details.html" %}
+              {% else %}
+                <label class="govuk-label">No recommendation is given for this case yet</label>
+              {% endif %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
