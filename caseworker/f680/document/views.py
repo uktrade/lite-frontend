@@ -94,7 +94,7 @@ class F680GenerateDocument(F680CaseworkerMixin, LoginRequiredMixin, FormView):
             return self.form_invalid(form)
 
         # TODO: Think about a payload builder
-        self.generate_document(str(self.kwargs["template_id"]), self.get_text(form))
+        self.generate_document(str(self.kwargs["template_id"]), form.cleaned_data["text"])
         success_message = "Generated document successfully"
         messages.success(self.request, success_message)
         return super().form_valid(form)
