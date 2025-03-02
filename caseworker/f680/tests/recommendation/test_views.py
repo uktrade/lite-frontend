@@ -95,6 +95,40 @@ class TestF680RecommendationView:
             == f'/queues/{f680_cases_to_review["id"]}/cases/{f680_case_id}/f680/recommendation/select-recommendation-type/'
         )
 
+    @pytest.mark.parametrize(
+        "recommendation_type, decision_string",
+        [
+            ({"key": "approve", "value": "Approve"}, "has approved"),
+            ({"key": "proviso", "value": "Proviso"}, "has approved with licence conditions"),
+        ],
+    )
+    def test_GET_recommendation_page_existing_recommendation(
+        self,
+        authorized_client,
+        f680_cases_to_review,
+        current_user,
+        mock_f680_case,
+        f680_case_id,
+        data_f680_case,
+        recommendation,
+        recommendation_type,
+        decision_string,
+    ):
+        url = reverse("cases:f680:recommendation", kwargs={"queue_pk": f680_cases_to_review["id"], "pk": f680_case_id})
+        data_f680_case["case"]["assigned_users"] = {f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
+        recommendation[0]["type"] = recommendation_type
+        data_f680_case["case"]["advice"] = recommendation
+        response = authorized_client.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
+        assertTemplateUsed(response, "f680/case/recommendation/other-recommendations.html")
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        all_teams_recommendation = soup.find_all("summary", {"class": "govuk-details__summary"})
+        assert len(all_teams_recommendation) == 1
+        actual_string = all_teams_recommendation[0].text.replace("\n", "").strip()
+        assert actual_string == f"{current_user['team']['name']} {decision_string}"
+
 
 class TestF680SelectRecommendationTypeView:
 

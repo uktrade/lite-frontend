@@ -17,7 +17,10 @@ from caseworker.f680.recommendation.forms.forms import (
     SimpleLicenceConditionsForm,
 )
 from caseworker.f680.recommendation.mixins import CaseContextMixin
-from caseworker.f680.recommendation.services import get_current_user_recommendation, post_approval_recommendation
+from caseworker.f680.recommendation.services import (
+    get_current_user_recommendation,
+    post_approval_recommendation,
+)
 from core.decorators import expect_status
 from core.wizard.conditionals import C
 from core.wizard.views import BaseSessionWizardView

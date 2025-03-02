@@ -1,23 +1,18 @@
 {% load advice_tags %}
 {% load static custom_tags %}
 
-{% block body %}
-<div class="govuk-width-container">
-    <main class="govuk-main-wrapper">
-        {% include "f680/case/recommendation/includes/form_errors.html" %}
-      <div class="govuk-grid-row">
-          <br>
-            <div class="govuk-grid-column-three-quarters">
-                <h1 class="govuk-heading-xl">View recommendation</h1>
-                {% with user=recommendation.user decision=recommendation.type.key %}
-                    {% if decision == 'approve' or decision == 'proviso' %}
-                        {% include "f680/case/recommendation/includes/recommendation_details_approve.html" with recommendation=recommendation %}
-                    {% elif decision == 'refuse' %}
-                        {% include "f680/case/recommendation/includes/recommendation_details_refuse.html" with recommendation=recommendation %}
-                    {% endif %}
-                {% endwith %}
-            </div>
+{% block full_width %}
+    {% include "f680/case/recommendation/includes/form_errors.html" %}
+    <div class="govuk-grid-row">
+        <br>
+        <div class="govuk-grid-column-three-quarters">
+            {% with user=recommendation.user decision=recommendation.type.key %}
+                {% if decision == 'approve' or decision == 'proviso' %}
+                    {% include "f680/case/recommendation/includes/recommendation_details_approve.html" with recommendation=recommendation %}
+                {% elif decision == 'refuse' %}
+                    {% include "f680/case/recommendation/includes/recommendation_details_refuse.html" with recommendation=recommendation %}
+                {% endif %}
+            {% endwith %}
         </div>
-    </main>
-</div>
+    </div>
 {% endblock %}
