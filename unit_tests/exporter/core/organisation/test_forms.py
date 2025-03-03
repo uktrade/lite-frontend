@@ -430,6 +430,13 @@ def test_register_details_form_field_validation(
             True,
             None,
         ),
+        (
+            {
+                "registration_number": "FC123456",
+            },
+            True,
+            None,
+        ),
     ),
 )
 def test_register_number_form_field_validation(

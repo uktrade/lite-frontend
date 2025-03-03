@@ -29,6 +29,22 @@ from caseworker.cases.objects import Case
 mock_gov_user_id = "2a43805b-c082-47e7-9188-c8b3e1a83cb0"  # /PS-IGNORE
 
 
+@pytest.fixture
+def f680_feature_flag_enabled(settings):
+    settings.FEATURE_FLAG_ALLOW_F680 = True
+
+
+@pytest.fixture
+def f680_feature_flag_disabled(settings):
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
+@pytest.fixture
+def mock_request_with_user(mock_gov_user, get_mock_request_user):
+    user = mock_gov_user["user"]
+    return get_mock_request_user(user)
+
+
 @pytest.mark.parametrize(
     "data, expected_result",
     (
@@ -717,12 +733,22 @@ def test_can_caseworker_add_edit_role(mock_gov_user, get_mock_request_user, user
         (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, {"user": {"id": "123"}}, True),
         (SUPER_USER_ROLE_ID, TAU_TEAM_ID, {"user": {"id": "123"}}, True),
         (LICENSING_UNIT_SENIOR_MANAGER_ROLE_ID, ADMIN_TEAM_ID, {"user": {"id": "123"}}, False),
-        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}}, False),
-        (SUPER_USER_ROLE_ID, TAU_TEAM_ID, {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}}, False),
         (
             SUPER_USER_ROLE_ID,
             ADMIN_TEAM_ID,
-            {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}},
+            {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}},  # /PS-IGNORE
+            False,
+        ),
+        (
+            SUPER_USER_ROLE_ID,
+            TAU_TEAM_ID,
+            {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}},  # /PS-IGNORE
+            False,
+        ),
+        (
+            SUPER_USER_ROLE_ID,
+            ADMIN_TEAM_ID,
+            {"user": {"id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0"}},  # /PS-IGNORE
             False,
         ),
         (None, None, None, False),
@@ -735,3 +761,11 @@ def test_can_caseworker_deactivate(mock_gov_user, get_mock_request_user, user_te
     user["team"]["id"] = user_team
     request = get_mock_request_user(user)
     assert rules.test_rule("can_caseworker_deactivate", request, user_data) is expected
+
+
+def test_can_user_modify_f680_feature_flag_enabled(f680_feature_flag_enabled, mock_request_with_user):
+    assert rules.test_rule("can_user_modify_f680", mock_request_with_user) is True
+
+
+def test_can_user_modify_f680_feature_flag_disabled(f680_feature_flag_disabled, mock_request_with_user):
+    assert rules.test_rule("can_user_modify_f680", mock_request_with_user) is False

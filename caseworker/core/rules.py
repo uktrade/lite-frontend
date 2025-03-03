@@ -1,3 +1,4 @@
+from django.conf import settings
 import rules
 
 from caseworker.advice.constants import AdviceLevel
@@ -197,6 +198,11 @@ def check_user_is_not_logged_in_caseworker(request, user):
     return is_actioned_user_not_current_user
 
 
+@rules.predicate
+def is_f680_feature_flag_enabled(request):
+    return settings.FEATURE_FLAG_ALLOW_F680
+
+
 rules.add_rule("can_user_allocate_case", is_case_caseworker_operable)
 rules.add_rule("can_user_change_case", is_user_allocated)
 rules.add_rule("can_user_move_case_forward", is_user_allocated)
@@ -225,3 +231,4 @@ rules.add_rule("can_user_manage_organisation", is_user_manage_organisations_role
 rules.add_rule("can_caseworker_deactivate", (is_super_user) & check_user_is_not_logged_in_caseworker)  # noqa
 rules.add_rule("can_caseworker_edit_user", (is_super_user))  # noqa
 rules.add_rule("can_caseworker_add_user", (is_super_user))  # noqa
+rules.add_rule("can_user_modify_f680", is_f680_feature_flag_enabled)

@@ -168,10 +168,10 @@ class CaseView(CaseworkerMixin, TemplateView):
 
     def get_destination_countries(self):
         destination_countries = set()
-        all_parties = self.case.data["ultimate_end_users"] + self.case.data["third_parties"]
-        if self.case.data["end_user"]:
+        all_parties = self.case.data.get("ultimate_end_users", []) + self.case.data.get("third_parties", [])
+        if self.case.data.get("end_user"):
             all_parties.append(self.case.data["end_user"])
-        if self.case.data["consignee"]:
+        if self.case.data.get("consignee"):
             all_parties.append(self.case.data["consignee"])
         for party in all_parties:
             destination_countries.add(party["country"]["name"])
@@ -259,3 +259,14 @@ class CaseView(CaseworkerMixin, TemplateView):
         else:
             getattr(self, "get_" + self.case.sub_type)()
         return render(request, "case/case.html", self.get_context())
+
+
+def get_case_detail_url(case_id, case_type, queue_id):
+    destinations = {
+        "f680_clearance": {"url": "cases:f680:details", "kwargs": {"queue_pk": queue_id, "pk": case_id}},
+        "standard": {"url": "cases:case", "kwargs": {"queue_pk": queue_id, "pk": case_id, "tab": "details"}},
+    }
+
+    url_name = destinations[case_type]["url"]
+    kwargs = destinations[case_type]["kwargs"]
+    return reverse(url_name, kwargs=kwargs)
