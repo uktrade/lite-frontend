@@ -7,8 +7,8 @@ app_name = "document"
 
 urlpatterns = [
     path(
-        "generation/",
+        "",
         views.DocumentGenerationView.as_view(),
-        name="generation",
+        name="all",
     ),
 ]

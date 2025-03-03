@@ -35,7 +35,7 @@ class DocumentGenerationView(LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
-        form_kwargs["approval_template"] = self.letter_templates["results"]
+        form_kwargs["approval_templates"] = self.letter_templates["results"]
         return form_kwargs
 
     def get_context_data(self, **kwargs):

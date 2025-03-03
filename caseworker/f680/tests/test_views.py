@@ -137,8 +137,8 @@ class TestMoveCaseForwardView:
         assert response.status_code == 302
         assert response.url == reverse("queues:cases", kwargs={"queue_pk": data_queue["id"]})
 
-        
- class TestCaseDocumentGenerationView:
+
+class TestCaseDocumentGenerationView:
 
     def test_GET_success(
         self,
@@ -150,7 +150,7 @@ class TestMoveCaseForwardView:
         data_f680_case,
         mock_letter_template_filter,
     ):
-        url = reverse("cases:f680:document:generation", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
         assert response.status_code == 200
         assert dict(response.context["case"]) == data_f680_case["case"]
@@ -163,6 +163,6 @@ class TestMoveCaseForwardView:
         assert "F680 Approval" in table_text
 
     def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
-        url = reverse("cases:f680:document:generation", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
+        url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
         with pytest.raises(HTTPError, match="404"):
             authorized_client.get(url)
