@@ -34,17 +34,17 @@ def mock_missing_case(missing_case_id, requests_mock):
 
 
 @pytest.fixture
-def mock_f680_case_with_submitted_by(f680_case_id, requests_mock, data_f680_case):
-    data_f680_case["case"]["data"]["submitted_by"] = {"first_name": "foo", "last_name": "bar"}
+def mock_f680_case_with_submitted_by(f680_case_id, requests_mock, data_submitted_f680_case):
+    data_submitted_f680_case["case"]["data"]["submitted_by"] = {"first_name": "foo", "last_name": "bar"}
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
-    return requests_mock.get(url=url, json=data_f680_case)
+    return requests_mock.get(url=url, json=data_submitted_f680_case)
 
 
 @pytest.fixture
-def mock_f680_case_with_assigned_user(f680_case_id, requests_mock, data_f680_case, data_queue, mock_gov_user):
-    data_f680_case["case"]["assigned_users"] = {data_queue["name"]: [mock_gov_user["user"]]}
+def mock_f680_case_with_assigned_user(f680_case_id, requests_mock, data_submitted_f680_case, data_queue, mock_gov_user):
+    data_submitted_f680_case["case"]["assigned_users"] = {data_queue["name"]: [mock_gov_user["user"]]}
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
-    return requests_mock.get(url=url, json=data_f680_case)
+    return requests_mock.get(url=url, json=data_submitted_f680_case)
 
 
 @pytest.fixture
@@ -70,12 +70,12 @@ def mock_letter_template_filter(requests_mock):
 class TestCaseDetailView:
 
     def test_GET_success(
-        self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_f680_case
+        self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_submitted_f680_case
     ):
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
         assert response.status_code == 200
-        assert dict(response.context["case"]) == data_f680_case["case"]
+        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
         soup = BeautifulSoup(response.content, "html.parser")
         assert f680_reference_code in soup.find("h1").text
         assert "General application details" in soup.find("h2").text
@@ -94,14 +94,14 @@ class TestCaseDetailView:
         mock_f680_case_with_submitted_by,
         f680_case_id,
         f680_reference_code,
-        data_f680_case,
+        data_submitted_f680_case,
     ):
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
         assert response.status_code == 200
 
     def test_GET_not_logged_in(
-        self, client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_f680_case
+        self, client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_submitted_f680_case
     ):
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         expected_redirect_location = reverse("auth:login")
@@ -147,13 +147,13 @@ class TestCaseDocumentGenerationView:
         mock_f680_case,
         f680_case_id,
         f680_reference_code,
-        data_f680_case,
+        data_submitted_f680_case,
         mock_letter_template_filter,
     ):
         url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
         assert response.status_code == 200
-        assert dict(response.context["case"]) == data_f680_case["case"]
+        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
         soup = BeautifulSoup(response.content, "html.parser")
         assert "Generate decision documents" in soup.find("h1").text
         table_elems = soup.find_all("table", {"id": "table-final-documents"})

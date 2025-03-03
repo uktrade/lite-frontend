@@ -77,17 +77,17 @@ class TestF680RecommendationView:
         mock_f680_case,
         f680_case_id,
         f680_reference_code,
-        data_f680_case,
+        data_submitted_f680_case,
     ):
         url = reverse(
             "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
         )
-        data_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
+        data_submitted_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
         response = authorized_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
 
-        assert dict(response.context["case"]) == data_f680_case["case"]
+        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
         soup = BeautifulSoup(response.content, "html.parser")
         assert f680_reference_code in soup.find("h1").text
         make_recommendation_button = soup.find(id="make-recommendation-button")
@@ -111,16 +111,16 @@ class TestF680RecommendationView:
         current_user,
         mock_f680_case,
         f680_case_id,
-        data_f680_case,
+        data_submitted_f680_case,
         recommendation,
         recommendation_type,
     ):
         url = reverse(
             "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
         )
-        data_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
+        data_submitted_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
         recommendation[0]["type"] = recommendation_type
-        data_f680_case["case"]["advice"] = recommendation
+        data_submitted_f680_case["case"]["advice"] = recommendation
         response = authorized_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
@@ -136,7 +136,7 @@ class TestF680RecommendationView:
 class TestF680SelectRecommendationTypeView:
 
     def test_GET_select_recommendation_type(
-        self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_f680_case
+        self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_submitted_f680_case
     ):
         url = reverse(
             "cases:f680:select_recommendation_type", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id}
@@ -144,7 +144,7 @@ class TestF680SelectRecommendationTypeView:
         response = authorized_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/select_recommendation_type.html")
-        assert dict(response.context["case"]) == data_f680_case["case"]
+        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
 
         form = response.context["form"]
         assert isinstance(form, SelectRecommendationTypeForm)
@@ -158,7 +158,7 @@ class TestF680SelectRecommendationTypeView:
         mock_f680_case,
         f680_case_id,
         f680_reference_code,
-        data_f680_case,
+        data_submitted_f680_case,
         recommendation,
         redirect,
     ):
@@ -169,7 +169,7 @@ class TestF680SelectRecommendationTypeView:
         assert response.status_code == 302
         assert (
             response.url
-            == f'/queues/00000000-0000-0000-0000-000000000001/cases/{data_f680_case["case"]["id"]}/f680/recommendation/{redirect}/'
+            == f'/queues/00000000-0000-0000-0000-000000000001/cases/{data_submitted_f680_case["case"]["id"]}/f680/recommendation/{redirect}/'
         )
 
 
@@ -191,7 +191,7 @@ class TestF680GiveApprovalRecommendationView:
     def test_approval_advice_post_valid(
         self,
         authorized_client,
-        data_f680_case,
+        data_submitted_f680_case,
         url_approve,
         mock_f680_case,
         mock_approval_reason,
@@ -212,7 +212,7 @@ class TestF680GiveApprovalRecommendationView:
         authorized_client,
         data_queue,
         f680_case_id,
-        data_f680_case,
+        data_submitted_f680_case,
         url_approve,
         mock_f680_case,
         mock_approval_reason,
@@ -260,7 +260,7 @@ class TestF680GiveApprovalRecommendationView:
         authorized_client,
         data_queue,
         f680_case_id,
-        data_f680_case,
+        data_submitted_f680_case,
         url_approve,
         mock_f680_case,
         mock_approval_reason,
@@ -308,13 +308,13 @@ class TestF680MyRecommendationView:
     def test_view_approve_recommendation(
         self,
         authorized_client,
-        data_f680_case,
+        data_submitted_f680_case,
         mock_f680_case,
         mock_current_gov_user,
         recommendation,
         view_recommendation_url,
     ):
-        data_f680_case["case"]["advice"] = recommendation
+        data_submitted_f680_case["case"]["advice"] = recommendation
         response = authorized_client.get(view_recommendation_url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/view_my_recommendation.html")
