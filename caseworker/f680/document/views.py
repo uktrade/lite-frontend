@@ -61,6 +61,7 @@ class F680GenerateDocument(F680CaseworkerMixin, LoginRequiredMixin, FormView):
         HTTPStatus.OK,
         "Error generating document preview",
         "Unexpected error generating document preview",
+        reraise_404=True,
     )
     def get_generated_document_preview(self, template_id, text):
         # TODO: Use of get_generated_document_preview service helper should
@@ -75,8 +76,6 @@ class F680GenerateDocument(F680CaseworkerMixin, LoginRequiredMixin, FormView):
         "Unexpected error generating document",
     )
     def generate_document(self, template_id, text):
-        # TODO: Use of get_generated_document_preview service helper should
-        #   be replaced with something that doesn't require text to be quoted
         return None, post_generated_document(
             self.request,
             self.case_id,
