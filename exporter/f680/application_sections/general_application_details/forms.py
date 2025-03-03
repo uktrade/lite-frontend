@@ -1,4 +1,3 @@
-from datetime import datetime
 from django import forms
 from django.template.loader import render_to_string
 
@@ -71,25 +70,6 @@ class ExplainExceptionalCircumstancesForm(BaseForm):
         label="Why do you need approval in less than 30 days?",
         widget=forms.Textarea(attrs={"rows": "5"}),
     )
-
-    def __init__(self, *args, **kwargs):
-        # We have to do some coercion from string to datetime object here due to JSON serialization
-        if (
-            "initial" in kwargs
-            and "exceptional_circumstances_date" in kwargs["initial"]
-            and isinstance(kwargs["initial"]["exceptional_circumstances_date"], str)
-        ):
-            kwargs["initial"]["exceptional_circumstances_date"] = datetime.fromisoformat(
-                kwargs["initial"]["exceptional_circumstances_date"]
-            )
-        super().__init__(*args, **kwargs)
-
-    def clean(self):
-        # We have to do some coercion from datetime object to string here due to JSON serialization
-        cleaned_data = super().clean()
-        if "exceptional_circumstances_date" in cleaned_data:
-            cleaned_data["exceptional_circumstances_date"] = cleaned_data["exceptional_circumstances_date"].isoformat()
-        return cleaned_data
 
     def get_layout_fields(self):
         return (

@@ -13,6 +13,18 @@ def unset_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
+@pytest.fixture()
+def set_f680_allowed_organisation(settings, organisation_pk):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = [organisation_pk]
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
+@pytest.fixture()
+def unset_f680_allowed_organisation(settings, organisation_pk):
+    settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = ["12345"]
+    settings.FEATURE_FLAG_ALLOW_F680 = False
+
+
 @pytest.fixture(autouse=True)
 def setup(mock_exporter_user_me, settings):
     settings.FEATURE_FLAG_ALLOW_F680 = True
@@ -55,7 +67,21 @@ def mock_f680_application_get(requests_mock, data_f680_case):
 @pytest.fixture
 def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
     data_f680_case["application"] = {
-        "additional_information": {"answers": {"note": "Some note text"}, "questions": {"note": "Add note"}}
+        "sections": {
+            "notes_for_case_officers": {
+                "type": "single",
+                "label": "Notes for case officers",
+                "fields": [
+                    {
+                        "key": "note",
+                        "answer": "Some note text",
+                        "datatype": "string",
+                        "question": "Add note",
+                        "raw_answer": "Some note text",
+                    }
+                ],
+            }
+        }
     }
     application_id = data_f680_case["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
@@ -100,12 +126,34 @@ class TestAdditionalInformationView:
         assert response.status_code == 200
         assert isinstance(response.context["form"], NotesForCaseOfficerForm)
 
+    def test_GET_success_with_organisation_set(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_application_wizard_url,
+        set_f680_allowed_organisation,
+    ):
+        response = authorized_client.get(f680_application_wizard_url)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], NotesForCaseOfficerForm)
+
     def test_GET_no_feature_flag_forbidden(
         self,
         authorized_client,
         mock_f680_application_get,
         f680_application_wizard_url,
         unset_f680_feature_flag,
+    ):
+        response = authorized_client.get(f680_application_wizard_url)
+        assert response.status_code == 200
+        assert response.context["title"] == "Forbidden"
+
+    def test_GET_no_feature_organisation_allowed(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        f680_application_wizard_url,
+        unset_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_application_wizard_url)
         assert response.status_code == 200
@@ -123,7 +171,21 @@ class TestAdditionalInformationView:
         assert mock_patch_f680_application.last_request.json() == {
             "application": {
                 "name": "F680 Test 1",
-                "additional_information": {"answers": {"note": "Some information"}, "questions": {"note": "Add note"}},
+                "sections": {
+                    "notes_for_case_officers": {
+                        "label": "Notes for case officers",
+                        "fields": [
+                            {
+                                "key": "note",
+                                "answer": "Some information",
+                                "raw_answer": "Some information",
+                                "question": "Add note",
+                                "datatype": "string",
+                            }
+                        ],
+                        "type": "single",
+                    }
+                },
             }
         }
 

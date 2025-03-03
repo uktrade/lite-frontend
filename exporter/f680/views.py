@@ -1,34 +1,26 @@
 from http import HTTPStatus
+import rules
 
-from django.conf import settings
 from django.contrib.auth.mixins import AccessMixin
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import FormView
+from django.views.generic import FormView, RedirectView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
-from core.wizard.views import BaseSessionWizardView
 
-from .constants import (
-    ApplicationFormSteps,
-)
-from .forms import (
-    ApplicationNameForm,
-    ApplicationSubmissionForm,
-)
-from .payloads import (
-    F680CreatePayloadBuilder,
-)
+from .forms import ApplicationSubmissionForm
+
 from .services import (
     post_f680_application,
     get_f680_application,
+    submit_f680_application,
 )
 
 
 class F680FeatureRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
-        if not settings.FEATURE_FLAG_ALLOW_F680:
+        if not rules.test_rule("can_exporter_use_f680s", request):
             self.raise_exception = True
             self.permission_denied_message = (
                 "You are not authorised to use the F680 Security Clearance application feature"
@@ -37,10 +29,7 @@ class F680FeatureRequiredMixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, BaseSessionWizardView):
-    form_list = [
-        (ApplicationFormSteps.APPLICATION_NAME, ApplicationNameForm),
-    ]
+class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, RedirectView):
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -58,11 +47,10 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Ba
             },
         )
 
-    def get_payload(self, form_dict):
-        return F680CreatePayloadBuilder().build(form_dict)
-
-    def done(self, form_list, form_dict, **kwargs):
-        data = self.get_payload(form_dict)
+    def get(self, request, *args, **kwargs):
+        super().get(request, *args, **kwargs)
+        # Data required to create a base application
+        data = {"application": {}}
         response_data, _ = self.post_f680_application(data)
         return redirect(self.get_success_url(response_data["id"]))
 
@@ -70,6 +58,10 @@ class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, Ba
 class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, FormView):
     form_class = ApplicationSubmissionForm
     template_name = "f680/summary.html"
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.application, _ = self.get_f680_application(kwargs["pk"])
 
     @expect_status(
         HTTPStatus.OK,
@@ -80,15 +72,43 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
     def get_f680_application(self, application_id):
         return get_f680_application(self.request, application_id)
 
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.application, _ = self.get_f680_application(kwargs["pk"])
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["application"] = self.application
-
         return context
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error submitting F680 application",
+        "Unexpected error submitting F680 application",
+        reraise_404=True,
+    )
+    def submit_f680_application(self, application_id):
+        return submit_f680_application(self.request, application_id)
+
+    def all_sections_complete(self):
+        # TODO: Think more about pre-submit validation as this is very barebones right now
+        complete_sections = set(self.application["application"].get("sections", {}).keys())
+        required_sections = set(
+            [
+                "general_application_details",
+                "approval_type",
+                "user_information",
+                "product_information",
+            ]
+        )
+        missing_sections = required_sections - complete_sections
+        return len(missing_sections) == 0, missing_sections
+
+    def form_valid(self, form):
+        is_sections_completed, _ = self.all_sections_complete()
+        if not is_sections_completed:
+            context_data = self.get_context_data(form=form)
+            context_data["errors"] = {"missing_sections": ["Please complete all required sections"]}
+            return self.render_to_response(context_data)
+
+        self.submit_f680_application(self.application["id"])
+        return super().form_valid(form)
+
     def get_success_url(self):
-        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
+        return reverse("applications:success_page", kwargs={"pk": self.application["id"]})

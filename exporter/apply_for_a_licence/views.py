@@ -23,7 +23,7 @@ from exporter.f680.views import F680FeatureRequiredMixin
 
 class LicenceType(LoginRequiredMixin, SingleFormView):
     def init(self, request, **kwargs):
-        self.form = opening_question()
+        self.form = opening_question(request)
         self.action = validate_opening_question
 
     def get_success_url(self):
