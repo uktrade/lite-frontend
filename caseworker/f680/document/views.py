@@ -92,6 +92,9 @@ class F680GenerateDocument(LoginRequiredMixin, F680CaseworkerMixin, FormView):
 
     def get_text(self, form):
         text = None
+        # The form can be submitted to preview the latest customisation text
+        #   In that case we should retrieve the text from the form for the preview
+        #   This can be determined by interrogating form.is_bound
         if form.is_bound:
             text = quote(form.cleaned_data.get("text", ""))
         return text
