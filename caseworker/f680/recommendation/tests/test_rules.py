@@ -25,8 +25,8 @@ def data_fake_queue():
 
 
 @pytest.fixture
-def data_assigned_case(data_f680_case):
-    case = Case(data_f680_case["case"])
+def data_assigned_case(data_submitted_f680_case):
+    case = Case(data_submitted_f680_case["case"])
     case.assigned_users = {
         "fake queue": [
             {"id": mock_gov_user_id},
@@ -42,15 +42,17 @@ def get_mock_request(user, queue):
     return request
 
 
-def test_can_user_make_f680_recommendation_request_missing_attributes(mock_gov_user, data_fake_queue, data_f680_case):
-    case = Case(data_f680_case["case"])
+def test_can_user_make_f680_recommendation_request_missing_attributes(
+    mock_gov_user, data_fake_queue, data_submitted_f680_case
+):
+    case = Case(data_submitted_f680_case["case"])
     request = None
 
     assert not recommendation_rules.can_user_make_f680_recommendation(request, case)
 
 
-def test_can_user_make_f680_recommendation_user_not_allocated(mock_gov_user, data_fake_queue, data_f680_case):
-    case = Case(data_f680_case["case"])
+def test_can_user_make_f680_recommendation_user_not_allocated(mock_gov_user, data_fake_queue, data_submitted_f680_case):
+    case = Case(data_submitted_f680_case["case"])
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
 
     assert not rules.test_rule("can_user_make_f680_recommendation", request, case)

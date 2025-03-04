@@ -22,7 +22,7 @@
                         <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">{{approval_templates.0.name}}</td>
                                 <td class="govuk-table__cell">
-                                    <a class="govuk-button govuk-button--primary" href="{% url "cases:f680:document:generate" queue_pk=queue_pk pk=case.id template_id=approval_templates.0.id %}">Generate</a>
+                                    <a class="govuk-button govuk-button--primary" href="{% url "cases:f680:document:generate" queue_pk=queue_id pk=case.id template_id=approval_templates.0.id %}">Generate</a>
                                 </td>
                         </tr>
                 </tbody>

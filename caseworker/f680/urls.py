@@ -36,4 +36,5 @@ urlpatterns = [
         views.MoveCaseForward.as_view(),
         name="move_case_forward",
     ),
+    path("document/", include("caseworker.f680.document.urls")),
 ]
