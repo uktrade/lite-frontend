@@ -10,25 +10,15 @@ from core.decorators import expect_status
 
 from caseworker.cases.services import get_generated_document_preview, post_generated_document
 from caseworker.letter_templates.services import get_letter_templates_list
-from caseworker.cases.services import get_case
 
 from caseworker.f680.views import F680CaseworkerMixin
 
-from .forms import GenerateDocumentForm, DocumentGenerationForm 
+from .forms import GenerateDocumentForm, DocumentGenerationForm
 
 
-class DocumentGenerationView(LoginRequiredMixin, FormView):
+class DocumentGenerationView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     form_class = DocumentGenerationForm
     template_name = "core/form.html"
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.case_id = str(kwargs["pk"])
-        self.case = get_case(request, self.case_id)
-        self.queue_id = kwargs["queue_pk"]
-        # We will pull the decision from the case when filtering
-        filter = {"case_type": self.case.case_type["sub_type"]["key"], "decision": "approve"}
-        self.letter_templates, _ = self.get_letter_templates_list(filter)
 
     @expect_status(
         HTTPStatus.OK,
@@ -39,8 +29,11 @@ class DocumentGenerationView(LoginRequiredMixin, FormView):
         return get_letter_templates_list(self.request, filter)
 
     def get_form_kwargs(self):
+        # We will pull the decision from the case when filtering
+        filter = {"case_type": self.case.case_type["sub_type"]["key"], "decision": "approve"}
+        letter_templates, _ = self.get_letter_templates_list(filter)
         form_kwargs = super().get_form_kwargs()
-        form_kwargs["approval_templates"] = self.letter_templates["results"]
+        form_kwargs["approval_templates"] = letter_templates["results"]
         return form_kwargs
 
     def get_context_data(self, **kwargs):

@@ -23,12 +23,6 @@ def setup(
 
 
 @pytest.fixture
-def mock_missing_case(missing_case_id, requests_mock):
-    url = client._build_absolute_uri(f"/cases/{missing_case_id}/")
-    return requests_mock.get(url=url, status_code=404)
-
-
-@pytest.fixture
 def mock_f680_case_with_submitted_by(f680_case_id, requests_mock, data_submitted_f680_case):
     data_submitted_f680_case["case"]["data"]["submitted_by"] = {"first_name": "foo", "last_name": "bar"}
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
