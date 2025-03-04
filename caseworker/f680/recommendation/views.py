@@ -33,10 +33,10 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         recommendation = None
-        if recommendation := get_current_user_recommendation(
+        if user_recommendation := get_current_user_recommendation(
             self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
         ):
-            recommendation = recommendation[0] if recommendation else None
+            user_recommendation = user_recommendation[0] if user_recommendation else None
 
         team_recommendations = []
         for recommendation in self.case.get("advice", []):
@@ -45,7 +45,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
             **context_data,
             "case": self.case,
             "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
-            "recommendation": recommendation,
+            "user_recommendation": user_recommendation,
             "teams_recommendations": team_recommendations,
         }
 
