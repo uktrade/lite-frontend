@@ -11,6 +11,8 @@
             <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate approval document</a>
         {% endif %}
 
+        {% include "f680/includes/move_case_forward.html" with request=request case=case queue=queue %}
+
         {% test_rule 'can_user_make_f680_recommendation' request case as can_user_make_f680_recommendation %}
         {% if can_user_make_f680_recommendation %}
             <br>
