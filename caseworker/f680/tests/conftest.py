@@ -90,7 +90,7 @@ def f680_reference_code():
 
 
 @pytest.fixture
-def f680_cases_to_review():
+def queue_f680_cases_to_review():
     return {
         "id": "5641aa2b-09ca-47f6-adcf-682b0472bc93",
         "alias": "F680 Cases to review",

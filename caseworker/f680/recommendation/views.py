@@ -40,6 +40,10 @@ class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView)
         ):
             self.recommendation = recommendation[0] if recommendation else None
 
+        self.team_recommendations = []
+        for recommendation in self.case.get("advice", []):
+            self.team_recommendations.append({"team": recommendation['team'], "recommendation": recommendation})
+
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         return {
@@ -47,6 +51,7 @@ class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView)
             "case": self.case,
             "title": self.title,
             "recommendation": self.recommendation,
+            "teams_recommendations": self.team_recommendations,
         }
 
 

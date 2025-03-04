@@ -5,18 +5,13 @@ from caseworker.f680.recommendation.services import get_current_user_recommendat
 
 
 @rules.predicate
-def has_user_made_recommendation(case, user):
-    team = user["team"]["alias"]
-    return get_current_user_recommendation(case.advice, user["id"], team)
-
-
-@rules.predicate
 def can_user_make_f680_recommendation(request, case):
     user = get_logged_in_caseworker(request)
     if not user:
         return False
 
-    if has_user_made_recommendation(case, user):
+    team = user["team"]["alias"]
+    if get_current_user_recommendation(case.advice, user["id"], team):
         return False
 
     return True

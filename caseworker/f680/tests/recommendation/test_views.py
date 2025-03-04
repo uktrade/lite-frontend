@@ -72,15 +72,17 @@ class TestF680RecommendationView:
     def test_GET_recommendation_success(
         self,
         authorized_client,
-        f680_cases_to_review,
+        queue_f680_cases_to_review,
         current_user,
         mock_f680_case,
         f680_case_id,
         f680_reference_code,
         data_f680_case,
     ):
-        url = reverse("cases:f680:recommendation", kwargs={"queue_pk": f680_cases_to_review["id"], "pk": f680_case_id})
-        data_f680_case["case"]["assigned_users"] = {f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
+        url = reverse(
+            "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
+        )
+        data_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
         response = authorized_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
@@ -92,30 +94,31 @@ class TestF680RecommendationView:
         assert make_recommendation_button
         assert (
             make_recommendation_button["href"]
-            == f'/queues/{f680_cases_to_review["id"]}/cases/{f680_case_id}/f680/recommendation/select-recommendation-type/'
+            == f'/queues/{queue_f680_cases_to_review["id"]}/cases/{f680_case_id}/f680/recommendation/select-recommendation-type/'
         )
 
     @pytest.mark.parametrize(
-        "recommendation_type, decision_string",
+        "recommendation_type",
         [
-            ({"key": "approve", "value": "Approve"}, "has approved"),
-            ({"key": "proviso", "value": "Proviso"}, "has approved with licence conditions"),
+            {"key": "approve", "value": "Approve"},
+            {"key": "proviso", "value": "Proviso"},
         ],
     )
     def test_GET_recommendation_page_existing_recommendation(
         self,
         authorized_client,
-        f680_cases_to_review,
+        queue_f680_cases_to_review,
         current_user,
         mock_f680_case,
         f680_case_id,
         data_f680_case,
         recommendation,
         recommendation_type,
-        decision_string,
     ):
-        url = reverse("cases:f680:recommendation", kwargs={"queue_pk": f680_cases_to_review["id"], "pk": f680_case_id})
-        data_f680_case["case"]["assigned_users"] = {f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
+        url = reverse(
+            "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
+        )
+        data_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
         recommendation[0]["type"] = recommendation_type
         data_f680_case["case"]["advice"] = recommendation
         response = authorized_client.get(url)
@@ -127,7 +130,7 @@ class TestF680RecommendationView:
         all_teams_recommendation = soup.find_all("summary", {"class": "govuk-details__summary"})
         assert len(all_teams_recommendation) == 1
         actual_string = all_teams_recommendation[0].text.replace("\n", "").strip()
-        assert actual_string == f"{current_user['team']['name']} {decision_string}"
+        assert actual_string == f"{current_user['team']['name']}"
 
 
 class TestF680SelectRecommendationTypeView:
