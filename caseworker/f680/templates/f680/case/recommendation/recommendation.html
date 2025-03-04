@@ -3,10 +3,9 @@
 {% load rules %}
 
 
-{% block body %}
+{% block details %}
 <div class="govuk-width-container">
     <main class="govuk-main-wrapper">
-
         {% if recommendation %}
             <br>
             <h1 class="govuk-heading-xl">View recommendation</h1>
@@ -24,6 +23,7 @@
             {% include "f680/case/recommendation/other-recommendations.html" with teams_recommendations=teams_recommendations %}
 
         {% endif %}
+        <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate approval document</a>
     </main>
 </div>
 {% endblock %}

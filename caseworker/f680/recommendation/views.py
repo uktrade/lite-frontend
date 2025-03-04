@@ -28,6 +28,7 @@ from core.wizard.views import BaseSessionWizardView
 
 class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/recommendation/recommendation.html"
+    current_tab = "recommendations"
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -57,6 +58,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
 
 class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/recommendation/view_my_recommendation.html"
+    current_tab = "recommendations"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -75,6 +77,7 @@ class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView
 class SelectRecommendationTypeView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     template_name = "f680/case/recommendation/select_recommendation_type.html"
     form_class = SelectRecommendationTypeForm
+    current_tab = "recommendations"
 
     def get_success_url(self):
         return reverse("cases:f680:approve_all", kwargs=self.kwargs)
@@ -86,6 +89,7 @@ class SelectRecommendationTypeView(LoginRequiredMixin, F680CaseworkerMixin, Form
 
 class BaseApprovalRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     template_name = "f680/case/recommendation/form_wizard.html"
+    current_tab = "recommendations"
 
     condition_dict = {
         AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),

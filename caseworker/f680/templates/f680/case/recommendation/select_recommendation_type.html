@@ -1,7 +1,7 @@
-{% extends 'layouts/case.html' %}
+{% extends 'f680/case/base.html' %}
 {% load crispy_forms_tags %}
 
-{% block body %}
+{% block details %}
 <div class="govuk-width-container">
     <a href="{% url 'cases:f680:recommendation' queue_pk case.id %}" class="govuk-back-link">Back</a>
     <main class="govuk-main-wrapper">

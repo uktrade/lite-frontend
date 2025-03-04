@@ -1,8 +1,8 @@
-{% extends 'layouts/case.html' %}
+{% extends 'f680/case/base.html' %}
 
 {% block title %} {{ title }} {% endblock %}
 
-{% block body %}
+{% block details %}
   <br>
   <h1 class="govuk-heading-xl">View recommendation</h1>
   {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
