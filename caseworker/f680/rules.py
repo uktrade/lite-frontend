@@ -14,7 +14,17 @@ def can_user_make_f680_recommendation(request, case):
     if get_current_user_recommendation(case.advice, user["id"], team):
         return False
 
-    return True
+    return case["data"]["status"]["key"] == "ogd_advice"
+
+
+@rules.predicate
+def case_ready_for_outcome(request, case):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+
+    return case["data"]["status"]["key"] == "under_final_review"
 
 
 rules.add_rule("can_user_make_f680_recommendation", is_user_allocated & can_user_make_f680_recommendation)
+rules.add_rule("can_user_generate_f680_outcome_document", is_user_allocated & case_ready_for_outcome)
