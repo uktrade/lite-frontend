@@ -1,0 +1,9 @@
+{% extends 'layouts/case.html' %}
+
+
+{% block details %}
+
+<br>
+<a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:select_recommendation_type' queue_pk case.id %}">Make recommendation</a>
+
+{% endblock %}
