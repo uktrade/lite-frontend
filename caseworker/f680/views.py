@@ -16,13 +16,13 @@ from caseworker.queues.services import get_queue
 
 
 class F680CaseworkerMixin(CaseworkerMixin):
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
 
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -30,7 +30,7 @@ class F680CaseworkerMixin(CaseworkerMixin):
         return context_data
 
 
-class CaseDetailView(F680CaseworkerMixin, LoginRequiredMixin, TemplateView):
+class CaseDetailView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/detail.html"
 
     def get_context_data(self, **kwargs):

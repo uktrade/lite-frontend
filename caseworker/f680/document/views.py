@@ -53,7 +53,7 @@ class DocumentGenerationView(LoginRequiredMixin, FormView):
         return reverse("cases:f680:details", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
 
 
-class F680GenerateDocument(F680CaseworkerMixin, LoginRequiredMixin, FormView):
+class F680GenerateDocument(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     template_name = "f680/document/preview.html"
     form_class = GenerateDocumentForm
 
