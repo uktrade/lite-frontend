@@ -44,6 +44,7 @@ class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
 class F680GenerateDocument(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     template_name = "f680/document/preview.html"
     form_class = GenerateDocumentForm
+    current_tab = "recommendation"
 
     @expect_status(
         HTTPStatus.OK,

@@ -16,17 +16,17 @@ from caseworker.f680.recommendation.forms.forms import (
     SelectRecommendationTypeForm,
     SimpleLicenceConditionsForm,
 )
-from caseworker.f680.recommendation.mixins import CaseContextMixin
 from caseworker.f680.recommendation.services import (
     get_current_user_recommendation,
     post_approval_recommendation,
 )
+from caseworker.f680.views import F680CaseworkerMixin
 from core.decorators import expect_status
 from core.wizard.conditionals import C
 from core.wizard.views import BaseSessionWizardView
 
 
-class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/recommendation/recommendation.html"
 
     def setup(self, request, *args, **kwargs):
@@ -55,7 +55,7 @@ class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView)
         }
 
 
-class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/recommendation/view_my_recommendation.html"
 
     def get_context_data(self, **kwargs):
@@ -72,7 +72,7 @@ class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         }
 
 
-class SelectRecommendationTypeView(LoginRequiredMixin, CaseContextMixin, FormView):
+class SelectRecommendationTypeView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     template_name = "f680/case/recommendation/select_recommendation_type.html"
     form_class = SelectRecommendationTypeForm
 
@@ -84,7 +84,7 @@ class SelectRecommendationTypeView(LoginRequiredMixin, CaseContextMixin, FormVie
         return super().form_valid(form)
 
 
-class BaseApprovalRecommendationView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
+class BaseApprovalRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     template_name = "f680/case/recommendation/form_wizard.html"
 
     condition_dict = {

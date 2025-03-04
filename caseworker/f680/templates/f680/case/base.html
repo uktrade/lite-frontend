@@ -1,0 +1,16 @@
+{% extends 'layouts/case.html' %}
+
+{% block header_tabs %}
+<div id="tab-bar" class="app-case-tab-bar">
+	<div class="govuk-width-container lite-tabs__container">
+        <div class="lite-tabs f680-tabs">
+            <a id="details" href="{% url 'cases:f680:details' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "details" %}lite-tabs__tab--selected{% endif %}">
+                Details
+            </a>
+            <a id="recommendations" href="{% url 'cases:f680:recommendation' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "recommendations" %}lite-tabs__tab--selected{% endif %}">
+                Recommendations
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
