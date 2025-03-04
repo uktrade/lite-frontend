@@ -82,7 +82,9 @@ class TestF680RecommendationView:
         url = reverse(
             "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
         )
-        data_submitted_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
+        data_submitted_f680_case["case"]["assigned_users"] = {
+            queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]
+        }
         response = authorized_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
@@ -118,7 +120,9 @@ class TestF680RecommendationView:
         url = reverse(
             "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
         )
-        data_submitted_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]}
+        data_submitted_f680_case["case"]["assigned_users"] = {
+            queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]
+        }
         recommendation[0]["type"] = recommendation_type
         data_submitted_f680_case["case"]["advice"] = recommendation
         response = authorized_client.get(url)

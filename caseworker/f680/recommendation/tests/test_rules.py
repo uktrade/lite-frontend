@@ -42,7 +42,9 @@ def get_mock_request(user, queue):
     return request
 
 
-def test_can_user_make_f680_recommendation_request_missing_attributes(mock_gov_user, data_fake_queue, data_submitted_f680_case):
+def test_can_user_make_f680_recommendation_request_missing_attributes(
+    mock_gov_user, data_fake_queue, data_submitted_f680_case
+):
     case = Case(data_submitted_f680_case["case"])
     request = None
 
