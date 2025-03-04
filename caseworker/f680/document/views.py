@@ -16,9 +16,9 @@ from caseworker.f680.views import F680CaseworkerMixin
 from .forms import GenerateDocumentForm, DocumentGenerationForm
 
 
-class DocumentGenerationView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
+class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     form_class = DocumentGenerationForm
-    template_name = "core/form.html"
+    template_name = "f680/document/all_documents.html"
 
     @expect_status(
         HTTPStatus.OK,
@@ -28,16 +28,11 @@ class DocumentGenerationView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     def get_letter_templates_list(self, filter):
         return get_letter_templates_list(self.request, filter)
 
-    def get_form_kwargs(self):
-        # We will pull the decision from the case when filtering
-        filter = {"case_type": self.case.case_type["sub_type"]["key"], "decision": "approve"}
-        letter_templates, _ = self.get_letter_templates_list(filter)
-        form_kwargs = super().get_form_kwargs()
-        form_kwargs["approval_templates"] = letter_templates["results"]
-        return form_kwargs
-
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
+        template_filter = {"case_type": self.case.case_type["sub_type"]["key"], "decision": "approve"}
+        letter_templates, _ = self.get_letter_templates_list(template_filter)
+        context_data["approval_templates"] = letter_templates["results"]
         context_data["case"] = self.case
         context_data["back_link_url"] = self.get_success_url()
         return context_data

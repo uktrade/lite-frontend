@@ -27,6 +27,7 @@ class F680CaseworkerMixin(CaseworkerMixin):
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data["case"] = self.case
+        context_data["queue_id"] = self.queue_id
         return context_data
 
 

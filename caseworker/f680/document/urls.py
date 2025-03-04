@@ -8,7 +8,7 @@ app_name = "document"
 urlpatterns = [
     path(
         "",
-        views.DocumentGenerationView.as_view(),
+        views.AllDocuments.as_view(),
         name="all",
     ),
     path(

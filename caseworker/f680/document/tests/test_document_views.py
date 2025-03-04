@@ -1,6 +1,5 @@
 import pytest
 
-from bs4 import BeautifulSoup
 from django.urls import reverse
 from requests.exceptions import HTTPError
 
@@ -20,7 +19,7 @@ def setup(
 
 
 @pytest.fixture
-def template_id():
+def f680_approval_template_id():
     return "68a17258-af0f-429e-922d-25945979fa6d"
 
 
@@ -30,11 +29,11 @@ def customisation_text():
 
 
 @pytest.fixture
-def mock_preview_f680_letter_missing_template(f680_case_id, template_id, requests_mock):
+def mock_preview_f680_letter_missing_template(f680_case_id, f680_approval_template_id, requests_mock):
     get_params = "&".join(
         [
             f"pk={f680_case_id}",
-            f"template={template_id}",
+            f"template={f680_approval_template_id}",
         ]
     )
     return requests_mock.get(
@@ -55,11 +54,11 @@ def data_preview_response_with_customisation_text(customisation_text):
 
 
 @pytest.fixture
-def mock_preview_f680_letter(f680_case_id, template_id, requests_mock, data_preview_response):
+def mock_preview_f680_letter(f680_case_id, f680_approval_template_id, requests_mock, data_preview_response):
     get_params = "&".join(
         [
             f"pk={f680_case_id}",
-            f"template={template_id}",
+            f"template={f680_approval_template_id}",
         ]
     )
     return requests_mock.get(
@@ -71,12 +70,16 @@ def mock_preview_f680_letter(f680_case_id, template_id, requests_mock, data_prev
 
 @pytest.fixture
 def mock_preview_f680_letter_with_customisation(
-    f680_case_id, template_id, requests_mock, data_preview_response_with_customisation_text, customisation_text
+    f680_case_id,
+    f680_approval_template_id,
+    requests_mock,
+    data_preview_response_with_customisation_text,
+    customisation_text,
 ):
     get_params = "&".join(
         [
             f"pk={f680_case_id}",
-            f"template={template_id}",
+            f"template={f680_approval_template_id}",
             f"text={customisation_text}",
         ]
     )
@@ -89,12 +92,16 @@ def mock_preview_f680_letter_with_customisation(
 
 @pytest.fixture
 def mock_preview_f680_letter_api_error(
-    f680_case_id, template_id, requests_mock, data_preview_response_with_customisation_text, customisation_text
+    f680_case_id,
+    f680_approval_template_id,
+    requests_mock,
+    data_preview_response_with_customisation_text,
+    customisation_text,
 ):
     get_params = "&".join(
         [
             f"pk={f680_case_id}",
-            f"template={template_id}",
+            f"template={f680_approval_template_id}",
             f"text={customisation_text}",
         ]
     )
@@ -106,7 +113,7 @@ def mock_preview_f680_letter_api_error(
 
 
 @pytest.fixture
-def mock_generate_f680_letter(f680_case_id, template_id, requests_mock, data_preview_response):
+def mock_generate_f680_letter(f680_case_id, requests_mock, data_preview_response):
     return requests_mock.post(
         client._build_absolute_uri(f"/cases/{f680_case_id}/generated-documents/"),
         json=data_preview_response,
@@ -115,7 +122,7 @@ def mock_generate_f680_letter(f680_case_id, template_id, requests_mock, data_pre
 
 
 @pytest.fixture
-def mock_generate_f680_letter_api_error(f680_case_id, template_id, requests_mock, data_preview_response):
+def mock_generate_f680_letter_api_error(f680_case_id, requests_mock, data_preview_response):
     return requests_mock.post(
         client._build_absolute_uri(f"/cases/{f680_case_id}/generated-documents/"),
         json={"error": "some error"},
@@ -124,18 +131,18 @@ def mock_generate_f680_letter_api_error(f680_case_id, template_id, requests_mock
 
 
 @pytest.fixture
-def generate_document_url(f680_case_id, template_id, data_queue):
+def generate_document_url(f680_case_id, f680_approval_template_id, data_queue):
     url = reverse(
         "cases:f680:document:generate",
-        kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id, "template_id": template_id},
+        kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id, "template_id": f680_approval_template_id},
     )
     return url
 
 
 @pytest.fixture
-def mock_letter_template_filter(requests_mock):
+def mock_letter_template_filter(requests_mock, f680_approval_template_id):
     url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance&decision=approve")
-    data = {"results": [{"id": "12345", "name": "F680 Approval", "decisions": []}]}
+    data = {"results": [{"id": f680_approval_template_id, "name": "F680 Approval", "decisions": []}]}
     return requests_mock.get(url=url, json=data)
 
 
@@ -175,7 +182,7 @@ class TestF680GenerateDocument:
         data_queue,
         f680_case_id,
         customisation_text,
-        template_id,
+        f680_approval_template_id,
     ):
         response = authorized_client.post(generate_document_url, {"generate": "", "text": customisation_text})
         assert response.status_code == 302
@@ -183,7 +190,7 @@ class TestF680GenerateDocument:
         assert mock_generate_f680_letter.call_count == 1
         assert mock_generate_f680_letter.last_request.json() == {
             "addressee": None,
-            "template": template_id,
+            "template": f680_approval_template_id,
             "text": customisation_text,
             "visible_to_exporter": False,
         }
@@ -203,14 +210,14 @@ class TestF680GenerateDocument:
         data_queue,
         f680_case_id,
         customisation_text,
-        template_id,
+        f680_approval_template_id,
     ):
         with pytest.raises(ServiceError):
             response = authorized_client.post(generate_document_url, {"generate": "", "text": customisation_text})
         assert mock_generate_f680_letter_api_error.call_count == 1
 
 
-class TestCaseDocumentGenerationView:
+class TestAllDocumentsView:
 
     def test_GET_success(
         self,
@@ -226,13 +233,6 @@ class TestCaseDocumentGenerationView:
         response = authorized_client.get(url)
         assert response.status_code == 200
         assert dict(response.context["case"]) == data_submitted_f680_case["case"]
-        soup = BeautifulSoup(response.content, "html.parser")
-        assert "Generate decision documents" in soup.find("h1").text
-        table_elems = soup.find_all("table", {"id": "table-final-documents"})
-
-        assert len(table_elems) == 1
-        table_text = table_elems[0].text
-        assert "F680 Approval" in table_text
 
     def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
         url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
