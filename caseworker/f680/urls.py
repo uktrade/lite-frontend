@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from caseworker.f680 import views
 from caseworker.f680.recommendation import views as recommendation_views
@@ -12,6 +12,7 @@ urlpatterns = [
         views.CaseDetailView.as_view(),
         name="details",
     ),
+    path("document/", include("caseworker.f680.document.urls")),
     path(
         "recommendation/",
         recommendation_views.CaseRecommendationView.as_view(),

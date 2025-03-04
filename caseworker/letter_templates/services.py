@@ -1,5 +1,5 @@
 from core import client
-from core.helpers import convert_dict_to_query_params
+from core.helpers import convert_dict_to_query_params, convert_parameters_to_query_params
 
 
 def sort_letter_paragraphs(paragraphs, ids):
@@ -55,4 +55,10 @@ def get_letter_layout(request, pk):
 def get_letter_preview(request, layout_id, paragraph_ids):
     querystring = convert_dict_to_query_params({"layout": layout_id, "paragraphs": paragraph_ids})
     data = client.get(request, f"/letter-templates/generate-preview/?{querystring}")
+    return data.json(), data.status_code
+
+
+def get_letter_templates_list(request, filters):
+    params = convert_parameters_to_query_params(filters)
+    data = client.get(request, f"/caseworker/letter_templates/{params}")
     return data.json(), data.status_code
