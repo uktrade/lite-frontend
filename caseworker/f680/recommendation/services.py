@@ -29,12 +29,12 @@ def group_recommendation_by_user(recommendation):
     return result
 
 
-def get_current_user_recommendation(recommendation, caseworker, team_alias):
+def get_current_user_recommendation(recommendation, caseworker_id, team_alias):
     user_level_recommendation = filter_recommendation_by_level(recommendation, ["user"])
-    user_recommendation = filter_current_user_recommendation(user_level_recommendation, caseworker)
+    user_recommendation = filter_current_user_recommendation(user_level_recommendation, caseworker_id)
     user_recommendation = filter_recommendation_by_team(user_recommendation, team_alias)
     grouped_user_recommendation = group_recommendation_by_user(user_recommendation)
-    return grouped_user_recommendation
+    return grouped_user_recommendation.get(caseworker_id)
 
 
 def post_approval_recommendation(request, case, data, level="user-advice"):

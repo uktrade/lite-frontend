@@ -90,6 +90,17 @@ def f680_reference_code():
 
 
 @pytest.fixture
+def queue_f680_cases_to_review():
+    return {
+        "id": "5641aa2b-09ca-47f6-adcf-682b0472bc93",
+        "alias": "F680 Cases to review",
+        "name": "F680 Cases to review",
+        "is_system_queue": True,
+        "countersigning_queue": None,
+    }
+
+
+@pytest.fixture
 def mock_f680_case(f680_case_id, requests_mock, data_f680_case):
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
     return requests_mock.get(url=url, json=data_f680_case)

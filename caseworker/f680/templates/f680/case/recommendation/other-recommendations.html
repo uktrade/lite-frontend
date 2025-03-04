@@ -1,0 +1,11 @@
+<h2 class="govuk-heading-m">Other recommendations for this case</h2>
+{% for item in teams_recommendations %}
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+                {{ item.team.name }}
+            </span>
+        </summary>
+        {% include "f680/case/recommendation/recommendation_details.html" with recommendation=item.recommendation %}
+    </details>
+{% endfor %}
