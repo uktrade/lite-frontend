@@ -1,6 +1,8 @@
 import pytest
 
+from bs4 import BeautifulSoup
 from django.urls import reverse
+from requests.exceptions import HTTPError
 
 from core import client
 from core.exceptions import ServiceError
@@ -130,6 +132,13 @@ def generate_document_url(f680_case_id, template_id, data_queue):
     return url
 
 
+@pytest.fixture
+def mock_letter_template_filter(requests_mock):
+    url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance&decision=approve")
+    data = {"results": [{"id": "12345", "name": "F680 Approval", "decisions": []}]}
+    return requests_mock.get(url=url, json=data)
+
+
 class TestF680GenerateDocument:
 
     def test_GET_template_does_not_exist(
@@ -199,3 +208,33 @@ class TestF680GenerateDocument:
         with pytest.raises(ServiceError):
             response = authorized_client.post(generate_document_url, {"generate": "", "text": customisation_text})
         assert mock_generate_f680_letter_api_error.call_count == 1
+
+
+class TestCaseDocumentGenerationView:
+
+    def test_GET_success(
+        self,
+        authorized_client,
+        data_queue,
+        mock_f680_case,
+        f680_case_id,
+        f680_reference_code,
+        data_submitted_f680_case,
+        mock_letter_template_filter,
+    ):
+        url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        response = authorized_client.get(url)
+        assert response.status_code == 200
+        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
+        soup = BeautifulSoup(response.content, "html.parser")
+        assert "Generate decision documents" in soup.find("h1").text
+        table_elems = soup.find_all("table", {"id": "table-final-documents"})
+
+        assert len(table_elems) == 1
+        table_text = table_elems[0].text
+        assert "F680 Approval" in table_text
+
+    def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
+        url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
+        with pytest.raises(HTTPError, match="404"):
+            authorized_client.get(url)

@@ -47,3 +47,14 @@ def mock_post_recommendation(requests_mock, data_submitted_f680_case):
 def mock_proviso_no_results(requests_mock):
     url = client._build_absolute_uri("/picklist/?type=proviso&page=1&disable_pagination=True&show_deactivated=False")
     return requests_mock.get(url=url, json={"results": []})
+
+
+@pytest.fixture
+def missing_case_id():
+    return "5eb8f65f-9ce0-4dd6-abde-5c3fc00b802c"
+
+
+@pytest.fixture
+def mock_missing_case(missing_case_id, requests_mock):
+    url = client._build_absolute_uri(f"/cases/{missing_case_id}/")
+    return requests_mock.get(url=url, status_code=404)

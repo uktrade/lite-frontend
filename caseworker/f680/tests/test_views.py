@@ -23,11 +23,6 @@ def setup(
 
 
 @pytest.fixture
-def missing_case_id():
-    return "5eb8f65f-9ce0-4dd6-abde-5c3fc00b802c"
-
-
-@pytest.fixture
 def mock_missing_case(missing_case_id, requests_mock):
     url = client._build_absolute_uri(f"/cases/{missing_case_id}/")
     return requests_mock.get(url=url, status_code=404)
@@ -51,13 +46,6 @@ def mock_put_assigned_queues(f680_case_id, requests_mock, data_queue):
 @pytest.fixture
 def f680_feature_flag_disabled(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
-
-
-@pytest.fixture
-def mock_letter_template_filter(requests_mock):
-    url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance&decision=approve")
-    data = {"results": [{"id": "12345", "name": "F680 Approval", "decisions": []}]}
-    return requests_mock.get(url=url, json=data)
 
 
 class TestCaseDetailView:
@@ -129,33 +117,3 @@ class TestMoveCaseForwardView:
         response = authorized_client.post(url)
         assert response.status_code == 302
         assert response.url == reverse("queues:cases", kwargs={"queue_pk": data_queue["id"]})
-
-
-class TestCaseDocumentGenerationView:
-
-    def test_GET_success(
-        self,
-        authorized_client,
-        data_queue,
-        mock_f680_case,
-        f680_case_id,
-        f680_reference_code,
-        data_submitted_f680_case,
-        mock_letter_template_filter,
-    ):
-        url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
-        response = authorized_client.get(url)
-        assert response.status_code == 200
-        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
-        soup = BeautifulSoup(response.content, "html.parser")
-        assert "Generate decision documents" in soup.find("h1").text
-        table_elems = soup.find_all("table", {"id": "table-final-documents"})
-
-        assert len(table_elems) == 1
-        table_text = table_elems[0].text
-        assert "F680 Approval" in table_text
-
-    def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
-        url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
-        with pytest.raises(HTTPError, match="404"):
-            authorized_client.get(url)
