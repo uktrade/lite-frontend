@@ -6,6 +6,6 @@
                 {{ item.team.name }}
             </span>
         </summary>
-        {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
+        {% include "f680/case/recommendation/recommendation_details.html" with recommendation=item.recommendation %}
     </details>
 {% endfor %}
