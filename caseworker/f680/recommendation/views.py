@@ -30,29 +30,23 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
     template_name = "f680/case/recommendation/recommendation.html"
     current_tab = "recommendations"
 
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.title = (
-            f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        )
-        self.recommendation = None
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        recommendation = None
         if recommendation := get_current_user_recommendation(
             self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
         ):
-            self.recommendation = recommendation[0] if recommendation else None
+            recommendation = recommendation[0] if recommendation else None
 
-        self.team_recommendations = []
+        team_recommendations = []
         for recommendation in self.case.get("advice", []):
-            self.team_recommendations.append({"team": recommendation["team"], "recommendation": recommendation})
-
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
+            team_recommendations.append({"team": recommendation["team"], "recommendation": recommendation})
         return {
             **context_data,
             "case": self.case,
-            "title": self.title,
-            "recommendation": self.recommendation,
-            "teams_recommendations": self.team_recommendations,
+            "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
+            "recommendation": recommendation,
+            "teams_recommendations": team_recommendations,
         }
 
 
