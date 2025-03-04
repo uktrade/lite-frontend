@@ -42,7 +42,7 @@ class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView)
 
         self.team_recommendations = []
         for recommendation in self.case.get("advice", []):
-            self.team_recommendations.append({"team": recommendation['team'], "recommendation": recommendation})
+            self.team_recommendations.append({"team": recommendation["team"], "recommendation": recommendation})
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
