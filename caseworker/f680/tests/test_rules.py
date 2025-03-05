@@ -103,6 +103,15 @@ def test_can_user_make_f680_recommendation_user_allocated(mock_gov_user, data_fa
     assert rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
 
 
+def test_can_user_move_f680_case_forward_request_missing_attributes(
+    mock_gov_user, data_fake_queue, data_unassigned_case
+):
+    case = data_unassigned_case
+    request = None
+
+    assert not recommendation_rules.f680_case_ready_for_move(request, case)
+
+
 def test_can_user_move_f680_case_forward_user_not_allocated_denied(
     mock_gov_user, data_fake_queue, data_unassigned_case
 ):
@@ -165,7 +174,6 @@ def test_can_user_move_f680_case_forward_recommendation_status_mod_ecju_granted(
 ):
     case = data_assigned_case
     MOD_ECJU_ALIAS = "MOD_ECJU"
-    case.advice = [{"team": {"alias": MOD_ECJU_ALIAS}}]
     data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
     request = get_allocated_request_user(mock_gov_user, data_fake_queue, team_alias=MOD_ECJU_ALIAS)
 
@@ -193,3 +201,10 @@ def test_can_user_make_f680_outcome_permission_granted(mock_gov_user, data_fake_
     request = get_allocated_request_user(mock_gov_user, data_fake_queue)
 
     assert rules.test_rule("can_user_make_f680_outcome", request, case)
+
+
+def test_can_user_make_f680_outcome_request_missing_attributes(mock_gov_user, data_fake_queue, data_unassigned_case):
+    case = data_unassigned_case
+    request = None
+
+    assert not recommendation_rules.case_ready_for_outcome(request, case)
