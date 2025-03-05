@@ -10,8 +10,7 @@ def can_user_make_f680_recommendation(request, case):
     if not user:
         return False
 
-    team = user["team"]["alias"]
-    if get_current_user_recommendation(case.advice, user["id"], team):
+    if get_current_user_recommendation(request.queue["id"], case.advice, user):
         return False
 
     return True

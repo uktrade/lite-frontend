@@ -4,11 +4,11 @@ from caseworker.advice import constants
 from core import client
 
 
-def filter_current_user_recommendation(all_recommendation, user_id):
+def filter_current_user_recommendation(all_recommendation, user_id, levels):
     return [
         recommendation
         for recommendation in all_recommendation
-        if recommendation["level"] == constants.AdviceLevel.USER
+        if recommendation["level"] in levels
         and recommendation["type"]["key"] in ["approve", "proviso", "refuse"]
         and (recommendation["user"]["id"] == user_id)
     ]
@@ -18,8 +18,8 @@ def filter_recommendation_by_level(all_recommendation, recommendation_levels):
     return [recommendation for recommendation in all_recommendation if recommendation["level"] in recommendation_levels]
 
 
-def filter_recommendation_by_team(all_recommendation, team_alias):
-    return [recommendation for recommendation in all_recommendation if recommendation["team"]["alias"] == team_alias]
+def filter_recommendation_by_team(all_recommendation, team_id):
+    return [recommendation for recommendation in all_recommendation if recommendation["team"]["id"] == team_id]
 
 
 def group_recommendation_by_user(recommendation):
@@ -29,12 +29,18 @@ def group_recommendation_by_user(recommendation):
     return result
 
 
-def get_current_user_recommendation(recommendation, caseworker_id, team_alias):
-    user_level_recommendation = filter_recommendation_by_level(recommendation, ["user"])
-    user_recommendation = filter_current_user_recommendation(user_level_recommendation, caseworker_id)
-    user_recommendation = filter_recommendation_by_team(user_recommendation, team_alias)
-    grouped_user_recommendation = group_recommendation_by_user(user_recommendation)
-    return grouped_user_recommendation.get(caseworker_id)
+def get_current_user_recommendation(queue_id, all_recommendations, caseworker):
+    level = ["user"]
+    team_id = caseworker["team"]["id"]
+    caseworker_id = caseworker["id"]
+    if team_id == constants.MOD_ECJU and queue_id == constants.MOD_ECJU_F680_CASES_UNDER_FINAL_REVIEW:
+        level = ["final"]
+
+    recommendation = filter_recommendation_by_level(all_recommendations, level)
+    recommendation = filter_current_user_recommendation(recommendation, caseworker_id, level)
+    recommendation = filter_recommendation_by_team(recommendation, team_id)
+    grouped_recommendation = group_recommendation_by_user(recommendation)
+    return grouped_recommendation.get(caseworker_id)
 
 
 def post_approval_recommendation(request, case, data, level="user-advice"):

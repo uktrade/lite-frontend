@@ -5,7 +5,7 @@ from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice.constants import AdviceSteps
+from caseworker.advice.constants import AdviceSteps, MOD_ECJU, MOD_ECJU_F680_CASES_UNDER_FINAL_REVIEW
 from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
@@ -35,9 +35,7 @@ class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView)
             f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
         )
         self.recommendation = None
-        if recommendation := get_current_user_recommendation(
-            self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
-        ):
+        if recommendation := get_current_user_recommendation(str(self.queue_id), self.case.advice, self.caseworker):
             self.recommendation = recommendation[0] if recommendation else None
 
         self.team_recommendations = []
@@ -61,9 +59,7 @@ class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        recommendation = get_current_user_recommendation(
-            self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
-        )
+        recommendation = get_current_user_recommendation(str(self.queue_id), self.case.advice, self.caseworker)
 
         return {
             **context,
@@ -118,7 +114,10 @@ class BaseApprovalRecommendationView(LoginRequiredMixin, CaseContextMixin, BaseS
         "Unexpected error adding approval recommendation",
     )
     def post_approval_recommendation(self, data):
-        return post_approval_recommendation(self.request, self.case, data)
+        level = "user-advice"
+        if self.caseworker["team"]["id"] == MOD_ECJU and str(self.queue_id) == MOD_ECJU_F680_CASES_UNDER_FINAL_REVIEW:
+            level = "final-advice"
+        return post_approval_recommendation(self.request, self.case, data, level=level)
 
     def get_payload(self, form_dict):
         return GiveApprovalAdvicePayloadBuilder().build(form_dict)
