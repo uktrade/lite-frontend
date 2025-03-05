@@ -5,6 +5,8 @@ import rules
 
 from django.http import HttpRequest
 
+from core.constants import CaseStatusEnum
+
 from caseworker.f680 import rules as recommendation_rules
 from caseworker.advice import services
 from caseworker.cases.objects import Case
@@ -77,6 +79,7 @@ def test_can_user_make_f680_recommendation_user_allocated_existing_recommendatio
 def test_can_user_make_f680_recommendation_user_allocated(
     queue_alias, mock_gov_user, data_fake_queue, data_assigned_case
 ):
+    data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
     mock_gov_user["user"]["team"]["alias"] = queue_alias
     data_fake_queue["alias"] = queue_alias
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
