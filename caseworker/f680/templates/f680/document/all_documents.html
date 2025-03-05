@@ -1,16 +1,11 @@
-{% extends 'layouts/case.html' %}
+{% extends 'f680/case/base.html' %}
 {% load crispy_forms_tags %}
 
 {% block full_width %}
 	<div class="app-letter-preview__container">
-		<div class="lite-app-bar">
-			<div class="lite-app-bar__content">
-				<h1 class="govuk-heading-l">{% block title %}Documents{% endblock %}</h1>
-			</div>
-		</div>
 
+		<h1 class="govuk-heading-l">{% block title %}Outcome Documents{% endblock %}</h1>
         <div class="govuk-!-margin-top-8">
-            <h1 class="govuk-visually-hidden">Case Documents</h1>
             <table class="govuk-table" id="table-final-documents">
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">

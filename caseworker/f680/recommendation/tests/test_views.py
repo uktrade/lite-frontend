@@ -14,6 +14,7 @@ from caseworker.f680.recommendation.forms.forms import (
     SimpleLicenceConditionsForm,
 )
 from core import client
+from core.constants import CaseStatusEnum
 
 
 @pytest.fixture(autouse=True)
@@ -85,6 +86,7 @@ class TestF680RecommendationView:
         data_submitted_f680_case["case"]["assigned_users"] = {
             queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]
         }
+        data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.OGD_ADVICE
         response = authorized_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")

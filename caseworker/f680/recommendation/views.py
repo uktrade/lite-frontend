@@ -16,47 +16,43 @@ from caseworker.f680.recommendation.forms.forms import (
     SelectRecommendationTypeForm,
     SimpleLicenceConditionsForm,
 )
-from caseworker.f680.recommendation.mixins import CaseContextMixin
 from caseworker.f680.recommendation.services import (
     get_current_user_recommendation,
     post_approval_recommendation,
 )
+from caseworker.f680.views import F680CaseworkerMixin
 from core.decorators import expect_status
 from core.wizard.conditionals import C
 from core.wizard.views import BaseSessionWizardView
 
 
-class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/recommendation/recommendation.html"
-
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
-        self.title = (
-            f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        )
-        self.recommendation = None
-        if recommendation := get_current_user_recommendation(
-            self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
-        ):
-            self.recommendation = recommendation[0] if recommendation else None
-
-        self.team_recommendations = []
-        for recommendation in self.case.get("advice", []):
-            self.team_recommendations.append({"team": recommendation["team"], "recommendation": recommendation})
+    current_tab = "recommendations"
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
+        recommendation = None
+        if user_recommendation := get_current_user_recommendation(
+            self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
+        ):
+            user_recommendation = user_recommendation[0] if user_recommendation else None
+
+        team_recommendations = []
+        for recommendation in self.case.get("advice", []):
+            team_recommendations.append({"team": recommendation["team"], "recommendation": recommendation})
         return {
             **context_data,
             "case": self.case,
-            "title": self.title,
-            "recommendation": self.recommendation,
-            "teams_recommendations": self.team_recommendations,
+            "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
+            "user_recommendation": user_recommendation,
+            "teams_recommendations": team_recommendations,
         }
 
 
-class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/recommendation/view_my_recommendation.html"
+    current_tab = "recommendations"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -72,9 +68,10 @@ class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
         }
 
 
-class SelectRecommendationTypeView(LoginRequiredMixin, CaseContextMixin, FormView):
+class SelectRecommendationTypeView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     template_name = "f680/case/recommendation/select_recommendation_type.html"
     form_class = SelectRecommendationTypeForm
+    current_tab = "recommendations"
 
     def get_success_url(self):
         return reverse("cases:f680:approve_all", kwargs=self.kwargs)
@@ -84,8 +81,9 @@ class SelectRecommendationTypeView(LoginRequiredMixin, CaseContextMixin, FormVie
         return super().form_valid(form)
 
 
-class BaseApprovalRecommendationView(LoginRequiredMixin, CaseContextMixin, BaseSessionWizardView):
+class BaseApprovalRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     template_name = "f680/case/recommendation/form_wizard.html"
+    current_tab = "recommendations"
 
     condition_dict = {
         AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),

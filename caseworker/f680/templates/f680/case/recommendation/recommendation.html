@@ -1,23 +1,29 @@
-{% extends 'layouts/case.html' %}
+{% extends 'f680/case/base.html' %}
 
 {% load rules %}
 
 
-{% block body %}
+{% block details %}
 <div class="govuk-width-container">
     <main class="govuk-main-wrapper">
+        {% test_rule 'can_user_make_f680_outcome' request case as can_user_make_f680_outcome %}
+        {% if can_user_make_f680_outcome %}
+            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate approval document</a>
+        {% endif %}
 
-        {% if recommendation %}
+        {% include "f680/includes/move_case_forward.html" with request=request case=case queue=queue %}
+
+        {% test_rule 'can_user_make_f680_recommendation' request case as can_user_make_f680_recommendation %}
+        {% if can_user_make_f680_recommendation %}
+            <br>
+            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:select_recommendation_type' queue_pk case.id %}">Make recommendation</a>
+        {% endif %}
+
+
+        {% if user_recommendation %}
             <br>
             <h1 class="govuk-heading-xl">View recommendation</h1>
             {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
-        {% else %}
-
-            {% test_rule 'can_user_make_f680_recommendation' request case as can_user_make_f680_recommendation %}
-            {% if can_user_make_f680_recommendation %}
-                <br>
-                <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:select_recommendation_type' queue_pk case.id %}">Make recommendation</a>
-            {% endif %}
         {% endif %}
 
         {% if case.advice %}
