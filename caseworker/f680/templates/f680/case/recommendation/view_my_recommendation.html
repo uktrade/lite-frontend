@@ -3,7 +3,8 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block details %}
-  <br>
+  {% include "f680/includes/move_case_forward.html" with request=request case=case queue=queue %}
+
   <h1 class="govuk-heading-xl">View recommendation</h1>
   {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
 {% endblock %}
