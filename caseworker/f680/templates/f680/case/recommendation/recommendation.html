@@ -6,8 +6,8 @@
 {% block details %}
 <div class="govuk-width-container">
     <main class="govuk-main-wrapper">
-        {% test_rule 'can_user_generate_f680_outcome_document' request case as can_user_generate_outcome_document %}
-        {% if can_user_generate_outcome_document %}
+        {% test_rule 'can_user_make_f680_outcome' request case as can_user_make_f680_outcome %}
+        {% if can_user_make_f680_outcome %}
             <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate approval document</a>
         {% endif %}
 

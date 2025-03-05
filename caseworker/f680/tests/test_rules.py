@@ -27,8 +27,14 @@ def data_fake_queue():
 
 
 @pytest.fixture
-def data_assigned_case(data_submitted_f680_case):
+def data_unassigned_case(data_submitted_f680_case):
     case = Case(data_submitted_f680_case["case"])
+    return case
+
+
+@pytest.fixture
+def data_assigned_case(data_unassigned_case):
+    case = data_unassigned_case
     case.assigned_users = {
         "fake queue": [
             {"id": mock_gov_user_id},
@@ -44,17 +50,24 @@ def get_mock_request(user, queue):
     return request
 
 
+def get_allocated_request_user(user, queue, team_alias=None):
+    if team_alias:
+        user["user"]["team"]["alias"] = team_alias
+    request = get_mock_request(user["user"], queue)
+    return request
+
+
 def test_can_user_make_f680_recommendation_request_missing_attributes(
-    mock_gov_user, data_fake_queue, data_submitted_f680_case
+    mock_gov_user, data_fake_queue, data_unassigned_case
 ):
-    case = Case(data_submitted_f680_case["case"])
+    case = data_unassigned_case
     request = None
 
     assert not recommendation_rules.can_user_make_f680_recommendation(request, case)
 
 
-def test_can_user_make_f680_recommendation_user_not_allocated(mock_gov_user, data_fake_queue, data_submitted_f680_case):
-    case = Case(data_submitted_f680_case["case"])
+def test_can_user_make_f680_recommendation_user_not_allocated(mock_gov_user, data_fake_queue, data_unassigned_case):
+    case = data_unassigned_case
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
 
     assert not rules.test_rule("can_user_make_f680_recommendation", request, case)
@@ -76,11 +89,107 @@ def test_can_user_make_f680_recommendation_user_allocated_existing_recommendatio
         services.MOD_DSR_TEAM,
     ),
 )
-def test_can_user_make_f680_recommendation_user_allocated(
+def test_can_user_make_f680_recommendation_user_allocated_incorrect_case_status(
     queue_alias, mock_gov_user, data_fake_queue, data_assigned_case
 ):
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+    assert not rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
+
+
+def test_can_user_make_f680_recommendation_user_allocated(mock_gov_user, data_fake_queue, data_assigned_case):
     data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
-    mock_gov_user["user"]["team"]["alias"] = queue_alias
-    data_fake_queue["alias"] = queue_alias
-    request = get_mock_request(mock_gov_user["user"], data_fake_queue)
+
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue)
     assert rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
+
+
+def test_can_user_move_f680_case_forward_user_not_allocated_denied(
+    mock_gov_user, data_fake_queue, data_unassigned_case
+):
+    case = data_unassigned_case
+    request = get_mock_request(mock_gov_user["user"], data_fake_queue)
+
+    assert not rules.test_rule("can_user_move_f680_case_forward", request, case)
+
+
+def test_can_user_move_f680_case_forward_user_allocated_wrong_status_denied(
+    mock_gov_user, data_fake_queue, data_assigned_case
+):
+    case = data_assigned_case
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+    case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
+
+    assert not rules.test_rule("can_user_move_f680_case_forward", request, case)
+
+
+def test_can_user_move_f680_case_forward_informational_status_granted(
+    mock_gov_user, data_fake_queue, data_assigned_case
+):
+    case = data_assigned_case
+    case.data["status"]["key"] = CaseStatusEnum.SUBMITTED
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+
+    assert rules.test_rule("can_user_move_f680_case_forward", request, case)
+
+
+def test_can_user_move_f680_case_forward_recommendation_status_no_recommendation_denied(
+    mock_gov_user, data_fake_queue, data_assigned_case
+):
+    case = data_assigned_case
+    data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+
+    assert not rules.test_rule("can_user_move_f680_case_forward", request, case)
+
+
+@pytest.mark.parametrize(
+    "team_alias",
+    (
+        services.MOD_CAPPROT_TEAM,
+        services.MOD_DSR_TEAM,
+    ),
+)
+def test_can_user_move_f680_case_forward_recommendation_status_granted(
+    team_alias, mock_gov_user, data_fake_queue, data_assigned_case
+):
+    case = data_assigned_case
+    case.advice = [{"team": {"alias": team_alias}}]
+    data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue, team_alias=team_alias)
+
+    assert rules.test_rule("can_user_move_f680_case_forward", request, case)
+
+
+def test_can_user_move_f680_case_forward_recommendation_status_mod_ecju_granted(
+    mock_gov_user, data_fake_queue, data_assigned_case
+):
+    case = data_assigned_case
+    MOD_ECJU_ALIAS = "MOD_ECJU"
+    case.advice = [{"team": {"alias": MOD_ECJU_ALIAS}}]
+    data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue, team_alias=MOD_ECJU_ALIAS)
+
+    assert rules.test_rule("can_user_move_f680_case_forward", request, case)
+
+
+def test_can_user_make_f680_outcome_user_not_allocated(mock_gov_user, data_fake_queue, data_unassigned_case):
+    case = data_unassigned_case
+    request = get_mock_request(mock_gov_user["user"], data_fake_queue)
+
+    assert not rules.test_rule("can_user_make_f680_outcome", request, case)
+
+
+def test_can_user_make_f680_outcome_user_allocated_wrong_status(mock_gov_user, data_fake_queue, data_assigned_case):
+    case = data_assigned_case
+    case.data["status"]["key"] = CaseStatusEnum.SUBMITTED
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+
+    assert not rules.test_rule("can_user_make_f680_outcome", request, case)
+
+
+def test_can_user_make_f680_outcome_permission_granted(mock_gov_user, data_fake_queue, data_assigned_case):
+    case = data_assigned_case
+    case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+
+    assert rules.test_rule("can_user_make_f680_outcome", request, case)
