@@ -5,7 +5,7 @@ from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice.constants import AdviceSteps, MOD_ECJU, MOD_ECJU_F680_CASES_UNDER_FINAL_REVIEW
+from caseworker.advice.constants import AdviceSteps
 from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
@@ -19,6 +19,7 @@ from caseworker.f680.recommendation.forms.forms import (
 from caseworker.f680.recommendation.mixins import CaseContextMixin
 from caseworker.f680.recommendation.services import (
     get_current_user_recommendation,
+    is_f680_finalise_queue,
     post_approval_recommendation,
 )
 from core.decorators import expect_status
@@ -115,7 +116,7 @@ class BaseApprovalRecommendationView(LoginRequiredMixin, CaseContextMixin, BaseS
     )
     def post_approval_recommendation(self, data):
         level = "user-advice"
-        if self.caseworker["team"]["id"] == MOD_ECJU and str(self.queue_id) == MOD_ECJU_F680_CASES_UNDER_FINAL_REVIEW:
+        if is_f680_finalise_queue(str(self.queue_id), self.caseworker):
             level = "final-advice"
         return post_approval_recommendation(self.request, self.case, data, level=level)
 

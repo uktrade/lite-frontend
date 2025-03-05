@@ -4,6 +4,11 @@ from caseworker.advice import constants
 from core import client
 
 
+def is_f680_finalise_queue(queue_id, caseworker):
+    team_id = caseworker["team"]["id"]
+    return team_id == constants.MOD_ECJU and queue_id == constants.MOD_ECJU_F680_CASES_UNDER_FINAL_REVIEW
+
+
 def filter_current_user_recommendation(all_recommendation, user_id, levels):
     return [
         recommendation
@@ -33,7 +38,7 @@ def get_current_user_recommendation(queue_id, all_recommendations, caseworker):
     level = ["user"]
     team_id = caseworker["team"]["id"]
     caseworker_id = caseworker["id"]
-    if team_id == constants.MOD_ECJU and queue_id == constants.MOD_ECJU_F680_CASES_UNDER_FINAL_REVIEW:
+    if is_f680_finalise_queue(queue_id, caseworker):
         level = ["final"]
 
     recommendation = filter_recommendation_by_level(all_recommendations, level)
