@@ -34,7 +34,7 @@ def group_recommendation_by_user(recommendation):
     return result
 
 
-def get_current_user_recommendation(queue_id, all_recommendations, caseworker):
+def current_user_recommendation(queue_id, all_recommendations, caseworker):
     level = ["user"]
     team_id = caseworker["team"]["id"]
     caseworker_id = caseworker["id"]

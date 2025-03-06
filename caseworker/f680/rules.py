@@ -1,7 +1,7 @@
 import rules
 
 from caseworker.core.rules import is_user_allocated, get_logged_in_caseworker
-from caseworker.f680.recommendation.services import get_current_user_recommendation
+from caseworker.f680.recommendation.services import current_user_recommendation
 
 
 @rules.predicate
@@ -10,7 +10,7 @@ def can_user_make_f680_recommendation(request, case):
     if not user:
         return False
 
-    if get_current_user_recommendation(request.queue["id"], case.advice, user):
+    if current_user_recommendation(request.queue["id"], case.advice, user):
         return False
 
     return True

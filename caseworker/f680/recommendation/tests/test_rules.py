@@ -58,7 +58,7 @@ def test_can_user_make_f680_recommendation_user_not_allocated(mock_gov_user, dat
     assert not rules.test_rule("can_user_make_f680_recommendation", request, case)
 
 
-@mock.patch("caseworker.f680.rules.get_current_user_recommendation")
+@mock.patch("caseworker.f680.rules.current_user_recommendation")
 def test_can_user_make_f680_recommendation_user_allocated_existing_recommendation(
     mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
 ):

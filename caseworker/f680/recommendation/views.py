@@ -18,7 +18,7 @@ from caseworker.f680.recommendation.forms.forms import (
 )
 from caseworker.f680.recommendation.mixins import CaseContextMixin
 from caseworker.f680.recommendation.services import (
-    get_current_user_recommendation,
+    current_user_recommendation,
     is_f680_finalise_queue,
     post_approval_recommendation,
 )
@@ -36,7 +36,7 @@ class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView)
             f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
         )
         self.recommendation = None
-        if recommendation := get_current_user_recommendation(str(self.queue_id), self.case.advice, self.caseworker):
+        if recommendation := current_user_recommendation(str(self.queue_id), self.case.advice, self.caseworker):
             self.recommendation = recommendation[0] if recommendation else None
 
         self.team_recommendations = []
@@ -60,7 +60,7 @@ class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        recommendation = get_current_user_recommendation(str(self.queue_id), self.case.advice, self.caseworker)
+        recommendation = current_user_recommendation(str(self.queue_id), self.case.advice, self.caseworker)
 
         return {
             **context,
