@@ -79,5 +79,6 @@ def test_can_user_make_f680_recommendation_user_allocated(
 ):
     mock_gov_user["user"]["team"]["alias"] = queue_alias
     data_fake_queue["alias"] = queue_alias
+    data_assigned_case['data']['status'] = {'key': 'ogd_advice', 'value': 'OGD Advice'}
     request = get_mock_request(mock_gov_user["user"], data_fake_queue)
     assert rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)

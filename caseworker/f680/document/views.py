@@ -19,6 +19,7 @@ from .forms import GenerateDocumentForm, DocumentGenerationForm
 class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     form_class = DocumentGenerationForm
     template_name = "f680/document/all_documents.html"
+    current_tab = "recommendations"
 
     @expect_status(
         HTTPStatus.OK,
@@ -44,6 +45,7 @@ class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
 class F680GenerateDocument(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     template_name = "f680/document/preview.html"
     form_class = GenerateDocumentForm
+    current_tab = "recommendations"
 
     @expect_status(
         HTTPStatus.OK,

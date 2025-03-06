@@ -8,31 +8,47 @@ import rules
 
 from core.auth.views import LoginRequiredMixin
 
+from caseworker.advice.constants import AdviceLevel
+from caseworker.advice.services import move_case_forward
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.cases.services import get_case
-from caseworker.advice.services import move_case_forward
+from caseworker.f680.rules import case_ready_for_outcome
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
+from caseworker.users.services import get_gov_user
 
 
 class F680CaseworkerMixin(CaseworkerMixin):
+    current_tab = None
+
     def dispatch(self, request, *args, **kwargs):
 
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
+        self.caseworker_id = str(self.request.session["lite_api_user_id"])
+        data, _ = get_gov_user(self.request, self.caseworker_id)
+        self.caseworker = data["user"]
+
+        self.case_ready_for_outcome = case_ready_for_outcome(request, self.case)
+        self.recommendation_level = AdviceLevel.FINAL if self.case_ready_for_outcome else AdviceLevel.USER
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data["case"] = self.case
         context_data["queue_id"] = self.queue_id
+        context_data["current_tab"] = self.current_tab
+        context_data["queue_pk"] = self.queue_id
+        context_data["caseworker"] = self.caseworker
         return context_data
 
 
 class CaseDetailView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/detail.html"
+    current_tab = "details"
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
