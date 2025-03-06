@@ -36,7 +36,9 @@ class PreviousApplicationsForm(BaseForm):
     ecju_reference_number = forms.CharField(label="What is the ECJU reference number?")
     previous_application_details = forms.CharField(
         label="Can you provide more detail?",
-        help_text="For example if the products have been previously agreed or refused to the end-user or country.  Or if its for the same goods but to different destinations.  If possible provide the export trade licence number",
+        help_text="For example if the products have been previously agreed or refused to the "
+        "end-user or country.  Or if its for the same goods but to different destinations.  "
+        "If possible provide the export trade licence number",
         widget=forms.Textarea(attrs={"rows": "5"}),
     )
 
