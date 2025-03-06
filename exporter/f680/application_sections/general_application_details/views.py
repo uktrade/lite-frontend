@@ -1,7 +1,12 @@
 from exporter.f680.application_sections.views import F680ApplicationSectionWizard
 
 from .constants import FormSteps
-from .forms import ApplicationNameForm, ExceptionalCircumstancesForm, ExplainExceptionalCircumstancesForm
+from .forms import (
+    ApplicationNameForm,
+    PreviousApplicationsForm,
+    ExceptionalCircumstancesForm,
+    ExplainExceptionalCircumstancesForm,
+)
 
 
 def is_exceptional_circumstances(wizard):
@@ -12,6 +17,7 @@ def is_exceptional_circumstances(wizard):
 class GeneralApplicationDetailsView(F680ApplicationSectionWizard):
     form_list = [
         (FormSteps.APPLICATION_NAME, ApplicationNameForm),
+        (FormSteps.PREVIOUS_APPLICATION, PreviousApplicationsForm),
         (FormSteps.EXCEPTIONAL_CIRCUMSTANCES, ExceptionalCircumstancesForm),
         (FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS, ExplainExceptionalCircumstancesForm),
     ]
