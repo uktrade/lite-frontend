@@ -16,7 +16,7 @@ def can_user_make_f680_recommendation(request, case):
     if not user:
         return False
 
-    if current_user_recommendation(request.queue["id"], case.advice, user):
+    if current_user_recommendation(case.advice, user):
         return False
 
     return True

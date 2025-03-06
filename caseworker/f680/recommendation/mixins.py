@@ -1,4 +1,6 @@
+from caseworker.advice.constants import AdviceLevel
 from caseworker.cases.services import get_case
+from caseworker.f680.rules import case_ready_for_outcome
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
 
@@ -19,6 +21,9 @@ class CaseContextMixin:
         self.caseworker_id = str(self.request.session["lite_api_user_id"])
         data, _ = get_gov_user(self.request, self.caseworker_id)
         self.caseworker = data["user"]
+
+        self.case_ready_for_outcome = case_ready_for_outcome(request, self.case)
+        self.recommendation_level = AdviceLevel.FINAL if self.case_ready_for_outcome else AdviceLevel.USER
 
     def get_context(self, **kwargs):
         return {}

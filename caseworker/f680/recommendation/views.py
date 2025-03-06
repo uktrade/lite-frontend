@@ -19,7 +19,6 @@ from caseworker.f680.recommendation.forms.forms import (
 from caseworker.f680.recommendation.mixins import CaseContextMixin
 from caseworker.f680.recommendation.services import (
     current_user_recommendation,
-    is_f680_finalise_queue,
     post_approval_recommendation,
 )
 from core.decorators import expect_status
@@ -36,7 +35,7 @@ class CaseRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView)
             f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
         )
         self.recommendation = None
-        if recommendation := current_user_recommendation(str(self.queue_id), self.case.advice, self.caseworker):
+        if recommendation := current_user_recommendation(self.case.advice, self.caseworker, self.recommendation_level):
             self.recommendation = recommendation[0] if recommendation else None
 
         self.team_recommendations = []
@@ -60,7 +59,7 @@ class MyRecommendationView(LoginRequiredMixin, CaseContextMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        recommendation = current_user_recommendation(str(self.queue_id), self.case.advice, self.caseworker)
+        recommendation = current_user_recommendation(self.case.advice, self.caseworker, self.recommendation_level)
 
         return {
             **context,
@@ -115,9 +114,7 @@ class BaseApprovalRecommendationView(LoginRequiredMixin, CaseContextMixin, BaseS
         "Unexpected error adding approval recommendation",
     )
     def post_approval_recommendation(self, data):
-        level = "user-advice"
-        if is_f680_finalise_queue(str(self.queue_id), self.caseworker):
-            level = "final-advice"
+        level = "final-advice" if self.case_ready_for_outcome else "user-advice"
         return post_approval_recommendation(self.request, self.case, data, level=level)
 
     def get_payload(self, form_dict):

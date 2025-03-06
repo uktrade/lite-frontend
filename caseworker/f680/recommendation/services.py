@@ -19,8 +19,8 @@ def filter_current_user_recommendation(all_recommendation, user_id, levels):
     ]
 
 
-def filter_recommendation_by_level(all_recommendation, recommendation_levels):
-    return [recommendation for recommendation in all_recommendation if recommendation["level"] in recommendation_levels]
+def filter_recommendation_by_level(all_recommendation, recommendation_level):
+    return [recommendation for recommendation in all_recommendation if recommendation["level"] == recommendation_level]
 
 
 def filter_recommendation_by_team(all_recommendation, team_id):
@@ -34,12 +34,9 @@ def group_recommendation_by_user(recommendation):
     return result
 
 
-def current_user_recommendation(queue_id, all_recommendations, caseworker):
-    level = ["user"]
+def current_user_recommendation(all_recommendations, caseworker, level):
     team_id = caseworker["team"]["id"]
     caseworker_id = caseworker["id"]
-    if is_f680_finalise_queue(queue_id, caseworker):
-        level = ["final"]
 
     recommendation = filter_recommendation_by_level(all_recommendations, level)
     recommendation = filter_current_user_recommendation(recommendation, caseworker_id, level)
