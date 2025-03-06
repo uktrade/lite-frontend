@@ -1,7 +1,13 @@
 import rules
 
+from core.constants import CaseStatusEnum
+
 from caseworker.core.rules import is_user_allocated, get_logged_in_caseworker
 from caseworker.f680.recommendation.services import current_user_recommendation
+
+RECOMMENDATION_STATUSES = [CaseStatusEnum.OGD_ADVICE]
+OUTCOME_STATUSES = [CaseStatusEnum.UNDER_FINAL_REVIEW]
+INFORMATIONAL_STATUSES = [CaseStatusEnum.SUBMITTED]
 
 
 @rules.predicate
@@ -16,4 +22,14 @@ def can_user_make_f680_recommendation(request, case):
     return True
 
 
+@rules.predicate
+def case_ready_for_outcome(request, case):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+
+    return case["data"]["status"]["key"] in OUTCOME_STATUSES
+
+
 rules.add_rule("can_user_make_f680_recommendation", is_user_allocated & can_user_make_f680_recommendation)
+rules.add_rule("can_user_make_f680_outcome", is_user_allocated & case_ready_for_outcome)
