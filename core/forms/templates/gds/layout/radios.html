@@ -1,6 +1,8 @@
 <!--
 This file is a template for the radios.html snippet to fix the line below which would mark checked when a choice is IN the field
 https://github.com/wildfish/crispy-forms-gds/blob/e5ecb6fc3ac906c80f1bd9f1d4a12e51c7bfa89d/src/crispy_forms_gds/templates/gds/layout/radios.html#L24
+
+It also includes functionality for setting a radio item as being disabled
 -->
 
 {% load l10n crispy_forms_gds %}
@@ -31,6 +33,9 @@ https://github.com/wildfish/crispy-forms-gds/blob/e5ecb6fc3ac906c80f1bd9f1d4a12e
           {% endif %}
           {% if choice.hint %}
              aria-describedby="id_{{ field.html_name }}_{{ forloop.counter }}_hint"
+          {% endif %}
+          {% if choice.disabled %}
+            disabled
           {% endif %}
         >
 

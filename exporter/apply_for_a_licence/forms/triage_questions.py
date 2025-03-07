@@ -1,9 +1,18 @@
 import rules
-from django.urls import reverse
-from django.conf import settings
 
-from exporter.applications.forms.edit import firearms_form, reference_name_form, told_by_an_official_form
+from django import forms
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.template.loader import render_to_string
+from django.urls import reverse
+
+from core.common.forms import (
+    Choice,
+    FieldsetForm,
+)
 from core.constants import GoodsTypeCategory
+from core.forms.layouts import RenderTemplate
+from exporter.applications.forms.edit import firearms_form, reference_name_form, told_by_an_official_form
 from exporter.core.constants import CaseTypes
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import (
@@ -22,7 +31,69 @@ from lite_forms.components import (
 )
 from lite_forms.helpers import conditional
 
-from django.template.loader import render_to_string
+
+class LicenceTypeForm(FieldsetForm):
+    class Layout:
+        TITLE = "Select what you need"
+
+    licence_type = forms.ChoiceField(
+        choices=(
+            Choice(
+                "export_licence",
+                "Export licence",
+                hint="Select if you’re sending products from the UK to another country. You need an export licence before you provide access to controlled technology, software or data.",
+            ),
+            Choice(
+                "f680",
+                "Security Approval",
+                hint="Select if you need approval to give classified products or information to non-UK organisations, governments and individuals. This includes F680 approval. You should apply for security approval before you apply for a licence.",
+            ),
+            Choice(
+                "transhipment",
+                "Transhipment licence",
+                disabled=True,
+                hint="Select if you're shipping something from overseas through the UK on to another country. If the products will be in the UK for 30 days or more, apply for an export licence.",
+            ),
+            Choice(
+                "trade_control_licence",
+                "Trade control licence",
+                disabled=True,
+                hint="Select if you’re arranging or brokering the sale or movement of controlled military products located overseas.",
+            ),
+        ),
+        error_messages={
+            "required": "Select the type of licence or clearance you need",
+        },
+        label="",
+        widget=forms.RadioSelect,
+    )
+
+    def __init__(self, *args, request, **kwargs):
+        super().__init__(*args, **kwargs)
+        licence_type_choices = {choice.value: choice for choice in self.fields["licence_type"].choices}
+        f680_choice = licence_type_choices["f680"]
+        f680_choice.disabled = not rules.test_rule("can_exporter_use_f680s", request)
+
+    def get_layout_fields(self):
+        return (
+            RenderTemplate("applications/use-spire-triage.html"),
+            "licence_type",
+        )
+
+    def clean_licence_type(self):
+        valid_choices = [
+            choice.value for choice in self.fields["licence_type"].choices if not getattr(choice, "disabled", False)
+        ]
+        value = self.cleaned_data["licence_type"]
+
+        if value not in valid_choices:
+            raise ValidationError(
+                self.error_messages["invalid_choice"],
+                code="invalid_choice",
+                params={"value": value},
+            )
+
+        return value
 
 
 def opening_question(request):
