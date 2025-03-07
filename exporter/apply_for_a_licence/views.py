@@ -40,6 +40,13 @@ class LicenceType(LoginRequiredMixin, FormView):
     def get_success_url(self):
         return reverse(f"apply_for_a_licence:{self.licence_type}_questions")
 
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx["back_link_url"] = reverse("core:home")
+
+        return ctx
+
 
 class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
     def init(self, request, **kwargs):
