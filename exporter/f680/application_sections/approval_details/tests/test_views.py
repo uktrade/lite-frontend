@@ -125,6 +125,15 @@ def force_product_under_itar(goto_product_step, post_to_product_step):
     )
 
 
+@pytest.fixture
+def force_has_security_classification(goto_product_step, post_to_product_step):
+    goto_product_step(FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION)
+    post_to_product_step(
+        FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+        {"has_security_classification": True},
+    )
+
+
 class TestApprovalDetailsView:
 
     def test_GET_no_application_404(
@@ -331,6 +340,25 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_DESCRIPTION,
                 {"product_description": "Does a thing"},
+                forms.ProductHasSecurityClassification,
+            ),
+            (
+                FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+                {"has_security_classification": True},
+                forms.ProductSecurityClassificationForm,
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "prefix": "some prefix",
+                    "security_classification": "unclassified",
+                    "suffix": "some suffix",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some ref",
+                    "date_of_issue_0": "1",
+                    "date_of_issue_1": "1",
+                    "date_of_issue_2": "2024",
+                },
                 forms.ProductForeignTechOrSharedInformation,
             ),
             (
@@ -389,6 +417,7 @@ class TestProductInformationViews:
         post_to_product_step,
         goto_product_step,
         mock_f680_application_get,
+        force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
     ):
@@ -471,6 +500,7 @@ class TestProductInformationViews:
         post_to_product_step,
         goto_product_step,
         mock_f680_application_get,
+        force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
     ):
@@ -489,6 +519,7 @@ class TestProductInformationViews:
         goto_product_step,
         mock_f680_application_get,
         mock_patch_f680_application,
+        force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
     ):
@@ -499,6 +530,27 @@ class TestProductInformationViews:
         response = post_to_product_step(
             FormSteps.PRODUCT_DESCRIPTION,
             {"product_description": "Does a thing"},
+        )
+        response = (
+            post_to_product_step(
+                FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+                {"has_security_classification": True},
+            ),
+        )
+        response = (
+            post_to_product_step(
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "prefix": "some prefix",
+                    "security_classification": "unclassified",
+                    "suffix": "some suffix",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "1234",
+                    "date_of_issue_0": "1",
+                    "date_of_issue_1": "1",
+                    "date_of_issue_2": "2025",
+                },
+            ),
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
@@ -565,6 +617,62 @@ class TestProductInformationViews:
                                 "raw_answer": "Does a thing",
                                 "question": "Describe the item",
                                 "datatype": "string",
+                            },
+                            {
+                                "key": "has_security_classification",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "prefix",
+                                "answer": "some prefix",
+                                "raw_answer": "some prefix",
+                                "question": "Enter a prefix (optional)",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "security_classification",
+                                "answer": "Unclassified",
+                                "raw_answer": "unclassified",
+                                "question": "Select security classification",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "other_security_classification",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Enter the security classification",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "suffix",
+                                "answer": "some suffix",
+                                "raw_answer": "some suffix",
+                                "question": "Enter a suffix (optional)",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "issuing_authority_name_address",
+                                "answer": "some address",
+                                "raw_answer": "some address",
+                                "question": "Name and address of the issuing authority",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "reference",
+                                "answer": "1234",
+                                "raw_answer": "1234",
+                                "question": "Reference",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "date_of_issue",
+                                "answer": "2025-01-01",
+                                "raw_answer": "2025-01-01",
+                                "question": "Date of issue",
+                                "datatype": "date",
                             },
                             {
                                 "key": "is_foreign_tech_or_information_shared",
