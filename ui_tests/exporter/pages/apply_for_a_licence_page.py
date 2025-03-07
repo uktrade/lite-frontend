@@ -6,7 +6,6 @@ from ui_tests.exporter.pages.BasePage import BasePage
 
 class ApplyForALicencePage(BasePage):
     NAME_OR_REFERENCE_INPUT_ID = "name"
-    LICENCE_TYPE_PARTIAL_ID = "licence_type-"
     MOD_APPLICATION_TYPE_PARTIAL_ID = "application_type-"
     RADIOBUTTON_LICENCE_ID_PARTIAL = "input#application_type-"
     EXPORT_BUTTON = "export_type-"
@@ -27,7 +26,7 @@ class ApplyForALicencePage(BasePage):
         element.send_keys(name)
 
     def select_licence_type(self, type):
-        self.driver.find_element(by=By.ID, value=f"{self.LICENCE_TYPE_PARTIAL_ID}{type}").click()
+        self.driver.find_element(by=By.ID, value=type).click()
 
     def select_mod_application_type(self, type):
         self.driver.find_element(by=By.ID, value=f"{self.MOD_APPLICATION_TYPE_PARTIAL_ID}{type}").click()
