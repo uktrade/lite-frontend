@@ -1,4 +1,5 @@
 import pytest
+import datetime
 
 from django.urls import reverse
 
@@ -819,6 +820,11 @@ class TestProductInformationViews:
                 {"product_description": "It does things"},
             ),
             (
+                FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+                forms.ProductHasSecurityClassification,
+                {"has_security_classification": True},
+            ),
+            (
                 FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
                 forms.ProductForeignTechOrSharedInformation,
                 {"is_foreign_tech_or_information_shared": True},
@@ -879,6 +885,7 @@ class TestProductInformationViews:
         goto_product_step,
         expected_initial,
         mock_f680_application_get_existing_data,
+        force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
     ):
@@ -887,6 +894,23 @@ class TestProductInformationViews:
         assert isinstance(response.context["form"], expected_form)
         for key, expected_value in expected_initial.items():
             assert response.context["form"][key].initial == expected_value
+
+    def test_GET_security_classifcation_details_with_existing_data_success(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get_existing_data,
+        force_has_security_classification,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        response = goto_product_step(FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductSecurityClassificationForm)
+        assert response.context["form"]["security_classification"].initial == "unclassified"
+        assert response.context["form"]["issuing_authority_name_address"].initial == "Some address"
+        assert response.context["form"]["reference"].initial == "1234"
+        assert response.context["form"]["date_of_issue"].initial.strftime("%Y-%m-%d") == "2024-01-01"
 
     def test_is_foreign_tech_or_information_shared_false_displays_correct_form(
         self,
