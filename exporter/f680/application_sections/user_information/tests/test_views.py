@@ -1,5 +1,4 @@
 import pytest
-from datetime import datetime
 
 from django.urls import reverse
 from freezegun import freeze_time

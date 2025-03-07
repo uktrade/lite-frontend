@@ -1,6 +1,5 @@
 from django import forms
 from crispy_forms_gds.choices import Choice
-from crispy_forms_gds.fields import DateInputField
 
 from core.common.forms import BaseForm
 from core.forms.layouts import F680ConditionalCheckboxes, F680ConditionalCheckboxesQuestion
