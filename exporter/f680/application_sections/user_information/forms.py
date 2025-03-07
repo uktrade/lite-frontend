@@ -141,6 +141,7 @@ class SecurityGradingForm(BaseForm):
         label="Enter a prefix (optional)",
         required=False,
     )
+
     security_classification = forms.ChoiceField(
         choices=(
             Choice("official", "Official"),
@@ -152,6 +153,7 @@ class SecurityGradingForm(BaseForm):
         label="Select security classification",
         widget=forms.RadioSelect,
     )
+
     suffix = forms.CharField(
         label="Enter a suffix (optional)",
         required=False,
