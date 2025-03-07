@@ -135,7 +135,7 @@ class EndUserAddressForm(BaseForm):
 
 class SecurityGradingForm(BaseForm):
     class Layout:
-        TITLE = "What is the security grading of the information or products you want to release to this end-user"
+        TITLE = "What is the security grading of the information or products you want to release to this entity"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     prefix = forms.CharField(
@@ -144,11 +144,8 @@ class SecurityGradingForm(BaseForm):
     )
     security_classification = forms.ChoiceField(
         choices=(
-            Choice("unclassified", "Unclassified"),
             Choice("official", "Official"),
             Choice("official-sensitive", "Official-Sensitive"),
-            Choice("restricted", "Restricted"),
-            Choice("confidential", "Confidential"),
             Choice("secret", "Secret"),
             Choice("top-secret", "Top Secret", divider="Or"),
             Choice("other", "Other"),
@@ -156,36 +153,16 @@ class SecurityGradingForm(BaseForm):
         label="Select security classification",
         widget=forms.RadioSelect,
     )
-    other_security_classification = forms.CharField(
-        label="Enter the security classification",
-        required=False,
-    )
     suffix = forms.CharField(
         label="Enter a suffix (optional)",
-        help_text="For example, UK eyes only",
         required=False,
-    )
-    issuing_authority_name_address = forms.CharField(
-        label="Name and address of the issuing authority",
-        widget=forms.Textarea(attrs={"rows": "5"}),
-    )
-    reference = forms.CharField(
-        label="Reference",
-    )
-    date_of_issue = DateInputField(
-        label="Date of issue",
-        help_text="For example, 27 3 2025",
     )
 
     def get_layout_fields(self):
         return (
             "prefix",
             "security_classification",
-            "other_security_classification",
             "suffix",
-            "issuing_authority_name_address",
-            "reference",
-            "date_of_issue",
         )
 
 
