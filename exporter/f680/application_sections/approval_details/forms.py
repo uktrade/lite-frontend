@@ -3,6 +3,7 @@ from django.db.models import TextChoices
 from django.template.loader import render_to_string
 
 from crispy_forms_gds.choices import Choice
+from crispy_forms_gds.fields import DateInputField
 from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm, TextChoice
@@ -127,6 +128,82 @@ class ProductDescription(BaseForm):
                 "Help with incorporating an item",
                 render_to_string("f680/forms/help_product_description.html"),
             ),
+        )
+
+
+class ProductHasSecurityClassification(BaseForm):
+    class Layout:
+        TITLE = "Has the product been given a security classifcation by a UK MOD authority?"
+        TITLE_AS_LABEL_FOR = "has_security_classification"
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    has_security_classification = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label=Layout.TITLE,
+        widget=forms.RadioSelect,
+        coerce=coerce_str_to_bool,
+    )
+
+    def get_layout_fields(self):
+        return ("has_security_classification",)
+
+
+class ProductSecurityClassificationForm(BaseForm):
+    class Layout:
+        TITLE = "What is the maximum security classification given?"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    prefix = forms.CharField(
+        label="Enter a prefix (optional)",
+        required=False,
+    )
+    security_classification = forms.ChoiceField(
+        choices=(
+            Choice("unclassified", "Unclassified"),
+            Choice("official", "Official"),
+            Choice("official-sensitive", "Official-Sensitive"),
+            Choice("restricted", "Restricted"),
+            Choice("confidential", "Confidential"),
+            Choice("secret", "Secret"),
+            Choice("top-secret", "Top Secret", divider="Or"),
+            Choice("other", "Other"),
+        ),
+        label="Select security classification",
+        widget=forms.RadioSelect,
+    )
+    other_security_classification = forms.CharField(
+        label="Enter the security classification",
+        required=False,
+    )
+    suffix = forms.CharField(
+        label="Enter a suffix (optional)",
+        help_text="For example, UK eyes only",
+        required=False,
+    )
+    issuing_authority_name_address = forms.CharField(
+        label="Name and address of the issuing authority",
+        widget=forms.Textarea(attrs={"rows": "5"}),
+    )
+    reference = forms.CharField(
+        label="Reference",
+    )
+    date_of_issue = DateInputField(
+        label="Date of issue",
+        help_text="For example, 27 3 2025",
+    )
+
+    def get_layout_fields(self):
+        return (
+            "prefix",
+            "security_classification",
+            "other_security_classification",
+            "suffix",
+            "issuing_authority_name_address",
+            "reference",
+            "date_of_issue",
         )
 
 
