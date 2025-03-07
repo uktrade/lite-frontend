@@ -16,20 +16,9 @@
         {% test_rule 'can_user_make_f680_recommendation' request case as can_user_make_f680_recommendation %}
         {% if can_user_make_f680_recommendation %}
             <br>
-            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:select_recommendation_type' queue_pk case.id %}">Make recommendation</a>
+            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:make_recommendation' queue_pk case.id %}">Make recommendation</a>
         {% endif %}
 
-
-        {% if user_recommendation %}
-            <br>
-            <h1 class="govuk-heading-xl">View recommendation</h1>
-            {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
-        {% endif %}
-
-        {% if case.advice %}
-            {% include "f680/case/recommendation/other-recommendations.html" with teams_recommendations=teams_recommendations %}
-
-        {% endif %}
     </main>
 </div>
 {% endblock %}

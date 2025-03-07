@@ -10,6 +10,7 @@ from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
 from caseworker.f680.recommendation.forms.forms import (
+    DestinationBasedProvisosForm,
     FootnotesApprovalAdviceForm,
     PicklistLicenceConditionsForm,
     RecommendAnApprovalForm,
@@ -136,6 +137,73 @@ class GiveApprovalRecommendationView(BaseApprovalRecommendationView):
             picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
             if picklist_options_exist:
                 return PicklistLicenceConditionsForm(data=data, prefix=step, **picklist_form_kwargs)
+            else:
+                return SimpleLicenceConditionsForm(data=data, prefix=step)
+
+        return super().get_form(step, data, files)
+
+
+class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
+    current_tab = "recommendations"
+
+    condition_dict = {}
+
+    form_list = [
+        (AdviceSteps.LICENCE_CONDITIONS, DestinationBasedProvisosForm),
+    ]
+
+    step_kwargs = {
+        AdviceSteps.LICENCE_CONDITIONS: proviso_picklist,
+    }
+
+    def get_success_url(self):
+        return reverse("cases:f680:view_my_recommendation", kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("cases:f680:select_recommendation_type", kwargs=self.kwargs)
+        return context
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding approval recommendation",
+        "Unexpected error adding approval recommendation",
+    )
+    def post_approval_recommendation(self, data):
+        return post_approval_recommendation(self.request, self.case, data)
+
+    def get_payload(self, form_dict):
+        return GiveApprovalAdvicePayloadBuilder().build(form_dict)
+
+    def done(self, form_list, form_dict, **kwargs):
+        data = self.get_payload(form_dict)
+        self.post_approval_recommendation(data)
+        return redirect(self.get_success_url())
+
+
+class MakeRecommendationView(BaseRecommendationView):
+
+    def unadvised_countries(self):
+        countries = {}
+        for item in self.case.data["application"]["sections"]["user_information"]["items"]:
+            country_data = [field for field in item["fields"] if field["key"] == "country"]
+            if country_data:
+                data = country_data[0]
+                countries[data["raw_answer"]] = data["answer"]
+
+        return countries
+
+    def get_form(self, step=None, data=None, files=None):
+
+        if step is None:
+            step = self.steps.current
+
+        countries = self.unadvised_countries()
+        if step == AdviceSteps.LICENCE_CONDITIONS:
+            picklist_form_kwargs = self.step_kwargs[AdviceSteps.LICENCE_CONDITIONS](self)
+            picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
+            if picklist_options_exist:
+                return DestinationBasedProvisosForm(data=data, prefix=step, countries=countries, **picklist_form_kwargs)
             else:
                 return SimpleLicenceConditionsForm(data=data, prefix=step)
 

@@ -10,6 +10,7 @@ from core.forms.layouts import (
     ConditionalCheckboxesQuestion,
     RadioTextArea,
 )
+from core.forms.widgets import GridmultipleSelect
 
 
 class SelectRecommendationTypeForm(forms.Form):
@@ -178,4 +179,58 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
         return (
             "instructions_to_exporter",
             RadioTextArea("footnote_details_radios", "footnote_details", self.footnote_text),
+        )
+
+
+class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
+    class Layout:
+        TITLE = "Add provisos for destinations"
+
+    proviso_checkboxes = forms.MultipleChoiceField(
+        label="",
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        choices=(),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
+        return {
+            "proviso": "\n\n--------\n".join(
+                [cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]]
+            )
+        }
+
+    def __init__(self, countries, *args, **kwargs):
+        proviso = kwargs.pop("proviso")
+
+        proviso_choices, proviso_text = self._picklist_to_choices(proviso)
+
+        self.conditional_checkbox_choices = (
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
+        )
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["countries"] = forms.MultipleChoiceField(
+            choices=countries.items(),
+            widget=GridmultipleSelect(),
+            label="Select countries for which you want to add provisos",
+            error_messages={"required": "Select the destinations you want to add provisos for"},
+        )
+
+        self.fields["proviso_checkboxes"].choices = proviso_choices
+        for choices in proviso_choices:
+            self.fields[choices.value] = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3}),
+                label="Description",
+                required=False,
+                initial=proviso_text[choices.value],
+            )
+
+    def get_layout_fields(self):
+        return (
+            "countries",
+            ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),
         )
