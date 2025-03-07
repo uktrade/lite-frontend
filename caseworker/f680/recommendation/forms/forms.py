@@ -196,8 +196,9 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
     def clean(self):
         cleaned_data = super().clean()
         # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
+        print(self.country['id'])
         return {
-            "proviso": "\n\n--------\n".join(
+            f"proviso_{self.country['id']}": "\n\n--------\n".join(
                 [cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]]
             )
         }

@@ -14,7 +14,7 @@ urlpatterns = [
     ),
     path(
         "recommendation/",
-        recommendation_views.CaseRecommendationView.as_view(),
+        recommendation_views.MakeRecommendationView.as_view(),
         name="recommendation",
     ),
     path(

@@ -11,6 +11,7 @@ from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
 from caseworker.f680.recommendation.constants import RecommendationSteps
+from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.forms.forms import (
     DestinationBasedProvisosForm,
     FootnotesApprovalAdviceForm,
@@ -175,10 +176,12 @@ class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
         return post_approval_recommendation(self.request, self.case, data)
 
     def get_payload(self, form_dict):
-        return GiveApprovalAdvicePayloadBuilder().build(form_dict)
+        return RecommendationPayloadBuilder().build(form_dict, self.countries)
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
+        print(data)
+        breakpoint()
         self.post_approval_recommendation(data)
         return redirect(self.get_success_url())
 
