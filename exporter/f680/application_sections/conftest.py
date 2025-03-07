@@ -132,10 +132,24 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                         "datatype": "boolean",
                     },
                     {
+                        "key": "prefix",
+                        "answer": "some prefix",
+                        "raw_answer": "some prefix",
+                        "question": "Enter a prefix (optional)",
+                        "datatype": "string",
+                    },
+                    {
                         "key": "security_classification",
                         "answer": "unclassified",
                         "raw_answer": "unclassified",
                         "question": "Select security classification",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "suffix",
+                        "answer": "some suffix",
+                        "raw_answer": "some suffix",
+                        "question": "Enter a suffix (optional)",
                         "datatype": "string",
                     },
                     {
