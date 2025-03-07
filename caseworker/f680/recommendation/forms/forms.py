@@ -2,7 +2,7 @@ from django import forms
 
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Submit
+from crispy_forms_gds.layout import HTML, Submit
 
 from core.common.forms import BaseForm
 from core.forms.layouts import (
@@ -184,7 +184,7 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
 
 class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
     class Layout:
-        TITLE = "Add provisos for destinations"
+        TITLE = ""
 
     proviso_checkboxes = forms.MultipleChoiceField(
         label="",
@@ -202,7 +202,7 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
             )
         }
 
-    def __init__(self, countries, *args, **kwargs):
+    def __init__(self, country, *args, **kwargs):
         proviso = kwargs.pop("proviso")
 
         proviso_choices, proviso_text = self._picklist_to_choices(proviso)
@@ -211,13 +211,14 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
             ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
         )
 
+        self.country = country
         super().__init__(*args, **kwargs)
 
-        self.fields["countries"] = forms.MultipleChoiceField(
-            choices=countries.items(),
-            widget=GridmultipleSelect(),
-            label="Select countries for which you want to add provisos",
-            error_messages={"required": "Select the destinations you want to add provisos for"},
+        self.fields["country"] = forms.BooleanField(
+            initial=True,
+            label=country["answer"],
+            required=False,
+            widget=forms.CheckboxInput(attrs={"class": "govuk-checkboxes__label"}),
         )
 
         self.fields["proviso_checkboxes"].choices = proviso_choices
@@ -231,6 +232,8 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
 
     def get_layout_fields(self):
         return (
-            "countries",
+            HTML.h1(f"Add provisos for {self.country['answer']}"),
+            "country",
+            HTML("<br><br>"),
             ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),
         )

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
@@ -9,6 +10,7 @@ from caseworker.advice.constants import AdviceSteps
 from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
+from caseworker.f680.recommendation.constants import RecommendationSteps
 from caseworker.f680.recommendation.forms.forms import (
     DestinationBasedProvisosForm,
     FootnotesApprovalAdviceForm,
@@ -149,11 +151,11 @@ class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
     condition_dict = {}
 
     form_list = [
-        (AdviceSteps.LICENCE_CONDITIONS, DestinationBasedProvisosForm),
+        (RecommendationSteps.RELEASE_PROVISOS, DestinationBasedProvisosForm),
     ]
 
     step_kwargs = {
-        AdviceSteps.LICENCE_CONDITIONS: proviso_picklist,
+        RecommendationSteps.RELEASE_PROVISOS: proviso_picklist,
     }
 
     def get_success_url(self):
@@ -183,28 +185,24 @@ class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
 
 class MakeRecommendationView(BaseRecommendationView):
 
-    def unadvised_countries(self):
-        countries = {}
-        for item in self.case.data["application"]["sections"]["user_information"]["items"]:
-            country_data = [field for field in item["fields"] if field["key"] == "country"]
-            if country_data:
-                data = country_data[0]
-                countries[data["raw_answer"]] = data["answer"]
+    def get_form_list(self):
+        self.form_list = OrderedDict()
+        for item in self.countries:
+            name = item["answer"].replace(" ", "-")
+            self.form_list[f"destination_{item['raw_answer']}_{name}_provisos"] = DestinationBasedProvisosForm
 
-        return countries
+        return self.form_list
 
     def get_form(self, step=None, data=None, files=None):
-
         if step is None:
             step = self.steps.current
 
-        countries = self.unadvised_countries()
-        if step == AdviceSteps.LICENCE_CONDITIONS:
-            picklist_form_kwargs = self.step_kwargs[AdviceSteps.LICENCE_CONDITIONS](self)
-            picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
-            if picklist_options_exist:
-                return DestinationBasedProvisosForm(data=data, prefix=step, countries=countries, **picklist_form_kwargs)
-            else:
-                return SimpleLicenceConditionsForm(data=data, prefix=step)
+        country_data = step.split("_")
+        name = country_data[2].replace("-", " ")
+        country = {"id": country_data[1], "answer": name}
+        picklist_form_kwargs = self.step_kwargs[RecommendationSteps.RELEASE_PROVISOS](self)
+        picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
+        if not picklist_options_exist:
+            raise ValueError("Provisos not defined")
 
-        return super().get_form(step, data, files)
+        return DestinationBasedProvisosForm(data=data, prefix=step, country=country, **picklist_form_kwargs)
