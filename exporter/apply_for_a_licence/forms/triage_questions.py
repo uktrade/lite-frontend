@@ -41,24 +41,29 @@ class LicenceTypeForm(FieldsetForm):
             Choice(
                 "export_licence",
                 "Export licence",
-                hint="Select if you’re sending products from the UK to another country. You need an export licence before you provide access to controlled technology, software or data.",
+                hint="Select if you’re sending products from the UK to another country. You need an export licence "
+                "before you provide access to controlled technology, software or data.",
             ),
             Choice(
                 "f680",
                 "Security Approval",
-                hint="Select if you need approval to give classified products or information to non-UK organisations, governments and individuals. This includes F680 approval. You should apply for security approval before you apply for a licence.",
+                hint="Select if you need approval to give classified products or information to non-UK organisations, "
+                "governments and individuals. This includes F680 approval. You should apply for security approval "
+                "before you apply for a licence.",
             ),
             Choice(
                 "transhipment",
                 "Transhipment licence",
                 disabled=True,
-                hint="Select if you're shipping something from overseas through the UK on to another country. If the products will be in the UK for 30 days or more, apply for an export licence.",
+                hint="Select if you're shipping something from overseas through the UK on to another country. If the "
+                "products will be in the UK for 30 days or more, apply for an export licence.",
             ),
             Choice(
                 "trade_control_licence",
                 "Trade control licence",
                 disabled=True,
-                hint="Select if you’re arranging or brokering the sale or movement of controlled military products located overseas.",
+                hint="Select if you’re arranging or brokering the sale or movement of controlled military products "
+                "located overseas.",
             ),
         ),
         error_messages={
