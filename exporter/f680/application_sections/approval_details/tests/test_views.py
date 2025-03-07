@@ -439,6 +439,22 @@ class TestProductInformationViews:
                 {"product_description": ["This field is required."]},
             ),
             (
+                FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+                {},
+                {"has_security_classification": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                },
+                {
+                    "issuing_authority_name_address": ["This field is required."],
+                    "reference": ["This field is required."],
+                    "date_of_issue": ["Enter the day, month and year"],
+                },
+            ),
+            (
                 FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
                 {},
                 {"is_foreign_tech_or_information_shared": ["This field is required."]},
