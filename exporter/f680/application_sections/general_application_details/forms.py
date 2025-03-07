@@ -28,12 +28,32 @@ class ApplicationNameForm(BaseForm):
         return ("name",)
 
 
+class PreviousApplicationConfirm(BaseForm):
+    class Layout:
+        TITLE = "Have you made a previous application?"
+        TITLE_AS_LABEL_FOR = "has_made_previous_application"
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    has_made_previous_application = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label=Layout.TITLE,
+        widget=forms.RadioSelect,
+        coerce=coerce_str_to_bool,
+    )
+
+    def get_layout_fields(self):
+        return ("has_made_previous_application",)
+
+
 class PreviousApplicationsForm(BaseForm):
     class Layout:
         TITLE = "Previous applications"
         SUBMIT_BUTTON_TEXT = "Continue"
 
-    ecju_reference_number = forms.CharField(label="What is the ECJU reference number?")
+    previous_application_ecju_reference = forms.CharField(label="What is the ECJU reference number?")
     previous_application_details = forms.CharField(
         label="Can you provide more detail?",
         help_text="For example if the products have been previously agreed or refused to the "
@@ -43,7 +63,7 @@ class PreviousApplicationsForm(BaseForm):
     )
 
     def get_layout_fields(self):
-        return ("ecju_reference_number", "previous_application_details")
+        return ("previous_application_ecju_reference", "previous_application_details")
 
 
 class ExceptionalCircumstancesForm(BaseForm):
