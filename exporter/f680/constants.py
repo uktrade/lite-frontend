@@ -8,8 +8,8 @@ class SecurityGrading:
     OFFICIAL_SENSITIVE = "official-sensitive"
     RESTRICTED = "restricted"
     CONFIDENTIAL = "confidential"
-    SECRET = "secret"  # /PS-IGNORE
-    TOP_SECRET = "top-secret"  # /PS-IGNORE
+    SECRET = "secret"  # noqa
+    TOP_SECRET = "top-secret"  # noqa
     OTHER = "other"
 
     security_release_choices = [
