@@ -643,6 +643,13 @@ class TestProductInformationViews:
                                 "datatype": "boolean",
                             },
                             {
+                                "key": "classification_info",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Provide details on what action will have to be taken to have the product security classified",
+                                "datatype": "string",
+                            },
+                            {
                                 "key": "prefix",
                                 "answer": "some prefix",
                                 "raw_answer": "some prefix",
