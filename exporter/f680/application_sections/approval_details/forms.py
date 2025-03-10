@@ -148,20 +148,23 @@ class ProductHasSecurityClassification(BaseForm):
         coerce=coerce_str_to_bool,
     )
 
-    classification_info = forms.CharField(
+    def get_layout_fields(self):
+        return ("has_security_classification",)
+
+
+class ActionTakenToClassifyInfo(BaseForm):
+    class Layout:
+        TITLE = "Provide details on what action will have to be taken to have the product security classified"
+        TITLE_AS_LABEL_FOR = "actions_to_get_classification"
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    actions_to_get_classification = forms.CharField(
+        label=Layout.TITLE,
         widget=forms.Textarea(attrs={"rows": 5}),
-        label=("Provide details on what action will have to be taken to have the product security classified"),
-        required=False,
     )
 
     def get_layout_fields(self):
-        return (
-            ConditionalRadios(
-                "has_security_classification",
-                "Yes",
-                ConditionalRadiosQuestion("No", "classification_info"),
-            ),
-        )
+        return ("actions_to_get_classification",)
 
 
 class ProductSecurityClassificationForm(BaseForm):
