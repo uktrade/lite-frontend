@@ -24,4 +24,8 @@ urlpatterns = [
         "<uuid:pk>/user-information/",
         include("exporter.f680.application_sections.user_information.urls"),
     ),
+    path(
+        "<uuid:pk>/supporting-documents/",
+        include("exporter.f680.application_sections.supporting_documents.urls"),
+    ),
 ]

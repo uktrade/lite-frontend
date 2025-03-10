@@ -143,6 +143,28 @@
                     </li>
                 </ul>
             </li>
+            <li>
+                <h2 class="lite-task-list__section">
+                    <span class="lite-task-list__section-number">5. </span>
+                    Supporting Documents
+                </h2>
+                <ul class="lite-task-list__items">
+                    <li class="lite-task-list__item">
+                        <div class="lite-task-list__item-header">
+                            <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:supporting_documents:add" pk=application.id %}">Documents</a>
+                            {% if application.application.sections.supporting_documents %}
+                            <div class="lite-tag lite-tag--blue">
+                                Completed
+                            </div>
+                            {% else %}
+                            <div class="lite-tag lite-tag--grey">
+                                Optional
+                            </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                </ul>
+            </li>
         </ol>
         <div class="app-submit-bar">
             {% crispy form %}
