@@ -8,6 +8,8 @@ from core import client
 
 from exporter.f680.application_sections.general_application_details.forms import (
     ApplicationNameForm,
+    PreviousApplicationConfirm,
+    PreviousApplicationsForm,
     ExceptionalCircumstancesForm,
     ExplainExceptionalCircumstancesForm,
 )
@@ -71,6 +73,15 @@ def force_exceptional_circumstances(goto_step, post_to_step):
 
 
 @pytest.fixture
+def force_has_made_previous_application(goto_step, post_to_step):
+    goto_step(FormSteps.HAS_MADE_PREVIOUS_APPLICATION)
+    post_to_step(
+        FormSteps.HAS_MADE_PREVIOUS_APPLICATION,
+        {"has_made_previous_application": True},
+    )
+
+
+@pytest.fixture
 def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
     data_f680_case["application"] = {
         "sections": {
@@ -83,6 +94,20 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                         "answer": "my first F680",
                         "raw_answer": "my first F680",
                         "question": "What is the name of the application?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "previous_application_ecju_reference",
+                        "answer": "123456",
+                        "raw_answer": "123456",
+                        "question": "What is the ECJU reference number?",
+                        "datatype": "string",
+                    },
+                    {
+                        "key": "previous_application_details",
+                        "answer": "some info",
+                        "raw_answer": "some info",
+                        "question": "Can you provide more detail?",
                         "datatype": "string",
                     },
                     {
@@ -182,7 +207,17 @@ class TestGeneralApplicationDetailsView:
     @pytest.mark.parametrize(
         "step, data, expected_next_form",
         (
-            (FormSteps.APPLICATION_NAME, {"name": "some application name"}, ExceptionalCircumstancesForm),
+            (FormSteps.APPLICATION_NAME, {"name": "some application name"}, PreviousApplicationConfirm),
+            (
+                FormSteps.HAS_MADE_PREVIOUS_APPLICATION,
+                {"has_made_previous_application": True},
+                PreviousApplicationsForm,
+            ),
+            (
+                FormSteps.PREVIOUS_APPLICATION,
+                {"previous_application_ecju_reference": "123", "previous_application_details": "some info"},
+                ExceptionalCircumstancesForm,
+            ),
             (
                 FormSteps.EXCEPTIONAL_CIRCUMSTANCES,
                 {"is_exceptional_circumstances": True},
@@ -198,6 +233,7 @@ class TestGeneralApplicationDetailsView:
         post_to_step,
         goto_step,
         mock_f680_application_get,
+        force_has_made_previous_application,
     ):
         goto_step(step)
         response = post_to_step(
@@ -274,6 +310,14 @@ class TestGeneralApplicationDetailsView:
             {"name": "some test app"},
         )
         response = post_to_step(
+            FormSteps.HAS_MADE_PREVIOUS_APPLICATION,
+            {"has_made_previous_application": True},
+        )
+        response = post_to_step(
+            FormSteps.PREVIOUS_APPLICATION,
+            {"previous_application_ecju_reference": "123456", "previous_application_details": "some info"},
+        )
+        response = post_to_step(
             FormSteps.EXCEPTIONAL_CIRCUMSTANCES,
             {"is_exceptional_circumstances": True},
         )
@@ -294,13 +338,33 @@ class TestGeneralApplicationDetailsView:
                 "sections": {
                     "general_application_details": {
                         "label": "General application details",
-                        "type": "single",
                         "fields": [
                             {
                                 "key": "name",
                                 "answer": "some test app",
                                 "raw_answer": "some test app",
                                 "question": "Name the application",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "has_made_previous_application",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Have you made a previous application?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "previous_application_ecju_reference",
+                                "answer": "123456",
+                                "raw_answer": "123456",
+                                "question": "What is the ECJU reference number?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "previous_application_details",
+                                "answer": "some info",
+                                "raw_answer": "some info",
+                                "question": "Can you provide more detail?",
                                 "datatype": "string",
                             },
                             {
@@ -325,7 +389,8 @@ class TestGeneralApplicationDetailsView:
                                 "datatype": "string",
                             },
                         ],
-                    },
+                        "type": "single",
+                    }
                 },
             }
         }
@@ -334,7 +399,16 @@ class TestGeneralApplicationDetailsView:
         "step, expected_form, expected_initial",
         (
             (FormSteps.APPLICATION_NAME, ApplicationNameForm, {"name": "my first F680"}),
-            (FormSteps.EXCEPTIONAL_CIRCUMSTANCES, ExceptionalCircumstancesForm, {"is_exceptional_circumstances": True}),
+            (
+                FormSteps.PREVIOUS_APPLICATION,
+                PreviousApplicationsForm,
+                {"previous_application_ecju_reference": "123456", "previous_application_details": "some info"},
+            ),
+            (
+                FormSteps.EXCEPTIONAL_CIRCUMSTANCES,
+                ExceptionalCircumstancesForm,
+                {"is_exceptional_circumstances": True},
+            ),
             (
                 FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS,
                 ExplainExceptionalCircumstancesForm,
@@ -355,6 +429,7 @@ class TestGeneralApplicationDetailsView:
         f680_application_wizard_url,
         goto_step,
         force_exceptional_circumstances,
+        force_has_made_previous_application,
     ):
         response = goto_step(step)
         assert response.status_code == 200
