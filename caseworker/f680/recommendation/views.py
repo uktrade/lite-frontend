@@ -22,7 +22,7 @@ from caseworker.f680.recommendation.forms.forms import (
 )
 from caseworker.f680.recommendation.services import (
     get_current_user_recommendation,
-    post_approval_recommendation,
+    post_recommendation,
 )
 from caseworker.f680.views import F680CaseworkerMixin
 from core.decorators import expect_status
@@ -172,8 +172,8 @@ class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
         "Error adding approval recommendation",
         "Unexpected error adding approval recommendation",
     )
-    def post_approval_recommendation(self, data):
-        return post_approval_recommendation(self.request, self.case, data)
+    def post_recommendation(self, data):
+        return post_recommendation(self.request, self.case, data)
 
     def get_payload(self, form_dict):
         return RecommendationPayloadBuilder().build(form_dict, self.countries)
@@ -181,8 +181,7 @@ class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
         print(data)
-        breakpoint()
-        self.post_approval_recommendation(data)
+        self.post_recommendation(data)
         return redirect(self.get_success_url())
 
 

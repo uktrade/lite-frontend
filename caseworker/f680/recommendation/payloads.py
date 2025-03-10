@@ -9,10 +9,9 @@ def get_cleaned_data(form):
 class RecommendationPayloadBuilder(MergingPayloadBuilder):
 
     def build(self, form_dict, countries):
-        self.payload_dict = {}
-        for item in countries:
-            name = item["answer"].replace(" ", "-")
-            key = f"destination_{item['raw_answer']}_{name}_provisos"
-            self.payload_dict[key] = get_cleaned_data
+        payload = []
+        for _, form in form_dict.items():
+            if form:
+                payload.append(get_cleaned_data(form))
 
-        return super().build(form_dict)
+        return payload

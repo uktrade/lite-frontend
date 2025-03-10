@@ -37,17 +37,19 @@ def get_current_user_recommendation(recommendation, caseworker_id, team_alias):
     return grouped_user_recommendation.get(caseworker_id)
 
 
-def post_approval_recommendation(request, case, data, level="user-advice"):
+def post_recommendation(request, case, data, level="user-advice"):
     json = [
         {
-            "type": "proviso" if data.get("proviso", False) else "approve",
-            "text": data["approval_reasons"],
-            "proviso": data.get("proviso", ""),
-            "note": data.get("instructions_to_exporter", ""),
-            "footnote_required": True if data.get("footnote_details") else False,
-            "footnote": data.get("footnote_details", ""),
+            "type": item["type"],
+            "text": "no concerns",
+            "proviso": item.get("proviso", ""),
+            "country": item["country"],
+            "note": item.get("instructions_to_exporter", ""),
+            "footnote_required": True if item.get("footnote_details") else False,
+            "footnote": item.get("footnote_details", ""),
             "denial_reasons": [],
         }
+        for item in data
     ]
     response = client.post(request, f"/cases/{case['id']}/{level}/", json)
     response.raise_for_status()

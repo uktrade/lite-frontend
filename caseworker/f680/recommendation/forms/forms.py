@@ -183,8 +183,20 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
 
 
 class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
+    CHOICES = [
+        ("approve", "Approve"),
+        ("refuse", "Refuse"),
+    ]
+
     class Layout:
         TITLE = ""
+
+    recommendation = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={"required": "Select if you approve or refuse"},
+    )
 
     proviso_checkboxes = forms.MultipleChoiceField(
         label="",
@@ -196,11 +208,12 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
     def clean(self):
         cleaned_data = super().clean()
         # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
-        print(self.country['id'])
         return {
-            f"proviso_{self.country['id']}": "\n\n--------\n".join(
+            f"type": cleaned_data["recommendation"],
+            "country": self.country["id"],
+            f"proviso": "\n\n--------\n".join(
                 [cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]]
-            )
+            ),
         }
 
     def __init__(self, country, *args, **kwargs):
@@ -236,5 +249,6 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
             HTML.h1(f"Add provisos for {self.country['answer']}"),
             "country",
             HTML("<br><br>"),
+            "recommendation",
             ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),
         )
