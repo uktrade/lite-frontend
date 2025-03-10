@@ -12,6 +12,17 @@ class SecurityGrading:
     TOP_SECRET = "top-secret"  # noqa
     OTHER = "other"
 
+    product_choices = [
+        (UNCLASSIFIED, "Unclassified"),
+        (OFFICIAL, "Official"),
+        (OFFICIAL_SENSITIVE, "Official - sensitive"),
+        (RESTRICTED, "Restricted"),
+        (CONFIDENTIAL, "Confidential"),
+        (SECRET, "Secret"),
+        (TOP_SECRET, "Top-secret"),
+        (OTHER, "Other"),
+    ]
+
     security_release_choices = [
         (UNCLASSIFIED, "Unclassified"),
         (OFFICIAL, "Official"),

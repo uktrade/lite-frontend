@@ -14,6 +14,7 @@ from core.forms.layouts import (
     ConditionalRadiosQuestion,
 )
 from core.forms.utils import coerce_str_to_bool
+from ...constants import SecurityGrading
 
 
 class ApprovalTypeForm(BaseForm):
@@ -161,16 +162,7 @@ class ProductSecurityClassificationForm(BaseForm):
         required=False,
     )
     security_classification = forms.ChoiceField(
-        choices=(
-            Choice("unclassified", "Unclassified"),
-            Choice("official", "Official"),
-            Choice("official-sensitive", "Official-Sensitive"),
-            Choice("restricted", "Restricted"),
-            Choice("confidential", "Confidential"),
-            Choice("secret", "Secret"),
-            Choice("top-secret", "Top Secret", divider="Or"),
-            Choice("other", "Other"),
-        ),
+        choices=SecurityGrading.product_choices,
         label="Select security classification",
         widget=forms.RadioSelect,
     )
