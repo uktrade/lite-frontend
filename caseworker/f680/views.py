@@ -29,6 +29,13 @@ class F680CaseworkerMixin(CaseworkerMixin):
         data, _ = get_gov_user(self.request, self.caseworker_id)
         self.caseworker = data["user"]
 
+        self.countries = []
+        for item in self.case.data["application"]["sections"]["user_information"]["items"]:
+            country_data = [field for field in item["fields"] if field["key"] == "country"]
+            if country_data:
+                data = country_data[0]
+                self.countries.append(country_data[0])
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

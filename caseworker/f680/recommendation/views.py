@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
@@ -9,7 +10,10 @@ from caseworker.advice.constants import AdviceSteps
 from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
+from caseworker.f680.recommendation.constants import RecommendationSteps
+from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.forms.forms import (
+    DestinationBasedProvisosForm,
     FootnotesApprovalAdviceForm,
     PicklistLicenceConditionsForm,
     RecommendAnApprovalForm,
@@ -18,7 +22,7 @@ from caseworker.f680.recommendation.forms.forms import (
 )
 from caseworker.f680.recommendation.services import (
     get_current_user_recommendation,
-    post_approval_recommendation,
+    post_recommendation,
 )
 from caseworker.f680.views import F680CaseworkerMixin
 from core.decorators import expect_status
@@ -140,3 +144,67 @@ class GiveApprovalRecommendationView(BaseApprovalRecommendationView):
                 return SimpleLicenceConditionsForm(data=data, prefix=step)
 
         return super().get_form(step, data, files)
+
+
+class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
+    current_tab = "recommendations"
+
+    condition_dict = {}
+
+    form_list = [
+        (RecommendationSteps.RELEASE_PROVISOS, DestinationBasedProvisosForm),
+    ]
+
+    step_kwargs = {
+        RecommendationSteps.RELEASE_PROVISOS: proviso_picklist,
+    }
+
+    def get_success_url(self):
+        return reverse("cases:f680:view_my_recommendation", kwargs=self.kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = reverse("cases:f680:select_recommendation_type", kwargs=self.kwargs)
+        return context
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error adding approval recommendation",
+        "Unexpected error adding approval recommendation",
+    )
+    def post_recommendation(self, data):
+        return post_recommendation(self.request, self.case, data)
+
+    def get_payload(self, form_dict):
+        return RecommendationPayloadBuilder().build(form_dict, self.countries)
+
+    def done(self, form_list, form_dict, **kwargs):
+        data = self.get_payload(form_dict)
+        print(data)
+        self.post_recommendation(data)
+        return redirect(self.get_success_url())
+
+
+class MakeRecommendationView(BaseRecommendationView):
+
+    def get_form_list(self):
+        self.form_list = OrderedDict()
+        for item in self.countries:
+            name = item["answer"].replace(" ", "-")
+            self.form_list[f"destination_{item['raw_answer']}_{name}_provisos"] = DestinationBasedProvisosForm
+
+        return self.form_list
+
+    def get_form(self, step=None, data=None, files=None):
+        if step is None:
+            step = self.steps.current
+
+        country_data = step.split("_")
+        name = country_data[2].replace("-", " ")
+        country = {"id": country_data[1], "answer": name}
+        picklist_form_kwargs = self.step_kwargs[RecommendationSteps.RELEASE_PROVISOS](self)
+        picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
+        if not picklist_options_exist:
+            raise ValueError("Provisos not defined")
+
+        return DestinationBasedProvisosForm(data=data, prefix=step, country=country, **picklist_form_kwargs)

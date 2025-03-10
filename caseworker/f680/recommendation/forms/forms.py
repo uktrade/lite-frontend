@@ -2,7 +2,7 @@ from django import forms
 
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Submit
+from crispy_forms_gds.layout import HTML, Submit
 
 from core.common.forms import BaseForm
 from core.forms.layouts import (
@@ -10,6 +10,7 @@ from core.forms.layouts import (
     ConditionalCheckboxesQuestion,
     RadioTextArea,
 )
+from core.forms.widgets import GridmultipleSelect
 
 
 class SelectRecommendationTypeForm(forms.Form):
@@ -178,4 +179,76 @@ class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
         return (
             "instructions_to_exporter",
             RadioTextArea("footnote_details_radios", "footnote_details", self.footnote_text),
+        )
+
+
+class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
+    CHOICES = [
+        ("approve", "Approve"),
+        ("refuse", "Refuse"),
+    ]
+
+    class Layout:
+        TITLE = ""
+
+    recommendation = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="",
+        error_messages={"required": "Select if you approve or refuse"},
+    )
+
+    proviso_checkboxes = forms.MultipleChoiceField(
+        label="",
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        choices=(),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
+        return {
+            f"type": cleaned_data["recommendation"],
+            "country": self.country["id"],
+            f"proviso": "\n\n--------\n".join(
+                [cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]]
+            ),
+        }
+
+    def __init__(self, country, *args, **kwargs):
+        proviso = kwargs.pop("proviso")
+
+        proviso_choices, proviso_text = self._picklist_to_choices(proviso)
+
+        self.conditional_checkbox_choices = (
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
+        )
+
+        self.country = country
+        super().__init__(*args, **kwargs)
+
+        self.fields["country"] = forms.BooleanField(
+            initial=True,
+            label=country["answer"],
+            required=False,
+            widget=forms.CheckboxInput(attrs={"class": "govuk-checkboxes__label"}),
+        )
+
+        self.fields["proviso_checkboxes"].choices = proviso_choices
+        for choices in proviso_choices:
+            self.fields[choices.value] = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3}),
+                label="Description",
+                required=False,
+                initial=proviso_text[choices.value],
+            )
+
+    def get_layout_fields(self):
+        return (
+            HTML.h1(f"Add provisos for {self.country['answer']}"),
+            "country",
+            HTML("<br><br>"),
+            "recommendation",
+            ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),
         )

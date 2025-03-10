@@ -36,4 +36,9 @@ urlpatterns = [
         name="move_case_forward",
     ),
     path("document/", include("caseworker.f680.document.urls")),
+    path(
+        "recommendation/make-recommendation/",
+        recommendation_views.MakeRecommendationView.as_view(),
+        name="make_recommendation",
+    ),
 ]

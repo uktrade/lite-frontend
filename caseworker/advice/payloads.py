@@ -8,7 +8,5 @@ def get_cleaned_data(form):
 
 class GiveApprovalAdvicePayloadBuilder(MergingPayloadBuilder):
     payload_dict = {
-        AdviceSteps.RECOMMEND_APPROVAL: get_cleaned_data,
         AdviceSteps.LICENCE_CONDITIONS: get_cleaned_data,
-        AdviceSteps.LICENCE_FOOTNOTES: get_cleaned_data,
     }
