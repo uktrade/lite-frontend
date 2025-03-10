@@ -3,6 +3,7 @@ from crispy_forms_gds.choices import Choice
 
 from core.common.forms import BaseForm
 from core.forms.layouts import F680ConditionalCheckboxes, F680ConditionalCheckboxesQuestion
+from ...constants import SecurityGrading
 
 
 class EntityTypeForm(BaseForm):
@@ -143,13 +144,7 @@ class SecurityGradingForm(BaseForm):
     )
 
     security_classification = forms.ChoiceField(
-        choices=(
-            Choice("official", "Official"),
-            Choice("official-sensitive", "Official-Sensitive"),
-            Choice("secret", "Secret"),
-            Choice("top-secret", "Top Secret", divider="Or"),
-            Choice("other", "Other"),
-        ),
+        choices=SecurityGrading.security_release_choices,
         label="Select security classification",
         widget=forms.RadioSelect,
     )
