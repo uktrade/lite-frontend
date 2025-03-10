@@ -5,7 +5,7 @@ from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice.constants import AdviceSteps
+from caseworker.advice.constants import AdviceLevel, AdviceSteps
 from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
@@ -114,7 +114,7 @@ class BaseApprovalRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, Ba
         "Unexpected error adding approval recommendation",
     )
     def post_approval_recommendation(self, data):
-        level = "final-advice" if self.case_ready_for_outcome else "user-advice"
+        level = "final-advice" if self.recommendation_level == AdviceLevel.FINAL else "user-advice"
         return post_approval_recommendation(self.request, self.case, data, level=level)
 
     def get_payload(self, form_dict):

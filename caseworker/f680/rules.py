@@ -27,15 +27,6 @@ def can_user_make_f680_recommendation(request, case):
 
 
 @rules.predicate
-def case_ready_for_outcome(request, case):
-    user = get_logged_in_caseworker(request)
-    if not user:
-        return False
-
-    return case["data"]["status"]["key"] in OUTCOME_STATUSES
-
-
-@rules.predicate
 def f680_case_ready_for_move(request, case):
     user = get_logged_in_caseworker(request)
     if not user:
