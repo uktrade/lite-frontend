@@ -36,9 +36,7 @@ class F680CaseworkerMixin(CaseworkerMixin):
         return super().dispatch(request, *args, **kwargs)
 
     def get_recommendation_level(self, case):
-        if case.status in OUTCOME_STATUSES:
-            return AdviceLevel.FINAL
-        return AdviceLevel.USER
+        return AdviceLevel.FINAL if case.status in OUTCOME_STATUSES else AdviceLevel.USER
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
