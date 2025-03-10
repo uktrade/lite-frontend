@@ -4,7 +4,7 @@ from crispy_forms_gds.fields import DateInputField
 
 from core.common.forms import BaseForm
 from core.forms.layouts import F680ConditionalCheckboxes, F680ConditionalCheckboxesQuestion
-from ...constants import SecurityGrading
+from f680.constants import SecurityGrading
 
 
 class EntityTypeForm(BaseForm):
