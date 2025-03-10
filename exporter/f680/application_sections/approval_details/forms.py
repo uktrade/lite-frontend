@@ -14,7 +14,7 @@ from core.forms.layouts import (
     ConditionalRadiosQuestion,
 )
 from core.forms.utils import coerce_str_to_bool
-from ...constants import SecurityGrading
+from exporter.f680.constants import SecurityGrading
 
 
 class ApprovalTypeForm(BaseForm):
