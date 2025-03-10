@@ -13,25 +13,43 @@ from caseworker.cases.services import get_case
 from caseworker.advice.services import move_case_forward
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
+from caseworker.users.services import get_gov_user
 
 
-class CaseDetailView(LoginRequiredMixin, CaseworkerMixin, TemplateView):
-    template_name = "f680/case/detail.html"
+class F680CaseworkerMixin(CaseworkerMixin):
+    current_tab = None
 
-    def setup(self, request, *args, **kwargs):
-        super().setup(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
 
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
+        self.caseworker_id = str(self.request.session["lite_api_user_id"])
+        data, _ = get_gov_user(self.request, self.caseworker_id)
+        self.caseworker = data["user"]
+
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["case"] = self.case
+        context_data["queue_id"] = self.queue_id
+        context_data["current_tab"] = self.current_tab
+        context_data["queue_pk"] = self.queue_id
+        context_data["caseworker"] = self.caseworker
+        return context_data
+
+
+class CaseDetailView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
+    template_name = "f680/case/detail.html"
+    current_tab = "details"
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         submitted_by = self.case["data"]["submitted_by"]
         if submitted_by and "first_name" in submitted_by:
             self.case["data"]["submitted_by"] = " ".join([submitted_by["first_name"], submitted_by["last_name"]])
-        context_data["case"] = self.case
         return context_data
 
 

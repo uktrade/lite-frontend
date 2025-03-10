@@ -4,12 +4,6 @@ services:
   api:
     container_name: api
     image: liteapi
-    environment:
-      # Below values can be found in vault
-      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-      AWS_REGION: ${AWS_REGION}
-      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
     env_file:
       - api.env
     depends_on:
@@ -51,3 +45,15 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
+
+  s3:
+    container_name: s3
+    image: minio/minio
+    ports:
+      - 9000:9000
+      - 9001:9001
+    entrypoint: sh
+    command: -c 'mkdir -p /buckets/uploads && mkdir -p /buckets/anonymiser && minio server /buckets --console-address ":9001"'
+    environment:
+      - MINIO_ROOT_USER=minio_username
+      - MINIO_ROOT_PASSWORD=minio_password

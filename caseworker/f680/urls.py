@@ -12,7 +12,6 @@ urlpatterns = [
         views.CaseDetailView.as_view(),
         name="details",
     ),
-    path("document/", include("caseworker.f680.document.urls")),
     path(
         "recommendation/",
         recommendation_views.CaseRecommendationView.as_view(),
@@ -36,4 +35,5 @@ urlpatterns = [
         views.MoveCaseForward.as_view(),
         name="move_case_forward",
     ),
+    path("document/", include("caseworker.f680.document.urls")),
 ]
