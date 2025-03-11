@@ -197,6 +197,20 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
         label="",
         error_messages={"required": "Select if you approve or refuse"},
     )
+    security_classification = forms.ChoiceField(
+        choices=(
+            Choice("unclassified", "Unclassified"),
+            Choice("official", "Official"),
+            Choice("official-sensitive", "Official-Sensitive"),
+            Choice("restricted", "Restricted"),
+            Choice("confidential", "Confidential"),
+            Choice("secret", "Secret"),
+            Choice("top-secret", "Top Secret", divider="Or"),
+            Choice("other", "Other"),
+        ),
+        label="Select security classification",
+        required=False,
+    )
 
     proviso_checkboxes = forms.MultipleChoiceField(
         label="",
@@ -246,9 +260,10 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.h1(f"Add provisos for {self.country['answer']}"),
+            HTML.h1(f"Add recommendation for {self.country['answer']}"),
             "country",
             HTML("<br><br>"),
             "recommendation",
+            "security_classification",
             ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),
         )
