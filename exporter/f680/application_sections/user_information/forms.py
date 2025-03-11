@@ -3,7 +3,10 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
 
 from core.common.forms import BaseForm
-from core.forms.layouts import F680ConditionalCheckboxes, F680ConditionalCheckboxesQuestion
+from core.forms.layouts import (
+    ConditionalRadios,
+    ConditionalRadiosQuestion,
+)
 
 
 class EntityTypeForm(BaseForm):
@@ -230,12 +233,12 @@ class EndUserAssembleManufactureForm(BaseForm):
         widget=forms.Textarea(attrs={"rows": 5}),
     )
 
-    def __init__(self, *args, **kwargs):
-        self.conditional_checkbox_choices = (
-            F680ConditionalCheckboxesQuestion(choices.label, choices.value)
-            for choices in self.assemble_manufacture_choices
-        )
-        super().__init__(*args, **kwargs)
-
     def get_layout_fields(self):
-        return (F680ConditionalCheckboxes("assemble_manufacture", *self.conditional_checkbox_choices),)
+        return (
+            ConditionalRadios(
+                "assemble_manufacture",
+                ConditionalRadiosQuestion("Yes, assembled", "assemble"),
+                ConditionalRadiosQuestion("Yes, manufactured", "manufacture"),
+                "No",
+            ),
+        )
