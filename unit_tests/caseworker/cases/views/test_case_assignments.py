@@ -30,6 +30,14 @@ def mock_remove_assignment(requests_mock, data_standard_case, data_assignment):
 
 
 @pytest.fixture
+def mock_remove_f680_assignment(requests_mock, data_submitted_f680_case, data_f680_assignment):
+    url = client._build_absolute_uri(
+        f"/cases/{data_submitted_f680_case['case']['id']}/case-assignments/{data_f680_assignment['id']}"
+    )
+    return requests_mock.delete(url=url, json=data_f680_assignment)
+
+
+@pytest.fixture
 def mock_remove_assignment_error(requests_mock, data_standard_case, data_assignment):
     url = client._build_absolute_uri(
         f"/cases/{data_standard_case['case']['id']}/case-assignments/{data_assignment['id']}"
@@ -76,6 +84,40 @@ def test_case_assignments_remove_user_GET_404(authorized_client, data_queue, dat
     )
     response = authorized_client.get(url)
     assert response.status_code == 404
+
+
+def test_f680_case_assignments_POST_remove_user_success(
+    authorized_client,
+    data_queue,
+    data_submitted_f680_case,
+    mock_f680_case,
+    data_f680_assignment,
+    mock_f680_case_with_assignments,
+    mock_remove_f680_assignment,
+    mock_queue,
+):
+
+    case = data_submitted_f680_case
+    url = reverse("cases:remove-case-assignment", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
+    response = authorized_client.post(url, data={"assignment_id": str(data_f680_assignment["id"])}, follow=True)
+    assert response.status_code == 200
+    assert (
+        response.redirect_chain[-1][0]
+        == f"/queues/{data_queue['id']}/cases/{data_submitted_f680_case['case']['id']}/f680/"
+    )
+    messages = [str(msg) for msg in response.context["messages"]]
+    expected_message = "some user was successfully removed as case adviser"
+    assert messages == [expected_message]
+
+    assert mock_remove_f680_assignment.called
+    assert (
+        mock_remove_f680_assignment.last_request.path
+        == f"/cases/{data_submitted_f680_case['case']['id']}/case-assignments/{data_f680_assignment['id']}/"
+    )
+    assert mock_remove_f680_assignment.last_request.json() == {}
+
+    html = BeautifulSoup(response.content, "html.parser")
+    assert expected_message in html.select("div.app-snackbar__content")[0].get_text()
 
 
 def test_case_assignments_POST_remove_user_success(
@@ -301,6 +343,44 @@ def test_case_assign_me(
 
     response = authorized_client.post(url, data=data, follow=True)
     assert response.status_code == 200
+    assert (
+        response.wsgi_request.path
+        == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/"
+    )
+
+    html = BeautifulSoup(response.content, "html.parser")
+    success_message = html.find(class_="app-snackbar__content")
+    assert "You have been successfully added as case adviser" in success_message.text
+
+
+def test_f680_case_assign_me(
+    authorized_client,
+    data_queue,
+    data_submitted_f680_case,
+    data_f680_assignment,
+    mock_gov_user,
+    mock_add_assignment,
+    mock_f680_case,
+    mock_queue,
+):
+    url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
+    case_url = reverse(
+        "cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]}
+    )
+    data = {
+        "queue_id": data_queue["id"],
+        "user_id": mock_gov_user["user"]["id"],
+        "case_id": data_submitted_f680_case["case"]["id"],
+        "return_to": case_url,
+    }
+
+    response = authorized_client.post(url, data=data, follow=True)
+
+    assert response.status_code == 200
+    assert (
+        response.wsgi_request.path
+        == "/queues/00000000-0000-0000-0000-000000000001/cases/67271217-7e55-4345-9db4-31de1bfe4067/f680/"
+    )
 
     html = BeautifulSoup(response.content, "html.parser")
     success_message = html.find(class_="app-snackbar__content")

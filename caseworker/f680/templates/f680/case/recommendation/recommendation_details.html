@@ -1,0 +1,18 @@
+{% load advice_tags %}
+{% load static custom_tags %}
+
+{% block full_width %}
+    {% include "f680/case/recommendation/includes/form_errors.html" %}
+    <div class="govuk-grid-row">
+        <br>
+        <div class="govuk-grid-column-three-quarters">
+            {% with user=recommendation.user decision=recommendation.type.key %}
+                {% if decision == 'approve' or decision == 'proviso' %}
+                    {% include "f680/case/recommendation/includes/recommendation_details_approve.html" with recommendation=recommendation %}
+                {% elif decision == 'refuse' %}
+                    {% include "f680/case/recommendation/includes/recommendation_details_refuse.html" with recommendation=recommendation %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}

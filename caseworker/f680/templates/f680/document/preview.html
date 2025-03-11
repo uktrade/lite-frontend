@@ -1,0 +1,14 @@
+{% extends 'f680/case/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block details %}
+	<div class="app-letter-preview__container">
+
+        {% crispy form %}
+
+		<div class="app-letter-preview__page" id="preview">
+			{{ preview|safe }}
+		</div>
+	</div>
+
+{% endblock %}
