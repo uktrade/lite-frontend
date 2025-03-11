@@ -947,7 +947,7 @@ class TestProductInformationViews:
         assert isinstance(response.context["form"], forms.ActionTakenToClassifyInfo)
         response.context["form"]["actions_to_classify"].initial == "some actions"
 
-    def test_is_foreign_tech_or_information_shared_false_displays_correct_form(
+    def test_POST_to_is_foreign_tech_or_information_shared_false_displays_correct_form(
         self,
         post_to_product_step,
         goto_product_step,
@@ -962,7 +962,7 @@ class TestProductInformationViews:
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
 
-    def test_is_controlled_under_itar_false_displays_correct_form(
+    def test_POST_to_is_controlled_under_itar_false_displays_correct_form(
         self,
         post_to_product_step,
         goto_product_step,
@@ -978,7 +978,7 @@ class TestProductInformationViews:
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
 
-    def test_is_not_security_classified_displays_correct_form(
+    def test_POST_to_is_not_security_classified_displays_correct_form(
         self,
         post_to_product_step,
         goto_product_step,
@@ -993,3 +993,18 @@ class TestProductInformationViews:
         )
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ActionTakenToClassifyInfo)
+
+    def test_POST_to_actions_to_classify_displays_correct_form(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_is_not_security_classified,
+    ):
+        goto_product_step(FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT)
+        response = post_to_product_step(
+            FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT,
+            {"actions_to_classify": "some actions"},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductForeignTechOrSharedInformation)
