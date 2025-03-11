@@ -70,7 +70,7 @@ def mock_exporter_user(requests_mock, lite_api_user_id):
 
 
 @pytest.fixture
-def mock_exporter_user_me(requests_mock, lite_api_user_id):
+def mock_exporter_user_me(requests_mock, lite_api_user_id, user_organisation_id):
     url = client._build_absolute_uri("/users/me/")
     data = {
         "user": {
@@ -94,7 +94,7 @@ def mock_exporter_user_me(requests_mock, lite_api_user_id):
         },
         "organisations": [
             {
-                "id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",
+                "id": user_organisation_id,
                 "name": "Archway Communications",
                 "joined_at": "2020-06-29T09:30:58.425994Z",
                 "status": {"key": "active", "value": "Active"},

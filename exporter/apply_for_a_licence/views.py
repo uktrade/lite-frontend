@@ -1,5 +1,8 @@
 from django.urls import reverse_lazy, reverse
-from django.views.generic import TemplateView
+from django.views.generic import (
+    FormView,
+    TemplateView,
+)
 
 from exporter.applications.services import post_applications, post_open_general_licences_applications
 from exporter.apply_for_a_licence.forms.open_general_licences import (
@@ -8,27 +11,41 @@ from exporter.apply_for_a_licence.forms.open_general_licences import (
 )
 
 from exporter.apply_for_a_licence.forms.triage_questions import (
-    opening_question,
+    LicenceTypeForm,
     export_licence_questions,
     transhipment_questions,
 )
-from exporter.apply_for_a_licence.validators import validate_opening_question, validate_open_general_licences
+from exporter.apply_for_a_licence.validators import validate_open_general_licences
 from exporter.core.constants import PERMANENT, CaseTypes
 from exporter.core.services import post_open_general_licence_cases
-from lite_forms.views import SingleFormView, MultiFormView
+from lite_forms.views import MultiFormView
 
 from core.auth.views import LoginRequiredMixin, RedirectView
 from exporter.f680.views import F680FeatureRequiredMixin
 
 
-class LicenceType(LoginRequiredMixin, SingleFormView):
-    def init(self, request, **kwargs):
-        self.form = opening_question(request)
-        self.action = validate_opening_question
+class LicenceType(LoginRequiredMixin, FormView):
+    form_class = LicenceTypeForm
+    template_name = "core/form.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
+    def form_valid(self, form):
+        self.licence_type = form.cleaned_data["licence_type"]
+        return super().form_valid(form)
 
     def get_success_url(self):
-        licence_type = self.get_validated_data()["licence_type"]
-        return reverse_lazy(f"apply_for_a_licence:{licence_type}_questions")
+        return reverse(f"apply_for_a_licence:{self.licence_type}_questions")
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+
+        ctx["back_link_url"] = reverse("core:home")
+
+        return ctx
 
 
 class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):

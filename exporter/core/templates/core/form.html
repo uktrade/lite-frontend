@@ -2,7 +2,7 @@
 
 {% load crispy_forms_tags crispy_forms_gds %}
 
-{% block title %}{{ form_title }}{% endblock %}
+{% block title %}{% if form_title %}{{ form_title }}{% else %}{{ form.get_title }}{% endif %}{% endblock %}
 
 {% block back_link %}
 	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
