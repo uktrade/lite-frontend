@@ -155,16 +155,16 @@ class ProductHasSecurityClassification(BaseForm):
 class ActionTakenToClassifyInfo(BaseForm):
     class Layout:
         TITLE = "Provide details on what action will have to be taken to have the product security classified"
-        TITLE_AS_LABEL_FOR = "actions_to_get_classification"
+        TITLE_AS_LABEL_FOR = "actions_to_classify"
         SUBMIT_BUTTON_TEXT = "Continue"
 
-    actions_to_get_classification = forms.CharField(
+    actions_to_classify = forms.CharField(
         label=Layout.TITLE,
         widget=forms.Textarea(attrs={"rows": 5}),
     )
 
     def get_layout_fields(self):
-        return ("actions_to_get_classification",)
+        return ("actions_to_classify",)
 
 
 class ProductSecurityClassificationForm(BaseForm):

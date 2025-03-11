@@ -135,6 +135,15 @@ def force_has_security_classification(goto_product_step, post_to_product_step):
     )
 
 
+@pytest.fixture
+def force_is_not_security_classified(goto_product_step, post_to_product_step):
+    goto_product_step(FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION)
+    post_to_product_step(
+        FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+        {"has_security_classification": False},
+    )
+
+
 class TestApprovalDetailsView:
 
     def test_GET_no_application_404(
@@ -530,6 +539,23 @@ class TestProductInformationViews:
         for field_name, error in expected_errors.items():
             assert response.context["form"][field_name].errors == error
 
+    def test_POST_to_step_actions_to_classify_validation_error(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_foreign_tech,
+        force_product_under_itar,
+        force_is_not_security_classified,
+    ):
+        goto_product_step(FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT)
+        response = post_to_product_step(
+            FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT,
+            {"actions_to_classify": ""},
+        )
+        assert response.status_code == 200
+        response.context["form"]["actions_to_classify"].errors == ["This field is required."]
+
     def test_POST_submit_wizard_success(
         self,
         post_to_product_step,
@@ -641,13 +667,6 @@ class TestProductInformationViews:
                                 "raw_answer": True,
                                 "question": "Has the product been given a security classifcation by a UK MOD authority?",
                                 "datatype": "boolean",
-                            },
-                            {
-                                "key": "classification_info",
-                                "answer": "",
-                                "raw_answer": "",
-                                "question": "Provide details on what action will have to be taken to have the product security classified",
-                                "datatype": "string",
                             },
                             {
                                 "key": "prefix",
@@ -914,6 +933,20 @@ class TestProductInformationViews:
         for key, expected_value in expected_initial.items():
             assert response.context["form"][key].initial == expected_value
 
+    def test_GET_with_actions_to_classify_data_success(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get_existing_data,
+        force_foreign_tech,
+        force_product_under_itar,
+        force_is_not_security_classified,
+    ):
+        response = goto_product_step(FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ActionTakenToClassifyInfo)
+        response.context["form"]["actions_to_classify"].initial == "some actions"
+
     def test_is_foreign_tech_or_information_shared_false_displays_correct_form(
         self,
         post_to_product_step,
@@ -944,3 +977,19 @@ class TestProductInformationViews:
         )
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
+
+    def test_is_not_security_classified_displays_correct_form(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_is_not_security_classified,
+    ):
+
+        goto_product_step(FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION)
+        response = post_to_product_step(
+            FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+            {"has_security_classification": False},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ActionTakenToClassifyInfo)

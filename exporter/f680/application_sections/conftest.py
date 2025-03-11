@@ -139,6 +139,13 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                         "datatype": "string",
                     },
                     {
+                        "key": "actions_to_classify",
+                        "answer": "some actions",
+                        "raw_answer": "some actions",
+                        "question": "Provide details on what action will have to be taken to have the product security classified",
+                        "datatype": "string",
+                    },
+                    {
                         "key": "security_classification",
                         "answer": "unclassified",
                         "raw_answer": "unclassified",
