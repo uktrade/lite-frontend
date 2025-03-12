@@ -1,1 +1,7 @@
 {% extends 'core/form-wizard.html' %}
+
+{% block right_side_panel %}
+    <div class="govuk-grid-column-one-third">
+        {% include "f680/case/recommendation/includes/case_details.html" with case=case %}
+    </div>
+{% endblock %}

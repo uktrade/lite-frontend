@@ -1,0 +1,74 @@
+{% load static advice_tags %}
+
+    {% with product_information=case.data.application.sections.product_information display_pv_grading=case.goods|is_case_pv_graded %}
+        <h2 class="govuk-heading-m">Case details</h2>
+        <details class="govuk-details" data-module="govuk-details">
+          <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Products</span>
+          </summary>
+          <div class="govuk-details__text">
+            <table id="table-nlr-products" class="govuk-table">
+              <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell govuk-!-font-weight-bold">Name</td>
+                  <td class="govuk-table__cell">
+                    {{ product_information.fields.0.answer }}
+                </td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell govuk-!-font-weight-bold">Description</td>
+                    <td class="govuk-table__cell">
+                      {{ product_information.fields.1.answer }}
+                  </td>
+                  </tr>
+                </tbody>
+            </table>
+          </div>
+        </details>
+
+        <details class="govuk-details" data-module="govuk-details">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">Destinations</span>
+          </summary>
+          <div class="govuk-details__text">
+            <table id="table-nlr-products" class="govuk-table">
+              <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th scope="col" class="govuk-table__header">Country</th>
+                  <th scope="col" class="govuk-table__header">Type</th>
+                  <th scope="col" class="govuk-table__header">Name</th>
+                  <th scope="col" class="govuk-table__header">Security classification</th>
+                </tr>
+              </thead>
+              <tbody class="govuk-table__body">
+                {% for entity in entities %}
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell">{{ entity.country }}</td>
+                  <td class="govuk-table__cell">{{ entity.entity_type }}</td>
+                  <td class="govuk-table__cell">{{ entity.end_user_name }}</td>
+                  <td class="govuk-table__cell">{{ entity.security_classification }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </details>
+
+        {% with release_request=case.data.application.sections.approval_type %}
+            <dl class="govuk-summary-list govuk-summary-list--no-border">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Security release requests
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <ol>
+                            {% for item in release_request.fields.0.answer %}
+                                <li>{{ item }}</li>
+                            {% endfor %}
+                          </ol>
+                    </dd>
+                </div>
+            </dl>
+          {% endwith %}
+
+    {% endwith %}

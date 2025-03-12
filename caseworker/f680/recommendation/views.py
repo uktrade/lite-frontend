@@ -148,6 +148,7 @@ class GiveApprovalRecommendationView(BaseApprovalRecommendationView):
 
 class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     current_tab = "recommendations"
+    template_name = "f680/case/recommendation/form_wizard.html"
 
     condition_dict = {}
 

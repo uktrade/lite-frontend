@@ -36,6 +36,14 @@ class F680CaseworkerMixin(CaseworkerMixin):
                 data = country_data[0]
                 self.countries.append(country_data[0])
 
+        self.entities = []
+        for item in self.case.data["application"]["sections"]["user_information"]["items"]:
+            data = {}
+            for field in item["fields"]:
+                if field["key"] in ["entity_type", "end_user_name", "country", "security_classification"]:
+                    data[field["key"]] = field["answer"]
+            self.entities.append(data)
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -45,6 +53,7 @@ class F680CaseworkerMixin(CaseworkerMixin):
         context_data["current_tab"] = self.current_tab
         context_data["queue_pk"] = self.queue_id
         context_data["caseworker"] = self.caseworker
+        context_data["entities"] = self.entities
         return context_data
 
 
