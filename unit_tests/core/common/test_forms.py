@@ -180,7 +180,7 @@ def test_get_field_label_with_title_as_label_for_produces_correct_label():
     assert title_with_label_tag == "title_for_BaseFormWithTitleAndTitleAsLabelFor"
 
 
-def test_get_field_label_without_title_as_label_has_no_lable():
+def test_get_field_label_without_title_as_label_has_no_label():
     form = BaseFormWithoutTitleAndTitleAsLabelFor()
     title_without_label_tag = form.get_field_label("char_field")
 
