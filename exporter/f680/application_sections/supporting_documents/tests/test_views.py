@@ -35,6 +35,7 @@ def mock_f680_application_get_404(requests_mock, missing_application_id):
 
 @pytest.fixture
 def mock_f680_application_get(requests_mock, data_f680_case, application_id):
+    data_f680_case["application"]["sections"] = {}
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
     return requests_mock.get(url=url, json=data_f680_case)
 
@@ -206,7 +207,9 @@ class TestSupportingDocumentsAttachView:
     ):
 
         post_document_url = f"/exporter/applications/{application_id}/documents/"
+
         requests_mock.post(url=post_document_url, json={}, status_code=201)
+        requests_mock.patch(f"/exporter/f680/application/{application_id}/", json={}, status_code=200)
 
         data = {
             "file": SimpleUploadedFile("file 1", b"File 1 contents"),
@@ -219,7 +222,21 @@ class TestSupportingDocumentsAttachView:
             kwargs={"pk": application_id},
         )
 
-        assert requests_mock.last_request.json() == {
+        request_1 = requests_mock.request_history.pop()
+        request_2 = requests_mock.request_history.pop()
+        request_3 = requests_mock.request_history.pop()
+
+        assert request_1.method == "PATCH"
+        assert request_1.json()["application"]["sections"]["supporting_documents"] == {
+            "label": "Supporting Documents",
+            "items": [{"id": "a66ebfb3-72c8-4a63-82f6-0519830729ce"}],
+            "type": "multiple",
+        }
+
+        assert request_2.method == "GET"
+
+        assert request_3.method == "POST"
+        assert request_3.json() == {
             "name": "file 1",
             "s3_key": "file 1",
             "size": 0,

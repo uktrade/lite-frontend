@@ -31,14 +31,16 @@ class SupportingDocumentsView(F680FeatureRequiredMixin, F680SupportingDocumentsM
 class SupportingDocumentsAddView(F680FeatureRequiredMixin, F680SupportingDocumentsMixin, FormView):
     form_class = F680AttachSupportingDocument
     template_name = "core/form.html"
+    section = "supporting_documents"
+    section_label = "Supporting Documents"
 
     @expect_status(
         HTTPStatus.CREATED,
         "Error creating F680 document",
         "Unexpected error creating F680 document",
     )
-    def post_f680_document(self, data, application_id):
-        return post_application_supporting_document(self.request, data, application_id)
+    def post_f680_document(self, data):
+        return post_application_supporting_document(self.request, data, self.application_id)
 
     def get_success_url(self):
         return reverse(
@@ -51,12 +53,28 @@ class SupportingDocumentsAddView(F680FeatureRequiredMixin, F680SupportingDocumen
         file = data["file"]
         description = data["description"]
         payload = {**get_document_data(file), "description": description, "application": self.application_id}
-        self.post_f680_document(payload, self.application_id)
-        # TODO After we enrich the JSON with
-        # {supporting-documents: {documents:{}}}
+        self.post_f680_document(payload)
+        self.update_supporting_application_documents()
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data["back_link_url"] = self.get_success_url()
         return context_data
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating F680 supporting documents",
+        "Unexpected error updating F680 supporting documents",
+    )
+    def update_supporting_application_documents(self):
+        self.supporting_documents, _ = self.get_f680_supporting_documents(self.application_id)
+        section_payload = {
+            "label": self.section_label,
+            "items": [{"id": doc["id"]} for doc in self.supporting_documents["results"]],
+            "type": "multiple",
+        }
+
+        self.application["application"]["sections"][self.section] = section_payload
+
+        return self.patch_f680_application(self.application)
