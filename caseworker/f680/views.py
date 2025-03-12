@@ -42,6 +42,8 @@ class F680CaseworkerMixin(CaseworkerMixin):
             for field in item["fields"]:
                 if field["key"] in ["entity_type", "end_user_name", "country", "security_classification"]:
                     data[field["key"]] = field["answer"]
+                    if field["key"] == "country":
+                        data["country_id"] = field["raw_answer"]
             self.entities.append(data)
 
         return super().dispatch(request, *args, **kwargs)

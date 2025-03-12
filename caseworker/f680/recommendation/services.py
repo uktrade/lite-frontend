@@ -43,7 +43,7 @@ def post_recommendation(request, case, data, level="user-advice"):
             "type": item["type"],
             "text": "no concerns",
             "proviso": item.get("proviso", ""),
-            "country": item["country"],
+            "country": item["country_id"],
             "note": item.get("instructions_to_exporter", ""),
             "footnote_required": True if item.get("footnote_details") else False,
             "footnote": item.get("footnote_details", ""),

@@ -223,14 +223,15 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
         cleaned_data = super().clean()
         # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
         return {
-            f"type": cleaned_data["recommendation"],
-            "country": self.country["id"],
-            f"proviso": "\n\n--------\n".join(
+            "type": cleaned_data["recommendation"],
+            "entity": self.entity["name"],
+            "country_id": self.entity["country_id"],
+            "proviso": "\n\n--------\n".join(
                 [cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]]
             ),
         }
 
-    def __init__(self, country, *args, **kwargs):
+    def __init__(self, entity, *args, **kwargs):
         proviso = kwargs.pop("proviso")
 
         proviso_choices, proviso_text = self._picklist_to_choices(proviso)
@@ -239,12 +240,12 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
             ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
         )
 
-        self.country = country
+        self.entity = entity
         super().__init__(*args, **kwargs)
 
-        self.fields["country"] = forms.BooleanField(
+        self.fields["entity"] = forms.BooleanField(
             initial=True,
-            label=country["answer"],
+            label=entity["name"],
             required=False,
             widget=forms.CheckboxInput(attrs={"class": "govuk-checkboxes__label"}),
         )
@@ -260,8 +261,8 @@ class DestinationBasedProvisosForm(PicklistAdviceForm, BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.h1(f"Add recommendation for {self.country['answer']}"),
-            "country",
+            HTML.h1(f"Add recommendation for {self.entity['name']}"),
+            "entity",
             HTML("<br><br>"),
             "recommendation",
             "security_classification",

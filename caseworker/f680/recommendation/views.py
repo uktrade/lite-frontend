@@ -177,7 +177,7 @@ class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
         return post_recommendation(self.request, self.case, data)
 
     def get_payload(self, form_dict):
-        return RecommendationPayloadBuilder().build(form_dict, self.countries)
+        return RecommendationPayloadBuilder().build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
@@ -190,9 +190,9 @@ class MakeRecommendationView(BaseRecommendationView):
 
     def get_form_list(self):
         self.form_list = OrderedDict()
-        for item in self.countries:
-            name = item["answer"].replace(" ", "-")
-            self.form_list[f"destination_{item['raw_answer']}_{name}_provisos"] = DestinationBasedProvisosForm
+        for item in self.entities:
+            name = item["end_user_name"].replace(" ", "-")
+            self.form_list[name] = DestinationBasedProvisosForm
 
         return self.form_list
 
@@ -200,12 +200,12 @@ class MakeRecommendationView(BaseRecommendationView):
         if step is None:
             step = self.steps.current
 
-        country_data = step.split("_")
-        name = country_data[2].replace("-", " ")
-        country = {"id": country_data[1], "answer": name}
+        name = step.replace("-", " ")
+        target = [e for e in self.entities if e['end_user_name'] == name]
+        entity = {"name": name, 'country_id': target[0]['country_id']}
         picklist_form_kwargs = self.step_kwargs[RecommendationSteps.RELEASE_PROVISOS](self)
         picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
         if not picklist_options_exist:
             raise ValueError("Provisos not defined")
 
-        return DestinationBasedProvisosForm(data=data, prefix=step, country=country, **picklist_form_kwargs)
+        return DestinationBasedProvisosForm(data=data, prefix=step, entity=entity, **picklist_form_kwargs)
