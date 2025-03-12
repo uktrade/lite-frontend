@@ -161,8 +161,6 @@ make run_all_tests
 - AWS_STORAGE_BUCKET_NAME
 - AWS_REGION
 - TEST_SSO_EMAIL
-- TEST_SSO_PASSWORD
-- TEST_SSO_NAME (for the caseworker)
 - NOTIFY_KEY
 - NOTIFY_FEEDBACK_TEMPLATE_ID
 - NOTIFY_FEEDBACK_EMAIL
@@ -177,9 +175,6 @@ Exporter UI Tests also requires the following :
 
 - GOVUK_BASIC_AUTH_USER_NAME - In vault used for GOV.UK basic authentication in test envs
 - GOVUK_BASIC_AUTH_USER_PASSWORD - In vault used for GOV.UK basic authentication in test envs
-- EXPORTER_TEST_SSO_EMAIL - In vault this is a default account setup for testing
-- EXPORTER_TEST_SSO_PASSWORD - In vault this is a default account setup for testing
-- EXPORTER_TEST_SSO_NAME=LITE Testing
 
 Before running the UI tests, make sure you have the following services running with corresponding ports:
 
