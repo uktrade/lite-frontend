@@ -10,7 +10,12 @@ from django.views.generic import FormView, TemplateView
 from requests.exceptions import HTTPError
 from urllib.parse import urlencode
 
-from exporter.applications.constants import ApplicationStatus
+from core.wizard.views import BaseSessionWizardView
+
+from exporter.applications.constants import (
+    ApplicationStatus,
+    ExportLicenceSteps,
+)
 from exporter.applications.forms.appeal import AppealForm
 from exporter.applications.forms.application_actions import (
     withdraw_application_confirmation,
@@ -22,6 +27,9 @@ from exporter.applications.forms.common import (
     exhibition_details_form,
     ApplicationMajorEditConfirmationForm,
     ApplicationsListSortForm,
+    LicenceTypeForm,
+    ApplicationNameForm,
+    ToldByAnOfficialForm,
 )
 from exporter.applications.helpers.check_your_answers import (
     convert_application_to_check_your_answers,
@@ -35,6 +43,7 @@ from exporter.applications.helpers.validators import (
     validate_delete_draft,
     validate_surrender_application_and_update_case_status,
 )
+from exporter.applications.payloads import ExportLicencePayloadBuilder
 from exporter.applications.services import (
     get_activity,
     get_application_history,
@@ -54,6 +63,7 @@ from exporter.applications.services import (
     post_appeal_document,
     get_appeal,
     create_application_amendment,
+    post_applications,
 )
 from exporter.organisation.members.services import get_user
 
@@ -618,3 +628,38 @@ class AppealApplicationConfirmation(LoginRequiredMixin, TemplateView):
         context["application"] = get_application(self.request, self.kwargs["case_pk"])
 
         return context
+
+
+class ExportLicenceView(LoginRequiredMixin, BaseSessionWizardView):
+    form_list = [
+        (ExportLicenceSteps.LICENCE_TYPE, LicenceTypeForm),
+        (ExportLicenceSteps.APPLICATION_NAME, ApplicationNameForm),
+        (ExportLicenceSteps.TOLD_BY_AN_OFFICIAL, ToldByAnOfficialForm),
+    ]
+
+    def get_context_data(self, form, **kwargs):
+        ctx = super().get_context_data(form, **kwargs)
+
+        ctx["back_link_url"] = reverse("apply_for_a_licence:start")
+        ctx["title"] = form.Layout.TITLE
+
+        return ctx
+
+    def get_payload(self, form_dict):
+        return ExportLicencePayloadBuilder().build(form_dict)
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error creating application",
+        "Unexpected error creating application",
+    )
+    def post_applications(self, data):
+        return post_applications(self.request, data)
+
+    def get_success_url(self):
+        return reverse("applications:task_list", kwargs={"pk": self.application["id"]})
+
+    def done(self, form_list, form_dict, **kwargs):
+        data = self.get_payload(form_dict)
+        self.application, _ = self.post_applications(data)
+        return redirect(self.get_success_url())

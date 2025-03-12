@@ -6,7 +6,7 @@ from django.views.generic import (
 
 from lite_forms.views import MultiFormView
 
-from exporter.applications.services import post_applications, post_open_general_licences_applications
+from exporter.applications.services import post_applications
 from exporter.applications.licence_type_processors import ExportLicenceLicenceTypeProcessor
 from exporter.apply_for_a_licence.forms.open_general_licences import (
     open_general_licence_forms,
@@ -15,7 +15,6 @@ from exporter.apply_for_a_licence.forms.open_general_licences import (
 from exporter.apply_for_a_licence.enums import LicenceType
 from exporter.apply_for_a_licence.forms.triage_questions import (
     LicenceTypeForm,
-    export_licence_questions,
     transhipment_questions,
 )
 from exporter.apply_for_a_licence.validators import validate_open_general_licences
@@ -53,30 +52,6 @@ class LicenceTypeView(LoginRequiredMixin, FormView):
         ctx["back_link_url"] = reverse("core:home")
 
         return ctx
-
-
-class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
-    def init(self, request, **kwargs):
-        self.forms = export_licence_questions(request, None)
-
-    def get_action(self):
-        if self.request.POST.get("application_type") == CaseTypes.OGEL:
-            return post_open_general_licences_applications
-        else:
-            return post_applications
-
-    def on_submission(self, request, **kwargs):
-        copied_req = request.POST.copy()
-        self.forms = export_licence_questions(
-            request, copied_req.get("application_type"), copied_req.get("goodstype_category")
-        )
-
-    def get_success_url(self):
-        if self.request.POST.get("application_type") == CaseTypes.OGEL:
-            return reverse_lazy("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGEL})
-        else:
-            pk = self.get_validated_data()["id"]
-            return reverse_lazy("applications:task_list", kwargs={"pk": pk})
 
 
 class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):
