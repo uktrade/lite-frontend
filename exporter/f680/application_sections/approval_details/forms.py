@@ -45,7 +45,7 @@ class ApprovalTypeForm(BaseForm):
     )
 
     approval_choices = forms.MultipleChoiceField(
-        label=Layout.TITLE,
+        label="",
         choices=(),
         error_messages={
             "required": "Select an approval choice",
@@ -99,7 +99,7 @@ class ProductNameForm(BaseForm):
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     product_name = forms.CharField(
-        label=Layout.TITLE,
+        label="",
         help_text="Where possible include the make, model and type of the item",
     )
 
@@ -115,7 +115,7 @@ class ProductDescription(BaseForm):
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     product_description = forms.CharField(
-        label=Layout.TITLE,
+        label="",
         help_text="Where possible include the make, model and type of the item",
         widget=forms.Textarea(attrs={"rows": 5}),
     )
@@ -141,7 +141,7 @@ class ProductForeignTechOrSharedInformation(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -164,7 +164,7 @@ class ProductControlledUnderItar(BaseForm):
             (False, "No"),
         ),
         help_text="We need to know about any items classified as Defence Articles or Technical Data.",
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -249,7 +249,7 @@ class ProductIncludeCryptography(BaseForm):
             (False, "No"),
         ),
         help_text="We need to know about any items classified as Defence Articles or Technical Data.",
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -277,6 +277,7 @@ class ProductIncludeCryptography(BaseForm):
 class ProductRatedUnderMTCR(BaseForm):
     class Layout:
         TITLE = "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)"
+        TITLE_AS_LABEL_FOR = "is_item_rated_under_mctr"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_rated_under_mctr = forms.ChoiceField(
@@ -289,7 +290,7 @@ class ProductRatedUnderMTCR(BaseForm):
             Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
-        label="Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
+        label="",
     )
 
     def get_layout_fields(self):
@@ -305,6 +306,7 @@ class ProductRatedUnderMTCR(BaseForm):
 class ProductMANPADs(BaseForm):
     class Layout:
         TITLE = "Do you believe the item is a man-portable air defence system (MANPAD)?"
+        TITLE_AS_LABEL_FOR = "is_item_manpad"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_manpad = forms.ChoiceField(
@@ -314,7 +316,7 @@ class ProductMANPADs(BaseForm):
             Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
-        label="Do you believe the item is a man-portable air defence system (MANPAD)?",
+        label="",
     )
 
     def get_layout_fields(self):
@@ -339,7 +341,7 @@ class ProductElectronicMODData(BaseForm):
             Choice("no", "No"),
         ),
         widget=forms.RadioSelect,
-        label=Layout.TITLE,
+        label="",
     )
 
     def get_layout_fields(self):
@@ -375,7 +377,7 @@ class ProductFunding(BaseForm):
             Choice("private_venture", "Private venture"),
         ),
         widget=forms.RadioSelect,
-        label="Who is funding the item?",
+        label="",
     )
 
     def get_layout_fields(self):
@@ -393,7 +395,7 @@ class ProductUsedByUKArmedForces(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
