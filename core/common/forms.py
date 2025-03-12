@@ -51,6 +51,14 @@ class BaseForm(forms.Form):
     def get_title(self):
         return self.Layout.TITLE
 
+    def add_required_to_conditional_text_field(self, parent_field, parent_field_response, required_field):
+        cleaned_data = super().clean()
+        parent_field = cleaned_data.get(parent_field)
+        required_field = cleaned_data.get(required_field)
+        if parent_field == parent_field_response and not required_field:
+            self.add_error(required_field, "Required information")
+        return cleaned_data
+
     def get_layout_fields(self):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
 

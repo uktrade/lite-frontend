@@ -263,6 +263,9 @@ class ProductControlledUnderItar(BaseForm):
         required=False,
     )
 
+    def clean(self):
+        return self.add_required_to_conditional_text_field("is_controlled_under_itar", True, "controlled_info")
+
     def get_layout_fields(self):
         return (
             ConditionalRadios(
@@ -343,6 +346,11 @@ class ProductIncludeCryptography(BaseForm):
         label="Provide full details",
         required=False,
     )
+
+    def clean(self):
+        return self.add_required_to_conditional_text_field(
+            "is_including_cryptography_or_security_features", True, "cryptography_or_security_feature_info"
+        )
 
     def get_layout_fields(self):
         return (
@@ -487,6 +495,11 @@ class ProductUsedByUKArmedForces(BaseForm):
         label="Explain how it will be used",
         required=False,
     )
+
+    def clean(self):
+        return self.add_required_to_conditional_text_field(
+            "is_used_by_uk_armed_forces", True, "used_by_uk_armed_forces_info"
+        )
 
     def get_layout_fields(self):
         return (
