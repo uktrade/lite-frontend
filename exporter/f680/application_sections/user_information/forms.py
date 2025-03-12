@@ -218,7 +218,7 @@ class EndUserAssembleManufactureForm(BaseForm):
         Choice("no", "No"),
     )
 
-    assemble_manufacture = forms.MultipleChoiceField(
+    assemble_manufacture = forms.ChoiceField(
         choices=assemble_manufacture_choices,
         label=Layout.TITLE,
     )
