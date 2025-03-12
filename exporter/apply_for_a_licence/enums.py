@@ -37,3 +37,10 @@ class OpenGeneralExportLicenceTypes:
     @classmethod
     def get_by_acronym(cls, acronym):
         return next(ogl for ogl in cls.all() if ogl.acronym.lower() == acronym.lower())
+
+
+class LicenceType:
+    EXPORT_LICENCE = "export_licence"
+    F680 = "f680"
+    TRANSHIPMENT = "transhipment"
+    TRADE_CONTROL_LICENCE = "trade_control_licence"
