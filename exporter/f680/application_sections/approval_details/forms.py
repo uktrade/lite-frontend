@@ -384,6 +384,25 @@ class ProductFunding(BaseForm):
         return ("funding_source",)
 
 
+class ModSponsorDetails(BaseForm):
+    class Layout:
+        TITLE = "Who is funding the item?"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    full_name = forms.CharField(label="Full name")
+    address = forms.CharField(label="Address", widget=forms.Textarea(attrs={"rows": 5}))
+    phone_number = forms.CharField(label="Phone number")
+    email_address = forms.EmailField(label="Email address")
+
+    def get_layout_fields(self):
+        return (
+            "full_name",
+            "address",
+            "phone_number",
+            "email_address",
+        )
+
+
 class ProductUsedByUKArmedForces(BaseForm):
     class Layout:
         TITLE = "Will the item be used by the UK Armed Forces?"

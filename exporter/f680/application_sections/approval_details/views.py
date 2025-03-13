@@ -14,6 +14,7 @@ from .forms import (
     ProductMANPADs,
     ProductElectronicMODData,
     ProductFunding,
+    ModSponsorDetails,
     ProductUsedByUKArmedForces,
 )
 
@@ -36,6 +37,17 @@ def is_controlled_under_itar(wizard):
     return cleaned_data.get("is_controlled_under_itar", False)
 
 
+def has_mod_sponsor(wizard):
+    mod_sources = ["mod", "part_mod"]
+    cleaned_data = wizard.get_cleaned_data_for_step(FormSteps.PRODUCT_FUNDING) or {}
+    funding_source = cleaned_data.get("funding_source", "")
+    result = False
+    if funding_source in mod_sources:
+        result = True
+
+    return result
+
+
 class ProductInformationView(F680ApplicationSectionWizard):
     form_list = [
         (FormSteps.PRODUCT_NAME, ProductNameForm),
@@ -48,11 +60,13 @@ class ProductInformationView(F680ApplicationSectionWizard):
         (FormSteps.PRODUCT_MANPAD, ProductMANPADs),
         (FormSteps.PRODUCT_ELECTRONICMODDATA, ProductElectronicMODData),
         (FormSteps.PRODUCT_FUNDING, ProductFunding),
+        (FormSteps.MOD_SPONSOR_DETAILS, ModSponsorDetails),
         (FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES, ProductUsedByUKArmedForces),
     ]
     condition_dict = {
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR: is_foreign_tech_or_information_shared,
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS: is_controlled_under_itar,
+        FormSteps.MOD_SPONSOR_DETAILS: has_mod_sponsor,
     }
     section = "product_information"
     section_label = "Product information"
