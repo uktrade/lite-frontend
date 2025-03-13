@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import forms
 from django.db.models import TextChoices
 from django.template.loader import render_to_string
@@ -14,6 +16,9 @@ from core.forms.layouts import (
     ConditionalRadiosQuestion,
 )
 from core.forms.utils import coerce_str_to_bool
+
+from exporter.core.forms import CustomErrorDateInputField
+from exporter.core.validators import PastDateValidator
 from exporter.f680.constants import SecurityGrading
 
 
@@ -197,9 +202,28 @@ class ProductSecurityClassificationForm(BaseForm):
     reference = forms.CharField(
         label="Reference",
     )
-    date_of_issue = DateInputField(
+    date_of_issue = CustomErrorDateInputField(
         label="Date of issue",
-        help_text="For example, 27 3 2025",
+        require_all_fields=False,
+        help_text=f"For example, 20 2 {datetime.now().year-1}",
+        error_messages={
+            "required": "Enter the date of issue",
+            "incomplete": "Enter the date of issue",
+            "invalid": "Date of issue must be a real date",
+            "day": {
+                "incomplete": "Date of issue must include a day",
+                "invalid": "Date of issue must be a real date",
+            },
+            "month": {
+                "incomplete": "Date of issue must include a month",
+                "invalid": "Date of issue must be a real date",
+            },
+            "year": {
+                "incomplete": "Date of issue must include a year",
+                "invalid": "Date of issue must be a real date",
+            },
+        },
+        validators=[PastDateValidator("Date of issue must be in the past")],
     )
 
     def get_layout_fields(self):
