@@ -1,3 +1,6 @@
+from crispy_forms_gds.choices import Choice
+
+
 class ApprovalTypeSteps:
     APPROVAL_TYPE = "APPROVAL_TYPE"
 
@@ -13,9 +16,9 @@ class SecurityGrading:
     OTHER = "other"
 
     security_release_choices = [
-        (OFFICIAL, "Official"),
-        (OFFICIAL_SENSITIVE, "Official - sensitive"),
-        (SECRET, "Secret"),
-        (TOP_SECRET, "Top-secret"),
-        (OTHER, "Other"),
+        Choice(OFFICIAL, "Official"),
+        Choice(OFFICIAL_SENSITIVE, "Official - sensitive"),
+        Choice(SECRET, "Secret"),
+        Choice(TOP_SECRET, "Top-secret", divider="Or"),
+        Choice(OTHER, "Other"),
     ]
