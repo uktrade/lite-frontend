@@ -122,7 +122,7 @@ def force_product_under_itar(goto_product_step, post_to_product_step):
     goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
     post_to_product_step(
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-        {"is_controlled_under_itar": True},
+        {"is_controlled_under_itar": True, "controlled_info": "some info"},
     )
 
 
@@ -378,7 +378,7 @@ class TestProductInformationViews:
             ),
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-                {"is_controlled_under_itar": True, "controlled_info": ""},
+                {"is_controlled_under_itar": True, "controlled_info": "some info"},
                 forms.ProductControlledUnderItarDetails,
             ),
             (
@@ -394,7 +394,10 @@ class TestProductInformationViews:
             ),
             (
                 FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
-                {"is_including_cryptography_or_security_features": True},
+                {
+                    "is_including_cryptography_or_security_features": True,
+                    "cryptography_or_security_feature_info": "some info",
+                },
                 forms.ProductRatedUnderMTCR,
             ),
             (
@@ -601,7 +604,7 @@ class TestProductInformationViews:
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-            {"is_controlled_under_itar": True, "controlled_info": ""},
+            {"is_controlled_under_itar": True, "controlled_info": "some info"},
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
@@ -615,7 +618,10 @@ class TestProductInformationViews:
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
-            {"is_including_cryptography_or_security_features": True},
+            {
+                "is_including_cryptography_or_security_features": True,
+                "cryptography_or_security_feature_info": "some info",
+            },
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_RATED_UNDER_MTCR,
@@ -635,7 +641,7 @@ class TestProductInformationViews:
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
-            {"is_used_by_uk_armed_forces": True},
+            {"is_used_by_uk_armed_forces": True, "used_by_uk_armed_forces_info": "some info"},
         )
 
         assert response.status_code == 302
@@ -733,8 +739,8 @@ class TestProductInformationViews:
                             },
                             {
                                 "key": "controlled_info",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "some info",
+                                "raw_answer": "some info",
                                 "question": "Explain how the technology or information is controlled.Include countries classification levels and reference numbers.  You can upload supporting documents later in your application",
                                 "datatype": "string",
                             },
@@ -782,8 +788,8 @@ class TestProductInformationViews:
                             },
                             {
                                 "key": "cryptography_or_security_feature_info",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "some info",
+                                "raw_answer": "some info",
                                 "question": "Provide full details",
                                 "datatype": "string",
                             },
@@ -824,8 +830,8 @@ class TestProductInformationViews:
                             },
                             {
                                 "key": "used_by_uk_armed_forces_info",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "some info",
+                                "raw_answer": "some info",
                                 "question": "Explain how it will be used",
                                 "datatype": "string",
                             },
