@@ -53,9 +53,9 @@ class BaseForm(forms.Form):
 
     def add_required_to_conditional_text_field(self, parent_field, parent_field_response, required_field):
         cleaned_data = super().clean()
-        parent_field = cleaned_data.get(parent_field)
-        required_field = cleaned_data.get(required_field)
-        if parent_field == parent_field_response and not required_field:
+        cleaned_parent_field = cleaned_data.get(parent_field)
+        cleaned_required_field = cleaned_data.get(required_field)
+        if cleaned_parent_field == parent_field_response and not cleaned_required_field:
             self.add_error(required_field, "Required information")
         return cleaned_data
 
