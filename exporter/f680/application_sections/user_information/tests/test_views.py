@@ -423,6 +423,13 @@ class TestUserInformationView:
                                         "datatype": "string",
                                     },
                                     {
+                                        "key": "other_security_classification",
+                                        "answer": "",
+                                        "raw_answer": "",
+                                        "question": "Enter the security classification",
+                                        "datatype": "string",
+                                    },
+                                    {
                                         "key": "suffix",
                                         "answer": "some suffix",
                                         "raw_answer": "some suffix",
@@ -595,6 +602,13 @@ class TestUserInformationView:
                     "answer": "Secret",
                     "raw_answer": "secret",
                     "question": "Select security classification",
+                    "datatype": "string",
+                },
+                {
+                    "key": "other_security_classification",
+                    "answer": "",
+                    "raw_answer": "",
+                    "question": "Enter the security classification",
                     "datatype": "string",
                 },
                 {

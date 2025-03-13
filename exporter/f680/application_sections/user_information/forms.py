@@ -154,6 +154,8 @@ class SecurityGradingForm(BaseForm):
         widget=forms.RadioSelect,
     )
 
+    other_security_classification = forms.CharField(label="Enter the security classification", required=False)
+
     suffix = forms.CharField(
         label="Enter a suffix (optional)",
         required=False,
@@ -162,7 +164,14 @@ class SecurityGradingForm(BaseForm):
     def get_layout_fields(self):
         return (
             "prefix",
-            "security_classification",
+            ConditionalRadios(
+                "security_classification",
+                "Official",
+                "Official - sensitive",
+                "Secret",
+                "Top-secret",
+                ConditionalRadiosQuestion("Other", "other_security_classification"),
+            ),
             "suffix",
         )
 
