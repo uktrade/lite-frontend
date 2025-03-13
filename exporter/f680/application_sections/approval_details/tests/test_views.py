@@ -464,7 +464,7 @@ class TestProductInformationViews:
                 {
                     "issuing_authority_name_address": ["This field is required."],
                     "reference": ["This field is required."],
-                    "date_of_issue": ["Enter the day, month and year"],
+                    "date_of_issue": ["Enter the date of issue"],
                 },
             ),
             (
