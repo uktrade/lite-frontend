@@ -44,7 +44,7 @@ class EntityTypeForm(BaseForm):
                 ),
             ),
         ),
-        label="Select type of entity",
+        label="",
         widget=forms.RadioSelect,
     )
 
@@ -89,7 +89,7 @@ class ThirdPartyRoleForm(BaseForm):
                 "Other",
             ),
         ),
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
     )
 
@@ -104,7 +104,7 @@ class EndUserNameForm(BaseForm):
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     end_user_name = forms.CharField(
-        label="End-user name",
+        label="",
         help_text="Name or organisation or individual",
     )
 
@@ -195,10 +195,11 @@ class SecurityGradingForm(BaseForm):
 class EndUserIntendedEndUseForm(BaseForm):
     class Layout:
         TITLE = "How does the end-user intend to use this product"
+        TITLE_AS_LABEL_FOR = "end_user_intended_end_use"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     end_user_intended_end_use = forms.CharField(
-        label="How does the end-user intend to use this product",
+        label="",
         widget=forms.Textarea(attrs={"rows": "5"}),
         help_text="Include as much information as you can. We need to know if they will integrate it into other equipment, involve any third parties, etc.",
     )
@@ -210,6 +211,7 @@ class EndUserIntendedEndUseForm(BaseForm):
 class EndUserAssembleManufactureForm(BaseForm):
     class Layout:
         TITLE = "Does this end-user need to assemble or manufacture any of the products?"
+        TITLE_AS_LABEL_FOR = "assemble_manufacture"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     assemble_manufacture_choices = (
@@ -220,7 +222,7 @@ class EndUserAssembleManufactureForm(BaseForm):
 
     assemble_manufacture = forms.ChoiceField(
         choices=assemble_manufacture_choices,
-        label=Layout.TITLE,
+        label="",
     )
     assemble = forms.CharField(
         label="Describe what assembly is needed.",
