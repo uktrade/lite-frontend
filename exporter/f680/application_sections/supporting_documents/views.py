@@ -71,7 +71,10 @@ class SupportingDocumentsAddView(F680FeatureRequiredMixin, F680SupportingDocumen
         self.supporting_documents, _ = self.get_f680_supporting_documents(self.application_id)
         section_payload = {
             "label": self.section_label,
-            "items": [{"id": doc["id"]} for doc in self.supporting_documents["results"]],
+            "items": [
+                {"id": doc["id"], "name": doc.get("name", ""), "description": doc.get("description", "")}
+                for doc in self.supporting_documents["results"]
+            ],
             "type": "multiple",
         }
 

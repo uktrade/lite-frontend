@@ -126,8 +126,8 @@ class TestSupportingDocumentsView:
         header = soup.find("h1", {"class": "govuk-heading-l"})
         table = soup.find("table", {"id": "table-supporting-documents"})
         download_link = table.find("a", {"class": "govuk-link"})["href"]
-        assert [th.text for th in table.find_all("th")] == ["Name", "Description", "Message", "Action"]
-        assert [td.text.strip() for td in table.find_all("td")] == ["sample_doc.pdf", "my item", "Download", ""]
+        assert [th.text for th in table.find_all("th")] == ["Name", "Description", "Action"]
+        assert [td.text.strip() for td in table.find_all("td")] == ["sample_doc.pdf", "my item", ""]
 
         assert header.text == "Supporting Documents"
         assert download_link == f"/applications/{application_id}/additional-document/{document_id}/download"
@@ -204,6 +204,7 @@ class TestSupportingDocumentsAttachView:
         f680_application_supporting_documents_attach_url,
         requests_mock,
         application_id,
+        document_data,
     ):
 
         post_document_url = f"/exporter/applications/{application_id}/documents/"
@@ -229,7 +230,13 @@ class TestSupportingDocumentsAttachView:
         assert request_1.method == "PATCH"
         assert request_1.json()["application"]["sections"]["supporting_documents"] == {
             "label": "Supporting Documents",
-            "items": [{"id": "a66ebfb3-72c8-4a63-82f6-0519830729ce"}],
+            "items": [
+                {
+                    "id": document_data[0]["id"],
+                    "name": document_data[0]["name"],
+                    "description": document_data[0]["description"],
+                }
+            ],
             "type": "multiple",
         }
 
