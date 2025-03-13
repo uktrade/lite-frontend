@@ -1014,3 +1014,36 @@ class TestProductInformationViews:
         )
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductForeignTechOrSharedInformation)
+
+    @pytest.mark.parametrize(
+        "step, data, required_field, expected_errors",
+        (
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                {"is_controlled_under_itar": True, "controlled_info": ""},
+                "controlled_info",
+                ["Required information"],
+            ),
+        ),
+    )
+    def test_POST_to_step_with_required_conditional_validation_error(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        step,
+        data,
+        required_field,
+        expected_errors,
+        force_has_security_classification,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        goto_product_step(step)
+        response = post_to_product_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+
+        assert response.context["form"][required_field].errors == expected_errors
