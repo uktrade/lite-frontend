@@ -22,10 +22,5 @@ def register_organisation_for_switching_organisation(context, api_test_client):
 
 
 @fixture()
-def get_eori_number():
-    return "GB" + "".join(["{}".format(randint(0, 9)) for _ in range(12)])
-
-
-@fixture()
 def get_registration_number():
     return "".join([str(randint(0, 9)) for _ in range(8)])

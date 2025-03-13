@@ -5,7 +5,7 @@ from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice.constants import AdviceSteps
+from caseworker.advice.constants import AdviceLevel, AdviceSteps
 from caseworker.advice.conditionals import form_add_licence_conditions
 from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
 from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
@@ -17,7 +17,7 @@ from caseworker.f680.recommendation.forms.forms import (
     SimpleLicenceConditionsForm,
 )
 from caseworker.f680.recommendation.services import (
-    get_current_user_recommendation,
+    current_user_recommendation,
     post_approval_recommendation,
 )
 from caseworker.f680.views import F680CaseworkerMixin
@@ -33,8 +33,8 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         recommendation = None
-        if user_recommendation := get_current_user_recommendation(
-            self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
+        if user_recommendation := current_user_recommendation(
+            self.case.advice, self.caseworker, self.recommendation_level
         ):
             user_recommendation = user_recommendation[0] if user_recommendation else None
 
@@ -57,9 +57,7 @@ class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        recommendation = get_current_user_recommendation(
-            self.case.advice, self.caseworker_id, self.caseworker["team"]["alias"]
-        )
+        recommendation = current_user_recommendation(self.case.advice, self.caseworker, self.recommendation_level)
 
         return {
             **context,
@@ -116,7 +114,8 @@ class BaseApprovalRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, Ba
         "Unexpected error adding approval recommendation",
     )
     def post_approval_recommendation(self, data):
-        return post_approval_recommendation(self.request, self.case, data)
+        level = "final-advice" if self.recommendation_level == AdviceLevel.FINAL else "user-advice"
+        return post_approval_recommendation(self.request, self.case, data, level=level)
 
     def get_payload(self, form_dict):
         return GiveApprovalAdvicePayloadBuilder().build(form_dict)

@@ -54,6 +54,13 @@ class BaseForm(forms.Form):
     def get_layout_fields(self):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
 
+    def get_field_label(self, field_name):
+        title_as_label_for = getattr(self.Layout, "TITLE_AS_LABEL_FOR", None)
+        if title_as_label_for == field_name:
+            return self.get_title()
+
+        return self[field_name].label
+
     def get_layout_actions(self):
         if hasattr(self.Layout, "SUBMIT_BUTTON_TEXT"):
             submit_button_text = self.Layout.SUBMIT_BUTTON_TEXT
