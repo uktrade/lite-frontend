@@ -1069,13 +1069,22 @@ class TestProductInformationViews:
         assert isinstance(response.context["form"], forms.ProductForeignTechOrSharedInformation)
 
     @pytest.mark.parametrize(
-        "step, data, required_field, expected_errors",
+        "step, data, required_field",
         (
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
                 {"is_controlled_under_itar": True, "controlled_info": ""},
                 "controlled_info",
-                ["Required information"],
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                {"is_including_cryptography_or_security_features": True, "cryptography_or_security_feature_info": ""},
+                "cryptography_or_security_feature_info",
+            ),
+            (
+                FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
+                {"is_used_by_uk_armed_forces": True, "used_by_uk_armed_forces_info": ""},
+                "used_by_uk_armed_forces_info",
             ),
         ),
     )
@@ -1087,7 +1096,6 @@ class TestProductInformationViews:
         step,
         data,
         required_field,
-        expected_errors,
         force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
@@ -1099,4 +1107,4 @@ class TestProductInformationViews:
         )
         assert response.status_code == 200
 
-        assert response.context["form"][required_field].errors == expected_errors
+        assert response.context["form"][required_field].errors == ["Required information"]
