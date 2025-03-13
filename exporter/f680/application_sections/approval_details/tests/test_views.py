@@ -253,7 +253,7 @@ class TestApprovalDetailsView:
             }
         }
 
-    def test_POST_to_step_validation_error(
+    def test_POST_to_approval_type_validation_error(
         self,
         post_to_approval_type_step,
         goto_approval_type_step,
@@ -465,6 +465,59 @@ class TestProductInformationViews:
                     "issuing_authority_name_address": ["This field is required."],
                     "reference": ["This field is required."],
                     "date_of_issue": ["Enter the date of issue"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some reference",
+                    "date_of_issue_0": "20",
+                },
+                {
+                    "date_of_issue": ["Date of issue must include a month", "Date of issue must include a year"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some reference",
+                    "date_of_issue_0": "20",
+                    "date_of_issue_2": "2020",
+                },
+                {
+                    "date_of_issue": ["Date of issue must include a month"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some reference",
+                    "date_of_issue_0": "20",
+                    "date_of_issue_1": "2",
+                    "date_of_issue_2": "2040",
+                },
+                {
+                    "date_of_issue": ["Date of issue must be in the past"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some reference",
+                    "date_of_issue_0": "50",
+                    "date_of_issue_1": "2",
+                    "date_of_issue_2": "2020",
+                },
+                {
+                    "date_of_issue": ["Date of issue must be a real date"],
                 },
             ),
             (
