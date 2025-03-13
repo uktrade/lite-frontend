@@ -9,6 +9,7 @@ from core.constants import CaseStatusEnum
 
 from caseworker.f680 import rules as recommendation_rules
 from caseworker.advice import services
+from caseworker.advice.constants import MOD_CAPPROT_TEAM, MOD_DSR_TEAM, MOD_ECJU
 from caseworker.cases.objects import Case
 
 
@@ -50,9 +51,9 @@ def get_mock_request(user, queue):
     return request
 
 
-def get_allocated_request_user(user, queue, team_alias=None):
-    if team_alias:
-        user["user"]["team"]["alias"] = team_alias
+def get_allocated_request_user(user, queue, team=None):
+    if team:
+        user["user"]["team"] = team
     request = get_mock_request(user["user"], queue)
     return request
 
@@ -73,7 +74,7 @@ def test_can_user_make_f680_recommendation_user_not_allocated(mock_gov_user, dat
     assert not rules.test_rule("can_user_make_f680_recommendation", request, case)
 
 
-@mock.patch("caseworker.f680.rules.get_current_user_recommendation")
+@mock.patch("caseworker.f680.rules.current_user_recommendation")
 def test_can_user_make_f680_recommendation_user_allocated_existing_recommendation(
     mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
 ):
@@ -152,19 +153,19 @@ def test_can_user_move_f680_case_forward_recommendation_status_no_recommendation
 
 
 @pytest.mark.parametrize(
-    "team_alias",
+    "team",
     (
-        services.MOD_CAPPROT_TEAM,
-        services.MOD_DSR_TEAM,
+        {"id": MOD_CAPPROT_TEAM, "alias": services.MOD_CAPPROT_TEAM},
+        {"id": MOD_DSR_TEAM, "alias": services.MOD_DSR_TEAM},
     ),
 )
 def test_can_user_move_f680_case_forward_recommendation_status_granted(
-    team_alias, mock_gov_user, data_fake_queue, data_assigned_case
+    team, mock_gov_user, data_fake_queue, data_assigned_case
 ):
     case = data_assigned_case
-    case.advice = [{"team": {"alias": team_alias}}]
+    case.advice = [{"team": team}]
     data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
-    request = get_allocated_request_user(mock_gov_user, data_fake_queue, team_alias=team_alias)
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue, team=team)
 
     assert rules.test_rule("can_user_move_f680_case_forward", request, case)
 
@@ -173,9 +174,9 @@ def test_can_user_move_f680_case_forward_recommendation_status_mod_ecju_granted(
     mock_gov_user, data_fake_queue, data_assigned_case
 ):
     case = data_assigned_case
-    MOD_ECJU_ALIAS = "MOD_ECJU"
+    team = {"id": MOD_ECJU, "alias": services.MOD_ECJU_TEAM}
     data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
-    request = get_allocated_request_user(mock_gov_user, data_fake_queue, team_alias=MOD_ECJU_ALIAS)
+    request = get_allocated_request_user(mock_gov_user, data_fake_queue, team=team)
 
     assert rules.test_rule("can_user_move_f680_case_forward", request, case)
 

@@ -147,11 +147,11 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case, data_
                                 "raw_answer": "some end use",
                             },
                             {
-                                "answer": ["Yes, assembled", "Yes, manufactured"],
-                                "datatype": "list",
+                                "answer": "Yes, assembled",
+                                "datatype": "string",
                                 "key": "assemble_manufacture",
                                 "question": "Does this end-user need to assemble or manufacture any of the products?",
-                                "raw_answer": ["assemble", "manufacture"],
+                                "raw_answer": "assemble",
                             },
                             {
                                 "answer": "some assembly",
@@ -159,13 +159,6 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case, data_
                                 "key": "assemble",
                                 "question": "Describe what assembly is needed.",
                                 "raw_answer": "some assembly",
-                            },
-                            {
-                                "answer": "some manufacture",
-                                "datatype": "string",
-                                "key": "manufacture",
-                                "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
-                                "raw_answer": "some manufacture",
                             },
                         ],
                         "id": data_item_id,
@@ -406,9 +399,8 @@ class TestUserInformationView:
         response = post_to_step(
             FormSteps.ASSEMBLE_MANUFACTURE,
             {
-                "assemble_manufacture": ["assemble", "manufacture"],
+                "assemble_manufacture": "assemble",
                 "assemble": "some assemble reason",
-                "manufacture": "some manufacture reason",
             },
         )
         assert response.status_code == 302
@@ -519,10 +511,10 @@ class TestUserInformationView:
                                     },
                                     {
                                         "key": "assemble_manufacture",
-                                        "answer": ["Yes, assembled", "Yes, manufactured"],
-                                        "raw_answer": ["assemble", "manufacture"],
+                                        "answer": "Yes, assembled",
+                                        "raw_answer": "assemble",
                                         "question": "Does this end-user need to assemble or manufacture any of the products?",
-                                        "datatype": "list",
+                                        "datatype": "string",
                                     },
                                     {
                                         "key": "assemble",
@@ -533,8 +525,8 @@ class TestUserInformationView:
                                     },
                                     {
                                         "key": "manufacture",
-                                        "answer": "some manufacture reason",
-                                        "raw_answer": "some manufacture reason",
+                                        "answer": "",
+                                        "raw_answer": "",
                                         "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
                                         "datatype": "string",
                                     },
@@ -617,9 +609,8 @@ class TestUserInformationView:
         response = post_to_step(
             FormSteps.ASSEMBLE_MANUFACTURE,
             {
-                "assemble_manufacture": ["assemble", "manufacture"],
+                "assemble_manufacture": "assemble",
                 "assemble": "some assemble reason",
-                "manufacture": "some manufacture reason",
             },
         )
         assert response.status_code == 302
@@ -728,10 +719,10 @@ class TestUserInformationView:
                 },
                 {
                     "key": "assemble_manufacture",
-                    "answer": ["Yes, assembled", "Yes, manufactured"],
-                    "raw_answer": ["assemble", "manufacture"],
+                    "answer": "Yes, assembled",
+                    "raw_answer": "assemble",
                     "question": "Does this end-user need to assemble or manufacture any of the products?",
-                    "datatype": "list",
+                    "datatype": "string",
                 },
                 {
                     "key": "assemble",
@@ -742,8 +733,8 @@ class TestUserInformationView:
                 },
                 {
                     "key": "manufacture",
-                    "answer": "some manufacture reason",
-                    "raw_answer": "some manufacture reason",
+                    "answer": "",
+                    "raw_answer": "",
                     "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
                     "datatype": "string",
                 },
@@ -844,9 +835,8 @@ class TestUserInformationSummaryView:
                 "reference": "some reference",
                 "date_of_issue": "2024-01-01",
                 "end_user_intended_end_use": "some end use",
-                "assemble_manufacture": ["Yes, assembled", "Yes, manufactured"],
+                "assemble_manufacture": "Yes, assembled",
                 "assemble": "some assembly",
-                "manufacture": "some manufacture",
             }
         }
 

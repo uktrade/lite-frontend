@@ -48,7 +48,7 @@ def edit_user_data():
                 "id": "00000000-0000-0000-0000-000000000001",
             },
             "default_queue": {"id": ALL_CASES_QUEUE_ID},
-            "email": "test@guygydu.com",
+            "email": "test@guygydu.com",  # /PS-IGNORE
         },
     }
 
@@ -140,11 +140,11 @@ def test_user_case_note_mention_count_error(authorized_client, requests_mock, da
     assert exception.response.status_code == 500
 
 
-def test_user_case_note_mentions(authorized_client, requests_mock):
+def test_user_case_note_mentions(user_organisation_id, authorized_client, requests_mock):
     mentions_data = {
         "results": [
             {
-                "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
+                "case_queue_id": user_organisation_id,
                 "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
                 "id": "f65fbf49-c14b-482b-833f-hdkwhdke79",  # /PS-IGNORE
                 "is_accessed": True,
@@ -167,11 +167,11 @@ def test_user_case_note_mentions(authorized_client, requests_mock):
     assert soup.find("table", {"class": "govuk-table"}).find("tr", {"id": "mentions-row-1"})
 
 
-def test_user_case_note_mentions_update_is_accessed(authorized_client, requests_mock):
+def test_user_case_note_mentions_update_is_accessed(user_organisation_id, authorized_client, requests_mock):
     mentions_data = {
         "results": [
             {
-                "case_queue_id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",  # /PS-IGNORE
+                "case_queue_id": user_organisation_id,
                 "case_id": "4966212d-5b52-4a6d-9e06-e589ab9dc221",  # /PS-IGNORE
                 "id": "f65fbf49-c14b-482b-833f-hdkwhdke79",  # /PS-IGNORE
                 "is_accessed": False,
@@ -335,14 +335,14 @@ def test_view_user_edit_user_permissions(
 @pytest.mark.parametrize(
     "role_id, team_id, edit_user_id ,can_deactivate",
     (
-        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),
-        (SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),
-        (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),
-        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),
-        (NON_SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", False),
-        (SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),
-        (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", False),
-        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),  # /PS-IGNORE
+        (SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),  # /PS-IGNORE
+        (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0", False),  # /PS-IGNORE
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),  # /PS-IGNORE
+        (NON_SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", False),  # /PS-IGNORE
+        (SUPER_USER_ROLE_ID, NON_ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),  # /PS-IGNORE
+        (NON_SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", False),  # /PS-IGNORE
+        (SUPER_USER_ROLE_ID, ADMIN_TEAM_ID, "4a43805b-c082-47e7-9188-c8b3e1a83cb1", True),  # /PS-IGNORE
     ),
 )
 def test_view_user_deactivate_permissions(
@@ -484,7 +484,7 @@ def test_edit_user_get(
         [
             SUPER_USER_ROLE_ID,
             {
-                "email": "test@guygydu.com",
+                "email": "test@guygydu.com",  # /PS-IGNORE
                 "role": "00000000-0000-0000-0000-000000000002",
                 "team": "00000000-0000-0000-0000-000000000001",
                 "default_queue": ALL_CASES_QUEUE_ID,
@@ -552,7 +552,7 @@ def test_edit_user_post_email_exists(
 ):
 
     requests_mock.get(
-        client._build_absolute_uri("/caseworker/gov_users/?email=changed@changeemaild.com"),
+        client._build_absolute_uri("/caseworker/gov_users/?email=changed@changeemaild.com"),  # /PS-IGNORE
         json={"count": 1},
     )
 
@@ -579,12 +579,17 @@ def test_edit_user_post_email_exists(
             ALL_CASES_QUEUE_ID,
             "00000000-0000-0000-0000-000000000001",
         ],
-        [ALL_CASES_QUEUE_ID, ALL_CASES_QUEUE_ID, ALL_CASES_QUEUE_ID, "2a43805b-c082-47e7-9188-c8b3e1a83cb0"],
+        [
+            ALL_CASES_QUEUE_ID,
+            ALL_CASES_QUEUE_ID,
+            ALL_CASES_QUEUE_ID,
+            "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
+        ],
         [
             ALL_CASES_QUEUE_ID,
             ALL_CASES_QUEUE_ID.replace("1", "2"),
             ALL_CASES_QUEUE_ID.replace("1", "2"),
-            "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
+            "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
         ],
     ),
 )
