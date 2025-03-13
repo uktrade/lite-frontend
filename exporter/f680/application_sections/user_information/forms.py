@@ -3,6 +3,8 @@ from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.fields import DateInputField
 
 from core.common.forms import BaseForm
+
+from exporter.f680.constants import SecurityGrading
 from core.forms.layouts import (
     ConditionalRadios,
     ConditionalRadiosQuestion,
@@ -146,16 +148,7 @@ class SecurityGradingForm(BaseForm):
         required=False,
     )
     security_classification = forms.ChoiceField(
-        choices=(
-            Choice("unclassified", "Unclassified"),
-            Choice("official", "Official"),
-            Choice("official-sensitive", "Official-Sensitive"),
-            Choice("restricted", "Restricted"),
-            Choice("confidential", "Confidential"),
-            Choice("secret", "Secret"),
-            Choice("top-secret", "Top Secret", divider="Or"),
-            Choice("other", "Other"),
-        ),
+        choices=SecurityGrading.security_release_choices,
         label="Select security classification",
         widget=forms.RadioSelect,
     )

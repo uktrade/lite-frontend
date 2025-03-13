@@ -6,6 +6,9 @@ from .forms import (
     ApprovalTypeForm,
     ProductNameForm,
     ProductDescription,
+    ProductHasSecurityClassification,
+    ActionTakenToClassifyInfo,
+    ProductSecurityClassificationForm,
     ProductForeignTechOrSharedInformation,
     ProductControlledUnderItar,
     ProductControlledUnderItarDetails,
@@ -36,10 +39,23 @@ def is_controlled_under_itar(wizard):
     return cleaned_data.get("is_controlled_under_itar", False)
 
 
+def has_security_classification(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION) or {}
+    return cleaned_data.get("has_security_classification", False)
+
+
+def is_not_security_classified(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION) or {}
+    return not cleaned_data.get("has_security_classification", False)
+
+
 class ProductInformationView(F680ApplicationSectionWizard):
     form_list = [
         (FormSteps.PRODUCT_NAME, ProductNameForm),
         (FormSteps.PRODUCT_DESCRIPTION, ProductDescription),
+        (FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION, ProductHasSecurityClassification),
+        (FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS, ProductSecurityClassificationForm),
+        (FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT, ActionTakenToClassifyInfo),
         (FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED, ProductForeignTechOrSharedInformation),
         (FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR, ProductControlledUnderItar),
         (FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS, ProductControlledUnderItarDetails),
@@ -53,6 +69,8 @@ class ProductInformationView(F680ApplicationSectionWizard):
     condition_dict = {
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR: is_foreign_tech_or_information_shared,
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS: is_controlled_under_itar,
+        FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS: has_security_classification,
+        FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT: is_not_security_classified,
     }
     section = "product_information"
     section_label = "Product information"
