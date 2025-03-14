@@ -161,15 +161,20 @@ class SecurityGradingForm(BaseForm):
         required=False,
     )
 
+    def clean(self):
+        return self.add_required_to_conditional_text_field(
+            "security_classification", "other", "other_security_classification"
+        )
+
     def get_layout_fields(self):
         return (
             "prefix",
             ConditionalRadios(
                 "security_classification",
                 "Official",
-                "Official - sensitive",
+                "Official-sensitive",
                 "Secret",
-                "Top-secret",
+                "Top secret",
                 ConditionalRadiosQuestion("Other", "other_security_classification"),
             ),
             "suffix",

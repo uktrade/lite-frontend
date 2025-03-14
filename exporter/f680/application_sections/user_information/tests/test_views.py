@@ -769,3 +769,31 @@ class TestUserInformationSummaryView:
         response = authorized_client.get(f680_user_information_summary_url)
         assert response.status_code == 200
         assert response.context["title"] == "Forbidden"
+
+    @pytest.mark.parametrize(
+        "step, data, required_field",
+        (
+            (
+                FormSteps.SECURITY_GRADING,
+                {"security_classification": "other", "other_security_classification": ""},
+                "other_security_classification",
+            ),
+        ),
+    )
+    def test_POST_to_step_with_required_conditional_validation_error(
+        self,
+        step,
+        data,
+        required_field,
+        post_to_step,
+        goto_step,
+        mock_f680_application_get,
+        force_third_party,
+    ):
+        goto_step(step)
+        response = post_to_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+        assert response.context["form"][required_field].errors == ["Required information"]
