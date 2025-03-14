@@ -147,7 +147,7 @@ class ProductHasSecurityClassification(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -163,7 +163,7 @@ class ActionTakenToClassifyInfo(BaseForm):
         SUBMIT_BUTTON_TEXT = "Continue"
 
     actions_to_classify = forms.CharField(
-        label=Layout.TITLE,
+        label="",
         widget=forms.Textarea(attrs={"rows": 5}),
     )
 
