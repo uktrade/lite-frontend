@@ -144,6 +144,15 @@ def force_is_not_security_classified(goto_product_step, post_to_product_step):
     )
 
 
+@pytest.fixture
+def force_mod_funded(goto_product_step, post_to_product_step):
+    goto_product_step(FormSteps.PRODUCT_FUNDING)
+    post_to_product_step(
+        FormSteps.PRODUCT_FUNDING,
+        {"funding_source": "mod"},
+    )
+
+
 class TestApprovalDetailsView:
 
     def test_GET_no_application_404(
@@ -621,6 +630,7 @@ class TestProductInformationViews:
         force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
+        force_mod_funded,
     ):
         response = post_to_product_step(
             FormSteps.PRODUCT_NAME,
@@ -691,6 +701,15 @@ class TestProductInformationViews:
         response = post_to_product_step(
             FormSteps.PRODUCT_FUNDING,
             {"funding_source": "mod"},
+        )
+        response = post_to_product_step(
+            FormSteps.MOD_SPONSOR_DETAILS,
+            {
+                "full_name": "a name",
+                "address": "16 Street",
+                "phone_number": "01234785785",
+                "email_address": "test@test.com",
+            },
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
@@ -872,6 +891,34 @@ class TestProductInformationViews:
                                 "answer": "MOD",
                                 "raw_answer": "mod",
                                 "question": "Who is funding the item?",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "full_name",
+                                "answer": "a name",
+                                "raw_answer": "a name",
+                                "question": "Full name",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "address",
+                                "answer": "16 Street",
+                                "raw_answer": "16 Street",
+                                "question": "Address",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "phone_number",
+                                "answer": "01234785785",
+                                "raw_answer": "01234785785",
+                                "question": "Phone number",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "email_address",
+                                "answer": "test@test.com",
+                                "raw_answer": "test@test.com",
+                                "question": "Email address",
                                 "datatype": "string",
                             },
                             {
