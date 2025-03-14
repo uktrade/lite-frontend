@@ -4,27 +4,28 @@ from django.views.generic import (
     TemplateView,
 )
 
-from exporter.applications.services import post_applications, post_open_general_licences_applications
+from lite_forms.views import MultiFormView
+
+from exporter.applications.services import post_applications
+from exporter.applications.licence_type_processors import ExportLicenceLicenceTypeProcessor
 from exporter.apply_for_a_licence.forms.open_general_licences import (
     open_general_licence_forms,
     open_general_licence_submit_success_page,
 )
-
+from exporter.apply_for_a_licence.enums import LicenceType
 from exporter.apply_for_a_licence.forms.triage_questions import (
     LicenceTypeForm,
-    export_licence_questions,
     transhipment_questions,
 )
 from exporter.apply_for_a_licence.validators import validate_open_general_licences
 from exporter.core.constants import PERMANENT, CaseTypes
 from exporter.core.services import post_open_general_licence_cases
-from lite_forms.views import MultiFormView
+from exporter.f680.licence_type_processors import F680LicenceLicenceTypeProcessor
 
-from core.auth.views import LoginRequiredMixin, RedirectView
-from exporter.f680.views import F680FeatureRequiredMixin
+from core.auth.views import LoginRequiredMixin
 
 
-class LicenceType(LoginRequiredMixin, FormView):
+class LicenceTypeView(LoginRequiredMixin, FormView):
     form_class = LicenceTypeForm
     template_name = "core/form.html"
 
@@ -34,11 +35,16 @@ class LicenceType(LoginRequiredMixin, FormView):
         return kwargs
 
     def form_valid(self, form):
-        self.licence_type = form.cleaned_data["licence_type"]
-        return super().form_valid(form)
+        licence_type = form.cleaned_data["licence_type"]
 
-    def get_success_url(self):
-        return reverse(f"apply_for_a_licence:{self.licence_type}_questions")
+        LicenceTypeProcessor = {
+            LicenceType.EXPORT_LICENCE: ExportLicenceLicenceTypeProcessor,
+            LicenceType.F680: F680LicenceLicenceTypeProcessor,
+        }[licence_type]
+
+        licence_type_processor = LicenceTypeProcessor(self.request)
+
+        return licence_type_processor.process()
 
     def get_context_data(self, *args, **kwargs):
         ctx = super().get_context_data(*args, **kwargs)
@@ -46,35 +52,6 @@ class LicenceType(LoginRequiredMixin, FormView):
         ctx["back_link_url"] = reverse("core:home")
 
         return ctx
-
-
-class ExportLicenceQuestions(LoginRequiredMixin, MultiFormView):
-    def init(self, request, **kwargs):
-        self.forms = export_licence_questions(request, None)
-
-    def get_action(self):
-        if self.request.POST.get("application_type") == CaseTypes.OGEL:
-            return post_open_general_licences_applications
-        else:
-            return post_applications
-
-    def on_submission(self, request, **kwargs):
-        copied_req = request.POST.copy()
-        self.forms = export_licence_questions(
-            request, copied_req.get("application_type"), copied_req.get("goodstype_category")
-        )
-
-    def get_success_url(self):
-        if self.request.POST.get("application_type") == CaseTypes.OGEL:
-            return reverse_lazy("apply_for_a_licence:ogl_questions", kwargs={"ogl": CaseTypes.OGEL})
-        else:
-            pk = self.get_validated_data()["id"]
-            return reverse_lazy("applications:task_list", kwargs={"pk": pk})
-
-
-class F680Questions(LoginRequiredMixin, RedirectView, F680FeatureRequiredMixin):
-    def get_redirect_url(self, *args, **kwargs):
-        return reverse("f680:apply")
 
 
 class TranshipmentQuestions(LoginRequiredMixin, MultiFormView):

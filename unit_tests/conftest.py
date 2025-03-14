@@ -2725,3 +2725,11 @@ def beautiful_soup():
         return BeautifulSoup(html, "html.parser")
 
     return _beautiful_soup
+
+
+@pytest.fixture()
+def api_url():
+    def _api_url(path):
+        return client._build_absolute_uri(path)
+
+    return _api_url

@@ -20,8 +20,8 @@ def authorized_client(authorized_client_factory, mock_exporter_user):
 
 
 @pytest.fixture
-def f680_apply_url():
-    return reverse("f680:apply")
+def apply_for_a_licence_url():
+    return reverse("apply_for_a_licence:start")
 
 
 @pytest.fixture
@@ -129,68 +129,19 @@ def set_f680_allowed_organisation(settings, organisation_pk):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
-class TestApplyForLicenceQuestionsClass:
-    def test_triage_f680_apply_redirect_success(self, authorized_client, f680_apply_url):
-        response = authorized_client.post(reverse("apply_for_a_licence:f680_questions"))
-        assert response.status_code == 302
-        assert response.url == f680_apply_url
-
-
-class TestF680ApplicationCreateView:
-    def test_get_create_f680_view_success(
+class TestF680ApplyForALicence:
+    def test_POST_apply_for_a_licence_success(
         self,
         authorized_client,
-        f680_apply_url,
+        apply_for_a_licence_url,
         f680_summary_url_with_application,
         mock_application_post,
     ):
-        response = authorized_client.get(f680_apply_url)
+        response = authorized_client.post(apply_for_a_licence_url, data={"licence_type": "f680"})
         assert response.status_code == 302
         assert response.url == f680_summary_url_with_application
         assert mock_application_post.called_once
         assert mock_application_post.last_request.json() == {"application": {}}
-
-    def test_get_create_f680_view_success_allowed_organisation(
-        self,
-        authorized_client,
-        f680_apply_url,
-        f680_summary_url_with_application,
-        mock_application_post,
-        set_f680_allowed_organisation,
-    ):
-        response = authorized_client.get(f680_apply_url)
-        assert response.status_code == 302
-        assert response.url == f680_summary_url_with_application
-        assert mock_application_post.called_once
-        assert mock_application_post.last_request.json() == {"application": {}}
-
-    def test_get_create_f680_view_fail_with_feature_flag_off(
-        self,
-        authorized_client,
-        f680_apply_url,
-        mock_f680_application_get,
-        unset_f680_feature_flag,
-    ):
-        response = authorized_client.get(f680_apply_url)
-        assert response.context[0].get("title") == "Forbidden"
-        assert (
-            "You are not authorised to use the F680 Security Clearance application feature"
-            in response.context[0].get("description").args
-        )
-
-    def test_get_create_f680_view_fail_with_feature_organidation_not_allowed(
-        self,
-        authorized_client,
-        f680_apply_url,
-        mock_f680_application_get,
-        unset_f680_allowed_organisation,
-    ):
-        response = authorized_client.get(f680_apply_url)
-        assert response.context[0].get("title") == "Forbidden"
-        assert (
-            "You are not authorised to use the F680 Security Clearance application feature"
-            in response.context[0].get("description").args
-        )
 
 
 class TestF680ApplicationSummaryView:

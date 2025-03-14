@@ -7,9 +7,7 @@ from exporter.apply_for_a_licence import views
 app_name = "apply_for_a_licence"
 
 urlpatterns = [
-    path("", views.LicenceType.as_view(), name="start"),
-    path("export/", views.ExportLicenceQuestions.as_view(), name="export_licence_questions"),
-    path("f680/", views.F680Questions.as_view(), name="f680_questions"),
+    path("", views.LicenceTypeView.as_view(), name="start"),
 ]
 
 if not settings.FEATURE_FLAG_ONLY_ALLOW_SIEL:
