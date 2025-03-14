@@ -18,18 +18,18 @@ class SecurityGrading:
     product_choices = [
         Choice(UNCLASSIFIED, "Unclassified"),
         Choice(OFFICIAL, "Official"),
-        Choice(OFFICIAL_SENSITIVE, "Official - sensitive"),
+        Choice(OFFICIAL_SENSITIVE, "Official-sensitive"),
         Choice(RESTRICTED, "Restricted"),
         Choice(CONFIDENTIAL, "Confidential"),
         Choice(SECRET, "Secret"),
-        Choice(TOP_SECRET, "Top-secret"),
+        Choice(TOP_SECRET, "Top secret"),
         Choice(OTHER, "Other"),
     ]
 
     security_release_choices = [
         Choice(OFFICIAL, "Official"),
-        Choice(OFFICIAL_SENSITIVE, "Official - sensitive"),
+        Choice(OFFICIAL_SENSITIVE, "Official-sensitive"),
         Choice(SECRET, "Secret"),
-        Choice(TOP_SECRET, "Top-secret", divider="Or"),
+        Choice(TOP_SECRET, "Top secret", divider="Or"),
         Choice(OTHER, "Other"),
     ]
