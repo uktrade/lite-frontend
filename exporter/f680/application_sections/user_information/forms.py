@@ -229,6 +229,12 @@ class EndUserAssembleManufactureForm(BaseForm):
         widget=forms.Textarea(attrs={"rows": 5}),
     )
 
+    def clean(self):
+        required_conditional_textbox_fields = ["assemble", "manufacture"]
+        for field in required_conditional_textbox_fields:
+            self.add_required_to_conditional_text_field("assemble_manufacture", field, field)
+        return super().clean()
+
     def get_layout_fields(self):
         return (
             ConditionalRadios(

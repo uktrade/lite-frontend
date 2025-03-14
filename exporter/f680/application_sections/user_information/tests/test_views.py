@@ -778,6 +778,16 @@ class TestUserInformationSummaryView:
                 {"security_classification": "other", "other_security_classification": ""},
                 "other_security_classification",
             ),
+            (
+                FormSteps.ASSEMBLE_MANUFACTURE,
+                {"assemble_manufacture": "assemble", "assemble": ""},
+                "assemble",
+            ),
+            (
+                FormSteps.ASSEMBLE_MANUFACTURE,
+                {"assemble_manufacture": "manufacture", "manufacture": ""},
+                "manufacture",
+            ),
         ),
     )
     def test_POST_to_step_with_required_conditional_validation_error(
