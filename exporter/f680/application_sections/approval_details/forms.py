@@ -287,14 +287,14 @@ class ProductControlledUnderItar(BaseForm):
     )
 
     def clean(self):
-        return self.add_required_to_conditional_text_field("is_controlled_under_itar", True, "controlled_info")
+        return self.add_required_to_conditional_text_field("is_controlled_under_itar", False, "controlled_info")
 
     def get_layout_fields(self):
         return (
             ConditionalRadios(
                 "is_controlled_under_itar",
-                ConditionalRadiosQuestion("Yes, it's controlled under  ITAR", "controlled_info"),
-                "No",
+                "Yes, it's controlled under  ITAR",
+                ConditionalRadiosQuestion("No", "controlled_info"),
             ),
             HTML.details(
                 "Help with ITAR",

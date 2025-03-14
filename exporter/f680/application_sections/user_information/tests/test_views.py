@@ -1,5 +1,4 @@
 import pytest
-from datetime import datetime
 
 from django.urls import reverse
 from freezegun import freeze_time
@@ -98,18 +97,11 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case, data_
                                 "raw_answer": "some prefix",
                             },
                             {
-                                "answer": "Unclassified",
+                                "answer": "Official",
                                 "datatype": "string",
                                 "key": "security_classification",
                                 "question": "Select security classification",
-                                "raw_answer": "unclassified",
-                            },
-                            {
-                                "answer": "",
-                                "datatype": "string",
-                                "key": "other_security_classification",
-                                "question": "Enter the security classification",
-                                "raw_answer": "",
+                                "raw_answer": "official",
                             },
                             {
                                 "answer": "some suffix",
@@ -117,27 +109,6 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case, data_
                                 "key": "suffix",
                                 "question": "Enter a suffix (optional)",
                                 "raw_answer": "some suffix",
-                            },
-                            {
-                                "answer": "some name and address",
-                                "datatype": "string",
-                                "key": "issuing_authority_name_address",
-                                "question": "Name and address of the issuing authority",
-                                "raw_answer": "some name and address",
-                            },
-                            {
-                                "answer": "some reference",
-                                "datatype": "string",
-                                "key": "reference",
-                                "question": "Reference",
-                                "raw_answer": "some reference",
-                            },
-                            {
-                                "answer": "2024-01-01",
-                                "datatype": "date",
-                                "key": "date_of_issue",
-                                "question": "Date of issue",
-                                "raw_answer": "2024-01-01",
                             },
                             {
                                 "answer": "some end use",
@@ -239,13 +210,8 @@ class TestUserInformationView:
                 FormSteps.SECURITY_GRADING,
                 {
                     "prefix": "some prefix",
-                    "security_classification": "unclassified",
+                    "security_classification": "official",
                     "suffix": "some suffix",
-                    "issuing_authority_name_address": "some name address",
-                    "reference": "some reference",
-                    "date_of_issue_0": "1",
-                    "date_of_issue_1": "1",
-                    "date_of_issue_2": "2025",
                 },
                 forms.EndUserIntendedEndUseForm,
             ),
@@ -294,14 +260,8 @@ class TestUserInformationView:
             ),
             (
                 FormSteps.SECURITY_GRADING,
-                {
-                    "security_classification": "unclassified",
-                },
-                {
-                    "issuing_authority_name_address": ["This field is required."],
-                    "reference": ["This field is required."],
-                    "date_of_issue": ["Enter the day, month and year"],
-                },
+                {},
+                {"security_classification": ["This field is required."]},
             ),
             (
                 FormSteps.INTENDED_END_USE,
@@ -377,11 +337,6 @@ class TestUserInformationView:
                 "prefix": "some prefix",
                 "security_classification": "secret",
                 "suffix": "some suffix",
-                "issuing_authority_name_address": "some name address",
-                "reference": "some ref",
-                "date_of_issue_0": "1",
-                "date_of_issue_1": "1",
-                "date_of_issue_2": "2024",
             },
         )
         assert response.status_code == 200
@@ -482,27 +437,6 @@ class TestUserInformationView:
                                         "datatype": "string",
                                     },
                                     {
-                                        "key": "issuing_authority_name_address",
-                                        "answer": "some name address",
-                                        "raw_answer": "some name address",
-                                        "question": "Name and address of the issuing authority",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "reference",
-                                        "answer": "some ref",
-                                        "raw_answer": "some ref",
-                                        "question": "Reference",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "date_of_issue",
-                                        "answer": "2024-01-01",
-                                        "raw_answer": "2024-01-01",
-                                        "question": "Date of issue",
-                                        "datatype": "date",
-                                    },
-                                    {
                                         "key": "end_user_intended_end_use",
                                         "answer": "some end use",
                                         "raw_answer": "some end use",
@@ -587,11 +521,6 @@ class TestUserInformationView:
                 "prefix": "some prefix",
                 "security_classification": "secret",
                 "suffix": "some suffix",
-                "issuing_authority_name_address": "some name address",
-                "reference": "some ref",
-                "date_of_issue_0": "1",
-                "date_of_issue_1": "1",
-                "date_of_issue_2": "2024",
             },
         )
         assert response.status_code == 200
@@ -690,27 +619,6 @@ class TestUserInformationView:
                     "datatype": "string",
                 },
                 {
-                    "key": "issuing_authority_name_address",
-                    "answer": "some name address",
-                    "raw_answer": "some name address",
-                    "question": "Name and address of the issuing authority",
-                    "datatype": "string",
-                },
-                {
-                    "key": "reference",
-                    "answer": "some ref",
-                    "raw_answer": "some ref",
-                    "question": "Reference",
-                    "datatype": "string",
-                },
-                {
-                    "key": "date_of_issue",
-                    "answer": "2024-01-01",
-                    "raw_answer": "2024-01-01",
-                    "question": "Date of issue",
-                    "datatype": "date",
-                },
-                {
                     "key": "end_user_intended_end_use",
                     "answer": "some end use",
                     "raw_answer": "some end use",
@@ -760,11 +668,8 @@ class TestUserInformationView:
                 forms.SecurityGradingForm,
                 {
                     "prefix": "some prefix",
-                    "security_classification": "unclassified",
+                    "security_classification": "official",
                     "suffix": "some suffix",
-                    "issuing_authority_name_address": "some name and address",
-                    "reference": "some reference",
-                    "date_of_issue": datetime(year=2024, month=1, day=1),
                 },
             ),
             (
@@ -828,12 +733,8 @@ class TestUserInformationSummaryView:
                 "address": "some address",
                 "country": "United States",
                 "prefix": "some prefix",
-                "security_classification": "Unclassified",
-                "other_security_classification": "",
+                "security_classification": "Official",
                 "suffix": "some suffix",
-                "issuing_authority_name_address": "some name and address",
-                "reference": "some reference",
-                "date_of_issue": "2024-01-01",
                 "end_user_intended_end_use": "some end use",
                 "assemble_manufacture": "Yes, assembled",
                 "assemble": "some assembly",
@@ -868,3 +769,41 @@ class TestUserInformationSummaryView:
         response = authorized_client.get(f680_user_information_summary_url)
         assert response.status_code == 200
         assert response.context["title"] == "Forbidden"
+
+    @pytest.mark.parametrize(
+        "step, data, required_field",
+        (
+            (
+                FormSteps.SECURITY_GRADING,
+                {"security_classification": "other", "other_security_classification": ""},
+                "other_security_classification",
+            ),
+            (
+                FormSteps.ASSEMBLE_MANUFACTURE,
+                {"assemble_manufacture": "assemble", "assemble": ""},
+                "assemble",
+            ),
+            (
+                FormSteps.ASSEMBLE_MANUFACTURE,
+                {"assemble_manufacture": "manufacture", "manufacture": ""},
+                "manufacture",
+            ),
+        ),
+    )
+    def test_POST_to_step_with_required_conditional_validation_error(
+        self,
+        step,
+        data,
+        required_field,
+        post_to_step,
+        goto_step,
+        mock_f680_application_get,
+        force_third_party,
+    ):
+        goto_step(step)
+        response = post_to_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+        assert response.context["form"][required_field].errors == ["Required information"]

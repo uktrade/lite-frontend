@@ -1,3 +1,6 @@
+from crispy_forms_gds.choices import Choice
+
+
 class ApprovalTypeSteps:
     APPROVAL_TYPE = "APPROVAL_TYPE"
 
@@ -13,23 +16,20 @@ class SecurityGrading:
     OTHER = "other"
 
     product_choices = [
-        (UNCLASSIFIED, "Unclassified"),
-        (OFFICIAL, "Official"),
-        (OFFICIAL_SENSITIVE, "Official - sensitive"),
-        (RESTRICTED, "Restricted"),
-        (CONFIDENTIAL, "Confidential"),
-        (SECRET, "Secret"),
-        (TOP_SECRET, "Top-secret"),
-        (OTHER, "Other"),
+        Choice(UNCLASSIFIED, "Unclassified"),
+        Choice(OFFICIAL, "Official"),
+        Choice(OFFICIAL_SENSITIVE, "Official-sensitive"),
+        Choice(RESTRICTED, "Restricted"),
+        Choice(CONFIDENTIAL, "Confidential"),
+        Choice(SECRET, "Secret"),
+        Choice(TOP_SECRET, "Top secret"),
+        Choice(OTHER, "Other"),
     ]
 
     security_release_choices = [
-        (UNCLASSIFIED, "Unclassified"),
-        (OFFICIAL, "Official"),
-        (OFFICIAL_SENSITIVE, "Official - sensitive"),
-        (RESTRICTED, "Restricted"),
-        (CONFIDENTIAL, "Confidential"),
-        (SECRET, "Secret"),
-        (TOP_SECRET, "Top-secret"),
-        (OTHER, "Other"),
+        Choice(OFFICIAL, "Official"),
+        Choice(OFFICIAL_SENSITIVE, "Official-sensitive"),
+        Choice(SECRET, "Secret"),
+        Choice(TOP_SECRET, "Top secret", divider="Or"),
+        Choice(OTHER, "Other"),
     ]
