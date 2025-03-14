@@ -40,12 +40,7 @@ def is_controlled_under_itar(wizard):
 def has_mod_sponsor(wizard):
     mod_sources = ["mod", "part_mod"]
     cleaned_data = wizard.get_cleaned_data_for_step(FormSteps.PRODUCT_FUNDING) or {}
-    funding_source = cleaned_data.get("funding_source", "")
-    result = False
-    if funding_source in mod_sources:
-        result = True
-
-    return result
+    return cleaned_data.get("funding_source", False) in mod_sources
 
 
 class ProductInformationView(F680ApplicationSectionWizard):
