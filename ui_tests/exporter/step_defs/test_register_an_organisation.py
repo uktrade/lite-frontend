@@ -3,11 +3,10 @@ from faker import Faker
 from pytest_bdd import scenarios, then, given, when
 from selenium.webdriver.common.by import By
 
+from tests_common import functions
+
 from ui_tests.exporter.pages.register_organisation import RegisterOrganisation
 from ui_tests.exporter.pages.start_page import StartPage
-from tests_common import functions
-from tests_common.api_client.sub_helpers.users import create_govuk_sso_user
-from ui_tests.exporter.fixtures.register_organisation import get_eori_number  # noqa
 from ui_tests.exporter.pages.mock_signin_page import MockSigninPage
 
 scenarios("../features/register_an_organisation.feature", strict_gherkin=False)
@@ -16,10 +15,9 @@ fake = Faker("en_GB")
 
 
 @given("I register but I don't belong to an organisation")
-def new_log_in(context):
-    response = create_govuk_sso_user()
-    context.newly_registered_email = response["email"]
-    context.newly_registered_password = response["password"]
+def new_log_in(context, exporter_info):
+    context.newly_registered_email = exporter_info["email"]
+    context.newly_registered_password = exporter_info["password"]
 
 
 @given("I make sure that I am not logged in")

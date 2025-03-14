@@ -23,6 +23,27 @@ class FileFieldForm(BaseForm):
         return ["file"]
 
 
+class BaseFormWithoutTitleAndTitleAsLabelFor(BaseForm):
+    class Layout:
+        TITLE = "title_for_BaseFormWithTitleAndTitleAsLabelFor"
+
+    char_field = forms.CharField(label="")
+
+    def get_layout_fields(self):
+        return ("char_field",)
+
+
+class BaseFormWithTitleAndTitleAsLabelFor(BaseForm):
+    class Layout:
+        TITLE = "title_for_BaseFormWithTitleAndTitleAsLabelFor"
+        TITLE_AS_LABEL_FOR = "char_field"
+
+    char_field = forms.CharField(label="")
+
+    def get_layout_fields(self):
+        return ("char_field",)
+
+
 @pytest.mark.parametrize(
     "form_class,has_enctype",
     (
@@ -149,3 +170,19 @@ def test_no_get_layout_fields(render_form):
 
     with pytest.raises(NotImplementedError):
         render_form(NoGetLayoutFields())
+
+
+def test_get_field_label_with_title_as_label_for_produces_correct_label():
+    form = BaseFormWithTitleAndTitleAsLabelFor()
+    title_with_label_tag = form.get_field_label("char_field")
+
+    assert form.Layout.TITLE == "title_for_BaseFormWithTitleAndTitleAsLabelFor"
+    assert title_with_label_tag == "title_for_BaseFormWithTitleAndTitleAsLabelFor"
+
+
+def test_get_field_label_without_title_as_label_has_no_label():
+    form = BaseFormWithoutTitleAndTitleAsLabelFor()
+    title_without_label_tag = form.get_field_label("char_field")
+
+    assert form.Layout.TITLE == "title_for_BaseFormWithTitleAndTitleAsLabelFor"
+    assert title_without_label_tag == ""

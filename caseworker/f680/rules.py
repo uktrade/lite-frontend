@@ -2,8 +2,9 @@ import rules
 
 from core.constants import CaseStatusEnum
 
+from caseworker.advice.constants import AdviceLevel
 from caseworker.core.rules import is_user_allocated, get_logged_in_caseworker
-from caseworker.f680.recommendation.services import get_current_user_recommendation, filter_recommendation_by_team
+from caseworker.f680.recommendation.services import current_user_recommendation, filter_recommendation_by_team
 
 
 RECOMMENDATION_STATUSES = [CaseStatusEnum.OGD_ADVICE]
@@ -18,21 +19,11 @@ def can_user_make_f680_recommendation(request, case):
     if not user:
         return False
 
-    # TODO: We could further limit the teams able to make advice, but leaving this open for now
-    team = user["team"]["alias"]
-    if get_current_user_recommendation(case.advice, user["id"], team):
+    level = AdviceLevel.FINAL if case["data"]["status"]["key"] in OUTCOME_STATUSES else AdviceLevel.USER
+    if current_user_recommendation(case.advice, user, level):
         return False
 
     return case["data"]["status"]["key"] in RECOMMENDATION_STATUSES
-
-
-@rules.predicate
-def case_ready_for_outcome(request, case):
-    user = get_logged_in_caseworker(request)
-    if not user:
-        return False
-
-    return case["data"]["status"]["key"] in OUTCOME_STATUSES
 
 
 @rules.predicate
@@ -46,16 +37,25 @@ def f680_case_ready_for_move(request, case):
         return True
 
     if case_status in RECOMMENDATION_STATUSES:
-        team = user["team"]["alias"]
-        team_recommendations_exist = bool(filter_recommendation_by_team(case.advice, team))
+        team = user["team"]
+        team_recommendations_exist = bool(filter_recommendation_by_team(case.advice, team["id"]))
         if team_recommendations_exist:
             return True
 
         # TODO: Remove this once we get stop the case going to MOD-ECJU Review and combine
-        if team == "MOD_ECJU":
+        if team["alias"] == "MOD_ECJU":
             return True
 
     return False
+
+
+@rules.predicate
+def case_ready_for_outcome(request, case):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+
+    return case["data"]["status"]["key"] in OUTCOME_STATUSES
 
 
 rules.add_rule("can_user_make_f680_recommendation", is_user_allocated & can_user_make_f680_recommendation)

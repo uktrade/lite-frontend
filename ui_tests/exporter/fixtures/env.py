@@ -1,7 +1,8 @@
 import os
+import pytest
 
 from environ import Env
-from pytest import fixture
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_FILE = os.path.join(BASE_DIR, ".env")
@@ -11,6 +12,6 @@ if os.path.exists(ENV_FILE):
 env = Env()
 
 
-@fixture()
+@pytest.fixture()
 def environment():
     return env
