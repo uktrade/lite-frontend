@@ -58,7 +58,7 @@ def document_data(application_id):
 
 @pytest.fixture
 def mock_f680_supporting_documents_get(requests_mock, data_f680_case, application_id, document_data):
-    url = client._build_absolute_uri(f"/exporter/applications/{application_id}/documents/")
+    url = client._build_absolute_uri(f"/exporter/applications/{application_id}/document/")
     return requests_mock.get(url=url, json={"results": document_data})
 
 
@@ -207,7 +207,7 @@ class TestSupportingDocumentsAttachView:
         document_data,
     ):
 
-        post_document_url = f"/exporter/applications/{application_id}/documents/"
+        post_document_url = f"/exporter/applications/{application_id}/document/"
 
         requests_mock.post(url=post_document_url, json={}, status_code=201)
         requests_mock.patch(f"/exporter/f680/application/{application_id}/", json={}, status_code=200)
@@ -228,13 +228,28 @@ class TestSupportingDocumentsAttachView:
         request_3 = requests_mock.request_history.pop()
 
         assert request_1.method == "PATCH"
+
         assert request_1.json()["application"]["sections"]["supporting_documents"] == {
             "label": "Supporting Documents",
             "items": [
                 {
                     "id": document_data[0]["id"],
-                    "name": document_data[0]["name"],
-                    "description": document_data[0]["description"],
+                    "fields": [
+                        {
+                            "key": "file",
+                            "answer": document_data[0]["name"],
+                            "raw_answer": document_data[0]["name"],
+                            "question": "file",
+                            "datatype": "string",
+                        },
+                        {
+                            "key": "description",
+                            "answer": document_data[0]["description"],
+                            "raw_answer": document_data[0]["description"],
+                            "question": "description",
+                            "datatype": "string",
+                        },
+                    ],
                 }
             ],
             "type": "multiple",
@@ -250,3 +265,32 @@ class TestSupportingDocumentsAttachView:
             "description": "my desc",
             "application": application_id,
         }
+
+    def test_POST_add_file_success_no_previous_document_section(
+        self,
+        authorized_client,
+        data_f680_case,
+        mock_f680_supporting_documents_get,
+        f680_application_supporting_documents_attach_url,
+        requests_mock,
+        application_id,
+        document_data,
+    ):
+
+        requests_mock.get(url=f"/exporter/f680/application/{application_id}/", json=data_f680_case)
+
+        post_document_url = f"/exporter/applications/{application_id}/document/"
+
+        requests_mock.post(url=post_document_url, json={}, status_code=201)
+        requests_mock.patch(f"/exporter/f680/application/{application_id}/", json={}, status_code=200)
+
+        data = {
+            "file": SimpleUploadedFile("file 1", b"File 1 contents"),
+            "description": "my desc",
+        }
+        response = authorized_client.post(f680_application_supporting_documents_attach_url, data)
+        assert response.status_code == 302
+        assert response.url == reverse(
+            "f680:supporting_documents:add",
+            kwargs={"pk": application_id},
+        )

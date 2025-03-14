@@ -3,7 +3,7 @@
 {% load additional_documents svg %}
 
 {% block back_link %}
-	<a href="{{back_link_url}}">Back</a>
+	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
 {% endblock %}
 
 {% block body %}
@@ -49,7 +49,7 @@
 			<span class="lite-information-text__icon" aria-hidden="true">!</span>
 			<p class="lite-information-text__text">
 				<span class="govuk-visually-hidden">Information</span>
-				NO Docs
+				No supporting documents
 			</p>
 		</div>
 		<div class="lite-information-text__help"></div>

@@ -599,10 +599,10 @@ def get_application_history(request, application_id):
 
 
 def post_application_supporting_document(request, data, application_id):
-    response = client.post(request, f"/exporter/applications/{application_id}/documents/", data=data)
+    response = client.post(request, f"/exporter/applications/{application_id}/document/", data=data)
     return response.json(), response.status_code
 
 
 def get_application_supporting_document(request, application_id):
-    response = client.get(request, f"/exporter/applications/{application_id}/documents/")
+    response = client.get(request, f"/exporter/applications/{application_id}/document/")
     return response.json(), response.status_code

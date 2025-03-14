@@ -8,6 +8,7 @@ from core.decorators import expect_status
 from core.helpers import get_document_data
 
 from exporter.applications.services import post_application_supporting_document
+from exporter.f680.payloads import F680DictPayloadBuilder
 from exporter.f680.views import F680FeatureRequiredMixin
 
 from .forms import F680AttachSupportingDocument
@@ -69,15 +70,12 @@ class SupportingDocumentsAddView(F680FeatureRequiredMixin, F680SupportingDocumen
     )
     def update_supporting_application_documents(self):
         self.supporting_documents, _ = self.get_f680_supporting_documents(self.application_id)
-        section_payload = {
-            "label": self.section_label,
-            "items": [
-                {"id": doc["id"], "name": doc.get("name", ""), "description": doc.get("description", "")}
-                for doc in self.supporting_documents["results"]
-            ],
-            "type": "multiple",
-        }
-
-        self.application["application"]["sections"][self.section] = section_payload
-
-        return self.patch_f680_application(self.application)
+        supporting_documents_data = [
+            {"id": doc["id"], "file": doc.get("name", ""), "description": doc.get("description", "")}
+            for doc in self.supporting_documents["results"]
+        ]
+        current_application = self.application.get("application", {})
+        section_payload = F680DictPayloadBuilder().build(
+            self.section, self.section_label, current_application, supporting_documents_data
+        )
+        return self.patch_f680_application(section_payload)
