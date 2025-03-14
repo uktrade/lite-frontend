@@ -1,16 +1,18 @@
+import rules
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.views.generic import TemplateView, View
-import rules
 
 from core.auth.views import LoginRequiredMixin
 
+from caseworker.advice.constants import AdviceLevel
+from caseworker.advice.services import move_case_forward
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.cases.services import get_case
-from caseworker.advice.services import move_case_forward
+from caseworker.f680.rules import OUTCOME_STATUSES
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
@@ -29,7 +31,12 @@ class F680CaseworkerMixin(CaseworkerMixin):
         data, _ = get_gov_user(self.request, self.caseworker_id)
         self.caseworker = data["user"]
 
+        self.recommendation_level = self.get_recommendation_level(self.case)
+
         return super().dispatch(request, *args, **kwargs)
+
+    def get_recommendation_level(self, case):
+        return AdviceLevel.FINAL if case.status in OUTCOME_STATUSES else AdviceLevel.USER
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)

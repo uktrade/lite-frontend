@@ -51,8 +51,23 @@ class BaseForm(forms.Form):
     def get_title(self):
         return self.Layout.TITLE
 
+    def add_required_to_conditional_text_field(self, parent_field, parent_field_response, required_field):
+        cleaned_data = super().clean()
+        cleaned_parent_field = cleaned_data.get(parent_field)
+        cleaned_required_field = cleaned_data.get(required_field)
+        if cleaned_parent_field == parent_field_response and not cleaned_required_field:
+            self.add_error(required_field, "Required information")
+        return cleaned_data
+
     def get_layout_fields(self):
         raise NotImplementedError(f"Implement `get_layout_fields` on {self.__class__.__name__}")
+
+    def get_field_label(self, field_name):
+        title_as_label_for = getattr(self.Layout, "TITLE_AS_LABEL_FOR", None)
+        if title_as_label_for == field_name:
+            return self.get_title()
+
+        return self[field_name].label
 
     def get_layout_actions(self):
         if hasattr(self.Layout, "SUBMIT_BUTTON_TEXT"):

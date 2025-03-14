@@ -32,7 +32,7 @@ class F680PatchPayloadBuilder:
                     "key": field_name,
                     "answer": answer,
                     "raw_answer": serialized_answer,
-                    "question": form[field_name].label,
+                    "question": form.get_field_label(field_name),
                     "datatype": datatype,
                 }
             )
