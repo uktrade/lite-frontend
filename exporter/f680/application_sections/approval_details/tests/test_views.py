@@ -1032,7 +1032,7 @@ class TestProductInformationViews:
         goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
         response = post_to_product_step(
             FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-            {"is_controlled_under_itar": False},
+            {"is_controlled_under_itar": False, "controlled_info": "some info"},
         )
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
@@ -1073,7 +1073,7 @@ class TestProductInformationViews:
         (
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-                {"is_controlled_under_itar": True, "controlled_info": ""},
+                {"is_controlled_under_itar": False, "controlled_info": ""},
                 "controlled_info",
             ),
             (
