@@ -149,7 +149,7 @@ class SecurityGradingForm(BaseForm):
     )
 
     security_classification = forms.ChoiceField(
-        choices=SecurityGrading.security_release_choices,
+        choices="",
         label="Select security classification",
         widget=forms.RadioSelect,
     )
@@ -166,17 +166,22 @@ class SecurityGradingForm(BaseForm):
             "security_classification", "other", "other_security_classification"
         )
 
+    def __init__(self, *args, **kwargs):
+        self.conditional_radio_choices = [
+            (
+                ConditionalRadiosQuestion(choice.label, "other_security_classification")
+                if choice.value == "other"
+                else choice.label
+            )
+            for choice in SecurityGrading.security_release_choices
+        ]
+        super().__init__(*args, **kwargs)
+        self.fields["security_classification"].choices = SecurityGrading.security_release_choices
+
     def get_layout_fields(self):
         return (
             "prefix",
-            ConditionalRadios(
-                "security_classification",
-                "Official",
-                "Official-sensitive",
-                "Secret",
-                "Top secret",
-                ConditionalRadiosQuestion("Other", "other_security_classification"),
-            ),
+            ConditionalRadios("security_classification", *self.conditional_radio_choices),
             "suffix",
         )
 
