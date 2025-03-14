@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 
 from django.urls import reverse
 
@@ -121,7 +122,25 @@ def force_product_under_itar(goto_product_step, post_to_product_step):
     goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
     post_to_product_step(
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-        {"is_controlled_under_itar": True},
+        {"is_controlled_under_itar": True, "controlled_info": "some info"},
+    )
+
+
+@pytest.fixture
+def force_has_security_classification(goto_product_step, post_to_product_step):
+    goto_product_step(FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION)
+    post_to_product_step(
+        FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+        {"has_security_classification": True},
+    )
+
+
+@pytest.fixture
+def force_is_not_security_classified(goto_product_step, post_to_product_step):
+    goto_product_step(FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION)
+    post_to_product_step(
+        FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+        {"has_security_classification": False},
     )
 
 
@@ -243,7 +262,7 @@ class TestApprovalDetailsView:
             }
         }
 
-    def test_POST_to_step_validation_error(
+    def test_POST_to_approval_type_validation_error(
         self,
         post_to_approval_type_step,
         goto_approval_type_step,
@@ -340,6 +359,25 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_DESCRIPTION,
                 {"product_description": "Does a thing"},
+                forms.ProductHasSecurityClassification,
+            ),
+            (
+                FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+                {"has_security_classification": True},
+                forms.ProductSecurityClassificationForm,
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "prefix": "some prefix",
+                    "security_classification": "unclassified",
+                    "suffix": "some suffix",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some ref",
+                    "date_of_issue_0": "1",
+                    "date_of_issue_1": "1",
+                    "date_of_issue_2": "2024",
+                },
                 forms.ProductForeignTechOrSharedInformation,
             ),
             (
@@ -349,7 +387,7 @@ class TestProductInformationViews:
             ),
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-                {"is_controlled_under_itar": True, "controlled_info": ""},
+                {"is_controlled_under_itar": True, "controlled_info": "some info"},
                 forms.ProductControlledUnderItarDetails,
             ),
             (
@@ -365,7 +403,10 @@ class TestProductInformationViews:
             ),
             (
                 FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
-                {"is_including_cryptography_or_security_features": True},
+                {
+                    "is_including_cryptography_or_security_features": True,
+                    "cryptography_or_security_feature_info": "some info",
+                },
                 forms.ProductRatedUnderMTCR,
             ),
             (
@@ -398,6 +439,7 @@ class TestProductInformationViews:
         post_to_product_step,
         goto_product_step,
         mock_f680_application_get,
+        force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
     ):
@@ -417,6 +459,75 @@ class TestProductInformationViews:
                 FormSteps.PRODUCT_DESCRIPTION,
                 {"product_description": ""},
                 {"product_description": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+                {},
+                {"has_security_classification": ["This field is required."]},
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                },
+                {
+                    "issuing_authority_name_address": ["This field is required."],
+                    "reference": ["This field is required."],
+                    "date_of_issue": ["Enter the date of issue"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some reference",
+                    "date_of_issue_0": "20",
+                },
+                {
+                    "date_of_issue": ["Date of issue must include a month", "Date of issue must include a year"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some reference",
+                    "date_of_issue_0": "20",
+                    "date_of_issue_2": "2020",
+                },
+                {
+                    "date_of_issue": ["Date of issue must include a month"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some reference",
+                    "date_of_issue_0": "20",
+                    "date_of_issue_1": "2",
+                    "date_of_issue_2": "2040",
+                },
+                {
+                    "date_of_issue": ["Date of issue must be in the past"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "unclassified",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "some reference",
+                    "date_of_issue_0": "50",
+                    "date_of_issue_1": "2",
+                    "date_of_issue_2": "2020",
+                },
+                {
+                    "date_of_issue": ["Date of issue must be a real date"],
+                },
             ),
             (
                 FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
@@ -480,6 +591,7 @@ class TestProductInformationViews:
         post_to_product_step,
         goto_product_step,
         mock_f680_application_get,
+        force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
     ):
@@ -492,12 +604,30 @@ class TestProductInformationViews:
         for field_name, error in expected_errors.items():
             assert response.context["form"][field_name].errors == error
 
+    def test_POST_to_step_actions_to_classify_validation_error(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_foreign_tech,
+        force_product_under_itar,
+        force_is_not_security_classified,
+    ):
+        goto_product_step(FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT)
+        response = post_to_product_step(
+            FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT,
+            {"actions_to_classify": ""},
+        )
+        assert response.status_code == 200
+        response.context["form"]["actions_to_classify"].errors == ["This field is required."]
+
     def test_POST_submit_wizard_success(
         self,
         post_to_product_step,
         goto_product_step,
         mock_f680_application_get,
         mock_patch_f680_application,
+        force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
         force_mod_funded,
@@ -510,13 +640,34 @@ class TestProductInformationViews:
             FormSteps.PRODUCT_DESCRIPTION,
             {"product_description": "Does a thing"},
         )
+        response = (
+            post_to_product_step(
+                FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+                {"has_security_classification": True},
+            ),
+        )
+        response = (
+            post_to_product_step(
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "prefix": "some prefix",
+                    "security_classification": "unclassified",
+                    "suffix": "some suffix",
+                    "issuing_authority_name_address": "some address",
+                    "reference": "1234",
+                    "date_of_issue_0": "1",
+                    "date_of_issue_1": "1",
+                    "date_of_issue_2": "2025",
+                },
+            ),
+        )
         response = post_to_product_step(
             FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
             {"is_foreign_tech_or_information_shared": True},
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-            {"is_controlled_under_itar": True, "controlled_info": ""},
+            {"is_controlled_under_itar": True, "controlled_info": "some info"},
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
@@ -530,7 +681,10 @@ class TestProductInformationViews:
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
-            {"is_including_cryptography_or_security_features": True},
+            {
+                "is_including_cryptography_or_security_features": True,
+                "cryptography_or_security_feature_info": "some info",
+            },
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_RATED_UNDER_MTCR,
@@ -559,7 +713,7 @@ class TestProductInformationViews:
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
-            {"is_used_by_uk_armed_forces": True},
+            {"is_used_by_uk_armed_forces": True, "used_by_uk_armed_forces_info": "some info"},
         )
 
         assert response.status_code == 302
@@ -586,6 +740,62 @@ class TestProductInformationViews:
                                 "datatype": "string",
                             },
                             {
+                                "key": "has_security_classification",
+                                "answer": "Yes",
+                                "raw_answer": True,
+                                "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                                "datatype": "boolean",
+                            },
+                            {
+                                "key": "prefix",
+                                "answer": "some prefix",
+                                "raw_answer": "some prefix",
+                                "question": "Enter a prefix (optional)",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "security_classification",
+                                "answer": "Unclassified",
+                                "raw_answer": "unclassified",
+                                "question": "Select security classification",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "other_security_classification",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Enter the security classification",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "suffix",
+                                "answer": "some suffix",
+                                "raw_answer": "some suffix",
+                                "question": "Enter a suffix (optional)",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "issuing_authority_name_address",
+                                "answer": "some address",
+                                "raw_answer": "some address",
+                                "question": "Name and address of the issuing authority",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "reference",
+                                "answer": "1234",
+                                "raw_answer": "1234",
+                                "question": "Reference",
+                                "datatype": "string",
+                            },
+                            {
+                                "key": "date_of_issue",
+                                "answer": "2025-01-01",
+                                "raw_answer": "2025-01-01",
+                                "question": "Date of issue",
+                                "datatype": "date",
+                            },
+                            {
                                 "key": "is_foreign_tech_or_information_shared",
                                 "answer": "Yes",
                                 "raw_answer": True,
@@ -601,8 +811,8 @@ class TestProductInformationViews:
                             },
                             {
                                 "key": "controlled_info",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "some info",
+                                "raw_answer": "some info",
                                 "question": "Explain how the technology or information is controlled.Include countries classification levels and reference numbers.  You can upload supporting documents later in your application",
                                 "datatype": "string",
                             },
@@ -650,8 +860,8 @@ class TestProductInformationViews:
                             },
                             {
                                 "key": "cryptography_or_security_feature_info",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "some info",
+                                "raw_answer": "some info",
                                 "question": "Provide full details",
                                 "datatype": "string",
                             },
@@ -720,8 +930,8 @@ class TestProductInformationViews:
                             },
                             {
                                 "key": "used_by_uk_armed_forces_info",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "some info",
+                                "raw_answer": "some info",
                                 "question": "Explain how it will be used",
                                 "datatype": "string",
                             },
@@ -740,6 +950,23 @@ class TestProductInformationViews:
                 FormSteps.PRODUCT_DESCRIPTION,
                 forms.ProductDescription,
                 {"product_description": "It does things"},
+            ),
+            (
+                FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+                forms.ProductHasSecurityClassification,
+                {"has_security_classification": True},
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                forms.ProductSecurityClassificationForm,
+                {
+                    "prefix": "some prefix",
+                    "security_classification": "unclassified",
+                    "suffix": "some suffix",
+                    "issuing_authority_name_address": "Some address",
+                    "reference": "1234",
+                    "date_of_issue": datetime(year=2024, month=1, day=1),
+                },
             ),
             (
                 FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
@@ -802,6 +1029,7 @@ class TestProductInformationViews:
         goto_product_step,
         expected_initial,
         mock_f680_application_get_existing_data,
+        force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
     ):
@@ -811,7 +1039,21 @@ class TestProductInformationViews:
         for key, expected_value in expected_initial.items():
             assert response.context["form"][key].initial == expected_value
 
-    def test_is_foreign_tech_or_information_shared_false_displays_correct_form(
+    def test_GET_with_actions_to_classify_data_success(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get_existing_data,
+        force_foreign_tech,
+        force_product_under_itar,
+        force_is_not_security_classified,
+    ):
+        response = goto_product_step(FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT)
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ActionTakenToClassifyInfo)
+        response.context["form"]["actions_to_classify"].initial == "some actions"
+
+    def test_POST_to_is_foreign_tech_or_information_shared_false_displays_correct_form(
         self,
         post_to_product_step,
         goto_product_step,
@@ -826,7 +1068,7 @@ class TestProductInformationViews:
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
 
-    def test_is_controlled_under_itar_false_displays_correct_form(
+    def test_POST_to_is_controlled_under_itar_false_displays_correct_form(
         self,
         post_to_product_step,
         goto_product_step,
@@ -841,3 +1083,75 @@ class TestProductInformationViews:
         )
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
+
+    def test_POST_to_is_not_security_classified_displays_correct_form(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_is_not_security_classified,
+    ):
+
+        goto_product_step(FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION)
+        response = post_to_product_step(
+            FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
+            {"has_security_classification": False},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ActionTakenToClassifyInfo)
+
+    def test_POST_to_actions_to_classify_displays_correct_form(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        force_is_not_security_classified,
+    ):
+        goto_product_step(FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT)
+        response = post_to_product_step(
+            FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT,
+            {"actions_to_classify": "some actions"},
+        )
+        assert response.status_code == 200
+        assert isinstance(response.context["form"], forms.ProductForeignTechOrSharedInformation)
+
+    @pytest.mark.parametrize(
+        "step, data, required_field",
+        (
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                {"is_controlled_under_itar": True, "controlled_info": ""},
+                "controlled_info",
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                {"is_including_cryptography_or_security_features": True, "cryptography_or_security_feature_info": ""},
+                "cryptography_or_security_feature_info",
+            ),
+            (
+                FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
+                {"is_used_by_uk_armed_forces": True, "used_by_uk_armed_forces_info": ""},
+                "used_by_uk_armed_forces_info",
+            ),
+        ),
+    )
+    def test_POST_to_step_with_required_conditional_validation_error(
+        self,
+        post_to_product_step,
+        goto_product_step,
+        mock_f680_application_get,
+        step,
+        data,
+        required_field,
+        force_has_security_classification,
+        force_foreign_tech,
+        force_product_under_itar,
+    ):
+        goto_product_step(step)
+        response = post_to_product_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+
+        assert response.context["form"][required_field].errors == ["Required information"]
