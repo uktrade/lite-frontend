@@ -83,3 +83,35 @@ class F680AppendingPayloadBuilder(F680PatchPayloadBuilder):
             application_data["sections"] = {section: section_payload}
 
         return {"application": application_data}
+
+
+class F680DictPayloadBuilder(F680PatchPayloadBuilder):
+    def build(self, section, section_label, application_data, dict_data):
+        all_items = {}
+        for item in dict_data:
+            item_id = item.pop("id")
+            fields = []
+            for key, value in item.items():
+                serialized_answer, datatype = self.serialize(value)
+                fields.append(
+                    {
+                        "key": key,
+                        "answer": value,
+                        "raw_answer": serialized_answer,
+                        "question": key,
+                        "datatype": datatype,
+                    }
+                )
+            item = {"id": item_id, "fields": fields}
+            all_items[item["id"]] = item
+        section_payload = {
+            "label": section_label,
+            "items": list(all_items.values()),
+            "type": "multiple",
+        }
+        try:
+            application_data["sections"][section] = section_payload
+        except KeyError:
+            application_data["sections"] = {section: section_payload}
+
+        return {"application": application_data}
