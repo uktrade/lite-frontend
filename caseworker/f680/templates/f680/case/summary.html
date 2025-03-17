@@ -1,1 +1,105 @@
-{% extends "case/base-case-summary.html" %}
+{% extends 'f680/case/base.html' %}
+
+{% block details %}
+
+<section class="govuk-!-margin-top-8">
+    <h1 class="govuk-visually-hidden">Case Summary</h1>
+    {% include "f680/includes/summary.html" %}
+</section>
+
+{% include "f680/includes/move_case_forward.html" with request=request case=case queue=queue %}
+
+<h2 class="govuk-heading-m">Product</h2>
+<table class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+
+			<th scope="col" class="govuk-table__header">Name</th>
+			<th scope="col" class="govuk-table__header">Description</th>
+			<th scope="col" class="govuk-table__header">Security Grading</th>
+			<th scope="col" class="govuk-table__header">Security Grading Other</th>
+			<th scope="col" class="govuk-table__header">Application Details</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{case.data.product.name}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{case.data.product.description|linebreaksbr}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{case.data.product.security_grading.value}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% if case.product.security_grading_other %}
+                    {{case.product.security_grading_other}}
+                {% else %}
+                    -
+                {% endif %}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                <a href="{% url 'cases:f680:details' queue_pk case.id %}#product_information" class="govuk-link govuk-link--no-visited-state">View full details</a>
+			</td>
+        </tr>
+	</tbody>
+</table>
+
+<h2 class="govuk-heading-m">Security Release Requests</h2>
+<table class="govuk-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+			<th scope="col" class="govuk-table__header">Security Grading</th>
+			<th scope="col" class="govuk-table__header">Recipient Name</th>
+			<th scope="col" class="govuk-table__header">Recipient Address</th>
+			<th scope="col" class="govuk-table__header">Recipient Country</th>
+			<th scope="col" class="govuk-table__header">Recipient Type</th>
+			<th scope="col" class="govuk-table__header">Security Grading Other</th>
+			<th scope="col" class="govuk-table__header">Approval Types</th>
+			<th scope="col" class="govuk-table__header">Intended use</th>
+			<th scope="col" class="govuk-table__header">Application Details</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+        {% for release_request in case.data.security_release_requests %}
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{release_request.security_grading.value}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{release_request.recipient.name}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400">
+                {{release_request.recipient.address|linebreaksbr}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{release_request.recipient.country.name}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{release_request.recipient.type.value}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% if release_request.security_grading_other %}
+                    {{release_request.security_grading_other}}
+                {% else %}
+                    -
+                {% endif %}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% for approval_type in release_request.approval_types %}
+                    {{approval_type|sentence_case}}<br/>
+                {% endfor %}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-800 ">
+                {{release_request.intended_use|linebreaksbr}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                <a href="{% url 'cases:f680:details' queue_pk case.id %}#user-information-{{release_request.id}}" class="govuk-link govuk-link--no-visited-state">View full details</a>
+			</td>
+        </tr>
+        {% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

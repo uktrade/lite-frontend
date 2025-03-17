@@ -13,6 +13,10 @@ $govuk-brand-colour: #31363f !default;
   @return url("../../../node_modules/govuk-frontend/govuk/assets/fonts/" + $filename);
 }
 
+h1, h2, h3 {
+    scroll-margin-top: 200px;
+}
+
 $govuk-image-url-function: "get_govuk_image_asset_url";
 $govuk-font-url-function: "get_govuk_font_asset_url";
 
