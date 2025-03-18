@@ -1,6 +1,7 @@
 from collections import defaultdict
 
 from core import client
+from caseworker.f680.recommendation.constants import RecommendationType
 
 
 def filter_current_user_recommendation(all_recommendation, user_id, levels):
@@ -39,18 +40,18 @@ def current_user_recommendation(all_recommendations, caseworker, level):
     return grouped_recommendation.get(caseworker_id)
 
 
-def post_approval_recommendation(request, case, data, level="user-advice"):
+def post_recommendation(request, case, data, level="user-advice"):
     json = [
         {
-            "type": "proviso" if data.get("proviso", False) else "approve",
-            "text": data["approval_reasons"],
-            "proviso": data.get("proviso", ""),
-            "note": data.get("instructions_to_exporter", ""),
-            "footnote_required": True if data.get("footnote_details") else False,
-            "footnote": data.get("footnote_details", ""),
-            "denial_reasons": [],
+            "type": item["type"],
+            "conditions": item["conditions"] if item["type"] == RecommendationType.APPROVE else "",
+            "refusal_reasons": item["conditions"] if item["type"] == RecommendationType.REFUSE else "",
+            "security_grading": item["security_grading"],
+            "security_grading_other": item["security_grading_other"],
+            "security_release_request": item["security_release_request"],
         }
+        for item in data
     ]
-    response = client.post(request, f"/cases/{case['id']}/{level}/", json)
+    response = client.post(request, f"/caseworker/f680/{case['id']}/recommendation/", json)
     response.raise_for_status()
     return response.json(), response.status_code

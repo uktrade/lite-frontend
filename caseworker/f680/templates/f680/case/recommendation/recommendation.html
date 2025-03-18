@@ -16,9 +16,8 @@
         {% test_rule 'can_user_make_f680_recommendation' request case as can_user_make_f680_recommendation %}
         {% if can_user_make_f680_recommendation %}
             <br>
-            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:select_recommendation_type' queue_pk case.id %}">Make recommendation</a>
+            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:make_recommendation' queue_pk case.id %}">Make recommendation</a>
         {% endif %}
-
 
         {% if user_recommendation %}
             <br>
