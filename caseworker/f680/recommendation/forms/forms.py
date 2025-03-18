@@ -2,12 +2,14 @@ from django import forms
 
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Submit
+from crispy_forms_gds.layout import HTML, Submit
 
 from core.common.forms import BaseForm
 from core.forms.layouts import (
     ConditionalCheckboxes,
     ConditionalCheckboxesQuestion,
+    ConditionalRadios,
+    ConditionalRadiosQuestion,
     RadioTextArea,
 )
 
@@ -98,12 +100,66 @@ class SimpleLicenceConditionsForm(BaseForm):
         return ("proviso",)
 
 
-class PicklistLicenceConditionsForm(PicklistAdviceForm, BaseForm):
+class BaseRecommendationForm(BaseForm):
     class Layout:
-        TITLE = "Add licence conditions (optional)"
+        TITLE = ""
 
-    proviso_checkboxes = forms.MultipleChoiceField(
-        label="",
+    CHOICES = [
+        ("approve", "Approve"),
+        ("refuse", "Refuse"),
+    ]
+    security_release_choices = (
+        Choice("official", "Official"),
+        Choice("official-sensitive", "Official-Sensitive"),
+        Choice("secret", "Secret"),
+        Choice("top-secret", "Top Secret", divider="Or"),
+        Choice("other", "Other"),
+    )
+    recommendation = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="Select recommendation type",
+        error_messages={"required": "Select if you approve or refuse"},
+    )
+    security_grading = forms.ChoiceField(
+        choices="",
+        label="Select security classification",
+        widget=forms.RadioSelect,
+    )
+    security_grading_other = forms.CharField(label="Enter the security classification", required=False)
+    conditions = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7}),
+        label="Provisos",
+        required=False,
+    )
+
+    def __init__(self, release_request, *args, **kwargs):
+        self.conditional_radio_choices = [
+            (
+                ConditionalRadiosQuestion(choice.label, "security_grading_other")
+                if choice.value == "other"
+                else choice.label
+            )
+            for choice in self.security_release_choices
+        ]
+
+        self.release_request = release_request
+        super().__init__(*args, **kwargs)
+
+        self.fields["security_grading"].choices = self.security_release_choices
+
+    def get_layout_fields(self):
+        return (
+            HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
+            "recommendation",
+            ConditionalRadios("security_grading", *self.conditional_radio_choices),
+            "conditions",
+        )
+
+
+class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationForm):
+    conditions = forms.MultipleChoiceField(
+        label="Provisos",
         required=False,
         widget=forms.CheckboxSelectMultiple,
         choices=(),
@@ -113,33 +169,40 @@ class PicklistLicenceConditionsForm(PicklistAdviceForm, BaseForm):
         cleaned_data = super().clean()
         # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
         return {
-            "proviso": "\n\n--------\n".join(
-                [cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]]
-            )
+            "type": cleaned_data["recommendation"],
+            "security_grading": cleaned_data["security_grading"],
+            "security_grading_other": cleaned_data["security_grading_other"],
+            "security_release_request": self.release_request["id"],
+            "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
         }
 
     def __init__(self, *args, **kwargs):
-        proviso = kwargs.pop("proviso")
+        conditions = kwargs.pop("proviso")
 
-        proviso_choices, proviso_text = self._picklist_to_choices(proviso)
+        conditions_choices, conditions_text = self._picklist_to_choices(conditions)
 
         self.conditional_checkbox_choices = (
-            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in conditions_choices
         )
 
         super().__init__(*args, **kwargs)
 
-        self.fields["proviso_checkboxes"].choices = proviso_choices
-        for choices in proviso_choices:
+        self.fields["conditions"].choices = conditions_choices
+        for choices in conditions_choices:
             self.fields[choices.value] = forms.CharField(
                 widget=forms.Textarea(attrs={"rows": 3}),
                 label="Description",
                 required=False,
-                initial=proviso_text[choices.value],
+                initial=conditions_text[choices.value],
             )
 
     def get_layout_fields(self):
-        return (ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),)
+        return (
+            HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
+            "recommendation",
+            ConditionalRadios("security_grading", *self.conditional_radio_choices),
+            ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
+        )
 
 
 class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
