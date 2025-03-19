@@ -21,7 +21,7 @@ class ApplyForALicencePage(BasePage):
     OIEL_EXPORT_TYPE_RADIO_BUTTON_ID = "goodstype_category-"
 
     def enter_name_or_reference_for_application(self, name):
-        element = self.driver.find_element(by=By.ID, value=self.NAME_OR_REFERENCE_INPUT_ID)
+        element = self.driver.find_element(by=By.ID, value="id_APPLICATION_NAME-name")
         element.clear()
         element.send_keys(name)
 
@@ -38,7 +38,8 @@ class ApplyForALicencePage(BasePage):
 
     def click_export_licence(self, export_type):
         return self.driver.find_element(
-            by=By.CSS_SELECTOR, value=self.RADIOBUTTON_LICENCE_ID_PARTIAL + export_type
+            by=By.CSS_SELECTOR,
+            value=f"input[name=LICENCE_TYPE-application_type][value={export_type}]",
         ).click()
 
     def select_types_of_clearance(self):
