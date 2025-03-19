@@ -106,7 +106,7 @@ class F680DictPayloadBuilder(F680PatchPayloadBuilder):
                     "datatype": datatype,
                 }
                 fields_sequence.append(key)
-            item = {"id": item_id, "fields": fields}
+            item = {"id": item_id, "fields": fields, "fields_sequence": fields_sequence}
             all_items[item["id"]] = item
         section_payload = {
             "label": section_label,

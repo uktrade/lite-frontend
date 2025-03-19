@@ -60,63 +60,73 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case, data_
             "user_information": {
                 "items": [
                     {
-                        "fields": [
-                            {
+                        "fields": {
+                            "entity_type": {
                                 "answer": "End user",
                                 "datatype": "string",
                                 "key": "entity_type",
                                 "question": "Select type of entity",
                                 "raw_answer": "end-user",
                             },
-                            {
+                            "end_user_name": {
                                 "answer": "some end user name",
                                 "datatype": "string",
                                 "key": "end_user_name",
                                 "question": "End-user name",
                                 "raw_answer": "some end user name",
                             },
-                            {
+                            "address": {
                                 "answer": "some address",
                                 "datatype": "string",
                                 "key": "address",
                                 "question": "Address",
                                 "raw_answer": "some address",
                             },
-                            {
+                            "country": {
                                 "answer": "United States",
                                 "datatype": "string",
                                 "key": "country",
                                 "question": "Country",
                                 "raw_answer": "US",
                             },
-                            {
+                            "prefix": {
                                 "answer": "some prefix",
                                 "datatype": "string",
                                 "key": "prefix",
                                 "question": "Enter a prefix (optional)",
                                 "raw_answer": "some prefix",
                             },
-                            {
+                            "security_classification": {
                                 "answer": "Official",
                                 "datatype": "string",
                                 "key": "security_classification",
                                 "question": "Select security classification",
                                 "raw_answer": "official",
                             },
-                            {
+                            "suffix": {
                                 "answer": "some suffix",
                                 "datatype": "string",
                                 "key": "suffix",
                                 "question": "Enter a suffix (optional)",
                                 "raw_answer": "some suffix",
                             },
-                            {
+                            "end_user_intended_end_use": {
                                 "answer": "some end use",
                                 "datatype": "string",
                                 "key": "end_user_intended_end_use",
                                 "question": "How does the end-user intend to use this item",
                                 "raw_answer": "some end use",
                             },
+                        },
+                        "fields_sequence": [
+                            "entity_type",
+                            "end_user_name",
+                            "address",
+                            "country",
+                            "prefix",
+                            "security_classification",
+                            "suffix",
+                            "end_user_intended_end_use",
                         ],
                         "id": data_item_id,
                     }
@@ -338,77 +348,89 @@ class TestUserInformationView:
                         "items": [
                             {
                                 "id": generated_uuid,
-                                "fields": [
-                                    {
+                                "fields": {
+                                    "entity_type": {
                                         "key": "entity_type",
                                         "answer": "Third party",
                                         "raw_answer": "third-party",
                                         "question": "Select type of entity",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "third_party_role": {
                                         "key": "third_party_role",
                                         "answer": "Consultant",
                                         "raw_answer": "consultant",
                                         "question": "Select the role of the third party",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "end_user_name": {
                                         "key": "end_user_name",
                                         "answer": "some end user name",
                                         "raw_answer": "some end user name",
                                         "question": "End-user name",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "address": {
                                         "key": "address",
                                         "answer": "some end user address",
                                         "raw_answer": "some end user address",
                                         "question": "Address",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "country": {
                                         "key": "country",
                                         "answer": "United States",
                                         "raw_answer": "US",
                                         "question": "Country",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "prefix": {
                                         "key": "prefix",
                                         "answer": "some prefix",
                                         "raw_answer": "some prefix",
                                         "question": "Enter a prefix (optional)",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "security_classification": {
                                         "key": "security_classification",
                                         "answer": "Secret",
                                         "raw_answer": "secret",
                                         "question": "Select security classification",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "other_security_classification": {
                                         "key": "other_security_classification",
                                         "answer": "",
                                         "raw_answer": "",
                                         "question": "Enter the security classification",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "suffix": {
                                         "key": "suffix",
                                         "answer": "some suffix",
                                         "raw_answer": "some suffix",
                                         "question": "Enter a suffix (optional)",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "end_user_intended_end_use": {
                                         "key": "end_user_intended_end_use",
                                         "answer": "some end use",
                                         "raw_answer": "some end use",
                                         "question": "How does the end-user intend to use this item",
                                         "datatype": "string",
                                     },
+                                },
+                                "fields_sequence": [
+                                    "entity_type",
+                                    "third_party_role",
+                                    "end_user_name",
+                                    "address",
+                                    "country",
+                                    "prefix",
+                                    "security_classification",
+                                    "other_security_classification",
+                                    "suffix",
+                                    "end_user_intended_end_use",
                                 ],
                             }
                         ],
@@ -489,77 +511,89 @@ class TestUserInformationView:
         # New record also present
         assert api_patch_payload["application"]["sections"]["user_information"]["items"][1] == {
             "id": generated_uuid,
-            "fields": [
-                {
+            "fields": {
+                "entity_type": {
                     "key": "entity_type",
                     "answer": "Third party",
                     "raw_answer": "third-party",
                     "question": "Select type of entity",
                     "datatype": "string",
                 },
-                {
+                "third_party_role": {
                     "key": "third_party_role",
                     "answer": "Consultant",
                     "raw_answer": "consultant",
                     "question": "Select the role of the third party",
                     "datatype": "string",
                 },
-                {
+                "end_user_name": {
                     "key": "end_user_name",
                     "answer": "some end user name",
                     "raw_answer": "some end user name",
                     "question": "End-user name",
                     "datatype": "string",
                 },
-                {
+                "address": {
                     "key": "address",
                     "answer": "some end user address",
                     "raw_answer": "some end user address",
                     "question": "Address",
                     "datatype": "string",
                 },
-                {
+                "country": {
                     "key": "country",
                     "answer": "United States",
                     "raw_answer": "US",
                     "question": "Country",
                     "datatype": "string",
                 },
-                {
+                "prefix": {
                     "key": "prefix",
                     "answer": "some prefix",
                     "raw_answer": "some prefix",
                     "question": "Enter a prefix (optional)",
                     "datatype": "string",
                 },
-                {
+                "security_classification": {
                     "key": "security_classification",
                     "answer": "Secret",
                     "raw_answer": "secret",
                     "question": "Select security classification",
                     "datatype": "string",
                 },
-                {
+                "other_security_classification": {
                     "key": "other_security_classification",
                     "answer": "",
                     "raw_answer": "",
                     "question": "Enter the security classification",
                     "datatype": "string",
                 },
-                {
+                "suffix": {
                     "key": "suffix",
                     "answer": "some suffix",
                     "raw_answer": "some suffix",
                     "question": "Enter a suffix (optional)",
                     "datatype": "string",
                 },
-                {
+                "end_user_intended_end_use": {
                     "key": "end_user_intended_end_use",
                     "answer": "some end use",
                     "raw_answer": "some end use",
                     "question": "How does the end-user intend to use this item",
                     "datatype": "string",
                 },
+            },
+            "fields_sequence": [
+                "entity_type",
+                "third_party_role",
+                "end_user_name",
+                "address",
+                "country",
+                "prefix",
+                "security_classification",
+                "other_security_classification",
+                "suffix",
+                "end_user_intended_end_use",
             ],
         }
 
