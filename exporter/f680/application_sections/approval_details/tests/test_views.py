@@ -472,16 +472,21 @@ class TestProductInformationViews:
     @pytest.mark.parametrize(
         "step, data, expected_errors",
         (
-            (FormSteps.PRODUCT_NAME, {"product_name": ""}, {"product_name": ["This field is required."]}),
+            (FormSteps.PRODUCT_NAME, {"product_name": ""}, {"product_name": ["Enter a descriptive name"]}),
             (
                 FormSteps.PRODUCT_DESCRIPTION,
                 {"product_description": ""},
-                {"product_description": ["This field is required."]},
+                {"product_description": ["Enter a description"]},
             ),
             (
                 FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
                 {},
-                {"has_security_classification": ["This field is required."]},
+                {"has_security_classification": ["Select yes if you have a security classification"]},
+            ),
+            (
+                FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT,
+                {},
+                {"actions_to_classify": ["Enter details about what you have done to get the item security classified"]},
             ),
             (
                 FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
@@ -489,9 +494,18 @@ class TestProductInformationViews:
                     "security_classification": "unclassified",
                 },
                 {
-                    "issuing_authority_name_address": ["This field is required."],
-                    "reference": ["This field is required."],
+                    "issuing_authority_name_address": ["Enter who issued the security classification"],
+                    "reference": ["Enter a reference"],
                     "date_of_issue": ["Enter the date of issue"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "other",
+                },
+                {
+                    "other_security_classification": ["Security classification cannot be blank"],
                 },
             ),
             (
@@ -550,12 +564,25 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
                 {},
-                {"is_foreign_tech_or_information_shared": ["This field is required."]},
+                {"is_foreign_tech_or_information_shared": ["Select yes if you will be sharing foreign technology"]},
             ),
             (
                 FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
                 {},
-                {"is_including_cryptography_or_security_features": ["This field is required."]},
+                {
+                    "is_including_cryptography_or_security_features": [
+                        "Select yes if the item includes information security features"
+                    ]
+                },
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                {"is_including_cryptography_or_security_features": True},
+                {
+                    "cryptography_or_security_feature_info": [
+                        "Details about the information security features cannot be blank"
+                    ]
+                },
             ),
             (
                 FormSteps.PRODUCT_RATED_UNDER_MTCR,
@@ -580,7 +607,18 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
                 {},
-                {"is_controlled_under_itar": ["This field is required."]},
+                {"is_controlled_under_itar": ["Select yes if the foreign technology is controlled under ITAR"]},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                {
+                    "is_controlled_under_itar": False,
+                },
+                {
+                    "controlled_info": [
+                        "Information on how the foreign technology or information is controlled cannot be blank"
+                    ]
+                },
             ),
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
@@ -592,11 +630,11 @@ class TestProductInformationViews:
                     "expected_time_in_possession": "",
                 },
                 {
-                    "controlled_information": ["This field is required."],
-                    "itar_reference_number": ["This field is required."],
-                    "usml_categories": ["This field is required."],
-                    "itar_approval_scope": ["This field is required."],
-                    "expected_time_in_possession": ["This field is required."],
+                    "controlled_information": ["Enter details about the ITAR controlled technology or information"],
+                    "itar_reference_number": ["Enter an ITAR reference number"],
+                    "usml_categories": ["Enter a USML category"],
+                    "itar_approval_scope": ["Enter details about the ITAR approval scope"],
+                    "expected_time_in_possession": ["Enter how long you'll possess the technology or information"],
                 },
             ),
         ),

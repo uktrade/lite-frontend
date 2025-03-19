@@ -120,6 +120,7 @@ class ProductNameForm(BaseForm):
     product_name = forms.CharField(
         label="",
         help_text="Where possible include the make, model and type of the item",
+        error_messages={"required": "Enter a descriptive name"},
     )
 
     def get_layout_fields(self):
@@ -137,6 +138,7 @@ class ProductDescription(BaseForm):
         label="",
         help_text="Where possible include the make, model and type of the item",
         widget=forms.Textarea(attrs={"rows": 5}),
+        error_messages={"required": "Enter a description"},
     )
 
     def get_layout_fields(self):
@@ -163,6 +165,7 @@ class ProductHasSecurityClassification(BaseForm):
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
+        error_messages={"required": "Select yes if you have a security classification"},
     )
 
     def get_layout_fields(self):
@@ -178,6 +181,7 @@ class ActionTakenToClassifyInfo(BaseForm):
     actions_to_classify = forms.CharField(
         label="",
         widget=forms.Textarea(attrs={"rows": 5}),
+        error_messages={"required": "Enter details about what you have done to get the item security classified"},
     )
 
     def get_layout_fields(self):
@@ -197,6 +201,7 @@ class ProductSecurityClassificationForm(BaseForm):
         choices=SecurityGrading.product_choices,
         label="Select security classification",
         widget=forms.RadioSelect,
+        error_messages={"required": "Select a security classification"},
     )
     other_security_classification = forms.CharField(
         label="Enter the security classification",
@@ -210,9 +215,11 @@ class ProductSecurityClassificationForm(BaseForm):
     issuing_authority_name_address = forms.CharField(
         label="Name and address of the issuing authority",
         widget=forms.Textarea(attrs={"rows": "5"}),
+        error_messages={"required": "Enter who issued the security classification"},
     )
     reference = forms.CharField(
         label="Reference",
+        error_messages={"required": "Enter a reference"},
     )
     date_of_issue = CustomErrorDateInputField(
         label="Date of issue",
@@ -238,11 +245,32 @@ class ProductSecurityClassificationForm(BaseForm):
         validators=[PastDateValidator("Date of issue must be in the past")],
     )
 
+    def clean(self):
+        return self.add_required_to_conditional_text_field(
+            {
+                "parent_field": "security_classification",
+                "parent_field_response": "other",
+                "required_field": "other_security_classification",
+                "error_message": "Security classification cannot be blank",
+            }
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.conditional_radio_choices = [
+            (
+                ConditionalRadiosQuestion(choice.label, "other_security_classification")
+                if choice.value == "other"
+                else choice.label
+            )
+            for choice in SecurityGrading.product_choices
+        ]
+        super().__init__(*args, **kwargs)
+        self.fields["security_classification"].choices = SecurityGrading.product_choices
+
     def get_layout_fields(self):
         return (
             "prefix",
-            "security_classification",
-            "other_security_classification",
+            ConditionalRadios("security_classification", *self.conditional_radio_choices),
             "suffix",
             "issuing_authority_name_address",
             "reference",
@@ -264,6 +292,7 @@ class ProductForeignTechOrSharedInformation(BaseForm):
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
+        error_messages={"required": "Select yes if you will be sharing foreign technology"},
     )
 
     def get_layout_fields(self):
@@ -287,6 +316,7 @@ class ProductControlledUnderItar(BaseForm):
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
+        error_messages={"required": "Select yes if the foreign technology is controlled under ITAR"},
     )
 
     controlled_info = forms.CharField(
@@ -305,6 +335,7 @@ class ProductControlledUnderItar(BaseForm):
                 "parent_field": "is_controlled_under_itar",
                 "parent_field_response": False,
                 "required_field": "controlled_info",
+                "error_message": "Information on how the foreign technology or information is controlled cannot be blank",
             }
         )
 
@@ -330,22 +361,26 @@ class ProductControlledUnderItarDetails(BaseForm):
     controlled_information = forms.CharField(
         label="What is the ITAR controlled technology or information?",
         widget=forms.Textarea(attrs={"rows": 5}),
+        error_messages={"required": "Enter details about the ITAR controlled technology or information"},
     )
 
     itar_reference_number = forms.CharField(
         label="ITAR reference number",
         help_text="You can find this on the licence, agreement or authorisation you received from the US",
+        error_messages={"required": "Enter an ITAR reference number"},
     )
 
     usml_categories = forms.CharField(
         label="What are the United States Munitions List (USML) categories listed on your ITAR approval?",
         help_text="You can find this on the licence, agreement or authorisation you received from the US",
+        error_messages={"required": "Enter a USML category"},
     )
 
     itar_approval_scope = forms.CharField(
         label="Describe the scope of your ITAR approval",
         help_text="You can find this on the licence, agreement or authorisation you received from the US",
         widget=forms.Textarea(attrs={"rows": 5}),
+        error_messages={"required": "Enter details about the ITAR approval scope"},
     )
 
     expected_time_in_possession = forms.CharField(
@@ -354,6 +389,7 @@ class ProductControlledUnderItarDetails(BaseForm):
             "to be in your possession?"
         ),
         help_text="For example, 10 years",
+        error_messages={"required": "Enter how long you'll possess the technology or information"},
     )
 
     def get_layout_fields(self):
@@ -381,6 +417,7 @@ class ProductIncludeCryptography(BaseForm):
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
+        error_messages={"required": "Select yes if the item includes information security features"},
     )
 
     cryptography_or_security_feature_info = forms.CharField(
@@ -395,6 +432,7 @@ class ProductIncludeCryptography(BaseForm):
                 "parent_field": "is_including_cryptography_or_security_features",
                 "parent_field_response": True,
                 "required_field": "cryptography_or_security_feature_info",
+                "error_message": "Details about the information security features cannot be blank",
             }
         )
 
