@@ -18,11 +18,6 @@ urlpatterns = [
         name="recommendation",
     ),
     path(
-        "recommendation/select-recommendation-type/",
-        recommendation_views.SelectRecommendationTypeView.as_view(),
-        name="select_recommendation_type",
-    ),
-    path(
         "recommendation/view-my-recommendation/",
         recommendation_views.MyRecommendationView.as_view(),
         name="view_my_recommendation",

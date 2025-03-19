@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import FormView, TemplateView
+from django.views.generic import TemplateView
 from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
@@ -12,7 +12,6 @@ from caseworker.f680.recommendation.constants import RecommendationSteps
 from caseworker.f680.recommendation.forms.forms import (
     BaseRecommendationForm,
     EntityConditionsRecommendationForm,
-    SelectRecommendationTypeForm,
 )
 from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
@@ -60,19 +59,6 @@ class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView
             "title": title,
             "user_recommendations": user_recommendations,
         }
-
-
-class SelectRecommendationTypeView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
-    template_name = "f680/case/recommendation/select_recommendation_type.html"
-    form_class = SelectRecommendationTypeForm
-    current_tab = "recommendations"
-
-    def get_success_url(self):
-        return reverse("cases:f680:approve_all", kwargs=self.kwargs)
-
-    def form_valid(self, form):
-        self.recommendation = form.cleaned_data["recommendation"]
-        return super().form_valid(form)
 
 
 class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
