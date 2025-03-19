@@ -1,0 +1,70 @@
+{% extends 'layouts/base.html' %}
+
+{% load additional_documents svg %}
+
+{% block back_link %}
+	<a href="{{ back_link_url }}" id="back-link" class="govuk-back-link">{{ back_link_text|default:"Back" }}</a>
+{% endblock %}
+
+{% block body %}
+	<div class="lite-app-bar">
+		<div class="lite-app-bar__content">
+			<h1 class="govuk-heading-l">Supporting Documents</h1>
+		</div>
+	</div>
+	<div class="govuk-grid-row">
+		<div class="govuk-grid-column-full">
+	{% if supporting_documents %}
+		<table class="govuk-table" id="table-supporting-documents">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th class="govuk-table__header" scope="col">Name</th>
+                    <th class="govuk-table__header" scope="col">Description</th>
+					<th class="govuk-table__header" scope="col">Action</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for supporting_document in supporting_documents %}
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">
+						{% if supporting_document.safe == True %}
+						<a href="{% url 'applications:download_additional_document' application.id supporting_document.id %}" id="document_download" class='govuk-link govuk-link--no-visited-state'>
+							{{ supporting_document.name }}
+						</a>
+						{% else %}
+							{{ supporting_document.name }}
+						{% endif %}
+					</td>
+                    <td class="govuk-table__cell">
+						{{ supporting_document.description|default_na }}
+					</td>
+					<td class="govuk-table__cell"></td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+	{% else %}
+		<div class="lite-information-text">
+			<span class="lite-information-text__icon" aria-hidden="true">!</span>
+			<p class="lite-information-text__text">
+				<span class="govuk-visually-hidden">Information</span>
+				No supporting documents
+			</p>
+		</div>
+		<div class="lite-information-text__help"></div>
+	{% endif %}
+		<div class="govuk-grid-row">
+				<a class="govuk-button govuk-button--secondary" href="{% url "f680:supporting_documents:attach" pk=application.id %}">
+					Add another document
+				</a>
+		</div>
+		<div class="govuk-grid-row">
+			<a class="govuk-button govuk-button--primary" href="{{back_link_url}}">
+				Continue
+			</a>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

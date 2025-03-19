@@ -589,7 +589,20 @@ def update_survey_feedback(request, survey_id, json):
     return data.json(), data.status_code
 
 
+# Exporter Services
+
+
 def get_application_history(request, application_id):
     response = client.get(request, f"/exporter/applications/{application_id}/history")
     response.raise_for_status()
     return response.json()
+
+
+def post_application_supporting_document(request, data, application_id):
+    response = client.post(request, f"/exporter/applications/{application_id}/document/", data=data)
+    return response.json(), response.status_code
+
+
+def get_application_supporting_document(request, application_id):
+    response = client.get(request, f"/exporter/applications/{application_id}/document/")
+    return response.json(), response.status_code

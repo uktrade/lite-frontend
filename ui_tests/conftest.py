@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import pytest
+from random import randint
 
 import tests_common.tools.helpers as utils
 
@@ -84,3 +85,8 @@ def tmp_download_path():
     download_path = Path("/tmp/downloads/")
     download_path.mkdir(exist_ok=True)
     return download_path
+
+
+@pytest.fixture
+def get_eori_number():
+    return "GB" + "".join(["{}".format(randint(0, 9)) for _ in range(12)])

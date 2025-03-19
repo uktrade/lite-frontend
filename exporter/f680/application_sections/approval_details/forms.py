@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django import forms
 from django.db.models import TextChoices
 from django.template.loader import render_to_string
@@ -13,6 +15,10 @@ from core.forms.layouts import (
     ConditionalRadiosQuestion,
 )
 from core.forms.utils import coerce_str_to_bool
+
+from exporter.core.forms import CustomErrorDateInputField
+from exporter.core.validators import PastDateValidator
+from exporter.f680.constants import SecurityGrading
 
 
 class ApprovalTypeForm(BaseForm):
@@ -45,7 +51,7 @@ class ApprovalTypeForm(BaseForm):
     )
 
     approval_choices = forms.MultipleChoiceField(
-        label=Layout.TITLE,
+        label="",
         choices=(),
         error_messages={
             "required": "Select an approval choice",
@@ -99,7 +105,7 @@ class ProductNameForm(BaseForm):
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     product_name = forms.CharField(
-        label=Layout.TITLE,
+        label="",
         help_text="Where possible include the make, model and type of the item",
     )
 
@@ -115,7 +121,7 @@ class ProductDescription(BaseForm):
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     product_description = forms.CharField(
-        label=Layout.TITLE,
+        label="",
         help_text="Where possible include the make, model and type of the item",
         widget=forms.Textarea(attrs={"rows": 5}),
     )
@@ -130,6 +136,107 @@ class ProductDescription(BaseForm):
         )
 
 
+class ProductHasSecurityClassification(BaseForm):
+    class Layout:
+        TITLE = "Has the product been given a security classifcation by a UK MOD authority?"
+        TITLE_AS_LABEL_FOR = "has_security_classification"
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    has_security_classification = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label=Layout.TITLE,
+        widget=forms.RadioSelect,
+        coerce=coerce_str_to_bool,
+    )
+
+    def get_layout_fields(self):
+        return ("has_security_classification",)
+
+
+class ActionTakenToClassifyInfo(BaseForm):
+    class Layout:
+        TITLE = "Provide details on what action will have to be taken to have the product security classified"
+        TITLE_AS_LABEL_FOR = "actions_to_classify"
+        SUBMIT_BUTTON_TEXT = "Continue"
+
+    actions_to_classify = forms.CharField(
+        label=Layout.TITLE,
+        widget=forms.Textarea(attrs={"rows": 5}),
+    )
+
+    def get_layout_fields(self):
+        return ("actions_to_classify",)
+
+
+class ProductSecurityClassificationForm(BaseForm):
+    class Layout:
+        TITLE = "What is the maximum security classification given?"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    prefix = forms.CharField(
+        label="Enter a prefix (optional)",
+        required=False,
+    )
+    security_classification = forms.ChoiceField(
+        choices=SecurityGrading.product_choices,
+        label="Select security classification",
+        widget=forms.RadioSelect,
+    )
+    other_security_classification = forms.CharField(
+        label="Enter the security classification",
+        required=False,
+    )
+    suffix = forms.CharField(
+        label="Enter a suffix (optional)",
+        help_text="For example, UK eyes only",
+        required=False,
+    )
+    issuing_authority_name_address = forms.CharField(
+        label="Name and address of the issuing authority",
+        widget=forms.Textarea(attrs={"rows": "5"}),
+    )
+    reference = forms.CharField(
+        label="Reference",
+    )
+    date_of_issue = CustomErrorDateInputField(
+        label="Date of issue",
+        require_all_fields=False,
+        help_text=f"For example, 20 2 {datetime.now().year-1}",
+        error_messages={
+            "required": "Enter the date of issue",
+            "incomplete": "Enter the date of issue",
+            "invalid": "Date of issue must be a real date",
+            "day": {
+                "incomplete": "Date of issue must include a day",
+                "invalid": "Date of issue must be a real date",
+            },
+            "month": {
+                "incomplete": "Date of issue must include a month",
+                "invalid": "Date of issue must be a real date",
+            },
+            "year": {
+                "incomplete": "Date of issue must include a year",
+                "invalid": "Date of issue must be a real date",
+            },
+        },
+        validators=[PastDateValidator("Date of issue must be in the past")],
+    )
+
+    def get_layout_fields(self):
+        return (
+            "prefix",
+            "security_classification",
+            "other_security_classification",
+            "suffix",
+            "issuing_authority_name_address",
+            "reference",
+            "date_of_issue",
+        )
+
+
 class ProductForeignTechOrSharedInformation(BaseForm):
     class Layout:
         TITLE = "Will any foreign technology or information be shared with the item?"
@@ -141,7 +248,7 @@ class ProductForeignTechOrSharedInformation(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -164,7 +271,7 @@ class ProductControlledUnderItar(BaseForm):
             (False, "No"),
         ),
         help_text="We need to know about any items classified as Defence Articles or Technical Data.",
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -178,6 +285,9 @@ class ProductControlledUnderItar(BaseForm):
         ),
         required=False,
     )
+
+    def clean(self):
+        return self.add_required_to_conditional_text_field("is_controlled_under_itar", True, "controlled_info")
 
     def get_layout_fields(self):
         return (
@@ -249,7 +359,7 @@ class ProductIncludeCryptography(BaseForm):
             (False, "No"),
         ),
         help_text="We need to know about any items classified as Defence Articles or Technical Data.",
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -259,6 +369,11 @@ class ProductIncludeCryptography(BaseForm):
         label="Provide full details",
         required=False,
     )
+
+    def clean(self):
+        return self.add_required_to_conditional_text_field(
+            "is_including_cryptography_or_security_features", True, "cryptography_or_security_feature_info"
+        )
 
     def get_layout_fields(self):
         return (
@@ -277,6 +392,7 @@ class ProductIncludeCryptography(BaseForm):
 class ProductRatedUnderMTCR(BaseForm):
     class Layout:
         TITLE = "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)"
+        TITLE_AS_LABEL_FOR = "is_item_rated_under_mctr"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_rated_under_mctr = forms.ChoiceField(
@@ -289,7 +405,7 @@ class ProductRatedUnderMTCR(BaseForm):
             Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
-        label="Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
+        label="",
     )
 
     def get_layout_fields(self):
@@ -305,6 +421,7 @@ class ProductRatedUnderMTCR(BaseForm):
 class ProductMANPADs(BaseForm):
     class Layout:
         TITLE = "Do you believe the item is a man-portable air defence system (MANPAD)?"
+        TITLE_AS_LABEL_FOR = "is_item_manpad"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_manpad = forms.ChoiceField(
@@ -314,7 +431,7 @@ class ProductMANPADs(BaseForm):
             Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
-        label="Do you believe the item is a man-portable air defence system (MANPAD)?",
+        label="",
     )
 
     def get_layout_fields(self):
@@ -339,7 +456,7 @@ class ProductElectronicMODData(BaseForm):
             Choice("no", "No"),
         ),
         widget=forms.RadioSelect,
-        label=Layout.TITLE,
+        label="",
     )
 
     def get_layout_fields(self):
@@ -375,7 +492,7 @@ class ProductFunding(BaseForm):
             Choice("private_venture", "Private venture"),
         ),
         widget=forms.RadioSelect,
-        label="Who is funding the item?",
+        label="",
     )
 
     def get_layout_fields(self):
@@ -393,7 +510,7 @@ class ProductUsedByUKArmedForces(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -403,6 +520,11 @@ class ProductUsedByUKArmedForces(BaseForm):
         label="Explain how it will be used",
         required=False,
     )
+
+    def clean(self):
+        return self.add_required_to_conditional_text_field(
+            "is_used_by_uk_armed_forces", True, "used_by_uk_armed_forces_info"
+        )
 
     def get_layout_fields(self):
         return (

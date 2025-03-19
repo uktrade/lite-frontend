@@ -1756,12 +1756,17 @@ def mock_status_properties_can_invoke_major_editable(requests_mock):
     return data
 
 
+@pytest.fixture()
+def user_organisation_id():
+    return "f65fbf49-c14b-482b-833f-fe39bb26a51d"
+
+
 @pytest.fixture
-def data_organisation():
+def data_organisation(user_organisation_id):
     expiry_date = datetime.date.today() + datetime.timedelta(days=100)
 
     return {
-        "id": "f65fbf49-c14b-482b-833f-fe39bb26a51d",
+        "id": user_organisation_id,
         "primary_site": {
             "id": "40f1315e-1283-424a-9295-decf69716379",
             "name": "Headquarters",
