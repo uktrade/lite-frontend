@@ -8,10 +8,6 @@ def filter_current_user_recommendation(all_recommendation, user_id):
     return [recommendation for recommendation in all_recommendation if (recommendation["user"]["id"] == user_id)]
 
 
-def filter_recommendation_by_level(all_recommendation, recommendation_level):
-    return [recommendation for recommendation in all_recommendation if recommendation["level"] == recommendation_level]
-
-
 def filter_recommendation_by_team(all_recommendation, team_id):
     return [recommendation for recommendation in all_recommendation if recommendation["team"]["id"] == team_id]
 
@@ -72,7 +68,7 @@ def get_case_recommendations(request, case):
     return response.json()
 
 
-def post_recommendation(request, case, data, level="user-advice"):
+def post_recommendation(request, case, data):
     json = [
         {
             "type": item["type"],

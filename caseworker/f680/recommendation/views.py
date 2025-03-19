@@ -107,7 +107,6 @@ class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
         return RecommendationPayloadBuilder().build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
-        breakpoint()
         data = self.get_payload(form_dict)
         self.post_recommendation(data)
         return redirect(self.get_success_url())
