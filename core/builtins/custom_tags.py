@@ -491,11 +491,6 @@ def values(dictionary):
 
 
 @register.filter()
-def dict_get(dictionary, key):
-    return dictionary.get(key)
-
-
-@register.filter()
 def filter_advice_by_level(advice, level):
     return [advice for advice in advice if advice["level"] == level]
 
