@@ -4,13 +4,13 @@ from django import forms
 from core.file_handler import validate_mime_type
 from exporter.core.constants import FileUploadFileTypes
 from exporter.core.forms import PotentiallyUnsafeClearableFileInput
-
-from crispy_forms_gds.layout import HTML
+from django.template.loader import render_to_string
 
 
 class F680AttachSupportingDocument(BaseForm):
     class Layout:
         TITLE = "Attach a supporting document"
+        SUBTITLE = render_to_string("f680/forms/subtitle_add_supporting_document.html")
 
     file = forms.FileField(
         label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
@@ -30,14 +30,7 @@ class F680AttachSupportingDocument(BaseForm):
     )
 
     def get_layout_fields(self):
-        content = HTML(
-            "You should upload a technical specification for the products in your application."
-            "<p>  If it applies to your application, make sure you also upload:</p>"
-            "<ul><li>the EW release capture form with part A </a> completed</li>"
-            + "<li>a written agreement or clearance to release security classified foriegn technology or information.</li></ul>"
-        )
         return (
-            content,
             "file",
             "description",
         )
