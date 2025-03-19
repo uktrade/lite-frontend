@@ -4,14 +4,8 @@ from core import client
 from caseworker.f680.recommendation.constants import RecommendationType
 
 
-def filter_current_user_recommendation(all_recommendation, user_id, levels):
-    return [
-        recommendation
-        for recommendation in all_recommendation
-        if recommendation["level"] in levels
-        and recommendation["type"]["key"] in ["approve", "proviso", "refuse"]
-        and (recommendation["user"]["id"] == user_id)
-    ]
+def filter_current_user_recommendation(all_recommendation, user_id):
+    return [recommendation for recommendation in all_recommendation if (recommendation["user"]["id"] == user_id)]
 
 
 def filter_recommendation_by_level(all_recommendation, recommendation_level):
@@ -29,15 +23,21 @@ def group_recommendation_by_user(recommendation):
     return result
 
 
-def current_user_recommendation(all_recommendations, caseworker, level):
+def current_user_recommendations(request, case, caseworker):
     team_id = caseworker["team"]["id"]
     caseworker_id = caseworker["id"]
 
-    recommendation = filter_recommendation_by_level(all_recommendations, level)
-    recommendation = filter_current_user_recommendation(recommendation, caseworker_id, level)
+    case_recommendations = get_case_recommendations(request, case)
+    recommendation = filter_current_user_recommendation(case_recommendations, caseworker_id)
     recommendation = filter_recommendation_by_team(recommendation, team_id)
     grouped_recommendation = group_recommendation_by_user(recommendation)
     return grouped_recommendation.get(caseworker_id)
+
+
+def get_case_recommendations(request, case):
+    response = client.get(request, f"/caseworker/f680/{case['id']}/recommendation/")
+    response.raise_for_status()
+    return response.json()
 
 
 def post_recommendation(request, case, data, level="user-advice"):

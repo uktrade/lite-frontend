@@ -36,8 +36,6 @@ class F680CaseworkerMixin(CaseworkerMixin):
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
 
-        self.recommendation_level = self.get_recommendation_level(self.case)
-
         return super().dispatch(request, *args, **kwargs)
 
     def get_recommendation_level(self, case):

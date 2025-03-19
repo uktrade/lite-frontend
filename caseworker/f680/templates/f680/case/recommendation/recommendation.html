@@ -19,13 +19,15 @@
             <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:make_recommendation' queue_pk case.id %}">Make recommendation</a>
         {% endif %}
 
-        {% if user_recommendation %}
+        {% if user_recommendations %}
             <br>
             <h1 class="govuk-heading-xl">View recommendation</h1>
-            {% include "f680/case/recommendation/recommendation_details.html" with recommendation=user_recommendation %}
+            {% for recommendation in user_recommendations %}
+                {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
+            {% endfor %}
         {% endif %}
 
-        {% if case.advice %}
+        {% if teams_recommendations %}
             {% include "f680/case/recommendation/other-recommendations.html" with teams_recommendations=teams_recommendations %}
 
         {% endif %}

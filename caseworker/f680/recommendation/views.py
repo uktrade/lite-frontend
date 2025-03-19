@@ -16,7 +16,8 @@ from caseworker.f680.recommendation.forms.forms import (
 )
 from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
-    current_user_recommendation,
+    current_user_recommendations,
+    get_case_recommendations,
     post_recommendation,
 )
 from caseworker.f680.views import F680CaseworkerMixin
@@ -30,20 +31,19 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        recommendation = None
-        if user_recommendation := current_user_recommendation(
-            self.case.advice, self.caseworker, self.recommendation_level
-        ):
-            user_recommendation = user_recommendation[0] if user_recommendation else None
+        case_recommendations = get_case_recommendations(self.request, self.case)
+
+        user_recommendations = current_user_recommendations(self.request, self.case, self.caseworker)
 
         team_recommendations = []
-        for recommendation in self.case.get("advice", []):
+        for recommendation in case_recommendations:
             team_recommendations.append({"team": recommendation["team"], "recommendation": recommendation})
+
         return {
             **context_data,
             "case": self.case,
             "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
-            "user_recommendation": user_recommendation,
+            "user_recommendations": user_recommendations,
             "teams_recommendations": team_recommendations,
         }
 
@@ -55,12 +55,12 @@ class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        recommendation = current_user_recommendation(self.case.advice, self.caseworker, self.recommendation_level)
+        user_recommendations = current_user_recommendations(self.request, self.case, self.caseworker)
 
         return {
             **context,
             "title": title,
-            "recommendation": recommendation[0] if recommendation else None,
+            "user_recommendations": user_recommendations,
         }
 
 
