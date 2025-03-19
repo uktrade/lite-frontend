@@ -1,7 +1,7 @@
 from django import forms
 
 from crispy_forms_gds.choices import Choice
-from crispy_forms_gds.layout import HTML
+from crispy_forms_gds.layout import HTML, Submit
 
 from core.common.forms import BaseForm
 from core.forms.layouts import (
@@ -143,3 +143,21 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
             ConditionalRadios("security_grading", *self.conditional_radio_choices),
             ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
         )
+
+
+class ClearRecommendationForm(BaseForm):
+    class Layout:
+        TITLE = ""
+
+    def get_layout_fields(self):
+        return []
+
+    def get_layout_actions(self):
+        return [
+            Submit("submit", "Confirm"),
+            HTML(
+                """<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:f680:view_my_recommendation' queue_pk case.id %}">
+                    Cancel
+                </a>"""
+            ),
+        ]

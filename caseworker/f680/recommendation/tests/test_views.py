@@ -6,7 +6,11 @@ from pytest_django.asserts import assertTemplateUsed
 from django.urls import reverse
 
 from caseworker.f680.recommendation.constants import RecommendationType
-from caseworker.f680.recommendation.forms.forms import BaseRecommendationForm, EntityConditionsRecommendationForm
+from caseworker.f680.recommendation.forms.forms import (
+    BaseRecommendationForm,
+    ClearRecommendationForm,
+    EntityConditionsRecommendationForm,
+)
 from core import client
 from core.constants import CaseStatusEnum
 
@@ -32,6 +36,11 @@ def make_recommendation_url(data_queue, f680_case_id):
 @pytest.fixture
 def view_recommendation_url(data_queue, f680_case_id):
     return reverse("cases:f680:view_my_recommendation", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+
+
+@pytest.fixture
+def clear_recommendation_url(data_queue, f680_case_id):
+    return reverse("cases:f680:clear_recommendation", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
 
 
 @pytest.fixture
@@ -76,6 +85,12 @@ def mock_get_case_recommendations(requests_mock, data_submitted_f680_case, recom
 def mock_get_case_no_recommendations(requests_mock, data_submitted_f680_case, recommendations):
     url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
     return requests_mock.get(url, json=[], status_code=200)
+
+
+@pytest.fixture
+def mock_clear_recommendations(requests_mock, data_submitted_f680_case):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.delete(url, status_code=204)
 
 
 class TestF680RecommendationView:
@@ -252,3 +267,51 @@ class TestF680MyRecommendationView:
         assert soup.find("h1", {"class": "govuk-heading-xl"}).text == "View recommendation"
         assert soup.find("h2", {"class": "govuk-heading-m"}).text.strip() == "australia name [Official]"
         assert soup.find("div", {"class": "clearance-conditions"}).text == "No concerns"
+        clear_recommendation_button = soup.find(id="clear-recommendation-button")
+        assert clear_recommendation_button
+
+    def test_clear_my_recommendation_get(
+        self,
+        authorized_client,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_current_gov_user,
+        mock_get_case_recommendations,
+        clear_recommendation_url,
+        view_recommendation_url,
+    ):
+        response = authorized_client.get(clear_recommendation_url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "f680/case/recommendation/clear_recommendation.html")
+
+        assert isinstance(response.context["form"], ClearRecommendationForm)
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        assert (
+            soup.find("h1", {"class": "govuk-heading-xl"}).text
+            == "Are you sure you want to delete your recommendation on this case?"
+        )
+        confirm_button = soup.find(id="submit-id-submit")
+        assert confirm_button
+
+        cancel_link = soup.find("a", {"class": "govuk-button"})
+        assert cancel_link
+        assert cancel_link["href"] == view_recommendation_url
+
+    def test_clear_my_recommendation_post(
+        self,
+        authorized_client,
+        mock_f680_case,
+        mock_current_gov_user,
+        mock_get_case_recommendations,
+        mock_clear_recommendations,
+        clear_recommendation_url,
+        data_queue,
+        data_submitted_f680_case,
+    ):
+        response = authorized_client.post(clear_recommendation_url)
+        assert response.status_code == 302
+        assert response.url == reverse(
+            "cases:f680:recommendation",
+            kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
+        )

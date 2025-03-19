@@ -81,5 +81,9 @@ def post_recommendation(request, case, data):
         for item in data
     ]
     response = client.post(request, f"/caseworker/f680/{case['id']}/recommendation/", json)
-    response.raise_for_status()
     return response.json(), response.status_code
+
+
+def clear_recommendation(request, case):
+    response = client.delete(request, f"/caseworker/f680/{case['id']}/recommendation/")
+    return None, response.status_code

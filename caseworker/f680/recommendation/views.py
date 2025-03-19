@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
 from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
@@ -11,10 +11,12 @@ from caseworker.advice.picklist_helpers import proviso_picklist
 from caseworker.f680.recommendation.constants import RecommendationSteps
 from caseworker.f680.recommendation.forms.forms import (
     BaseRecommendationForm,
+    ClearRecommendationForm,
     EntityConditionsRecommendationForm,
 )
 from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
+    clear_recommendation,
     current_user_recommendations,
     get_case_recommendations,
     group_recommendations_by_team_and_users,
@@ -59,6 +61,26 @@ class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView
             "title": title,
             "user_recommendations": user_recommendations,
         }
+
+
+class ClearRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
+    template_name = "f680/case/recommendation/clear_recommendation.html"
+    form_class = ClearRecommendationForm
+
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error clearing recommendation",
+        "Unexpected error clearing recommendation",
+    )
+    def clear_recommendation(self, case):
+        return clear_recommendation(self.request, case)
+
+    def form_valid(self, form):
+        self.clear_recommendation(self.case)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
 
 class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):

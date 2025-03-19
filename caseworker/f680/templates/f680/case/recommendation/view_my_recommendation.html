@@ -6,6 +6,11 @@
   {% include "f680/includes/move_case_forward.html" with request=request case=case queue=queue %}
 
   <h1 class="govuk-heading-xl">View recommendation</h1>
+
+  <a id="clear-recommendation-button" role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:f680:clear_recommendation' queue_pk case.id %}">
+      Clear recommendation
+  </a>
+
   {% for recommendation in user_recommendations %}
       {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
   {% endfor %}

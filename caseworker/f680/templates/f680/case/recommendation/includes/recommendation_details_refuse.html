@@ -16,6 +16,8 @@
                     {% if recommendation.refusal_reasons %}
                         <h2 class="govuk-heading-m">Reason for refusing</h2>
                         <p class="govuk-body">{{ recommendation.refusal_reasons|linebreaks }}</p>
+                    {% else %}
+                        <div class="govuk-body">---</div>
                     {% endif %}
                 </div>
             </div>
