@@ -76,8 +76,21 @@ class ApprovalTypeForm(BaseForm):
     approval_details_text = forms.CharField(
         label="Provide details about what you're seeking approval to do",
         widget=forms.Textarea(attrs={"rows": 5}),
-        required=False,
+        error_messages={
+            "required": "Enter details about what you're seeking approval to do",
+        },
     )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        approval_choices = cleaned_data.get("approval_choices", [])
+        required_fields = ["demonstration_in_uk", "demonstration_overseas"]
+
+        for choice in approval_choices:
+            if choice in required_fields:
+                self.add_error(choice, "What you're demonstrating and why cannot be blank")
+
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         self.conditional_checkbox_choices = (
@@ -287,7 +300,13 @@ class ProductControlledUnderItar(BaseForm):
     )
 
     def clean(self):
-        return self.add_required_to_conditional_text_field("is_controlled_under_itar", False, "controlled_info")
+        return self.add_required_to_conditional_text_field(
+            {
+                "parent_field": "is_controlled_under_itar",
+                "parent_field_response": False,
+                "required_field": "controlled_info",
+            }
+        )
 
     def get_layout_fields(self):
         return (
@@ -372,7 +391,11 @@ class ProductIncludeCryptography(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            "is_including_cryptography_or_security_features", True, "cryptography_or_security_feature_info"
+            {
+                "parent_field": "is_including_cryptography_or_security_features",
+                "parent_field_response": True,
+                "required_field": "cryptography_or_security_feature_info",
+            }
         )
 
     def get_layout_fields(self):
@@ -542,7 +565,11 @@ class ProductUsedByUKArmedForces(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            "is_used_by_uk_armed_forces", True, "used_by_uk_armed_forces_info"
+            {
+                "parent_field": "is_used_by_uk_armed_forces",
+                "parent_field_response": True,
+                "required_field": "used_by_uk_armed_forces_info",
+            }
         )
 
     def get_layout_fields(self):

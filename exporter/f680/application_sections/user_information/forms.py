@@ -163,7 +163,11 @@ class SecurityGradingForm(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            "security_classification", "other", "other_security_classification"
+            {
+                "parent_field": "security_classification",
+                "parent_field_response": "other",
+                "required_field": "other_security_classification",
+            }
         )
 
     def __init__(self, *args, **kwargs):
@@ -232,7 +236,13 @@ class EndUserAssembleManufactureForm(BaseForm):
     def clean(self):
         required_conditional_textbox_fields = ["assemble", "manufacture"]
         for field in required_conditional_textbox_fields:
-            self.add_required_to_conditional_text_field("assemble_manufacture", field, field)
+            self.add_required_to_conditional_text_field(
+                {
+                    "parent_field": "assemble_manufacture",
+                    "parent_field_response": field,
+                    "required_field": field,
+                }
+            )
         return super().clean()
 
     def get_layout_fields(self):

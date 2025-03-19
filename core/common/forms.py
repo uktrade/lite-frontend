@@ -51,12 +51,17 @@ class BaseForm(forms.Form):
     def get_title(self):
         return self.Layout.TITLE
 
-    def add_required_to_conditional_text_field(self, parent_field, parent_field_response, required_field):
+    def add_required_to_conditional_text_field(self, field_data):
+        """
+        This function accepts a dict with the keys parent_field, parent_field_response and required_field to
+        define the elements of the form targetted and the required information.  There is an optional key of
+        error_message which can define a customer error message instead of the "Required information" default
+        """
         cleaned_data = super().clean()
-        cleaned_parent_field = cleaned_data.get(parent_field)
-        cleaned_required_field = cleaned_data.get(required_field)
-        if cleaned_parent_field == parent_field_response and not cleaned_required_field:
-            self.add_error(required_field, "Required information")
+        cleaned_parent_field = cleaned_data.get(field_data.get("parent_field"))
+        cleaned_required_field = cleaned_data.get(field_data.get("required_field"))
+        if cleaned_parent_field == field_data.get("parent_field_response") and not cleaned_required_field:
+            self.add_error(field_data.get("required_field"), field_data.get("error_message", "Required information"))
         return cleaned_data
 
     def get_layout_fields(self):

@@ -216,7 +216,7 @@ class TestApprovalDetailsView:
     ):
         response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
-            {"approval_choices": ["training", "supply"]},
+            {"approval_choices": ["training", "supply"], "approval_details_text": "some text"},
         )
         assert response.status_code == 302
         assert mock_patch_f680_application.called_once
@@ -250,8 +250,8 @@ class TestApprovalDetailsView:
                             },
                             {
                                 "key": "approval_details_text",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "some text",
+                                "raw_answer": "some text",
                                 "question": "Provide details about what you're seeking approval to do",
                                 "datatype": "string",
                             },
@@ -262,19 +262,37 @@ class TestApprovalDetailsView:
             }
         }
 
+    @pytest.mark.parametrize(
+        "data, expected_errors",
+        (
+            ({}, {"approval_choices": ["Select an approval choice"]}),
+            (
+                {"approval_choices": "demonstration_in_uk"},
+                {"demonstration_in_uk": ["What you're demonstrating and why cannot be blank"]},
+            ),
+            (
+                {"approval_choices": "demonstration_overseas"},
+                {"demonstration_overseas": ["What you're demonstrating and why cannot be blank"]},
+            ),
+        ),
+    )
     def test_POST_to_approval_type_validation_error(
         self,
         post_to_approval_type_step,
         goto_approval_type_step,
         mock_f680_application_get,
+        data,
+        expected_errors,
     ):
         goto_approval_type_step(FormSteps.APPROVAL_TYPE)
         response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
-            {},
+            data,
         )
         assert response.status_code == 200
-        assert "Select an approval choice" in response.context["form"]["approval_choices"].errors
+
+        for field_name, error in expected_errors.items():
+            assert response.context["form"][field_name].errors == error
 
     def test_GET_with_existing_data_success(
         self,
