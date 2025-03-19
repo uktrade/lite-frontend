@@ -93,7 +93,7 @@ class UserInformationSummaryView(F680FeatureRequiredMixin, TemplateView):
             return {}
         user_entities = {}
         for entity in self.application["application"]["sections"]["user_information"]["items"]:
-            answers = {field["key"]: field["answer"] for field in entity["fields"]}
+            answers = {field["key"]: field["answer"] for field in entity["fields"].values()}
             user_entities[entity["id"]] = answers
         return user_entities
 

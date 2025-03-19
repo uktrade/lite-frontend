@@ -46,7 +46,7 @@ class F680ApplicationSectionWizard(LoginRequiredMixin, F680FeatureRequiredMixin,
 
     def deserialize_payload(self, payload):
         data = {}
-        for field in payload["fields"]:
+        for field in payload["fields"].values():
             key = field["key"]
             data[key] = self.deserialize(field["raw_answer"], field["datatype"])
         return data
