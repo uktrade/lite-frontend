@@ -18,6 +18,7 @@ from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
     current_user_recommendations,
     get_case_recommendations,
+    group_recommendations_by_team_and_users,
     post_recommendation,
 )
 from caseworker.f680.views import F680CaseworkerMixin
@@ -34,17 +35,14 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
         case_recommendations = get_case_recommendations(self.request, self.case)
 
         user_recommendations = current_user_recommendations(self.request, self.case, self.caseworker)
-
-        team_recommendations = []
-        for recommendation in case_recommendations:
-            team_recommendations.append({"team": recommendation["team"], "recommendation": recommendation})
+        recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
 
         return {
             **context_data,
             "case": self.case,
             "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
             "user_recommendations": user_recommendations,
-            "teams_recommendations": team_recommendations,
+            "recommendations_by_team": recommendations_by_team,
         }
 
 

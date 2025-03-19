@@ -1,11 +1,22 @@
 <h2 class="govuk-heading-m">All recommendations for this case</h2>
-{% for item in teams_recommendations %}
+{% for item in recommendations_by_team %}
     <details class="govuk-details" data-module="govuk-details">
         <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text govuk-!-font-weight-bold">
                 {{ item.team.name }}
             </span>
         </summary>
-        {% include "f680/case/recommendation/recommendation_details.html" with recommendation=item.recommendation %}
+        {% for user in item.users %}
+            <details class="govuk-details govuk-!-padding-left-6 govuk-!-margin-top-2" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+                        {{ user.user|full_name }}
+                    </span>
+                </summary>
+                {% for recommendation in user.recommendations %}
+                    {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
+                {% endfor %}
+            </details>
+        {% endfor %}
     </details>
 {% endfor %}

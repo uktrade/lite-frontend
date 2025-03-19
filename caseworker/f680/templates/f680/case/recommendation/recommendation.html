@@ -27,8 +27,8 @@
             {% endfor %}
         {% endif %}
 
-        {% if teams_recommendations %}
-            {% include "f680/case/recommendation/other-recommendations.html" with teams_recommendations=teams_recommendations %}
+        {% if recommendations_by_team %}
+            {% include "f680/case/recommendation/other-recommendations.html" with recommendations_by_team=recommendations_by_team %}
 
         {% endif %}
     </main>
