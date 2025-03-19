@@ -114,22 +114,8 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case, data_
                                 "answer": "some end use",
                                 "datatype": "string",
                                 "key": "end_user_intended_end_use",
-                                "question": "How does the end-user intend to use this product",
+                                "question": "How does the end-user intend to use this item",
                                 "raw_answer": "some end use",
-                            },
-                            {
-                                "answer": "Yes, assembled",
-                                "datatype": "string",
-                                "key": "assemble_manufacture",
-                                "question": "Does this end-user need to assemble or manufacture any of the products?",
-                                "raw_answer": "assemble",
-                            },
-                            {
-                                "answer": "some assembly",
-                                "datatype": "string",
-                                "key": "assemble",
-                                "question": "Describe what assembly is needed.",
-                                "raw_answer": "some assembly",
                             },
                         ],
                         "id": data_item_id,
@@ -215,11 +201,6 @@ class TestUserInformationView:
                 },
                 forms.EndUserIntendedEndUseForm,
             ),
-            (
-                FormSteps.INTENDED_END_USE,
-                {"end_user_intended_end_use": "some end use"},
-                forms.EndUserAssembleManufactureForm,
-            ),
         ),
     )
     def test_POST_to_step_success(
@@ -267,11 +248,6 @@ class TestUserInformationView:
                 FormSteps.INTENDED_END_USE,
                 {},
                 {"end_user_intended_end_use": ["This field is required."]},
-            ),
-            (
-                FormSteps.ASSEMBLE_MANUFACTURE,
-                {},
-                {"assemble_manufacture": ["This field is required."]},
             ),
         ),
     )
@@ -346,16 +322,6 @@ class TestUserInformationView:
             FormSteps.INTENDED_END_USE,
             {
                 "end_user_intended_end_use": "some end use",
-            },
-        )
-        assert response.status_code == 200
-        assert type(response.context["form"]) == forms.EndUserAssembleManufactureForm
-
-        response = post_to_step(
-            FormSteps.ASSEMBLE_MANUFACTURE,
-            {
-                "assemble_manufacture": "assemble",
-                "assemble": "some assemble reason",
             },
         )
         assert response.status_code == 302
@@ -440,28 +406,7 @@ class TestUserInformationView:
                                         "key": "end_user_intended_end_use",
                                         "answer": "some end use",
                                         "raw_answer": "some end use",
-                                        "question": "How does the end-user intend to use this product",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "assemble_manufacture",
-                                        "answer": "Yes, assembled",
-                                        "raw_answer": "assemble",
-                                        "question": "Does this end-user need to assemble or manufacture any of the products?",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "assemble",
-                                        "answer": "some assemble reason",
-                                        "raw_answer": "some assemble reason",
-                                        "question": "Describe what assembly is needed.",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "manufacture",
-                                        "answer": "",
-                                        "raw_answer": "",
-                                        "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
+                                        "question": "How does the end-user intend to use this item",
                                         "datatype": "string",
                                     },
                                 ],
@@ -530,16 +475,6 @@ class TestUserInformationView:
             FormSteps.INTENDED_END_USE,
             {
                 "end_user_intended_end_use": "some end use",
-            },
-        )
-        assert response.status_code == 200
-        assert type(response.context["form"]) == forms.EndUserAssembleManufactureForm
-
-        response = post_to_step(
-            FormSteps.ASSEMBLE_MANUFACTURE,
-            {
-                "assemble_manufacture": "assemble",
-                "assemble": "some assemble reason",
             },
         )
         assert response.status_code == 302
@@ -622,28 +557,7 @@ class TestUserInformationView:
                     "key": "end_user_intended_end_use",
                     "answer": "some end use",
                     "raw_answer": "some end use",
-                    "question": "How does the end-user intend to use this product",
-                    "datatype": "string",
-                },
-                {
-                    "key": "assemble_manufacture",
-                    "answer": "Yes, assembled",
-                    "raw_answer": "assemble",
-                    "question": "Does this end-user need to assemble or manufacture any of the products?",
-                    "datatype": "string",
-                },
-                {
-                    "key": "assemble",
-                    "answer": "some assemble reason",
-                    "raw_answer": "some assemble reason",
-                    "question": "Describe what assembly is needed.",
-                    "datatype": "string",
-                },
-                {
-                    "key": "manufacture",
-                    "answer": "",
-                    "raw_answer": "",
-                    "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
+                    "question": "How does the end-user intend to use this item",
                     "datatype": "string",
                 },
             ],
@@ -676,11 +590,6 @@ class TestUserInformationView:
                 FormSteps.INTENDED_END_USE,
                 forms.EndUserIntendedEndUseForm,
                 {"end_user_intended_end_use": "some end use"},
-            ),
-            (
-                FormSteps.ASSEMBLE_MANUFACTURE,
-                forms.EndUserAssembleManufactureForm,
-                {},
             ),
         ),
     )
@@ -736,8 +645,6 @@ class TestUserInformationSummaryView:
                 "security_classification": "Official",
                 "suffix": "some suffix",
                 "end_user_intended_end_use": "some end use",
-                "assemble_manufacture": "Yes, assembled",
-                "assemble": "some assembly",
             }
         }
 
@@ -777,16 +684,6 @@ class TestUserInformationSummaryView:
                 FormSteps.SECURITY_GRADING,
                 {"security_classification": "other", "other_security_classification": ""},
                 "other_security_classification",
-            ),
-            (
-                FormSteps.ASSEMBLE_MANUFACTURE,
-                {"assemble_manufacture": "assemble", "assemble": ""},
-                "assemble",
-            ),
-            (
-                FormSteps.ASSEMBLE_MANUFACTURE,
-                {"assemble_manufacture": "manufacture", "manufacture": ""},
-                "manufacture",
             ),
         ),
     )

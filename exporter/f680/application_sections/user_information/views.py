@@ -21,7 +21,6 @@ from .forms import (
     EndUserAddressForm,
     SecurityGradingForm,
     EndUserIntendedEndUseForm,
-    EndUserAssembleManufactureForm,
 )
 
 
@@ -38,7 +37,6 @@ class UserInformationView(F680MultipleItemApplicationSectionWizard):
         (FormSteps.END_USER_ADDRESS, EndUserAddressForm),
         (FormSteps.SECURITY_GRADING, SecurityGradingForm),
         (FormSteps.INTENDED_END_USE, EndUserIntendedEndUseForm),
-        (FormSteps.ASSEMBLE_MANUFACTURE, EndUserAssembleManufactureForm),
     ]
     condition_dict = {
         FormSteps.THIRD_PARTY_ROLE: is_third_party,
