@@ -620,6 +620,30 @@ class TestProductInformationViews:
                 },
             ),
             (
+                FormSteps.MOD_SPONSOR_DETAILS,
+                {
+                    "full_name": "John Bloggs",
+                    "address": "62 Soapy Bubble Street",
+                    "phone_number": "07777 123 123",
+                    "email_address": "bork",
+                },
+                {
+                    "email_address": ["Enter an email address in the correct format, like name@example.com"],
+                },
+            ),
+            (
+                FormSteps.MOD_SPONSOR_DETAILS,
+                {
+                    "full_name": "John Bloggs",
+                    "address": "62 Soapy Bubble Street",
+                    "phone_number": "bork",
+                    "email_address": "test@email.com",
+                },
+                {
+                    "phone_number": ["Enter a phone number, like 02890 960 001, 07787 900 982 or +447787 570 192"],
+                },
+            ),
+            (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
                 {},
                 {"is_controlled_under_itar": ["Select yes if the foreign technology is controlled under ITAR"]},

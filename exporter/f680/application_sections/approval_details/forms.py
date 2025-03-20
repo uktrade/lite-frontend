@@ -20,6 +20,8 @@ from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.validators import PastDateValidator
 from exporter.f680.constants import SecurityGrading
 
+from exporter.core.organisation.validators import validate_phone
+
 
 class ApprovalTypeForm(BaseForm):
     class Layout:
@@ -580,11 +582,17 @@ class ModSponsorDetails(BaseForm):
     )
     phone_number = forms.CharField(
         label="Phone number",
-        error_messages={"required": "Enter the sponsor's phone number"},
+        error_messages={
+            "required": "Enter the sponsor's phone number",
+        },
+        validators=[validate_phone],
     )
     email_address = forms.EmailField(
         label="Email address",
-        error_messages={"required": "Enter the sponsor's email address"},
+        error_messages={
+            "required": "Enter the sponsor's email address",
+            "invalid": "Enter an email address in the correct format, like name@example.com",
+        },
     )
 
     def get_layout_fields(self):
