@@ -10,6 +10,7 @@ from django.views.generic import FormView, TemplateView
 from requests.exceptions import HTTPError
 from urllib.parse import urlencode
 
+from core.wizard.conditionals import C
 from core.wizard.views import BaseSessionWizardView
 
 from exporter.applications.constants import (
@@ -65,6 +66,7 @@ from exporter.applications.services import (
     create_application_amendment,
     post_applications,
 )
+from exporter.applications.views.conditionals import is_indeterminate_export_licence_type_allowed
 from exporter.organisation.members.services import get_user
 
 from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType
@@ -636,6 +638,13 @@ class ExportLicenceView(LoginRequiredMixin, BaseSessionWizardView):
         (ExportLicenceSteps.APPLICATION_NAME, ApplicationNameForm),
         (ExportLicenceSteps.TOLD_BY_AN_OFFICIAL, ToldByAnOfficialForm),
     ]
+
+    condition_dict = {
+        ExportLicenceSteps.LICENCE_TYPE: ~C(is_indeterminate_export_licence_type_allowed),
+    }
+
+    def get_organisation(self):
+        return self.request.session["organisation"]
 
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
