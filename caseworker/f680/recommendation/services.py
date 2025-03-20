@@ -71,9 +71,9 @@ def get_case_recommendations(request, case):
 def post_recommendation(request, case, data):
     json = [
         {
-            "type": item["type"],
-            "conditions": item["conditions"] if item["type"] == RecommendationType.APPROVE else "",
-            "refusal_reasons": item["conditions"] if item["type"] == RecommendationType.REFUSE else "",
+            "type": item["recommendation"],
+            "conditions": item["conditions"] if item["recommendation"] == RecommendationType.APPROVE else "",
+            "refusal_reasons": item["conditions"] if item["recommendation"] == RecommendationType.REFUSE else "",
             "security_grading": item["security_grading"],
             "security_grading_other": item["security_grading_other"],
             "security_release_request": item["security_release_request"],

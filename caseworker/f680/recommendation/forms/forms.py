@@ -93,6 +93,14 @@ class BaseRecommendationForm(BaseForm):
 
         self.fields["security_grading"].choices = self.security_release_choices
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return {
+            **cleaned_data,
+            "security_release_request": self.release_request["id"],
+        }
+
     def get_layout_fields(self):
         return (
             HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
@@ -114,7 +122,7 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
         cleaned_data = super().clean()
         # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
         return {
-            "type": cleaned_data["recommendation"],
+            "recommendation": cleaned_data["recommendation"],
             "security_grading": cleaned_data["security_grading"],
             "security_grading_other": cleaned_data["security_grading_other"],
             "security_release_request": self.release_request["id"],

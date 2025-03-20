@@ -6,7 +6,7 @@ from pytest_django.asserts import assertTemplateUsed
 from django.urls import reverse
 
 from caseworker.f680.recommendation.constants import RecommendationType
-from caseworker.f680.recommendation.forms.forms import EntityConditionsRecommendationForm
+from caseworker.f680.recommendation.forms.forms import BaseRecommendationForm, EntityConditionsRecommendationForm
 from core import client
 from core.constants import CaseStatusEnum
 
@@ -172,6 +172,54 @@ class TestF680MakeRecommendationView:
         assert response.status_code == 200
         form = response.context["form"]
         assert isinstance(form, EntityConditionsRecommendationForm)
+
+        response = post_to_step(
+            security_release_requests[2]["id"],
+            {
+                "recommendation": RecommendationType.REFUSE,
+                "security_grading": "official",
+                "conditions": [],
+            },
+        )
+        assert response.status_code == 302
+        assert response.url == view_recommendation_url
+
+    def test_make_recommendation_post_no_team_provisos(
+        self,
+        authorized_client,
+        data_submitted_f680_case,
+        make_recommendation_url,
+        mock_f680_case,
+        mock_approval_reason,
+        mock_no_provisos,
+        mock_post_recommendation,
+        post_to_step,
+        view_recommendation_url,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        response = post_to_step(
+            security_release_requests[0]["id"],
+            {
+                "recommendation": RecommendationType.APPROVE,
+                "security_grading": "official",
+                "conditions": ["no_release", "no_specifications"],
+            },
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, BaseRecommendationForm)
+
+        response = post_to_step(
+            security_release_requests[1]["id"],
+            {
+                "recommendation": RecommendationType.APPROVE,
+                "security_grading": "official",
+                "conditions": ["no_specifications"],
+            },
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, BaseRecommendationForm)
 
         response = post_to_step(
             security_release_requests[2]["id"],

@@ -822,6 +822,12 @@ def mock_proviso(requests_mock):
 
 
 @pytest.fixture
+def mock_no_provisos(requests_mock):
+    url = client._build_absolute_uri("/picklist/?type=proviso&page=1&disable_pagination=True&show_deactivated=False")
+    return requests_mock.get(url=url, json={"results": []})
+
+
+@pytest.fixture
 def mock_footnote_details(requests_mock):
     url = client._build_absolute_uri("/picklist/?type=footnotes&page=1&disable_pagination=True&show_deactivated=False")
     data = {
