@@ -11,7 +11,6 @@ from django.http import StreamingHttpResponse
 from django_chunk_upload_handlers.s3 import S3FileUploadHandler
 
 
-
 logger = logging.getLogger(__name__)
 
 
