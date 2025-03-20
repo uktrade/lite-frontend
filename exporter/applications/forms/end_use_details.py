@@ -1,9 +1,7 @@
-from exporter.core.constants import STANDARD, OPEN
 from lite_content.lite_exporter_frontend import generic, strings
 from lite_content.lite_exporter_frontend.applications import (
     EndUseDetails,
     StandardApplicationTaskList,
-    OpenApplicationTaskList,
 )
 from lite_forms.components import BackLink, Form, RadioButtons, FormGroup, Option, TextInput, TextArea
 from lite_forms.helpers import conditional
@@ -11,12 +9,7 @@ from lite_forms.helpers import conditional
 
 def end_use_details_form(application, request, back_link):
     is_eu_military = request.POST.get("is_eu_military", "").lower() == "true" or application.is_eu_military
-    caption = ""
-
-    if application.sub_type == STANDARD:
-        caption = StandardApplicationTaskList.END_USE_DETAILS
-    elif application.sub_type == OPEN:
-        caption = OpenApplicationTaskList.END_USE_DETAILS
+    caption = StandardApplicationTaskList.END_USE_DETAILS
 
     return FormGroup(
         [
@@ -24,7 +17,7 @@ def end_use_details_form(application, request, back_link):
             is_military_end_use_controls_form(caption),
             is_informed_wmd_form(caption),
             is_suspected_wmd_form(caption),
-            conditional(application.sub_type == STANDARD, is_eu_military_form(caption)),
+            is_eu_military_form(caption),
             conditional(is_eu_military, is_compliant_limitations_eu_form(caption)),
         ]
     )

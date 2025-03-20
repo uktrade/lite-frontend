@@ -3,7 +3,6 @@ from django.views.generic import TemplateView
 
 from exporter.applications.forms.end_use_details import end_use_details_form, intended_end_use_form
 from exporter.applications.services import put_end_use_details, get_application
-from exporter.core.constants import F680
 from lite_content.lite_exporter_frontend import generic
 from lite_content.lite_exporter_frontend.applications import EndUseDetails as strings, F680ClearanceTaskList
 from lite_forms.views import SummaryListFormView, SingleFormView
@@ -27,10 +26,7 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
         return form_view.post(request, **kwargs)
 
     def _get_form_view(self, request, **kwargs):
-        if self.application.sub_type == F680:
-            return self._get_single_form_view(request, **kwargs)
-        else:
-            return self._get_summary_list_form_view(request, **kwargs)
+        return self._get_summary_list_form_view(request, **kwargs)
 
     def _get_single_form_view(self, request, **kwargs):
         # Construct an override init method for the class instance
