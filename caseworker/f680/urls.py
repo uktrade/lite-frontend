@@ -20,7 +20,7 @@ urlpatterns = [
     path(
         "activities/",
         views.NotesAndTimelineView.as_view(),
-        name="activities",
+        name="notes_and_timeline",
     ),
     path(
         "recommendation/",
