@@ -4,18 +4,22 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView, View, FormView
 
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import move_case_forward
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
-from caseworker.cases.services import get_case
+from caseworker.cases.services import get_case, post_case_notes
 from caseworker.f680.rules import OUTCOME_STATUSES
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
+
+from caseworker.activities.forms import NotesAndTimelineForm
+from caseworker.activities.views import ActivityMixin
+from lite_forms.generators import error_page
 
 
 class F680CaseworkerMixin(CaseworkerMixin):
@@ -101,3 +105,34 @@ class MoveCaseForward(LoginRequiredMixin, View):
         messages.success(self.request, success_message, extra_tags="safe")
         queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
         return redirect(queue_url)
+
+
+class NotesAndTimelineView(LoginRequiredMixin, F680CaseworkerMixin, ActivityMixin, FormView):
+    template_name = "f680/case/activities.html"
+    current_tab = "activities"
+    form_class = NotesAndTimelineForm
+
+    def get_view_url(self):
+        return reverse("cases:f680:activities", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+    def get(self, *args, **kwargs):
+        response = super().get(*args, **kwargs)
+        self.update_mentions()
+        return response
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["request"] = self.request
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs) | self.get_activity_context_data()
+
+    def form_valid(self, form):
+        response, status_code = post_case_notes(self.request, self.case_id, form.cleaned_data)
+        if status_code != 201:
+            return error_page(self.request, response.get("errors")["text"][0])
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return self.get_view_url()

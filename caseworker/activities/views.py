@@ -21,25 +21,7 @@ from caseworker.activities.forms import NotesAndTimelineForm
 from lite_forms.generators import error_page
 
 
-class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormView):
-    template_name = "activities/notes-and-timeline.html"
-    form_class = NotesAndTimelineForm
-
-    @cached_property
-    def case_id(self):
-        return str(self.kwargs["pk"])
-
-    @cached_property
-    def case(self):
-        return get_case(self.request, self.case_id)
-
-    @cached_property
-    def queue_id(self):
-        return str(self.kwargs["queue_pk"])
-
-    @cached_property
-    def queue(self):
-        return get_queue(self.request, self.queue_id)
+class ActivityMixin:
 
     @cached_property
     def mentions(self):
@@ -47,14 +29,7 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
         return case_note_mentions.get("results")
 
     def get_team_filter_url(self, team):
-        url = reverse(
-            "cases:activities:notes-and-timeline",
-            kwargs={
-                "pk": self.case_id,
-                "queue_pk": self.queue_id,
-            },
-        )
-        return f"{url}?team_id={team['key']}"
+        return f"{self.get_view_url()}?team_id={team['key']}"
 
     def get_is_filtered_by_team(self, team):
         return self.request.GET.get("team_id") == team["key"]
@@ -74,16 +49,51 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
         ]
         return team_filters
 
-    def get(self, request, *args, **kwargs):
-        response = super().get(request, *args, **kwargs)
-        if "mentions" in list(request.GET.keys()):
+    def update_mentions(self):
+        if "mentions" in list(self.request.GET.keys()):
             my_unread_mentions = [
                 {"id": m["id"], "is_accessed": True}
                 for m in self.mentions
                 if not m["is_accessed"] and m["user"]["id"] == self.request.session["lite_api_user_id"]
             ]
             if my_unread_mentions:
-                update_mentions(request, my_unread_mentions)
+                update_mentions(self.request, my_unread_mentions)
+
+    def get_activity_context_data(self):
+        return {
+            "filtering_by": list(self.request.GET.keys()),
+            "team_filters": self.get_team_filters(),
+            "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
+            "current_view_url": self.get_view_url(),
+        }
+
+
+class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, ActivityMixin, FormView):
+    template_name = "activities/notes-and-timeline.html"
+    form_class = NotesAndTimelineForm
+
+    @cached_property
+    def case_id(self):
+        return str(self.kwargs["pk"])
+
+    @cached_property
+    def case(self):
+        return get_case(self.request, self.case_id)
+
+    @cached_property
+    def queue_id(self):
+        return str(self.kwargs["queue_pk"])
+
+    @cached_property
+    def queue(self):
+        return get_queue(self.request, self.queue_id)
+
+    def get_view_url(self):
+        return reverse("cases:activities:notes-and-timeline", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+    def get(self, *args, **kwargs):
+        response = super().get(*args, **kwargs)
+        self.update_mentions()
         return response
 
     def get_form_kwargs(self):
@@ -96,13 +106,10 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
         return {
             **context,
             "case": self.case,
-            "filtering_by": list(self.request.GET.keys()),
             "queue": self.queue,
-            "team_filters": self.get_team_filters(),
             "tabs": self.get_standard_application_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
-            "activities": get_activity(self.request, self.case_id, activity_filters=self.request.GET),
-        }
+        } | self.get_activity_context_data()
 
     def form_valid(self, form):
         response, status_code = post_case_notes(self.request, self.case_id, form.cleaned_data)
@@ -111,4 +118,4 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, FormV
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:activities:notes-and-timeline", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+        return self.get_view_url()

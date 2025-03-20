@@ -1,5 +1,4 @@
 {% extends 'layouts/case.html' %}
-{% load crispy_forms_tags %}
 
 {% block header_tabs %}
     <div id="tab-bar" class="app-case-tab-bar">
@@ -10,80 +9,5 @@
 {% endblock %}
 
 {% block details %}
-    <h1 class="govuk-heading-s">Case history</h1>
-    <p class="govuk-body govuk-!-margin-bottom-8">View a timeline showing progress and case notes for this application.</p>
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-one-quarter">
-            <nav class="notes-and-timeline-nav">
-                <ul class="notes-and-timeline-nav__list">
-                    <li class="notes-and-timeline-nav__list-item{% if not filtering_by %} notes-and-timeline-nav__list-item--selected{% endif %}">
-                        <a class="notes-and-timeline-nav__list-link" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}">
-                            <span class="notes-and-timeline-nav__list-link-wrapper">
-                                View all notes and timeline
-                            </span>
-                        </a>
-                    </li>
-                    {% for team_id, team_name, team_filter_url, is_filtered_by_team in team_filters %}
-                        <li class="notes-and-timeline-nav__list-item{% if is_filtered_by_team %} notes-and-timeline-nav__list-item--selected{% endif %}">
-                            <a class="notes-and-timeline-nav__list-link" href="{{ team_filter_url }}">
-                                <span class="notes-and-timeline-nav__list-link-wrapper">
-                                    {{ team_name }}
-                                </span>
-                            </a>
-                        </li>
-                    {% endfor %}
-                    <li class="notes-and-timeline-nav__list-item">
-                        <a class="notes-and-timeline-nav__list-link{% if "user_type" in filtering_by %} notes-and-timeline-nav__list-item--selected{% endif %}" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}?user_type=exporter">
-                            <span class="notes-and-timeline-nav__list-link-wrapper">
-                                Exporter
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <hr>
-            <nav class="notes-and-timeline-nav">
-                <ul class="notes-and-timeline-nav__list notes-and-timeline-nav__mentions">
-                    <li class="notes-and-timeline-nav__list-item{% if "mentions" in filtering_by %} notes-and-timeline-nav__list-item--selected{% endif %}">
-                        <a class="notes-and-timeline-nav__list-link" href="{% url 'cases:activities:notes-and-timeline' pk=case.id queue_pk=queue.id %}?mentions=True&activity_type=created_case_note_with_mentions">
-                            <span class="notes-and-timeline-nav__list-link-wrapper">
-                                Mentions
-                            </span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-        <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-grid-row">
-                <div class="notes-and-timeline-case-note">
-                    {% crispy form %}
-                </div>
-            </div>
-            <div class="govuk-grid-row">
-                <div class="notes-and-timeline-timeline">
-                        {% regroup activities by created_at|to_datetime|date:"d F Y" as activity_list %}
-                        {% for activities_by_date in activity_list %}
-                            <div class="notes-and-timeline-timeline__day-group">
-                                <h2 class="notes-and-timeline-timeline__day-group-heading">{{ activities_by_date.grouper }}</h2>
-                                {% for activity in activities_by_date.list %}
-                                    {% with user=activity.user %}
-                                        <div class="notes-and-timeline-timeline__day-group-item">
-
-			                                {% include 'activities/includes/activity-entry-user.html' with activity=activity %}
-			                                {% include 'activities/includes/activity-entry-activity.html' with activity=activity %}
-                                            {% if activity.additional_text %}
-                                                <div class="notes-and-timeline-timeline__day-group-note">
-                                                    {{ activity.additional_text|linebreaks }}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    {% endwith %}
-                                {% endfor %}
-                            </div>
-                        {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
+  {% include "activities/includes/case_history.html" %}
 {% endblock %}
