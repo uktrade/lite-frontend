@@ -10,7 +10,6 @@ from django.http import StreamingHttpResponse
 
 from django_chunk_upload_handlers.s3 import S3FileUploadHandler
 
-from django_chunk_upload_handlers.clam_av import validate_virus_check_result
 
 
 logger = logging.getLogger(__name__)
