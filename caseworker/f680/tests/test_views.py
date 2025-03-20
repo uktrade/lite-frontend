@@ -90,6 +90,46 @@ class TestCaseDetailView:
             authorized_client.get(url)
 
 
+class TestCaseSummaryView:
+
+    def test_GET_success(
+        self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_submitted_f680_case
+    ):
+        url = reverse("cases:f680:summary", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        response = authorized_client.get(url)
+        assert response.status_code == 200
+        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
+        soup = BeautifulSoup(response.content, "html.parser")
+        assert f680_reference_code in soup.find("h1").text
+
+        assert "Product" in soup.find("h2").text
+        product_table_elems = soup.find_all("table", {"class": "f680-product-table"})
+        assert len(product_table_elems) == 1
+        product_table_text = product_table_elems[0].text
+        assert "product description" in product_table_text
+
+        security_release_table_elems = soup.find_all("table", {"class": "f680-security-release-table"})
+        assert len(security_release_table_elems) == 1
+        security_release_table_text = security_release_table_elems[0].text
+        assert "australia name" in security_release_table_text
+        assert "france name" in security_release_table_text
+        assert "uae name" in security_release_table_text
+
+    def test_GET_not_logged_in(
+        self, client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_submitted_f680_case
+    ):
+        url = reverse("cases:f680:summary", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        expected_redirect_location = reverse("auth:login")
+        response = client.get(url)
+        assert response.status_code == 302
+        assert response.url.startswith(expected_redirect_location)
+
+    def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
+        url = reverse("cases:f680:summary", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
+        with pytest.raises(HTTPError, match="404"):
+            authorized_client.get(url)
+
+
 class TestMoveCaseForwardView:
 
     def test_POST_not_assigned_permisison_denied(self, authorized_client, data_queue, mock_f680_case, f680_case_id):

@@ -9,6 +9,11 @@ app_name = "f680"
 urlpatterns = [
     path(
         "",
+        views.CaseSummaryView.as_view(),
+        name="summary",
+    ),
+    path(
+        "details/",
         views.CaseDetailView.as_view(),
         name="details",
     ),
