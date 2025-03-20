@@ -266,7 +266,7 @@ class TestUserInformationView:
             (
                 FormSteps.INTENDED_END_USE,
                 {},
-                {"end_user_intended_end_use": ["This field is required."]},
+                {"end_user_intended_end_use": ["Enter how the end-user will use the item"]},
             ),
             (
                 FormSteps.ASSEMBLE_MANUFACTURE,
