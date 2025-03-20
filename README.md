@@ -301,7 +301,7 @@ to run the tests run:
 ### Without docker
 
 Node version required can be found in the `package.json` under `engines`.
-All javascripts and scss files are stored under caseworker/assets and exporter/assets
+All Javascript and SCSS files are stored under caseworker/assets and exporter/assets
 
 ```
   npm i
