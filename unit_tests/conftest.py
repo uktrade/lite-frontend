@@ -1218,8 +1218,572 @@ def data_standard_case_with_all_trigger_list_products_assessed(data_standard_cas
 
 
 @pytest.fixture
-def data_submitted_f680_case():
+def data_australia_release_id():
+    return "2ad8273e-a15d-4bb3-b7ec-af78b5574615"
+
+
+@pytest.fixture
+def data_france_release_id():
+    return "695c65e5-4c80-4d0a-aef5-db94908b0417"
+
+
+@pytest.fixture
+def data_uae_release_id():
+    return "ba8c4b61-51e3-4be3-9208-f7eff2923c91"
+
+
+# TODO: There is overlap here between a fixture in lite-api, however we are currently
+#   missing a mechanism to share fixtures between the two
+@pytest.fixture
+def data_application_json(data_australia_release_id, data_france_release_id, data_uae_release_id):
+    return {
+        "sections": {
+            "approval_type": {
+                "type": "single",
+                "label": "Approval type",
+                "fields": [
+                    {
+                        "key": "approval_choices",
+                        "answer": ["Demonstration overseas", "Training"],
+                        "datatype": "list",
+                        "question": "Select the types of approvals you need",
+                        "raw_answer": ["demonstration_overseas", "training"],
+                    },
+                    {
+                        "key": "demonstration_in_uk",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Explain what you are demonstrating and why",
+                        "raw_answer": "",
+                    },
+                    {
+                        "key": "demonstration_overseas",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Explain what you are demonstrating and why",
+                        "raw_answer": "",
+                    },
+                    {
+                        "key": "approval_details_text",
+                        "answer": "csda",
+                        "datatype": "string",
+                        "question": "Provide details about what you're seeking approval to do",
+                        "raw_answer": "csda",
+                    },
+                ],
+            },
+            "user_information": {
+                "type": "multiple",
+                "items": [
+                    {
+                        "id": data_france_release_id,
+                        "fields": [
+                            {
+                                "key": "entity_type",
+                                "answer": "Ultimate end-user",
+                                "datatype": "string",
+                                "question": "Select type of entity",
+                                "raw_answer": "ultimate-end-user",
+                            },
+                            {
+                                "key": "end_user_name",
+                                "answer": "france name",
+                                "datatype": "string",
+                                "question": "End-user name",
+                                "raw_answer": "france name",
+                            },
+                            {
+                                "key": "address",
+                                "answer": "france address",
+                                "datatype": "string",
+                                "question": "Address",
+                                "raw_answer": "france address",
+                            },
+                            {
+                                "key": "country",
+                                "answer": "France",
+                                "datatype": "string",
+                                "question": "Country",
+                                "raw_answer": "FR",
+                            },
+                            {
+                                "key": "prefix",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter a prefix (optional)",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "security_classification",
+                                "answer": "Official",
+                                "datatype": "string",
+                                "question": "Select security classification",
+                                "raw_answer": "official",
+                            },
+                            {
+                                "key": "other_security_classification",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter the security classification",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "suffix",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter a suffix (optional)",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "issuing_authority_name_address",
+                                "answer": "cdsacsad",
+                                "datatype": "string",
+                                "question": "Name and address of the issuing authority",
+                                "raw_answer": "cdsacsad",
+                            },
+                            {
+                                "key": "reference",
+                                "answer": "ref",
+                                "datatype": "string",
+                                "question": "Reference",
+                                "raw_answer": "ref",
+                            },
+                            {
+                                "key": "date_of_issue",
+                                "answer": "2024-01-01",
+                                "datatype": "date",
+                                "question": "Date of issue",
+                                "raw_answer": "2024-01-01",
+                            },
+                            {
+                                "key": "end_user_intended_end_use",
+                                "answer": "france intended use",
+                                "datatype": "string",
+                                "question": "How does the end-user intend to use this product",
+                                "raw_answer": "france intended use",
+                            },
+                            {
+                                "key": "assemble_manufacture",
+                                "answer": ["No"],
+                                "datatype": "list",
+                                "question": "Does this end-user need to assemble or manufacture any of the products?",
+                                "raw_answer": ["no"],
+                            },
+                            {
+                                "key": "assemble",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Describe what assembly is needed.",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "manufacture",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
+                                "raw_answer": "",
+                            },
+                        ],
+                    },
+                    {
+                        "id": data_uae_release_id,
+                        "fields": [
+                            {
+                                "key": "entity_type",
+                                "answer": "End user",
+                                "datatype": "string",
+                                "question": "Select type of entity",
+                                "raw_answer": "end-user",
+                            },
+                            {
+                                "key": "end_user_name",
+                                "answer": "uae name",
+                                "datatype": "string",
+                                "question": "End-user name",
+                                "raw_answer": "uae name",
+                            },
+                            {
+                                "key": "address",
+                                "answer": "uae address",
+                                "datatype": "string",
+                                "question": "Address",
+                                "raw_answer": "uae address",
+                            },
+                            {
+                                "key": "country",
+                                "answer": "United Arab Emirates",
+                                "datatype": "string",
+                                "question": "Country",
+                                "raw_answer": "AE",
+                            },
+                            {
+                                "key": "prefix",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter a prefix (optional)",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "security_classification",
+                                "answer": "Top-Secret",
+                                "datatype": "string",
+                                "question": "Select security classification",
+                                "raw_answer": "top-secret",
+                            },
+                            {
+                                "key": "other_security_classification",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter the security classification",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "suffix",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter a suffix (optional)",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "issuing_authority_name_address",
+                                "answer": "casdcdsa",
+                                "datatype": "string",
+                                "question": "Name and address of the issuing authority",
+                                "raw_answer": "casdcdsa",
+                            },
+                            {
+                                "key": "reference",
+                                "answer": "csd",
+                                "datatype": "string",
+                                "question": "Reference",
+                                "raw_answer": "csd",
+                            },
+                            {
+                                "key": "date_of_issue",
+                                "answer": "2024-01-01",
+                                "datatype": "date",
+                                "question": "Date of issue",
+                                "raw_answer": "2024-01-01",
+                            },
+                            {
+                                "key": "end_user_intended_end_use",
+                                "answer": "uae intended use",
+                                "datatype": "string",
+                                "question": "How does the end-user intend to use this product",
+                                "raw_answer": "uae intended use",
+                            },
+                            {
+                                "key": "assemble_manufacture",
+                                "answer": ["No"],
+                                "datatype": "list",
+                                "question": "Does this end-user need to assemble or manufacture any of the products?",
+                                "raw_answer": ["no"],
+                            },
+                            {
+                                "key": "assemble",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Describe what assembly is needed.",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "manufacture",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
+                                "raw_answer": "",
+                            },
+                        ],
+                    },
+                    {
+                        "id": data_australia_release_id,
+                        "fields": [
+                            {
+                                "key": "entity_type",
+                                "answer": "Third party",
+                                "datatype": "string",
+                                "question": "Select type of entity",
+                                "raw_answer": "third-party",
+                            },
+                            {
+                                "key": "third_party_role",
+                                "answer": "Consultant",
+                                "datatype": "string",
+                                "question": "Select the role of the third party",
+                                "raw_answer": "consultant",
+                            },
+                            {
+                                "key": "end_user_name",
+                                "answer": "australia name",
+                                "datatype": "string",
+                                "question": "End-user name",
+                                "raw_answer": "australia name",
+                            },
+                            {
+                                "key": "address",
+                                "answer": "australia address",
+                                "datatype": "string",
+                                "question": "Address",
+                                "raw_answer": "australia address",
+                            },
+                            {
+                                "key": "country",
+                                "answer": "Australia",
+                                "datatype": "string",
+                                "question": "Country",
+                                "raw_answer": "AU",
+                            },
+                            {
+                                "key": "prefix",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter a prefix (optional)",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "security_classification",
+                                "answer": "Secret",
+                                "datatype": "string",
+                                "question": "Select security classification",
+                                "raw_answer": "secret",
+                            },
+                            {
+                                "key": "other_security_classification",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter the security classification",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "suffix",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter a suffix (optional)",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "issuing_authority_name_address",
+                                "answer": "csdacdsa",
+                                "datatype": "string",
+                                "question": "Name and address of the issuing authority",
+                                "raw_answer": "csdacdsa",
+                            },
+                            {
+                                "key": "reference",
+                                "answer": "casdcdsa",
+                                "datatype": "string",
+                                "question": "Reference",
+                                "raw_answer": "casdcdsa",
+                            },
+                            {
+                                "key": "date_of_issue",
+                                "answer": "2024-01-01",
+                                "datatype": "date",
+                                "question": "Date of issue",
+                                "raw_answer": "2024-01-01",
+                            },
+                            {
+                                "key": "end_user_intended_end_use",
+                                "answer": "australia intended use",
+                                "datatype": "string",
+                                "question": "How does the end-user intend to use this product",
+                                "raw_answer": "australia intended use",
+                            },
+                            {
+                                "key": "assemble_manufacture",
+                                "answer": ["No"],
+                                "datatype": "list",
+                                "question": "Does this end-user need to assemble or manufacture any of the products?",
+                                "raw_answer": ["no"],
+                            },
+                            {
+                                "key": "assemble",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Describe what assembly is needed.",
+                                "raw_answer": "",
+                            },
+                            {
+                                "key": "manufacture",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
+                                "raw_answer": "",
+                            },
+                        ],
+                    },
+                ],
+                "label": "User Information",
+            },
+            "product_information": {
+                "type": "single",
+                "label": "Product information",
+                "fields": [
+                    {
+                        "key": "product_name",
+                        "answer": "some product name",
+                        "datatype": "string",
+                        "question": "Give the item a descriptive name",
+                        "raw_answer": "some product name",
+                    },
+                    {
+                        "key": "product_description",
+                        "answer": "some product description",
+                        "datatype": "string",
+                        "question": "Describe the item",
+                        "raw_answer": "some product description",
+                    },
+                    {
+                        "key": "has_security_classification",
+                        "answer": "Yes",
+                        "datatype": "boolean",
+                        "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                        "raw_answer": True,
+                    },
+                    {
+                        "key": "prefix",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Enter a prefix (optional)",
+                        "raw_answer": "",
+                    },
+                    {
+                        "key": "security_classification",
+                        "answer": "Official",
+                        "datatype": "string",
+                        "question": "Select security classification",
+                        "raw_answer": "official",
+                    },
+                    {
+                        "key": "other_security_classification",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Enter the security classification",
+                        "raw_answer": "",
+                    },
+                    {
+                        "key": "suffix",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Enter a suffix (optional)",
+                        "raw_answer": "",
+                    },
+                    {
+                        "key": "issuing_authority_name_address",
+                        "answer": "csadcas",
+                        "datatype": "string",
+                        "question": "Name and address of the issuing authority",
+                        "raw_answer": "csadcas",
+                    },
+                    {
+                        "key": "reference",
+                        "answer": "fdfscsa",
+                        "datatype": "string",
+                        "question": "Reference",
+                        "raw_answer": "fdfscsa",
+                    },
+                    {
+                        "key": "date_of_issue",
+                        "answer": "0001-01-01",
+                        "datatype": "date",
+                        "question": "Date of issue",
+                        "raw_answer": "0001-01-01",
+                    },
+                    {
+                        "key": "is_foreign_tech_or_information_shared",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Will any foreign technology or information be shared with the item?",
+                        "raw_answer": False,
+                    },
+                    {
+                        "key": "is_including_cryptography_or_security_features",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Does the item include cryptography or other information security features?",
+                        "raw_answer": False,
+                    },
+                    {
+                        "key": "cryptography_or_security_feature_info",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Provide full details",
+                        "raw_answer": "",
+                    },
+                    {
+                        "key": "is_item_rated_under_mctr",
+                        "answer": "Yes, the product is MTCR Category 2",
+                        "datatype": "string",
+                        "question": "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
+                        "raw_answer": "mtcr_2",
+                    },
+                    {
+                        "key": "is_item_manpad",
+                        "answer": "Don't know",
+                        "datatype": "string",
+                        "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
+                        "raw_answer": "dont_know",
+                    },
+                    {
+                        "key": "is_mod_electronic_data_shared",
+                        "answer": "No",
+                        "datatype": "string",
+                        "question": "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?",
+                        "raw_answer": "no",
+                    },
+                    {
+                        "key": "funding_source",
+                        "answer": "MOD",
+                        "datatype": "string",
+                        "question": "Who is funding the item?",
+                        "raw_answer": "mod",
+                    },
+                    {
+                        "key": "is_used_by_uk_armed_forces",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Will the item be used by the UK Armed Forces?",
+                        "raw_answer": False,
+                    },
+                    {
+                        "key": "used_by_uk_armed_forces_info",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Explain how it will be used",
+                        "raw_answer": "",
+                    },
+                ],
+            },
+            "general_application_details": {
+                "type": "single",
+                "label": "General application details",
+                "fields": [
+                    {
+                        "key": "name",
+                        "answer": "some name",
+                        "datatype": "string",
+                        "question": "Name the application",
+                        "raw_answer": "some name",
+                    },
+                    {
+                        "key": "is_exceptional_circumstances",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
+                        "raw_answer": False,
+                    },
+                ],
+            },
+        }
+    }
+
+
+@pytest.fixture
+def data_submitted_f680_case(
+    data_application_json, data_australia_release_id, data_france_release_id, data_uae_release_id
+):
     submitted_at = timezone.now() - timedelta(days=7)
+    product_id = "67271217-7e55-4345-9db4-31de1bfe4066"
     return {
         "case": {
             "advice": [],
@@ -1236,30 +1800,7 @@ def data_submitted_f680_case():
             "copy_of": None,
             "countersign_advice": [],
             "data": {
-                "application": {
-                    "sections": {
-                        "general_application_details": {
-                            "label": "General application details",
-                            "type": "single",
-                            "fields": [
-                                {
-                                    "key": "name",
-                                    "answer": "some name",
-                                    "datatype": "string",
-                                    "question": "Name the application",
-                                    "raw_answer": "casdc",
-                                },
-                                {
-                                    "key": "is_exceptional_circumstances",
-                                    "answer": "No",
-                                    "datatype": "boolean",
-                                    "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
-                                    "raw_answer": False,
-                                },
-                            ],
-                        },
-                    }
-                },
+                "application": data_application_json,
                 "id": "67271217-7e55-4345-9db4-31de1bfe4067",
                 "organisation": {
                     "id": "1363b104-9669-4c53-8602-8fc3717b07cd",  # /PS-IGNORE
@@ -1271,6 +1812,84 @@ def data_submitted_f680_case():
                 "status": {"id": "00000000-0000-0000-0000-000000000001", "key": "submitted", "value": "Submitted"},
                 "submitted_at": submitted_at.isoformat(),
                 "submitted_by": None,
+                "product": {
+                    "id": product_id,
+                    "name": "some product name",
+                    "description": "some product description",
+                    "security_grading": {"key": "official", "value": "Official"},
+                    "security_grading_other": None,
+                },
+                "security_release_requests": [
+                    {
+                        "id": data_australia_release_id,
+                        "recipient": {
+                            "id": "8d6236bf-1d94-450d-98f9-97e7b428dea6",
+                            "name": "australia name",
+                            "address": "australia address",
+                            "country": {
+                                "id": "AU",
+                                "name": "Australia",
+                                "type": "gov.uk Country",
+                                "is_eu": False,
+                                "report_name": "",
+                            },
+                            "type": {"key": "third-party", "value": "Third party"},
+                            "role": {"key": "consultant", "value": "Consultant"},
+                            "role_other": None,
+                        },
+                        "security_grading": {"key": "secret", "value": "Secret"},
+                        "security_grading_other": "",
+                        "approval_types": ["demonstration_overseas", "training"],
+                        "intended_use": "australia intended use",
+                        "product_id": product_id,
+                    },
+                    {
+                        "id": data_france_release_id,
+                        "recipient": {
+                            "id": "8d6236bf-1d94-450d-98f9-97e7b428dea7",
+                            "name": "france name",
+                            "address": "france address",
+                            "country": {
+                                "id": "FR",
+                                "name": "France",
+                                "type": "gov.uk Country",
+                                "is_eu": True,
+                                "report_name": "",
+                            },
+                            "type": {"key": "ultimate-end-user", "value": "Ultimate end-user"},
+                            "role": None,
+                            "role_other": None,
+                        },
+                        "security_grading": {"key": "official", "value": "Official"},
+                        "security_grading_other": "",
+                        "approval_types": ["demonstration_overseas", "training"],
+                        "intended_use": "france intended use",
+                        "product_id": product_id,
+                    },
+                    {
+                        "id": data_uae_release_id,
+                        "recipient": {
+                            "id": "8d6236bf-1d94-450d-98f9-97e7b428dea8",
+                            "name": "uae name",
+                            "address": "uae address",
+                            "country": {
+                                "id": "AE",
+                                "name": "UAE",
+                                "type": "gov.uk Country",
+                                "is_eu": False,
+                                "report_name": "",
+                            },
+                            "type": {"key": "end-user", "value": "End-user"},
+                            "role": None,
+                            "role_other": None,
+                        },
+                        "security_grading": {"key": "top-secret", "value": "Top-secret"},
+                        "security_grading_other": "",
+                        "approval_types": ["demonstration_overseas", "training"],
+                        "intended_use": "uae intended use",
+                        "product_id": product_id,
+                    },
+                ],
             },
             "flags": [],
             "has_advice": {"final": False, "my_team": False, "my_user": False, "team": False, "user": False},
@@ -2725,3 +3344,11 @@ def beautiful_soup():
         return BeautifulSoup(html, "html.parser")
 
     return _beautiful_soup
+
+
+@pytest.fixture()
+def api_url():
+    def _api_url(path):
+        return client._build_absolute_uri(path)
+
+    return _api_url

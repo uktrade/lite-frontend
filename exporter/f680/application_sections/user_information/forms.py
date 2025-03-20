@@ -1,4 +1,5 @@
 from django import forms
+from django.template.loader import render_to_string
 from crispy_forms_gds.choices import Choice
 
 from core.common.forms import BaseForm
@@ -188,14 +189,15 @@ class SecurityGradingForm(BaseForm):
 
 class EndUserIntendedEndUseForm(BaseForm):
     class Layout:
-        TITLE = "How does the end-user intend to use this product"
+        TITLE = "How does the end-user intend to use this item"
         TITLE_AS_LABEL_FOR = "end_user_intended_end_use"
         SUBMIT_BUTTON_TEXT = "Save and continue"
+        SUBTITLE = render_to_string("f680/forms/subtitle_product_intended_use.html")
 
     end_user_intended_end_use = forms.CharField(
         label="",
         widget=forms.Textarea(attrs={"rows": "5"}),
-        help_text="Include as much information as you can. We need to know if they will integrate it into other equipment, involve any third parties, etc.",
+        help_text="",
     )
 
     def get_layout_fields(self):

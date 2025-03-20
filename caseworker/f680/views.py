@@ -48,19 +48,36 @@ class F680CaseworkerMixin(CaseworkerMixin):
         context_data["current_tab"] = self.current_tab
         context_data["queue_pk"] = self.queue_id
         context_data["caseworker"] = self.caseworker
+        submitted_by = self.case["data"]["submitted_by"]
+        if submitted_by and "first_name" in submitted_by:
+            self.case["data"]["submitted_by"] = " ".join([submitted_by["first_name"], submitted_by["last_name"]])
         return context_data
 
 
 class CaseDetailView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/detail.html"
-    current_tab = "details"
+    current_tab = "application-details"
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        submitted_by = self.case["data"]["submitted_by"]
-        if submitted_by and "first_name" in submitted_by:
-            self.case["data"]["submitted_by"] = " ".join([submitted_by["first_name"], submitted_by["last_name"]])
+        application_section_order = [
+            "general_application_details",
+            "approval_type",
+            "product_information",
+            "user_information",
+            "supporting_documents",
+            "notes_for_case_officers",
+        ]
+        application_sections = {
+            key: self.case["data"]["application"]["sections"].get(key, None) for key in application_section_order
+        }
+        context_data["application_sections"] = application_sections
         return context_data
+
+
+class CaseSummaryView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
+    template_name = "f680/case/summary.html"
+    current_tab = "application-summary"
 
 
 class MoveCaseForward(LoginRequiredMixin, View):
