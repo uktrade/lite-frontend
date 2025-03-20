@@ -48,6 +48,7 @@ class EntityTypeForm(BaseForm):
         ),
         label="",
         widget=forms.RadioSelect,
+        error_messages={"required": "Select the type of entity"},
     )
 
     def get_layout_fields(self):
@@ -93,6 +94,7 @@ class ThirdPartyRoleForm(BaseForm):
         ),
         label="",
         widget=forms.RadioSelect,
+        error_messages={"required": "Select a role"},
     )
 
     def get_layout_fields(self):
@@ -108,6 +110,7 @@ class EndUserNameForm(BaseForm):
     end_user_name = forms.CharField(
         label="",
         help_text="Name or organisation or individual",
+        error_messages={"required": "Enter a name"},
     )
 
     def get_layout_fields(self):
@@ -122,11 +125,13 @@ class EndUserAddressForm(BaseForm):
     address = forms.CharField(
         label="Address",
         widget=forms.Textarea(attrs={"rows": "5"}),
+        error_messages={"required": "Enter an address"},
     )
     country = forms.ChoiceField(
         label="Country",
         choices=[],
         widget=forms.widgets.Select(attrs={"data-module": "autocomplete-select"}),
+        error_messages={"required": "Enter or select a country"},
     )
 
     def __init__(self, *args, countries=None, **kwargs):
@@ -152,6 +157,7 @@ class SecurityGradingForm(BaseForm):
         choices="",
         label="Select security classification",
         widget=forms.RadioSelect,
+        error_messages={"required": "Select a security classification"},
     )
 
     other_security_classification = forms.CharField(label="Enter the security classification", required=False)
@@ -167,6 +173,7 @@ class SecurityGradingForm(BaseForm):
                 "parent_field": "security_classification",
                 "parent_field_response": "other",
                 "required_field": "other_security_classification",
+                "error_message": "Security classification cannot be blank",
             }
         )
 
@@ -200,6 +207,7 @@ class EndUserIntendedEndUseForm(BaseForm):
         label="",
         widget=forms.Textarea(attrs={"rows": "5"}),
         help_text="Include as much information as you can. We need to know if they will integrate it into other equipment, involve any third parties, etc.",
+        error_messages={"required": "Enter how the end-user will use the item"},
     )
 
     def get_layout_fields(self):
