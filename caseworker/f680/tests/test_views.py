@@ -6,6 +6,8 @@ from requests.exceptions import HTTPError
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
+from http import HTTPStatus
+
 from core import client
 from caseworker.f680 import rules as recommendation_rules
 
@@ -29,6 +31,18 @@ def mock_f680_case_with_submitted_by(f680_case_id, requests_mock, data_submitted
     data_submitted_f680_case["case"]["data"]["submitted_by"] = {"first_name": "foo", "last_name": "bar"}
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
     return requests_mock.get(url=url, json=data_submitted_f680_case)
+
+
+@pytest.fixture
+def mock_f680_case_activity_filters(f680_case_id, requests_mock, standard_case_activity_filters):
+    url = client._build_absolute_uri(f"/cases/{f680_case_id}/activity/filters/")
+    return requests_mock.get(url=url, json=standard_case_activity_filters)
+
+
+@pytest.fixture
+def mock_f680_case_activity(f680_case_id, requests_mock, standard_case_activity):
+    url = client._build_absolute_uri(f"/cases/{f680_case_id}/activity/")
+    return requests_mock.get(url=url, json=standard_case_activity)
 
 
 @pytest.fixture
@@ -57,7 +71,7 @@ class TestCaseDetailView:
     ):
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert dict(response.context["case"]) == data_submitted_f680_case["case"]
         soup = BeautifulSoup(response.content, "html.parser")
         assert f680_reference_code in soup.find("h1").text
@@ -115,7 +129,7 @@ class TestCaseDetailView:
     ):
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
     def test_GET_not_logged_in(
         self, client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_submitted_f680_case
@@ -123,7 +137,7 @@ class TestCaseDetailView:
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         expected_redirect_location = reverse("auth:login")
         response = client.get(url)
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url.startswith(expected_redirect_location)
 
     def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
@@ -139,7 +153,7 @@ class TestCaseSummaryView:
     ):
         url = reverse("cases:f680:summary", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert dict(response.context["case"]) == data_submitted_f680_case["case"]
         soup = BeautifulSoup(response.content, "html.parser")
         assert f680_reference_code in soup.find("h1").text
@@ -163,7 +177,7 @@ class TestCaseSummaryView:
         url = reverse("cases:f680:summary", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         expected_redirect_location = reverse("auth:login")
         response = client.get(url)
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url.startswith(expected_redirect_location)
 
     def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
@@ -177,19 +191,95 @@ class TestMoveCaseForwardView:
     def test_POST_not_assigned_permisison_denied(self, authorized_client, data_queue, mock_f680_case, f680_case_id):
         url = reverse("cases:f680:move_case_forward", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.post(url)
-        assert response.status_code == 403
+        assert response.status_code == HTTPStatus.FORBIDDEN
 
     def test_POST_no_f680_feature_flag_permission_denied(
         self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_feature_flag_disabled
     ):
         url = reverse("cases:f680:move_case_forward", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.post(url)
-        assert response.status_code == 403
+        assert response.status_code == HTTPStatus.FORBIDDEN
 
     def test_POST_success(
         self, authorized_client, data_queue, mock_f680_case_with_assigned_user, f680_case_id, mock_put_assigned_queues
     ):
         url = reverse("cases:f680:move_case_forward", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.post(url)
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url == reverse("queues:cases", kwargs={"queue_pk": data_queue["id"]})
+
+
+@pytest.fixture
+def mock_post_case_notes(requests_mock, f680_case_id):
+    return requests_mock.post(
+        f"/cases/{f680_case_id}/case-notes/",
+        json={},
+        status_code=HTTPStatus.CREATED,
+    )
+
+
+class TestNotesAndTimelineView:
+
+    @pytest.fixture(autouse=True)
+    def _setup(self, setup, data_queue, f680_case_id, mock_gov_users, requests_mock):
+        self.f680_case_id = f680_case_id
+        self.queue = data_queue
+        self.url = reverse(
+            "cases:f680:notes_and_timeline", kwargs={"queue_pk": self.queue["id"], "pk": self.f680_case_id}
+        )
+        self.gov_user_id = "1f288b81-2c26-439f-ac32-2a43c8b1a5cb"
+        requests_mock.get(
+            client._build_absolute_uri(f"/gov-users/"),
+            json={
+                "results": mock_gov_users,
+            },
+        )
+
+    def test_GET_not_logged_in(
+        self,
+        client,
+        mock_f680_case,
+        mock_f680_case_activity,
+        mock_f680_case_activity_filters,
+    ):
+        expected_redirect_location = reverse("auth:login")
+        response = client.get(self.url)
+        assert response.status_code == HTTPStatus.FOUND
+        assert response.url.startswith(expected_redirect_location)
+
+    def test_GET_success(
+        self,
+        authorized_client,
+        mock_f680_case,
+        mock_f680_case_activity,
+        mock_f680_case_activity_filters,
+    ):
+
+        response = authorized_client.get(self.url)
+        assert response.status_code == HTTPStatus.OK
+
+    def test_POST_success(
+        self,
+        authorized_client,
+        mock_f680_case,
+        mock_f680_case_activity,
+        mock_f680_case_activity_filters,
+        mock_post_case_notes,
+    ):
+        response = authorized_client.post(
+            self.url,
+            data={
+                "text": "Note text",
+                "mentions": [self.gov_user_id],
+            },
+        )
+        assert response.status_code == HTTPStatus.FOUND
+        assert (
+            response.url == f"/queues/00000000-0000-0000-0000-000000000001/cases/{self.f680_case_id}/f680/activities/"
+        )
+        assert mock_post_case_notes.called
+        assert mock_post_case_notes.last_request.json() == {
+            "is_urgent": False,
+            "mentions": [{"user": self.gov_user_id}],
+            "text": "Note text",
+        }
