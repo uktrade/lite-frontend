@@ -10,6 +10,8 @@ from django.http import StreamingHttpResponse
 
 from django_chunk_upload_handlers.s3 import S3FileUploadHandler
 
+from django_chunk_upload_handlers.clam_av import validate_virus_check_result
+
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +52,7 @@ def s3_client():
 def validate_mime_type(file):
     if isinstance(file, UnacceptableMimeTypeFile):
         raise ValidationError(
-            "The file type is not supported. Upload a supported file type",
+            "The selected file must be a DOCX, DOC, PDF, PNG, JPEG or ODT",
             code="invalid_mime_type",
         )
 

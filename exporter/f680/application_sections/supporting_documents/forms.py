@@ -15,7 +15,7 @@ class F680AttachSupportingDocument(BaseForm):
     file = forms.FileField(
         label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
         error_messages={
-            "required": "supporting document required",
+            "required": "Select a supporting document",
         },
         validators=[
             validate_mime_type,
