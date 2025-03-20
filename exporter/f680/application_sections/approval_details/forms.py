@@ -467,6 +467,7 @@ class ProductRatedUnderMTCR(BaseForm):
         ),
         widget=forms.RadioSelect,
         label="",
+        error_messages={"required": "Select yes if the product is rated under MTCR"},
     )
 
     def get_layout_fields(self):
@@ -493,6 +494,7 @@ class ProductMANPADs(BaseForm):
         ),
         widget=forms.RadioSelect,
         label="",
+        error_messages={"required": "Select yes if the product is a MANPADS"},
     )
 
     def get_layout_fields(self):
@@ -518,6 +520,7 @@ class ProductElectronicMODData(BaseForm):
         ),
         widget=forms.RadioSelect,
         label="",
+        error_messages={"required": "Select yes if EW data will be shared"},
     )
 
     def get_layout_fields(self):
@@ -554,6 +557,7 @@ class ProductFunding(BaseForm):
         ),
         widget=forms.RadioSelect,
         label="",
+        error_messages={"required": "Select who is funding the item"},
     )
 
     def get_layout_fields(self):
@@ -565,10 +569,23 @@ class ModSponsorDetails(BaseForm):
         TITLE = "Who is funding the item?"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    full_name = forms.CharField(label="Full name")
-    address = forms.CharField(label="Address", widget=forms.Textarea(attrs={"rows": 5}))
-    phone_number = forms.CharField(label="Phone number")
-    email_address = forms.EmailField(label="Email address")
+    full_name = forms.CharField(
+        label="Full name",
+        error_messages={"required": "Enter the sponsor's full name"},
+    )
+    address = forms.CharField(
+        label="Address",
+        widget=forms.Textarea(attrs={"rows": 5}),
+        error_messages={"required": "Enter the sponsor's address"},
+    )
+    phone_number = forms.CharField(
+        label="Phone number",
+        error_messages={"required": "Enter the sponsor's phone number"},
+    )
+    email_address = forms.EmailField(
+        label="Email address",
+        error_messages={"required": "Enter the sponsor's email address"},
+    )
 
     def get_layout_fields(self):
         return (
@@ -593,6 +610,7 @@ class ProductUsedByUKArmedForces(BaseForm):
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
+        error_messages={"required": "Select yes if UK armed forced will use the item"},
     )
 
     used_by_uk_armed_forces_info = forms.CharField(
@@ -607,6 +625,7 @@ class ProductUsedByUKArmedForces(BaseForm):
                 "parent_field": "is_used_by_uk_armed_forces",
                 "parent_field_response": True,
                 "required_field": "used_by_uk_armed_forces_info",
+                "error_message": "Details about how the item will be used cannot be blank",
             }
         )
 

@@ -587,22 +587,37 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_RATED_UNDER_MTCR,
                 {"is_item_rated_under_mctr": ""},
-                {"is_item_rated_under_mctr": ["This field is required."]},
+                {"is_item_rated_under_mctr": ["Select yes if the product is rated under MTCR"]},
             ),
             (
                 FormSteps.PRODUCT_MANPAD,
                 {"is_item_manpad": ""},
-                {"is_item_manpad": ["This field is required."]},
+                {"is_item_manpad": ["Select yes if the product is a MANPADS"]},
             ),
             (
                 FormSteps.PRODUCT_ELECTRONICMODDATA,
                 {"is_mod_electronic_data_shared": ""},
-                {"is_mod_electronic_data_shared": ["This field is required."]},
+                {"is_mod_electronic_data_shared": ["Select yes if EW data will be shared"]},
             ),
             (
                 FormSteps.PRODUCT_FUNDING,
                 {"funding_source": ""},
-                {"funding_source": ["This field is required."]},
+                {"funding_source": ["Select who is funding the item"]},
+            ),
+            (
+                FormSteps.MOD_SPONSOR_DETAILS,
+                {
+                    "full_name": "",
+                    "address": "",
+                    "phone_number": "",
+                    "email_address": "",
+                },
+                {
+                    "full_name": ["Enter the sponsor's full name"],
+                    "address": ["Enter the sponsor's address"],
+                    "phone_number": ["Enter the sponsor's phone number"],
+                    "email_address": ["Enter the sponsor's email address"],
+                },
             ),
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
@@ -636,6 +651,11 @@ class TestProductInformationViews:
                     "itar_approval_scope": ["Enter details about the ITAR approval scope"],
                     "expected_time_in_possession": ["Enter how long you'll possess the technology or information"],
                 },
+            ),
+            (
+                FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
+                {},
+                {"is_used_by_uk_armed_forces": ["Select yes if UK armed forced will use the item"]},
             ),
         ),
     )
@@ -1190,7 +1210,7 @@ class TestProductInformationViews:
                 FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
                 {"is_used_by_uk_armed_forces": True, "used_by_uk_armed_forces_info": ""},
                 "used_by_uk_armed_forces_info",
-                ["Required information"],
+                ["Details about how the item will be used cannot be blank"],
             ),
         ),
     )
