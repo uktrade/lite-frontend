@@ -74,7 +74,7 @@ def test_can_user_make_f680_recommendation_user_not_allocated(mock_gov_user, dat
     assert not rules.test_rule("can_user_make_f680_recommendation", request, case)
 
 
-@mock.patch("caseworker.f680.rules.current_user_recommendation")
+@mock.patch("caseworker.f680.rules.current_user_recommendations")
 def test_can_user_make_f680_recommendation_user_allocated_existing_recommendation(
     mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
 ):
@@ -83,21 +83,20 @@ def test_can_user_make_f680_recommendation_user_allocated_existing_recommendatio
     assert not rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
 
 
-@pytest.mark.parametrize(
-    "queue_alias",
-    (
-        services.MOD_CAPPROT_TEAM,
-        services.MOD_DSR_TEAM,
-    ),
-)
+@mock.patch("caseworker.f680.rules.current_user_recommendations")
 def test_can_user_make_f680_recommendation_user_allocated_incorrect_case_status(
-    queue_alias, mock_gov_user, data_fake_queue, data_assigned_case
+    mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
 ):
+    mock_get_my_recommendation.return_value = True
     request = get_allocated_request_user(mock_gov_user, data_fake_queue)
     assert not rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
 
 
-def test_can_user_make_f680_recommendation_user_allocated(mock_gov_user, data_fake_queue, data_assigned_case):
+@mock.patch("caseworker.f680.rules.current_user_recommendations")
+def test_can_user_make_f680_recommendation_user_allocated(
+    mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
+):
+    mock_get_my_recommendation.return_value = False
     data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
 
     request = get_allocated_request_user(mock_gov_user, data_fake_queue)

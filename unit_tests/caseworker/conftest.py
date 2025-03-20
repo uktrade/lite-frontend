@@ -814,6 +814,8 @@ def mock_proviso(requests_mock):
     data = {
         "results": [
             {"name": "firearm serial numbers", "text": "Firearm serial numbers text"},
+            {"name": "no release", "text": "No release of capability details"},
+            {"name": "no specifications", "text": "No release of specifications"},
         ]
     }
     return requests_mock.get(url=url, json=data)
