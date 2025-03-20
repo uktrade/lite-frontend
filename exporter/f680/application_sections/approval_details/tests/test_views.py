@@ -216,7 +216,12 @@ class TestApprovalDetailsView:
     ):
         response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
-            {"approval_choices": ["training", "supply"], "approval_details_text": "some text"},
+            {
+                "approval_choices": ["demonstration_in_uk", "demonstration_overseas", "training", "supply"],
+                "approval_details_text": "some text",
+                "demonstration_in_uk": "details",
+                "demonstration_overseas": "details",
+            },
         )
         assert response.status_code == 302
         assert mock_patch_f680_application.called_once
@@ -229,22 +234,27 @@ class TestApprovalDetailsView:
                         "fields": [
                             {
                                 "key": "approval_choices",
-                                "answer": ["Training", "Supply"],
-                                "raw_answer": ["training", "supply"],
+                                "answer": [
+                                    "Demonstration in the United Kingdom to overseas customers",
+                                    "Demonstration overseas",
+                                    "Training",
+                                    "Supply",
+                                ],
+                                "raw_answer": ["demonstration_in_uk", "demonstration_overseas", "training", "supply"],
                                 "question": "Select the types of approvals you need",
                                 "datatype": "list",
                             },
                             {
                                 "key": "demonstration_in_uk",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "details",
+                                "raw_answer": "details",
                                 "question": "Explain what you are demonstrating and why",
                                 "datatype": "string",
                             },
                             {
                                 "key": "demonstration_overseas",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "details",
+                                "raw_answer": "details",
                                 "question": "Explain what you are demonstrating and why",
                                 "datatype": "string",
                             },

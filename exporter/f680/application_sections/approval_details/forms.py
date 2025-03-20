@@ -84,12 +84,13 @@ class ApprovalTypeForm(BaseForm):
     )
 
     def clean(self):
+        required_fields = ["demonstration_in_uk", "demonstration_overseas"]
         cleaned_data = super().clean()
         approval_choices = cleaned_data.get("approval_choices", [])
-        required_fields = ["demonstration_in_uk", "demonstration_overseas"]
 
         for choice in approval_choices:
-            if choice in required_fields:
+            required_field_data = cleaned_data.get(choice, False)
+            if choice in required_fields and not required_field_data:
                 self.add_error(choice, "What you're demonstrating and why cannot be blank")
 
         return cleaned_data
