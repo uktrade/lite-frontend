@@ -31,20 +31,6 @@ class PicklistAdviceForm(forms.Form):
         return reasons_choices, reasons_text
 
 
-class SimpleLicenceConditionsForm(BaseForm):
-    class Layout:
-        TITLE = "Add licence conditions (optional)"
-
-    proviso = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7}),
-        label="Licence condition",
-        required=False,
-    )
-
-    def get_layout_fields(self):
-        return ("proviso",)
-
-
 class BaseRecommendationForm(BaseForm):
     class Layout:
         TITLE = ""
@@ -70,6 +56,7 @@ class BaseRecommendationForm(BaseForm):
         choices="",
         label="Select security classification",
         widget=forms.RadioSelect,
+        error_messages={"required": "Select the security classification"},
     )
     security_grading_other = forms.CharField(label="Enter the security classification", required=False)
     conditions = forms.CharField(
@@ -122,9 +109,9 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
         cleaned_data = super().clean()
         # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
         return {
-            "recommendation": cleaned_data["recommendation"],
-            "security_grading": cleaned_data["security_grading"],
-            "security_grading_other": cleaned_data["security_grading_other"],
+            "recommendation": cleaned_data.get("recommendation", ""),
+            "security_grading": cleaned_data.get("security_grading", ""),
+            "security_grading_other": cleaned_data.get("security_grading_other", ""),
             "security_release_request": self.release_request["id"],
             "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
         }
