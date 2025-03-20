@@ -149,3 +149,45 @@ def test_create_application_failure(
     soup = beautiful_soup(response.content)
     assert "Unexpected error creating application" in soup.text
     assert not mock_post_applications.called
+
+
+def test_create_application_success_with_indeterminate_export_licence_type(
+    authorized_client,
+    apply_for_an_export_licence_url,
+    post_to_step,
+    mock_post_applications,
+    application_id,
+    settings,
+    user_organisation_id,
+):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = [user_organisation_id]
+
+    response = authorized_client.get(apply_for_an_export_licence_url)
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ApplicationNameForm)
+
+    response = post_to_step(
+        ExportLicenceSteps.APPLICATION_NAME,
+        {
+            "name": "Application Name",
+        },
+    )
+    assert response.status_code == 200
+    assert isinstance(response.context["form"], ToldByAnOfficialForm)
+
+    response = post_to_step(
+        ExportLicenceSteps.TOLD_BY_AN_OFFICIAL,
+        {
+            "have_you_been_informed": "yes",
+            "reference_number_on_information_form": "CRE/2020/1234567",
+        },
+    )
+    assert response.status_code == 302
+    assert response.url == reverse("applications:task_list", kwargs={"pk": application_id})
+    assert mock_post_applications.last_request.json() == {
+        "application_type": "siel",
+        "export_type": "permanent",
+        "have_you_been_informed": "yes",
+        "name": "Application Name",
+        "reference_number_on_information_form": "CRE/2020/1234567",
+    }
