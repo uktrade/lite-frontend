@@ -53,9 +53,11 @@ class BaseForm(forms.Form):
 
     def add_required_to_conditional_text_field(self, field_data):
         """
-        This function accepts a dict with the keys parent_field, parent_field_response and required_field to
-        define the elements of the form targetted and the required information.  There is an optional key of
-        error_message which can define a customer error message instead of the "Required information" default
+        This function allows us to set a text field which appears conditionally based on a response from a
+        parent field to be set as required It accepts a dict with the keys parent_field, parent_field_response
+        and required_field to define the fields of the form targetted and the required information.  There is
+        an optional key of error_message which can define a customer error message instead of the "Required
+        information" default.
         """
         cleaned_data = super().clean()
         cleaned_parent_field = cleaned_data.get(field_data.get("parent_field"))

@@ -66,6 +66,8 @@ class ApprovalTypeForm(BaseForm):
         label="Explain what you are demonstrating and why",
         help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
+        # Required is set to False here but added in clean method as these textboxes only appear when
+        # the option with the same name is ticked
         required=False,
     )
 
@@ -73,6 +75,8 @@ class ApprovalTypeForm(BaseForm):
         label="Explain what you are demonstrating and why",
         help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
+        # Required is set to False here but added in clean method as these textboxes only appear when
+        # the option with the same name is ticked
         required=False,
     )
 
@@ -209,6 +213,7 @@ class ProductSecurityClassificationForm(BaseForm):
     )
     other_security_classification = forms.CharField(
         label="Enter the security classification",
+        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
         required=False,
     )
     suffix = forms.CharField(
@@ -330,6 +335,7 @@ class ProductControlledUnderItar(BaseForm):
             "Include countries classification levels and reference numbers."
             "  You can upload supporting documents later in your application"
         ),
+        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
         required=False,
     )
 
@@ -427,6 +433,7 @@ class ProductIncludeCryptography(BaseForm):
     cryptography_or_security_feature_info = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 5}),
         label="Provide full details",
+        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
         required=False,
     )
 
@@ -623,6 +630,7 @@ class ProductUsedByUKArmedForces(BaseForm):
     used_by_uk_armed_forces_info = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 5}),
         label="Explain how it will be used",
+        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
         required=False,
     )
 

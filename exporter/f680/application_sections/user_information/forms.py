@@ -161,7 +161,11 @@ class SecurityGradingForm(BaseForm):
         error_messages={"required": "Select a security classification"},
     )
 
-    other_security_classification = forms.CharField(label="Enter the security classification", required=False)
+    other_security_classification = forms.CharField(
+        label="Enter the security classification",
+        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
+        required=False,
+    )
 
     suffix = forms.CharField(
         label="Enter a suffix (optional)",
