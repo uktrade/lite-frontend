@@ -39,8 +39,8 @@ def mock_f680_case(f680_case_id, requests_mock, data_submitted_f680_case):
 
 @pytest.fixture
 def mock_post_recommendation(requests_mock, data_submitted_f680_case):
-    user_recommendation_create_url = f"/cases/{data_submitted_f680_case['case']['id']}/user-advice/"
-    return requests_mock.post(user_recommendation_create_url, json={}, status_code=201)
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.post(url, json={}, status_code=201)
 
 
 @pytest.fixture

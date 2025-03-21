@@ -1,4 +1,6 @@
 import rules
+
+from collections import OrderedDict
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
@@ -30,8 +32,9 @@ class F680CaseworkerMixin(CaseworkerMixin):
         self.caseworker_id = str(self.request.session["lite_api_user_id"])
         data, _ = get_gov_user(self.request, self.caseworker_id)
         self.caseworker = data["user"]
-
-        self.recommendation_level = self.get_recommendation_level(self.case)
+        self.security_release_requests = OrderedDict()
+        for rr in self.case["data"]["security_release_requests"]:
+            self.security_release_requests[rr["id"]] = rr
 
         return super().dispatch(request, *args, **kwargs)
 

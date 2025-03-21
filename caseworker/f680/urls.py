@@ -23,17 +23,14 @@ urlpatterns = [
         name="recommendation",
     ),
     path(
-        "recommendation/select-recommendation-type/",
-        recommendation_views.SelectRecommendationTypeView.as_view(),
-        name="select_recommendation_type",
-    ),
-    path(
         "recommendation/view-my-recommendation/",
         recommendation_views.MyRecommendationView.as_view(),
         name="view_my_recommendation",
     ),
     path(
-        "recommendation/approve-all/", recommendation_views.GiveApprovalRecommendationView.as_view(), name="approve_all"
+        "recommendation/make-recommendation/",
+        recommendation_views.MakeRecommendationView.as_view(),
+        name="make_recommendation",
     ),
     path(
         "move-case-forward/",

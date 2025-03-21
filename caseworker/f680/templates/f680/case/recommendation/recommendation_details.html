@@ -7,7 +7,7 @@
         <br>
         <div class="govuk-grid-column-three-quarters">
             {% with user=recommendation.user decision=recommendation.type.key %}
-                {% if decision == 'approve' or decision == 'proviso' %}
+                {% if decision == 'approve' %}
                     {% include "f680/case/recommendation/includes/recommendation_details_approve.html" with recommendation=recommendation %}
                 {% elif decision == 'refuse' %}
                     {% include "f680/case/recommendation/includes/recommendation_details_refuse.html" with recommendation=recommendation %}
