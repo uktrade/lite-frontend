@@ -72,7 +72,7 @@ def test_invalid_file_type(file_upload_handler_settings, client):
         response = client.post(reverse("file-upload"), {"upload_file": f})
 
     assert not response.form.is_valid()
-    assert response.form.errors == {"upload_file": ["The file type is not supported. Upload a supported file type"]}
+    assert response.form.errors == {"upload_file": ["The selected file must be a DOCX, DOC, PDF, PNG, JPEG or ODT"]}
 
 
 @pytest.mark.urls(__name__)
@@ -81,7 +81,7 @@ def test_invalid_mime_type(file_upload_handler_settings, client):
         response = client.post(reverse("file-upload"), {"upload_file": f})
 
     assert not response.form.is_valid()
-    assert response.form.errors == {"upload_file": ["The file type is not supported. Upload a supported file type"]}
+    assert response.form.errors == {"upload_file": ["The selected file must be a DOCX, DOC, PDF, PNG, JPEG or ODT"]}
 
 
 @pytest.mark.parametrize("func_name", ["open", "chunks", "multiple_chunks", "__iter__", "__enter__", "obj"])

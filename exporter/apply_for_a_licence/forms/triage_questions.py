@@ -67,7 +67,7 @@ class LicenceTypeForm(FieldsetForm):
             ),
         ),
         error_messages={
-            "required": "Select the type of licence or clearance you need",
+            "required": "Select the type of licence or approval you need",
         },
         label="",
         widget=forms.RadioSelect,

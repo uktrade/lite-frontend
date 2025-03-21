@@ -50,7 +50,7 @@ def s3_client():
 def validate_mime_type(file):
     if isinstance(file, UnacceptableMimeTypeFile):
         raise ValidationError(
-            "The file type is not supported. Upload a supported file type",
+            "The selected file must be a DOCX, DOC, PDF, PNG, JPEG or ODT",
             code="invalid_mime_type",
         )
 

@@ -42,7 +42,7 @@ class Validation:
     SIC_NUMBERS_ONLY_ERROR_MESSAGE = "SIC code can only include numbers"
     SIC_NUMBER_LENGTH_ERROR_MESSAGE = "Enter a SIC code that is 5 numbers long, like 12345"
 
-    INVALID_PHONE_NUMBERS_ERROR_MESSAGE = "Invalid telephone number"
+    INVALID_PHONE_NUMBERS_ERROR_MESSAGE = "Enter a phone number, like 02890 960 001, 07787 900 982 or +447787 570 192"
 
     REGISTRATION_NUM_MIN_LENGTH_ERROR_MESSAGE = "The CRN or RC number is too short"
     REGISTRATION_NUM_MAX_LENGTH_ERROR_MESSAGE = "The CRN or RC number is too long"
