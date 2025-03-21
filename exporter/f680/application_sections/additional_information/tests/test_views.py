@@ -71,15 +71,16 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
             "notes_for_case_officers": {
                 "type": "single",
                 "label": "Notes for case officers",
-                "fields": [
-                    {
+                "fields": {
+                    "note": {
                         "key": "note",
                         "answer": "Some note text",
                         "datatype": "string",
                         "question": "Add note",
                         "raw_answer": "Some note text",
                     }
-                ],
+                },
+                "fields_sequence": ["note"],
             }
         }
     }
@@ -174,15 +175,16 @@ class TestAdditionalInformationView:
                 "sections": {
                     "notes_for_case_officers": {
                         "label": "Notes for case officers",
-                        "fields": [
-                            {
+                        "fields": {
+                            "note": {
                                 "key": "note",
                                 "answer": "Some information",
                                 "raw_answer": "Some information",
                                 "question": "Add note",
                                 "datatype": "string",
                             }
-                        ],
+                        },
+                        "fields_sequence": ["note"],
                         "type": "single",
                     }
                 },
