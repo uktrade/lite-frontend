@@ -44,7 +44,7 @@ def mock_f680_application_get(requests_mock, data_f680_case, application_id):
 def document_data(application_id):
     return [
         {
-            "id": "a66ebfb3-72c8-4a63-82f6-0519830729ce",
+            "id": "a66ebfb3-72c8-4a63-82f6-0519830729ce",  # /PS-IGNORE
             "name": "sample_doc.pdf",
             "s3_key": "sample_doc.pdf",
             "description": "my item",
@@ -234,22 +234,23 @@ class TestSupportingDocumentsAttachView:
             "items": [
                 {
                     "id": document_data[0]["id"],
-                    "fields": [
-                        {
+                    "fields": {
+                        "file": {
                             "key": "file",
                             "answer": document_data[0]["name"],
                             "raw_answer": document_data[0]["name"],
                             "question": "file",
                             "datatype": "string",
                         },
-                        {
+                        "description": {
                             "key": "description",
                             "answer": document_data[0]["description"],
                             "raw_answer": document_data[0]["description"],
                             "question": "description",
                             "datatype": "string",
                         },
-                    ],
+                    },
+                    "fields_sequence": ["file", "description"],
                 }
             ],
             "type": "multiple",
