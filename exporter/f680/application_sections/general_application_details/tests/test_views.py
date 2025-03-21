@@ -88,49 +88,57 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
             "general_application_details": {
                 "label": "General application details",
                 "type": "single",
-                "fields": [
-                    {
+                "fields": {
+                    "name": {
                         "key": "name",
                         "answer": "my first F680",
                         "raw_answer": "my first F680",
                         "question": "What is the name of the application?",
                         "datatype": "string",
                     },
-                    {
+                    "previous_application_ecju_reference": {
                         "key": "previous_application_ecju_reference",
                         "answer": "123456",
                         "raw_answer": "123456",
                         "question": "What is the ECJU reference number?",
                         "datatype": "string",
                     },
-                    {
+                    "previous_application_details": {
                         "key": "previous_application_details",
                         "answer": "some info",
                         "raw_answer": "some info",
                         "question": "Can you provide more detail?",
                         "datatype": "string",
                     },
-                    {
+                    "is_exceptional_circumstances": {
                         "key": "is_exceptional_circumstances",
                         "answer": "Yes",
                         "raw_answer": True,
                         "question": "Are there exceptional circumstances?",
                         "datatype": "boolean",
                     },
-                    {
+                    "exceptional_circustances_date": {
                         "key": "exceptional_circumstances_date",
                         "answer": "2090-01-01",
                         "raw_answer": "2090-01-01",
                         "question": "What date do you need it?",
                         "datatype": "date",
                     },
-                    {
+                    "exceptional_circumstances_reason": {
                         "key": "exceptional_circumstances_reason",
                         "answer": "some reason",
                         "raw_answer": "some reason",
                         "question": "What makes the circumstances exceptional?",
                         "datatype": "string",
                     },
+                },
+                "fields_sequence": [
+                    "name",
+                    "previous_application_ecju_reference",
+                    "previous_application_details",
+                    "is_exceptional_circumstances",
+                    "exceptional_circumstances_date",
+                    "exceptional_circumstances_reason",
                 ],
             },
         }
@@ -338,59 +346,68 @@ class TestGeneralApplicationDetailsView:
                 "sections": {
                     "general_application_details": {
                         "label": "General application details",
-                        "fields": [
-                            {
+                        "fields": {
+                            "name": {
                                 "key": "name",
                                 "answer": "some test app",
                                 "raw_answer": "some test app",
                                 "question": "Name the application",
                                 "datatype": "string",
                             },
-                            {
+                            "has_made_previous_application": {
                                 "key": "has_made_previous_application",
                                 "answer": "Yes",
                                 "raw_answer": True,
                                 "question": "Have you made a previous application?",
                                 "datatype": "boolean",
                             },
-                            {
+                            "previous_application_ecju_reference": {
                                 "key": "previous_application_ecju_reference",
                                 "answer": "123456",
                                 "raw_answer": "123456",
                                 "question": "What is the ECJU reference number?",
                                 "datatype": "string",
                             },
-                            {
+                            "previous_application_details": {
                                 "key": "previous_application_details",
                                 "answer": "some info",
                                 "raw_answer": "some info",
                                 "question": "Can you provide more detail?",
                                 "datatype": "string",
                             },
-                            {
+                            "is_exceptional_circumstances": {
                                 "key": "is_exceptional_circumstances",
                                 "answer": "Yes",
                                 "raw_answer": True,
                                 "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
                                 "datatype": "boolean",
                             },
-                            {
+                            "exceptional_circumstances_date": {
                                 "key": "exceptional_circumstances_date",
                                 "answer": "2026-12-01",
                                 "raw_answer": "2026-12-01",
                                 "question": "When do you need your F680 approval?",
                                 "datatype": "date",
                             },
-                            {
+                            "exceptional_circumstances_reason": {
                                 "key": "exceptional_circumstances_reason",
                                 "answer": "because",
                                 "raw_answer": "because",
                                 "question": "Why do you need approval in less than 30 days?",
                                 "datatype": "string",
                             },
-                        ],
+                        },
                         "type": "single",
-                    }
+                        "fields_sequence": [
+                            "name",
+                            "has_made_previous_application",
+                            "previous_application_ecju_reference",
+                            "previous_application_details",
+                            "is_exceptional_circumstances",
+                            "exceptional_circumstances_date",
+                            "exceptional_circumstances_reason",
+                        ],
+                    },
                 },
             }
         }

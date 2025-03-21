@@ -1,9 +1,7 @@
 import pytest
 
-from django.urls import (
-    reverse,
-    reverse_lazy,
-)
+from django.http import HttpResponse
+from django.urls import reverse
 
 
 @pytest.fixture()
@@ -12,32 +10,34 @@ def licence_type_url():
 
 
 @pytest.mark.parametrize(
-    "licence_type, update_settings, expected_url",
+    "licence_type, processor_class",
     (
-        ("export_licence", {}, reverse_lazy("apply_for_a_licence:export_licence_questions")),
-        ("f680", {"FEATURE_FLAG_ALLOW_F680": True}, reverse_lazy("apply_for_a_licence:f680_questions")),
-        (
-            "f680",
-            {"FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS": "f65fbf49-c14b-482b-833f-fe39bb26a51d"},  # /PS-IGNORE
-            reverse_lazy("apply_for_a_licence:f680_questions"),
-        ),
+        ("export_licence", "ExportLicenceLicenceTypeProcessor"),
+        ("f680", "F680LicenceLicenceTypeProcessor"),
     ),
 )
-def test_licence_type_redirects(
+def test_licence_type_delegates_to_processor(
     authorized_client,
     licence_type_url,
     licence_type,
+    processor_class,
+    mocker,
     settings,
-    update_settings,
-    expected_url,
 ):
-    for key, value in update_settings.items():
-        setattr(settings, key, value)
+    settings.FEATURE_FLAG_ALLOW_F680 = True
+
+    mock_process_class = mocker.patch(f"exporter.apply_for_a_licence.views.{processor_class}")
+    mock_process_object = mock_process_class()
+
+    returned_response = HttpResponse("OK")
+    mock_process_object.process.return_value = returned_response
 
     response = authorized_client.post(
         licence_type_url,
         data={"licence_type": licence_type},
     )
 
-    assert response.status_code == 302
-    assert response.url == expected_url
+    mock_process_class.assert_called_with(response.wsgi_request)
+
+    mock_process_object.process.assert_called()
+    assert response == returned_response

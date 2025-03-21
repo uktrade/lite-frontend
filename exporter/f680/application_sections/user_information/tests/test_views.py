@@ -1,5 +1,4 @@
 import pytest
-from datetime import datetime
 
 from django.urls import reverse
 from freezegun import freeze_time
@@ -61,105 +60,73 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case, data_
             "user_information": {
                 "items": [
                     {
-                        "fields": [
-                            {
+                        "fields": {
+                            "entity_type": {
                                 "answer": "End user",
                                 "datatype": "string",
                                 "key": "entity_type",
                                 "question": "Select type of entity",
                                 "raw_answer": "end-user",
                             },
-                            {
+                            "end_user_name": {
                                 "answer": "some end user name",
                                 "datatype": "string",
                                 "key": "end_user_name",
                                 "question": "End-user name",
                                 "raw_answer": "some end user name",
                             },
-                            {
+                            "address": {
                                 "answer": "some address",
                                 "datatype": "string",
                                 "key": "address",
                                 "question": "Address",
                                 "raw_answer": "some address",
                             },
-                            {
+                            "country": {
                                 "answer": "United States",
                                 "datatype": "string",
                                 "key": "country",
                                 "question": "Country",
                                 "raw_answer": "US",
                             },
-                            {
+                            "prefix": {
                                 "answer": "some prefix",
                                 "datatype": "string",
                                 "key": "prefix",
                                 "question": "Enter a prefix (optional)",
                                 "raw_answer": "some prefix",
                             },
-                            {
-                                "answer": "Unclassified",
+                            "security_classification": {
+                                "answer": "Official",
                                 "datatype": "string",
                                 "key": "security_classification",
                                 "question": "Select security classification",
-                                "raw_answer": "unclassified",
+                                "raw_answer": "official",
                             },
-                            {
-                                "answer": "",
-                                "datatype": "string",
-                                "key": "other_security_classification",
-                                "question": "Enter the security classification",
-                                "raw_answer": "",
-                            },
-                            {
+                            "suffix": {
                                 "answer": "some suffix",
                                 "datatype": "string",
                                 "key": "suffix",
                                 "question": "Enter a suffix (optional)",
                                 "raw_answer": "some suffix",
                             },
-                            {
-                                "answer": "some name and address",
-                                "datatype": "string",
-                                "key": "issuing_authority_name_address",
-                                "question": "Name and address of the issuing authority",
-                                "raw_answer": "some name and address",
-                            },
-                            {
-                                "answer": "some reference",
-                                "datatype": "string",
-                                "key": "reference",
-                                "question": "Reference",
-                                "raw_answer": "some reference",
-                            },
-                            {
-                                "answer": "2024-01-01",
-                                "datatype": "date",
-                                "key": "date_of_issue",
-                                "question": "Date of issue",
-                                "raw_answer": "2024-01-01",
-                            },
-                            {
+                            "end_user_intended_end_use": {
                                 "answer": "some end use",
                                 "datatype": "string",
                                 "key": "end_user_intended_end_use",
-                                "question": "How does the end-user intend to use this product",
+                                "question": "How does the end-user intend to use this item",
                                 "raw_answer": "some end use",
                             },
-                            {
-                                "answer": "Yes, assembled",
-                                "datatype": "string",
-                                "key": "assemble_manufacture",
-                                "question": "Does this end-user need to assemble or manufacture any of the products?",
-                                "raw_answer": "assemble",
-                            },
-                            {
-                                "answer": "some assembly",
-                                "datatype": "string",
-                                "key": "assemble",
-                                "question": "Describe what assembly is needed.",
-                                "raw_answer": "some assembly",
-                            },
+                        },
+                        "fields_sequence": [
+                            "entity_type",
+                            "end_user_name",
+                            "address",
+                            "country",
+                            "prefix",
+                            "security_classification",
+                            "suffix",
+                            "end_user_intended_end_use",
                         ],
                         "id": data_item_id,
                     }
@@ -239,20 +206,10 @@ class TestUserInformationView:
                 FormSteps.SECURITY_GRADING,
                 {
                     "prefix": "some prefix",
-                    "security_classification": "unclassified",
+                    "security_classification": "official",
                     "suffix": "some suffix",
-                    "issuing_authority_name_address": "some name address",
-                    "reference": "some reference",
-                    "date_of_issue_0": "1",
-                    "date_of_issue_1": "1",
-                    "date_of_issue_2": "2025",
                 },
                 forms.EndUserIntendedEndUseForm,
-            ),
-            (
-                FormSteps.INTENDED_END_USE,
-                {"end_user_intended_end_use": "some end use"},
-                forms.EndUserAssembleManufactureForm,
             ),
         ),
     )
@@ -294,24 +251,13 @@ class TestUserInformationView:
             ),
             (
                 FormSteps.SECURITY_GRADING,
-                {
-                    "security_classification": "unclassified",
-                },
-                {
-                    "issuing_authority_name_address": ["This field is required."],
-                    "reference": ["This field is required."],
-                    "date_of_issue": ["Enter the day, month and year"],
-                },
+                {},
+                {"security_classification": ["This field is required."]},
             ),
             (
                 FormSteps.INTENDED_END_USE,
                 {},
                 {"end_user_intended_end_use": ["This field is required."]},
-            ),
-            (
-                FormSteps.ASSEMBLE_MANUFACTURE,
-                {},
-                {"assemble_manufacture": ["This field is required."]},
             ),
         ),
     )
@@ -377,11 +323,6 @@ class TestUserInformationView:
                 "prefix": "some prefix",
                 "security_classification": "secret",
                 "suffix": "some suffix",
-                "issuing_authority_name_address": "some name address",
-                "reference": "some ref",
-                "date_of_issue_0": "1",
-                "date_of_issue_1": "1",
-                "date_of_issue_2": "2024",
             },
         )
         assert response.status_code == 200
@@ -391,16 +332,6 @@ class TestUserInformationView:
             FormSteps.INTENDED_END_USE,
             {
                 "end_user_intended_end_use": "some end use",
-            },
-        )
-        assert response.status_code == 200
-        assert type(response.context["form"]) == forms.EndUserAssembleManufactureForm
-
-        response = post_to_step(
-            FormSteps.ASSEMBLE_MANUFACTURE,
-            {
-                "assemble_manufacture": "assemble",
-                "assemble": "some assemble reason",
             },
         )
         assert response.status_code == 302
@@ -417,119 +348,89 @@ class TestUserInformationView:
                         "items": [
                             {
                                 "id": generated_uuid,
-                                "fields": [
-                                    {
+                                "fields": {
+                                    "entity_type": {
                                         "key": "entity_type",
                                         "answer": "Third party",
                                         "raw_answer": "third-party",
                                         "question": "Select type of entity",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "third_party_role": {
                                         "key": "third_party_role",
                                         "answer": "Consultant",
                                         "raw_answer": "consultant",
                                         "question": "Select the role of the third party",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "end_user_name": {
                                         "key": "end_user_name",
                                         "answer": "some end user name",
                                         "raw_answer": "some end user name",
                                         "question": "End-user name",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "address": {
                                         "key": "address",
                                         "answer": "some end user address",
                                         "raw_answer": "some end user address",
                                         "question": "Address",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "country": {
                                         "key": "country",
                                         "answer": "United States",
                                         "raw_answer": "US",
                                         "question": "Country",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "prefix": {
                                         "key": "prefix",
                                         "answer": "some prefix",
                                         "raw_answer": "some prefix",
                                         "question": "Enter a prefix (optional)",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "security_classification": {
                                         "key": "security_classification",
                                         "answer": "Secret",
                                         "raw_answer": "secret",
                                         "question": "Select security classification",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "other_security_classification": {
                                         "key": "other_security_classification",
                                         "answer": "",
                                         "raw_answer": "",
                                         "question": "Enter the security classification",
                                         "datatype": "string",
                                     },
-                                    {
+                                    "suffix": {
                                         "key": "suffix",
                                         "answer": "some suffix",
                                         "raw_answer": "some suffix",
                                         "question": "Enter a suffix (optional)",
                                         "datatype": "string",
                                     },
-                                    {
-                                        "key": "issuing_authority_name_address",
-                                        "answer": "some name address",
-                                        "raw_answer": "some name address",
-                                        "question": "Name and address of the issuing authority",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "reference",
-                                        "answer": "some ref",
-                                        "raw_answer": "some ref",
-                                        "question": "Reference",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "date_of_issue",
-                                        "answer": "2024-01-01",
-                                        "raw_answer": "2024-01-01",
-                                        "question": "Date of issue",
-                                        "datatype": "date",
-                                    },
-                                    {
+                                    "end_user_intended_end_use": {
                                         "key": "end_user_intended_end_use",
                                         "answer": "some end use",
                                         "raw_answer": "some end use",
-                                        "question": "How does the end-user intend to use this product",
+                                        "question": "How does the end-user intend to use this item",
                                         "datatype": "string",
                                     },
-                                    {
-                                        "key": "assemble_manufacture",
-                                        "answer": "Yes, assembled",
-                                        "raw_answer": "assemble",
-                                        "question": "Does this end-user need to assemble or manufacture any of the products?",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "assemble",
-                                        "answer": "some assemble reason",
-                                        "raw_answer": "some assemble reason",
-                                        "question": "Describe what assembly is needed.",
-                                        "datatype": "string",
-                                    },
-                                    {
-                                        "key": "manufacture",
-                                        "answer": "",
-                                        "raw_answer": "",
-                                        "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
-                                        "datatype": "string",
-                                    },
+                                },
+                                "fields_sequence": [
+                                    "entity_type",
+                                    "third_party_role",
+                                    "end_user_name",
+                                    "address",
+                                    "country",
+                                    "prefix",
+                                    "security_classification",
+                                    "other_security_classification",
+                                    "suffix",
+                                    "end_user_intended_end_use",
                                 ],
                             }
                         ],
@@ -587,11 +488,6 @@ class TestUserInformationView:
                 "prefix": "some prefix",
                 "security_classification": "secret",
                 "suffix": "some suffix",
-                "issuing_authority_name_address": "some name address",
-                "reference": "some ref",
-                "date_of_issue_0": "1",
-                "date_of_issue_1": "1",
-                "date_of_issue_2": "2024",
             },
         )
         assert response.status_code == 200
@@ -601,16 +497,6 @@ class TestUserInformationView:
             FormSteps.INTENDED_END_USE,
             {
                 "end_user_intended_end_use": "some end use",
-            },
-        )
-        assert response.status_code == 200
-        assert type(response.context["form"]) == forms.EndUserAssembleManufactureForm
-
-        response = post_to_step(
-            FormSteps.ASSEMBLE_MANUFACTURE,
-            {
-                "assemble_manufacture": "assemble",
-                "assemble": "some assemble reason",
             },
         )
         assert response.status_code == 302
@@ -625,119 +511,89 @@ class TestUserInformationView:
         # New record also present
         assert api_patch_payload["application"]["sections"]["user_information"]["items"][1] == {
             "id": generated_uuid,
-            "fields": [
-                {
+            "fields": {
+                "entity_type": {
                     "key": "entity_type",
                     "answer": "Third party",
                     "raw_answer": "third-party",
                     "question": "Select type of entity",
                     "datatype": "string",
                 },
-                {
+                "third_party_role": {
                     "key": "third_party_role",
                     "answer": "Consultant",
                     "raw_answer": "consultant",
                     "question": "Select the role of the third party",
                     "datatype": "string",
                 },
-                {
+                "end_user_name": {
                     "key": "end_user_name",
                     "answer": "some end user name",
                     "raw_answer": "some end user name",
                     "question": "End-user name",
                     "datatype": "string",
                 },
-                {
+                "address": {
                     "key": "address",
                     "answer": "some end user address",
                     "raw_answer": "some end user address",
                     "question": "Address",
                     "datatype": "string",
                 },
-                {
+                "country": {
                     "key": "country",
                     "answer": "United States",
                     "raw_answer": "US",
                     "question": "Country",
                     "datatype": "string",
                 },
-                {
+                "prefix": {
                     "key": "prefix",
                     "answer": "some prefix",
                     "raw_answer": "some prefix",
                     "question": "Enter a prefix (optional)",
                     "datatype": "string",
                 },
-                {
+                "security_classification": {
                     "key": "security_classification",
                     "answer": "Secret",
                     "raw_answer": "secret",
                     "question": "Select security classification",
                     "datatype": "string",
                 },
-                {
+                "other_security_classification": {
                     "key": "other_security_classification",
                     "answer": "",
                     "raw_answer": "",
                     "question": "Enter the security classification",
                     "datatype": "string",
                 },
-                {
+                "suffix": {
                     "key": "suffix",
                     "answer": "some suffix",
                     "raw_answer": "some suffix",
                     "question": "Enter a suffix (optional)",
                     "datatype": "string",
                 },
-                {
-                    "key": "issuing_authority_name_address",
-                    "answer": "some name address",
-                    "raw_answer": "some name address",
-                    "question": "Name and address of the issuing authority",
-                    "datatype": "string",
-                },
-                {
-                    "key": "reference",
-                    "answer": "some ref",
-                    "raw_answer": "some ref",
-                    "question": "Reference",
-                    "datatype": "string",
-                },
-                {
-                    "key": "date_of_issue",
-                    "answer": "2024-01-01",
-                    "raw_answer": "2024-01-01",
-                    "question": "Date of issue",
-                    "datatype": "date",
-                },
-                {
+                "end_user_intended_end_use": {
                     "key": "end_user_intended_end_use",
                     "answer": "some end use",
                     "raw_answer": "some end use",
-                    "question": "How does the end-user intend to use this product",
+                    "question": "How does the end-user intend to use this item",
                     "datatype": "string",
                 },
-                {
-                    "key": "assemble_manufacture",
-                    "answer": "Yes, assembled",
-                    "raw_answer": "assemble",
-                    "question": "Does this end-user need to assemble or manufacture any of the products?",
-                    "datatype": "string",
-                },
-                {
-                    "key": "assemble",
-                    "answer": "some assemble reason",
-                    "raw_answer": "some assemble reason",
-                    "question": "Describe what assembly is needed.",
-                    "datatype": "string",
-                },
-                {
-                    "key": "manufacture",
-                    "answer": "",
-                    "raw_answer": "",
-                    "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
-                    "datatype": "string",
-                },
+            },
+            "fields_sequence": [
+                "entity_type",
+                "third_party_role",
+                "end_user_name",
+                "address",
+                "country",
+                "prefix",
+                "security_classification",
+                "other_security_classification",
+                "suffix",
+                "end_user_intended_end_use",
             ],
         }
 
@@ -760,22 +616,14 @@ class TestUserInformationView:
                 forms.SecurityGradingForm,
                 {
                     "prefix": "some prefix",
-                    "security_classification": "unclassified",
+                    "security_classification": "official",
                     "suffix": "some suffix",
-                    "issuing_authority_name_address": "some name and address",
-                    "reference": "some reference",
-                    "date_of_issue": datetime(year=2024, month=1, day=1),
                 },
             ),
             (
                 FormSteps.INTENDED_END_USE,
                 forms.EndUserIntendedEndUseForm,
                 {"end_user_intended_end_use": "some end use"},
-            ),
-            (
-                FormSteps.ASSEMBLE_MANUFACTURE,
-                forms.EndUserAssembleManufactureForm,
-                {},
             ),
         ),
     )
@@ -828,15 +676,9 @@ class TestUserInformationSummaryView:
                 "address": "some address",
                 "country": "United States",
                 "prefix": "some prefix",
-                "security_classification": "Unclassified",
-                "other_security_classification": "",
+                "security_classification": "Official",
                 "suffix": "some suffix",
-                "issuing_authority_name_address": "some name and address",
-                "reference": "some reference",
-                "date_of_issue": "2024-01-01",
                 "end_user_intended_end_use": "some end use",
-                "assemble_manufacture": "Yes, assembled",
-                "assemble": "some assembly",
             }
         }
 
@@ -868,3 +710,31 @@ class TestUserInformationSummaryView:
         response = authorized_client.get(f680_user_information_summary_url)
         assert response.status_code == 200
         assert response.context["title"] == "Forbidden"
+
+    @pytest.mark.parametrize(
+        "step, data, required_field",
+        (
+            (
+                FormSteps.SECURITY_GRADING,
+                {"security_classification": "other", "other_security_classification": ""},
+                "other_security_classification",
+            ),
+        ),
+    )
+    def test_POST_to_step_with_required_conditional_validation_error(
+        self,
+        step,
+        data,
+        required_field,
+        post_to_step,
+        goto_step,
+        mock_f680_application_get,
+        force_third_party,
+    ):
+        goto_step(step)
+        response = post_to_step(
+            step,
+            data,
+        )
+        assert response.status_code == 200
+        assert response.context["form"][required_field].errors == ["Required information"]

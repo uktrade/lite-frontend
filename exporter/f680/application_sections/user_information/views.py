@@ -21,7 +21,6 @@ from .forms import (
     EndUserAddressForm,
     SecurityGradingForm,
     EndUserIntendedEndUseForm,
-    EndUserAssembleManufactureForm,
 )
 
 
@@ -38,7 +37,6 @@ class UserInformationView(F680MultipleItemApplicationSectionWizard):
         (FormSteps.END_USER_ADDRESS, EndUserAddressForm),
         (FormSteps.SECURITY_GRADING, SecurityGradingForm),
         (FormSteps.INTENDED_END_USE, EndUserIntendedEndUseForm),
-        (FormSteps.ASSEMBLE_MANUFACTURE, EndUserAssembleManufactureForm),
     ]
     condition_dict = {
         FormSteps.THIRD_PARTY_ROLE: is_third_party,
@@ -95,7 +93,7 @@ class UserInformationSummaryView(F680FeatureRequiredMixin, TemplateView):
             return {}
         user_entities = {}
         for entity in self.application["application"]["sections"]["user_information"]["items"]:
-            answers = {field["key"]: field["answer"] for field in entity["fields"]}
+            answers = {field["key"]: field["answer"] for field in entity["fields"].values()}
             user_entities[entity["id"]] = answers
         return user_entities
 
