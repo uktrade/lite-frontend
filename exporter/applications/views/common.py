@@ -32,10 +32,7 @@ from exporter.applications.forms.common import (
     ApplicationNameForm,
     ToldByAnOfficialForm,
 )
-from exporter.applications.helpers.check_your_answers import (
-    convert_application_to_check_your_answers,
-    get_application_type_string,
-)
+from exporter.applications.helpers.check_your_answers import convert_application_to_check_your_answers
 from exporter.applications.helpers.summaries import draft_summary
 from exporter.applications.helpers.task_list_sections import get_reference_number_description
 from exporter.applications.helpers.task_lists import get_application_task_list
@@ -364,7 +361,6 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
                 "application": self.application,
                 "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
                 "summary_page": True,
-                "application_type": get_application_type_string(self.application),
                 "notes": get_case_notes(self.request, self.case_id)["case_notes"],
                 "reference_code": get_reference_number_description(self.application),
             }
