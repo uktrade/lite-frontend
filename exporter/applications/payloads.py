@@ -16,11 +16,6 @@ class ExportLicencePayloadBuilder(MergingPayloadBuilder):
     def build(self, form_dict):
         payload = super().build(form_dict)
 
-        payload.update(
-            {
-                "application_type": "siel",
-                "export_type": "permanent",
-            }
-        )
+        payload.update({"export_type": "permanent"})
 
         return payload

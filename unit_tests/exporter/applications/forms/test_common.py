@@ -10,18 +10,18 @@ from exporter.applications.forms.common import (
 @pytest.mark.parametrize(
     "data, is_valid, cleaned_data, errors",
     (
-        ({"application_type": "siel"}, True, {"application_type": "siel"}, {}),
+        ({"licence_type": "siel"}, True, {"licence_type": "siel"}, {}),
         (
-            {"application_type": "ogel"},
+            {"licence_type": "ogel"},
             False,
             {},
-            {"application_type": ["Select a valid choice. ogel is not one of the available choices."]},
+            {"licence_type": ["Select a valid choice. ogel is not one of the available choices."]},
         ),
         (
-            {"application_type": "oiel"},
+            {"licence_type": "oiel"},
             False,
             {},
-            {"application_type": ["Select a valid choice. oiel is not one of the available choices."]},
+            {"licence_type": ["Select a valid choice. oiel is not one of the available choices."]},
         ),
     ),
 )
