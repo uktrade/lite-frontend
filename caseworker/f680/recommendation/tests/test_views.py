@@ -139,6 +139,8 @@ class TestF680MakeRecommendationView:
     def test_make_recommendation_post(
         self,
         authorized_client,
+        requests_mock,
+        f680_case_id,
         data_submitted_f680_case,
         make_recommendation_url,
         mock_f680_case,
@@ -155,6 +157,8 @@ class TestF680MakeRecommendationView:
                 "recommendation": RecommendationType.APPROVE,
                 "security_grading": "official",
                 "conditions": ["no_release", "no_specifications"],
+                "no_release": "no release",
+                "no_specifications": "no specifications",
             },
         )
         assert response.status_code == 200
@@ -167,6 +171,7 @@ class TestF680MakeRecommendationView:
                 "recommendation": RecommendationType.APPROVE,
                 "security_grading": "official",
                 "conditions": ["no_specifications"],
+                "no_specifications": "no specifications",
             },
         )
         assert response.status_code == 200
@@ -184,9 +189,41 @@ class TestF680MakeRecommendationView:
         assert response.status_code == 302
         assert response.url == view_recommendation_url
 
+        request = requests_mock.request_history.pop()
+        assert request.method == "POST"
+        assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
+        assert request.json() == [
+            {
+                "type": RecommendationType.APPROVE,
+                "conditions": "no release\n\n--------\nno specifications",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+            },
+            {
+                "type": RecommendationType.APPROVE,
+                "conditions": "no specifications",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[1]["id"],
+            },
+            {
+                "type": RecommendationType.REFUSE,
+                "conditions": "",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[2]["id"],
+            },
+        ]
+
     def test_make_recommendation_post_no_team_provisos(
         self,
         authorized_client,
+        requests_mock,
+        f680_case_id,
         data_submitted_f680_case,
         make_recommendation_url,
         mock_f680_case,
@@ -202,7 +239,7 @@ class TestF680MakeRecommendationView:
             {
                 "recommendation": RecommendationType.APPROVE,
                 "security_grading": "official",
-                "conditions": ["no_release", "no_specifications"],
+                "conditions": "no release",
             },
         )
         assert response.status_code == 200
@@ -214,7 +251,7 @@ class TestF680MakeRecommendationView:
             {
                 "recommendation": RecommendationType.APPROVE,
                 "security_grading": "official",
-                "conditions": ["no_specifications"],
+                "conditions": "no specifications",
             },
         )
         assert response.status_code == 200
@@ -226,11 +263,41 @@ class TestF680MakeRecommendationView:
             {
                 "recommendation": RecommendationType.REFUSE,
                 "security_grading": "official",
-                "conditions": [],
+                "conditions": "",
             },
         )
         assert response.status_code == 302
         assert response.url == view_recommendation_url
+
+        request = requests_mock.request_history.pop()
+        assert request.method == "POST"
+        assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
+        assert request.json() == [
+            {
+                "type": RecommendationType.APPROVE,
+                "conditions": "no release",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+            },
+            {
+                "type": RecommendationType.APPROVE,
+                "conditions": "no specifications",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[1]["id"],
+            },
+            {
+                "type": RecommendationType.REFUSE,
+                "conditions": "",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[2]["id"],
+            },
+        ]
 
 
 class TestF680MyRecommendationView:
