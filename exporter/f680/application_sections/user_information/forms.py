@@ -208,7 +208,6 @@ class EndUserIntendedEndUseForm(BaseForm):
     end_user_intended_end_use = forms.CharField(
         label="",
         widget=forms.Textarea(attrs={"rows": "5"}),
-        help_text="Include as much information as you can. We need to know if they will integrate it into other equipment, involve any third parties, etc.",
         error_messages={"required": "Enter how the end-user will use the item"},
     )
 

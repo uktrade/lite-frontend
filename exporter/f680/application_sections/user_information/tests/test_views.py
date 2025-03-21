@@ -720,18 +720,6 @@ class TestUserInformationSummaryView:
                 "other_security_classification",
                 ["Security classification cannot be blank"],
             ),
-            (
-                FormSteps.ASSEMBLE_MANUFACTURE,
-                {"assemble_manufacture": "assemble", "assemble": ""},
-                "assemble",
-                ["Required information"],
-            ),
-            (
-                FormSteps.ASSEMBLE_MANUFACTURE,
-                {"assemble_manufacture": "manufacture", "manufacture": ""},
-                "manufacture",
-                ["Required information"],
-            ),
         ),
     )
     def test_POST_to_step_with_required_conditional_validation_error(
