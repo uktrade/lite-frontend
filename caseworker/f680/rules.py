@@ -3,7 +3,11 @@ import rules
 from core.constants import CaseStatusEnum
 
 from caseworker.core.rules import is_user_allocated, get_logged_in_caseworker
-from caseworker.f680.recommendation.services import current_user_recommendations, filter_recommendation_by_team
+from caseworker.f680.recommendation.services import (
+    current_user_recommendations,
+    filter_recommendation_by_team,
+    get_case_recommendations,
+)
 
 
 RECOMMENDATION_STATUSES = [CaseStatusEnum.OGD_ADVICE]
@@ -35,8 +39,10 @@ def f680_case_ready_for_move(request, case):
         return True
 
     if case_status in RECOMMENDATION_STATUSES:
+        case_recommendations = get_case_recommendations(request, case)
+
         team = user["team"]
-        team_recommendations_exist = bool(filter_recommendation_by_team(case.advice, team["id"]))
+        team_recommendations_exist = bool(filter_recommendation_by_team(case_recommendations, team["id"]))
         if team_recommendations_exist:
             return True
 

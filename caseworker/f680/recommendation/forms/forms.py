@@ -107,7 +107,6 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
 
     def clean(self):
         cleaned_data = super().clean()
-        # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
         return {
             "recommendation": cleaned_data.get("recommendation", ""),
             "security_grading": cleaned_data.get("security_grading", ""),

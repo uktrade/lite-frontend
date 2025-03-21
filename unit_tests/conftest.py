@@ -1241,35 +1241,41 @@ def data_application_json(data_australia_release_id, data_france_release_id, dat
             "approval_type": {
                 "type": "single",
                 "label": "Approval type",
-                "fields": [
-                    {
+                "fields": {
+                    "approval_choices": {
                         "key": "approval_choices",
                         "answer": ["Demonstration overseas", "Training"],
                         "datatype": "list",
                         "question": "Select the types of approvals you need",
                         "raw_answer": ["demonstration_overseas", "training"],
                     },
-                    {
+                    "demonstration_in_uk": {
                         "key": "demonstration_in_uk",
                         "answer": "",
                         "datatype": "string",
                         "question": "Explain what you are demonstrating and why",
                         "raw_answer": "",
                     },
-                    {
+                    "demonstration_overseas": {
                         "key": "demonstration_overseas",
                         "answer": "",
                         "datatype": "string",
                         "question": "Explain what you are demonstrating and why",
                         "raw_answer": "",
                     },
-                    {
+                    "approval_details_text": {
                         "key": "approval_details_text",
                         "answer": "csda",
                         "datatype": "string",
                         "question": "Provide details about what you're seeking approval to do",
                         "raw_answer": "csda",
                     },
+                },
+                "fields_sequence": [
+                    "approval_choices",
+                    "demonstration_in_uk",
+                    "demonstration_overseas",
+                    "approval_details_text",
                 ],
             },
             "user_information": {
@@ -1277,339 +1283,391 @@ def data_application_json(data_australia_release_id, data_france_release_id, dat
                 "items": [
                     {
                         "id": data_france_release_id,
-                        "fields": [
-                            {
+                        "fields": {
+                            "entity_type": {
                                 "key": "entity_type",
                                 "answer": "Ultimate end-user",
                                 "datatype": "string",
                                 "question": "Select type of entity",
                                 "raw_answer": "ultimate-end-user",
                             },
-                            {
+                            "end_user_name": {
                                 "key": "end_user_name",
                                 "answer": "france name",
                                 "datatype": "string",
                                 "question": "End-user name",
                                 "raw_answer": "france name",
                             },
-                            {
+                            "address": {
                                 "key": "address",
                                 "answer": "france address",
                                 "datatype": "string",
                                 "question": "Address",
                                 "raw_answer": "france address",
                             },
-                            {
+                            "country": {
                                 "key": "country",
                                 "answer": "France",
                                 "datatype": "string",
                                 "question": "Country",
                                 "raw_answer": "FR",
                             },
-                            {
+                            "prefix": {
                                 "key": "prefix",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter a prefix (optional)",
                                 "raw_answer": "",
                             },
-                            {
+                            "security_classification": {
                                 "key": "security_classification",
                                 "answer": "Official",
                                 "datatype": "string",
                                 "question": "Select security classification",
                                 "raw_answer": "official",
                             },
-                            {
+                            "other_security_classification": {
                                 "key": "other_security_classification",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter the security classification",
                                 "raw_answer": "",
                             },
-                            {
+                            "suffix": {
                                 "key": "suffix",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter a suffix (optional)",
                                 "raw_answer": "",
                             },
-                            {
+                            "issuing_authority_name_address": {
                                 "key": "issuing_authority_name_address",
                                 "answer": "cdsacsad",
                                 "datatype": "string",
                                 "question": "Name and address of the issuing authority",
                                 "raw_answer": "cdsacsad",
                             },
-                            {
+                            "reference": {
                                 "key": "reference",
                                 "answer": "ref",
                                 "datatype": "string",
                                 "question": "Reference",
                                 "raw_answer": "ref",
                             },
-                            {
+                            "date_of_issue": {
                                 "key": "date_of_issue",
                                 "answer": "2024-01-01",
                                 "datatype": "date",
                                 "question": "Date of issue",
                                 "raw_answer": "2024-01-01",
                             },
-                            {
+                            "end_user_intended_end_use": {
                                 "key": "end_user_intended_end_use",
                                 "answer": "france intended use",
                                 "datatype": "string",
                                 "question": "How does the end-user intend to use this product",
                                 "raw_answer": "france intended use",
                             },
-                            {
+                            "assemble_manufacture": {
                                 "key": "assemble_manufacture",
                                 "answer": ["No"],
                                 "datatype": "list",
                                 "question": "Does this end-user need to assemble or manufacture any of the products?",
                                 "raw_answer": ["no"],
                             },
-                            {
+                            "assemble": {
                                 "key": "assemble",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Describe what assembly is needed.",
                                 "raw_answer": "",
                             },
-                            {
+                            "manufacture": {
                                 "key": "manufacture",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
                                 "raw_answer": "",
                             },
+                        },
+                        "fields_sequence": [
+                            "entity_type",
+                            "end_user_name",
+                            "address",
+                            "country",
+                            "prefix",
+                            "security_classification",
+                            "other_security_classification",
+                            "suffix",
+                            "issuing_authority_name_address",
+                            "reference",
+                            "date_of_issue",
+                            "end_user_intended_end_use",
+                            "assemble_manufacture",
+                            "assemble",
+                            "manufacture",
                         ],
                     },
                     {
                         "id": data_uae_release_id,
-                        "fields": [
-                            {
+                        "fields": {
+                            "entity_type": {
                                 "key": "entity_type",
                                 "answer": "End user",
                                 "datatype": "string",
                                 "question": "Select type of entity",
                                 "raw_answer": "end-user",
                             },
-                            {
+                            "end_user_name": {
                                 "key": "end_user_name",
                                 "answer": "uae name",
                                 "datatype": "string",
                                 "question": "End-user name",
                                 "raw_answer": "uae name",
                             },
-                            {
+                            "address": {
                                 "key": "address",
                                 "answer": "uae address",
                                 "datatype": "string",
                                 "question": "Address",
                                 "raw_answer": "uae address",
                             },
-                            {
+                            "country": {
                                 "key": "country",
                                 "answer": "United Arab Emirates",
                                 "datatype": "string",
                                 "question": "Country",
                                 "raw_answer": "AE",
                             },
-                            {
+                            "prefix": {
                                 "key": "prefix",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter a prefix (optional)",
                                 "raw_answer": "",
                             },
-                            {
+                            "security_classification": {
                                 "key": "security_classification",
                                 "answer": "Top-Secret",
                                 "datatype": "string",
                                 "question": "Select security classification",
                                 "raw_answer": "top-secret",
                             },
-                            {
+                            "other_security_classification": {
                                 "key": "other_security_classification",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter the security classification",
                                 "raw_answer": "",
                             },
-                            {
+                            "suffix": {
                                 "key": "suffix",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter a suffix (optional)",
                                 "raw_answer": "",
                             },
-                            {
+                            "issuing_authority_name_address": {
                                 "key": "issuing_authority_name_address",
                                 "answer": "casdcdsa",
                                 "datatype": "string",
                                 "question": "Name and address of the issuing authority",
                                 "raw_answer": "casdcdsa",
                             },
-                            {
+                            "reference": {
                                 "key": "reference",
                                 "answer": "csd",
                                 "datatype": "string",
                                 "question": "Reference",
                                 "raw_answer": "csd",
                             },
-                            {
+                            "date_of_issue": {
                                 "key": "date_of_issue",
                                 "answer": "2024-01-01",
                                 "datatype": "date",
                                 "question": "Date of issue",
                                 "raw_answer": "2024-01-01",
                             },
-                            {
+                            "end_user_intended_end_use": {
                                 "key": "end_user_intended_end_use",
                                 "answer": "uae intended use",
                                 "datatype": "string",
                                 "question": "How does the end-user intend to use this product",
                                 "raw_answer": "uae intended use",
                             },
-                            {
+                            "assemble_manufacture": {
                                 "key": "assemble_manufacture",
                                 "answer": ["No"],
                                 "datatype": "list",
                                 "question": "Does this end-user need to assemble or manufacture any of the products?",
                                 "raw_answer": ["no"],
                             },
-                            {
+                            "assemble": {
                                 "key": "assemble",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Describe what assembly is needed.",
                                 "raw_answer": "",
                             },
-                            {
+                            "manufacture": {
                                 "key": "manufacture",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
                                 "raw_answer": "",
                             },
+                        },
+                        "fields_sequence": [
+                            "entity_type",
+                            "end_user_name",
+                            "address",
+                            "country",
+                            "prefix",
+                            "security_classification",
+                            "other_security_classification",
+                            "suffix",
+                            "issuing_authority_name_address",
+                            "reference",
+                            "date_of_issue",
+                            "end_user_intended_end_use",
+                            "assemble_manufacture",
+                            "assemble",
+                            "manufacture",
                         ],
                     },
                     {
                         "id": data_australia_release_id,
-                        "fields": [
-                            {
+                        "fields": {
+                            "entity_type": {
                                 "key": "entity_type",
                                 "answer": "Third party",
                                 "datatype": "string",
                                 "question": "Select type of entity",
                                 "raw_answer": "third-party",
                             },
-                            {
+                            "third_party_role": {
                                 "key": "third_party_role",
                                 "answer": "Consultant",
                                 "datatype": "string",
                                 "question": "Select the role of the third party",
                                 "raw_answer": "consultant",
                             },
-                            {
+                            "end_user_name": {
                                 "key": "end_user_name",
                                 "answer": "australia name",
                                 "datatype": "string",
                                 "question": "End-user name",
                                 "raw_answer": "australia name",
                             },
-                            {
+                            "address": {
                                 "key": "address",
                                 "answer": "australia address",
                                 "datatype": "string",
                                 "question": "Address",
                                 "raw_answer": "australia address",
                             },
-                            {
+                            "country": {
                                 "key": "country",
                                 "answer": "Australia",
                                 "datatype": "string",
                                 "question": "Country",
                                 "raw_answer": "AU",
                             },
-                            {
+                            "prefix": {
                                 "key": "prefix",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter a prefix (optional)",
                                 "raw_answer": "",
                             },
-                            {
+                            "security_classification": {
                                 "key": "security_classification",
                                 "answer": "Secret",
                                 "datatype": "string",
                                 "question": "Select security classification",
                                 "raw_answer": "secret",
                             },
-                            {
+                            "other_security_classification": {
                                 "key": "other_security_classification",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter the security classification",
                                 "raw_answer": "",
                             },
-                            {
+                            "suffix": {
                                 "key": "suffix",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Enter a suffix (optional)",
                                 "raw_answer": "",
                             },
-                            {
+                            "issuing_authority_name_address": {
                                 "key": "issuing_authority_name_address",
                                 "answer": "csdacdsa",
                                 "datatype": "string",
                                 "question": "Name and address of the issuing authority",
                                 "raw_answer": "csdacdsa",
                             },
-                            {
+                            "reference": {
                                 "key": "reference",
                                 "answer": "casdcdsa",
                                 "datatype": "string",
                                 "question": "Reference",
                                 "raw_answer": "casdcdsa",
                             },
-                            {
+                            "date_of_issue": {
                                 "key": "date_of_issue",
                                 "answer": "2024-01-01",
                                 "datatype": "date",
                                 "question": "Date of issue",
                                 "raw_answer": "2024-01-01",
                             },
-                            {
+                            "end_user_intended_end_use": {
                                 "key": "end_user_intended_end_use",
                                 "answer": "australia intended use",
                                 "datatype": "string",
                                 "question": "How does the end-user intend to use this product",
                                 "raw_answer": "australia intended use",
                             },
-                            {
+                            "assemble_manufacture": {
                                 "key": "assemble_manufacture",
                                 "answer": ["No"],
                                 "datatype": "list",
                                 "question": "Does this end-user need to assemble or manufacture any of the products?",
                                 "raw_answer": ["no"],
                             },
-                            {
+                            "assemble": {
                                 "key": "assemble",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Describe what assembly is needed.",
                                 "raw_answer": "",
                             },
-                            {
+                            "manufacture": {
                                 "key": "manufacture",
                                 "answer": "",
                                 "datatype": "string",
                                 "question": "Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
                                 "raw_answer": "",
                             },
+                        },
+                        "fields_sequence": [
+                            "entity_type",
+                            "third_party_role",
+                            "end_user_name",
+                            "address",
+                            "country",
+                            "prefix",
+                            "security_classification",
+                            "other_security_classification",
+                            "suffix",
+                            "issuing_authority_name_address",
+                            "reference",
+                            "date_of_issue",
+                            "end_user_intended_end_use",
+                            "assemble_manufacture",
+                            "assemble",
+                            "manufacture",
                         ],
                     },
                 ],
@@ -1618,161 +1676,183 @@ def data_application_json(data_australia_release_id, data_france_release_id, dat
             "product_information": {
                 "type": "single",
                 "label": "Product information",
-                "fields": [
-                    {
+                "fields": {
+                    "product_name": {
                         "key": "product_name",
                         "answer": "some product name",
                         "datatype": "string",
                         "question": "Give the item a descriptive name",
                         "raw_answer": "some product name",
                     },
-                    {
+                    "product_description": {
                         "key": "product_description",
                         "answer": "some product description",
                         "datatype": "string",
                         "question": "Describe the item",
                         "raw_answer": "some product description",
                     },
-                    {
+                    "has_security_classification": {
                         "key": "has_security_classification",
                         "answer": "Yes",
                         "datatype": "boolean",
                         "question": "Has the product been given a security classifcation by a UK MOD authority?",
                         "raw_answer": True,
                     },
-                    {
+                    "prefix": {
                         "key": "prefix",
                         "answer": "",
                         "datatype": "string",
                         "question": "Enter a prefix (optional)",
                         "raw_answer": "",
                     },
-                    {
+                    "security_classification": {
                         "key": "security_classification",
                         "answer": "Official",
                         "datatype": "string",
                         "question": "Select security classification",
                         "raw_answer": "official",
                     },
-                    {
+                    "other_security_classification": {
                         "key": "other_security_classification",
                         "answer": "",
                         "datatype": "string",
                         "question": "Enter the security classification",
                         "raw_answer": "",
                     },
-                    {
+                    "suffix": {
                         "key": "suffix",
                         "answer": "",
                         "datatype": "string",
                         "question": "Enter a suffix (optional)",
                         "raw_answer": "",
                     },
-                    {
+                    "issuing_authority_name_address": {
                         "key": "issuing_authority_name_address",
                         "answer": "csadcas",
                         "datatype": "string",
                         "question": "Name and address of the issuing authority",
                         "raw_answer": "csadcas",
                     },
-                    {
+                    "reference": {
                         "key": "reference",
                         "answer": "fdfscsa",
                         "datatype": "string",
                         "question": "Reference",
                         "raw_answer": "fdfscsa",
                     },
-                    {
+                    "date_of_issue": {
                         "key": "date_of_issue",
                         "answer": "0001-01-01",
                         "datatype": "date",
                         "question": "Date of issue",
                         "raw_answer": "0001-01-01",
                     },
-                    {
+                    "is_foreign_tech_or_information_shared": {
                         "key": "is_foreign_tech_or_information_shared",
                         "answer": "No",
                         "datatype": "boolean",
                         "question": "Will any foreign technology or information be shared with the item?",
                         "raw_answer": False,
                     },
-                    {
+                    "is_including_cryptography_or_security_features": {
                         "key": "is_including_cryptography_or_security_features",
                         "answer": "No",
                         "datatype": "boolean",
                         "question": "Does the item include cryptography or other information security features?",
                         "raw_answer": False,
                     },
-                    {
+                    "cryptography_or_security_feature_info": {
                         "key": "cryptography_or_security_feature_info",
                         "answer": "",
                         "datatype": "string",
                         "question": "Provide full details",
                         "raw_answer": "",
                     },
-                    {
+                    "is_item_rated_under_mctr": {
                         "key": "is_item_rated_under_mctr",
                         "answer": "Yes, the product is MTCR Category 2",
                         "datatype": "string",
                         "question": "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
                         "raw_answer": "mtcr_2",
                     },
-                    {
+                    "is_item_manpad": {
                         "key": "is_item_manpad",
                         "answer": "Don't know",
                         "datatype": "string",
                         "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
                         "raw_answer": "dont_know",
                     },
-                    {
+                    "is_mod_electronic_data_shared": {
                         "key": "is_mod_electronic_data_shared",
                         "answer": "No",
                         "datatype": "string",
                         "question": "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?",
                         "raw_answer": "no",
                     },
-                    {
+                    "funding_source": {
                         "key": "funding_source",
                         "answer": "MOD",
                         "datatype": "string",
                         "question": "Who is funding the item?",
                         "raw_answer": "mod",
                     },
-                    {
+                    "is_used_by_uk_armed_forces": {
                         "key": "is_used_by_uk_armed_forces",
                         "answer": "No",
                         "datatype": "boolean",
                         "question": "Will the item be used by the UK Armed Forces?",
                         "raw_answer": False,
                     },
-                    {
+                    "used_by_uk_armed_forces_info": {
                         "key": "used_by_uk_armed_forces_info",
                         "answer": "",
                         "datatype": "string",
                         "question": "Explain how it will be used",
                         "raw_answer": "",
                     },
+                },
+                "fields_sequence": [
+                    "product_name",
+                    "product_description",
+                    "has_security_classification",
+                    "prefix",
+                    "security_classification",
+                    "other_security_classification",
+                    "suffix",
+                    "issuing_authority_name_address",
+                    "reference",
+                    "date_of_issue",
+                    "is_foreign_tech_or_information_shared",
+                    "is_including_cryptography_or_security_features",
+                    "cryptography_or_security_feature_info",
+                    "is_item_rated_under_mctr",
+                    "is_item_manpad",
+                    "is_mod_electronic_data_shared",
+                    "funding_source",
+                    "is_used_by_uk_armed_forces",
+                    "used_by_uk_armed_forces_info",
                 ],
             },
             "general_application_details": {
                 "type": "single",
                 "label": "General application details",
-                "fields": [
-                    {
+                "fields": {
+                    "name": {
                         "key": "name",
                         "answer": "some name",
                         "datatype": "string",
                         "question": "Name the application",
                         "raw_answer": "some name",
                     },
-                    {
+                    "is_exceptional_circumstances": {
                         "key": "is_exceptional_circumstances",
                         "answer": "No",
                         "datatype": "boolean",
                         "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
                         "raw_answer": False,
                     },
-                ],
+                },
+                "fields_sequence": ["name", "is_exceptional_circumstances"],
             },
         }
     }

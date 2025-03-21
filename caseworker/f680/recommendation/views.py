@@ -134,12 +134,22 @@ class MakeRecommendationView(BaseRecommendationView):
             step = self.steps.current
 
         release_request = self.security_release_requests[step]
+        initial = {"security_grading": release_request["security_grading"]["key"]}
 
         picklist_form_kwargs = self.step_kwargs[RecommendationSteps.RELEASE_REQUEST_PROVISOS](self)
         picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
         if picklist_options_exist:
             return EntityConditionsRecommendationForm(
-                data=data, prefix=step, release_request=release_request, **picklist_form_kwargs
+                initial=initial,
+                prefix=step,
+                data=data,
+                release_request=release_request,
+                **picklist_form_kwargs,
             )
         else:
-            return BaseRecommendationForm(data=data, release_request=release_request, prefix=step)
+            return BaseRecommendationForm(
+                initial=initial,
+                prefix=step,
+                data=data,
+                release_request=release_request,
+            )

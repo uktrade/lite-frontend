@@ -65,7 +65,15 @@ def current_user_recommendations(request, case, caseworker):
 def get_case_recommendations(request, case):
     response = client.get(request, f"/caseworker/f680/{case['id']}/recommendation/")
     response.raise_for_status()
-    return response.json()
+
+    recommendations = response.json()
+    for item in recommendations:
+        release_id = item["security_release_request"]
+        item["security_release_request"] = next(
+            item for item in case["data"]["security_release_requests"] if item["id"] == release_id
+        )
+
+    return recommendations
 
 
 def post_recommendation(request, case, data):
