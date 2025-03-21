@@ -4,8 +4,11 @@
 <div id="tab-bar" class="app-case-tab-bar">
 	<div class="govuk-width-container lite-tabs__container">
         <div class="lite-tabs f680-tabs">
-            <a id="details" href="{% url 'cases:f680:details' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "details" %}lite-tabs__tab--selected{% endif %}">
-                Details
+            <a id="summary" href="{% url 'cases:f680:summary' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "application-summary" %}lite-tabs__tab--selected{% endif %}">
+                Summary
+            </a>
+            <a id="application-details" href="{% url 'cases:f680:details' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "application-details" %}lite-tabs__tab--selected{% endif %}">
+                Application Details
             </a>
             <a id="recommendations" href="{% url 'cases:f680:recommendation' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "recommendations" %}lite-tabs__tab--selected{% endif %}">
                 Recommendations

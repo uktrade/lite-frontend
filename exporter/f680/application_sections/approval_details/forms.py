@@ -533,10 +533,7 @@ class ProductElectronicMODData(BaseForm):
                 "is_mod_electronic_data_shared",
                 ConditionalRadiosQuestion(
                     "Yes",
-                    HTML.p(
-                        "You need to complete part A off the MOD EW Data Release Capture Form and attach "
-                        "it to the application in the supporting documents section"
-                    ),
+                    HTML(render_to_string("f680/forms/conditional_yes_electronic_warfare.html")),
                 ),
                 "No",
             ),

@@ -101,9 +101,8 @@ def test_f680_case_assignments_POST_remove_user_success(
     url = reverse("cases:remove-case-assignment", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
     response = authorized_client.post(url, data={"assignment_id": str(data_f680_assignment["id"])}, follow=True)
     assert response.status_code == 200
-    assert (
-        response.redirect_chain[-1][0]
-        == f"/queues/{data_queue['id']}/cases/{data_submitted_f680_case['case']['id']}/f680/"
+    assert response.redirect_chain[-1][0] == reverse(
+        "cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]}
     )
     messages = [str(msg) for msg in response.context["messages"]]
     expected_message = "some user was successfully removed as case adviser"
@@ -345,7 +344,7 @@ def test_case_assign_me(
     assert response.status_code == 200
     assert (
         response.wsgi_request.path
-        == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/"
+        == "/queues/00000000-0000-0000-0000-000000000001/cases/8fb76bed-fd45-4293-95b8-eda9468aa254/"  # /PS-IGNORE
     )
 
     html = BeautifulSoup(response.content, "html.parser")
@@ -377,9 +376,9 @@ def test_f680_case_assign_me(
     response = authorized_client.post(url, data=data, follow=True)
 
     assert response.status_code == 200
-    assert (
-        response.wsgi_request.path
-        == "/queues/00000000-0000-0000-0000-000000000001/cases/67271217-7e55-4345-9db4-31de1bfe4067/f680/"
+    assert response.wsgi_request.path == reverse(
+        "cases:f680:details",
+        kwargs={"queue_pk": "00000000-0000-0000-0000-000000000001", "pk": data_submitted_f680_case["case"]["id"]},
     )
 
     html = BeautifulSoup(response.content, "html.parser")

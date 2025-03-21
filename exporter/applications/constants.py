@@ -65,3 +65,9 @@ class OielLicenceTypes(Enum):
             OielLicenceTypes.DEALER.value,
             OielLicenceTypes.UK_CONTINENTAL_SHELF.value,
         ]
+
+
+class ExportLicenceSteps:
+    LICENCE_TYPE = "LICENCE_TYPE"
+    APPLICATION_NAME = "APPLICATION_NAME"
+    TOLD_BY_AN_OFFICIAL = "TOLD_BY_AN_OFFICIAL"
