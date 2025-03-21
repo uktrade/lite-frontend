@@ -704,6 +704,7 @@ class TestProductInformationViews:
         force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
+        force_mod_funded,
     ):
         goto_product_step(step)
         response = post_to_product_step(

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django import forms
+from django.core.validators import EmailValidator
 from django.db.models import TextChoices
 from django.template.loader import render_to_string
 
@@ -588,12 +589,12 @@ class ModSponsorDetails(BaseForm):
         },
         validators=[validate_phone],
     )
-    email_address = forms.EmailField(
+    email_address = forms.CharField(
         label="Email address",
         error_messages={
             "required": "Enter the sponsor's email address",
-            "invalid": "Enter an email address in the correct format, like name@example.com",
         },
+        validators=[EmailValidator("Enter an email address in the correct format, like name@example.com")],
     )
 
     def get_layout_fields(self):
