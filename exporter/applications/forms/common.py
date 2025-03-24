@@ -146,7 +146,7 @@ class LicenceTypeForm(FieldsetForm):
     class Layout:
         TITLE = "Select the type of export licence you need"
 
-    application_type = forms.ChoiceField(
+    licence_type = forms.ChoiceField(
         choices=(
             Choice(
                 CaseTypes.SIEL,
@@ -176,18 +176,18 @@ class LicenceTypeForm(FieldsetForm):
     def get_layout_fields(self):
         return (
             RenderTemplate("applications/use-spire-application-type.html"),
-            "application_type",
+            "licence_type",
         )
 
-    def clean_application_type(self):
+    def clean_licence_type(self):
         valid_choices = [
-            choice.value for choice in self.fields["application_type"].choices if not getattr(choice, "disabled", False)
+            choice.value for choice in self.fields["licence_type"].choices if not getattr(choice, "disabled", False)
         ]
-        value = self.cleaned_data["application_type"]
+        value = self.cleaned_data["licence_type"]
 
         if value not in valid_choices:
             raise ValidationError(
-                self.fields["application_type"].error_messages["invalid_choice"],
+                self.fields["licence_type"].error_messages["invalid_choice"],
                 code="invalid_choice",
                 params={"value": value},
             )

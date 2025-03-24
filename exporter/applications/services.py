@@ -606,3 +606,8 @@ def post_application_supporting_document(request, data, application_id):
 def get_application_supporting_document(request, application_id):
     response = client.get(request, f"/exporter/applications/{application_id}/document/")
     return response.json(), response.status_code
+
+
+def post_export_licence_application(request, json):
+    data = client.post(request, "/exporter/export-licences/application/", json)
+    return data.json(), data.status_code

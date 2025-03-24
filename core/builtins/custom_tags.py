@@ -26,10 +26,7 @@ from django.utils.safestring import mark_safe, SafeString
 
 from exporter.core.constants import (
     DATE_FORMAT,
-    CASE_SECTIONS,
     PAGE_DATE_FORMAT,
-    STANDARD,
-    OPEN,
     NOT_STARTED,
     DONE,
     IN_PROGRESS,
@@ -764,21 +761,8 @@ def getitem(obj, name):
 
 
 @register.filter()
-def application_type_in_list(application_type, application_types):
-    types = CASE_SECTIONS[application_types]
-    if isinstance(types, list):
-        return application_type in types
-    else:
-        return application_type == types
-
-
-@register.filter()
 def get_end_use_details_status(application):
-    fields = ["intended_end_use"]
-    if application.sub_type in [STANDARD, OPEN]:
-        fields += ["is_military_end_use_controls", "is_informed_wmd", "is_suspected_wmd"]
-        if application.sub_type == STANDARD:
-            fields.append("is_eu_military")
+    fields = ["intended_end_use", "is_military_end_use_controls", "is_informed_wmd", "is_suspected_wmd"]
     end_use_detail_field_data = [application.get(field) is not None for field in fields]
 
     if all(end_use_detail_field_data):
