@@ -1,4 +1,5 @@
 {% extends 'f680/case/base.html' %}
+{% load rules %}
 
 {% block title %} {{ title }} {% endblock %}
 
@@ -7,9 +8,12 @@
 
   <h1 class="govuk-heading-xl">View recommendation</h1>
 
-  <a id="clear-recommendation-button" role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:f680:clear_recommendation' queue_pk case.id %}">
-      Clear recommendation
-  </a>
+  {% test_rule 'can_user_clear_f680_recommendation' request case as can_user_clear_f680_recommendation %}
+  {% if can_user_clear_f680_recommendation %}
+    <a id="clear-recommendation-button" role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:f680:clear_recommendation' queue_pk case.id %}">
+        Clear recommendation
+    </a>
+  {% endif %}
 
   {% for recommendation in user_recommendations %}
       {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}

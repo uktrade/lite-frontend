@@ -213,3 +213,34 @@ def test_can_user_make_f680_outcome_request_missing_attributes(mock_gov_user, da
     request = None
 
     assert not recommendation_rules.case_ready_for_outcome(request, case)
+
+
+class TestClearF680RecommendationRule:
+
+    def test_request_missing_attributes(self, mock_gov_user, data_fake_queue, data_unassigned_case):
+        case = data_unassigned_case
+        request = None
+
+        assert not recommendation_rules.can_user_clear_f680_recommendation(request, case)
+
+    def test_user_not_allocated(self, mock_gov_user, data_fake_queue, data_unassigned_case):
+        case = data_unassigned_case
+        request = get_mock_request(mock_gov_user["user"], data_fake_queue)
+
+        assert not rules.test_rule("can_user_clear_f680_recommendation", request, case)
+
+    @mock.patch("caseworker.f680.rules.current_user_recommendations")
+    def test_with_no_user_recommendations(
+        self, mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
+    ):
+        mock_get_my_recommendation.return_value = []
+        request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+        assert not rules.test_rule("can_user_clear_f680_recommendation", request, data_assigned_case)
+
+    @mock.patch("caseworker.f680.rules.current_user_recommendations")
+    def test_with_user_recommendations(
+        self, mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
+    ):
+        mock_get_my_recommendation.return_value = [{"type": "approve"}, {"type": "refuse"}]
+        request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+        assert rules.test_rule("can_user_clear_f680_recommendation", request, data_assigned_case)
