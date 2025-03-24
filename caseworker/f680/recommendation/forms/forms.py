@@ -155,7 +155,8 @@ class ClearRecommendationForm(BaseForm):
         return [
             Submit("submit", "Confirm"),
             HTML(
-                """<a role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:f680:view_my_recommendation' queue_pk case.id %}">
+                """<a role="button" draggable="false" class="govuk-button govuk-button--secondary"
+                    href="{% url 'cases:f680:view_my_recommendation' queue_pk case.id %}">
                     Cancel
                 </a>"""
             ),
