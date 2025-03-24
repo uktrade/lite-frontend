@@ -2,9 +2,12 @@ import rules
 
 from core.constants import CaseStatusEnum
 
-from caseworker.advice.constants import AdviceLevel
 from caseworker.core.rules import is_user_allocated, get_logged_in_caseworker
-from caseworker.f680.recommendation.services import current_user_recommendation, filter_recommendation_by_team
+from caseworker.f680.recommendation.services import (
+    current_user_recommendations,
+    filter_recommendation_by_team,
+    get_case_recommendations,
+)
 
 
 RECOMMENDATION_STATUSES = [CaseStatusEnum.OGD_ADVICE]
@@ -19,8 +22,7 @@ def can_user_make_f680_recommendation(request, case):
     if not user:
         return False
 
-    level = AdviceLevel.FINAL if case["data"]["status"]["key"] in OUTCOME_STATUSES else AdviceLevel.USER
-    if current_user_recommendation(case.advice, user, level):
+    if current_user_recommendations(request, case, user):
         return False
 
     return case["data"]["status"]["key"] in RECOMMENDATION_STATUSES
@@ -37,8 +39,10 @@ def f680_case_ready_for_move(request, case):
         return True
 
     if case_status in RECOMMENDATION_STATUSES:
+        case_recommendations = get_case_recommendations(request, case)
+
         team = user["team"]
-        team_recommendations_exist = bool(filter_recommendation_by_team(case.advice, team["id"]))
+        team_recommendations_exist = bool(filter_recommendation_by_team(case_recommendations, team["id"]))
         if team_recommendations_exist:
             return True
 

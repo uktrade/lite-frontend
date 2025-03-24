@@ -5,20 +5,16 @@ from pytest_django.asserts import assertTemplateUsed
 
 from django.urls import reverse
 
-from caseworker.advice.constants import AdviceSteps
-from caseworker.f680.recommendation.forms.forms import (
-    FootnotesApprovalAdviceForm,
-    PicklistLicenceConditionsForm,
-    RecommendAnApprovalForm,
-    SelectRecommendationTypeForm,
-    SimpleLicenceConditionsForm,
-)
+from caseworker.f680.recommendation.constants import RecommendationType
+from caseworker.f680.recommendation.forms.forms import BaseRecommendationForm, EntityConditionsRecommendationForm
 from core import client
 from core.constants import CaseStatusEnum
 
 
 @pytest.fixture(autouse=True)
 def setup(
+    data_queue,
+    f680_case_id,
     mock_queue,
     mock_case,
     mock_approval_reason,
@@ -29,8 +25,8 @@ def setup(
 
 
 @pytest.fixture
-def url_approve(data_queue, f680_case_id):
-    return reverse("cases:f680:approve_all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+def make_recommendation_url(data_queue, f680_case_id):
+    return reverse("cases:f680:make_recommendation", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
 
 
 @pytest.fixture
@@ -39,8 +35,8 @@ def view_recommendation_url(data_queue, f680_case_id):
 
 
 @pytest.fixture
-def post_to_step(post_to_step_factory, url_approve):
-    return post_to_step_factory(url_approve)
+def post_to_step(post_to_step_factory, make_recommendation_url):
+    return post_to_step_factory(make_recommendation_url)
 
 
 @pytest.fixture
@@ -52,20 +48,34 @@ def mock_current_gov_user(requests_mock, f680_case_id):
 
 
 @pytest.fixture
-def recommendation(current_user, admin_team):
+def recommendations(current_user, admin_team, data_submitted_f680_case):
+    security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
     return [
         {
             "created_at": "2021-10-16T23:48:39.486679+01:00",
-            "denial_reasons": [],
             "id": "429c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
-            "level": "user",
-            "note": "additional notes",
-            "text": "No concerns",
             "type": {"key": "approve", "value": "Approve"},
+            "conditions": "No concerns",
+            "refusal_reasons": "",
+            "security_grading": {"key": "official", "value": "Official"},
+            "security_grading_other": "",
+            "security_release_request": security_release_requests[0]["id"],
             "user": current_user,
             "team": admin_team,
         }
     ]
+
+
+@pytest.fixture
+def mock_get_case_recommendations(requests_mock, data_submitted_f680_case, recommendations):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.get(url, json=recommendations, status_code=200)
+
+
+@pytest.fixture
+def mock_get_case_no_recommendations(requests_mock, data_submitted_f680_case, recommendations):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.get(url, json=[], status_code=200)
 
 
 class TestF680RecommendationView:
@@ -76,6 +86,7 @@ class TestF680RecommendationView:
         queue_f680_cases_to_review,
         current_user,
         mock_f680_case,
+        mock_get_case_no_recommendations,
         f680_case_id,
         f680_reference_code,
         data_submitted_f680_case,
@@ -98,26 +109,18 @@ class TestF680RecommendationView:
         assert make_recommendation_button
         assert (
             make_recommendation_button["href"]
-            == f'/queues/{queue_f680_cases_to_review["id"]}/cases/{f680_case_id}/f680/recommendation/select-recommendation-type/'
+            == f'/queues/{queue_f680_cases_to_review["id"]}/cases/{f680_case_id}/f680/recommendation/make-recommendation/'
         )
 
-    @pytest.mark.parametrize(
-        "recommendation_type",
-        [
-            {"key": "approve", "value": "Approve"},
-            {"key": "proviso", "value": "Proviso"},
-        ],
-    )
     def test_GET_recommendation_page_existing_recommendation(
         self,
         authorized_client,
         queue_f680_cases_to_review,
         current_user,
         mock_f680_case,
+        mock_get_case_recommendations,
         f680_case_id,
         data_submitted_f680_case,
-        recommendation,
-        recommendation_type,
     ):
         url = reverse(
             "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
@@ -125,207 +128,194 @@ class TestF680RecommendationView:
         data_submitted_f680_case["case"]["assigned_users"] = {
             queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]
         }
-        recommendation[0]["type"] = recommendation_type
-        data_submitted_f680_case["case"]["advice"] = recommendation
         response = authorized_client.get(url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
         assertTemplateUsed(response, "f680/case/recommendation/other-recommendations.html")
 
-        soup = BeautifulSoup(response.content, "html.parser")
-        all_teams_recommendation = soup.find_all("summary", {"class": "govuk-details__summary"})
-        assert len(all_teams_recommendation) == 1
-        actual_string = all_teams_recommendation[0].text.replace("\n", "").strip()
-        assert actual_string == f"{current_user['team']['name']}"
 
+class TestF680MakeRecommendationView:
 
-class TestF680SelectRecommendationTypeView:
-
-    def test_GET_select_recommendation_type(
-        self, authorized_client, data_queue, mock_f680_case, f680_case_id, f680_reference_code, data_submitted_f680_case
-    ):
-        url = reverse(
-            "cases:f680:select_recommendation_type", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id}
-        )
-        response = authorized_client.get(url)
-        assert response.status_code == 200
-        assertTemplateUsed(response, "f680/case/recommendation/select_recommendation_type.html")
-        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
-
-        form = response.context["form"]
-        assert isinstance(form, SelectRecommendationTypeForm)
-        assert form.fields["recommendation"].choices == [("approve_all", "Approve all")]
-
-    @pytest.mark.parametrize("recommendation, redirect", [("approve_all", "approve-all")])
-    def test_submit_select_recommendation_type(
+    def test_make_recommendation_post(
         self,
         authorized_client,
-        data_queue,
-        mock_f680_case,
+        requests_mock,
         f680_case_id,
-        f680_reference_code,
         data_submitted_f680_case,
-        recommendation,
-        redirect,
-    ):
-        url = reverse(
-            "cases:f680:select_recommendation_type", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id}
-        )
-        response = authorized_client.post(url, data={"recommendation": recommendation})
-        assert response.status_code == 302
-        assert (
-            response.url
-            == f'/queues/00000000-0000-0000-0000-000000000001/cases/{data_submitted_f680_case["case"]["id"]}/f680/recommendation/{redirect}/'
-        )
-
-
-class TestF680GiveApprovalRecommendationView:
-
-    def test_give_approval_advice_get(self, authorized_client, beautiful_soup, mock_f680_case, url_approve):
-        response = authorized_client.get(url_approve)
-        assert response.status_code == 200
-        assertTemplateUsed(response, "f680/case/recommendation/form_wizard.html")
-
-        soup = beautiful_soup(response.content)
-        header = soup.find("h1", {"class": "govuk-heading-xl"})
-        assert header.text == "Recommend an approval"
-
-        form = response.context["form"]
-        assert isinstance(form, RecommendAnApprovalForm)
-        assert list(form.fields.keys()) == ["approval_reasons", "approval_radios", "add_licence_conditions"]
-
-    def test_approval_advice_post_valid(
-        self,
-        authorized_client,
-        data_submitted_f680_case,
-        url_approve,
+        make_recommendation_url,
         mock_f680_case,
         mock_approval_reason,
         mock_proviso,
-        mock_footnote_details,
         mock_post_recommendation,
         post_to_step,
-        beautiful_soup,
+        view_recommendation_url,
     ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         response = post_to_step(
-            AdviceSteps.RECOMMEND_APPROVAL,
-            {"approval_reasons": "No concerns"},
+            security_release_requests[0]["id"],
+            {
+                "recommendation": RecommendationType.APPROVE,
+                "security_grading": "official",
+                "conditions": ["no_release", "no_specifications"],
+                "no_release": "no release",
+                "no_specifications": "no specifications",
+            },
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, EntityConditionsRecommendationForm)
+
+        response = post_to_step(
+            security_release_requests[1]["id"],
+            {
+                "recommendation": RecommendationType.APPROVE,
+                "security_grading": "official",
+                "conditions": ["no_specifications"],
+                "no_specifications": "no specifications",
+            },
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, EntityConditionsRecommendationForm)
+
+        response = post_to_step(
+            security_release_requests[2]["id"],
+            {
+                "recommendation": RecommendationType.REFUSE,
+                "security_grading": "official",
+                "conditions": [],
+            },
         )
         assert response.status_code == 302
+        assert response.url == view_recommendation_url
 
-    def test_approval_advice_post_valid_add_conditional(
+        request = requests_mock.request_history.pop()
+        assert request.method == "POST"
+        assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
+        assert request.json() == [
+            {
+                "type": RecommendationType.APPROVE,
+                "conditions": "no release\n\n--------\nno specifications",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+            },
+            {
+                "type": RecommendationType.APPROVE,
+                "conditions": "no specifications",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[1]["id"],
+            },
+            {
+                "type": RecommendationType.REFUSE,
+                "conditions": "",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[2]["id"],
+            },
+        ]
+
+    def test_make_recommendation_post_no_team_provisos(
         self,
         authorized_client,
-        data_queue,
+        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
-        url_approve,
+        make_recommendation_url,
         mock_f680_case,
         mock_approval_reason,
-        mock_proviso,
-        mock_footnote_details,
+        mock_no_provisos,
         mock_post_recommendation,
         post_to_step,
-        beautiful_soup,
+        view_recommendation_url,
     ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         response = post_to_step(
-            AdviceSteps.RECOMMEND_APPROVAL,
-            {"approval_reasons": "reason", "add_licence_conditions": True},
+            security_release_requests[0]["id"],
+            {
+                "recommendation": RecommendationType.APPROVE,
+                "security_grading": "official",
+                "conditions": "no release",
+            },
         )
         assert response.status_code == 200
-
-        soup = beautiful_soup(response.content)
-        # redirected to next form
         form = response.context["form"]
-        assert isinstance(form, PicklistLicenceConditionsForm)
+        assert isinstance(form, BaseRecommendationForm)
 
-        header = soup.find("h1")
-        assert header.text == "Add licence conditions (optional)"
-
-        add_LC_response = post_to_step(AdviceSteps.LICENCE_CONDITIONS, {"proviso": "proviso"})
-        assert add_LC_response.status_code == 200
-        soup = beautiful_soup(add_LC_response.content)
-        # redirected to next form
-        form = add_LC_response.context["form"]
-        assert isinstance(form, FootnotesApprovalAdviceForm)
-        header = soup.find("h1")
-        assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
-
-        add_instructions_response = post_to_step(
-            AdviceSteps.LICENCE_FOOTNOTES,
-            {"instructions_to_exporter": "instructions", "footnote_details": "footnotes"},
-        )
-        assert add_instructions_response.status_code == 302
-        assert (
-            add_instructions_response.url
-            == f'/queues/{data_queue["id"]}/cases/{f680_case_id}/f680/recommendation/view-my-recommendation/'
-        )
-
-    def test_approval_advice_post_valid_add_conditional_optional(
-        self,
-        authorized_client,
-        data_queue,
-        f680_case_id,
-        data_submitted_f680_case,
-        url_approve,
-        mock_f680_case,
-        mock_approval_reason,
-        mock_footnote_details,
-        mock_post_recommendation,
-        mock_proviso_no_results,
-        post_to_step,
-        beautiful_soup,
-    ):
         response = post_to_step(
-            AdviceSteps.RECOMMEND_APPROVAL,
-            {"approval_reasons": "reason", "add_licence_conditions": True},
+            security_release_requests[1]["id"],
+            {
+                "recommendation": RecommendationType.APPROVE,
+                "security_grading": "official",
+                "conditions": "no specifications",
+            },
         )
         assert response.status_code == 200
-
-        soup = beautiful_soup(response.content)
-        # redirected to next form
         form = response.context["form"]
-        assert isinstance(form, SimpleLicenceConditionsForm)
+        assert isinstance(form, BaseRecommendationForm)
 
-        header = soup.find("h1")
-        assert header.text == "Add licence conditions (optional)"
-
-        add_LC_response = post_to_step(AdviceSteps.LICENCE_CONDITIONS, {})
-        assert add_LC_response.status_code == 200
-        soup = beautiful_soup(add_LC_response.content)
-        # redirected to next form
-        form = add_LC_response.context["form"]
-        assert isinstance(form, FootnotesApprovalAdviceForm)
-        header = soup.find("h1")
-        assert header.text == "Add instructions to the exporter, or a reporting footnote (optional)"
-
-        add_instructions_response = post_to_step(
-            AdviceSteps.LICENCE_FOOTNOTES,
-            {"instructions_to_exporter": "instructions", "footnote_details": "footnotes"},
+        response = post_to_step(
+            security_release_requests[2]["id"],
+            {
+                "recommendation": RecommendationType.REFUSE,
+                "security_grading": "official",
+                "conditions": "",
+            },
         )
-        assert add_instructions_response.status_code == 302
-        assert (
-            add_instructions_response.url
-            == f'/queues/{data_queue["id"]}/cases/{f680_case_id}/f680/recommendation/view-my-recommendation/'
-        )
+        assert response.status_code == 302
+        assert response.url == view_recommendation_url
+
+        request = requests_mock.request_history.pop()
+        assert request.method == "POST"
+        assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
+        assert request.json() == [
+            {
+                "type": RecommendationType.APPROVE,
+                "conditions": "no release",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+            },
+            {
+                "type": RecommendationType.APPROVE,
+                "conditions": "no specifications",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[1]["id"],
+            },
+            {
+                "type": RecommendationType.REFUSE,
+                "conditions": "",
+                "refusal_reasons": "",
+                "security_grading": "official",
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[2]["id"],
+            },
+        ]
 
 
 class TestF680MyRecommendationView:
-    def test_view_approve_recommendation(
+    def test_view_my_recommendation(
         self,
         authorized_client,
         data_submitted_f680_case,
         mock_f680_case,
+        recommendations,
         mock_current_gov_user,
-        recommendation,
+        mock_get_case_recommendations,
         view_recommendation_url,
     ):
-        data_submitted_f680_case["case"]["advice"] = recommendation
         response = authorized_client.get(view_recommendation_url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/view_my_recommendation.html")
 
         soup = BeautifulSoup(response.content, "html.parser")
         assert soup.find("h1", {"class": "govuk-heading-xl"}).text == "View recommendation"
-        assert soup.find("h2", {"class": "govuk-heading-m"}).text == "Reason for approving"
-        assert soup.find("p", {"class": "govuk-body"}).text == "No concerns"
+        assert soup.find("h2", {"class": "govuk-heading-m"}).text.strip() == "australia name [Official]"
+        assert soup.find("div", {"class": "clearance-conditions"}).text == "No concerns"
