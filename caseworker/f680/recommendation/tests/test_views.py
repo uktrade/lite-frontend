@@ -368,6 +368,8 @@ class TestF680MyRecommendationView:
     def test_clear_my_recommendation_post(
         self,
         authorized_client,
+        requests_mock,
+        f680_case_id,
         mock_f680_case,
         mock_current_gov_user,
         mock_get_case_recommendations,
@@ -382,3 +384,7 @@ class TestF680MyRecommendationView:
             "cases:f680:recommendation",
             kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
         )
+        request = requests_mock.request_history.pop()
+        assert request.method == "DELETE"
+        assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
+        assert request.json() == {}
