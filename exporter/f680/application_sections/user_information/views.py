@@ -106,7 +106,33 @@ class UserInformationSummaryView(F680FeatureRequiredMixin, TemplateView):
 
 class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
 
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.application, _ = self.get_f680_application(kwargs["pk"])
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error getting F680 application",
+        "Unexpected error getting F680 application",
+        reraise_404=True,
+    )
+    def get_f680_application(self, application_id):
+        return get_f680_application(self.request, application_id)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error deleting F680 application entity",
+        "Unexpected error deleting F680 application entity",
+        reraise_404=True,
+    )
+    def remove_application_entity(self, entity_id):
+        breakpoint()
+        user_information_items = self.application["application"]["sections"]["user_information"]["items"]
+        for item in user_information_items:
+            if item["id"] == entity_id:
+                user_information_items.remove(item)
+
     def get(self, request, *args, **kwargs):
-        # Delete the party here by calling patch
+        self.remove_application_entity(kwargs["id"])
 
         return redirect(reverse("f680:summary", kwargs={"pk": kwargs["pk"]}))
