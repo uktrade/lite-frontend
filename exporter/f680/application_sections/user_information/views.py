@@ -8,7 +8,7 @@ from core.decorators import expect_status
 
 from exporter.core.services import get_countries
 from exporter.f680.views import F680FeatureRequiredMixin
-from exporter.f680.services import get_f680_application
+from exporter.f680.services import get_f680_application, patch_f680_application
 
 from exporter.f680.application_sections.views import F680MultipleItemApplicationSectionWizard
 
@@ -121,18 +121,21 @@ class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
 
     @expect_status(
         HTTPStatus.OK,
-        "Error deleting F680 application entity",
-        "Unexpected error deleting F680 application entity",
-        reraise_404=True,
+        "Error updating F680 application",
+        "Unexpected error updating F680 application",
     )
+    def patch_f680_application(self, data):
+        return patch_f680_application(self.request, self.application["id"], data)
+
     def remove_application_entity(self, entity_id):
-        breakpoint()
-        user_information_items = self.application["application"]["sections"]["user_information"]["items"]
+        application_data = self.application
+        user_information_items = application_data["application"]["sections"]["user_information"]["items"]
         for item in user_information_items:
-            if item["id"] == entity_id:
+            if item["id"] == str(entity_id):
                 user_information_items.remove(item)
+                application_data["application"]["sections"]["user_information"]["items"] = user_information_items
+                self.patch_f680_application(application_data)
 
     def get(self, request, *args, **kwargs):
         self.remove_application_entity(kwargs["id"])
-
         return redirect(reverse("f680:summary", kwargs={"pk": kwargs["pk"]}))
