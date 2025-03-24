@@ -102,3 +102,11 @@ class UserInformationSummaryView(F680FeatureRequiredMixin, TemplateView):
             "application": self.application,
             "user_entities": self.user_entities,
         }
+
+
+class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        # Delete the party here by calling patch
+
+        return redirect(reverse("f680:summary", kwargs={"pk": kwargs["pk"]}))
