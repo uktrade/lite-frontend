@@ -2,6 +2,8 @@
 
 {% load crispy_forms_tags %}
 
+{% block back_link_url %}{% url "applications:applications" %}{% endblock %}
+
 {% block title %}Apply for an F680 Application{% endblock%}
 
 {% block body %}

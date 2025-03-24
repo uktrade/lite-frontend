@@ -169,9 +169,11 @@ class TestApprovalDetailsView:
         authorized_client,
         mock_f680_application_get,
         f680_approval_type_wizard_url,
+        data_f680_case,
     ):
         response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
+        assert response.context["back_link_url"] == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
         assert isinstance(response.context["form"], forms.ApprovalTypeForm)
 
     def test_GET_success_with_organisation_set(
@@ -320,9 +322,11 @@ class TestProductInformationViews:
         authorized_client,
         mock_f680_application_get,
         f680_product_wizard_url,
+        data_f680_case,
     ):
         response = authorized_client.get(f680_product_wizard_url)
         assert response.status_code == 200
+        assert response.context["back_link_url"] == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
         assert isinstance(response.context["form"], forms.ProductNameForm)
 
     def test_GET_success_with_organisation_set(

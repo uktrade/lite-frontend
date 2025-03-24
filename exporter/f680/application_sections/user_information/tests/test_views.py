@@ -172,9 +172,11 @@ class TestUserInformationView:
         authorized_client,
         mock_f680_application_get,
         f680_user_information_wizard_url,
+        data_f680_case,
     ):
         response = authorized_client.get(f680_user_information_wizard_url)
         assert response.status_code == 200
+        assert response.context["back_link_url"] == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
         assert isinstance(response.context["form"], forms.EntityTypeForm)
 
     def test_GET_no_feature_flag_forbidden(
