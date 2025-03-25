@@ -8,6 +8,8 @@ from core.wizard.views import BaseSessionWizardView
 from caseworker.f680.views import F680CaseworkerMixin
 from caseworker.f680.outcome import forms
 from caseworker.f680.outcome.constants import OutcomeSteps
+from caseworker.f680.outcome.payloads import OutcomePayloadBuilder
+from caseworker.f680.outcome.services import post_outcome
 
 
 def is_approve_selected(wizard):
@@ -56,12 +58,10 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         "Unexpected error adding outcome",
     )
     def post_outcome(self, data):
-        # TODO
-        pass
+        return post_outcome(self.request, self.case.id, data)
 
     def get_payload(self, form_dict):
-        # TODO
-        pass
+        return OutcomePayloadBuilder().build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
