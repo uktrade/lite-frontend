@@ -1,0 +1,57 @@
+<table class="govuk-table f680-outcome-table">
+	<thead class="govuk-table__head">
+		<tr class="govuk-table__row">
+
+			<th scope="col" class="govuk-table__header">Security releases</th>
+			<th scope="col" class="govuk-table__header">Outcome</th>
+			<th scope="col" class="govuk-table__header">Security Grading</th>
+			<th scope="col" class="govuk-table__header">Approval types</th>
+			<th scope="col" class="govuk-table__header">Conditions</th>
+			<th scope="col" class="govuk-table__header">Refusal reasons</th>
+		</tr>
+	</thead>
+	<tbody class="govuk-table__body">
+        {% for outcome in outcomes %}
+		<tr class="govuk-table__row">
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% for security_release in outcome.security_release_requests %}
+                    {{security_release.recipient.name}}, {{security_release.recipient.country.name}}<br/>
+                {% endfor %}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{outcome.outcome|capfirst}}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% if outcome.security_grading %}
+                    {{outcome.security_grading|capfirst}}
+                {% else %}
+                    -
+                {% endif %}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% if outcome.approval_types %}
+                    {% for approval_type in outcome.approval_types %}
+                        {{approval_type|sentence_case}}<br/>
+                    {% endfor %}
+                {% else %}
+                    -
+                {% endif %}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% if outcome.conditions %}
+                    {{outcome.conditions|linebreaksbr}}
+                {% else %}
+                    -
+                {% endif %}
+			</td>
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% if outcome.refusal_reasons %}
+                    {{outcome.refusal_reasons|linebreaksbr}}
+                {% else %}
+                    -
+                {% endif %}
+			</td>
+        </tr>
+        {% endfor %}
+	</tbody>
+</table>

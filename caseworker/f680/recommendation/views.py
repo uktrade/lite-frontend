@@ -23,6 +23,7 @@ from caseworker.f680.recommendation.services import (
     post_recommendation,
 )
 from caseworker.f680.views import F680CaseworkerMixin
+from caseworker.f680.outcome.services import get_hydrated_outcomes
 from core.decorators import expect_status
 from core.wizard.views import BaseSessionWizardView
 
@@ -37,6 +38,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
 
         user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
         recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
+        outcomes, _ = get_hydrated_outcomes(self.request, self.case)
 
         return {
             **context_data,
@@ -44,6 +46,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
             "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
             "user_recommendations": user_recommendations,
             "recommendations_by_team": recommendations_by_team,
+            "outcomes": outcomes,
         }
 
 
