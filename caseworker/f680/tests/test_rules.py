@@ -1,7 +1,8 @@
-from unittest import mock
-
 import pytest
 import rules
+
+from itertools import chain
+from unittest import mock
 
 from django.http import HttpRequest
 
@@ -56,6 +57,34 @@ def get_allocated_request_user(user, queue, team=None):
         user["user"]["team"] = team
     request = get_mock_request(user["user"], queue)
     return request
+
+
+class TestIsUserAllowedToMakeRecommendationRule:
+
+    def test_request_missing_attributes(self, data_unassigned_case):
+        case = data_unassigned_case
+        request = None
+
+        assert not recommendation_rules.is_user_allowed_to_make_f680_recommendation(request, case)
+
+    @pytest.mark.parametrize(
+        "case_status, expected",
+        (
+            chain(
+                ((status, False) for status in recommendation_rules.INFORMATIONAL_STATUSES),
+                ((status, True) for status in recommendation_rules.RECOMMENDATION_STATUSES),
+                ((status, True) for status in recommendation_rules.OUTCOME_STATUSES),
+            )
+        ),
+    )
+    def test_user_allowed_to_make_f680_recommendation(
+        self, mock_gov_user, data_fake_queue, data_assigned_case, case_status, expected
+    ):
+        team = {"id": MOD_ECJU, "alias": services.MOD_ECJU_TEAM}
+        data_assigned_case.data["status"]["key"] = case_status
+        request = get_allocated_request_user(mock_gov_user, data_fake_queue, team=team)
+
+        assert rules.test_rule("is_user_allowed_to_make_f680_recommendation", request, data_assigned_case) is expected
 
 
 def test_can_user_make_f680_recommendation_request_missing_attributes(

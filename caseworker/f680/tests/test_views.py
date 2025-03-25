@@ -1,11 +1,13 @@
 import pytest
 
+from itertools import chain
 from requests.exceptions import HTTPError
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
+from caseworker.f680 import rules as recommendation_rules
 
 
 @pytest.fixture(autouse=True)
@@ -35,6 +37,10 @@ def mock_put_assigned_queues(f680_case_id, requests_mock, data_queue):
     return requests_mock.put(
         client._build_absolute_uri(f"/cases/{f680_case_id}/assigned-queues/"), json={"queues": [queue_pk]}
     )
+@pytest.fixture
+def mock_case_sub_statuses(requests_mock, data_submitted_f680_case):
+    url = f"/applications/{data_submitted_f680_case['case']['id']}/sub-statuses/"
+    return requests_mock.get(url, json=[])
 
 
 @pytest.fixture
@@ -61,6 +67,42 @@ class TestCaseDetailView:
             "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?" in table_text
         )
         assert "some name" in table_text
+
+    @pytest.mark.parametrize(
+        "case_status, expected",
+        (
+            chain(
+                ((status, False) for status in recommendation_rules.INFORMATIONAL_STATUSES),
+                ((status, True) for status in recommendation_rules.RECOMMENDATION_STATUSES),
+                ((status, True) for status in recommendation_rules.OUTCOME_STATUSES),
+            )
+        ),
+    )
+    def test_GET_case_recommendation_tab_status(
+        self,
+        authorized_client,
+        data_queue,
+        mock_f680_case,
+        mock_case_sub_statuses,
+        mock_get_case_no_recommendations,
+        f680_case_id,
+        data_submitted_f680_case,
+        queue_f680_cases_to_review,
+        current_user,
+        case_status,
+        expected,
+    ):
+        data_submitted_f680_case["case"]["data"]["status"]["key"] = case_status
+        data_submitted_f680_case["case"]["assigned_users"] = {
+            queue_f680_cases_to_review["name"]: [current_user]
+        }
+        url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        response = authorized_client.get(url)
+        assert response.status_code == 200
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        recommendations_tab = soup.find(id="recommendations")
+        assert bool(recommendations_tab) is expected
 
     def test_GET_success_transformed_submitted_by(
         self,
