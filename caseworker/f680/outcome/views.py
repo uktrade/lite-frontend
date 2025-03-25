@@ -24,7 +24,7 @@ def is_refuse_selected(wizard):
 
 class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     # TODO: custom template
-    template_name = "f680/case/recommendation/form_wizard.html"
+    template_name = "f680/case/outcome/form_wizard.html"
     current_tab = "recommendations"
 
     form_list = [
