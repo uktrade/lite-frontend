@@ -57,9 +57,12 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
     def get_form_kwargs(self, step):
-        if step != OutcomeSteps.SELECT_OUTCOME:
-            return {}
-        return {"security_release_requests": self.remaining_requests_without_outcome}
+        if step == OutcomeSteps.SELECT_OUTCOME:
+            return {"security_release_requests": self.remaining_requests_without_outcome}
+        if step == OutcomeSteps.APPROVE:
+            # Restrict approval type choices to those requested in the application
+            return {"all_approval_types": self.case["data"]["security_release_requests"][0]["approval_types"]}
+        return {}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

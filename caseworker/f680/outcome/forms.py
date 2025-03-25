@@ -77,6 +77,14 @@ class ApproveOutcomeForm(BaseForm):
         required=False,
     )
 
+    def __init__(self, all_approval_types, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        approval_type_choices = []
+        for choice_key, choice_value in self.fields["approval_types"].choices:
+            if choice_key in all_approval_types:
+                approval_type_choices.append((choice_key, choice_value))
+        self.fields["approval_types"].choices = approval_type_choices
+
     def get_layout_fields(self):
         return (
             "security_grading",
