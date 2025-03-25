@@ -74,7 +74,7 @@ def test_can_user_make_f680_recommendation_user_not_allocated(mock_gov_user, dat
     assert not rules.test_rule("can_user_make_f680_recommendation", request, case)
 
 
-@mock.patch("caseworker.f680.rules.current_user_recommendations")
+@mock.patch("caseworker.f680.rules.recommendations_by_current_user")
 def test_can_user_make_f680_recommendation_user_allocated_existing_recommendation(
     mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
 ):
@@ -83,7 +83,7 @@ def test_can_user_make_f680_recommendation_user_allocated_existing_recommendatio
     assert not rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
 
 
-@mock.patch("caseworker.f680.rules.current_user_recommendations")
+@mock.patch("caseworker.f680.rules.recommendations_by_current_user")
 def test_can_user_make_f680_recommendation_user_allocated_incorrect_case_status(
     mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
 ):
@@ -92,7 +92,7 @@ def test_can_user_make_f680_recommendation_user_allocated_incorrect_case_status(
     assert not rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
 
 
-@mock.patch("caseworker.f680.rules.current_user_recommendations")
+@mock.patch("caseworker.f680.rules.recommendations_by_current_user")
 def test_can_user_make_f680_recommendation_user_allocated(
     mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
 ):
@@ -229,7 +229,7 @@ class TestClearF680RecommendationRule:
 
         assert not rules.test_rule("can_user_clear_f680_recommendation", request, case)
 
-    @mock.patch("caseworker.f680.rules.current_user_recommendations")
+    @mock.patch("caseworker.f680.rules.recommendations_by_current_user")
     def test_with_no_user_recommendations(
         self, mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
     ):
@@ -237,7 +237,7 @@ class TestClearF680RecommendationRule:
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
         assert not rules.test_rule("can_user_clear_f680_recommendation", request, data_assigned_case)
 
-    @mock.patch("caseworker.f680.rules.current_user_recommendations")
+    @mock.patch("caseworker.f680.rules.recommendations_by_current_user")
     def test_with_user_recommendations(
         self, mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
     ):

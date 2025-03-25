@@ -17,7 +17,7 @@ from caseworker.f680.recommendation.forms.forms import (
 from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
     clear_recommendation,
-    current_user_recommendations,
+    recommendations_by_current_user,
     get_case_recommendations,
     group_recommendations_by_team_and_users,
     post_recommendation,
@@ -35,7 +35,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
         context_data = super().get_context_data(**kwargs)
         case_recommendations = get_case_recommendations(self.request, self.case)
 
-        user_recommendations = current_user_recommendations(self.request, self.case, self.caseworker)
+        user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
         recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
 
         return {
@@ -54,7 +54,7 @@ class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        user_recommendations = current_user_recommendations(self.request, self.case, self.caseworker)
+        user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
 
         return {
             **context,

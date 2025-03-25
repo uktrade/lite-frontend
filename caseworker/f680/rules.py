@@ -4,7 +4,7 @@ from core.constants import CaseStatusEnum
 
 from caseworker.core.rules import is_user_allocated, get_logged_in_caseworker
 from caseworker.f680.recommendation.services import (
-    current_user_recommendations,
+    recommendations_by_current_user,
     filter_recommendation_by_team,
     get_case_recommendations,
 )
@@ -22,7 +22,7 @@ def can_user_make_f680_recommendation(request, case):
     if not user:
         return False
 
-    if current_user_recommendations(request, case, user):
+    if recommendations_by_current_user(request, case, user):
         return False
 
     return case["data"]["status"]["key"] in RECOMMENDATION_STATUSES
@@ -34,7 +34,7 @@ def can_user_clear_f680_recommendation(request, case):
     if not user:
         return False
 
-    return bool(current_user_recommendations(request, case, user))
+    return bool(recommendations_by_current_user(request, case, user))
 
 
 @rules.predicate

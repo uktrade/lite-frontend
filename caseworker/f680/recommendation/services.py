@@ -51,7 +51,7 @@ def group_recommendations_by_team_and_users(case_recommendations):
     return grouped_result
 
 
-def current_user_recommendations(request, case, caseworker):
+def recommendations_by_current_user(request, case, caseworker):
     team_id = caseworker["team"]["id"]
     caseworker_id = caseworker["id"]
 
