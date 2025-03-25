@@ -1,0 +1,7 @@
+{% extends 'core/form-wizard.html' %}
+
+{% block right_side_panel %}
+<div class="govuk-grid-column-one-third">
+    {% include "f680/includes/product_table.html" with case=case queue_pk=queue_pk %}
+</div>
+{% endblock %}
