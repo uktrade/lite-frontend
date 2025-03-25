@@ -49,10 +49,10 @@ def post_to_step(post_to_step_factory, make_recommendation_url):
 
 
 @pytest.fixture
-def mock_current_gov_user(requests_mock, f680_case_id):
+def mock_current_gov_user(requests_mock, current_user, f680_case_id):
     return requests_mock.get(
         client._build_absolute_uri(f"/gov_users/{f680_case_id}"),
-        json={"user": {"id": "58e62718-e889-4a01-b603-e676b794b394"}},
+        json={"user": {"id": current_user["id"]}},
     )
 
 
@@ -320,12 +320,16 @@ class TestF680MyRecommendationView:
         self,
         authorized_client,
         data_submitted_f680_case,
+        queue_f680_cases_to_review,
+        current_user,
         mock_f680_case,
-        recommendations,
         mock_current_gov_user,
         mock_get_case_recommendations,
         view_recommendation_url,
     ):
+        data_submitted_f680_case["case"]["assigned_users"] = {
+            queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]
+        }
         response = authorized_client.get(view_recommendation_url)
         assert response.status_code == 200
         assertTemplateUsed(response, "f680/case/recommendation/view_my_recommendation.html")
