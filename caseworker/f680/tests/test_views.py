@@ -37,6 +37,8 @@ def mock_put_assigned_queues(f680_case_id, requests_mock, data_queue):
     return requests_mock.put(
         client._build_absolute_uri(f"/cases/{f680_case_id}/assigned-queues/"), json={"queues": [queue_pk]}
     )
+
+
 @pytest.fixture
 def mock_case_sub_statuses(requests_mock, data_submitted_f680_case):
     url = f"/applications/{data_submitted_f680_case['case']['id']}/sub-statuses/"
@@ -93,9 +95,7 @@ class TestCaseDetailView:
         expected,
     ):
         data_submitted_f680_case["case"]["data"]["status"]["key"] = case_status
-        data_submitted_f680_case["case"]["assigned_users"] = {
-            queue_f680_cases_to_review["name"]: [current_user]
-        }
+        data_submitted_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [current_user]}
         url = reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
         assert response.status_code == 200
