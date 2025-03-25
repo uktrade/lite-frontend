@@ -9,7 +9,7 @@ from caseworker.f680.views import F680CaseworkerMixin
 from caseworker.f680.outcome import forms
 from caseworker.f680.outcome.constants import OutcomeSteps
 from caseworker.f680.outcome.payloads import OutcomePayloadBuilder
-from caseworker.f680.outcome.services import post_outcome
+from caseworker.f680.outcome.services import post_outcome, get_outcomes
 
 
 def is_approve_selected(wizard):
@@ -38,14 +38,24 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         OutcomeSteps.REFUSE: is_refuse_selected,
     }
 
+    def extra_setup(self, request):
+        self.existing_outcomes, _ = self.get_existing_outcomes()
+        release_requests_with_outcome = set()
+        for outcome in self.existing_outcomes:
+            release_requests_with_outcome.update(outcome["security_release_requests"])
+        self.remaining_requests_without_outcome = []
+        for release_request in self.case.data["security_release_requests"]:
+            if release_request["id"] in release_requests_with_outcome:
+                continue
+            self.remaining_requests_without_outcome.append(release_request)
+
     def get_success_url(self):
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
     def get_form_kwargs(self, step):
         if step != OutcomeSteps.SELECT_OUTCOME:
             return {}
-        # TODO: Restrict this to only security releases where no outcome has been given
-        return {"security_release_requests": self.case.data["security_release_requests"]}
+        return {"security_release_requests": self.remaining_requests_without_outcome}
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -59,6 +69,14 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     )
     def post_outcome(self, data):
         return post_outcome(self.request, self.case.id, data)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error getting existing outcomes",
+        "Unexpected error getting existing outcomes",
+    )
+    def get_existing_outcomes(self):
+        return get_outcomes(self.request, self.case.id)
 
     def get_payload(self, form_dict):
         return OutcomePayloadBuilder().build(form_dict)
