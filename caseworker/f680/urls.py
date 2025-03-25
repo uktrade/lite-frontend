@@ -33,6 +33,11 @@ urlpatterns = [
         name="make_recommendation",
     ),
     path(
+        "recommendation/clear-recommendation/",
+        recommendation_views.ClearRecommendationView.as_view(),
+        name="clear_recommendation",
+    ),
+    path(
         "move-case-forward/",
         views.MoveCaseForward.as_view(),
         name="move_case_forward",

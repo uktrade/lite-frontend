@@ -51,7 +51,7 @@ def group_recommendations_by_team_and_users(case_recommendations):
     return grouped_result
 
 
-def current_user_recommendations(request, case, caseworker):
+def recommendations_by_current_user(request, case, caseworker):
     team_id = caseworker["team"]["id"]
     caseworker_id = caseworker["id"]
 
@@ -89,5 +89,9 @@ def post_recommendation(request, case, data):
         for item in data
     ]
     response = client.post(request, f"/caseworker/f680/{case['id']}/recommendation/", json)
-    response.raise_for_status()
     return response.json(), response.status_code
+
+
+def clear_recommendation(request, case):
+    response = client.delete(request, f"/caseworker/f680/{case['id']}/recommendation/")
+    return None, response.status_code

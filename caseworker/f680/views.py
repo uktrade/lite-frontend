@@ -48,6 +48,7 @@ class F680CaseworkerMixin(CaseworkerMixin):
         context_data["current_tab"] = self.current_tab
         context_data["queue_pk"] = self.queue_id
         context_data["caseworker"] = self.caseworker
+        context_data["security_release_requests"] = list(self.security_release_requests.values())
         submitted_by = self.case["data"]["submitted_by"]
         if submitted_by and "first_name" in submitted_by:
             self.case["data"]["submitted_by"] = " ".join([submitted_by["first_name"], submitted_by["last_name"]])

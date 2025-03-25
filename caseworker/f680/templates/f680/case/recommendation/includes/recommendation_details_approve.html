@@ -16,6 +16,8 @@
                     {% if recommendation.conditions %}
                         <h2 class="govuk-heading-m">Provisos</h2>
                         <div class="govuk-body clearance-conditions">{{ recommendation.conditions|linebreaks }}</div>
+                    {% else %}
+                        <div class="govuk-body clearance-conditions">---</div>
                     {% endif %}
                 </div>
             </div>

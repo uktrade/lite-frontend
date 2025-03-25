@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import TemplateView
+from django.views.generic import FormView, TemplateView
 from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
@@ -11,11 +11,13 @@ from caseworker.advice.picklist_helpers import proviso_picklist
 from caseworker.f680.recommendation.constants import RecommendationSteps
 from caseworker.f680.recommendation.forms.forms import (
     BaseRecommendationForm,
+    ClearRecommendationForm,
     EntityConditionsRecommendationForm,
 )
 from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
-    current_user_recommendations,
+    clear_recommendation,
+    recommendations_by_current_user,
     get_case_recommendations,
     group_recommendations_by_team_and_users,
     post_recommendation,
@@ -33,7 +35,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
         context_data = super().get_context_data(**kwargs)
         case_recommendations = get_case_recommendations(self.request, self.case)
 
-        user_recommendations = current_user_recommendations(self.request, self.case, self.caseworker)
+        user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
         recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
 
         return {
@@ -52,13 +54,33 @@ class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        user_recommendations = current_user_recommendations(self.request, self.case, self.caseworker)
+        user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
 
         return {
             **context,
             "title": title,
             "user_recommendations": user_recommendations,
         }
+
+
+class ClearRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
+    template_name = "f680/case/recommendation/clear_recommendation.html"
+    form_class = ClearRecommendationForm
+
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error clearing recommendation",
+        "Unexpected error clearing recommendation",
+    )
+    def clear_recommendation(self, case):
+        return clear_recommendation(self.request, case)
+
+    def form_valid(self, form):
+        self.clear_recommendation(self.case)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
 
 class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
