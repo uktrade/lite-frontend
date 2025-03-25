@@ -67,6 +67,14 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["back_link_url"] = reverse("cases:f680:recommendation", kwargs=self.kwargs)
+        select_outcome_data = self.storage.get_step_data(OutcomeSteps.SELECT_OUTCOME)
+        if select_outcome_data:
+            selected_security_release_ids = select_outcome_data.getlist("select_outcome-security_release_requests")
+            selected_security_releases = []
+            for security_release_request in self.case["data"]["security_release_requests"]:
+                if security_release_request["id"] in selected_security_release_ids:
+                    selected_security_releases.append(security_release_request)
+            context["selected_security_release_requests"] = selected_security_releases
         return context
 
     @expect_status(

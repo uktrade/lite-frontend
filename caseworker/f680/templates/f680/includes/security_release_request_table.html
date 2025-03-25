@@ -1,4 +1,3 @@
-<h2 class="govuk-heading-m">Security Release Requests</h2>
 <table class="govuk-table f680-security-release-table">
 	<thead class="govuk-table__head">
 		<tr class="govuk-table__row">
@@ -14,7 +13,7 @@
 		</tr>
 	</thead>
 	<tbody class="govuk-table__body">
-        {% for release_request in case.data.security_release_requests %}
+        {% for release_request in security_release_requests %}
 		<tr class="govuk-table__row">
 			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                 {{release_request.security_grading.value}}
