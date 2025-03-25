@@ -39,15 +39,19 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     }
 
     def extra_setup(self, request):
-        self.existing_outcomes, _ = self.get_existing_outcomes()
+        self.existing_outcomes, self.remaining_requests_without_outcome = self.get_remaining_outcomes()
+
+    def get_remaining_outcomes(self):
+        existing_outcomes, _ = self.get_existing_outcomes()
         release_requests_with_outcome = set()
-        for outcome in self.existing_outcomes:
+        for outcome in existing_outcomes:
             release_requests_with_outcome.update(outcome["security_release_requests"])
-        self.remaining_requests_without_outcome = []
+        remaining_requests_without_outcome = []
         for release_request in self.case.data["security_release_requests"]:
             if release_request["id"] in release_requests_with_outcome:
                 continue
-            self.remaining_requests_without_outcome.append(release_request)
+            remaining_requests_without_outcome.append(release_request)
+        return existing_outcomes, remaining_requests_without_outcome
 
     def get_success_url(self):
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
@@ -84,4 +88,7 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
         self.post_outcome(data)
-        return redirect(self.get_success_url())
+        _, remaining_requests_without_outcome = self.get_remaining_outcomes()
+        if len(remaining_requests_without_outcome) == 0:
+            return redirect(self.get_success_url())
+        return redirect(reverse("cases:f680:outcome:decide_outcome", kwargs=self.kwargs))
