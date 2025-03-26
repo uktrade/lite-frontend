@@ -1,0 +1,214 @@
+{% load humanize %}
+{% load svg %}
+
+<tr class="govuk-table__row" id="{{ case.id }}">
+
+	{% if not queue.is_system_queue %}
+		<td class="govuk-table__cell govuk-table__cell--checkbox">
+			<div>
+				<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
+				<label class="govuk-label govuk-checkboxes__label" for="{{ case.id }}">
+					<span class="govuk-visually-hidden"></span>
+				</label>
+			</div>
+		</td>
+	{% endif %}
+
+	<td class="govuk-table__cell govuk-table__cell--tight">
+		<div class="app-cases__row__vertical-column">
+
+			{% include "includes/sla_display.html" with case=case %}
+
+			{% if not is_all_cases_queue %}
+				{% if case.is_recently_updated %}
+					<span
+						data-tooltip="{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
+						class="app-cases__row__icon app-cases__row__attention-needed">!</span>
+				{% endif %}
+			{% endif %}
+
+			{% if cases.results.is_work_queue %}
+				{% if case.has_open_queries %}
+				<div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
+					{% svg 'ecju-query' %}
+				</div>
+				{% endif %}
+			{% endif %}
+
+		</div>
+	</td>
+
+	{# case info #}
+	<td class="govuk-table__cell">
+		<a class="govuk-link govuk-link--no-visited-state" id="case-{{ case.id }}" href="{% if case.case_type.sub_type.key == "f680_clearance" %}{% url 'cases:f680:details' queue.id case.id %}{% else %}{% url 'cases:case' queue.id case.id %}{% endif %}">
+			<span class="govuk-visually-hidden">View</span> {{ case.reference_code }}
+		</a>
+		<address>
+			<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+				{{ case.organisation.name }}
+			</p>
+		</address>
+		<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.status.value }}</p>
+		{% if case.sub_status %}
+			<div class="govuk-tag govuk-tag--blue govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.sub_status.name }}</div>
+		{% endif %}
+	</td>
+
+	{# destinations #}
+	<td class="govuk-table__cell" data-customiser-key="destination">
+		<ol class="govuk-list destinations__list">
+			{% for rr in case.f680_data.security_release_requests %}
+				<li>
+					{{ rr.recipient.country.name }}
+				</li>
+			{% endfor %}
+		</ol>
+	</td>
+
+	{# 	Case allocation #}
+	<td class="govuk-table__cell expander" data-expander-visible-elems="3" data-customiser-key="case_allocation">
+		<ul class="app-assignments__list expander__expand-list">
+			{% if case.queue_assignments %}
+				{% for queue_id, assignment in case.queue_assignments.items %}
+                   {% if not assignment.assignees %}
+				   <li class="app-assignments__item expander__expand-list__item">
+					   <div class="app-assignments__user">
+                                Not allocated
+					   </div>
+					   <div class="app-assignments__team">
+						   {{ assignment.queue_name }}
+					   </div>
+				   </li>
+                   {% else %}
+                        {% for assignee in assignment.assignees %}
+				            <li class="app-assignments__item expander__expand-list__item">
+				                <div class="app-assignments__user">
+				             	    {% if assignee.first_name and assignee.last_name %}
+				             	     		{{ assignee.first_name }} {{ assignee.last_name }}
+				             	    {% else %}
+				             	     		{{ assignee.email }}
+				             	    {% endif %}
+				                </div>
+				                <div class="app-assignments__team">
+				             	   {{ assignment.queue_name }}
+				                </div>
+				            </li>
+                        {% endfor %}
+                   {% endif %}
+				{% endfor %}
+			{% endif %}
+		</ul>
+	</td>
+	{# case recommendations #}
+	<td class="govuk-table__cell case-recommendation" data-customiser-key="case_recommendation">
+		{% include "includes/f680_recommendations.html" with case_recommendations=case.f680_data.recommendations %}
+	</td>
+    {# case updates #}
+	<td class="govuk-table__cell" data-customiser-key="case_updates">
+		<ul class="app-updates__list">
+			{% if case.activity_updates %}
+				{% for update in case.activity_updates %}
+					<li class="app-updates__item">
+						<div class="app-updates__action">
+							{% if forloop.first %}
+								Latest action
+							{% else %}
+								Previous action
+							{% endif %}
+						</div>
+						<div class="app-updates__department">
+			                {% include 'activities/includes/activity-entry-user.html' with activity=update %} {{ update.created_at|to_datetime|date:"d F Y" }}
+						</div>
+						<div class="app-updates__activity">
+			                {% include 'activities/includes/activity-entry-activity.html' with activity=update %}
+						</div>
+						{% if update.additional_text %}
+							<div class="app-updates__activity">
+								{{ update.additional_text|linebreaksbr }}
+							</div>
+						{% endif %}
+					</li>
+				{% endfor %}
+			{% endif %}
+		</ul>
+	</td>
+
+	{# Products #}
+	<td class="govuk-table__cell" data-customiser-key="products">
+		{{ case.f680_data.product.name }}
+	</td>
+
+    {# Users #}
+    <td class="govuk-table__cell" data-customiser-key="users">
+        <ol class="govuk-list app-users__list">
+            {% for rr in case.f680_data.security_release_requests %}
+                <li class="app-cles__item">
+                    {% if rr.recipient.type.key == "end-user"  %}
+                        <strong>End-user:</strong> {{ rr.recipient.name }}
+                    {% elif rr.recipient.type.key == "ultimate-end-user"  %}
+                        <strong>Ultimate end-user:</strong> {{ rr.recipient.name }}
+					{% elif rr.recipient.type.key == "third-party"  %}
+                        <strong>Third party:</strong> {{ rr.recipient.name }}
+					{% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </td>
+
+	{# CLEs #}
+	<td class="govuk-table__cell" data-customiser-key="control_list_entry">
+		NA
+	</td>
+
+	{# Report summaries #}
+	<td class="govuk-table__cell" data-customiser-key="report_summary">
+		NA
+	</td>
+
+	{# Regimes #}
+	<td class="govuk-table__cell" data-customiser-key="regime">
+		NA
+	</td>
+
+	{# Total value #}
+	<td class="govuk-table__cell" data-customiser-key="total_value">
+		NA
+	</td>
+
+	{# Queries #}
+	<td class="govuk-table__cell" data-customiser-key="queries">
+        {% if case.ecju_queries %}
+            <span class="app-ecju-queries"><a href="{% url 'cases:case' queue.id case.id %}ecju-queries/" class="govuk-link govuk-link--no-visited-state">{{case.ecju_queries|length}} queries</a></span>
+        {% endif %}
+	</td>
+
+	{# Denial matches #}
+	<td class="govuk-table__cell" data-customiser-key="denial_matches">
+		NA
+	</td>
+
+	{# intended end use #}
+
+	<td class="govuk-table__cell" data-customiser-key="intended_end_use">
+		<ol class="govuk-list app-users__list">
+			{% for rr in case.f680_data.security_release_requests %}
+				<li class="app-cles__item">
+					<strong>{{ rr.recipient.name }}</strong>
+					<span class="app-intended-end-use">
+						{{ rr.intended_use }}
+					</span>
+				</li>
+			{% endfor %}
+		</ol>
+	</td>
+
+	{# application flags #}
+	<td class="govuk-table__cell lite-tablet-hide" data-customiser-key="flags">
+		{% if case.flags or case.destinations_flags or case.goods_flags %}
+			{% include 'includes/case-row-flags.html' with flags=case.flags destinations_flags=case.destinations_flags goods_flags=case.goods_flags %}
+		{% else %}
+			<p class="app-information-bar">No flags set</p>
+		{% endif %}
+	</td>
+
+</tr>

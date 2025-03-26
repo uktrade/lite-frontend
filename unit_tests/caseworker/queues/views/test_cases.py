@@ -56,7 +56,7 @@ def mock_team_queue(requests_mock):
         "countersigning_queue": None,
     }
     url = client._build_absolute_uri("/queues/")
-    return requests_mock.get(url=re.compile(f"{url}.*/"), json=data_queue)
+    return requests_mock.get(url=re.compile(f"{url}.*/"), json=data)
 
 
 @pytest.fixture
