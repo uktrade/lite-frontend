@@ -129,7 +129,9 @@ class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
 
     def remove_application_entity(self, entity_to_remove_id):
         application_data = self.application
-        user_information_items = application_data["application"].get("sections", {})["user_information"]["items"]
+        user_information_items = (
+            application_data["application"].get("sections", {}).get("user_information", {}).get("items")
+        )
         for item in user_information_items:
             if item.get("id", None) == str(entity_to_remove_id):
                 user_information_items.remove(item)
@@ -137,4 +139,17 @@ class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
 
     def get(self, request, *args, **kwargs):
         self.remove_application_entity(kwargs.get("entity_to_remove_id", ""))
+        application, _ = self.get_f680_application(kwargs["pk"])
+        user_entities = (
+            application.get("application", {}).get("sections", {}).get("user_information", {}).get("items", [])
+        )
+        if user_entities:
+            return redirect(
+                reverse(
+                    "f680:user_information:summary",
+                    kwargs={
+                        "pk": self.application["id"],
+                    },
+                )
+            )
         return redirect(reverse("f680:summary", kwargs={"pk": kwargs["pk"]}))
