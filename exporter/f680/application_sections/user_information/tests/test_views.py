@@ -880,7 +880,7 @@ class TestUserInformationRemoveEntityView:
         data_f680_case,
     ):
         mocker.patch(
-            "exporter.f680.application_sections.user_information.views.UserInformationRemoveEntityView.has_user_entities",
+            "exporter.f680.application_sections.user_information.views.UserInformationRemoveEntityView.has_user_entities_remaining",
             return_value=False,
         )
         response = authorized_client.get(f680_user_information_remove_entity_url)
