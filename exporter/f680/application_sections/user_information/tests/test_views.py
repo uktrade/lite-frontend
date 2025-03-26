@@ -853,9 +853,29 @@ class TestUserInformationRemoveEntityView:
         response = authorized_client.get(missing_f680_user_information_remove_entity_url)
         assert response.status_code == 404
 
-    def test_GET_user_information_remove_entity(
+    def test_GET_user_information_remove_entity_not_has_user_entities(
         self,
         authorized_client,
+        mocker,
+        f680_user_information_remove_entity_url,
+        mock_f680_application_get_existing_data,
+        mock_patch_f680_application,
+    ):
+        mocker.patch(
+            "exporter.f680.application_sections.user_information.views.UserInformationRemoveEntityView.has_user_entities",
+            return_value=False,
+        )
+        response = authorized_client.get(f680_user_information_remove_entity_url)
+        assert (
+            mock_patch_f680_application.last_request.json()["application"]["sections"]["user_information"]["items"]
+            == []
+        )
+        assert response.status_code == 302
+
+    def test_GET_user_information_remove_entity_has_user_entities(
+        self,
+        authorized_client,
+        mocker,
         f680_user_information_remove_entity_url,
         mock_f680_application_get_existing_data,
         mock_patch_f680_application,
