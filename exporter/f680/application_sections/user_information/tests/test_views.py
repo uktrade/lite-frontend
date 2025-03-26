@@ -853,13 +853,31 @@ class TestUserInformationRemoveEntityView:
         response = authorized_client.get(missing_f680_user_information_remove_entity_url)
         assert response.status_code == 404
 
-    def test_GET_user_information_remove_entity_not_has_user_entities(
+    def test_GET_user_information_remove_entity_has_user_entities(
         self,
         authorized_client,
         mocker,
         f680_user_information_remove_entity_url,
         mock_f680_application_get_existing_data,
         mock_patch_f680_application,
+        data_f680_case,
+    ):
+        response = authorized_client.get(f680_user_information_remove_entity_url)
+        assert (
+            mock_patch_f680_application.last_request.json()["application"]["sections"]["user_information"]["items"]
+            == []
+        )
+        assert response.status_code == 302
+        assert response.url == reverse("f680:user_information:summary", kwargs={"pk": data_f680_case["id"]})
+
+    def test_GET_user_information_remove_entity_no_user_entities_remain(
+        self,
+        authorized_client,
+        mocker,
+        f680_user_information_remove_entity_url,
+        mock_f680_application_get_existing_data,
+        mock_patch_f680_application,
+        data_f680_case,
     ):
         mocker.patch(
             "exporter.f680.application_sections.user_information.views.UserInformationRemoveEntityView.has_user_entities",
@@ -871,18 +889,4 @@ class TestUserInformationRemoveEntityView:
             == []
         )
         assert response.status_code == 302
-
-    def test_GET_user_information_remove_entity_has_user_entities(
-        self,
-        authorized_client,
-        mocker,
-        f680_user_information_remove_entity_url,
-        mock_f680_application_get_existing_data,
-        mock_patch_f680_application,
-    ):
-        response = authorized_client.get(f680_user_information_remove_entity_url)
-        assert (
-            mock_patch_f680_application.last_request.json()["application"]["sections"]["user_information"]["items"]
-            == []
-        )
-        assert response.status_code == 302
+        assert response.url == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
