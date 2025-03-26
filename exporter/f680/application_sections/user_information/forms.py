@@ -174,12 +174,10 @@ class SecurityGradingForm(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            {
-                "parent_field": "security_classification",
-                "parent_field_response": "other",
-                "required_field": "other_security_classification",
-                "error_message": "Security classification cannot be blank",
-            }
+            parent_field="security_classification",
+            parent_field_response="other",
+            required_field="other_security_classification",
+            error_message="Security classification cannot be blank",
         )
 
     def __init__(self, *args, **kwargs):

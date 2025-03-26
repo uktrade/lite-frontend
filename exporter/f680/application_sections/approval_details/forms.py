@@ -256,12 +256,10 @@ class ProductSecurityClassificationForm(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            {
-                "parent_field": "security_classification",
-                "parent_field_response": "other",
-                "required_field": "other_security_classification",
-                "error_message": "Security classification cannot be blank",
-            }
+            parent_field="security_classification",
+            parent_field_response="other",
+            required_field="other_security_classification",
+            error_message="Security classification cannot be blank",
         )
 
     def __init__(self, *args, **kwargs):
@@ -341,12 +339,10 @@ class ProductControlledUnderItar(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            {
-                "parent_field": "is_controlled_under_itar",
-                "parent_field_response": False,
-                "required_field": "controlled_info",
-                "error_message": "Information on how the foreign technology or information is controlled cannot be blank",
-            }
+            parent_field="is_controlled_under_itar",
+            parent_field_response=False,
+            required_field="controlled_info",
+            error_message="Information on how the foreign technology or information is controlled cannot be blank",
         )
 
     def get_layout_fields(self):
@@ -439,12 +435,10 @@ class ProductIncludeCryptography(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            {
-                "parent_field": "is_including_cryptography_or_security_features",
-                "parent_field_response": True,
-                "required_field": "cryptography_or_security_feature_info",
-                "error_message": "Details about the information security features cannot be blank",
-            }
+            parent_field="is_including_cryptography_or_security_features",
+            parent_field_response=True,
+            required_field="cryptography_or_security_feature_info",
+            error_message="Details about the information security features cannot be blank",
         )
 
     def get_layout_fields(self):
@@ -636,12 +630,10 @@ class ProductUsedByUKArmedForces(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            {
-                "parent_field": "is_used_by_uk_armed_forces",
-                "parent_field_response": True,
-                "required_field": "used_by_uk_armed_forces_info",
-                "error_message": "Details about how the item will be used cannot be blank",
-            }
+            parent_field="is_used_by_uk_armed_forces",
+            parent_field_response=True,
+            required_field="used_by_uk_armed_forces_info",
+            error_message="Details about how the item will be used cannot be blank",
         )
 
     def get_layout_fields(self):
