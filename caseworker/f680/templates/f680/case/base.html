@@ -17,6 +17,9 @@
                     Recommendations
                 </a>
             {% endif %}
+            <a id="notes-and-timeline" href="{% url 'cases:f680:notes_and_timeline' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "notes-and-timeline" %}lite-tabs__tab--selected{% endif %}">
+                Notes and timeline
+            </a>
         </div>
     </div>
 </div>
