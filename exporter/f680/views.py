@@ -3,7 +3,7 @@ import rules
 
 from django.contrib.auth.mixins import AccessMixin
 from django.urls import reverse
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -84,3 +84,7 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
 
     def get_success_url(self):
         return reverse("applications:success_page", kwargs={"pk": self.application["id"]})
+
+
+class F680ApplicationDetailView(LoginRequiredMixin, F680FeatureRequiredMixin, TemplateView):
+    template_name = "f680/application_detail.html"
