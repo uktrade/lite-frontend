@@ -108,7 +108,7 @@ class EndUserNameForm(BaseForm):
 
     end_user_name = forms.CharField(
         label="",
-        help_text="Name or organisation or individual",
+        help_text="Name of organisation or individual",
     )
 
     def get_layout_fields(self):
