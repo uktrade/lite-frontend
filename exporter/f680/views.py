@@ -15,6 +15,8 @@ from .services import (
     submit_f680_application,
 )
 
+from exporter.applications.services import get_application
+
 
 class F680FeatureRequiredMixin(AccessMixin):
     def dispatch(self, request, *args, **kwargs):
@@ -88,3 +90,13 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
 
 class F680ApplicationDetailView(LoginRequiredMixin, F680FeatureRequiredMixin, TemplateView):
     template_name = "f680/application_detail.html"
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.application_id = str(kwargs["pk"])
+        self.application = get_application(request, str(kwargs["pk"]))
+
+    def get_context_data(self, pk, **kwargs):
+        return {
+            "application": self.application,
+        }
