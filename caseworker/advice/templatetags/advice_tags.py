@@ -113,11 +113,6 @@ def countersignatures_for_advice(case, advice):
     ]
 
 
-@register.filter
-def get_third_party(third_parties, id):
-    return [party for party in third_parties if party["id"] == id]
-
-
 @register.inclusion_tag("advice/group-advice.html", takes_context=True)
 def group_advice(context):
     grouped_advice = []
