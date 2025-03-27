@@ -22,6 +22,7 @@ class ApplicationNameForm(BaseForm):
     name = forms.CharField(
         label="",
         help_text="Give the application a reference name so you can refer back to it when needed",
+        error_messages={"required": "Enter an application name"},
     )
 
     def get_layout_fields(self):
@@ -42,6 +43,7 @@ class PreviousApplicationConfirm(BaseForm):
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
+        error_messages={"required": "Select yes if you have made F680 applications before"},
     )
 
     def get_layout_fields(self):
@@ -53,13 +55,17 @@ class PreviousApplicationsForm(BaseForm):
         TITLE = "Previous applications"
         SUBMIT_BUTTON_TEXT = "Continue"
 
-    previous_application_ecju_reference = forms.CharField(label="What is the ECJU reference number?")
+    previous_application_ecju_reference = forms.CharField(
+        label="What is the ECJU reference number?",
+        error_messages={"required": "Enter a reference number"},
+    )
     previous_application_details = forms.CharField(
         label="Can you provide more detail?",
         help_text="For example if the products have been previously agreed or refused to the "
         "end-user or country.  Or if its for the same goods but to different destinations.  "
         "If possible provide the export trade licence number",
         widget=forms.Textarea(attrs={"rows": "5"}),
+        error_messages={"required": "Enter details about the previous applications"},
     )
 
     def get_layout_fields(self):
@@ -80,6 +86,7 @@ class ExceptionalCircumstancesForm(BaseForm):
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
+        error_messages={"required": "Select yes if you have exceptional circumstances"},
     )
 
     def get_layout_fields(self):
@@ -107,6 +114,7 @@ class ExplainExceptionalCircumstancesForm(BaseForm):
     exceptional_circumstances_reason = forms.CharField(
         label="Why do you need approval in less than 30 days?",
         widget=forms.Textarea(attrs={"rows": "5"}),
+        error_messages={"required": "Enter details about why you need approval in less than 30 days"},
     )
 
     def get_layout_fields(self):

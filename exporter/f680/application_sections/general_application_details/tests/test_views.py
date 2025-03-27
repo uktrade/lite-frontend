@@ -256,14 +256,43 @@ class TestGeneralApplicationDetailsView:
     @pytest.mark.parametrize(
         "step, data, expected_errors",
         (
-            (FormSteps.APPLICATION_NAME, {"name": ""}, {"name": ["This field is required."]}),
-            (FormSteps.EXCEPTIONAL_CIRCUMSTANCES, {}, {"is_exceptional_circumstances": ["This field is required."]}),
+            (FormSteps.APPLICATION_NAME, {"name": ""}, {"name": ["Enter an application name"]}),
+            (
+                FormSteps.HAS_MADE_PREVIOUS_APPLICATION,
+                {},
+                {"has_made_previous_application": ["Select yes if you have made F680 applications before"]},
+            ),
+            (
+                FormSteps.PREVIOUS_APPLICATION,
+                {"previous_application_details": "some info"},
+                {"previous_application_ecju_reference": ["Enter a reference number"]},
+            ),
+            (
+                FormSteps.PREVIOUS_APPLICATION,
+                {"previous_application_ecju_reference": "123456"},
+                {"previous_application_details": ["Enter details about the previous applications"]},
+            ),
+            (
+                FormSteps.PREVIOUS_APPLICATION,
+                {},
+                {
+                    "previous_application_ecju_reference": ["Enter a reference number"],
+                    "previous_application_details": ["Enter details about the previous applications"],
+                },
+            ),
+            (
+                FormSteps.EXCEPTIONAL_CIRCUMSTANCES,
+                {},
+                {"is_exceptional_circumstances": ["Select yes if you have exceptional circumstances"]},
+            ),
             (
                 FormSteps.EXCEPTIONAL_CIRCUMSTANCES_REASONS,
                 {},
                 {
                     "exceptional_circumstances_date": ["Enter the day, month and year"],
-                    "exceptional_circumstances_reason": ["This field is required."],
+                    "exceptional_circumstances_reason": [
+                        "Enter details about why you need approval in less than 30 days"
+                    ],
                 },
             ),
             (
@@ -309,6 +338,7 @@ class TestGeneralApplicationDetailsView:
         )
         assert response.status_code == 200
         for field_name, error in expected_errors.items():
+
             assert response.context["form"][field_name].errors == error
 
     @freeze_time("2026-11-30")

@@ -11,6 +11,7 @@ class NotesForCaseOfficerForm(BaseForm):
     note = forms.CharField(
         label="Add note",
         widget=forms.Textarea(attrs={"cols": "80"}),
+        required=False,
     )
 
     def get_layout_fields(self):
