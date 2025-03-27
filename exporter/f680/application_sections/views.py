@@ -65,6 +65,14 @@ class F680ApplicationSectionWizard(LoginRequiredMixin, F680FeatureRequiredMixin,
             },
         )
 
+    def get_back_link_url(self):
+        return self.get_success_url(self.application["id"])
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["back_link_url"] = self.get_back_link_url()
+        return context_data
+
     def get_payload(self, form_dict):
         current_application = self.application.get("application", {})
         return F680PatchPayloadBuilder().build(self.section, self.section_label, current_application, form_dict)

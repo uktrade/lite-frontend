@@ -1,0 +1,63 @@
+{% load static advice_tags %}
+
+    {% with product=case.data.product %}
+        <h2 class="govuk-heading-m">Case details</h2>
+        <details class="govuk-details" data-module="govuk-details">
+          <summary class="govuk-details__summary">
+              <span class="govuk-details__summary-text">Products</span>
+          </summary>
+          <div class="govuk-details__text">
+            <table id="table-nlr-products" class="govuk-table">
+              <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell govuk-!-font-weight-bold">Name</td>
+                  <td class="govuk-table__cell">
+                    {{ product.name}}
+                </td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell govuk-!-font-weight-bold">Description</td>
+                    <td class="govuk-table__cell">
+                      {{ product.description }}
+                  </td>
+                  </tr>
+                </tbody>
+            </table>
+          </div>
+        </details>
+
+        <details class="govuk-details" data-module="govuk-details">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">Destinations</span>
+          </summary>
+          <div class="govuk-details__text">
+            <table id="table-nlr-products" class="govuk-table">
+              <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th scope="col" class="govuk-table__header">Country</th>
+                  <th scope="col" class="govuk-table__header">Type</th>
+                  <th scope="col" class="govuk-table__header">Name</th>
+                  <th scope="col" class="govuk-table__header">Security grading</th>
+                </tr>
+              </thead>
+              <tbody class="govuk-table__body">
+                {% for rr in security_release_requests %}
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell">
+                    <strong>{{ rr.recipient.country.name }}</strong><br>
+                    <ol>
+                      {% for item in rr.approval_types %}
+                          <li>{{ item }}</li>
+                      {% endfor %}
+                    </ol>
+                  </td>
+                  <td class="govuk-table__cell">{{ rr.recipient.type.value }}</td>
+                  <td class="govuk-table__cell">{{ rr.recipient.name }}</td>
+                  <td class="govuk-table__cell">{{ rr.security_grading.value }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </details>
+    {% endwith %}

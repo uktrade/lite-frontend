@@ -568,7 +568,7 @@ class ProductFunding(BaseForm):
 
 class ModSponsorDetails(BaseForm):
     class Layout:
-        TITLE = "Who is funding the item?"
+        TITLE = "MOD sponsor details"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     full_name = forms.CharField(
