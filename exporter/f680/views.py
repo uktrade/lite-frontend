@@ -15,7 +15,14 @@ from .services import (
     submit_f680_application,
 )
 
-from exporter.applications.services import get_application
+from exporter.applications.services import (
+    get_activity,
+    get_application_history,
+    get_case_notes,
+    get_case_generated_documents,
+    get_application_ecju_queries,
+    get_application,
+)
 
 
 class F680FeatureRequiredMixin(AccessMixin):
@@ -93,10 +100,36 @@ class F680ApplicationDetailView(LoginRequiredMixin, F680FeatureRequiredMixin, Te
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
-        self.application_id = str(kwargs["pk"])
         self.application = get_application(request, str(kwargs["pk"]))
+        self.get_application_history = get_application_history(self.request, str(kwargs["pk"]))
+        self.view_type = kwargs.get("type", None)
 
     def get_context_data(self, pk, **kwargs):
-        return {
-            "application": self.application,
+        context = super().get_context_data(**kwargs)
+        context["application"] = self.application
+        context["application_history"] = self.get_application_history
+        application_section_order = [
+            "general_application_details",
+            "approval_type",
+            "product_information",
+            "user_information",
+            "supporting_documents",
+            "notes_for_case_officers",
+        ]
+        application_sections = {
+            key: self.application["application"]["sections"].get(key, None) for key in application_section_order
         }
+
+        context["application_sections"] = application_sections
+        context["activity"] = (get_activity(self.request, self.application["id"]) or {},)
+        if self.view_type == "case-notes":
+            context["notes"] = get_case_notes(self.request, self.application["id"])["case_notes"]
+
+        if self.view_type == "ecju-queries":
+            context["open_queries"], context["closed_queries"] = get_application_ecju_queries(
+                self.request, self.application["id"]
+            )
+        if self.view_type == "generated-documents":
+            generated_documents, _ = get_case_generated_documents(self.request, self.application["id"])
+            context["generated_documents"] = generated_documents["results"]
+        return context

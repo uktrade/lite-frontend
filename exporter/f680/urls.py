@@ -8,6 +8,7 @@ app_name = "f680"
 urlpatterns = [
     path("<uuid:pk>/apply/", views.F680ApplicationSummaryView.as_view(), name="summary"),
     path("<uuid:pk>/", views.F680ApplicationDetailView.as_view(), name="detail"),
+    path("<uuid:pk>/<str:type>/", views.F680ApplicationDetailView.as_view(), name="detail"),
     path(
         "<uuid:pk>/general-application-details/",
         include("exporter.f680.application_sections.general_application_details.urls"),
