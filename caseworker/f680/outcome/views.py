@@ -59,7 +59,7 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     def get_success_url(self):
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
-    def get_form_kwargs(self, step):
+    def get_form_kwargs(self, step=None):
         if step == OutcomeSteps.SELECT_OUTCOME:
             return {"security_release_requests": self.remaining_requests_without_outcome}
         if step == OutcomeSteps.APPROVE:
