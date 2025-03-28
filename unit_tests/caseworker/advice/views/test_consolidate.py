@@ -19,6 +19,7 @@ from caseworker.advice.services import (
 )
 from core import client
 from unit_tests.caseworker.conftest import countersignatures_for_advice
+from unit_tests.helpers import get_rows
 
 
 @pytest.fixture
@@ -392,19 +393,10 @@ def test_view_consolidate_approve_outcome(
     table = soup.find("table", id="table-licenceable-products")
     assert [th.text for th in table.find_all("th")] == ["Country", "Type", "Name", "Approved products"]
 
-    assert [td.text for td in table.find_all("td")] == [
-        "Abu Dhabi",
-        "Consignee",
-        "Consignee",
-        "All",
-        "United Kingdom",
-        "End-user",
-        "End User",
-        "All",
-        "United Kingdom",
-        "Third party",
-        "Third party",
-        "All",
+    assert get_rows(table) == [
+        ["Abu Dhabi", "Consignee", "Consignee", "All"],
+        ["United Kingdom", "End-user", "End User", "All"],
+        ["United Kingdom", "Third party", "Third party", "All"],
     ]
 
 
@@ -429,23 +421,10 @@ def test_view_consolidate_refuse_outcome(
         "Refused products",
         "Refusal criteria",
     ]
-
-    assert [td.text for td in table.find_all("td")] == [
-        "Abu Dhabi",
-        "Consignee",
-        "Consignee",
-        "All",
-        "five a, five b",
-        "United Kingdom",
-        "End-user",
-        "End User",
-        "All",
-        "five a, five b",
-        "United Kingdom",
-        "Third party",
-        "Third party",
-        "All",
-        "five a, five b",
+    assert get_rows(table) == [
+        ["Abu Dhabi", "Consignee", "Consignee", "All", "five a, five b"],
+        ["United Kingdom", "End-user", "End User", "All", "five a, five b"],
+        ["United Kingdom", "Third party", "Third party", "All", "five a, five b"],
     ]
 
 

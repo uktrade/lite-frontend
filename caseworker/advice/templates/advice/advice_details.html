@@ -28,56 +28,60 @@
     <tbody class="govuk-table__body">
         {% for item in advice %}
             {% if item.consignee %}
-            {% with consignee=case.data.consignee %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">{{ consignee.country.name }}</td>
-                <td class="govuk-table__cell">{{ consignee.type_display_value }}</td>
-                <td class="govuk-table__cell">{{ consignee.name }}</td>
-                <td class="govuk-table__cell">All</td>
-                {% if decision == 'refuse' %}
-                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
-				{% endif %}
-            </tr>
-            {% endwith %}
+                {% with consignee=case.data.consignee %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">{{ consignee.country.name }}</td>
+                        <td class="govuk-table__cell">{{ consignee.type_display_value }}</td>
+                        <td class="govuk-table__cell">{{ consignee.name }}</td>
+                        <td class="govuk-table__cell">All</td>
+                        {% if decision == 'refuse' %}
+                            <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
+                        {% endif %}
+                    </tr>
+                {% endwith %}
             {% endif %}
             {% if item.end_user %}
-            {% with end_user=case.data.end_user %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">{{ end_user.country.name }}</td>
-                <td class="govuk-table__cell">{{ end_user.type_display_value }}</td>
-                <td class="govuk-table__cell">{{ end_user.name }}</td>
-                <td class="govuk-table__cell">All</td>
-                {% if decision == 'refuse' %}
-                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
-				{% endif %}
-            </tr>
-            {% endwith %}
+                {% with end_user=case.data.end_user %}
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">{{ end_user.country.name }}</td>
+                        <td class="govuk-table__cell">{{ end_user.type_display_value }}</td>
+                        <td class="govuk-table__cell">{{ end_user.name }}</td>
+                        <td class="govuk-table__cell">All</td>
+                        {% if decision == 'refuse' %}
+                            <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
+                        {% endif %}
+                    </tr>
+                {% endwith %}
             {% endif %}
             {% if item.third_party %}
-            {% for third_party in case.data.third_parties|get_third_party:item.third_party %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">{{ third_party.country.name }}</td>
-                <td class="govuk-table__cell">{{ third_party.type_display_value }}</td>
-                <td class="govuk-table__cell">{{ third_party.name }}</td>
-                <td class="govuk-table__cell">All</td>
-                {% if decision == 'refuse' %}
-                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
+                {% for third_party in case.data.third_parties %}
+                    {% if item.third_party == third_party.id %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ third_party.country.name }}</td>
+                            <td class="govuk-table__cell">{{ third_party.type_display_value }}</td>
+                            <td class="govuk-table__cell">{{ third_party.name }}</td>
+                            <td class="govuk-table__cell">All</td>
+                            {% if decision == 'refuse' %}
+                                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
             {% endif %}
             {% if item.ultimate_end_user %}
-            {% for ultimate_end_user in case.data.ultimate_end_users %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
-                <td class="govuk-table__cell">{{ ultimate_end_user.type_display_value }}</td>
-                <td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
-                <td class="govuk-table__cell">All</td>
-                {% if decision == 'refuse' %}
-                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
-                {% endif %}
-            </tr>
-            {% endfor %}
+                {% for ultimate_end_user in case.data.ultimate_end_users %}
+                    {% if item.ultimate_end_user == ultimate_end_user.id %}
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">{{ ultimate_end_user.country.name }}</td>
+                            <td class="govuk-table__cell">{{ ultimate_end_user.type_display_value }}</td>
+                            <td class="govuk-table__cell">{{ ultimate_end_user.name }}</td>
+                            <td class="govuk-table__cell">All</td>
+                            {% if decision == 'refuse' %}
+                                <td class="govuk-table__cell">{{ item.denial_reasons|get_denial_reason_display_values:denial_reasons_display}}</td>
+                            {% endif %}
+                        </tr>
+                    {% endif %}
+                {% endfor %}
             {% endif %}
         {% endfor %}
     </tbody>
