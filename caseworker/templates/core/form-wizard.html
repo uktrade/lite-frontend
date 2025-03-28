@@ -28,6 +28,8 @@
             {% include "gds/layout/error_summary.html" %}
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
+                    {% block before_form %}
+                    {% endblock %}
                     {% if wizard.form.forms %}
                         {{ wizard.form.management_form }}
                         {% for form in wizard.form.forms %}

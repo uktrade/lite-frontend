@@ -39,6 +39,37 @@ def recommendations(current_user, admin_team, data_submitted_f680_case):
 
 
 @pytest.fixture
+def mock_outcomes_no_outcomes(requests_mock, data_submitted_f680_case):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/"
+    return requests_mock.get(url, json=[], status_code=200)
+
+
+@pytest.fixture
+def data_outcomes(current_user, admin_team, data_submitted_f680_case):
+    security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+    return [
+        {
+            "id": "429c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+            "created_at": "2021-10-16T23:48:39.486679+01:00",
+            "outcome": "approve",
+            "conditions": "No concerns",
+            "refusal_reasons": None,
+            "security_grading": "official",
+            "approval_types": ["training"],
+            "security_release_requests": [security_release_requests[0]["id"]],
+            "user": current_user,
+            "team": admin_team,
+        }
+    ]
+
+
+@pytest.fixture
+def mock_outcomes_single_outcome(requests_mock, data_outcomes, data_submitted_f680_case):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/"
+    return requests_mock.get(url, json=data_outcomes, status_code=200)
+
+
+@pytest.fixture
 def mock_f680_case_with_assigned_user(f680_case_id, requests_mock, data_submitted_f680_case, data_queue, mock_gov_user):
     data_submitted_f680_case["case"]["assigned_users"] = {data_queue["name"]: [mock_gov_user["user"]]}
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
