@@ -1,0 +1,15 @@
+{% extends 'f680/case/base.html' %}
+{% load crispy_forms_tags %}
+{% load svg %}
+
+{% block header_tabs %}{% endblock %}
+
+{% block details %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <a href="{% url 'cases:f680:ecju_queries' queue_pk case.id %}" class="govuk-back-link">Back</a>
+      {% crispy form %}
+    </div>
+  </div>
+{% endblock %}
+

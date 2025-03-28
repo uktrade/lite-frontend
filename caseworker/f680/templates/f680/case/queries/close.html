@@ -1,0 +1,26 @@
+{% extends 'f680/case/base.html' %}
+{% load crispy_forms_tags %}
+{% load svg %}
+
+{% block header_tabs %}{% endblock %}
+
+{% block details %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <a href="{% url 'cases:f680:ecju_queries' queue_pk case.id %}" class="govuk-back-link">Back</a>
+      <h3 class="govuk-heading-l">Close query</h3>
+      <div class="app-ecju-query" id="ecju-query">
+        <div class="app-ecju-query__item">
+          <p class="app-ecju-query__heading">{{ query.query_type.value }} by {{ query.raised_by_user_name }}</p>
+          <div class="app-ecju-query__text" data-max-length="300">
+            {{ query.question|linebreaks }}
+          </div>
+          <p class="app-ecju-query__date">
+            Sent at {{ query.created_at|str_time_on_date }}.
+          </p>
+        </div>
+      </div>
+      {% crispy form %}
+    </div>
+  </div>
+{% endblock %}
