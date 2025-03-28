@@ -82,7 +82,8 @@
         </div>
     {% endfor %}
     {% elif type == 'case-notes' %}
-        {% url "applications:application" application.id "case-notes" as post_url %}
+        {% url "f680:detail" application.id "case-notes" as post_url %}
+        {% url "f680:detail" application.id as return_url %}
         {% include "includes/case-notes.html" with post_url=post_url %}
     {% elif type == 'ecju-queries' %}
         {% include "includes/ecju-queries.html" with object_type="application" case_id=application.id %}
