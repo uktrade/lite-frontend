@@ -43,6 +43,13 @@ urlpatterns = [
         name="clear_recommendation",
     ),
     path(
+        "ecju-queries/",
+        views.ECJUQueryListView.as_view(),
+        name="ecju_queries",
+    ),
+    path("ecju-queries/new/", views.NewECJUQueryView.as_view(), name="new_ecju_query"),
+    path("ecju-queries/<uuid:query_pk>/close-query/", views.CloseECJUQueryView.as_view(), name="close_ecju_query"),
+    path(
         "move-case-forward/",
         views.MoveCaseForward.as_view(),
         name="move_case_forward",

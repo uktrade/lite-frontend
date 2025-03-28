@@ -13,14 +13,18 @@ from core.auth.views import LoginRequiredMixin
 from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import move_case_forward
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
-from caseworker.cases.services import get_case
+from caseworker.cases.services import get_case, post_ecju_query
 from caseworker.f680.rules import OUTCOME_STATUSES
+from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.cases.helpers.case import CaseworkerMixin
+from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
 
 from caseworker.activities.forms import NotesAndTimelineForm
 from caseworker.activities.mixins import NotesAndTimelineMixin
+from caseworker.cases.forms.queries import CloseQueryForm
+from caseworker.cases.views.queries import CloseQueryMixin
 
 
 class F680CaseworkerMixin(CaseworkerMixin):
@@ -117,3 +121,43 @@ class NotesAndTimelineView(LoginRequiredMixin, F680CaseworkerMixin, NotesAndTime
 
     def get_view_url(self):
         return reverse("cases:f680:notes_and_timeline", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+
+class ECJUQueryListView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
+    template_name = "f680/case/queries/list.html"
+    current_tab = "ecju-queries"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        open_ecju_queries, closed_ecju_queries = get_ecju_queries(self.request, self.case_id)
+        open_ecju_queries_with_forms = self.get_open_ecju_queries_with_forms(open_ecju_queries)
+        context["open_queries"] = open_ecju_queries_with_forms
+        context["closed_queries"] = closed_ecju_queries
+        return context
+
+    def get_open_ecju_queries_with_forms(self, open_ecju_queries):
+        open_ecju_queries_with_forms = []
+        for open_query in open_ecju_queries:
+            open_ecju_queries_with_forms.append((open_query, CloseQueryForm(prefix=str(open_query["id"]))))
+        return open_ecju_queries_with_forms
+
+
+class NewECJUQueryView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
+    template_name = "f680/case/queries/new.html"
+    form_class = NewECJUQueryForm
+
+    def form_valid(self, form):
+        data = {"question": form.cleaned_data["question"], "query_type": "ecju_query"}
+        post_ecju_query(self.request, self.case_id, data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:f680:ecju_queries", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+
+class CloseECJUQueryView(LoginRequiredMixin, F680CaseworkerMixin, CloseQueryMixin, FormView):
+    form_class = CloseQueryForm
+    template_name = "f680/case/queries/close.html"
+
+    def get_success_url(self):
+        return reverse("cases:f680:ecju_queries", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
