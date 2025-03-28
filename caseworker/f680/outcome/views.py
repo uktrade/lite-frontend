@@ -23,7 +23,6 @@ def is_refuse_selected(wizard):
 
 
 class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
-    # TODO: custom template
     template_name = "f680/case/outcome/form_wizard.html"
     current_tab = "recommendations"
 
@@ -39,19 +38,23 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     }
 
     def extra_setup(self, request):
-        self.existing_outcomes, self.remaining_requests_without_outcome = self.get_remaining_outcomes()
+        self.existing_outcomes, self.remaining_requests_without_outcome, self.remaining_request_ids_without_outcome = (
+            self.get_remaining_outcomes()
+        )
 
     def get_remaining_outcomes(self):
         existing_outcomes, _ = self.get_existing_outcomes()
         release_requests_with_outcome = set()
         for outcome in existing_outcomes:
             release_requests_with_outcome.update(outcome["security_release_requests"])
+        remaining_request_ids_without_outcome = set()
         remaining_requests_without_outcome = []
         for release_request in self.case.data["security_release_requests"]:
             if release_request["id"] in release_requests_with_outcome:
                 continue
             remaining_requests_without_outcome.append(release_request)
-        return existing_outcomes, remaining_requests_without_outcome
+            remaining_request_ids_without_outcome.add(release_request["id"])
+        return existing_outcomes, remaining_requests_without_outcome, remaining_request_ids_without_outcome
 
     def get_success_url(self):
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
@@ -99,7 +102,8 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
         self.post_outcome(data)
-        _, remaining_requests_without_outcome = self.get_remaining_outcomes()
-        if len(remaining_requests_without_outcome) == 0:
+        for request_id in data["security_release_requests"]:
+            self.remaining_request_ids_without_outcome.remove(request_id)
+        if len(self.remaining_request_ids_without_outcome) == 0:
             return redirect(self.get_success_url())
         return redirect(reverse("cases:f680:outcome:decide_outcome", kwargs=self.kwargs))
