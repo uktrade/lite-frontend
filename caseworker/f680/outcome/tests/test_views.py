@@ -143,8 +143,29 @@ class TestDecideOutcomeView:
         form = response.context["form"]
         assert isinstance(form, expected_form_class)
 
-    def test_POST_select_outcome_bad_request(self):
-        pass
+    def test_POST_select_outcome_bad_request(
+        self,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_no_outcomes,
+        post_to_step,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        request_ids = [request["id"] for request in security_release_requests]
+        response = post_to_step(
+            OutcomeSteps.SELECT_OUTCOME,
+            {},
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, forms.SelectOutcomeForm)
+        assert form.errors == {
+            "outcome": ["Select if you approve or refuse"],
+            "security_release_requests": ["This field is required."],
+        }
 
     def test_POST_approve(
         self,
@@ -192,8 +213,39 @@ class TestDecideOutcomeView:
             "security_release_requests": request_ids,
         }
 
-    def test_POST_approve_bad_request(self):
-        pass
+    def test_POST_approve_bad_request(
+        self,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        data_queue,
+        mock_f680_case,
+        mock_outcomes_no_outcomes,
+        post_to_step,
+        mock_POST_outcome,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        request_ids = [request["id"] for request in security_release_requests]
+        response = post_to_step(
+            OutcomeSteps.SELECT_OUTCOME,
+            {
+                "outcome": "approve",
+                "security_release_requests": request_ids,
+            },
+        )
+        assert response.status_code == 200
+
+        response = post_to_step(
+            OutcomeSteps.APPROVE,
+            {},
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert form.errors == {
+            "security_grading": ["Select the security grading"],
+            "approval_types": ["This field is required."],
+        }
 
     def test_POST_partial_approve(
         self,
@@ -280,5 +332,34 @@ class TestDecideOutcomeView:
             "security_release_requests": request_ids,
         }
 
-    def test_POST_refuse_bad_request(self):
-        pass
+    def test_POST_refuse_bad_request(
+        self,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_no_outcomes,
+        post_to_step,
+        mock_POST_outcome,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        request_ids = [request["id"] for request in security_release_requests]
+        response = post_to_step(
+            OutcomeSteps.SELECT_OUTCOME,
+            {
+                "outcome": "refuse",
+                "security_release_requests": request_ids,
+            },
+        )
+        assert response.status_code == 200
+
+        response = post_to_step(
+            OutcomeSteps.REFUSE,
+            {},
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert form.errors == {
+            "refusal_reasons": ["This field is required."],
+        }
