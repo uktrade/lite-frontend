@@ -69,4 +69,26 @@
             </a>
         </div>
     </div>
+    {% if not type %}
+	{% for section_key, section in application_sections.items %}
+    <div class="application-section">
+        {% if section_key == "user_information" %}
+            {% include "f680/includes/application_section_user_information.html" with section=section %}
+        {% elif section.type == "single" %}
+            {% include "f680/includes/application_section_single.html" with section=section section_key=section_key %}
+        {% else %}
+            {% include "f680/includes/application_section_multiple.html" with section=section section_key=section_key %}
+        {% endif %}
+        </div>
+    {% endfor %}
+    {% elif type == 'case-notes' %}
+        {% url "applications:application" application.id "case-notes" as post_url %}
+        {% include "includes/case-notes.html" with post_url=post_url %}
+    {% elif type == 'ecju-queries' %}
+        {% include "includes/ecju-queries.html" with object_type="application" case_id=application.id %}
+    {% elif type == 'generated-documents' %}
+        {% include "core/ecju-generated-documents.html" %}
+    {% elif type == 'activity' %}
+        {% include "applications/tabs/activity.html" %}
+    {% endif %}
 {% endblock %}
