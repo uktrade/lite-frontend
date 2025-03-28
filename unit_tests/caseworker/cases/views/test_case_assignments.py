@@ -95,8 +95,9 @@ def test_f680_case_assignments_POST_remove_user_success(
     mock_f680_case_with_assignments,
     mock_remove_f680_assignment,
     mock_queue,
+    settings,
 ):
-
+    settings.FEATURE_FLAG_ALLOW_F680 = True
     case = data_submitted_f680_case
     url = reverse("cases:remove-case-assignment", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
     response = authorized_client.post(url, data={"assignment_id": str(data_f680_assignment["id"])}, follow=True)
@@ -361,7 +362,9 @@ def test_f680_case_assign_me(
     mock_add_assignment,
     mock_f680_case,
     mock_queue,
+    settings,
 ):
+    settings.FEATURE_FLAG_ALLOW_F680 = True
     url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
     case_url = reverse(
         "cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]}
