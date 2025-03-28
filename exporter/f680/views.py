@@ -2,9 +2,8 @@ from http import HTTPStatus
 import rules
 
 from django.contrib.auth.mixins import AccessMixin
-from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import FormView, RedirectView
+from django.views.generic import FormView
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -12,7 +11,6 @@ from core.decorators import expect_status
 from .forms import ApplicationSubmissionForm
 
 from .services import (
-    post_f680_application,
     get_f680_application,
     submit_f680_application,
 )
@@ -27,32 +25,6 @@ class F680FeatureRequiredMixin(AccessMixin):
             )
             return self.handle_no_permission()
         return super().dispatch(request, *args, **kwargs)
-
-
-class F680ApplicationCreateView(LoginRequiredMixin, F680FeatureRequiredMixin, RedirectView):
-
-    @expect_status(
-        HTTPStatus.CREATED,
-        "Error creating F680 application",
-        "Unexpected error creating F680 application",
-    )
-    def post_f680_application(self, data):
-        return post_f680_application(self.request, data)
-
-    def get_success_url(self, application_id):
-        return reverse(
-            "f680:summary",
-            kwargs={
-                "pk": application_id,
-            },
-        )
-
-    def get(self, request, *args, **kwargs):
-        super().get(request, *args, **kwargs)
-        # Data required to create a base application
-        data = {"application": {}}
-        response_data, _ = self.post_f680_application(data)
-        return redirect(self.get_success_url(response_data["id"]))
 
 
 class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, FormView):

@@ -147,7 +147,7 @@ class ProductHasSecurityClassification(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        label=Layout.TITLE,
+        label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
     )
@@ -163,7 +163,7 @@ class ActionTakenToClassifyInfo(BaseForm):
         SUBMIT_BUTTON_TEXT = "Continue"
 
     actions_to_classify = forms.CharField(
-        label=Layout.TITLE,
+        label="",
         widget=forms.Textarea(attrs={"rows": 5}),
     )
 
@@ -287,14 +287,14 @@ class ProductControlledUnderItar(BaseForm):
     )
 
     def clean(self):
-        return self.add_required_to_conditional_text_field("is_controlled_under_itar", True, "controlled_info")
+        return self.add_required_to_conditional_text_field("is_controlled_under_itar", False, "controlled_info")
 
     def get_layout_fields(self):
         return (
             ConditionalRadios(
                 "is_controlled_under_itar",
-                ConditionalRadiosQuestion("Yes, it's controlled under  ITAR", "controlled_info"),
-                "No",
+                "Yes, it's controlled under  ITAR",
+                ConditionalRadiosQuestion("No", "controlled_info"),
             ),
             HTML.details(
                 "Help with ITAR",
@@ -465,10 +465,7 @@ class ProductElectronicMODData(BaseForm):
                 "is_mod_electronic_data_shared",
                 ConditionalRadiosQuestion(
                     "Yes",
-                    HTML.p(
-                        "You need to complete part A off the MOD EW Data Release Capture Form and attach "
-                        "it to the application in the supporting documents section"
-                    ),
+                    HTML(render_to_string("f680/forms/conditional_yes_electronic_warfare.html")),
                 ),
                 "No",
             ),
@@ -497,6 +494,25 @@ class ProductFunding(BaseForm):
 
     def get_layout_fields(self):
         return ("funding_source",)
+
+
+class ModSponsorDetails(BaseForm):
+    class Layout:
+        TITLE = "Who is funding the item?"
+        SUBMIT_BUTTON_TEXT = "Save and continue"
+
+    full_name = forms.CharField(label="Full name")
+    address = forms.CharField(label="Address", widget=forms.Textarea(attrs={"rows": 5}))
+    phone_number = forms.CharField(label="Phone number")
+    email_address = forms.EmailField(label="Email address")
+
+    def get_layout_fields(self):
+        return (
+            "full_name",
+            "address",
+            "phone_number",
+            "email_address",
+        )
 
 
 class ProductUsedByUKArmedForces(BaseForm):

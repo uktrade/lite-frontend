@@ -66,7 +66,7 @@ class FlagsList(LoginRequiredMixin, TemplateView):
 
 def perform_action(case, level, request, pk, json):
     selected_goods_ids = request.GET.getlist("goods", request.GET.getlist("goods_types"))
-    goods = case.data.get("goods", case.data.get("goods_types"))
+    goods = case.data.get("goods", case.data.get("goods_types", []))
     product_ids = [item["good"]["id"] for item in goods if item["id"] in selected_goods_ids]
     data = {
         "level": level,

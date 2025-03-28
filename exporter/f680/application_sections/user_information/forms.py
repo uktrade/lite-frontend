@@ -1,10 +1,11 @@
 from django import forms
+from django.template.loader import render_to_string
 from crispy_forms_gds.choices import Choice
-from crispy_forms_gds.fields import DateInputField
 
 from core.common.forms import BaseForm
 
 from exporter.f680.constants import SecurityGrading
+
 from core.forms.layouts import (
     ConditionalRadios,
     ConditionalRadiosQuestion,
@@ -140,61 +141,63 @@ class EndUserAddressForm(BaseForm):
 
 class SecurityGradingForm(BaseForm):
     class Layout:
-        TITLE = "What is the security grading of the information or products you want to release to this end-user"
+        TITLE = "What is the security grading of the information or products you want to release to this entity"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     prefix = forms.CharField(
         label="Enter a prefix (optional)",
         required=False,
     )
+
     security_classification = forms.ChoiceField(
-        choices=SecurityGrading.security_release_choices,
+        choices="",
         label="Select security classification",
         widget=forms.RadioSelect,
     )
-    other_security_classification = forms.CharField(
-        label="Enter the security classification",
-        required=False,
-    )
+
+    other_security_classification = forms.CharField(label="Enter the security classification", required=False)
+
     suffix = forms.CharField(
         label="Enter a suffix (optional)",
-        help_text="For example, UK eyes only",
         required=False,
     )
-    issuing_authority_name_address = forms.CharField(
-        label="Name and address of the issuing authority",
-        widget=forms.Textarea(attrs={"rows": "5"}),
-    )
-    reference = forms.CharField(
-        label="Reference",
-    )
-    date_of_issue = DateInputField(
-        label="Date of issue",
-        help_text="For example, 27 3 2025",
-    )
+
+    def clean(self):
+        return self.add_required_to_conditional_text_field(
+            "security_classification", "other", "other_security_classification"
+        )
+
+    def __init__(self, *args, **kwargs):
+        self.conditional_radio_choices = [
+            (
+                ConditionalRadiosQuestion(choice.label, "other_security_classification")
+                if choice.value == "other"
+                else choice.label
+            )
+            for choice in SecurityGrading.security_release_choices
+        ]
+        super().__init__(*args, **kwargs)
+        self.fields["security_classification"].choices = SecurityGrading.security_release_choices
 
     def get_layout_fields(self):
         return (
             "prefix",
-            "security_classification",
-            "other_security_classification",
+            ConditionalRadios("security_classification", *self.conditional_radio_choices),
             "suffix",
-            "issuing_authority_name_address",
-            "reference",
-            "date_of_issue",
         )
 
 
 class EndUserIntendedEndUseForm(BaseForm):
     class Layout:
-        TITLE = "How does the end-user intend to use this product"
+        TITLE = "How does the end-user intend to use this item"
         TITLE_AS_LABEL_FOR = "end_user_intended_end_use"
         SUBMIT_BUTTON_TEXT = "Save and continue"
+        SUBTITLE = render_to_string("f680/forms/subtitle_product_intended_use.html")
 
     end_user_intended_end_use = forms.CharField(
         label="",
         widget=forms.Textarea(attrs={"rows": "5"}),
-        help_text="Include as much information as you can. We need to know if they will integrate it into other equipment, involve any third parties, etc.",
+        help_text="",
     )
 
     def get_layout_fields(self):
@@ -227,6 +230,12 @@ class EndUserAssembleManufactureForm(BaseForm):
         required=False,
         widget=forms.Textarea(attrs={"rows": 5}),
     )
+
+    def clean(self):
+        required_conditional_textbox_fields = ["assemble", "manufacture"]
+        for field in required_conditional_textbox_fields:
+            self.add_required_to_conditional_text_field("assemble_manufacture", field, field)
+        return super().clean()
 
     def get_layout_fields(self):
         return (
