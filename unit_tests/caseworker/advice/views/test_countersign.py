@@ -11,6 +11,7 @@ from core import client
 from caseworker.advice import services
 from caseworker.advice.constants import AdviceLevel, AdviceType
 from unit_tests.caseworker.conftest import countersignatures_for_advice
+from unit_tests.helpers import get_rows
 
 
 @pytest.fixture(autouse=True)
@@ -26,7 +27,7 @@ def setup(
 
 
 @pytest.fixture
-def url(request, data_queue, data_standard_case):
+def countersign_review_url(request, data_queue, data_standard_case):
     return reverse(
         f"cases:countersign_review", kwargs={"queue_pk": data_queue["id"], "pk": data_standard_case["case"]["id"]}
     )
@@ -237,6 +238,171 @@ def senior_licensing_manager_countersigning_case_assigned_to_user(
     return senior_licensing_manager_countersigning_case
 
 
+def test_countersign_review_parties_grouping(
+    authorized_client,
+    countersign_review_url,
+    beautiful_soup,
+    data_standard_case,
+    admin_team,
+):
+    user_1_id = uuid4()
+    user_2_id = uuid4()
+
+    consignee_id = data_standard_case["case"]["data"]["consignee"]["id"]
+
+    end_user_id = data_standard_case["case"]["data"]["end_user"]["id"]
+
+    third_party_1_id = str(uuid4())
+    third_party_2_id = str(uuid4())
+    third_parties = [
+        {
+            "id": third_party_1_id,
+            "name": "Third party one",
+            "country": {"id": "DE", "name": "Germany"},
+            "type": "third_party",
+            "type_display_value": "Third party",
+        },
+        {
+            "id": third_party_2_id,
+            "name": "Third party two",
+            "country": {"id": "FR", "name": "France"},
+            "type": "third_party",
+            "type_display_value": "Third party",
+        },
+    ]
+    data_standard_case["case"]["data"]["third_parties"] = third_parties
+
+    ultimate_end_user_1_id = str(uuid4())
+    ultimate_end_user_2_id = str(uuid4())
+    ultimate_end_user_3_id = str(uuid4())
+    ultimate_end_users = [
+        {
+            "id": ultimate_end_user_1_id,
+            "name": "Ultimate end user one",
+            "country": {"id": "GR", "name": "Greece"},
+            "type": "ultimate_end_user",
+            "type_display_value": "Ultimate End-user",
+        },
+        {
+            "id": ultimate_end_user_2_id,
+            "name": "Ultimate end user two",
+            "country": {"id": "BG", "name": "Bulgaria"},
+            "type": "ultimate_end_user",
+            "type_display_value": "Ultimate End-user",
+        },
+        {
+            "id": ultimate_end_user_3_id,
+            "name": "Ultimate end user three",
+            "country": {"id": "MA", "name": "Morocco"},
+            "type": "ultimate_end_user",
+            "type_display_value": "Ultimate End-user",
+        },
+    ]
+    data_standard_case["case"]["data"]["ultimate_end_users"] = ultimate_end_users
+
+    data_standard_case["case"]["advice"] = [
+        {
+            "id": str(uuid4()),
+            "level": "user",
+            "consignee": consignee_id,
+            "end_user": None,
+            "third_party": None,
+            "ultimate_end_user": None,
+            "type": {"key": "approve", "value": "Approve"},
+            "user": {"id": str(user_1_id)},
+            "team": admin_team,
+        },
+        {
+            "id": str(uuid4()),
+            "level": "user",
+            "consignee": None,
+            "end_user": end_user_id,
+            "third_party": None,
+            "ultimate_end_user": None,
+            "type": {"key": "approve", "value": "Approve"},
+            "user": {"id": str(user_1_id)},
+            "team": admin_team,
+        },
+        {
+            "id": str(uuid4()),
+            "level": "user",
+            "consignee": None,
+            "end_user": None,
+            "third_party": third_party_1_id,
+            "ultimate_end_user": None,
+            "type": {"key": "approve", "value": "Approve"},
+            "user": {"id": str(user_1_id)},
+            "team": admin_team,
+        },
+        {
+            "id": str(uuid4()),
+            "level": "user",
+            "consignee": None,
+            "end_user": None,
+            "third_party": third_party_2_id,
+            "ultimate_end_user": None,
+            "type": {"key": "approve", "value": "Approve"},
+            "user": {"id": str(user_1_id)},
+            "team": admin_team,
+        },
+        {
+            "id": str(uuid4()),
+            "level": "user",
+            "consignee": None,
+            "end_user": None,
+            "third_party": None,
+            "ultimate_end_user": ultimate_end_user_1_id,
+            "type": {"key": "approve", "value": "Approve"},
+            "user": {"id": str(user_1_id)},
+            "team": admin_team,
+        },
+        {
+            "id": str(uuid4()),
+            "level": "user",
+            "consignee": None,
+            "end_user": None,
+            "third_party": None,
+            "ultimate_end_user": ultimate_end_user_2_id,
+            "type": {"key": "approve", "value": "Approve"},
+            "user": {"id": str(user_1_id)},
+            "team": admin_team,
+        },
+        {
+            "id": str(uuid4()),
+            "level": "user",
+            "consignee": None,
+            "end_user": None,
+            "third_party": None,
+            "ultimate_end_user": ultimate_end_user_3_id,
+            "type": {"key": "approve", "value": "Approve"},
+            "user": {"id": str(user_2_id)},
+            "team": admin_team,
+        },
+    ]
+
+    response = authorized_client.get(countersign_review_url)
+    assert response.status_code == 200
+
+    soup = beautiful_soup(response.content)
+    advice_tables = soup.select(".advice-table")
+    assert len(advice_tables) == 2
+
+    user_1_advice_table = advice_tables[0]
+    assert get_rows(user_1_advice_table) == [
+        ["Abu Dhabi", "Consignee", "Consignee", "All"],
+        ["United Kingdom", "End-user", "End User", "All"],
+        ["Germany", "Third party", "Third party one", "All"],
+        ["France", "Third party", "Third party two", "All"],
+        ["Greece", "Ultimate End-user", "Ultimate end user one", "All"],
+        ["Bulgaria", "Ultimate End-user", "Ultimate end user two", "All"],
+    ]
+
+    user_2_advice_table = advice_tables[1]
+    assert get_rows(user_2_advice_table) == [
+        ["Morocco", "Ultimate End-user", "Ultimate end user three", "All"],
+    ]
+
+
 def test_countersign_approve_all_put(
     authorized_client,
     requests_mock,
@@ -244,7 +410,7 @@ def test_countersign_approve_all_put(
     standard_case_with_advice,
     advice_for_countersign,
     mock_gov_user,
-    url,
+    countersign_review_url,
 ):
     case_id = data_standard_case["case"]["id"]
     user_id = mock_gov_user["user"]["id"]
@@ -277,7 +443,7 @@ def test_countersign_approve_all_put(
         data[f"form-{index}-approval_reasons"] = [f"reason{index}"]
         requests_mock.get(client._build_absolute_uri(f"/users/{item}/team-queues/"), json={"queues": []})
 
-    response = authorized_client.post(url, data=data)
+    response = authorized_client.post(countersign_review_url, data=data)
     assert response.status_code == 302
 
     history = [item for item in requests_mock.request_history if countersign_advice_url in item.url]

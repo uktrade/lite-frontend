@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 
+{% load url_helpers %}
+
 {% block back_link %}
 {% endblock %}
 
@@ -50,7 +52,7 @@
 								</div>
 						 </div>
 						</td>
-						<td class="govuk-table__cell notes-and-timeline-timeline__view-column"><a href="{% url 'cases:case' queue_pk=user_case_note_mention.case_queue_id pk=user_case_note_mention.case_id %}activities/?mentions=True&activity_type=created_case_note_with_mentions">View or respond</a></td>
+						<td class="govuk-table__cell notes-and-timeline-timeline__view-column"><a href="{% get_notes_and_timelines_url user_case_note_mention.case_id user_case_note_mention.reference_code user_case_note_mention.case_queue_id %}?mentions=True&activity_type=created_case_note_with_mentions">View or respond</a></td>
 					</tr>
 				{% endfor %}
 			</tbody>

@@ -8,7 +8,7 @@
     <main class="govuk-main-wrapper">
         {% test_rule 'can_user_make_f680_outcome' request case as can_user_make_f680_outcome %}
         {% if can_user_make_f680_outcome %}
-            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate approval document</a>
+            <a id="approval-document" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate approval document</a>
         {% endif %}
 
         {% include "f680/includes/move_case_forward.html" with request=request case=case queue=queue %}
@@ -16,18 +16,19 @@
         {% test_rule 'can_user_make_f680_recommendation' request case as can_user_make_f680_recommendation %}
         {% if can_user_make_f680_recommendation %}
             <br>
-            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:select_recommendation_type' queue_pk case.id %}">Make recommendation</a>
+            <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:make_recommendation' queue_pk case.id %}">Make recommendation</a>
         {% endif %}
 
-
-        {% if user_recommendation %}
+        {% if user_recommendations %}
             <br>
             <h1 class="govuk-heading-xl">View recommendation</h1>
-            {% include "f680/case/recommendation/recommendation_details.html" with recommendation=user_recommendation %}
+            {% for recommendation in user_recommendations %}
+                {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
+            {% endfor %}
         {% endif %}
 
-        {% if case.advice %}
-            {% include "f680/case/recommendation/other-recommendations.html" with teams_recommendations=teams_recommendations %}
+        {% if recommendations_by_team %}
+            {% include "f680/case/recommendation/other-recommendations.html" with recommendations_by_team=recommendations_by_team %}
 
         {% endif %}
     </main>

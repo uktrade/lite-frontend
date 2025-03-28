@@ -20,6 +20,25 @@ def queue_f680_cases_to_review():
 
 
 @pytest.fixture
+def recommendations(current_user, admin_team, data_submitted_f680_case):
+    security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+    return [
+        {
+            "created_at": "2021-10-16T23:48:39.486679+01:00",
+            "id": "429c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+            "type": {"key": "approve", "value": "Approve"},
+            "conditions": "No concerns",
+            "refusal_reasons": "",
+            "security_grading": {"key": "official", "value": "Official"},
+            "security_grading_other": "",
+            "security_release_request": security_release_requests[0]["id"],
+            "user": current_user,
+            "team": admin_team,
+        }
+    ]
+
+
+@pytest.fixture
 def mock_f680_case_with_assigned_user(f680_case_id, requests_mock, data_submitted_f680_case, data_queue, mock_gov_user):
     data_submitted_f680_case["case"]["assigned_users"] = {data_queue["name"]: [mock_gov_user["user"]]}
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
@@ -39,8 +58,20 @@ def mock_f680_case(f680_case_id, requests_mock, data_submitted_f680_case):
 
 @pytest.fixture
 def mock_post_recommendation(requests_mock, data_submitted_f680_case):
-    user_recommendation_create_url = f"/cases/{data_submitted_f680_case['case']['id']}/user-advice/"
-    return requests_mock.post(user_recommendation_create_url, json={}, status_code=201)
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.post(url, json={}, status_code=201)
+
+
+@pytest.fixture
+def mock_get_case_recommendations(requests_mock, data_submitted_f680_case, recommendations):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.get(url, json=recommendations, status_code=200)
+
+
+@pytest.fixture
+def mock_get_case_no_recommendations(requests_mock, data_submitted_f680_case, recommendations):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.get(url, json=[], status_code=200)
 
 
 @pytest.fixture
