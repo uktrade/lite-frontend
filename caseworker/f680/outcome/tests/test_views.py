@@ -52,6 +52,65 @@ def mock_POST_outcome(requests_mock, data_submitted_f680_case):
 
 class TestDecideOutcomeView:
 
+    def test_GET_select_outcome(
+        self,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_no_outcomes,
+        decide_outcome_url,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        expected_security_release_request_choices = [
+            [
+                request["id"],
+                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading']['value']}",
+            ]
+            for request in security_release_requests
+        ]
+        request_ids = [request["id"] for request in security_release_requests]
+        response = authorized_client.get(decide_outcome_url)
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, forms.SelectOutcomeForm)
+        assert (
+            response.context["form"].fields["security_release_requests"].choices
+            == expected_security_release_request_choices
+        )
+
+    def test_GET_select_outcome_existing_outcome(
+        self,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_single_outcome,
+        decide_outcome_url,
+        data_outcomes,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        existing_outcome_id = data_outcomes[0]["security_release_requests"][0]
+        expected_security_release_request_choices = [
+            [
+                request["id"],
+                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading']['value']}",
+            ]
+            for request in security_release_requests
+            if request["id"] != existing_outcome_id
+        ]
+        request_ids = [request["id"] for request in security_release_requests]
+        response = authorized_client.get(decide_outcome_url)
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, forms.SelectOutcomeForm)
+        assert (
+            response.context["form"].fields["security_release_requests"].choices
+            == expected_security_release_request_choices
+        )
+
     @pytest.mark.parametrize(
         "outcome, expected_form_class",
         (
@@ -83,6 +142,9 @@ class TestDecideOutcomeView:
         assert response.status_code == 200
         form = response.context["form"]
         assert isinstance(form, expected_form_class)
+
+    def test_POST_select_outcome_bad_request(self):
+        pass
 
     def test_POST_approve(
         self,
@@ -129,6 +191,9 @@ class TestDecideOutcomeView:
             "security_grading": "secret",
             "security_release_requests": request_ids,
         }
+
+    def test_POST_approve_bad_request(self):
+        pass
 
     def test_POST_partial_approve(
         self,
@@ -214,3 +279,6 @@ class TestDecideOutcomeView:
             "refusal_reasons": "my reasons",
             "security_release_requests": request_ids,
         }
+
+    def test_POST_refuse_bad_request(self):
+        pass
