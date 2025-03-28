@@ -1,0 +1,21 @@
+{% if activity %}
+	<div class="app-activity-preview__container">
+		<div class="app-activity__list">
+			{% for audit in activity %}
+				<div id="case-activity-{{ audit.id }}" class="app-activity__item">
+					<p class="govuk-body govuk-!-font-size-16">
+						<span class="user">{{ audit.0.user.first_name }} {{ audit.0.user.last_name }}</span> {{ audit.0.text }}
+					</p>
+					{% if audit.additional_text %}
+						<div class="app-activity__additional-text">
+							{{ audit.0.additional_text }}
+						</div>
+					{% endif %}
+					<p class="govuk-hint govuk-!-font-size-16">{{ audit.0.created_at|str_date }}</p>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+{% else %}
+	{% include "includes/notice.html" with text="There's been no activity." %}
+{% endif %}

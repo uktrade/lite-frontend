@@ -84,12 +84,12 @@
     {% elif type == 'case-notes' %}
         {% url "f680:detail" application.id "case-notes" as post_url %}
         {% url "f680:detail" application.id as return_url %}
-        {% include "includes/case-notes.html" with post_url=post_url %}
+        {% include "includes/case-notes.html" %}
     {% elif type == 'ecju-queries' %}
         {% include "includes/ecju-queries.html" with object_type="application" case_id=application.id %}
     {% elif type == 'generated-documents' %}
         {% include "core/ecju-generated-documents.html" %}
     {% elif type == 'activity' %}
-        {% include "applications/tabs/activity.html" %}
+        {% include "f680/includes/activity.html" %}
     {% endif %}
 {% endblock %}
