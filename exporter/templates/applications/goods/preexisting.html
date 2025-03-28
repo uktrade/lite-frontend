@@ -21,9 +21,6 @@
 						<th scope="col" class="govuk-table__header">Part number</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.PRODUCT_TYPE' %}</th>
 						<th scope="col" class="govuk-table__header">{% lcs 'goods.AddPreexistingGoodToApplicationForm.Table.CONTROL_LIST_ENTRIES' %}</th>
-						{% if feature_flag_firearms_enabled %}
-						<th scope="col" class="govuk-table__header"></th>
-						{% endif %}
 						<th scope="col" class="govuk-table__header"></th>
 					</tr>
 				</thead>
@@ -54,11 +51,6 @@
 							<td class="govuk-table__cell" id="good-control_code">
 								{% include 'includes/verified-control-list-entries.html' with control_list_entries=good.control_list_entries status=good.status%}
 							</td>
-							{% if feature_flag_firearms_enabled %}
-							<td class="govuk-table__cell lite-!-text-align-right">
-								<a class="govuk-link govuk-link--no-visited-state" id="import-product-view-product" href='{% url "goods:good_detail_application" good.id "application" draft_id %}' draggable="false">View</a>
-							</td>
-							{% endif %}
 							<td class="govuk-table__cell lite-!-text-align-right">
 								{% if good.firearm_details.type.key == "firearms" %}
 									<a href="{% url 'applications:attach_firearm_to_application' draft_id good.id %}" id="add-firearm-to-application" class="govuk-link govuk-link--no-visited-state" draggable="false">
