@@ -3,7 +3,7 @@ import rules
 
 from django.contrib.auth.mixins import AccessMixin
 from django.http import Http404
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.shortcuts import redirect
 from django.views.generic import FormView, TemplateView
 
