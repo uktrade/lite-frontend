@@ -1,7 +1,7 @@
 {% load humanize %}
 {% load svg %}
 
-<tr class="govuk-table__row" id="{{ case.id }}">
+<tr class="govuk-table__row" id="{{ case.case_type.reference.key }}_{{ case.id }}">
 
 	{% if not queue.is_system_queue %}
 		<td class="govuk-table__cell govuk-table__cell--checkbox">

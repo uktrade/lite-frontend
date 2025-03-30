@@ -7,7 +7,6 @@ from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from caseworker.core.constants import ADMIN_TEAM_ID, FCDO_TEAM_ID, LICENSING_UNIT_TEAM_ID, TAU_TEAM_ID
-from caseworker.cases.helpers.case import LU_POST_CIRC_FINALISE_QUEUE_ALIAS, LU_PRE_CIRC_REVIEW_QUEUE_ALIAS
 from caseworker.queues.views.forms import CasesFiltersForm
 from core import client
 from core.exceptions import ServiceError
@@ -747,84 +746,214 @@ def test_case_search_tabs_context(url, authorized_client, mock_cases_search_page
     }
 
 
-@pytest.mark.parametrize(
-    "url",
-    (
-        (reverse("core:index")),
-        (reverse("queues:cases")),
-    ),
-)
-def test_queue_assignments(url, authorized_client):
-    response = authorized_client.get(url)
-    expected_queue_assignments = {
-        "ee1a3870-73d7-4af3-b629-e28f2c2227d7": {
-            "assignees": [
-                {
-                    "email": "test@mail.com",  # /PS-IGNORE
-                    "first_name": "John",
-                    "last_name": "Smith",
-                    "team_id": "00000000-0000-0000-0000-000000000001",
-                    "team_name": "Admin",
-                },
-                {
-                    "email": "test2@mail.com",  # /PS-IGNORE
-                    "first_name": "Joe",
-                    "last_name": "Smith",
-                    "team_id": "00000000-0000-0000-0000-000000000001",
-                    "team_name": "Admin",
-                },
-            ],
-            "queue_name": "Initial Queue",
-        },
-        "ee1a3870-73d7-4af3-b629-e28f2c2227d8": {
-            "assignees": [],
-            "queue_name": "Another Queue",
-        },
-    }
-    assert response.context["data"]["results"]["cases"][0]["queue_assignments"] == expected_queue_assignments
-
-    html = BeautifulSoup(response.content, "html.parser")
-    li_elems = [elem.get_text() for elem in html.find_all("li", {"class": "app-assignments__item"})]
-    # first case
-    assert "Not allocated" in li_elems[0]
-    assert "Licensing Unit case officer" in li_elems[0]
-    assert "John Smith" in li_elems[1]
-    assert "Initial Queue" in li_elems[1]
-    assert "Joe Smith" in li_elems[2]
-    assert "Initial Queue" in li_elems[2]
-    assert "Not allocated" in li_elems[3]
-    assert "Another Queue" in li_elems[3]
-    # second case
-    assert "Not allocated" in li_elems[4]
-    assert "Licensing Unit case officer" in li_elems[4]
+def extract_destinations(case_row):
+    return [item.text.strip() for item in case_row.find("td", {"data-customiser-key": "destination"}).find_all("li")]
 
 
-@pytest.mark.parametrize(
-    "alias",
-    (
-        (LU_POST_CIRC_FINALISE_QUEUE_ALIAS),
-        (LU_PRE_CIRC_REVIEW_QUEUE_ALIAS),
-    ),
-)
-def test_unallocated_assignments_hidden(
-    authorized_client, mock_team_cases_search, mock_queue_with_alias_factory, alias
-):
-    mock_queue_with_alias_factory(alias)
-    url = client._build_absolute_uri(f"/queues/{queue_pk}")
-    response = authorized_client.get(url)
-    html = BeautifulSoup(response.content, "html.parser")
-    assignments = [elem.get_text() for elem in html.find_all("li", {"class": "app-assignments__item"})]
-    assert len(assignments) == 4
-    # first case
-    assert "Not allocated" in assignments[0]
-    assert "Licensing Unit case officer" in assignments[0]
-    assert "John Smith" in assignments[1]
-    assert "Initial Queue" in assignments[1]
-    assert "Joe Smith" in assignments[2]
-    assert "Initial Queue" in assignments[2]
-    # second case
-    assert "Not allocated" in assignments[3]
-    assert "Licensing Unit case officer" in assignments[3]
+def extract_case_officer(case_row):
+    assignments_row = case_row.find("td", {"data-customiser-key": "case_allocation"})
+    children = assignments_row.find_all("li")
+    # first item is case officer followed by case advisors
+    return children[0].find("div").text.strip()
+
+
+def extract_case_advisors(case_row):
+    assignments_row = case_row.find("td", {"data-customiser-key": "case_allocation"})
+    children = assignments_row.find_all("li")
+    case_advisors = []
+    for item in children[1:]:
+        case_advisor, queue_name = [e.text.strip() for e in item.find_all("div")]
+        case_advisors.append({"case_advisor": case_advisor, "queue_name": queue_name})
+
+    return case_advisors
+
+
+def extract_f680_case_advisors(case_row):
+    assignments_row = case_row.find("td", {"data-customiser-key": "case_allocation"})
+    children = assignments_row.find_all("li")
+    case_advisors = []
+    for item in children:
+        case_advisor, queue_name = [e.text.strip() for e in item.find_all("div")]
+        case_advisors.append({"case_advisor": case_advisor, "queue_name": queue_name})
+
+    return case_advisors
+
+
+def extract_recommendations(case_row):
+    recommendations = []
+    recommendations_row = case_row.find("td", {"data-customiser-key": "case_recommendation"})
+    for element in recommendations_row.find_all("li"):
+        team, type = [e.text.strip() for e in element.find_all("div")]
+        if type == "Approved":
+            type = "approve"
+        if type == "Approved with licence conditions":
+            type = "proviso"
+        if "Refused" in type:
+            type = "refuse"
+        recommendations.append({"type": type, "team": team})
+
+    return recommendations
+
+
+def extract_case_updates(case_row):
+    updates = []
+    updates_row = case_row.find("td", {"data-customiser-key": "case_updates"})
+    update_items = updates_row.find_all("li")
+    for item in update_items:
+        _, team_user, update = item.find_all("div")
+        team_user = team_user.text.strip().split(":")
+        team = team_user[0]
+        user = team_user[1].split("\n")[0].strip()
+        updates.append({"team": team, "user": user, "text": update.text.strip()})
+
+    return updates
+
+
+def extract_case_products(case_row):
+    products_row = case_row.find("td", {"data-customiser-key": "products"})
+    return [item.text.strip() for item in products_row.find_all("li")]
+
+
+def extract_case_products_cles(case_row):
+    cles_row = case_row.find("td", {"data-customiser-key": "control_list_entry"})
+    return [item.text.strip() for item in cles_row.find_all("li")]
+
+
+def extract_case_entities(case_row):
+    entities = []
+    entities_row = case_row.find("td", {"data-customiser-key": "users"})
+    for item in entities_row.find_all("li"):
+        type, name = item.text.strip().split(":")
+        entities.append({"type": type, "name": name.strip()})
+
+    return entities
+
+
+def test_siel_case_row(authorized_client, data_cases_search):
+    response = authorized_client.get(reverse("core:index"))
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    case = data_cases_search["results"]["cases"][1]
+
+    case_row = soup.find(lambda tag: tag.get("id", "").find("siel") != -1)
+
+    reference_code = case_row.find("a", {"id": f"case-{case['id']}"})
+    assert case["reference_code"] in reference_code.text
+
+    expected_destinations = [item["country"]["name"] for item in case["destinations"]]
+    actual_destinations = extract_destinations(case_row)
+    assert actual_destinations == expected_destinations
+
+    case_officer = extract_case_officer(case_row)
+    assert case_officer == f"{case['case_officer']['first_name']} {case['case_officer']['last_name']}"
+
+    case_advisors = extract_case_advisors(case_row)
+    expected_case_advisors = []
+    for _, user in case["assignments"].items():
+        expected_case_advisors.append(
+            {
+                "case_advisor": f"{user['first_name']} {user['last_name']}",
+                "queue_name": ",".join(q["name"] for q in user["queues"]),
+            }
+        )
+    assert sorted(case_advisors) == sorted(expected_case_advisors)
+
+    recommendations = extract_recommendations(case_row)
+    expected_recommendations = [
+        {
+            "type": item["type"]["key"],
+            "team": item["user"]["team"],
+        }
+        for item in case["advice"]
+    ]
+
+    assert recommendations == expected_recommendations
+
+    case_updates = extract_case_updates(case_row)
+    expected_updates = [
+        {
+            "user": f"{item['user']['first_name']} {item['user']['last_name']}",
+            "team": item["user"]["team"],
+            "text": item["text"],
+        }
+        for item in case["activity_updates"]
+    ]
+    assert case_updates == expected_updates
+
+    products = extract_case_products(case_row)
+    expected_products = []
+    for item in case["goods"]:
+        quantity = float(item["quantity"])
+        expected_products.append(f"{item['name']} ({int(quantity)})")
+
+    assert products == expected_products
+
+    cles = extract_case_products_cles(case_row)
+    expected_cles = [", ".join(item["cles"]) for item in case["goods"]]
+    assert cles == expected_cles
+
+
+def test_f680_case_row(authorized_client, data_cases_search):
+    response = authorized_client.get(reverse("core:index"))
+    soup = BeautifulSoup(response.content, "html.parser")
+
+    case = data_cases_search["results"]["cases"][2]
+
+    case_row = soup.find(lambda tag: tag.get("id", "").find("f680") != -1)
+
+    reference_code = case_row.find("a", {"id": f"case-{case['id']}"})
+    assert case["reference_code"] in reference_code.text
+
+    actual_destinations = extract_destinations(case_row)
+    expected_destinations = [
+        rr["recipient"]["country"]["name"] for rr in case["f680_data"]["security_release_requests"]
+    ]
+    assert actual_destinations == expected_destinations
+
+    case_advisors = extract_f680_case_advisors(case_row)
+    expected_case_advisors = []
+    for _, user in case["assignments"].items():
+        expected_case_advisors.append(
+            {
+                "case_advisor": f"{user['first_name']} {user['last_name']}",
+                "queue_name": ",".join(q["name"] for q in user["queues"]),
+            }
+        )
+    assert sorted(case_advisors) == sorted(expected_case_advisors)
+
+    recommendations = extract_recommendations(case_row)
+    expected_recommendations = [
+        {
+            "type": item["type"],
+            "team": item["team"],
+        }
+        for item in case["f680_data"]["recommendations"]
+    ]
+    assert recommendations == expected_recommendations
+
+    case_updates = extract_case_updates(case_row)
+    expected_updates = [
+        {
+            "user": f"{item['user']['first_name']} {item['user']['last_name']}",
+            "team": item["user"]["team"],
+            "text": item["text"],
+        }
+        for item in case["activity_updates"]
+    ]
+    assert case_updates == expected_updates
+
+    product = case_row.find("td", {"data-customiser-key": "products"}).text.strip()
+    assert product == case["f680_data"]["product"]["name"]
+
+    entities = extract_case_entities(case_row)
+    expected_entities = [
+        {
+            "type": rr["recipient"]["type"]["value"],
+            "name": rr["recipient"]["name"],
+        }
+        for rr in case["f680_data"]["security_release_requests"]
+    ]
+    assert entities == expected_entities
 
 
 @pytest.mark.parametrize(
