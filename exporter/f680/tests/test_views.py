@@ -314,6 +314,20 @@ def f680_submitted_application_summary_url_with_application(data_f680_case_compl
 
 
 @pytest.fixture
+def f680_submitted_application_summary_url_with_application_case_notes(data_f680_case_complete_application):
+    return reverse(
+        "f680:submitted_summary", kwargs={"pk": data_f680_case_complete_application["id"], "type": "case-notes"}
+    )
+
+
+@pytest.fixture
+def f680_submitted_application_summary_url_with_application_ecju_query(data_f680_case_complete_application):
+    return reverse(
+        "f680:submitted_summary", kwargs={"pk": data_f680_case_complete_application["id"], "type": "ecju-queries"}
+    )
+
+
+@pytest.fixture
 def post_to_step(post_to_step_factory, f680_apply_url, mock_application_post):
     return post_to_step_factory(f680_apply_url)
 
@@ -374,6 +388,14 @@ def mock_get_application_history(requests_mock, data_f680_submitted_application,
     application_id = data_f680_submitted_application["id"]
     url = client._build_absolute_uri(f"/exporter/applications/{application_id}/history")
     return requests_mock.get(url=url, json=data_f680_case_application_history, status_code=200)
+
+
+@pytest.fixture
+def mock_get_f680_case_notes(data_f680_case, requests_mock):
+    return requests_mock.get(
+        f"/cases/{data_f680_case['id']}/case-notes/",
+        json={"case_notes": []},
+    )
 
 
 def get_activity(request, pk):
@@ -589,3 +611,24 @@ class TestF680SubmittedApplicationSummaryView:
         assert response.context["application_sections"] == data_f680_submitted_application["application"]["sections"]
 
         assert response.status_code == 200
+
+    def test_get_f680_summary_view_success_case_notes(
+        self,
+        authorized_client,
+        f680_submitted_application_summary_url_with_application_case_notes,
+        mock_f680_application_get_submitted_application,
+        mock_get_application_history,
+        mock_get_application_activity,
+        data_f680_submitted_application,
+        mock_get_f680_case_notes,
+    ):
+        application_id = data_f680_submitted_application["id"]
+
+        response = authorized_client.get(f680_submitted_application_summary_url_with_application_case_notes)
+        content = BeautifulSoup(response.content, "html.parser")
+        case_notes_title = content.find("label", {"id": "case-notes-title"}).text
+        return_url = content.find("a", {"id": "case-notes-return-url"}).get("href")
+
+        assert response.status_code == 200
+        assert case_notes_title == "Add a note"
+        assert return_url == f"/f680/{application_id}/summary/"

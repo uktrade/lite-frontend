@@ -4,7 +4,7 @@
 	<form method="post" action="{{ post_url }}" {% if error %}class="govuk-form-group--error"{% endif %}>
 		{% csrf_token %}
 		{% if not status_is_terminal %}
-			<label class="govuk-label" for="input-case-note">{% lcs 'applications.CaseNotes.TITLE' %}</label>
+			<label id="case-notes-title" class="govuk-label" for="input-case-note">{% lcs 'applications.CaseNotes.TITLE' %}</label>
 			{% if errors %}
 				<span id="error-case-note" for="input-case-note" class="govuk-error-message">
 					<span class="govuk-visually-hidden">Error:</span>
@@ -46,7 +46,7 @@
 {% else %}
 	{% include "includes/notice.html" with text="applications.CaseNotes.NO_NOTES" %}
 {% endif %}
-<a class="govuk-button govuk-button--primary" href="{% if return_url %}{{ return_url }}{% else %}{% url 'applications:application' application.id %}{% endif %}">
+<a id="case-notes-return-url" class="govuk-button govuk-button--primary" href="{% if return_url %}{{ return_url }}{% else %}{% url 'applications:application' application.id %}{% endif %}">
 	Save and continue
 </a>
 <script src="{% static 'javascripts/pluralize.js' %}"></script>
