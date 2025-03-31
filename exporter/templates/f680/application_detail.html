@@ -37,10 +37,10 @@
     </div>
     <div class="lite-tabs__container">
         <div class="lite-tabs">
-            <a href="{% url 'f680:detail' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
+            <a href="{% url 'f680:submitted_summary' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
             Details
             </a>
-            <a href="{% url 'f680:detail' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
+            <a href="{% url 'f680:submitted_summary' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
                 Notes
                 {% if application.exporter_user_notification_count.casenote %}
                     <div class="lite-notification-bubble">
@@ -48,7 +48,7 @@
                     </div>
                 {% endif %}
             </a>
-            <a href="{% url 'f680:detail' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
+            <a href="{% url 'f680:submitted_summary' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
                 ECJU queries
                 {% if application.exporter_user_notification_count.ecjuquery %}
                     <div class="lite-notification-bubble">
@@ -56,7 +56,7 @@
                     </div>
                 {% endif %}
             </a>
-            <a href="{% url 'f680:detail' application.id 'generated-documents' %}" class="lite-tabs__tab {% if type == 'generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-generated-documents">
+            <a href="{% url 'f680:submitted_summary' application.id 'generated-documents' %}" class="lite-tabs__tab {% if type == 'generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-generated-documents">
                 ECJU documents
                 {% if application.exporter_user_notification_count.generatedcasedocument %}
                     <div class="lite-notification-bubble">
@@ -64,7 +64,7 @@
                     </div>
                 {% endif %}
             </a>
-            <a href="{% url 'f680:detail' application.id 'activity' %}" class="lite-tabs__tab {% if type == 'activity' %}lite-tabs__tab--selected{% endif %}" id="link-activity">
+            <a href="{% url 'f680:submitted_summary' application.id 'activity' %}" class="lite-tabs__tab {% if type == 'activity' %}lite-tabs__tab--selected{% endif %}" id="link-activity">
                 Activity
             </a>
         </div>
@@ -82,8 +82,8 @@
         </div>
     {% endfor %}
     {% elif type == 'case-notes' %}
-        {% url "f680:detail" application.id "case-notes" as post_url %}
-        {% url "f680:detail" application.id as return_url %}
+        {% url "f680:submitted_summary" application.id "case-notes" as post_url %}
+        {% url "f680:submitted_summary" application.id as return_url %}
         {% include "includes/case-notes.html" %}
     {% elif type == 'ecju-queries' %}
         {% include "includes/ecju-queries.html" with object_type="application" case_id=application.id %}

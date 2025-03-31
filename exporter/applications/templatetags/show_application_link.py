@@ -13,7 +13,7 @@ def show_application_link(application, template="show_application_link.html"):
 
     link_mapping = {
         ("f680_clearance", True): "f680:summary",
-        ("f680_clearance", False): "f680:detail",
+        ("f680_clearance", False): "f680:submitted_summary",
         ("standard", True): "applications:task_list",
         ("standard", False): "applications:application",
     }

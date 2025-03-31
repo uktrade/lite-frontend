@@ -99,7 +99,7 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
         return reverse("applications:success_page", kwargs={"pk": self.application["id"]})
 
 
-class F680ApplicationDetailView(LoginRequiredMixin, F680FeatureRequiredMixin, TemplateView):
+class F680SubmittedApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, TemplateView):
     template_name = "f680/application_detail.html"
 
     def setup(self, request, *args, **kwargs):
@@ -144,4 +144,4 @@ class F680ApplicationDetailView(LoginRequiredMixin, F680FeatureRequiredMixin, Te
         response, _ = post_case_notes(request, self.application["id"], request.POST)
         if "errors" in response:
             return self.get(request, error=response["errors"], text=request.POST.get("text"), **kwargs)
-        return redirect(reverse("f680:detail", kwargs={"pk": self.application["id"], "type": "case-notes"}))
+        return redirect(reverse("f680:submitted_summary", kwargs={"pk": self.application["id"], "type": "case-notes"}))
