@@ -131,6 +131,9 @@ class ECJURespondQueryConfirmView(LoginRequiredMixin, ECJURespondMixin, FormView
     form_class = ECJUQueryRespondConfirmForm
 
     def get_success_url(self):
+        application_reference_code = self.application.get("reference_code", False)
+        if application_reference_code and application_reference_code.startswith("F680"):
+            return reverse("f680:submitted_summary", kwargs={"pk": self.application["id"], "type": "ecju-queries"})
         return reverse_lazy("applications:application", kwargs={"pk": self.case_id, "type": "ecju-queries"})
 
     def form_valid(self, form):
