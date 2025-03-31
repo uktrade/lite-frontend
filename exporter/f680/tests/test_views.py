@@ -1,5 +1,6 @@
 import pytest
 from uuid import uuid4
+from freezegun import freeze_time
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
@@ -42,6 +43,280 @@ def data_f680_case(data_organisation):
 
 
 @pytest.fixture
+def data_f680_submitted_application(data_f680_case):
+    data_f680_case["application"] = {
+        "sections": {
+            "approval_type": {
+                "type": "single",
+                "label": "Approval type",
+                "fields": {
+                    "approval_choices": {
+                        "key": "approval_choices",
+                        "answer": ["Supply"],
+                        "datatype": "list",
+                        "question": "Select the types of approvals you need",
+                        "raw_answer": ["supply"],
+                    },
+                    "demonstration_in_uk": {
+                        "key": "demonstration_in_uk",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Explain what you are demonstrating and why",
+                        "raw_answer": "",
+                    },
+                    "approval_details_text": {
+                        "key": "approval_details_text",
+                        "answer": "cvxb",
+                        "datatype": "string",
+                        "question": "Provide details about what you're seeking approval to do",
+                        "raw_answer": "cvxb",
+                    },
+                    "demonstration_overseas": {
+                        "key": "demonstration_overseas",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Explain what you are demonstrating and why",
+                        "raw_answer": "",
+                    },
+                },
+                "fields_sequence": [
+                    "approval_choices",
+                    "demonstration_in_uk",
+                    "demonstration_overseas",
+                    "approval_details_text",
+                ],
+            },
+            "user_information": {
+                "type": "multiple",
+                "items": [
+                    {
+                        "id": "6a752666-72a2-447c-951a-9eb79d4c4302",
+                        "fields": {
+                            "prefix": {
+                                "key": "prefix",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter a prefix (optional)",
+                                "raw_answer": "",
+                            },
+                            "suffix": {
+                                "key": "suffix",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter a suffix (optional)",
+                                "raw_answer": "",
+                            },
+                            "address": {
+                                "key": "address",
+                                "answer": "cvb",
+                                "datatype": "string",
+                                "question": "Address",
+                                "raw_answer": "cvb",
+                            },
+                            "country": {
+                                "key": "country",
+                                "answer": "United Arab Emirates",
+                                "datatype": "string",
+                                "question": "Country",
+                                "raw_answer": "AE",
+                            },
+                            "entity_type": {
+                                "key": "entity_type",
+                                "answer": "End user",
+                                "datatype": "string",
+                                "question": "Select type of entity",
+                                "raw_answer": "end-user",
+                            },
+                            "end_user_name": {
+                                "key": "end_user_name",
+                                "answer": "cvb",
+                                "datatype": "string",
+                                "question": "End-user name",
+                                "raw_answer": "cvb",
+                            },
+                            "security_classification": {
+                                "key": "security_classification",
+                                "answer": "Secret",
+                                "datatype": "string",
+                                "question": "Select security classification",
+                                "raw_answer": "secret",
+                            },
+                            "end_user_intended_end_use": {
+                                "key": "end_user_intended_end_use",
+                                "answer": "cvb",
+                                "datatype": "string",
+                                "question": "How does the end-user intend to use this item",
+                                "raw_answer": "cvb",
+                            },
+                            "other_security_classification": {
+                                "key": "other_security_classification",
+                                "answer": "",
+                                "datatype": "string",
+                                "question": "Enter the security classification",
+                                "raw_answer": "",
+                            },
+                        },
+                        "fields_sequence": [
+                            "entity_type",
+                            "end_user_name",
+                            "address",
+                            "country",
+                            "prefix",
+                            "security_classification",
+                            "other_security_classification",
+                            "suffix",
+                            "end_user_intended_end_use",
+                        ],
+                    }
+                ],
+                "label": "User Information",
+            },
+            "product_information": {
+                "type": "single",
+                "label": "Product information",
+                "fields": {
+                    "product_name": {
+                        "key": "product_name",
+                        "answer": "cb",
+                        "datatype": "string",
+                        "question": "Give the item a descriptive name",
+                        "raw_answer": "cb",
+                    },
+                    "funding_source": {
+                        "key": "funding_source",
+                        "answer": "Private venture",
+                        "datatype": "string",
+                        "question": "Who is funding the item?",
+                        "raw_answer": "private_venture",
+                    },
+                    "is_item_manpad": {
+                        "key": "is_item_manpad",
+                        "answer": "Don't know",
+                        "datatype": "string",
+                        "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
+                        "raw_answer": "dont_know",
+                    },
+                    "actions_to_classify": {
+                        "key": "actions_to_classify",
+                        "answer": "cvb",
+                        "datatype": "string",
+                        "question": "Provide details on what action will have to be taken to have the product security classified",
+                        "raw_answer": "cvb",
+                    },
+                    "product_description": {
+                        "key": "product_description",
+                        "answer": "cbv",
+                        "datatype": "string",
+                        "question": "Describe the item",
+                        "raw_answer": "cbv",
+                    },
+                    "is_item_rated_under_mctr": {
+                        "key": "is_item_rated_under_mctr",
+                        "answer": "No, but the item supports a MTCR Category 1 item",
+                        "datatype": "string",
+                        "question": "Do you believe the item is rated under the Missile Technology Control Regime (MTCR)",
+                        "raw_answer": "supports_mtcr_1",
+                    },
+                    "is_used_by_uk_armed_forces": {
+                        "key": "is_used_by_uk_armed_forces",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Will the item be used by the UK Armed Forces?",
+                        "raw_answer": False,
+                    },
+                    "has_security_classification": {
+                        "key": "has_security_classification",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                        "raw_answer": False,
+                    },
+                    "used_by_uk_armed_forces_info": {
+                        "key": "used_by_uk_armed_forces_info",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Explain how it will be used",
+                        "raw_answer": "",
+                    },
+                    "is_mod_electronic_data_shared": {
+                        "key": "is_mod_electronic_data_shared",
+                        "answer": "No",
+                        "datatype": "string",
+                        "question": "Will any electronic warfare data owned by the Ministry of Defence (MOD) be shared with the item?",
+                        "raw_answer": "no",
+                    },
+                    "cryptography_or_security_feature_info": {
+                        "key": "cryptography_or_security_feature_info",
+                        "answer": "",
+                        "datatype": "string",
+                        "question": "Provide full details",
+                        "raw_answer": "",
+                    },
+                    "is_foreign_tech_or_information_shared": {
+                        "key": "is_foreign_tech_or_information_shared",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Will any foreign technology or information be shared with the item?",
+                        "raw_answer": False,
+                    },
+                    "is_including_cryptography_or_security_features": {
+                        "key": "is_including_cryptography_or_security_features",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Does the item include cryptography or other information security features?",
+                        "raw_answer": False,
+                    },
+                },
+                "fields_sequence": [
+                    "product_name",
+                    "product_description",
+                    "has_security_classification",
+                    "actions_to_classify",
+                    "is_foreign_tech_or_information_shared",
+                    "is_including_cryptography_or_security_features",
+                    "cryptography_or_security_feature_info",
+                    "is_item_rated_under_mctr",
+                    "is_item_manpad",
+                    "is_mod_electronic_data_shared",
+                    "funding_source",
+                    "is_used_by_uk_armed_forces",
+                    "used_by_uk_armed_forces_info",
+                ],
+            },
+            "general_application_details": {
+                "type": "single",
+                "label": "General application details",
+                "fields": {
+                    "name": {
+                        "key": "name",
+                        "answer": "F680 Test 1",
+                        "datatype": "string",
+                        "question": "Name the application",
+                        "raw_answer": "F680 Test 1",
+                    },
+                    "is_exceptional_circumstances": {
+                        "key": "is_exceptional_circumstances",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
+                        "raw_answer": False,
+                    },
+                    "has_made_previous_application": {
+                        "key": "has_made_previous_application",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Have you made a previous application?",
+                        "raw_answer": False,
+                    },
+                },
+                "fields_sequence": ["name", "has_made_previous_application", "is_exceptional_circumstances"],
+            },
+        }
+    }
+    return data_f680_case
+
+
+@pytest.fixture
 def data_f680_case_complete_application(data_f680_case):
     data_f680_case["application"] = {
         "sections": {
@@ -66,8 +341,31 @@ def data_f680_case_partially_complete_application(data_f680_case):
 
 
 @pytest.fixture
+def data_f680_case_application_history(data_f680_case):
+
+    return {
+        "id": data_f680_case["id"],
+        "reference_code": data_f680_case["reference_code"],
+        "amendment_history": [
+            {
+                "ecju_query_count": 0,
+                "reference_code": "F680/2025/0000001",
+                "submitted_at": "2025-03-27T16:02:16.695411Z",
+                "id": data_f680_case["id"],
+                "status": {"status": "submitted", "status_display": "Submitted"},
+            }
+        ],
+    }
+
+
+@pytest.fixture
 def f680_summary_url_with_application(data_f680_case):
     return reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
+
+
+@pytest.fixture
+def f680_submitted_application_summary_url_with_application(data_f680_case_complete_application):
+    return reverse("f680:submitted_summary", kwargs={"pk": data_f680_case_complete_application["id"]})
 
 
 @pytest.fixture
@@ -87,6 +385,13 @@ def mock_f680_application_get_application_complete(requests_mock, data_f680_case
     application_id = data_f680_case_complete_application["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
     return requests_mock.get(url=url, json=data_f680_case_complete_application)
+
+
+@pytest.fixture
+def mock_f680_application_get_submitted_application(requests_mock, data_f680_submitted_application):
+    application_id = data_f680_submitted_application["id"]
+    url = client._build_absolute_uri(f"/applications/{application_id}/")
+    return requests_mock.get(url=url, json=data_f680_submitted_application)
 
 
 @pytest.fixture
@@ -110,6 +415,32 @@ def mock_f680_application_submit(requests_mock, data_f680_case_complete_applicat
     application_id = data_f680_case_complete_application["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/submit/")
     return requests_mock.post(url=url, json=data_f680_case_complete_application)
+
+
+@pytest.fixture
+def mock_f680_application_get_submitted_application(requests_mock, data_f680_submitted_application):
+    application_id = data_f680_submitted_application["id"]
+    url = client._build_absolute_uri(f"/applications/{application_id}/")
+    return requests_mock.get(url=url, json=data_f680_submitted_application)
+
+
+@pytest.fixture
+def mock_get_application_history(requests_mock, data_f680_submitted_application, data_f680_case_application_history):
+    application_id = data_f680_submitted_application["id"]
+    url = client._build_absolute_uri(f"/exporter/applications/{application_id}/history")
+    return requests_mock.get(url=url, json=data_f680_case_application_history, status_code=200)
+
+
+def get_activity(request, pk):
+    data = client.get(request, f"/applications/{pk}/activity/")
+    return data.json()["activity"]
+
+
+@pytest.fixture
+def mock_get_application_activity(requests_mock, data_f680_submitted_application):
+    application_id = data_f680_submitted_application["id"]
+    url = client._build_absolute_uri(f"/applications/{application_id}/activity/")
+    return requests_mock.get(url=url, json={"activity": {}}, status_code=200)
 
 
 @pytest.fixture()
@@ -296,3 +627,17 @@ class TestF680ApplicationSummaryView:
             "You are not authorised to use the F680 Security Clearance application feature"
             in response.context[0].get("description").args
         )
+
+
+class TestF680SubmittedApplicationSummaryView:
+    def test_get_f680_summary_view_success(
+        self,
+        authorized_client,
+        f680_submitted_application_summary_url_with_application,
+        mock_f680_application_get_submitted_application,
+        mock_get_application_history,
+        mock_get_application_activity,
+    ):
+        response = authorized_client.get(f680_submitted_application_summary_url_with_application)
+
+        assert response.status_code == 200
