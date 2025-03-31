@@ -398,6 +398,14 @@ def mock_get_f680_case_notes(data_f680_case, requests_mock):
     )
 
 
+@pytest.fixture
+def mock_get_f680_ecju_queries(data_f680_case, requests_mock):
+    return requests_mock.get(
+        f"/cases/{data_f680_case['id']}/ecju-queries/",
+        json={"ecju_queries": []},
+    )
+
+
 def get_activity(request, pk):
     data = client.get(request, f"/applications/{pk}/activity/")
     return data.json()["activity"]
@@ -632,3 +640,22 @@ class TestF680SubmittedApplicationSummaryView:
         assert response.status_code == 200
         assert case_notes_title == "Add a note"
         assert return_url == f"/f680/{application_id}/summary/"
+
+    def test_get_f680_summary_view_success_ecju_queries(
+        self,
+        authorized_client,
+        f680_submitted_application_summary_url_with_application_ecju_query,
+        mock_f680_application_get_submitted_application,
+        mock_get_application_history,
+        mock_get_application_activity,
+        data_f680_submitted_application,
+        mock_get_f680_ecju_queries,
+    ):
+
+        response = authorized_client.get(f680_submitted_application_summary_url_with_application_ecju_query)
+        content = BeautifulSoup(response.content, "html.parser")
+
+        queries_text = content.find("p", {"id": "no-application-span"}).text
+
+        assert response.status_code == 200
+        assert "There are no ECJU queries on this application." in queries_text
