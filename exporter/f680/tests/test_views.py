@@ -1,6 +1,5 @@
 import pytest
 from uuid import uuid4
-from freezegun import freeze_time
 
 from bs4 import BeautifulSoup
 from django.urls import reverse
@@ -254,6 +253,9 @@ def data_f680_submitted_application(data_f680_case):
                 },
                 "fields_sequence": ["name", "has_made_previous_application", "is_exceptional_circumstances"],
             },
+            "user_information": None,
+            "supporting_documents": None,
+            "notes_for_case_officers": None,
         }
     }
     return data_f680_case
@@ -584,11 +586,6 @@ class TestF680SubmittedApplicationSummaryView:
     ):
         response = authorized_client.get(f680_submitted_application_summary_url_with_application)
 
-        submitted_application = data_f680_submitted_application["application"]["sections"]
-
-        submitted_application.update(
-            {"user_information": None, "supporting_documents": None, "notes_for_case_officers": None}
-        )
-
         assert response.context["application_sections"] == data_f680_submitted_application["application"]["sections"]
+
         assert response.status_code == 200
