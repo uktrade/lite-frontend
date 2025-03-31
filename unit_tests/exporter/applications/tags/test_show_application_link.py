@@ -75,7 +75,7 @@ from exporter.applications.templatetags.show_application_link import show_applic
                 "name": "Application 7",
                 "case_type": {"sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"}},
             },
-            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/f680/00000000-0000-0000-0000-000000000007/detail/">Application 7</a>',
+            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/f680/00000000-0000-0000-0000-000000000007/summary/">Application 7</a>',
         ),
     ],
 )
