@@ -46,6 +46,34 @@ def data_f680_case(data_organisation):
 def data_f680_submitted_application(data_f680_case):
     data_f680_case["application"] = {
         "sections": {
+            "general_application_details": {
+                "type": "single",
+                "label": "General application details",
+                "fields": {
+                    "name": {
+                        "key": "name",
+                        "answer": "F680 Test 1",
+                        "datatype": "string",
+                        "question": "Name the application",
+                        "raw_answer": "F680 Test 1",
+                    },
+                    "is_exceptional_circumstances": {
+                        "key": "is_exceptional_circumstances",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Do you have exceptional circumstances that mean you need F680 approval in less than 30 days?",
+                        "raw_answer": False,
+                    },
+                    "has_made_previous_application": {
+                        "key": "has_made_previous_application",
+                        "answer": "No",
+                        "datatype": "boolean",
+                        "question": "Have you made a previous application?",
+                        "raw_answer": False,
+                    },
+                },
+                "fields_sequence": ["name", "has_made_previous_application", "is_exceptional_circumstances"],
+            },
             "approval_type": {
                 "type": "single",
                 "label": "Approval type",
@@ -85,91 +113,6 @@ def data_f680_submitted_application(data_f680_case):
                     "demonstration_overseas",
                     "approval_details_text",
                 ],
-            },
-            "user_information": {
-                "type": "multiple",
-                "items": [
-                    {
-                        "id": "6a752666-72a2-447c-951a-9eb79d4c4302",
-                        "fields": {
-                            "prefix": {
-                                "key": "prefix",
-                                "answer": "",
-                                "datatype": "string",
-                                "question": "Enter a prefix (optional)",
-                                "raw_answer": "",
-                            },
-                            "suffix": {
-                                "key": "suffix",
-                                "answer": "",
-                                "datatype": "string",
-                                "question": "Enter a suffix (optional)",
-                                "raw_answer": "",
-                            },
-                            "address": {
-                                "key": "address",
-                                "answer": "cvb",
-                                "datatype": "string",
-                                "question": "Address",
-                                "raw_answer": "cvb",
-                            },
-                            "country": {
-                                "key": "country",
-                                "answer": "United Arab Emirates",
-                                "datatype": "string",
-                                "question": "Country",
-                                "raw_answer": "AE",
-                            },
-                            "entity_type": {
-                                "key": "entity_type",
-                                "answer": "End user",
-                                "datatype": "string",
-                                "question": "Select type of entity",
-                                "raw_answer": "end-user",
-                            },
-                            "end_user_name": {
-                                "key": "end_user_name",
-                                "answer": "cvb",
-                                "datatype": "string",
-                                "question": "End-user name",
-                                "raw_answer": "cvb",
-                            },
-                            "security_classification": {
-                                "key": "security_classification",
-                                "answer": "Secret",
-                                "datatype": "string",
-                                "question": "Select security classification",
-                                "raw_answer": "secret",
-                            },
-                            "end_user_intended_end_use": {
-                                "key": "end_user_intended_end_use",
-                                "answer": "cvb",
-                                "datatype": "string",
-                                "question": "How does the end-user intend to use this item",
-                                "raw_answer": "cvb",
-                            },
-                            "other_security_classification": {
-                                "key": "other_security_classification",
-                                "answer": "",
-                                "datatype": "string",
-                                "question": "Enter the security classification",
-                                "raw_answer": "",
-                            },
-                        },
-                        "fields_sequence": [
-                            "entity_type",
-                            "end_user_name",
-                            "address",
-                            "country",
-                            "prefix",
-                            "security_classification",
-                            "other_security_classification",
-                            "suffix",
-                            "end_user_intended_end_use",
-                        ],
-                    }
-                ],
-                "label": "User Information",
             },
             "product_information": {
                 "type": "single",
@@ -637,7 +580,15 @@ class TestF680SubmittedApplicationSummaryView:
         mock_f680_application_get_submitted_application,
         mock_get_application_history,
         mock_get_application_activity,
+        data_f680_submitted_application,
     ):
         response = authorized_client.get(f680_submitted_application_summary_url_with_application)
 
+        submitted_application = data_f680_submitted_application["application"]["sections"]
+
+        submitted_application.update(
+            {"user_information": None, "supporting_documents": None, "notes_for_case_officers": None}
+        )
+
+        assert response.context["application_sections"] == data_f680_submitted_application["application"]["sections"]
         assert response.status_code == 200
