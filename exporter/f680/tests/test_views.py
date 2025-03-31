@@ -434,6 +434,26 @@ def mock_get_application_activity(requests_mock, data_f680_submitted_application
     return requests_mock.get(url=url, json={"activity": {}}, status_code=200)
 
 
+@pytest.fixture
+def case_notes_url(data_queue, data_f680_case):
+    return reverse(
+        "cases:case_notes",
+        kwargs={
+            "queue_pk": data_queue["id"],
+            "pk": data_f680_case["id"],
+        },
+    )
+
+
+@pytest.fixture
+def mock_post_case_notes(requests_mock, data_f680_case):
+    return requests_mock.post(
+        f"/cases/{data_f680_case['id']}/case-notes/",
+        json={},
+        status_code=201,
+    )
+
+
 @pytest.fixture()
 def unset_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
@@ -693,3 +713,46 @@ class TestF680SubmittedApplicationSummaryView:
 
         assert response.status_code == 200
         assert "There are no ECJU documents for this product." in document_info_text
+
+    def test_post_f680_summary_view_success_case_notes(
+        self,
+        authorized_client,
+        f680_submitted_application_summary_url_with_application_case_notes,
+        mock_f680_application_get_submitted_application,
+        mock_get_application_history,
+        mock_get_application_activity,
+        data_f680_submitted_application,
+        mock_get_f680_case_notes,
+        mock_post_case_notes,
+    ):
+        application_id = data_f680_submitted_application["id"]
+
+        note_json = {"text": "Note text"}
+
+        post_response = authorized_client.post(
+            f680_submitted_application_summary_url_with_application_case_notes, data=note_json
+        )
+
+        assert mock_post_case_notes.last_request.json() == {"text": "Note text"}
+        assert post_response.status_code == 302
+        assert post_response.url == f"/f680/{application_id}/summary/case-notes/"
+
+    def test_post_f680_summary_view_case_notes_with_wrong_type_raises_404(
+        self,
+        authorized_client,
+        f680_submitted_application_summary_url_with_application_ecju_documents,
+        mock_f680_application_get_submitted_application,
+        mock_get_application_history,
+        mock_get_application_activity,
+        data_f680_submitted_application,
+        mock_get_f680_case_notes,
+        mock_post_case_notes,
+    ):
+
+        note_json = {"text": "Note text"}
+
+        post_response = authorized_client.post(
+            f680_submitted_application_summary_url_with_application_ecju_documents, data=note_json
+        )
+
+        assert post_response.status_code == 404
