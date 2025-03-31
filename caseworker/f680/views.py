@@ -14,7 +14,12 @@ from core.auth.views import LoginRequiredMixin
 from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import move_case_forward
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
+<<<<<<< HEAD
 from caseworker.cases.services import get_case, post_ecju_query
+=======
+from caseworker.cases.services import get_case
+from caseworker.f680.recommendation.services import get_case_recommendations
+>>>>>>> 2d80e1df1 (Show recommendations during F680 outcome flow)
 from caseworker.f680.rules import OUTCOME_STATUSES
 from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.cases.helpers.case import CaseworkerMixin
@@ -38,9 +43,13 @@ class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
         raise PermissionDenied("Cannot modify or view F680s")
 
     def dispatch(self, request, *args, **kwargs):
-        self.case_id = str(kwargs["pk"])
+        self.extra_setup(request)
+        return super().dispatch(request, *args, **kwargs)
+
+    def extra_setup(self, request):
+        self.case_id = str(self.kwargs["pk"])
         self.case = get_case(request, self.case_id)
-        self.queue_id = kwargs["queue_pk"]
+        self.queue_id = self.kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
         self.caseworker_id = str(self.request.session["lite_api_user_id"])
         data, _ = get_gov_user(self.request, self.caseworker_id)
@@ -48,12 +57,7 @@ class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
         self.security_release_requests = OrderedDict()
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
-        self.extra_setup(request)
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def extra_setup(self, request):
-        return
+        self.case_recommendations = get_case_recommendations(self.request, self.case)
 
     def get_recommendation_level(self, case):
         return AdviceLevel.FINAL if case.status in OUTCOME_STATUSES else AdviceLevel.USER

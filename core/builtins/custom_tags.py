@@ -977,6 +977,11 @@ def pprint_dict(value):
 
 
 @register.filter
+def force_list(value):
+    return [value]
+
+
+@register.filter
 def pagination_params(url, page):
     url_parts = urlparse.urlparse(url)
     query_dict = QueryDict(url_parts.query, mutable=True)

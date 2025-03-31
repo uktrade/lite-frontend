@@ -1,5 +1,7 @@
-from django.shortcuts import redirect, reverse
+from collections import defaultdict
 from http import HTTPStatus
+
+from django.shortcuts import redirect, reverse
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -38,6 +40,7 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     }
 
     def extra_setup(self, request):
+        super().extra_setup(request)
         self.existing_outcomes, self.remaining_requests_without_outcome, self.remaining_request_ids_without_outcome = (
             self.get_remaining_outcomes()
         )
@@ -67,17 +70,40 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
             return {"all_approval_types": self.case["data"]["security_release_requests"][0]["approval_types"]}
         return {}
 
+    def get_selected_security_releases(self, all_security_release_requests):
+        select_outcome_data = self.storage.get_step_data(OutcomeSteps.SELECT_OUTCOME)
+        if not select_outcome_data:
+            return []
+
+        selected_security_release_ids = select_outcome_data.getlist("select_outcome-security_release_requests")
+        return [
+            security_release_request
+            for security_release_request in all_security_release_requests
+            if security_release_request["id"] in selected_security_release_ids
+        ]
+
+    def get_all_security_releases(self):
+        recommendations_by_security_release = defaultdict(list)
+        for recommendation in self.case_recommendations:
+            recommendations_by_security_release[recommendation["security_release_request"]["id"]].append(recommendation)
+
+        all_security_releases = []
+        for security_release_request in self.case["data"]["security_release_requests"]:
+            security_release_id = security_release_request["id"]
+            if security_release_id not in self.remaining_request_ids_without_outcome:
+                continue
+            security_release_request["recommendations"] = recommendations_by_security_release[security_release_id]
+            all_security_releases.append(security_release_request)
+        return all_security_releases
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["back_link_url"] = reverse("cases:f680:recommendation", kwargs=self.kwargs)
-        select_outcome_data = self.storage.get_step_data(OutcomeSteps.SELECT_OUTCOME)
-        if select_outcome_data:
-            selected_security_release_ids = select_outcome_data.getlist("select_outcome-security_release_requests")
-            selected_security_releases = []
-            for security_release_request in self.case["data"]["security_release_requests"]:
-                if security_release_request["id"] in selected_security_release_ids:
-                    selected_security_releases.append(security_release_request)
-            context["selected_security_release_requests"] = selected_security_releases
+        all_security_release_requests = self.get_all_security_releases()
+        context["all_security_release_requests"] = all_security_release_requests
+        context["selected_security_release_requests"] = self.get_selected_security_releases(
+            all_security_release_requests
+        )
         return context
 
     @expect_status(
