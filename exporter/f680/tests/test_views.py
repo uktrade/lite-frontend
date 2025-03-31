@@ -328,6 +328,14 @@ def f680_submitted_application_summary_url_with_application_ecju_query(data_f680
 
 
 @pytest.fixture
+def f680_submitted_application_summary_url_with_application_ecju_documents(data_f680_case_complete_application):
+    return reverse(
+        "f680:submitted_summary",
+        kwargs={"pk": data_f680_case_complete_application["id"], "type": "generated-documents"},
+    )
+
+
+@pytest.fixture
 def post_to_step(post_to_step_factory, f680_apply_url, mock_application_post):
     return post_to_step_factory(f680_apply_url)
 
@@ -403,6 +411,14 @@ def mock_get_f680_ecju_queries(data_f680_case, requests_mock):
     return requests_mock.get(
         f"/cases/{data_f680_case['id']}/ecju-queries/",
         json={"ecju_queries": []},
+    )
+
+
+@pytest.fixture
+def mock_get_f680_ecju_documents(data_f680_case, requests_mock):
+    return requests_mock.get(
+        f"/cases/{data_f680_case['id']}/generated-documents/",
+        json={"count": 0, "total_pages": 1, "results": []},
     )
 
 
@@ -655,7 +671,25 @@ class TestF680SubmittedApplicationSummaryView:
         response = authorized_client.get(f680_submitted_application_summary_url_with_application_ecju_query)
         content = BeautifulSoup(response.content, "html.parser")
 
-        queries_text = content.find("p", {"id": "no-application-span"}).text
+        queries_text = content.find("p", {"id": "queries-info"}).text
 
         assert response.status_code == 200
         assert "There are no ECJU queries on this application." in queries_text
+
+    def test_get_f680_summary_view_success_ecju_documents(
+        self,
+        authorized_client,
+        f680_submitted_application_summary_url_with_application_ecju_documents,
+        mock_f680_application_get_submitted_application,
+        mock_get_application_history,
+        mock_get_application_activity,
+        data_f680_submitted_application,
+        mock_get_f680_ecju_documents,
+    ):
+
+        response = authorized_client.get(f680_submitted_application_summary_url_with_application_ecju_documents)
+        content = BeautifulSoup(response.content, "html.parser")
+        document_info_text = content.find("p", {"id": "documents-info"}).text
+
+        assert response.status_code == 200
+        assert "There are no ECJU documents for this product." in document_info_text
