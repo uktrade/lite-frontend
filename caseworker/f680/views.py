@@ -10,17 +10,17 @@ from django.views.generic import TemplateView, View, FormView
 
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice.constants import AdviceLevel
-from caseworker.advice.services import move_case_forward
-from caseworker.core.constants import ALL_CASES_QUEUE_ID
-from caseworker.cases.services import get_case
-from caseworker.f680.rules import OUTCOME_STATUSES
-from caseworker.cases.helpers.case import CaseworkerMixin
-from caseworker.queues.services import get_queue
-from caseworker.users.services import get_gov_user
-
 from caseworker.activities.forms import NotesAndTimelineForm
 from caseworker.activities.mixins import NotesAndTimelineMixin
+from caseworker.advice.constants import AdviceLevel
+from caseworker.advice.services import move_case_forward
+from caseworker.cases.helpers.case import CaseworkerMixin
+from caseworker.cases.services import get_case
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
+from caseworker.f680.rules import OUTCOME_STATUSES
+from caseworker.picklists.services import get_picklists_list
+from caseworker.queues.services import get_queue
+from caseworker.users.services import get_gov_user
 
 
 class F680CaseworkerMixin(CaseworkerMixin):
@@ -38,6 +38,8 @@ class F680CaseworkerMixin(CaseworkerMixin):
         self.security_release_requests = OrderedDict()
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
+
+        self.conditions = get_picklists_list(request, type="proviso", disable_pagination=True, show_deactivated=False)
 
         return super().dispatch(request, *args, **kwargs)
 
