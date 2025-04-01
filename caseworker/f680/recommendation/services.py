@@ -59,7 +59,7 @@ def recommendations_by_current_user(request, case, caseworker):
     recommendation = filter_current_user_recommendation(case_recommendations, caseworker_id)
     recommendation = filter_recommendation_by_team(recommendation, team_id)
     grouped_recommendation = group_recommendations_by_user(recommendation)
-    return grouped_recommendation.get(caseworker_id)
+    return grouped_recommendation.get(caseworker_id, [])
 
 
 def get_case_recommendations(request, case):

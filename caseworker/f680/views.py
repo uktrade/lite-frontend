@@ -17,6 +17,7 @@ from caseworker.advice.services import move_case_forward
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.services import get_case
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
+from caseworker.f680.recommendation.services import recommendations_by_current_user
 from caseworker.f680.rules import OUTCOME_STATUSES
 from caseworker.picklists.services import get_picklists_list
 from caseworker.queues.services import get_queue
@@ -40,6 +41,14 @@ class F680CaseworkerMixin(CaseworkerMixin):
             self.security_release_requests[rr["id"]] = rr
 
         self.conditions = get_picklists_list(request, type="proviso", disable_pagination=True, show_deactivated=False)
+
+        recommendations = recommendations_by_current_user(request, self.case, self.caseworker)
+        completed_release_requests = [item["security_release_request"] for item in recommendations]
+        self.pending_release_requests = {
+            rr["id"]: rr
+            for rr in self.case["data"]["security_release_requests"]
+            if rr["id"] not in completed_release_requests
+        }
 
         return super().dispatch(request, *args, **kwargs)
 
