@@ -109,6 +109,7 @@ class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.application, _ = self.get_f680_application(kwargs["pk"])
+        self.application_id = self.application["id"]
 
     @expect_status(
         HTTPStatus.OK,
@@ -125,7 +126,7 @@ class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
         "Unexpected error updating F680 application",
     )
     def patch_f680_application(self, data):
-        return patch_f680_application(self.request, self.application["id"], data)
+        return patch_f680_application(self.request, self.application_id, data)
 
     def remove_application_entity(self, entity_to_remove_id):
         application_data = self.application
@@ -135,21 +136,21 @@ class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
         for item in user_information_items:
             if item["id"] == entity_to_remove_id:
                 user_information_items.remove(item)
-                self.patch_f680_application(application_data)
-
-    def has_user_entities_remaining(self):
-        application, _ = self.get_f680_application(self.application["id"])
-        return application.get("application", {}).get("sections", {}).get("user_information", {}).get("items", [])
+                application_data, _ = self.patch_f680_application(application_data)
+                self.application = application_data
 
     def get(self, request, *args, **kwargs):
         self.remove_application_entity(kwargs["entity_to_remove_id"])
-        if self.has_user_entities_remaining():
+        has_user_entities_remaining = (
+            self.application.get("application", {}).get("sections", {}).get("user_information", {}).get("items", [])
+        )
+        if has_user_entities_remaining:
             return redirect(
                 reverse(
                     "f680:user_information:summary",
                     kwargs={
-                        "pk": self.application["id"],
+                        "pk": self.application_id,
                     },
                 )
             )
-        return redirect(reverse("f680:summary", kwargs={"pk": self.application["id"]}))
+        return redirect(reverse("f680:summary", kwargs={"pk": self.application_id}))
