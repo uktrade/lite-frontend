@@ -643,9 +643,6 @@ class ExportLicenceView(LoginRequiredMixin, BaseSessionWizardView):
         ExportLicenceSteps.LICENCE_TYPE: ~C(is_indeterminate_export_licence_type_allowed),
     }
 
-    def get_organisation(self):
-        return self.request.session["organisation"]
-
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
 

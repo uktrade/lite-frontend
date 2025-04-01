@@ -1,5 +1,5 @@
-from django.conf import settings
+import rules
 
 
 def is_indeterminate_export_licence_type_allowed(wizard):
-    return wizard.get_organisation() in settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS
+    return rules.test_rule("can_exporter_apply_for_indeterminate_export_licence_type", wizard.request)
