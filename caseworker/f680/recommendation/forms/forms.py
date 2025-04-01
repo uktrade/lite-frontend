@@ -31,6 +31,28 @@ class PicklistAdviceForm(forms.Form):
         return reasons_choices, reasons_text
 
 
+class EntitySelectionForm(BaseForm):
+    class Layout:
+        TITLE = "Select entities"
+
+    release_requests = forms.MultipleChoiceField(
+        label="",
+        widget=forms.CheckboxSelectMultiple,
+        choices=(),
+        error_messages={"required": "Select entities to add recommendations"},
+    )
+
+    def __init__(self, release_requests, *args, **kwargs):
+        release_requests_choices = [Choice(rr["id"], rr["recipient"]["name"]) for rr in release_requests]
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["release_requests"].choices = release_requests_choices
+
+    def get_layout_fields(self):
+        return ("release_requests",)
+
+
 class BaseRecommendationForm(BaseForm):
     class Layout:
         TITLE = ""
