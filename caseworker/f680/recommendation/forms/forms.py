@@ -55,7 +55,7 @@ class EntitySelectionForm(BaseForm):
 
 class BaseRecommendationForm(BaseForm):
     class Layout:
-        TITLE = ""
+        TITLE = "Add recommendation"
 
     CHOICES = [
         ("approve", "Approve"),
@@ -87,7 +87,7 @@ class BaseRecommendationForm(BaseForm):
         required=False,
     )
 
-    def __init__(self, release_request, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         self.conditional_radio_choices = [
             (
                 ConditionalRadiosQuestion(choice.label, "security_grading_other")
@@ -97,18 +97,9 @@ class BaseRecommendationForm(BaseForm):
             for choice in self.security_release_choices
         ]
 
-        self.release_request = release_request
         super().__init__(*args, **kwargs)
 
         self.fields["security_grading"].choices = self.security_release_choices
-
-    def clean(self):
-        cleaned_data = super().clean()
-
-        return {
-            **cleaned_data,
-            "security_release_request": self.release_request["id"],
-        }
 
     def get_layout_fields(self):
         return (
@@ -133,13 +124,10 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
             "recommendation": cleaned_data.get("recommendation", ""),
             "security_grading": cleaned_data.get("security_grading", ""),
             "security_grading_other": cleaned_data.get("security_grading_other", ""),
-            "security_release_request": self.release_request["id"],
             "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
         }
 
-    def __init__(self, *args, **kwargs):
-        conditions = kwargs.pop("proviso")
-
+    def __init__(self, conditions, *args, **kwargs):
         conditions_choices, conditions_text = self._picklist_to_choices(conditions)
 
         self.conditional_checkbox_choices = (
@@ -159,7 +147,6 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
 
     def get_layout_fields(self):
         return (
-            HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
             "recommendation",
             ConditionalRadios("security_grading", *self.conditional_radio_choices),
             ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
