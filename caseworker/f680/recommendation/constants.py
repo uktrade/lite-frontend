@@ -5,4 +5,5 @@ class RecommendationType:
 
 
 class RecommendationSteps:
+    SELECT_ENTITIES = "select_entities"
     RELEASE_REQUEST_PROVISOS = "release_request_provisos"
