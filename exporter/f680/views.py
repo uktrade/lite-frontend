@@ -140,8 +140,8 @@ class F680SubmittedApplicationSummaryView(LoginRequiredMixin, F680FeatureRequire
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error posting case notes",
-        "Unexpected error posting case notes",
+        "Error creating case note",
+        "Unexpected error creating case note",
     )
     def post_case_notes(self, application_id):
         return post_case_notes(self.request, application_id, self.request.POST)
@@ -149,6 +149,7 @@ class F680SubmittedApplicationSummaryView(LoginRequiredMixin, F680FeatureRequire
     def post(self, request, **kwargs):
         if self.view_type != "case-notes":
             raise Http404()
+
         self.post_case_notes(self.application["id"])
 
         return redirect(reverse("f680:submitted_summary", kwargs={"pk": self.application["id"], "type": "case-notes"}))

@@ -435,22 +435,20 @@ def mock_get_application_activity(requests_mock, data_f680_submitted_application
 
 
 @pytest.fixture
-def case_notes_url(data_queue, data_f680_case):
-    return reverse(
-        "cases:case_notes",
-        kwargs={
-            "queue_pk": data_queue["id"],
-            "pk": data_f680_case["id"],
-        },
-    )
-
-
-@pytest.fixture
 def mock_post_case_notes(requests_mock, data_f680_case):
     return requests_mock.post(
         f"/cases/{data_f680_case['id']}/case-notes/",
         json={},
         status_code=201,
+    )
+
+
+@pytest.fixture
+def mock_post_case_notes_error(requests_mock, data_f680_case):
+    return requests_mock.post(
+        f"/cases/{data_f680_case['id']}/case-notes/",
+        json={},
+        status_code=500,
     )
 
 
@@ -756,3 +754,28 @@ class TestF680SubmittedApplicationSummaryView:
         )
 
         assert post_response.status_code == 404
+
+    def test_post_case_notes_error(
+        self,
+        authorized_client,
+        requests_mock,
+        data_f680_submitted_application,
+        f680_submitted_application_summary_url_with_application_case_notes,
+        mock_f680_application_get_submitted_application,
+        mock_get_application_history,
+        mock_get_application_activity,
+        mock_get_f680_case_notes,
+        mock_post_case_notes_error,
+    ):
+
+        app_pk = data_f680_submitted_application["id"]
+
+        response = authorized_client.post(
+            reverse("f680:submitted_summary", kwargs={"pk": app_pk, "type": "case-notes"})
+        )
+
+        content = BeautifulSoup(response.content, "html.parser")
+        error_text = content.find("p", {"class": "govuk-body"}).text
+
+        assert response.status_code == 200
+        assert "Unexpected error creating case note" in error_text
