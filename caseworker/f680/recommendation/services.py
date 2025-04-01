@@ -62,6 +62,14 @@ def recommendations_by_current_user(request, case, caseworker):
     return grouped_recommendation.get(caseworker_id, [])
 
 
+def get_pending_recommendation_requests(request, case, caseworker):
+    recommendations = recommendations_by_current_user(request, case, caseworker)
+    completed_release_requests = [item["security_release_request"]["id"] for item in recommendations]
+    return {
+        rr["id"]: rr for rr in case["data"]["security_release_requests"] if rr["id"] not in completed_release_requests
+    }
+
+
 def get_case_recommendations(request, case):
     response = client.get(request, f"/caseworker/f680/{case['id']}/recommendation/")
     response.raise_for_status()
@@ -79,14 +87,14 @@ def get_case_recommendations(request, case):
 def post_recommendation(request, case, data):
     json = [
         {
-            "type": item["recommendation"],
-            "conditions": item["conditions"] if item["recommendation"] == RecommendationType.APPROVE else "",
-            "refusal_reasons": item["conditions"] if item["recommendation"] == RecommendationType.REFUSE else "",
-            "security_grading": item["security_grading"],
-            "security_grading_other": item["security_grading_other"],
-            "security_release_request": item["security_release_request"],
+            "type": data["recommendation"],
+            "conditions": data["conditions"] if data["recommendation"] == RecommendationType.APPROVE else "",
+            "refusal_reasons": data["conditions"] if data["recommendation"] == RecommendationType.REFUSE else "",
+            "security_grading": data["security_grading"],
+            "security_grading_other": data["security_grading_other"],
+            "security_release_request": release_request_id,
         }
-        for item in data
+        for release_request_id in data["release_requests"]
     ]
     response = client.post(request, f"/caseworker/f680/{case['id']}/recommendation/", json)
     return response.json(), response.status_code

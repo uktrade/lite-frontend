@@ -1,18 +1,16 @@
-from collections import OrderedDict
-
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
 from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
-
-from caseworker.advice.picklist_helpers import proviso_picklist
+from core.wizard.conditionals import C
 from caseworker.f680.recommendation.constants import RecommendationSteps
 from caseworker.f680.recommendation.forms.forms import (
     BaseRecommendationForm,
     ClearRecommendationForm,
     EntityConditionsRecommendationForm,
+    EntitySelectionForm,
 )
 from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
@@ -83,19 +81,42 @@ class ClearRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, FormView)
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
 
-class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
+def team_provisos_exist(wizard):
+    return len(wizard.conditions["results"]) > 0
+
+
+class MakeRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     template_name = "f680/case/recommendation/form_wizard.html"
     current_tab = "recommendations"
 
     form_list = [
+        (RecommendationSteps.SELECT_ENTITIES, EntitySelectionForm),
         (RecommendationSteps.RELEASE_REQUEST_PROVISOS, EntityConditionsRecommendationForm),
+        (RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS, BaseRecommendationForm),
     ]
 
-    step_kwargs = {
-        RecommendationSteps.RELEASE_REQUEST_PROVISOS: proviso_picklist,
+    condition_dict = {
+        RecommendationSteps.RELEASE_REQUEST_PROVISOS: C(team_provisos_exist),
+        RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS: ~C(team_provisos_exist),
     }
 
+    def get_form_kwargs(self, step=None):
+        kwargs = super().get_form_kwargs(step)
+
+        if step == RecommendationSteps.SELECT_ENTITIES:
+            pending_release_requests = self.pending_recommendation_requests()
+            kwargs["release_requests"] = list(pending_release_requests.values())
+
+        if step == RecommendationSteps.RELEASE_REQUEST_PROVISOS:
+            kwargs["conditions"] = self.conditions
+
+        return kwargs
+
     def get_success_url(self):
+        pending_release_requests = self.pending_recommendation_requests()
+        if pending_release_requests:
+            return reverse("cases:f680:recommendation", kwargs=self.kwargs)
+
         return reverse("cases:f680:view_my_recommendation", kwargs=self.kwargs)
 
     def get_context_data(self, **kwargs):
@@ -118,38 +139,3 @@ class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
         data = self.get_payload(form_dict)
         self.post_recommendation(data)
         return redirect(self.get_success_url())
-
-
-class MakeRecommendationView(BaseRecommendationView):
-
-    def get_form_list(self):
-        form_list = OrderedDict()
-        for rr_key in self.security_release_requests.keys():
-            form_list[rr_key] = EntityConditionsRecommendationForm
-
-        return form_list
-
-    def get_form(self, step=None, data=None, files=None):
-        if step is None:
-            step = self.steps.current
-
-        release_request = self.security_release_requests[step]
-        initial = {"security_grading": release_request["security_grading"]["key"]}
-
-        picklist_form_kwargs = self.step_kwargs[RecommendationSteps.RELEASE_REQUEST_PROVISOS](self)
-        picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
-        if picklist_options_exist:
-            return EntityConditionsRecommendationForm(
-                initial=initial,
-                prefix=step,
-                data=data,
-                release_request=release_request,
-                **picklist_form_kwargs,
-            )
-        else:
-            return BaseRecommendationForm(
-                initial=initial,
-                prefix=step,
-                data=data,
-                release_request=release_request,
-            )
