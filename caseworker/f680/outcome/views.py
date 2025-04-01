@@ -87,7 +87,12 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     def get_all_security_releases(self):
         recommendations_by_security_release = defaultdict(list)
         for recommendation in self.case_recommendations:
-            recommendations_by_security_release[recommendation["security_release_request"]["id"]].append(recommendation)
+            # Replace security_release_request dict in recommendation with ID - this is redundant in template
+            # context as recommendations are already attached to the security releases
+            recommendation = recommendation.copy()
+            recommendation["security_release_request_id"] = recommendation["security_release_request"]["id"]
+            del recommendation["security_release_request"]
+            recommendations_by_security_release[recommendation["security_release_request_id"]].append(recommendation)
 
         all_security_releases = []
         for security_release_request in self.case["data"]["security_release_requests"]:
