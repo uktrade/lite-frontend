@@ -12,6 +12,7 @@ from caseworker.f680.outcome import forms
 from caseworker.f680.outcome.constants import OutcomeSteps
 from caseworker.f680.outcome.payloads import OutcomePayloadBuilder
 from caseworker.f680.outcome.services import post_outcome, get_outcomes
+from caseworker.f680.recommendation.services import get_case_recommendations
 
 
 def is_approve_selected(wizard):
@@ -44,6 +45,7 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         self.existing_outcomes, self.remaining_requests_without_outcome, self.remaining_request_ids_without_outcome = (
             self.get_remaining_outcomes()
         )
+        self.case_recommendations = get_case_recommendations(self.request, self.case)
 
     def get_remaining_outcomes(self):
         existing_outcomes, _ = self.get_existing_outcomes()

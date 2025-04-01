@@ -18,6 +18,7 @@ def setup(
     mock_denial_reasons,
     mock_footnote_details,
     settings,
+    mock_get_case_recommendations,
 ):
     settings.FEATURE_FLAG_ALLOW_F680 = True
     return
