@@ -37,6 +37,8 @@ class F680ApplicationSectionWizard(LoginRequiredMixin, F680FeatureRequiredMixin,
         "Unexpected error updating F680 application",
     )
     def patch_f680_application(self, data):
+        if self.section == "general_application_details":
+            data["name"] = data["application"]["sections"]["general_application_details"]["fields"]["name"]["answer"]
         return patch_f680_application(self.request, self.application["id"], data)
 
     def deserialize(self, value, datatype):
