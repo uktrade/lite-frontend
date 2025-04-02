@@ -40,7 +40,7 @@ class F680FeatureRequiredMixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class F680BaseSubmissionMixin:
+class F680BasePresubmissionMixin:
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.application, _ = self.get_f680_application(kwargs["pk"])
@@ -74,7 +74,7 @@ class F680BaseSubmissionMixin:
         return len(missing_sections) == 0, missing_sections
 
 
-class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F680BaseSubmissionMixin, FormView):
+class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F680BasePresubmissionMixin, FormView):
     form_class = ApplicationPresubmissionForm
     template_name = "f680/summary.html"
 
@@ -91,9 +91,9 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
         return reverse("f680:declaration", kwargs={"pk": self.application["id"]})
 
 
-class F680PresubmissionDeclarationView(LoginRequiredMixin, F680FeatureRequiredMixin, F680BaseSubmissionMixin, FormView):
+class F680DeclarationView(LoginRequiredMixin, F680FeatureRequiredMixin, F680BasePresubmissionMixin, FormView):
     form_class = ApplicationSubmissionForm
-    template_name = "f680/declaration.html"
+    template_name = "core/form.html"
 
     def form_valid(self, form):
         is_sections_completed, _ = self.all_sections_complete()
@@ -101,8 +101,6 @@ class F680PresubmissionDeclarationView(LoginRequiredMixin, F680FeatureRequiredMi
             context_data = self.get_context_data(form=form)
             context_data["errors"] = {"missing_sections": ["Please complete all required sections"]}
             return self.render_to_response(context_data)
-
-        self.submit_f680_application(self.application["id"])
         return super().form_valid(form)
 
     @expect_status(
@@ -114,7 +112,16 @@ class F680PresubmissionDeclarationView(LoginRequiredMixin, F680FeatureRequiredMi
     def submit_f680_application(self, application_id):
         return submit_f680_application(self.request, application_id)
 
+    def get_back_link_url(self):
+        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = self.get_back_link_url()
+        return context
+
     def get_success_url(self):
+        self.submit_f680_application(self.application["id"])
         return reverse("applications:success_page", kwargs={"pk": self.application["id"]})
 
 
