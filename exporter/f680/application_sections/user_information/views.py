@@ -136,13 +136,20 @@ class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
         for item in user_information_items:
             if item["id"] == entity_to_remove_id:
                 user_information_items.remove(item)
-                application_data, _ = self.patch_f680_application(application_data)
-                self.application = application_data
+
+        amended_application_data, _ = self.patch_f680_application(application_data)
+        return amended_application_data
 
     def get(self, request, *args, **kwargs):
-        self.remove_application_entity(kwargs["entity_to_remove_id"])
+        amended_application_data = self.remove_application_entity(kwargs["entity_to_remove_id"])
+        return self.get_success_url(amended_application_data)
+
+    def get_success_url(self, amended_application_data):
         has_user_entities_remaining = (
-            self.application.get("application", {}).get("sections", {}).get("user_information", {}).get("items", [])
+            amended_application_data.get("application", {})
+            .get("sections", {})
+            .get("user_information", {})
+            .get("items", [])
         )
         if has_user_entities_remaining:
             return redirect(
