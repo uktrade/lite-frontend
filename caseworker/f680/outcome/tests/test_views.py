@@ -1,4 +1,5 @@
 import pytest
+from http import HTTPStatus
 
 from django.urls import reverse
 
@@ -41,13 +42,13 @@ def mock_current_gov_user(requests_mock, current_user, f680_case_id):
 @pytest.fixture
 def mock_outcomes_no_outcomes(requests_mock, data_submitted_f680_case):
     url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/"
-    return requests_mock.get(url, json=[], status_code=200)
+    return requests_mock.get(url, json=[], status_code=HTTPStatus.OK)
 
 
 @pytest.fixture
 def mock_POST_outcome(requests_mock, data_submitted_f680_case):
     url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/"
-    return requests_mock.post(url, json={}, status_code=201)
+    return requests_mock.post(url, json={}, status_code=HTTPStatus.CREATED)
 
 
 class TestDecideOutcomeView:
@@ -72,7 +73,7 @@ class TestDecideOutcomeView:
         ]
         request_ids = [request["id"] for request in security_release_requests]
         response = authorized_client.get(decide_outcome_url)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert isinstance(form, forms.SelectOutcomeForm)
         assert (
@@ -103,7 +104,7 @@ class TestDecideOutcomeView:
         ]
         request_ids = [request["id"] for request in security_release_requests]
         response = authorized_client.get(decide_outcome_url)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert isinstance(form, forms.SelectOutcomeForm)
         assert (
@@ -139,7 +140,7 @@ class TestDecideOutcomeView:
                 "security_release_requests": request_ids,
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert isinstance(form, expected_form_class)
 
@@ -159,7 +160,7 @@ class TestDecideOutcomeView:
             OutcomeSteps.SELECT_OUTCOME,
             {},
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert isinstance(form, forms.SelectOutcomeForm)
         assert form.errors == {
@@ -188,7 +189,7 @@ class TestDecideOutcomeView:
                 "security_release_requests": request_ids,
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
         response = post_to_step(
             OutcomeSteps.APPROVE,
@@ -198,7 +199,7 @@ class TestDecideOutcomeView:
                 "security_grading": "secret",
             },
         )
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url == reverse(
             "cases:f680:recommendation",
             kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
@@ -234,13 +235,13 @@ class TestDecideOutcomeView:
                 "security_release_requests": request_ids,
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
         response = post_to_step(
             OutcomeSteps.APPROVE,
             {},
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert form.errors == {
             "security_grading": ["Select the security grading"],
@@ -269,7 +270,7 @@ class TestDecideOutcomeView:
                 "security_release_requests": request_ids,
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
         response = post_to_step(
             OutcomeSteps.APPROVE,
@@ -279,7 +280,7 @@ class TestDecideOutcomeView:
                 "security_grading": "secret",
             },
         )
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url == reverse(
             "cases:f680:outcome:decide_outcome",
             kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
@@ -315,7 +316,7 @@ class TestDecideOutcomeView:
                 "security_release_requests": request_ids,
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
         response = post_to_step(
             OutcomeSteps.REFUSE,
@@ -323,7 +324,7 @@ class TestDecideOutcomeView:
                 "refusal_reasons": "my reasons",
             },
         )
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
         assert request.json() == {
@@ -352,13 +353,13 @@ class TestDecideOutcomeView:
                 "security_release_requests": request_ids,
             },
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
         response = post_to_step(
             OutcomeSteps.REFUSE,
             {},
         )
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert form.errors == {
             "refusal_reasons": ["This field is required."],
