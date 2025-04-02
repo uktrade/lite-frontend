@@ -1,9 +1,9 @@
 from django import forms
-
 from django.template.loader import render_to_string
 
+from crispy_forms_gds.layout import HTML
+
 from core.common.forms import BaseForm
-from core.forms.utils import coerce_str_to_bool
 
 
 class ApplicationPresubmissionForm(BaseForm):
@@ -33,4 +33,7 @@ class ApplicationSubmissionForm(BaseForm):
     )
 
     def get_layout_fields(self):
-        return ("foi_choice",)
+        return (
+            "foi_choice",
+            HTML(render_to_string("f680/forms/declaration.html")),
+        )
