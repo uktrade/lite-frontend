@@ -8,7 +8,7 @@ from core.decorators import expect_status
 
 from exporter.core.services import get_countries
 from exporter.f680.views import F680FeatureRequiredMixin
-from exporter.f680.services import get_f680_application
+from exporter.f680.services import get_f680_application, patch_f680_application
 
 from exporter.f680.application_sections.views import F680MultipleItemApplicationSectionWizard
 
@@ -105,3 +105,62 @@ class UserInformationSummaryView(F680FeatureRequiredMixin, TemplateView):
             "application": self.application,
             "user_entities": self.user_entities,
         }
+
+
+class UserInformationRemoveEntityView(F680FeatureRequiredMixin, TemplateView):
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self.application, _ = self.get_f680_application(kwargs["pk"])
+        self.application_id = self.application["id"]
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error getting F680 application",
+        "Unexpected error getting F680 application",
+        reraise_404=True,
+    )
+    def get_f680_application(self, application_id):
+        return get_f680_application(self.request, application_id)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating F680 application",
+        "Unexpected error updating F680 application",
+    )
+    def patch_f680_application(self, data):
+        return patch_f680_application(self.request, self.application_id, data)
+
+    def remove_application_entity(self, entity_to_remove_id):
+        application_data = self.application
+        user_information_items = (
+            application_data["application"].get("sections", {}).get("user_information", {}).get("items", [])
+        )
+        for item in user_information_items:
+            if item["id"] == entity_to_remove_id:
+                user_information_items.remove(item)
+
+        amended_application_data, _ = self.patch_f680_application(application_data)
+        return amended_application_data
+
+    def get(self, request, *args, **kwargs):
+        amended_application_data = self.remove_application_entity(kwargs["entity_to_remove_id"])
+        return self.get_success_url(amended_application_data)
+
+    def get_success_url(self, amended_application_data):
+        has_user_entities_remaining = (
+            amended_application_data.get("application", {})
+            .get("sections", {})
+            .get("user_information", {})
+            .get("items", [])
+        )
+        if has_user_entities_remaining:
+            return redirect(
+                reverse(
+                    "f680:user_information:summary",
+                    kwargs={
+                        "pk": self.application_id,
+                    },
+                )
+            )
+        return redirect(reverse("f680:summary", kwargs={"pk": self.application_id}))

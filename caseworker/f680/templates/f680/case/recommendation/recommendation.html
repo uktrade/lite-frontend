@@ -8,12 +8,17 @@
     <main class="govuk-main-wrapper">
         {% test_rule 'can_user_make_f680_outcome' request case as can_user_make_f680_outcome %}
         {% if can_user_make_f680_outcome %}
-            <a id="approval-document" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate approval document</a>
+            <a id="decide-outcome-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:outcome:decide_outcome' queue_pk case.id %}">Decide outcome</a>
         {% endif %}
 
         {% test_rule 'can_user_move_f680_case_forward' request case as can_user_move_f680_case_forward %}
         {% if can_user_move_f680_case_forward %}
             {% include "f680/includes/move_case_forward.html" with request=request case=case queue=queue %}
+
+            {% if outcomes %}
+                <h1 class="govuk-heading-xl">Outcomes</h1>
+                {% include "f680/case/outcome/includes/outcomes_table.html" with outcomes=outcomes %}
+            {% endif %}
 
             {% if user_recommendations %}
                 <h1 class="govuk-heading-xl">View recommendation</h1>

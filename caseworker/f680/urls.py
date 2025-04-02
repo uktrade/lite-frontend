@@ -48,4 +48,5 @@ urlpatterns = [
         name="move_case_forward",
     ),
     path("document/", include("caseworker.f680.document.urls")),
+    path("outcome/", include("caseworker.f680.outcome.urls")),
 ]

@@ -1,0 +1,9 @@
+{% if field.datatype == "list" %}
+    <ul class="govuk-list--bullet">
+    {% for answer_item in field.answer %}
+        <li>{{answer_item}}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+{{field.answer}}
+{% endif %}

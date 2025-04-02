@@ -39,10 +39,14 @@ class F680CaseworkerMixin(CaseworkerMixin):
         self.security_release_requests = OrderedDict()
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
+        self.extra_setup(request)
 
         self.conditions = get_picklists_list(request, type="proviso", disable_pagination=True, show_deactivated=False)
 
         return super().dispatch(request, *args, **kwargs)
+
+    def extra_setup(self, request):
+        return
 
     def get_recommendation_level(self, case):
         return AdviceLevel.FINAL if case.status in OUTCOME_STATUSES else AdviceLevel.USER
