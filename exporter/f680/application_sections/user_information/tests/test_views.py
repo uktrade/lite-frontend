@@ -894,3 +894,4 @@ class TestUserInformationRemoveEntityView:
 
         assert response.status_code == 302
         assert response.url == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
+
