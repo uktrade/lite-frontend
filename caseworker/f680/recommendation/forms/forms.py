@@ -103,7 +103,6 @@ class BaseRecommendationForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
             "recommendation",
             ConditionalRadios("security_grading", *self.conditional_radio_choices),
             "conditions",
