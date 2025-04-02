@@ -1,0 +1,71 @@
+<div class="govuk-grid-column-two-thirds">
+    <table class="govuk-table f680-recommendations-table govuk-grid-column-two-thirds">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+
+                <th scope="col" class="govuk-table__header">Name</th>
+                <th scope="col" class="govuk-table__header">Decision</th>
+                <th scope="col" class="govuk-table__header">Security grading</th>
+                <th scope="col" class="govuk-table__header">Conditions/Refusal reasons</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for recommendation in user_recommendations %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                    {{ recommendation.security_release_request.recipient.name }}<br/>
+                    {{ recommendation.security_release_request.recipient.country.name }}<br/>
+                </td>
+                <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                    {{ recommendation.type.key|capfirst }}
+                </td>
+                <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                    {{ recommendation.security_grading.value }}
+                </td>
+                <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                    <details class="govuk-details govuk-!-padding-left-6 govuk-!-margin-top-2" data-module="govuk-details">
+                        <summary class="govuk-details__summary">
+                            <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+                                {% if recommendation.type.key == 'approve' %}
+                                    Conditions
+                                {% else %}
+                                    Refusal reasons
+                                {% endif %}
+                            </span>
+                        </summary>
+                            {% if recommendation.type.key == 'approve' %}
+                                {{ recommendation.conditions|linebreaks }}
+                            {% elif recommendation.type.key == 'refuse' %}
+                                {{ recommendation.refusal_reasons|linebreaks }}
+                            {% endif %}
+                    </details>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 class="govuk-heading-m">Pending entities</h2>
+    <table class="govuk-table f680-recommendations-table govuk-grid-column-two-thirds">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+
+                <th scope="col" class="govuk-table__header">Name</th>
+                <th scope="col" class="govuk-table__header">Security grading requested</th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for item in pending_recommendations %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                    {{ item.recipient.name }}<br/>
+                    {{ item.recipient.country.name }}<br/>
+                </td>
+                <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                    {{ item.security_grading.value }}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

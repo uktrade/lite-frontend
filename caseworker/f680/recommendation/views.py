@@ -32,6 +32,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         case_recommendations = get_case_recommendations(self.request, self.case)
+        pending_recommendations = self.pending_recommendation_requests()
 
         user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
         recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
@@ -42,6 +43,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
             "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
             "user_recommendations": user_recommendations,
             "recommendations_by_team": recommendations_by_team,
+            "pending_recommendations": list(pending_recommendations.values()),
         }
 
 
