@@ -6,7 +6,7 @@
 					<p class="govuk-body govuk-!-font-size-16">
 						<span class="user">{{ audit.0.user.first_name }} {{ audit.0.user.last_name }}</span> {{ audit.0.text }}
 					</p>
-					{% if audit.additional_text %}
+					{% if audit.0.additional_text %}
 						<div class="app-activity__additional-text">
 							{{ audit.0.additional_text }}
 						</div>
