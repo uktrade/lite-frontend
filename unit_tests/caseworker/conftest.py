@@ -814,9 +814,17 @@ def mock_proviso(requests_mock):
     data = {
         "results": [
             {"name": "firearm serial numbers", "text": "Firearm serial numbers text"},
+            {"name": "no release", "text": "No release of capability details"},
+            {"name": "no specifications", "text": "No release of specifications"},
         ]
     }
     return requests_mock.get(url=url, json=data)
+
+
+@pytest.fixture
+def mock_no_provisos(requests_mock):
+    url = client._build_absolute_uri("/picklist/?type=proviso&page=1&disable_pagination=True&show_deactivated=False")
+    return requests_mock.get(url=url, json={"results": []})
 
 
 @pytest.fixture

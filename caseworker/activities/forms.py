@@ -31,6 +31,7 @@ class NotesAndTimelineForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request")
+        view_url = kwargs.pop("view_url", "")
         super().__init__(*args, **kwargs)
 
         users_data, _ = get_gov_users(request, {"disable_pagination": True, "status": UserStatuses.ACTIVE})
@@ -46,9 +47,9 @@ class NotesAndTimelineForm(forms.Form):
             Div(
                 Submit("submit", "Add a case note"),
                 HTML(
-                    """
+                    f"""
                     <a id="id_cancel"
-                        href={% url "cases:activities:notes-and-timeline" pk=case.id queue_pk=queue.id %}
+                        href={view_url}
                         class="govuk-body govuk-link govuk-link--no-visited-state case-note-cancel"
                         type="button"
                         draggable="false">

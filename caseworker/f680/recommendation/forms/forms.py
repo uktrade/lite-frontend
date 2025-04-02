@@ -1,33 +1,15 @@
 from django import forms
 
 from crispy_forms_gds.choices import Choice
-from crispy_forms_gds.helper import FormHelper
-from crispy_forms_gds.layout import Submit
+from crispy_forms_gds.layout import HTML, Submit
 
 from core.common.forms import BaseForm
 from core.forms.layouts import (
     ConditionalCheckboxes,
     ConditionalCheckboxesQuestion,
-    RadioTextArea,
+    ConditionalRadios,
+    ConditionalRadiosQuestion,
 )
-
-
-class SelectRecommendationTypeForm(forms.Form):
-    CHOICES = [
-        ("approve_all", "Approve all"),
-    ]
-
-    recommendation = forms.ChoiceField(
-        choices=CHOICES,
-        widget=forms.RadioSelect,
-        label="",
-        error_messages={"required": "Select if you approve all or refuse all"},
-    )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.helper = FormHelper()
-        self.helper.add_input(Submit("submit", "Continue"))
 
 
 class PicklistAdviceForm(forms.Form):
@@ -49,61 +31,75 @@ class PicklistAdviceForm(forms.Form):
         return reasons_choices, reasons_text
 
 
-class RecommendAnApprovalForm(PicklistAdviceForm, BaseForm):
+class BaseRecommendationForm(BaseForm):
     class Layout:
-        TITLE = "Recommend an approval"
+        TITLE = ""
 
-    approval_reasons = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7, "class": "govuk-!-margin-top-4", "name": "approval_reasons"}),
-        label="",
-        error_messages={"required": "Enter a reason for approving"},
+    CHOICES = [
+        ("approve", "Approve"),
+        ("refuse", "Refuse"),
+    ]
+    security_release_choices = (
+        Choice("official", "Official"),
+        Choice("official-sensitive", "Official-Sensitive"),
+        Choice("secret", "Secret"),
+        Choice("top-secret", "Top Secret", divider="Or"),
+        Choice("other", "Other"),
     )
-    approval_radios = forms.ChoiceField(
-        label="What is your reason for approving?",
-        required=False,
+    recommendation = forms.ChoiceField(
+        choices=CHOICES,
         widget=forms.RadioSelect,
-        choices=(),
+        label="Select recommendation type",
+        error_messages={"required": "Select if you approve or refuse"},
     )
-    add_licence_conditions = forms.BooleanField(
-        label="Add licence conditions, instructions to exporter or footnotes (optional)",
+    security_grading = forms.ChoiceField(
+        choices="",
+        label="Select security classification",
+        widget=forms.RadioSelect,
+        error_messages={"required": "Select the security classification"},
+    )
+    security_grading_other = forms.CharField(label="Enter the security classification", required=False)
+    conditions = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7}),
+        label="Provisos",
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        approval_reason = kwargs.pop("approval_reason")
-        # this follows the same pattern as denial_reasons.
-        approval_choices, approval_text = self._picklist_to_choices(approval_reason)
-        self.approval_text = approval_text
+    def __init__(self, release_request, *args, **kwargs):
+        self.conditional_radio_choices = [
+            (
+                ConditionalRadiosQuestion(choice.label, "security_grading_other")
+                if choice.value == "other"
+                else choice.label
+            )
+            for choice in self.security_release_choices
+        ]
+
+        self.release_request = release_request
         super().__init__(*args, **kwargs)
-        self.fields["approval_radios"].choices = approval_choices
+
+        self.fields["security_grading"].choices = self.security_release_choices
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        return {
+            **cleaned_data,
+            "security_release_request": self.release_request["id"],
+        }
 
     def get_layout_fields(self):
         return (
-            RadioTextArea("approval_radios", "approval_reasons", self.approval_text),
-            "add_licence_conditions",
+            HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
+            "recommendation",
+            ConditionalRadios("security_grading", *self.conditional_radio_choices),
+            "conditions",
         )
 
 
-class SimpleLicenceConditionsForm(BaseForm):
-    class Layout:
-        TITLE = "Add licence conditions (optional)"
-
-    proviso = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 7}),
-        label="Licence condition",
-        required=False,
-    )
-
-    def get_layout_fields(self):
-        return ("proviso",)
-
-
-class PicklistLicenceConditionsForm(PicklistAdviceForm, BaseForm):
-    class Layout:
-        TITLE = "Add licence conditions (optional)"
-
-    proviso_checkboxes = forms.MultipleChoiceField(
-        label="",
+class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationForm):
+    conditions = forms.MultipleChoiceField(
+        label="Provisos",
         required=False,
         widget=forms.CheckboxSelectMultiple,
         choices=(),
@@ -111,71 +107,57 @@ class PicklistLicenceConditionsForm(PicklistAdviceForm, BaseForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        # only return proviso (text) for selected checkboxes, nothing else matters, join by 2 newlines
         return {
-            "proviso": "\n\n--------\n".join(
-                [cleaned_data[selected] for selected in cleaned_data["proviso_checkboxes"]]
-            )
+            "recommendation": cleaned_data.get("recommendation", ""),
+            "security_grading": cleaned_data.get("security_grading", ""),
+            "security_grading_other": cleaned_data.get("security_grading_other", ""),
+            "security_release_request": self.release_request["id"],
+            "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
         }
 
     def __init__(self, *args, **kwargs):
-        proviso = kwargs.pop("proviso")
+        conditions = kwargs.pop("proviso")
 
-        proviso_choices, proviso_text = self._picklist_to_choices(proviso)
+        conditions_choices, conditions_text = self._picklist_to_choices(conditions)
 
         self.conditional_checkbox_choices = (
-            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in proviso_choices
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in conditions_choices
         )
 
         super().__init__(*args, **kwargs)
 
-        self.fields["proviso_checkboxes"].choices = proviso_choices
-        for choices in proviso_choices:
+        self.fields["conditions"].choices = conditions_choices
+        for choices in conditions_choices:
             self.fields[choices.value] = forms.CharField(
                 widget=forms.Textarea(attrs={"rows": 3}),
                 label="Description",
                 required=False,
-                initial=proviso_text[choices.value],
+                initial=conditions_text[choices.value],
             )
 
     def get_layout_fields(self):
-        return (ConditionalCheckboxes("proviso_checkboxes", *self.conditional_checkbox_choices),)
+        return (
+            HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
+            "recommendation",
+            ConditionalRadios("security_grading", *self.conditional_radio_choices),
+            ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
+        )
 
 
-class FootnotesApprovalAdviceForm(PicklistAdviceForm, BaseForm):
+class ClearRecommendationForm(BaseForm):
     class Layout:
-        TITLE = "Add instructions to the exporter, or a reporting footnote (optional)"
-
-    instructions_to_exporter = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": "3"}),
-        label="Add any instructions for the exporter (optional)",
-        help_text="These may be added to the licence cover letter, subject to review by the Licensing Unit.",
-        required=False,
-    )
-
-    footnote_details_radios = forms.ChoiceField(
-        label="Add a reporting footnote (optional)",
-        required=False,
-        widget=forms.RadioSelect,
-        choices=(),
-    )
-    footnote_details = forms.CharField(
-        widget=forms.Textarea(attrs={"rows": 3}),
-        label="",
-        required=False,
-    )
-
-    def __init__(self, *args, **kwargs):
-        footnote_details = kwargs.pop("footnote_details")
-        footnote_details_choices, footnote_text = self._picklist_to_choices(footnote_details)
-        self.footnote_text = footnote_text
-
-        super().__init__(*args, **kwargs)
-
-        self.fields["footnote_details_radios"].choices = footnote_details_choices
+        TITLE = ""
 
     def get_layout_fields(self):
-        return (
-            "instructions_to_exporter",
-            RadioTextArea("footnote_details_radios", "footnote_details", self.footnote_text),
-        )
+        return []
+
+    def get_layout_actions(self):
+        return [
+            Submit("submit", "Confirm"),
+            HTML(
+                """<a role="button" draggable="false" class="govuk-button govuk-button--secondary"
+                    href="{% url 'cases:f680:view_my_recommendation' queue_pk case.id %}">
+                    Cancel
+                </a>"""
+            ),
+        ]

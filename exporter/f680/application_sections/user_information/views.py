@@ -50,6 +50,9 @@ class UserInformationView(F680MultipleItemApplicationSectionWizard):
             return {"countries": countries}
         return {}
 
+    def get_back_link_url(self):
+        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
+
     def get_success_url(self, application_id):
         return reverse(
             "f680:user_information:summary",

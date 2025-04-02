@@ -1,0 +1,95 @@
+{% extends "layouts/base.html" %}
+
+{% block back_link_url %}{% url "applications:applications" %}{% endblock %}
+
+{% block body %}
+    <div class="lite-app-bar">
+        <div class="lite-app-bar__content">
+            <h1 class="govuk-heading-l">
+                {% block title %}
+                    {{ application.application.sections.general_application_details.fields.name.answer|default:application.reference_code }}
+                {% endblock %}
+            </h1>
+        </div>
+    </div>
+    <div class="govuk-grid-row govuk-!-margin-0" id="application-summary-grid">
+        <dl class="govuk-summary-list govuk-summary-list--no-border govuk-grid-column-two-thirds">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    ECJU reference
+                </dt>
+                <dd class="govuk-summary-list__value" id="summary-list-reference-code">
+                    {{ application.reference_code }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Application type
+				</dt>
+				<dd class="govuk-summary-list__value">
+					MOD F680 Clearance
+				</dd>
+			</div>
+        </dl>
+    </div>
+    <div id="application-history">
+        {% include "applications/history.html" %}
+    </div>
+    <div class="lite-tabs__container">
+        <div class="lite-tabs">
+            <a href="{% url 'f680:submitted_summary' application.id %}" class="lite-tabs__tab {% if not type %}lite-tabs__tab--selected{% endif %}" id="link-details">
+            Details
+            </a>
+            <a href="{% url 'f680:submitted_summary' application.id 'case-notes' %}" class="lite-tabs__tab {% if type == 'case-notes' %}lite-tabs__tab--selected{% endif %}" id="link-case-notes">
+                Notes
+                {% if application.exporter_user_notification_count.casenote %}
+                    <div class="lite-notification-bubble">
+                        {{ application.exporter_user_notification_count.casenote }}
+                    </div>
+                {% endif %}
+            </a>
+            <a href="{% url 'f680:submitted_summary' application.id 'ecju-queries' %}" class="lite-tabs__tab {% if type == 'ecju-queries' %}lite-tabs__tab--selected{% endif %}" id="link-ecju-queries">
+                ECJU queries
+                {% if application.exporter_user_notification_count.ecjuquery %}
+                    <div class="lite-notification-bubble">
+                        {{ application.exporter_user_notification_count.ecjuquery }}
+                    </div>
+                {% endif %}
+            </a>
+            <a href="{% url 'f680:submitted_summary' application.id 'generated-documents' %}" class="lite-tabs__tab {% if type == 'generated-documents' %}lite-tabs__tab--selected{% endif %}" id="link-generated-documents">
+                ECJU documents
+                {% if application.exporter_user_notification_count.generatedcasedocument %}
+                    <div class="lite-notification-bubble">
+                        {{ application.exporter_user_notification_count.generatedcasedocument }}
+                    </div>
+                {% endif %}
+            </a>
+            <a href="{% url 'f680:submitted_summary' application.id 'activity' %}" class="lite-tabs__tab {% if type == 'activity' %}lite-tabs__tab--selected{% endif %}" id="link-activity">
+                Activity
+            </a>
+        </div>
+    </div>
+    {% if not type %}
+	{% for section_key, section in application_sections.items %}
+    <div class="application-section">
+        {% if section_key == "user_information" %}
+            {% include "f680/includes/application_section_user_information.html" with section=section %}
+        {% elif section.type == "single" %}
+            {% include "f680/includes/application_section_single.html" with section=section section_key=section_key %}
+        {% else %}
+            {% include "f680/includes/application_section_multiple.html" with section=section section_key=section_key %}
+        {% endif %}
+        </div>
+    {% endfor %}
+    {% elif type == 'case-notes' %}
+        {% url "f680:submitted_summary" application.id "case-notes" as post_url %}
+        {% url "f680:submitted_summary" application.id as return_url %}
+        {% include "includes/case-notes.html" %}
+    {% elif type == 'ecju-queries' %}
+        {% include "includes/ecju-queries.html" with object_type="application" case_id=application.id %}
+    {% elif type == 'generated-documents' %}
+        {% include "core/ecju-generated-documents.html" %}
+    {% elif type == 'activity' %}
+        {% include "f680/includes/activity.html" %}
+    {% endif %}
+{% endblock %}

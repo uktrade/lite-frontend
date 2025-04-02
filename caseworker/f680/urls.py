@@ -18,14 +18,14 @@ urlpatterns = [
         name="details",
     ),
     path(
+        "activities/",
+        views.NotesAndTimelineView.as_view(),
+        name="notes_and_timeline",
+    ),
+    path(
         "recommendation/",
         recommendation_views.CaseRecommendationView.as_view(),
         name="recommendation",
-    ),
-    path(
-        "recommendation/select-recommendation-type/",
-        recommendation_views.SelectRecommendationTypeView.as_view(),
-        name="select_recommendation_type",
     ),
     path(
         "recommendation/view-my-recommendation/",
@@ -33,7 +33,14 @@ urlpatterns = [
         name="view_my_recommendation",
     ),
     path(
-        "recommendation/approve-all/", recommendation_views.GiveApprovalRecommendationView.as_view(), name="approve_all"
+        "recommendation/make-recommendation/",
+        recommendation_views.MakeRecommendationView.as_view(),
+        name="make_recommendation",
+    ),
+    path(
+        "recommendation/clear-recommendation/",
+        recommendation_views.ClearRecommendationView.as_view(),
+        name="clear_recommendation",
     ),
     path(
         "move-case-forward/",

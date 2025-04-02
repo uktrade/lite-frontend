@@ -1,4 +1,5 @@
 {% extends 'layouts/case.html' %}
+{% load rules %}
 
 {% block header_tabs %}
 <div id="tab-bar" class="app-case-tab-bar">
@@ -10,8 +11,14 @@
             <a id="application-details" href="{% url 'cases:f680:details' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "application-details" %}lite-tabs__tab--selected{% endif %}">
                 Application Details
             </a>
-            <a id="recommendations" href="{% url 'cases:f680:recommendation' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "recommendations" %}lite-tabs__tab--selected{% endif %}">
-                Recommendations
+            {% test_rule 'is_user_allowed_to_make_f680_recommendation' request case as is_user_allowed_to_make_f680_recommendation %}
+            {% if is_user_allowed_to_make_f680_recommendation %}
+                <a id="recommendations" href="{% url 'cases:f680:recommendation' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "recommendations" %}lite-tabs__tab--selected{% endif %}">
+                    Recommendations
+                </a>
+            {% endif %}
+            <a id="notes-and-timeline" href="{% url 'cases:f680:notes_and_timeline' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "notes-and-timeline" %}lite-tabs__tab--selected{% endif %}">
+                Notes and timeline
             </a>
         </div>
     </div>

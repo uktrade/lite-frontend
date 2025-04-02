@@ -194,7 +194,7 @@ class TestSupportingDocumentsAttachView:
         assert response.status_code == 200
         soup = beautiful_soup(response.content)
         error = soup.find("ul", {"class": "govuk-list govuk-error-summary__list"}).li.text
-        assert error == "supporting document required"
+        assert error == "Select a supporting document"
 
     def test_POST_add_file_success(
         self,

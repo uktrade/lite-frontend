@@ -169,9 +169,11 @@ class TestApprovalDetailsView:
         authorized_client,
         mock_f680_application_get,
         f680_approval_type_wizard_url,
+        data_f680_case,
     ):
         response = authorized_client.get(f680_approval_type_wizard_url)
         assert response.status_code == 200
+        assert response.context["back_link_url"] == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
         assert isinstance(response.context["form"], forms.ApprovalTypeForm)
 
     def test_GET_success_with_organisation_set(
@@ -216,7 +218,12 @@ class TestApprovalDetailsView:
     ):
         response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
-            {"approval_choices": ["training", "supply"]},
+            {
+                "approval_choices": ["demonstration_in_uk", "demonstration_overseas", "training", "supply"],
+                "approval_details_text": "some text",
+                "demonstration_in_uk": "details",
+                "demonstration_overseas": "details",
+            },
         )
         assert response.status_code == 302
         assert mock_patch_f680_application.called_once
@@ -229,29 +236,34 @@ class TestApprovalDetailsView:
                         "fields": {
                             "approval_choices": {
                                 "key": "approval_choices",
-                                "answer": ["Training", "Supply"],
-                                "raw_answer": ["training", "supply"],
+                                "answer": [
+                                    "Demonstration in the United Kingdom to overseas customers",
+                                    "Demonstration overseas",
+                                    "Training",
+                                    "Supply",
+                                ],
+                                "raw_answer": ["demonstration_in_uk", "demonstration_overseas", "training", "supply"],
                                 "question": "Select the types of approvals you need",
                                 "datatype": "list",
                             },
                             "demonstration_in_uk": {
                                 "key": "demonstration_in_uk",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "details",
+                                "raw_answer": "details",
                                 "question": "Explain what you are demonstrating and why",
                                 "datatype": "string",
                             },
                             "demonstration_overseas": {
                                 "key": "demonstration_overseas",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "details",
+                                "raw_answer": "details",
                                 "question": "Explain what you are demonstrating and why",
                                 "datatype": "string",
                             },
                             "approval_details_text": {
                                 "key": "approval_details_text",
-                                "answer": "",
-                                "raw_answer": "",
+                                "answer": "some text",
+                                "raw_answer": "some text",
                                 "question": "Provide details about what you're seeking approval to do",
                                 "datatype": "string",
                             },
@@ -268,19 +280,37 @@ class TestApprovalDetailsView:
             }
         }
 
+    @pytest.mark.parametrize(
+        "data, expected_errors",
+        (
+            ({}, {"approval_choices": ["Select an approval choice"]}),
+            (
+                {"approval_choices": "demonstration_in_uk"},
+                {"demonstration_in_uk": ["What you're demonstrating and why cannot be blank"]},
+            ),
+            (
+                {"approval_choices": "demonstration_overseas"},
+                {"demonstration_overseas": ["What you're demonstrating and why cannot be blank"]},
+            ),
+        ),
+    )
     def test_POST_to_approval_type_validation_error(
         self,
         post_to_approval_type_step,
         goto_approval_type_step,
         mock_f680_application_get,
+        data,
+        expected_errors,
     ):
         goto_approval_type_step(FormSteps.APPROVAL_TYPE)
         response = post_to_approval_type_step(
             FormSteps.APPROVAL_TYPE,
-            {},
+            data,
         )
         assert response.status_code == 200
-        assert "Select an approval choice" in response.context["form"]["approval_choices"].errors
+
+        for field_name, error in expected_errors.items():
+            assert response.context["form"][field_name].errors == error
 
     def test_GET_with_existing_data_success(
         self,
@@ -320,9 +350,11 @@ class TestProductInformationViews:
         authorized_client,
         mock_f680_application_get,
         f680_product_wizard_url,
+        data_f680_case,
     ):
         response = authorized_client.get(f680_product_wizard_url)
         assert response.status_code == 200
+        assert response.context["back_link_url"] == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
         assert isinstance(response.context["form"], forms.ProductNameForm)
 
     def test_GET_success_with_organisation_set(
@@ -460,16 +492,21 @@ class TestProductInformationViews:
     @pytest.mark.parametrize(
         "step, data, expected_errors",
         (
-            (FormSteps.PRODUCT_NAME, {"product_name": ""}, {"product_name": ["This field is required."]}),
+            (FormSteps.PRODUCT_NAME, {"product_name": ""}, {"product_name": ["Enter a descriptive name"]}),
             (
                 FormSteps.PRODUCT_DESCRIPTION,
                 {"product_description": ""},
-                {"product_description": ["This field is required."]},
+                {"product_description": ["Enter a description"]},
             ),
             (
                 FormSteps.PRODUCT_HAS_SECURITY_CLASSIFICATION,
                 {},
-                {"has_security_classification": ["This field is required."]},
+                {"has_security_classification": ["Select yes if you have a security classification"]},
+            ),
+            (
+                FormSteps.ACTION_TAKEN_TO_CLASSIFY_PRODUCT,
+                {},
+                {"actions_to_classify": ["Enter details about what you have done to get the item security classified"]},
             ),
             (
                 FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
@@ -477,9 +514,18 @@ class TestProductInformationViews:
                     "security_classification": "unclassified",
                 },
                 {
-                    "issuing_authority_name_address": ["This field is required."],
-                    "reference": ["This field is required."],
+                    "issuing_authority_name_address": ["Enter who issued the security classification"],
+                    "reference": ["Enter a reference"],
                     "date_of_issue": ["Enter the date of issue"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "security_classification": "other",
+                },
+                {
+                    "other_security_classification": ["Security classification cannot be blank"],
                 },
             ),
             (
@@ -538,37 +584,100 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_FOREIGN_TECHNOLOGY_OR_INFORMATION_SHARED,
                 {},
-                {"is_foreign_tech_or_information_shared": ["This field is required."]},
+                {"is_foreign_tech_or_information_shared": ["Select yes if you will be sharing foreign technology"]},
             ),
             (
                 FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
                 {},
-                {"is_including_cryptography_or_security_features": ["This field is required."]},
+                {
+                    "is_including_cryptography_or_security_features": [
+                        "Select yes if the item includes information security features"
+                    ]
+                },
+            ),
+            (
+                FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
+                {"is_including_cryptography_or_security_features": True},
+                {
+                    "cryptography_or_security_feature_info": [
+                        "Details about the information security features cannot be blank"
+                    ]
+                },
             ),
             (
                 FormSteps.PRODUCT_RATED_UNDER_MTCR,
                 {"is_item_rated_under_mctr": ""},
-                {"is_item_rated_under_mctr": ["This field is required."]},
+                {"is_item_rated_under_mctr": ["Select yes if the product is rated under MTCR"]},
             ),
             (
                 FormSteps.PRODUCT_MANPAD,
                 {"is_item_manpad": ""},
-                {"is_item_manpad": ["This field is required."]},
+                {"is_item_manpad": ["Select yes if the product is a MANPADS"]},
             ),
             (
                 FormSteps.PRODUCT_ELECTRONICMODDATA,
                 {"is_mod_electronic_data_shared": ""},
-                {"is_mod_electronic_data_shared": ["This field is required."]},
+                {"is_mod_electronic_data_shared": ["Select yes if EW data will be shared"]},
             ),
             (
                 FormSteps.PRODUCT_FUNDING,
                 {"funding_source": ""},
-                {"funding_source": ["This field is required."]},
+                {"funding_source": ["Select who is funding the item"]},
+            ),
+            (
+                FormSteps.MOD_SPONSOR_DETAILS,
+                {
+                    "full_name": "",
+                    "address": "",
+                    "phone_number": "",
+                    "email_address": "",
+                },
+                {
+                    "full_name": ["Enter the sponsor's full name"],
+                    "address": ["Enter the sponsor's address"],
+                    "phone_number": ["Enter the sponsor's phone number"],
+                    "email_address": ["Enter the sponsor's email address"],
+                },
+            ),
+            (
+                FormSteps.MOD_SPONSOR_DETAILS,
+                {
+                    "full_name": "John Bloggs",
+                    "address": "62 Soapy Bubble Street",
+                    "phone_number": "07777 123 123",
+                    "email_address": "bork",
+                },
+                {
+                    "email_address": ["Enter an email address in the correct format, like name@example.com"],
+                },
+            ),
+            (
+                FormSteps.MOD_SPONSOR_DETAILS,
+                {
+                    "full_name": "John Bloggs",
+                    "address": "62 Soapy Bubble Street",
+                    "phone_number": "bork",
+                    "email_address": "test@email.com",
+                },
+                {
+                    "phone_number": ["Enter a phone number, like 02890 960 001, 07787 900 982 or +447787 570 192"],
+                },
             ),
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
                 {},
-                {"is_controlled_under_itar": ["This field is required."]},
+                {"is_controlled_under_itar": ["Select yes if the foreign technology is controlled under ITAR"]},
+            ),
+            (
+                FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
+                {
+                    "is_controlled_under_itar": False,
+                },
+                {
+                    "controlled_info": [
+                        "Information on how the foreign technology or information is controlled cannot be blank"
+                    ]
+                },
             ),
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
@@ -580,12 +689,17 @@ class TestProductInformationViews:
                     "expected_time_in_possession": "",
                 },
                 {
-                    "controlled_information": ["This field is required."],
-                    "itar_reference_number": ["This field is required."],
-                    "usml_categories": ["This field is required."],
-                    "itar_approval_scope": ["This field is required."],
-                    "expected_time_in_possession": ["This field is required."],
+                    "controlled_information": ["Enter details about the ITAR controlled technology or information"],
+                    "itar_reference_number": ["Enter an ITAR reference number"],
+                    "usml_categories": ["Enter a USML category"],
+                    "itar_approval_scope": ["Enter details about the ITAR approval scope"],
+                    "expected_time_in_possession": ["Enter how long you'll possess the technology or information"],
                 },
+            ),
+            (
+                FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
+                {},
+                {"is_used_by_uk_armed_forces": ["Select yes if UK armed forced will use the item"]},
             ),
         ),
     )
@@ -600,6 +714,7 @@ class TestProductInformationViews:
         force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
+        force_mod_funded,
     ):
         goto_product_step(step)
         response = post_to_product_step(
@@ -1154,22 +1269,25 @@ class TestProductInformationViews:
         assert isinstance(response.context["form"], forms.ProductForeignTechOrSharedInformation)
 
     @pytest.mark.parametrize(
-        "step, data, required_field",
+        "step, data, required_field, expected_errors",
         (
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
                 {"is_controlled_under_itar": False, "controlled_info": ""},
                 "controlled_info",
+                ["Information on how the foreign technology or information is controlled cannot be blank"],
             ),
             (
                 FormSteps.PRODUCT_INCLUDE_CRYPTOGRAPHY,
                 {"is_including_cryptography_or_security_features": True, "cryptography_or_security_feature_info": ""},
                 "cryptography_or_security_feature_info",
+                ["Details about the information security features cannot be blank"],
             ),
             (
                 FormSteps.PRODUCT_USED_BY_UK_ARMED_FORCES,
                 {"is_used_by_uk_armed_forces": True, "used_by_uk_armed_forces_info": ""},
                 "used_by_uk_armed_forces_info",
+                ["Details about how the item will be used cannot be blank"],
             ),
         ),
     )
@@ -1181,6 +1299,7 @@ class TestProductInformationViews:
         step,
         data,
         required_field,
+        expected_errors,
         force_has_security_classification,
         force_foreign_tech,
         force_product_under_itar,
@@ -1192,4 +1311,4 @@ class TestProductInformationViews:
         )
         assert response.status_code == 200
 
-        assert response.context["form"][required_field].errors == ["Required information"]
+        assert response.context["form"][required_field].errors == expected_errors
