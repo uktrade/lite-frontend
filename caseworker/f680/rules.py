@@ -7,6 +7,7 @@ from caseworker.f680.recommendation.services import (
     recommendations_by_current_user,
     filter_recommendation_by_team,
     get_case_recommendations,
+    get_pending_recommendation_requests,
 )
 
 
@@ -31,7 +32,8 @@ def can_user_make_f680_recommendation(request, case):
     if not user:
         return False
 
-    if recommendations_by_current_user(request, case, user):
+    pending_recommendations = get_pending_recommendation_requests(request, case, user)
+    if recommendations_by_current_user(request, case, user) and not pending_recommendations:
         return False
 
     return case["data"]["status"]["key"] in RECOMMENDATION_STATUSES
@@ -57,6 +59,10 @@ def f680_case_ready_for_move(request, case):
         return True
 
     if case_status in RECOMMENDATION_STATUSES:
+        pending_recommendations = get_pending_recommendation_requests(request, case, user)
+        if pending_recommendations:
+            return False
+
         case_recommendations = get_case_recommendations(request, case)
 
         team = user["team"]
