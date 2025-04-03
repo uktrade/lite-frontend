@@ -104,7 +104,7 @@ class ThirdPartyRoleForm(BaseForm):
 
 class EndUserNameForm(BaseForm):
     class Layout:
-        TITLE = "End-user name"
+        TITLE = "Name"
         TITLE_AS_LABEL_FOR = "end_user_name"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
@@ -120,7 +120,7 @@ class EndUserNameForm(BaseForm):
 
 class EndUserAddressForm(BaseForm):
     class Layout:
-        TITLE = "End-user address"
+        TITLE = "Address"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     address = forms.CharField(
@@ -202,7 +202,7 @@ class SecurityGradingForm(BaseForm):
 
 class EndUserIntendedEndUseForm(BaseForm):
     class Layout:
-        TITLE = "How does the end-user intend to use this item"
+        TITLE = "How does the entity intend to use this item"
         TITLE_AS_LABEL_FOR = "end_user_intended_end_use"
         SUBMIT_BUTTON_TEXT = "Save and continue"
         SUBTITLE = render_to_string("f680/forms/subtitle_product_intended_use.html")

@@ -77,6 +77,32 @@ def mock_ecju_query_get_document(data_standard_case, data_ecju_queries, requests
     yield data
 
 
+@pytest.fixture
+def confirm_url_f680_application(data_f680_case, data_ecju_query_pk):
+    return reverse(
+        "ecju_queries:respond_to_application_query_confirm",
+        kwargs={
+            "case_pk": data_f680_case["id"],
+            "query_pk": data_ecju_query_pk,
+        },
+    )
+
+
+@pytest.fixture
+def mock_f680_application_get_submitted_application(requests_mock, data_f680_submitted_application):
+    application_id = data_f680_submitted_application["id"]
+    url = client._build_absolute_uri(f"/applications/{application_id}/")
+    return requests_mock.get(url=url, json=data_f680_submitted_application)
+
+
+@pytest.fixture
+def mock_put_ecju_query_f680(requests_mock, data_f680_case, data_ecju_queries):
+    url = client._build_absolute_uri(
+        f"/cases/{data_f680_case['id']}/ecju-queries/{data_ecju_queries['ecju_queries'][0]['id']}/"
+    )
+    yield requests_mock.put(url=url, json={})
+
+
 def test_ecju_form(data_standard_case, data_ecju_queries):
 
     ecju_respond_form = ECJUQueryRespondForm(
@@ -263,6 +289,22 @@ def test_ecju_respond_query_confirm_view_save_response(
     assert mock_put_ecju_query.called
 
     assert mock_put_ecju_query.last_request.json() == {"response": "session response"}
+
+
+def test_ecju_respond_query_confirm_f680_application_return_url(
+    authorized_client,
+    mock_f680_application_get_submitted_application,
+    data_f680_case,
+    confirm_url_f680_application,
+    data_ecju_query_pk,
+    mock_put_ecju_query_f680,
+):
+    response = authorized_client.post(confirm_url_f680_application)
+
+    assert response.status_code == 302
+
+    data_f680_case_id = data_f680_case["id"]
+    assert response.url == f"/f680/{data_f680_case_id}/summary/ecju-queries/"
 
 
 def test_ecju_respond_query_confirm_view_save_with_no_response(
