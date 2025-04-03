@@ -62,6 +62,7 @@ class F680BasePresubmissionMixin:
 
     def all_sections_complete(self):
         # TODO: Think more about pre-submit validation as this is very barebones right now
+
         complete_sections = set(self.application["application"].get("sections", {}).keys())
         required_sections = set(
             [

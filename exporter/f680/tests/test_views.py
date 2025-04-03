@@ -269,7 +269,21 @@ def data_f680_case_complete_application(data_f680_case):
             "approval_type": {},
             "user_information": {},
             "product_information": {},
-        }
+        },
+    }
+    return data_f680_case
+
+
+@pytest.fixture
+def data_f680_case_complete_application_agree_to_foi(data_f680_case):
+    data_f680_case["application"] = {
+        "sections": {
+            "general_application_details": {},
+            "approval_type": {},
+            "user_information": {},
+            "product_information": {},
+        },
+        "agreed_to_foi": False,
     }
     return data_f680_case
 
@@ -309,8 +323,8 @@ def f680_summary_url_with_application(data_f680_case):
 
 
 @pytest.fixture
-def f680_declaration_url(data_f680_case_complete_application):
-    return reverse("f680:declaration", kwargs={"pk": data_f680_case_complete_application["id"]})
+def f680_declaration_url_with_application(data_f680_case):
+    return reverse("f680:declaration", kwargs={"pk": data_f680_case["id"]})
 
 
 @pytest.fixture
@@ -387,6 +401,20 @@ def mock_f680_application_submit(requests_mock, data_f680_case_complete_applicat
     application_id = data_f680_case_complete_application["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/submit/")
     return requests_mock.post(url=url, json=data_f680_case_complete_application)
+
+
+@pytest.fixture
+def mock_post_f680_application_declaration(requests_mock, data_f680_case_complete_application_agree_to_foi):
+    application_id = data_f680_case_complete_application_agree_to_foi["id"]
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/declaration/")
+    return requests_mock.post(url=url, json=data_f680_case_complete_application_agree_to_foi)
+
+
+@pytest.fixture
+def mock_patch_f680_application(requests_mock, data_f680_case):
+    application_id = data_f680_case["id"]
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
+    return requests_mock.patch(url=url, json=data_f680_case)
 
 
 @pytest.fixture
@@ -642,10 +670,14 @@ class TestF680ApplicationSummaryView:
 
 class TestF680ApplicationDeclarationView:
     def test_GET_f680_declaration_view_success(
-        self, authorized_client, f680_declaration_url, mock_f680_application_get, f680_summary_url_with_application
+        self,
+        authorized_client,
+        f680_declaration_url_with_application,
+        mock_f680_application_get,
+        f680_summary_url_with_application,
     ):
 
-        response = authorized_client.get(f680_declaration_url)
+        response = authorized_client.get(f680_declaration_url_with_application)
 
         assert isinstance(response.context["form"], ApplicationSubmissionForm)
         assertTemplateUsed(response, "core/form.html")
@@ -658,17 +690,32 @@ class TestF680ApplicationDeclarationView:
     def test_POST_f680_declaration_view_fail(
         self,
         authorized_client,
-        f680_declaration_url,
-        mock_f680_application_get_application_complete,
-        mock_f680_application_submit,
+        f680_declaration_url_with_application,
+        mock_f680_application_get,
     ):
 
-        response = authorized_client.post(f680_declaration_url)
+        response = authorized_client.post(f680_declaration_url_with_application)
         soup = BeautifulSoup(response.content, "html.parser")
         assert (
             "If you agree to make the application details publicly available click yes"
             in soup.find("div", {"class": "govuk-error-summary__body"}).text
         )
+
+    def test_POST_f680_declaration_view_success(
+        self,
+        authorized_client,
+        f680_declaration_url_with_application,
+        mock_f680_application_get_application_complete,
+        mock_patch_f680_application,
+        mock_f680_application_submit,
+        data_f680_case,
+    ):
+        response = authorized_client.post(f680_declaration_url_with_application, data={"agreed_to_foi": True})
+
+        assert mock_patch_f680_application.called_once
+        assert mock_patch_f680_application.last_request.json()["application"]["agreed_to_foi"]
+        assert response.status_code == 302
+        assert response.url == reverse("applications:success_page", kwargs={"pk": data_f680_case["id"]})
 
 
 class TestF680SubmittedApplicationSummaryView:
