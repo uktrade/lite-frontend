@@ -283,7 +283,7 @@ class ApplicationTaskList(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.OK:
             return get_application_task_list(request, application, errors=data.get("errors"))
 
-        return redirect("applications:success_page", pk=application_id)
+        return redirect("applications:summary", pk=application_id)
 
 
 class ApplicationDetail(LoginRequiredMixin, TemplateView):
