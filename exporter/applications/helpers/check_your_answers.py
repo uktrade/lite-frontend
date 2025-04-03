@@ -6,8 +6,6 @@ from django.utils.safestring import mark_safe
 from exporter.applications.helpers.countries import ContractTypes
 from exporter.applications.helpers.parties import party_requires_ec3_document
 from exporter.core.constants import (
-    OPEN,
-    F680,
     TEMPORARY,
     PERMANENT,
     PartyDocumentType,
@@ -308,8 +306,6 @@ def convert_party(party, application, editable):
     if not party:
         return {}
 
-    has_clearance = application["case_type"]["sub_type"]["key"] == F680
-
     data = {
         "Name": party["name"],
         "Type": party["sub_type_other"] if party["sub_type_other"] else party["sub_type"]["value"],
@@ -325,34 +321,29 @@ def convert_party(party, application, editable):
     if party["type"] == "third_party":
         data["Role"] = party.get("role_other") if party.get("role_other") else party.get("role").get("value")
 
-    if application["case_type"]["sub_type"]["key"] != OPEN:
-        if party["type"] == "end_user":
-            party_data = get_end_user_data(application, party, editable)
-            data = dict(data, **party_data)
-        else:
-            if party.get("document"):
-                party_type = party["type"]
-                if party["type"] == "third_party":
-                    party_type = "third-parties"
-                document = _convert_document(party, party_type, application["id"], editable)
-            else:
-                document = convert_to_link(
-                    reverse(
-                        f"applications:{party['type']}_attach_document",
-                        kwargs={"pk": application["id"], "obj_pk": party["id"]},
-                    ),
-                    "Attach document",
-                )
-
-            data["Document"] = document
-
-    if has_clearance:
-        data["Clearance level"] = party["clearance_level"].get("value") if party["clearance_level"] else None
+    if party["type"] == "end_user":
+        party_data = get_end_user_data(application, party, editable)
+        data = dict(data, **party_data)
     else:
-        data.pop("Clearance level")
-        # Only display descriptors on third parties for non F680 applications
-        if party["type"] != "third_party" and not data.get("Descriptors"):
-            data.pop("Descriptors")
+        if party.get("document"):
+            party_type = party["type"]
+            if party["type"] == "third_party":
+                party_type = "third-parties"
+            document = _convert_document(party, party_type, application["id"], editable)
+        else:
+            document = convert_to_link(
+                reverse(
+                    f"applications:{party['type']}_attach_document",
+                    kwargs={"pk": application["id"], "obj_pk": party["id"]},
+                ),
+                "Attach document",
+            )
+
+        data["Document"] = document
+
+    # Only display descriptors on third parties for non F680 applications
+    if party["type"] != "third_party" and not data.get("Descriptors"):
+        data.pop("Descriptors")
 
     return data
 
