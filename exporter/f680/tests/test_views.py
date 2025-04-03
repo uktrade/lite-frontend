@@ -309,8 +309,8 @@ def f680_summary_url_with_application(data_f680_case):
 
 
 @pytest.fixture
-def f680_declaration_application_declaration_url(data_f680_case_complete_application):
-    return reverse("f680:declaration", kwargs={"pk": data_f680_case["id"]})
+def f680_declaration_url(data_f680_case_complete_application):
+    return reverse("f680:declaration", kwargs={"pk": data_f680_case_complete_application["id"]})
 
 
 @pytest.fixture
@@ -638,6 +638,22 @@ class TestF680ApplicationSummaryView:
             "You are not authorised to use the F680 Security Clearance application feature"
             in response.context[0].get("description").args
         )
+
+
+class TestF680ApplicationDeclarationView:
+    def test_get_f680_declaration_view_success(
+        self, authorized_client, f680_declaration_url, mock_f680_application_get, f680_summary_url_with_application
+    ):
+
+        response = authorized_client.get(f680_declaration_url)
+
+        assert isinstance(response.context["form"], ApplicationSubmissionForm)
+        assertTemplateUsed(response, "core/form.html")
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        assert soup.find("h1").string == "Submit your application"
+        assert soup.find("a", {"id": "back-link"})["href"] == f680_summary_url_with_application
+        assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Accept and submit"
 
 
 class TestF680SubmittedApplicationSummaryView:
