@@ -18,6 +18,11 @@ urlpatterns = [
         name="details",
     ),
     path(
+        "activities/",
+        views.NotesAndTimelineView.as_view(),
+        name="notes_and_timeline",
+    ),
+    path(
         "recommendation/",
         recommendation_views.CaseRecommendationView.as_view(),
         name="recommendation",
@@ -43,4 +48,5 @@ urlpatterns = [
         name="move_case_forward",
     ),
     path("document/", include("caseworker.f680.document.urls")),
+    path("outcome/", include("caseworker.f680.outcome.urls")),
 ]

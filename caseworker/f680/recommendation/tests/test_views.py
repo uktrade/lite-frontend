@@ -57,37 +57,6 @@ def mock_current_gov_user(requests_mock, current_user, f680_case_id):
 
 
 @pytest.fixture
-def recommendations(current_user, admin_team, data_submitted_f680_case):
-    security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
-    return [
-        {
-            "created_at": "2021-10-16T23:48:39.486679+01:00",
-            "id": "429c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
-            "type": {"key": "approve", "value": "Approve"},
-            "conditions": "No concerns",
-            "refusal_reasons": "",
-            "security_grading": {"key": "official", "value": "Official"},
-            "security_grading_other": "",
-            "security_release_request": security_release_requests[0]["id"],
-            "user": current_user,
-            "team": admin_team,
-        }
-    ]
-
-
-@pytest.fixture
-def mock_get_case_recommendations(requests_mock, data_submitted_f680_case, recommendations):
-    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
-    return requests_mock.get(url, json=recommendations, status_code=200)
-
-
-@pytest.fixture
-def mock_get_case_no_recommendations(requests_mock, data_submitted_f680_case, recommendations):
-    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
-    return requests_mock.get(url, json=[], status_code=200)
-
-
-@pytest.fixture
 def mock_clear_recommendations(requests_mock, data_submitted_f680_case):
     url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
     return requests_mock.delete(url, status_code=204)
@@ -102,6 +71,7 @@ class TestF680RecommendationView:
         current_user,
         mock_f680_case,
         mock_get_case_no_recommendations,
+        mock_outcomes_no_outcomes,
         f680_case_id,
         f680_reference_code,
         data_submitted_f680_case,
@@ -127,12 +97,40 @@ class TestF680RecommendationView:
             == f'/queues/{queue_f680_cases_to_review["id"]}/cases/{f680_case_id}/f680/recommendation/make-recommendation/'
         )
 
+    def test_GET_recommendation_success_with_outcome(
+        self,
+        authorized_client,
+        queue_f680_cases_to_review,
+        current_user,
+        mock_f680_case,
+        mock_get_case_no_recommendations,
+        mock_outcomes_single_outcome,
+        f680_case_id,
+        f680_reference_code,
+        data_submitted_f680_case,
+        data_outcomes,
+    ):
+        url = reverse(
+            "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
+        )
+        data_submitted_f680_case["case"]["assigned_users"] = {
+            queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]
+        }
+        data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.OGD_ADVICE
+        response = authorized_client.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
+        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
+        assert len(response.context["outcomes"]) == 1
+        assert response.context["outcomes"][0]["id"] == data_outcomes[0]["id"]
+
     def test_GET_recommendation_page_existing_recommendation(
         self,
         authorized_client,
         queue_f680_cases_to_review,
         current_user,
         mock_f680_case,
+        mock_outcomes_no_outcomes,
         mock_get_case_recommendations,
         f680_case_id,
         data_submitted_f680_case,

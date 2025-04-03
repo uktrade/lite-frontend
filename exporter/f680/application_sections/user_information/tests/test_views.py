@@ -235,31 +235,31 @@ class TestUserInformationView:
     @pytest.mark.parametrize(
         "step, data, expected_errors",
         (
-            (FormSteps.ENTITY_TYPE, {"entity_type": ""}, {"entity_type": ["This field is required."]}),
+            (FormSteps.ENTITY_TYPE, {"entity_type": ""}, {"entity_type": ["Select the type of entity"]}),
             (
                 FormSteps.THIRD_PARTY_ROLE,
                 {},
-                {"third_party_role": ["This field is required."]},
+                {"third_party_role": ["Select a role"]},
             ),
             (
                 FormSteps.END_USER_NAME,
                 {},
-                {"end_user_name": ["This field is required."]},
+                {"end_user_name": ["Enter a name"]},
             ),
             (
                 FormSteps.END_USER_ADDRESS,
                 {},
-                {"address": ["This field is required."], "country": ["This field is required."]},
+                {"address": ["Enter an address"], "country": ["Enter or select a country"]},
             ),
             (
                 FormSteps.SECURITY_GRADING,
                 {},
-                {"security_classification": ["This field is required."]},
+                {"security_classification": ["Select a security classification"]},
             ),
             (
                 FormSteps.INTENDED_END_USE,
                 {},
-                {"end_user_intended_end_use": ["This field is required."]},
+                {"end_user_intended_end_use": ["Enter how the end-user will use the item"]},
             ),
         ),
     )
@@ -369,7 +369,7 @@ class TestUserInformationView:
                                         "key": "end_user_name",
                                         "answer": "some end user name",
                                         "raw_answer": "some end user name",
-                                        "question": "End-user name",
+                                        "question": "Name",
                                         "datatype": "string",
                                     },
                                     "address": {
@@ -418,7 +418,7 @@ class TestUserInformationView:
                                         "key": "end_user_intended_end_use",
                                         "answer": "some end use",
                                         "raw_answer": "some end use",
-                                        "question": "How does the end-user intend to use this item",
+                                        "question": "How does the entity intend to use this item",
                                         "datatype": "string",
                                     },
                                 },
@@ -532,7 +532,7 @@ class TestUserInformationView:
                     "key": "end_user_name",
                     "answer": "some end user name",
                     "raw_answer": "some end user name",
-                    "question": "End-user name",
+                    "question": "Name",
                     "datatype": "string",
                 },
                 "address": {
@@ -581,7 +581,7 @@ class TestUserInformationView:
                     "key": "end_user_intended_end_use",
                     "answer": "some end use",
                     "raw_answer": "some end use",
-                    "question": "How does the end-user intend to use this item",
+                    "question": "How does the entity intend to use this item",
                     "datatype": "string",
                 },
             },
@@ -714,12 +714,13 @@ class TestUserInformationSummaryView:
         assert response.context["title"] == "Forbidden"
 
     @pytest.mark.parametrize(
-        "step, data, required_field",
+        "step, data, required_field, expected_errors",
         (
             (
                 FormSteps.SECURITY_GRADING,
                 {"security_classification": "other", "other_security_classification": ""},
                 "other_security_classification",
+                ["Security classification cannot be blank"],
             ),
         ),
     )
@@ -728,6 +729,7 @@ class TestUserInformationSummaryView:
         step,
         data,
         required_field,
+        expected_errors,
         post_to_step,
         goto_step,
         mock_f680_application_get,
@@ -739,4 +741,156 @@ class TestUserInformationSummaryView:
             data,
         )
         assert response.status_code == 200
-        assert response.context["form"][required_field].errors == ["Required information"]
+        assert response.context["form"][required_field].errors == expected_errors
+
+
+@pytest.fixture
+def data_f680_case_with_user_information_entity(data_f680_case, data_item_id):
+    data_f680_case["application"] = {
+        "sections": {
+            "user_information": {
+                "items": [
+                    {
+                        "fields": {
+                            "entity_type": {
+                                "answer": "End user",
+                                "datatype": "string",
+                                "key": "entity_type",
+                                "question": "Select type of entity",
+                                "raw_answer": "end-user",
+                            },
+                            "end_user_name": {
+                                "answer": "some end user name",
+                                "datatype": "string",
+                                "key": "end_user_name",
+                                "question": "End-user name",
+                                "raw_answer": "some end user name",
+                            },
+                            "address": {
+                                "answer": "some address",
+                                "datatype": "string",
+                                "key": "address",
+                                "question": "Address",
+                                "raw_answer": "some address",
+                            },
+                            "country": {
+                                "answer": "United States",
+                                "datatype": "string",
+                                "key": "country",
+                                "question": "Country",
+                                "raw_answer": "US",
+                            },
+                            "prefix": {
+                                "answer": "some prefix",
+                                "datatype": "string",
+                                "key": "prefix",
+                                "question": "Enter a prefix (optional)",
+                                "raw_answer": "some prefix",
+                            },
+                            "security_classification": {
+                                "answer": "Official",
+                                "datatype": "string",
+                                "key": "security_classification",
+                                "question": "Select security classification",
+                                "raw_answer": "official",
+                            },
+                            "suffix": {
+                                "answer": "some suffix",
+                                "datatype": "string",
+                                "key": "suffix",
+                                "question": "Enter a suffix (optional)",
+                                "raw_answer": "some suffix",
+                            },
+                            "end_user_intended_end_use": {
+                                "answer": "some end use",
+                                "datatype": "string",
+                                "key": "end_user_intended_end_use",
+                                "question": "How does the end-user intend to use this item",
+                                "raw_answer": "some end use",
+                            },
+                        },
+                        "fields_sequence": [
+                            "entity_type",
+                            "end_user_name",
+                            "address",
+                            "country",
+                            "prefix",
+                            "security_classification",
+                            "suffix",
+                            "end_user_intended_end_use",
+                        ],
+                        "id": data_item_id,
+                    }
+                ],
+                "label": "User Information",
+                "type": "multiple",
+            }
+        }
+    }
+    return data_f680_case
+
+
+@pytest.fixture
+def missing_f680_user_information_remove_entity_url(missing_application_id, data_item_id):
+    return reverse(
+        "f680:user_information:remove",
+        kwargs={"pk": missing_application_id, "entity_to_remove_id": data_item_id},
+    )
+
+
+@pytest.fixture
+def f680_user_information_remove_entity_url(data_f680_case_with_user_information_entity, data_item_id):
+    return reverse(
+        "f680:user_information:remove",
+        kwargs={"pk": data_f680_case_with_user_information_entity["id"], "entity_to_remove_id": data_item_id},
+    )
+
+
+class TestUserInformationRemoveEntityView:
+
+    def test_GET_user_information_remove_entity_no_application_404(
+        self,
+        authorized_client,
+        missing_f680_user_information_remove_entity_url,
+        mock_f680_application_get_404,
+    ):
+        response = authorized_client.get(missing_f680_user_information_remove_entity_url)
+        assert response.status_code == 404
+
+    def test_GET_user_information_remove_entity_has_user_entities(
+        self,
+        authorized_client,
+        f680_user_information_remove_entity_url,
+        mock_f680_application_get_existing_data,
+        mock_patch_f680_application,
+        data_f680_case,
+    ):
+        response = authorized_client.get(f680_user_information_remove_entity_url)
+
+        assert (
+            mock_patch_f680_application.last_request.json()["application"]["sections"]["user_information"]["items"]
+            == []
+        )
+        assert response.status_code == 302
+        assert response.url == reverse("f680:user_information:summary", kwargs={"pk": data_f680_case["id"]})
+
+    def test_GET_user_information_remove_entity_no_user_entities_remain(
+        self,
+        authorized_client,
+        f680_user_information_remove_entity_url,
+        mock_f680_application_get_existing_data,
+        mock_patch_f680_application_no_user_information_items,
+        data_f680_case,
+    ):
+
+        response = authorized_client.get(f680_user_information_remove_entity_url)
+
+        assert (
+            mock_patch_f680_application_no_user_information_items.last_request.json()["application"]["sections"][
+                "user_information"
+            ]["items"]
+            == []
+        )
+
+        assert response.status_code == 302
+        assert response.url == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})

@@ -29,3 +29,13 @@ def merge_summaries(summary_1, summary_2):
     summary_2_dict = get_summary_dict(summary_2)
     combined_summary = {**summary_1_dict, **summary_2_dict}
     return tuple(combined_summary.values())
+
+
+def get_rows(table):
+    rows = []
+    for table_row in table.select("tbody .govuk-table__row"):
+        cells = []
+        for row_cell in table_row.select(".govuk-table__cell"):
+            cells.append(row_cell.text)
+        rows.append(cells)
+    return rows

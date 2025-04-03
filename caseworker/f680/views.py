@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from django.views.generic import TemplateView, View
+from django.views.generic import TemplateView, View, FormView
 
 from core.auth.views import LoginRequiredMixin
 
@@ -18,6 +18,9 @@ from caseworker.f680.rules import OUTCOME_STATUSES
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
+
+from caseworker.activities.forms import NotesAndTimelineForm
+from caseworker.activities.mixins import NotesAndTimelineMixin
 
 
 class F680CaseworkerMixin(CaseworkerMixin):
@@ -35,8 +38,12 @@ class F680CaseworkerMixin(CaseworkerMixin):
         self.security_release_requests = OrderedDict()
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
+        self.extra_setup(request)
 
         return super().dispatch(request, *args, **kwargs)
+
+    def extra_setup(self, request):
+        return
 
     def get_recommendation_level(self, case):
         return AdviceLevel.FINAL if case.status in OUTCOME_STATUSES else AdviceLevel.USER
@@ -105,3 +112,12 @@ class MoveCaseForward(LoginRequiredMixin, View):
         messages.success(self.request, success_message, extra_tags="safe")
         queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
         return redirect(queue_url)
+
+
+class NotesAndTimelineView(LoginRequiredMixin, F680CaseworkerMixin, NotesAndTimelineMixin, FormView):
+    template_name = "f680/case/notes-and-timeline.html"
+    current_tab = "notes-and-timeline"
+    form_class = NotesAndTimelineForm
+
+    def get_view_url(self):
+        return reverse("cases:f680:notes_and_timeline", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})

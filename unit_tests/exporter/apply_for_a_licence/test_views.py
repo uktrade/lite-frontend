@@ -41,3 +41,24 @@ def test_licence_type_delegates_to_processor(
 
     mock_process_object.process.assert_called()
     assert response == returned_response
+
+
+@pytest.mark.parametrize(
+    "data, expected_errors",
+    (({}, ["Select the type of licence or approval you need"]),),
+)
+def test_POST_to_licence_type_view_validation_error(
+    settings,
+    authorized_client,
+    licence_type_url,
+    data,
+    expected_errors,
+):
+    settings.FEATURE_FLAG_ALLOW_F680 = True
+
+    response = authorized_client.post(
+        licence_type_url,
+        data=data,
+    )
+
+    assert response.context["form"]["licence_type"].errors == expected_errors

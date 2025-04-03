@@ -8,7 +8,7 @@
     <main class="govuk-main-wrapper">
         {% test_rule 'can_user_make_f680_outcome' request case as can_user_make_f680_outcome %}
         {% if can_user_make_f680_outcome %}
-            <a id="approval-document" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate approval document</a>
+            <a id="decide-outcome-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:outcome:decide_outcome' queue_pk case.id %}">Decide outcome</a>
         {% endif %}
 
         {% include "f680/includes/move_case_forward.html" with request=request case=case queue=queue %}
@@ -17,6 +17,11 @@
         {% if can_user_make_f680_recommendation %}
             <br>
             <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:make_recommendation' queue_pk case.id %}">Make recommendation</a>
+        {% endif %}
+
+        {% if outcomes %}
+            <h1 class="govuk-heading-xl">Outcomes</h1>
+            {% include "f680/case/outcome/includes/outcomes_table.html" with outcomes=outcomes %}
         {% endif %}
 
         {% if user_recommendations %}

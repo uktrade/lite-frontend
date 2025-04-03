@@ -16,6 +16,15 @@ INFORMATIONAL_STATUSES = [CaseStatusEnum.SUBMITTED]
 
 
 @rules.predicate
+def is_user_allowed_to_make_f680_recommendation(request, case):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+
+    return case["data"]["status"]["key"] in RECOMMENDATION_STATUSES + OUTCOME_STATUSES
+
+
+@rules.predicate
 def can_user_make_f680_recommendation(request, case):
     # TODO: change this snippet in to a decorator? We seem to use it for every rule
     user = get_logged_in_caseworker(request)
@@ -71,6 +80,9 @@ def case_ready_for_outcome(request, case):
     return case["data"]["status"]["key"] in OUTCOME_STATUSES
 
 
+rules.add_rule(
+    "is_user_allowed_to_make_f680_recommendation", is_user_allocated & is_user_allowed_to_make_f680_recommendation
+)
 rules.add_rule("can_user_make_f680_recommendation", is_user_allocated & can_user_make_f680_recommendation)
 rules.add_rule("can_user_clear_f680_recommendation", is_user_allocated & can_user_clear_f680_recommendation)
 rules.add_rule("can_user_make_f680_outcome", is_user_allocated & case_ready_for_outcome)

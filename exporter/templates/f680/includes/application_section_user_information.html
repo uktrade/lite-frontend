@@ -1,0 +1,10 @@
+<h2 class="govuk-heading-m">{{section.label}}</h2>
+
+{% for item in section.items %}
+    {% for field in item.fields %}
+        {% if field.key == "end_user_name" %}
+        <h3 class="govuk-heading-m" id="user-information-{{item.id}}">{{field.answer}}</h3>
+        {% endif %}
+    {% endfor %}
+    {% include "f680/includes/application_section_fields.html" with item=item section_key=section_key %}
+{% endfor %}

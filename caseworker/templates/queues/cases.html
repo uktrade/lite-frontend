@@ -40,22 +40,20 @@
 			</div>
 		{% endif %}
 	</div>
-
-	<div id="queues" class="app-hidden">
-		<div class="app-menu__search">
-			<div>
-				{% svg 'search' %}
-			</div>
-			<input type="text" id="filter-queues">
-		</div>
-		{% for item in data.results.queues %}
-			<a href="{% url 'queues:cases' item.id %}" id="{{ item.id }}" class="app-menu__item app-menu__item--subtitle {% if item.id == queue.id %}app-menu__item--selected{% endif %}">
-				{{ item.name }}
-				<span class="app-menu__item-subtitle">{{ item.case_count }}</span>
-			</a>
-		{% endfor %}
-	</div>
-
+  <div id="queues" class="app-hidden">
+    <div class="app-menu__search">
+      <div>
+        {% svg 'search' %}
+      </div>
+      <input type="text" id="filter-queues">
+    </div>
+    {% for item in data.results.queues %}
+      <a href="{% url 'queues:cases' item.id %}" id="{{ item.id }}" class="app-menu__item app-menu__item--subtitle {% if item.id == queue.id %}app-menu__item--selected{% endif %}">
+        {{ item.name }}
+        <span class="app-menu__item-subtitle">{{ item.case_count }}</span>
+      </a>
+    {% endfor %}
+  </div>
 
     <div class="app-queue-view">
         <div class="app-queue-view__filters">
