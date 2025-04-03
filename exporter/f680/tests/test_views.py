@@ -6,7 +6,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
-from exporter.f680.forms import ApplicationSubmissionForm
+from exporter.f680.forms import ApplicationPresubmissionForm, ApplicationSubmissionForm
 
 
 @pytest.fixture(autouse=True)
@@ -309,6 +309,11 @@ def f680_summary_url_with_application(data_f680_case):
 
 
 @pytest.fixture
+def f680_declaration_application_declaration_url(data_f680_case_complete_application):
+    return reverse("f680:declaration", kwargs={"pk": data_f680_case["id"]})
+
+
+@pytest.fixture
 def f680_submitted_application_summary_url_with_application(data_f680_case_complete_application):
     return reverse("f680:submitted_summary", kwargs={"pk": data_f680_case_complete_application["id"]})
 
@@ -492,8 +497,7 @@ class TestF680ApplicationSummaryView:
         mock_f680_application_get,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
-
-        assert isinstance(response.context["form"], ApplicationSubmissionForm)
+        assert isinstance(response.context["form"], ApplicationPresubmissionForm)
         assertTemplateUsed(response, "f680/summary.html")
 
         content = BeautifulSoup(response.content, "html.parser")
@@ -509,7 +513,7 @@ class TestF680ApplicationSummaryView:
     ):
         response = authorized_client.get(f680_summary_url_with_application)
 
-        assert isinstance(response.context["form"], ApplicationSubmissionForm)
+        assert isinstance(response.context["form"], ApplicationPresubmissionForm)
         assertTemplateUsed(response, "f680/summary.html")
 
         content = BeautifulSoup(response.content, "html.parser")
@@ -599,9 +603,7 @@ class TestF680ApplicationSummaryView:
         )
 
         assert response.status_code == 302
-        assert response.url == reverse(
-            "applications:success_page", kwargs={"pk": data_f680_case_complete_application["id"]}
-        )
+        assert response.url == reverse("f680:declaration", kwargs={"pk": data_f680_case_complete_application["id"]})
 
     def test_post_f680_submission_form_fail_with_feature_flag_off(
         self,
@@ -649,7 +651,6 @@ class TestF680SubmittedApplicationSummaryView:
         data_f680_submitted_application,
     ):
         response = authorized_client.get(f680_submitted_application_summary_url_with_application)
-
         assert response.context["application_sections"] == data_f680_submitted_application["application"]["sections"]
 
         assert response.status_code == 200

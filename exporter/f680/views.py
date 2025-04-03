@@ -15,6 +15,7 @@ from .forms import ApplicationPresubmissionForm, ApplicationSubmissionForm
 
 from .services import (
     get_f680_application,
+    patch_f680_application,
     submit_f680_application,
 )
 
@@ -101,7 +102,18 @@ class F680DeclarationView(LoginRequiredMixin, F680FeatureRequiredMixin, F680Base
             context_data = self.get_context_data(form=form)
             context_data["errors"] = {"missing_sections": ["Please complete all required sections"]}
             return self.render_to_response(context_data)
+        data = form.cleaned_data
+        self.patch_f680_application(data)
         return super().form_valid(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating F680 application",
+        "Unexpected error updating F680 application",
+    )
+    def patch_f680_application(self, data):
+        self.application["application"].update(data)
+        return patch_f680_application(self.request, self.application["id"], self.application)
 
     @expect_status(
         HTTPStatus.OK,

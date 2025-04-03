@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from crispy_forms_gds.layout import HTML
 
 from core.common.forms import BaseForm
+from core.forms.utils import coerce_str_to_bool
 
 
 class ApplicationPresubmissionForm(BaseForm):
@@ -21,19 +22,20 @@ class ApplicationSubmissionForm(BaseForm):
         SUBTITLE = render_to_string("f680/forms/subtitle_declaration.html")
         SUBMIT_BUTTON_TEXT = "Accept and submit"
 
-    foi_choice = forms.TypedChoiceField(
+    agreed_to_foi = forms.TypedChoiceField(
         choices=(
-            ("yes", "Yes"),
-            ("no", "No"),
+            (False, "Yes"),
+            (True, "No"),
         ),
         label="Do you agree to make the application details publicly available?",
         widget=forms.RadioSelect,
         error_messages={"required": "If you agree to make the application details publicly available click yes"},
+        coerce=coerce_str_to_bool,
         required=True,
     )
 
     def get_layout_fields(self):
         return (
-            "foi_choice",
+            "agreed_to_foi",
             HTML(render_to_string("f680/forms/declaration.html")),
         )
