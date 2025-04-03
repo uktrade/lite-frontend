@@ -22,6 +22,8 @@ class Application(Munch):
 
     @property
     def sub_type(self):
+        if self["case_type"]["sub_type"] is None:
+            return None
         return self["case_type"]["sub_type"]["key"]
 
     @property
