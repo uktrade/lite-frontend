@@ -68,7 +68,10 @@ from exporter.organisation.members.services import get_user
 
 from exporter.core.constants import APPLICANT_EDITING
 from exporter.core.services import get_organisation
-from lite_content.lite_exporter_frontend import strings
+from lite_content.lite_exporter_frontend import (
+    applications,
+    strings,
+)
 from lite_forms.generators import confirm_form
 from lite_forms.views import SingleFormView, MultiFormView
 from exporter.applications.forms.hcsat import HCSATminiform
