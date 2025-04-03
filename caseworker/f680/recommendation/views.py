@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import FormView, TemplateView
@@ -5,24 +7,23 @@ from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice.constants import AdviceLevel, AdviceSteps
-from caseworker.advice.conditionals import form_add_licence_conditions
-from caseworker.advice.payloads import GiveApprovalAdvicePayloadBuilder
-from caseworker.advice.picklist_helpers import approval_picklist, footnote_picklist, proviso_picklist
+from caseworker.advice.picklist_helpers import proviso_picklist
+from caseworker.f680.recommendation.constants import RecommendationSteps
 from caseworker.f680.recommendation.forms.forms import (
-    FootnotesApprovalAdviceForm,
-    PicklistLicenceConditionsForm,
-    RecommendAnApprovalForm,
-    SelectRecommendationTypeForm,
-    SimpleLicenceConditionsForm,
+    BaseRecommendationForm,
+    ClearRecommendationForm,
+    EntityConditionsRecommendationForm,
 )
+from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
-    current_user_recommendation,
-    post_approval_recommendation,
+    clear_recommendation,
+    recommendations_by_current_user,
+    get_case_recommendations,
+    group_recommendations_by_team_and_users,
+    post_recommendation,
 )
 from caseworker.f680.views import F680CaseworkerMixin
 from core.decorators import expect_status
-from core.wizard.conditionals import C
 from core.wizard.views import BaseSessionWizardView
 
 
@@ -32,21 +33,17 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        recommendation = None
-        if user_recommendation := current_user_recommendation(
-            self.case.advice, self.caseworker, self.recommendation_level
-        ):
-            user_recommendation = user_recommendation[0] if user_recommendation else None
+        case_recommendations = get_case_recommendations(self.request, self.case)
 
-        team_recommendations = []
-        for recommendation in self.case.get("advice", []):
-            team_recommendations.append({"team": recommendation["team"], "recommendation": recommendation})
+        user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
+        recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
+
         return {
             **context_data,
             "case": self.case,
             "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
-            "user_recommendation": user_recommendation,
-            "teams_recommendations": team_recommendations,
+            "user_recommendations": user_recommendations,
+            "recommendations_by_team": recommendations_by_team,
         }
 
 
@@ -57,47 +54,45 @@ class MyRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         title = f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}"
-        recommendation = current_user_recommendation(self.case.advice, self.caseworker, self.recommendation_level)
+        user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
 
         return {
             **context,
             "title": title,
-            "recommendation": recommendation[0] if recommendation else None,
+            "user_recommendations": user_recommendations,
         }
 
 
-class SelectRecommendationTypeView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
-    template_name = "f680/case/recommendation/select_recommendation_type.html"
-    form_class = SelectRecommendationTypeForm
-    current_tab = "recommendations"
+class ClearRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
+    template_name = "f680/case/recommendation/clear_recommendation.html"
+    form_class = ClearRecommendationForm
 
-    def get_success_url(self):
-        return reverse("cases:f680:approve_all", kwargs=self.kwargs)
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error clearing recommendation",
+        "Unexpected error clearing recommendation",
+    )
+    def clear_recommendation(self, case):
+        return clear_recommendation(self.request, case)
 
     def form_valid(self, form):
-        self.recommendation = form.cleaned_data["recommendation"]
+        self.clear_recommendation(self.case)
         return super().form_valid(form)
 
+    def get_success_url(self):
+        return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
-class BaseApprovalRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
+
+class BaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     template_name = "f680/case/recommendation/form_wizard.html"
     current_tab = "recommendations"
 
-    condition_dict = {
-        AdviceSteps.LICENCE_CONDITIONS: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
-        AdviceSteps.LICENCE_FOOTNOTES: C(form_add_licence_conditions(AdviceSteps.RECOMMEND_APPROVAL)),
-    }
-
     form_list = [
-        (AdviceSteps.RECOMMEND_APPROVAL, RecommendAnApprovalForm),
-        (AdviceSteps.LICENCE_CONDITIONS, PicklistLicenceConditionsForm),
-        (AdviceSteps.LICENCE_FOOTNOTES, FootnotesApprovalAdviceForm),
+        (RecommendationSteps.RELEASE_REQUEST_PROVISOS, EntityConditionsRecommendationForm),
     ]
 
     step_kwargs = {
-        AdviceSteps.RECOMMEND_APPROVAL: approval_picklist,
-        AdviceSteps.LICENCE_CONDITIONS: proviso_picklist,
-        AdviceSteps.LICENCE_FOOTNOTES: footnote_picklist,
+        RecommendationSteps.RELEASE_REQUEST_PROVISOS: proviso_picklist,
     }
 
     def get_success_url(self):
@@ -105,37 +100,56 @@ class BaseApprovalRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, Ba
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["back_link_url"] = reverse("cases:f680:select_recommendation_type", kwargs=self.kwargs)
+        context["back_link_url"] = reverse("cases:f680:recommendation", kwargs=self.kwargs)
         return context
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error adding approval recommendation",
-        "Unexpected error adding approval recommendation",
+        "Error adding recommendation",
+        "Unexpected error adding recommendation",
     )
-    def post_approval_recommendation(self, data):
-        level = "final-advice" if self.recommendation_level == AdviceLevel.FINAL else "user-advice"
-        return post_approval_recommendation(self.request, self.case, data, level=level)
+    def post_recommendation(self, data):
+        return post_recommendation(self.request, self.case, data)
 
     def get_payload(self, form_dict):
-        return GiveApprovalAdvicePayloadBuilder().build(form_dict)
+        return RecommendationPayloadBuilder().build(form_dict)
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
-        self.post_approval_recommendation(data)
+        self.post_recommendation(data)
         return redirect(self.get_success_url())
 
 
-class GiveApprovalRecommendationView(BaseApprovalRecommendationView):
+class MakeRecommendationView(BaseRecommendationView):
+
+    def get_form_list(self):
+        form_list = OrderedDict()
+        for rr_key in self.security_release_requests.keys():
+            form_list[rr_key] = EntityConditionsRecommendationForm
+
+        return form_list
 
     def get_form(self, step=None, data=None, files=None):
+        if step is None:
+            step = self.steps.current
 
-        if step == AdviceSteps.LICENCE_CONDITIONS:
-            picklist_form_kwargs = self.step_kwargs[AdviceSteps.LICENCE_CONDITIONS](self)
-            picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
-            if picklist_options_exist:
-                return PicklistLicenceConditionsForm(data=data, prefix=step, **picklist_form_kwargs)
-            else:
-                return SimpleLicenceConditionsForm(data=data, prefix=step)
+        release_request = self.security_release_requests[step]
+        initial = {"security_grading": release_request["security_grading"]["key"]}
 
-        return super().get_form(step, data, files)
+        picklist_form_kwargs = self.step_kwargs[RecommendationSteps.RELEASE_REQUEST_PROVISOS](self)
+        picklist_options_exist = len(picklist_form_kwargs["proviso"]["results"]) > 0
+        if picklist_options_exist:
+            return EntityConditionsRecommendationForm(
+                initial=initial,
+                prefix=step,
+                data=data,
+                release_request=release_request,
+                **picklist_form_kwargs,
+            )
+        else:
+            return BaseRecommendationForm(
+                initial=initial,
+                prefix=step,
+                data=data,
+                release_request=release_request,
+            )

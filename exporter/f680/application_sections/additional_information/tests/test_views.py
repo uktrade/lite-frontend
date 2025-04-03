@@ -122,9 +122,11 @@ class TestAdditionalInformationView:
         authorized_client,
         mock_f680_application_get,
         f680_application_wizard_url,
+        data_f680_case,
     ):
         response = authorized_client.get(f680_application_wizard_url)
         assert response.status_code == 200
+        assert response.context["back_link_url"] == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
         assert isinstance(response.context["form"], NotesForCaseOfficerForm)
 
     def test_GET_success_with_organisation_set(
@@ -191,19 +193,28 @@ class TestAdditionalInformationView:
             }
         }
 
-    def test_POST_to_step_validation_error(
+    def test_POST_to_notes_no_validation_error(
         self,
         post_to_step,
         goto_step,
         mock_f680_application_get,
+        mock_patch_f680_application,
+        authorized_client,
+        beautiful_soup,
     ):
         goto_step(FormSteps.NOTES_FOR_CASEWORKER)
         response = post_to_step(
             FormSteps.NOTES_FOR_CASEWORKER,
             {},
         )
-        assert response.status_code == 200
-        assert response.context["form"]["note"].errors == ["This field is required."]
+        assert response.status_code == 302
+
+        response = authorized_client.get(response.url)
+        soup = beautiful_soup(response.content)
+        parent_div = soup.find(text="Notes for case officers").parent.parent
+        task_list_option_guidance = parent_div.find("div", {"class": "lite-tag"})
+
+        assert "Optional" in task_list_option_guidance.text
 
     def test_GET_with_existing_data_success(
         self,

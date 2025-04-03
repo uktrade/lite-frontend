@@ -172,9 +172,11 @@ class TestUserInformationView:
         authorized_client,
         mock_f680_application_get,
         f680_user_information_wizard_url,
+        data_f680_case,
     ):
         response = authorized_client.get(f680_user_information_wizard_url)
         assert response.status_code == 200
+        assert response.context["back_link_url"] == reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
         assert isinstance(response.context["form"], forms.EntityTypeForm)
 
     def test_GET_no_feature_flag_forbidden(
@@ -233,31 +235,31 @@ class TestUserInformationView:
     @pytest.mark.parametrize(
         "step, data, expected_errors",
         (
-            (FormSteps.ENTITY_TYPE, {"entity_type": ""}, {"entity_type": ["This field is required."]}),
+            (FormSteps.ENTITY_TYPE, {"entity_type": ""}, {"entity_type": ["Select the type of entity"]}),
             (
                 FormSteps.THIRD_PARTY_ROLE,
                 {},
-                {"third_party_role": ["This field is required."]},
+                {"third_party_role": ["Select a role"]},
             ),
             (
                 FormSteps.END_USER_NAME,
                 {},
-                {"end_user_name": ["This field is required."]},
+                {"end_user_name": ["Enter a name"]},
             ),
             (
                 FormSteps.END_USER_ADDRESS,
                 {},
-                {"address": ["This field is required."], "country": ["This field is required."]},
+                {"address": ["Enter an address"], "country": ["Enter or select a country"]},
             ),
             (
                 FormSteps.SECURITY_GRADING,
                 {},
-                {"security_classification": ["This field is required."]},
+                {"security_classification": ["Select a security classification"]},
             ),
             (
                 FormSteps.INTENDED_END_USE,
                 {},
-                {"end_user_intended_end_use": ["This field is required."]},
+                {"end_user_intended_end_use": ["Enter how the end-user will use the item"]},
             ),
         ),
     )
@@ -712,12 +714,13 @@ class TestUserInformationSummaryView:
         assert response.context["title"] == "Forbidden"
 
     @pytest.mark.parametrize(
-        "step, data, required_field",
+        "step, data, required_field, expected_errors",
         (
             (
                 FormSteps.SECURITY_GRADING,
                 {"security_classification": "other", "other_security_classification": ""},
                 "other_security_classification",
+                ["Security classification cannot be blank"],
             ),
         ),
     )
@@ -726,6 +729,7 @@ class TestUserInformationSummaryView:
         step,
         data,
         required_field,
+        expected_errors,
         post_to_step,
         goto_step,
         mock_f680_application_get,
@@ -737,4 +741,4 @@ class TestUserInformationSummaryView:
             data,
         )
         assert response.status_code == 200
-        assert response.context["form"][required_field].errors == ["Required information"]
+        assert response.context["form"][required_field].errors == expected_errors

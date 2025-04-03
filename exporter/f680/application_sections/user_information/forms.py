@@ -49,6 +49,7 @@ class EntityTypeForm(BaseForm):
         ),
         label="",
         widget=forms.RadioSelect,
+        error_messages={"required": "Select the type of entity"},
     )
 
     def get_layout_fields(self):
@@ -94,6 +95,7 @@ class ThirdPartyRoleForm(BaseForm):
         ),
         label="",
         widget=forms.RadioSelect,
+        error_messages={"required": "Select a role"},
     )
 
     def get_layout_fields(self):
@@ -109,6 +111,7 @@ class EndUserNameForm(BaseForm):
     end_user_name = forms.CharField(
         label="",
         help_text="Name or organisation or individual",
+        error_messages={"required": "Enter a name"},
     )
 
     def get_layout_fields(self):
@@ -123,11 +126,13 @@ class EndUserAddressForm(BaseForm):
     address = forms.CharField(
         label="Address",
         widget=forms.Textarea(attrs={"rows": "5"}),
+        error_messages={"required": "Enter an address"},
     )
     country = forms.ChoiceField(
         label="Country",
         choices=[],
         widget=forms.widgets.Select(attrs={"data-module": "autocomplete-select"}),
+        error_messages={"required": "Enter or select a country"},
     )
 
     def __init__(self, *args, countries=None, **kwargs):
@@ -153,9 +158,14 @@ class SecurityGradingForm(BaseForm):
         choices="",
         label="Select security classification",
         widget=forms.RadioSelect,
+        error_messages={"required": "Select a security classification"},
     )
 
-    other_security_classification = forms.CharField(label="Enter the security classification", required=False)
+    other_security_classification = forms.CharField(
+        label="Enter the security classification",
+        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
+        required=False,
+    )
 
     suffix = forms.CharField(
         label="Enter a suffix (optional)",
@@ -164,7 +174,10 @@ class SecurityGradingForm(BaseForm):
 
     def clean(self):
         return self.add_required_to_conditional_text_field(
-            "security_classification", "other", "other_security_classification"
+            parent_field="security_classification",
+            parent_field_response="other",
+            required_field="other_security_classification",
+            error_message="Security classification cannot be blank",
         )
 
     def __init__(self, *args, **kwargs):
@@ -197,52 +210,8 @@ class EndUserIntendedEndUseForm(BaseForm):
     end_user_intended_end_use = forms.CharField(
         label="",
         widget=forms.Textarea(attrs={"rows": "5"}),
-        help_text="",
+        error_messages={"required": "Enter how the end-user will use the item"},
     )
 
     def get_layout_fields(self):
         return ("end_user_intended_end_use",)
-
-
-class EndUserAssembleManufactureForm(BaseForm):
-    class Layout:
-        TITLE = "Does this end-user need to assemble or manufacture any of the products?"
-        TITLE_AS_LABEL_FOR = "assemble_manufacture"
-        SUBMIT_BUTTON_TEXT = "Save and continue"
-
-    assemble_manufacture_choices = (
-        Choice("assemble", "Yes, assembled"),
-        Choice("manufacture", "Yes, manufactured"),
-        Choice("no", "No"),
-    )
-
-    assemble_manufacture = forms.ChoiceField(
-        choices=assemble_manufacture_choices,
-        label="",
-    )
-    assemble = forms.CharField(
-        label="Describe what assembly is needed.",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-    )
-    manufacture = forms.CharField(
-        label="Describe what manufacture is needed. Be sure to include the manufacturer's website if they have one.",
-        required=False,
-        widget=forms.Textarea(attrs={"rows": 5}),
-    )
-
-    def clean(self):
-        required_conditional_textbox_fields = ["assemble", "manufacture"]
-        for field in required_conditional_textbox_fields:
-            self.add_required_to_conditional_text_field("assemble_manufacture", field, field)
-        return super().clean()
-
-    def get_layout_fields(self):
-        return (
-            ConditionalRadios(
-                "assemble_manufacture",
-                ConditionalRadiosQuestion("Yes, assembled", "assemble"),
-                ConditionalRadiosQuestion("Yes, manufactured", "manufacture"),
-                "No",
-            ),
-        )

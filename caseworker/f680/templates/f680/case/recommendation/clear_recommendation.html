@@ -1,0 +1,18 @@
+{% extends 'f680/case/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block details %}
+<div class="govuk-width-container">
+    <a href="#" class="govuk-back-link">Back</a>
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Are you sure you want to delete your recommendation on this case?</h1>
+                {% crispy form %}
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
