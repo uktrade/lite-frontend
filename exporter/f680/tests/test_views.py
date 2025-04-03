@@ -641,7 +641,7 @@ class TestF680ApplicationSummaryView:
 
 
 class TestF680ApplicationDeclarationView:
-    def test_get_f680_declaration_view_success(
+    def test_GET_f680_declaration_view_success(
         self, authorized_client, f680_declaration_url, mock_f680_application_get, f680_summary_url_with_application
     ):
 
@@ -654,6 +654,21 @@ class TestF680ApplicationDeclarationView:
         assert soup.find("h1").string == "Submit your application"
         assert soup.find("a", {"id": "back-link"})["href"] == f680_summary_url_with_application
         assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Accept and submit"
+
+    def test_POST_f680_declaration_view_fail(
+        self,
+        authorized_client,
+        f680_declaration_url,
+        mock_f680_application_get_application_complete,
+        mock_f680_application_submit,
+    ):
+
+        response = authorized_client.post(f680_declaration_url)
+        soup = BeautifulSoup(response.content, "html.parser")
+        assert (
+            "If you agree to make the application details publicly available click yes"
+            in soup.find("div", {"class": "govuk-error-summary__body"}).text
+        )
 
 
 class TestF680SubmittedApplicationSummaryView:
