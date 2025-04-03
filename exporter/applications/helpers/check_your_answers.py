@@ -694,13 +694,6 @@ def _convert_document(party, document_type, application_id, editable):
         )
 
 
-def _convert_attachable_document(address, attach_address, document, editable):
-    if not document and editable:
-        return convert_to_link(attach_address, Parties.Documents.ATTACH)
-
-    return convert_to_link(address, "Download")
-
-
 def get_total_goods_value(goods: list):
     total_value = 0
     for good in goods:
@@ -752,7 +745,3 @@ def is_open_application_with_end_user(application):
         ]:
             return True
     return False
-
-
-def _convert_goods_categories(goods_categories):
-    return (", ".join([x["value"] for x in goods_categories]),)
