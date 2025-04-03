@@ -43,30 +43,12 @@ def test_entity_selection_form_valid(data, valid_status, errors):
             False,
             {
                 "recommendation": ["Select if you approve or refuse"],
-                "security_grading": ["Select the security classification"],
             },
         ),
         (
             {
                 "recommendation": RecommendationType.APPROVE,
-                "security_grading": "",
-            },
-            False,
-            {"security_grading": ["Select the security classification"]},
-        ),
-        (
-            {
-                "recommendation": RecommendationType.APPROVE,
-                # it is not possible to select this but if we were to submit then it fails as expected
-                "security_grading": "confidential",
-            },
-            False,
-            {"security_grading": ["Select a valid choice. confidential is not one of the available choices."]},
-        ),
-        (
-            {
-                "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
+                "conditions": "",
             },
             True,
             {},
@@ -74,7 +56,7 @@ def test_entity_selection_form_valid(data, valid_status, errors):
         (
             {
                 "recommendation": RecommendationType.REFUSE,
-                "security_grading": "official",
+                "conditions": "",
             },
             True,
             {},
@@ -96,30 +78,12 @@ def test_make_recommendation_form_valid(data, valid_status, errors):
             False,
             {
                 "recommendation": ["Select if you approve or refuse"],
-                "security_grading": ["Select the security classification"],
             },
         ),
         (
             {
                 "recommendation": RecommendationType.APPROVE,
-                "security_grading": "",
-            },
-            False,
-            {"security_grading": ["Select the security classification"]},
-        ),
-        (
-            {
-                "recommendation": RecommendationType.APPROVE,
-                # it is not possible to select this but if we were to submit then it fails as expected
-                "security_grading": "confidential",
-            },
-            False,
-            {"security_grading": ["Select a valid choice. confidential is not one of the available choices."]},
-        ),
-        (
-            {
-                "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
+                "conditions": "",
             },
             True,
             {},
@@ -127,7 +91,7 @@ def test_make_recommendation_form_valid(data, valid_status, errors):
         (
             {
                 "recommendation": RecommendationType.REFUSE,
-                "security_grading": "official",
+                "conditions": "",
             },
             True,
             {},

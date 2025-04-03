@@ -90,8 +90,6 @@ def post_recommendation(request, case, data):
             "type": data["recommendation"],
             "conditions": data["conditions"] if data["recommendation"] == RecommendationType.APPROVE else "",
             "refusal_reasons": data["conditions"] if data["recommendation"] == RecommendationType.REFUSE else "",
-            "security_grading": data["security_grading"],
-            "security_grading_other": data["security_grading_other"],
             "security_release_request": release_request_id,
         }
         for release_request_id in data["release_requests"]

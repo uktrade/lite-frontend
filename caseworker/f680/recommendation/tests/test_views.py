@@ -197,7 +197,6 @@ class TestF680MakeRecommendationView:
             RecommendationSteps.RELEASE_REQUEST_PROVISOS,
             {
                 "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
                 "conditions": ["no_release", "no_specifications"],
                 "no_specifications": "no specifications",
                 "no_release": "no release",
@@ -214,8 +213,6 @@ class TestF680MakeRecommendationView:
                 "type": RecommendationType.APPROVE,
                 "conditions": "no release\n\n--------\nno specifications",
                 "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
                 "security_release_request": release_request_id,
             }
             for release_request_id in release_requests_ids
@@ -254,7 +251,6 @@ class TestF680MakeRecommendationView:
             RecommendationSteps.RELEASE_REQUEST_PROVISOS,
             {
                 "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
                 "conditions": ["no_release", "no_specifications"],
                 "no_specifications": "no specifications",
                 "no_release": "no release",
@@ -273,8 +269,6 @@ class TestF680MakeRecommendationView:
                 "type": RecommendationType.APPROVE,
                 "conditions": "no release\n\n--------\nno specifications",
                 "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
                 "security_release_request": release_request_id,
             }
             for release_request_id in release_requests_ids[:2]
@@ -313,7 +307,6 @@ class TestF680MakeRecommendationView:
             RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS,
             {
                 "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
                 "conditions": "no release",
             },
         )
@@ -328,8 +321,6 @@ class TestF680MakeRecommendationView:
                 "type": RecommendationType.APPROVE,
                 "conditions": "no release",
                 "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
                 "security_release_request": release_request_id,
             }
             for release_request_id in release_requests_ids
@@ -357,7 +348,7 @@ class TestF680MyRecommendationView:
 
         soup = BeautifulSoup(response.content, "html.parser")
         assert soup.find("h1", {"class": "govuk-heading-xl"}).text == "View recommendation"
-        assert soup.find("h2", {"class": "govuk-heading-m"}).text.strip() == "australia name [Official]"
+        assert soup.find("h2", {"class": "govuk-heading-m"}).text.strip() == "australia name"
         assert soup.find("div", {"class": "clearance-conditions"}).text == "No concerns"
         clear_recommendation_button = soup.find(id="clear-recommendation-button")
         assert clear_recommendation_button

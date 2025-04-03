@@ -5,7 +5,6 @@
 
                 <th scope="col" class="govuk-table__header">Name</th>
                 <th scope="col" class="govuk-table__header">Decision</th>
-                <th scope="col" class="govuk-table__header">Security grading</th>
                 <th scope="col" class="govuk-table__header">Conditions/Refusal reasons</th>
             </tr>
         </thead>
@@ -18,9 +17,6 @@
                 </td>
                 <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                     {{ recommendation.type.key|capfirst }}
-                </td>
-                <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
-                    {{ recommendation.security_grading.value }}
                 </td>
                 <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                     <details class="govuk-details govuk-!-padding-left-6 govuk-!-margin-top-2" data-module="govuk-details">

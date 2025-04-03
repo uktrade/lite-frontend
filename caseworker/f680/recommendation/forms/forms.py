@@ -7,8 +7,6 @@ from core.common.forms import BaseForm
 from core.forms.layouts import (
     ConditionalCheckboxes,
     ConditionalCheckboxesQuestion,
-    ConditionalRadios,
-    ConditionalRadiosQuestion,
 )
 
 
@@ -61,50 +59,21 @@ class BaseRecommendationForm(BaseForm):
         ("approve", "Approve"),
         ("refuse", "Refuse"),
     ]
-    security_release_choices = (
-        Choice("official", "Official"),
-        Choice("official-sensitive", "Official-Sensitive"),
-        Choice("secret", "Secret"),
-        Choice("top-secret", "Top Secret", divider="Or"),
-        Choice("other", "Other"),
-    )
     recommendation = forms.ChoiceField(
         choices=CHOICES,
         widget=forms.RadioSelect,
         label="Select recommendation type",
         error_messages={"required": "Select if you approve or refuse"},
     )
-    security_grading = forms.ChoiceField(
-        choices="",
-        label="Select security classification",
-        widget=forms.RadioSelect,
-        error_messages={"required": "Select the security classification"},
-    )
-    security_grading_other = forms.CharField(label="Enter the security classification", required=False)
     conditions = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
         label="Provisos",
         required=False,
     )
 
-    def __init__(self, *args, **kwargs):
-        self.conditional_radio_choices = [
-            (
-                ConditionalRadiosQuestion(choice.label, "security_grading_other")
-                if choice.value == "other"
-                else choice.label
-            )
-            for choice in self.security_release_choices
-        ]
-
-        super().__init__(*args, **kwargs)
-
-        self.fields["security_grading"].choices = self.security_release_choices
-
     def get_layout_fields(self):
         return (
             "recommendation",
-            ConditionalRadios("security_grading", *self.conditional_radio_choices),
             "conditions",
         )
 
@@ -121,8 +90,6 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
         cleaned_data = super().clean()
         return {
             "recommendation": cleaned_data.get("recommendation", ""),
-            "security_grading": cleaned_data.get("security_grading", ""),
-            "security_grading_other": cleaned_data.get("security_grading_other", ""),
             "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
         }
 
@@ -147,7 +114,6 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
     def get_layout_fields(self):
         return (
             "recommendation",
-            ConditionalRadios("security_grading", *self.conditional_radio_choices),
             ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
         )
 
