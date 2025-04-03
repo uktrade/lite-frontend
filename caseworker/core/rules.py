@@ -217,7 +217,7 @@ rules.add_rule(
 )
 rules.add_rule("can_user_review_and_combine", is_user_allocated & (case_has_ogd_advice | is_case_nlr))  # noqa
 rules.add_rule("can_user_assess_products", is_user_allocated & (is_user_in_tau_team | is_user_in_admin_team))  # noqa
-rules.add_rule("can_user_add_an_ejcu_query", is_user_allocated)
+rules.add_rule("can_user_add_an_ecju_query", is_user_allocated)
 rules.add_rule("can_user_attach_document", rules.always_allow)
 rules.add_rule("can_user_generate_document", is_user_allocated)
 rules.add_rule("can_user_add_contact", is_user_allocated)

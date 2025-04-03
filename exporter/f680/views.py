@@ -110,6 +110,7 @@ class F680SubmittedApplicationSummaryView(LoginRequiredMixin, F680FeatureRequire
 
     def get_context_data(self, pk, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["is_f680"] = True
         context["application"] = self.application
         context["application_history"] = self.get_application_history
         application_section_order = [
