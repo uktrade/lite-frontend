@@ -1,0 +1,12 @@
+<a class="govuk-link govuk-link--no-visited-state" id="case-{{ case.id }}" href="{% if case.case_type.sub_type.key == "f680_clearance" %}{% url 'cases:f680:details' queue.id case.id %}{% else %}{% url 'cases:case' queue.id case.id %}{% endif %}">
+	<span class="govuk-visually-hidden">View</span> {{ case.reference_code }}
+</a>
+<address>
+	<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+		{{ case.organisation.name }}
+	</p>
+</address>
+<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.status.value }}</p>
+{% if case.sub_status %}
+	<div class="govuk-tag govuk-tag--blue govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.sub_status.name }}</div>
+{% endif %}
