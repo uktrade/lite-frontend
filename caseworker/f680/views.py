@@ -38,9 +38,13 @@ class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
         raise PermissionDenied("Cannot modify or view F680s")
 
     def dispatch(self, request, *args, **kwargs):
-        self.case_id = str(kwargs["pk"])
+        self.extra_setup(request)
+        return super().dispatch(request, *args, **kwargs)
+
+    def extra_setup(self, request):
+        self.case_id = str(self.kwargs["pk"])
         self.case = get_case(request, self.case_id)
-        self.queue_id = kwargs["queue_pk"]
+        self.queue_id = self.kwargs["queue_pk"]
         self.queue = get_queue(request, self.queue_id)
         self.caseworker_id = str(self.request.session["lite_api_user_id"])
         data, _ = get_gov_user(self.request, self.caseworker_id)
@@ -48,12 +52,6 @@ class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
         self.security_release_requests = OrderedDict()
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
-        self.extra_setup(request)
-
-        return super().dispatch(request, *args, **kwargs)
-
-    def extra_setup(self, request):
-        return
 
     def get_recommendation_level(self, case):
         return AdviceLevel.FINAL if case.status in OUTCOME_STATUSES else AdviceLevel.USER
