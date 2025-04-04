@@ -22,6 +22,7 @@ class ApplicationSubmissionForm(BaseForm):
         SUBTITLE = render_to_string("f680/forms/subtitle_declaration.html")
         SUBMIT_BUTTON_TEXT = "Accept and submit"
 
+    # This follows the same structure as the SIELs applcation here exporter/applications/forms/declaration.py
     agreed_to_foi = forms.TypedChoiceField(
         choices=(
             (False, "Yes"),
