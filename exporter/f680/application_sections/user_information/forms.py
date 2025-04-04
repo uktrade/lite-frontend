@@ -1,6 +1,8 @@
 from django import forms
 from django.template.loader import render_to_string
+
 from crispy_forms_gds.choices import Choice
+from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm
 
@@ -152,6 +154,7 @@ class SecurityGradingForm(BaseForm):
     prefix = forms.CharField(
         label="Enter a prefix (optional)",
         required=False,
+        help_text="For example, UK, NATO or OCCAR. Leave blank if you don’t have one.",
     )
 
     security_classification = forms.ChoiceField(
@@ -168,7 +171,8 @@ class SecurityGradingForm(BaseForm):
     )
 
     suffix = forms.CharField(
-        label="Enter a suffix (optional)",
+        label="Enter any additional markings (optional)",
+        help_text="For example, handling instructions, descriptors or national caveats. Leave blank if you do not have any.",
         required=False,
     )
 
@@ -197,6 +201,10 @@ class SecurityGradingForm(BaseForm):
             "prefix",
             ConditionalRadios("security_classification", *self.conditional_radio_choices),
             "suffix",
+            HTML.details(
+                "Help with security classification, prefix and additional markings",
+                render_to_string("f680/forms/help_security_classification.html"),
+            ),
         )
 
 
