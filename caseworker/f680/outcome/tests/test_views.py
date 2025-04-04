@@ -18,6 +18,7 @@ def setup(
     mock_denial_reasons,
     mock_footnote_details,
     settings,
+    mock_get_case_recommendations,
 ):
     settings.FEATURE_FLAG_ALLOW_F680 = True
     return
@@ -64,6 +65,7 @@ class TestDecideOutcomeView:
         mock_f680_case,
         mock_outcomes_no_outcomes,
         decide_outcome_url,
+        recommendations,
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         expected_security_release_request_choices = [
@@ -82,6 +84,66 @@ class TestDecideOutcomeView:
             response.context["form"].fields["security_release_requests"].choices
             == expected_security_release_request_choices
         )
+        assert response.context["selected_security_release_requests"] == []
+        expected_all_security_release_requests = {
+            "approval_types": ["demonstration_overseas", "training"],
+            "id": request_ids[0],
+            "intended_use": "australia intended use",
+            "product_id": data_submitted_f680_case["case"]["data"]["product"]["id"],
+            "recipient": {
+                "address": "australia address",
+                "country": {
+                    "id": "AU",
+                    "is_eu": False,
+                    "name": "Australia",
+                    "report_name": "",
+                    "type": "gov.uk Country",
+                },
+                "id": data_submitted_f680_case["case"]["data"]["security_release_requests"][0]["recipient"]["id"],
+                "name": "australia name",
+                "role": {"key": "consultant", "value": "Consultant"},
+                "role_other": None,
+                "type": {"key": "third-party", "value": "Third party"},
+            },
+            "recommendations": [
+                {
+                    "conditions": "No concerns",
+                    "created_at": "2021-10-16T23:48:39.486679+01:00",
+                    "id": recommendations[0]["id"],
+                    "refusal_reasons": "",
+                    "security_grading": {"key": "official", "value": "Official"},
+                    "security_grading_other": "",
+                    "security_release_request_id": request_ids[0],
+                    "team": {
+                        "alias": None,
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "is_ogd": False,
+                        "name": "Admin",
+                        "part_of_ecju": None,
+                    },
+                    "type": {"key": "approve", "value": "Approve"},
+                    "user": {
+                        "email": "test.user@example.com",  # /PS-IGNORE
+                        "first_name": "Test",
+                        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
+                        "last_name": "User",
+                        "role_name": "Super User",
+                        "status": "Active",
+                        "team": {
+                            "alias": None,
+                            "id": "00000000-0000-0000-0000-000000000001",
+                            "is_ogd": False,
+                            "name": "Admin",
+                            "part_of_ecju": None,
+                        },
+                    },
+                }
+            ],
+            "security_grading": {"key": "secret", "value": "Secret"},
+            "security_grading_other": "",
+        }
+
+        assert response.context["all_security_release_requests"][0] == expected_all_security_release_requests
 
     def test_GET_select_outcome_existing_outcome(
         self,
@@ -132,6 +194,7 @@ class TestDecideOutcomeView:
         post_to_step,
         outcome,
         expected_form_class,
+        recommendations,
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
@@ -145,6 +208,65 @@ class TestDecideOutcomeView:
         assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert isinstance(form, expected_form_class)
+        expected_selected_security_release_requests = {
+            "approval_types": ["demonstration_overseas", "training"],
+            "id": request_ids[0],
+            "intended_use": "australia intended use",
+            "product_id": data_submitted_f680_case["case"]["data"]["product"]["id"],
+            "recipient": {
+                "address": "australia address",
+                "country": {
+                    "id": "AU",
+                    "is_eu": False,
+                    "name": "Australia",
+                    "report_name": "",
+                    "type": "gov.uk Country",
+                },
+                "id": data_submitted_f680_case["case"]["data"]["security_release_requests"][0]["recipient"]["id"],
+                "name": "australia name",
+                "role": {"key": "consultant", "value": "Consultant"},
+                "role_other": None,
+                "type": {"key": "third-party", "value": "Third party"},
+            },
+            "recommendations": [
+                {
+                    "conditions": "No concerns",
+                    "created_at": "2021-10-16T23:48:39.486679+01:00",
+                    "id": recommendations[0]["id"],
+                    "refusal_reasons": "",
+                    "security_grading": {"key": "official", "value": "Official"},
+                    "security_grading_other": "",
+                    "security_release_request_id": request_ids[0],
+                    "team": {
+                        "alias": None,
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "is_ogd": False,
+                        "name": "Admin",
+                        "part_of_ecju": None,
+                    },
+                    "type": {"key": "approve", "value": "Approve"},
+                    "user": {
+                        "email": "test.user@example.com",  # /PS-IGNORE
+                        "first_name": "Test",
+                        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
+                        "last_name": "User",
+                        "role_name": "Super User",
+                        "status": "Active",
+                        "team": {
+                            "alias": None,
+                            "id": "00000000-0000-0000-0000-000000000001",
+                            "is_ogd": False,
+                            "name": "Admin",
+                            "part_of_ecju": None,
+                        },
+                    },
+                }
+            ],
+            "security_grading": {"key": "secret", "value": "Secret"},
+            "security_grading_other": "",
+        }
+
+        assert response.context["selected_security_release_requests"][0] == expected_selected_security_release_requests
 
     def test_POST_select_outcome_bad_request(
         self,
