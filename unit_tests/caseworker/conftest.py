@@ -182,7 +182,7 @@ def filter_data(mock_case_statuses, data_case_types, gov_uk_users):
 @pytest.fixture
 def data_cases_search(filter_data):
     return {
-        "count": 1,
+        "count": 3,
         "results": {
             "cases": [
                 {
@@ -350,6 +350,7 @@ def data_cases_search(filter_data):
                         },
                     ],
                     "intended_end_use": "birthday present",
+                    "f680_data": {},
                 },
                 {
                     "id": "8fb76bed-fd45-4293-95b8-eda9468aa254",  # /PS-IGNORE
@@ -372,18 +373,114 @@ def data_cases_search(filter_data):
                         }
                     ],
                     "goods_flags": [],
+                    "destinations": [{"country": {"id": "NO", "name": "Norway"}}],
                     "has_open_queries": False,
                     "is_recently_updated": True,
-                    "assignments": {},
+                    "case_officer": {"first_name": "John", "last_name": "Clarke", "email": "test@example.net"},
+                    "assignments": {
+                        "9c4e66be-9f0f-451a-9c5f-d30e9c4bb69d": {  # /PS-IGNORE
+                            "email": "test@mail.com",  # /PS-IGNORE
+                            "first_name": "John",
+                            "last_name": "Smith",
+                            "queues": [
+                                {
+                                    "id": "ee1a3870-73d7-4af3-b629-e28f2c2227d7",
+                                    "name": "Licensing Reception cases to review",
+                                }
+                            ],
+                            "team_id": "00000000-0000-0000-0000-000000000001",
+                            "team_name": "Admin",
+                        },
+                    },
                     "queues": [],
-                    "case_officer": None,
                     "reference_code": "GBSIEL/2020/0002687/T",
+                    "advice": [
+                        {"type": {"key": "approve"}, "user": {"team": "OGD Team1"}},
+                        {"type": {"key": "proviso"}, "user": {"team": "OGD Team2"}},
+                        {"type": {"key": "refuse"}, "user": {"team": "OGD Team3"}},
+                    ],
+                    "activity_updates": [
+                        {
+                            "id": "02cc3048-f893-4f0a-b37f-d066bc0b072a",  # /PS-IGNORE
+                            "created_at": "2023-02-02T17:30:05.184293Z",
+                            "user": {
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "first_name": "LITE",
+                                "last_name": "system",
+                                "team": "OGD Team1",
+                            },
+                            "text": "allocated self to case",
+                            "additional_text": "",
+                        },
+                    ],
                     "sla_days": 2,
                     "sla_remaining_days": 18,
                     "status": {"key": "submitted", "value": "Submitted"},
                     "next_review_date": None,
                     "licences": [],
                     "submitted_at": "2023-01-17T14:53:09.826340Z",
+                    "goods": [
+                        {
+                            "name": "Transmitter",
+                            "cles": ["ML1"],
+                            "report_summary_subject": "telecommunications",
+                            "report_summary_prefix": None,
+                            "quantity": "1.00",
+                            "value": "12000.00",
+                            "regimes": [],
+                        }
+                    ],
+                    "denials": [],
+                    "ecju_queries": [],
+                    "intended_end_use": "replica",
+                    "sub_status": {
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "name": "test sub status",
+                    },
+                    "f680_data": {},
+                },
+                {
+                    "id": "67271217-7e55-4345-9db4-31de1bfe4067",  # /PS-IGNORE
+                    "reference_code": "F680/2025/0000001",
+                    "case_type": {
+                        "id": "00000000-0000-0000-0000-000000000007",
+                        "reference": {"key": "f680", "value": "MOD F680 Clearance"},
+                        "type": {"key": "security_clearance", "value": "Security clearance"},
+                        "sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"},
+                    },
+                    "destinations_flags": [],
+                    "flags": [],
+                    "submitted_at": "2023-01-17T14:53:09.826340Z",
+                    "assignments": {
+                        "9c4e66be-9f0f-451a-9c5f-d30e9c4bb69d": {  # /PS-IGNORE
+                            "email": "test@mail.com",  # /PS-IGNORE
+                            "first_name": "John",
+                            "last_name": "Smith",
+                            "queues": [
+                                {
+                                    "id": "ee1a3870-73d7-4af3-b629-e28f2c2227d7",
+                                    "name": "Licensing Reception cases to review",
+                                }
+                            ],
+                            "team_id": "00000000-0000-0000-0000-000000000001",
+                            "team_name": "Admin",
+                        },
+                    },
+                    "activity_updates": [
+                        {
+                            "id": "02cc3048-f893-4f0a-b37f-d066bc0b072a",  # /PS-IGNORE
+                            "created_at": "2023-02-02T17:30:05.184293Z",
+                            "user": {
+                                "id": "00000000-0000-0000-0000-000000000001",
+                                "first_name": "LITE",
+                                "last_name": "system",
+                                "team": "OGD Team1",
+                            },
+                            "text": "allocated self to case",
+                            "additional_text": "",
+                        },
+                    ],
+                    "queues": [],
                     "goods": [],
                     "denials": [],
                     "ecju_queries": [],
@@ -391,6 +488,61 @@ def data_cases_search(filter_data):
                     "sub_status": {
                         "id": "00000000-0000-0000-0000-000000000001",
                         "name": "test sub status",
+                    },
+                    "f680_data": {
+                        "product": {
+                            "id": "a16bd788-44af-4d2b-9dd6-91e8ab3f1ecc",  # /PS-IGNORE
+                            "name": "Spectrometer",
+                            "description": "",
+                            "security_grading": {"key": "official", "value": "Official"},
+                            "security_grading_other": None,
+                        },
+                        "security_release_requests": [
+                            {
+                                "id": "4e3dff0f-e0c9-4349-8e46-63bb70e67755",  # /PS-IGNORE
+                                "recipient": {
+                                    "id": "427506e8-3842-4c12-acea-aa49d55a36a6",  # /PS-IGNORE
+                                    "name": "Entity1",
+                                    "address": "Tokyo",
+                                    "country": {
+                                        "id": "JP",
+                                        "name": "Japan",
+                                    },
+                                    "type": {"key": "end-user", "value": "End-user"},
+                                    "role": None,
+                                    "role_other": None,
+                                },
+                                "security_grading": {"key": "official-sensitive", "value": "Official - sensitive"},
+                                "security_grading_other": None,
+                                "approval_types": ["demonstration_overseas", "training", "supply"],
+                                "intended_use": "Demo, training and supply",
+                                "product_id": "a16bd788-44af-4d2b-9dd6-91e8ab3f1ecc",
+                            },
+                            {
+                                "id": "d0a4730a-5fab-4214-972a-a7159fdb310a",  # /PS-IGNORE
+                                "recipient": {
+                                    "id": "f7be0a74-b66d-4bd8-b318-8d67fd071120",  # /PS-IGNORE
+                                    "name": "Entity2",
+                                    "address": "Canberra",
+                                    "country": {
+                                        "id": "AU",
+                                        "name": "Australia",
+                                    },
+                                    "type": {"key": "end-user", "value": "End-user"},
+                                    "role": None,
+                                    "role_other": None,
+                                },
+                                "security_grading": {"key": "secret", "value": "Secret"},
+                                "security_grading_other": None,
+                                "approval_types": ["demonstration_overseas", "training", "supply"],
+                                "intended_use": "Day to day use",
+                                "product_id": "a16bd788-44af-4d2b-9dd6-91e8ab3f1ecc",  # /PS-IGNORE
+                            },
+                        ],
+                        "recommendations": [
+                            {"team": "OGD Team1", "type": "approve", "recipient": "Entity1"},
+                            {"team": "OGD Team2", "type": "refuse", "recipient": "Entity2"},
+                        ],
                     },
                 },
             ],
