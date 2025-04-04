@@ -92,7 +92,7 @@
 	{# Queries #}
 	<td class="govuk-table__cell" data-customiser-key="queries">
         {% if case.ecju_queries %}
-            <span class="app-ecju-queries"><a href="{% url 'cases:case' queue.id case.id %}ecju-queries/" class="govuk-link govuk-link--no-visited-state">{{case.ecju_queries|length}} queries</a></span>
+            <span class="app-ecju-queries"><a href="{% url 'cases:f680:ecju_queries' queue.id case.id %}" class="govuk-link govuk-link--no-visited-state">{{case.ecju_queries|length}} queries</a></span>
         {% endif %}
 	</td>
 
