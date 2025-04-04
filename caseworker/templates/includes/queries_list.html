@@ -1,0 +1,95 @@
+{% load svg crispy_forms_tags crispy_forms_gds %}
+
+{% if open_queries %}
+    <h3 class="govuk-heading-m">Open queries</h3>
+    <div id="open-queries">
+      {% for ecju_query, close_query_form in open_queries %} 
+        <div class="app-ecju-query" id="open-ecju-query">
+          <div class="app-ecju-query__item">
+            <p class="app-ecju-query__heading">{{ ecju_query.query_type.value }} by {{ ecju_query.raised_by_user_name }}</p>
+            <div class="app-ecju-query__text" data-max-length="300">
+              {{ ecju_query.question|linebreaks }}
+            </div>
+            <p class="app-ecju-query__date">
+              Sent at {{ ecju_query.created_at|str_time_on_date }}. This query has been open for {{ ecju_query.open_working_days }} working day{{ ecju_query.open_working_days|pluralize }}.
+            </p>
+            <details class="govuk-details">
+              <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                  Close query
+                </span>
+              </summary>
+              <div class="govuk-details__text">
+                <form method="post" action="{% if is_f680 %}{% url 'cases:f680:close_ecju_query' queue_pk=queue.id pk=case.id query_pk=ecju_query.id %}{% else %}{% url 'cases:close_query' queue_pk=queue.id pk=case.id query_pk=ecju_query.id %}{% endif %}">
+                  {% csrf_token %}
+                  {% crispy close_query_form %}
+                </form>
+              </div>
+            </details>
+          </div>
+        </div>
+        <hr class="lite-horizontal-separator">
+      {% endfor %}
+    </div>
+  {% endif %}
+  
+ {% if closed_queries %}
+	<h3 class="govuk-heading-m">Closed queries</h3>
+	<p class="govuk-caption-m">Queries are automatically closed when the exporter responds to them.</p>
+	<br><br>
+	<div id="closed-queries">
+		{% for ecju_query in closed_queries %}
+			<div class="app-ecju-query" id="closed-ecju-query">
+				<div class="app-ecju-query__item">
+					<p class="app-ecju-query__heading">{{ ecju_query.query_type.value }} by {{ ecju_query.raised_by_user_name }}</p>
+					<div class="app-ecju-query__text">
+						{{ ecju_query.question|linebreaks }}
+					</div>
+					<p class="app-ecju-query__date">
+						Sent at {{ ecju_query.created_at|str_time_on_date }}.
+					</p>
+				</div>
+				<div class="app-ecju-query__item app-ecju-query__item--right">
+					<p class="app-ecju-query__heading">
+						<a class="govuk-link govuk-link--no-visited-state">
+							{{ ecju_query.responded_by_user_name }}
+						</a>
+					</p>
+					{% if ecju_query.response %}
+					<div class="app-ecju-query__text" data-max-length="300">
+						{{ ecju_query.response|linebreaks }}
+					</div>
+					{% endif %}
+					{% if ecju_query.documents %}
+						{% for document in ecju_query.documents %}
+							<br>
+							<li class="app-documents__item govuk-!-margin-top-2">
+								<div class="app-documents__item-preview">
+									{% svg 'document' %}
+									<span>
+										{{ document.name|file_type }}
+									</span>
+								</div>
+								<div class="app-documents__item-details">
+									<a {% if document.safe == True %}href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=document.id %}"
+										{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
+									{% if document.description %}
+									<p class="govuk-body">{{ document.description }}</p>
+									{% endif %}
+								</div>
+							</li>
+						{% endfor %}
+					{% endif %}
+					<p class="app-ecju-query__date">
+						Closed at {{ ecju_query.responded_at|str_time_on_date }} by {{ ecju_query.responded_by_user_name }}.
+					</p>
+				</div>
+			</div>
+			<hr class="lite-horizontal-separator">
+		{% endfor %}
+	</div>
+{% endif %}
+
+{% if not open_queries and not closed_queries %}
+	{% include 'includes/notice.html' with text='cases.EcjuQueries.CASE_HAS_NO_QUERIES' %}
+{% endif %}

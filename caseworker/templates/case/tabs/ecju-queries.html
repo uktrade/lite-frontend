@@ -3,8 +3,8 @@
 
 <div class="lite-buttons-row">
 	{% make_list queue.id case.id as button_params %}
-	{% test_rule 'can_user_add_an_ejcu_query' request case as can_user_add_an_ejcu_query %}
-	{% if can_user_add_an_ejcu_query %}
+	{% test_rule 'can_user_add_an_ecju_query' request case as can_user_add_an_ecju_query %}
+	{% if can_user_add_an_ecju_query %}
 		{% govuk_link_button id='new-query' text='cases.EcjuQueries.AddQuery.ADD_BUTTON_LABEL' url='cases:new_ecju_query' url_param=button_params query_params="?query_type=ecju_query"%}
 	{% endif %}
 	{% if case.case_type.reference.key in "comp_v,comp_c" %}
@@ -13,97 +13,4 @@
 	{% endif %}
 </div>
 
-{% if open_ecju_queries_with_forms %}
-	<h3 class="govuk-heading-m">{% lcs 'cases.EcjuQueries.OPEN' %}</h3>
-	<div id="open-queries">
-		{% for ecju_query, close_query_form in open_ecju_queries_with_forms %}
-			<div class="app-ecju-query" id="open-ecju-query">
-				<div class="app-ecju-query__item">
-					<p class="app-ecju-query__heading">{{ ecju_query.query_type.value }} by {{ ecju_query.raised_by_user_name }}</p>
-					<div class="app-ecju-query__text" data-max-length="300">
-						{{ ecju_query.question|linebreaks }}
-					</div>
-					<p class="app-ecju-query__date">
-						Sent at {{ ecju_query.created_at|str_time_on_date }}. This query has been open for {{ ecju_query.open_working_days }} working day{{ ecju_query.open_working_days|pluralize }}.
-					</p>
-					<details class="govuk-details">
-						<summary class="govuk-details__summary">
-							<span class="govuk-details__summary-text">
-								Close query
-							</span>
-						</summary>
-						<div class="govuk-details__text">
-							<form method="post" action="{% url 'cases:close_query' queue_pk=queue.id pk=case.id query_pk=ecju_query.id %}">
-								{% csrf_token %}
-								{% crispy close_query_form %}
-							</form>
-						</div>
-					</details>
-				</div>
-			</div>
-			<hr class="lite-horizontal-separator">
-		{% endfor %}
-	</div>
-{% endif %}
-
-{% if closed_ecju_queries %}
-	<h3 class="govuk-heading-m">{% lcs 'cases.EcjuQueries.CLOSED' %}</h3>
-	<p class="govuk-caption-m">{% lcs 'cases.EcjuQueries.CLOSED_DESCRIPTION' %}</p>
-	<br><br>
-	<div id="closed-queries">
-		{% for ecju_query in closed_ecju_queries %}
-			<div class="app-ecju-query" id="closed-ecju-query">
-				<div class="app-ecju-query__item">
-					<p class="app-ecju-query__heading">{{ ecju_query.query_type.value }} by {{ ecju_query.raised_by_user_name }}</p>
-					<div class="app-ecju-query__text">
-						{{ ecju_query.question|linebreaks }}
-					</div>
-					<p class="app-ecju-query__date">
-						Sent at {{ ecju_query.created_at|str_time_on_date }}.
-					</p>
-				</div>
-				<div class="app-ecju-query__item app-ecju-query__item--right">
-					<p class="app-ecju-query__heading">
-						<a class="govuk-link govuk-link--no-visited-state">
-							{{ ecju_query.responded_by_user_name }}
-						</a>
-					</p>
-					{% if ecju_query.response %}
-					<div class="app-ecju-query__text" data-max-length="300">
-						{{ ecju_query.response|linebreaks }}
-					</div>
-					{% endif %}
-					{% if ecju_query.documents %}
-						{% for document in ecju_query.documents %}
-							<br>
-							<li class="app-documents__item govuk-!-margin-top-2">
-								<div class="app-documents__item-preview">
-									{% svg 'document' %}
-									<span>
-										{{ document.name|file_type }}
-									</span>
-								</div>
-								<div class="app-documents__item-details">
-									<a {% if document.safe == True %}href="{% url 'cases:document' queue_pk=queue.id  pk=case.id file_pk=document.id %}"
-										{% endif %} class="govuk-link--no-visited-state">{{ document.name }}</a>
-									{% if document.description %}
-									<p class="govuk-body">{{ document.description }}</p>
-									{% endif %}
-								</div>
-							</li>
-						{% endfor %}
-					{% endif %}
-
-					<p class="app-ecju-query__date">
-						Closed at {{ ecju_query.responded_at|str_time_on_date }} by {{ ecju_query.responded_by_user_name }}.
-					</p>
-				</div>
-			</div>
-			<hr class="lite-horizontal-separator">
-		{% endfor %}
-	</div>
-{% endif %}
-
-{% if not open_ecju_queries_with_forms and not closed_ecju_queries %}
-	{% include 'includes/notice.html' with text='cases.EcjuQueries.CASE_HAS_NO_QUERIES' %}
-{% endif %}
+{% include 'includes/queries_list.html' %}
