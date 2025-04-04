@@ -411,7 +411,7 @@ class TestUserInformationView:
                                         "key": "suffix",
                                         "answer": "some suffix",
                                         "raw_answer": "some suffix",
-                                        "question": "Enter a suffix (optional)",
+                                        "question": "Enter any additional markings (optional)",
                                         "datatype": "string",
                                     },
                                     "end_user_intended_end_use": {
@@ -574,7 +574,7 @@ class TestUserInformationView:
                     "key": "suffix",
                     "answer": "some suffix",
                     "raw_answer": "some suffix",
-                    "question": "Enter a suffix (optional)",
+                    "question": "Enter any additional markings (optional)",
                     "datatype": "string",
                 },
                 "end_user_intended_end_use": {
