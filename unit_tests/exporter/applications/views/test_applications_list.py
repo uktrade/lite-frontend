@@ -36,25 +36,31 @@ headers = [
 ]
 
 
-def standard_application_subtype_dict():
-    return {"key": "standard", "value": "Standard Licence"}
+def standard_application_case_type_dict():
+    return {
+        "reference": {"key": "siel", "value": "SIEL"},
+        "sub_type": {"key": "standard", "value": "Standard Licence"},
+    }
 
 
-def f680_application_subtype_dict():
-    return {"key": "f680_clearance", "value": "MOD F680 Clearance"}
+def f680_application_case_type_dict():
+    return {
+        "reference": {"key": "f680", "value": "F680"},
+        "sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"},
+    }
 
 
-def base_application_data(index, subtype):
+def base_application_data(index, case_type):
     return {
         "id": str(uuid4()),
         "name": f"Application{index}",
         "export_type": {"key": "permanent", "value": "Permanent"},
         "exporter_user_notification_count": 0,
-        "case_type": {"sub_type": subtype},
+        "case_type": case_type,
     }
 
 
-def draft_applications(subtype):
+def draft_applications(case_type):
     return [
         {
             "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "Draft"},
@@ -62,13 +68,13 @@ def draft_applications(subtype):
             "submitted_by": "",
             "submitted_at": None,
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, subtype),
+            **base_application_data(index, case_type),
         }
         for index in range(5)
     ]
 
 
-def submitted_applications(subtype):
+def submitted_applications(case_type):
     status_list = [
         {"id": "00000000-0000-0000-0000-000000000004", "key": "submitted", "value": "Submitted"},
         {"id": "00000000-0000-0000-0000-000000000003", "key": "initial_checks", "value": "Initial checks"},
@@ -82,7 +88,7 @@ def submitted_applications(subtype):
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, subtype),
+            **base_application_data(index, case_type),
         }
         for index in range(len(status_list))
     ]
@@ -96,7 +102,7 @@ def finalised_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, standard_application_subtype_dict()),
+            **base_application_data(index, standard_application_case_type_dict()),
         }
         for index in range(8)
     ]
@@ -114,7 +120,7 @@ def archived_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, standard_application_subtype_dict()),
+            **base_application_data(index, standard_application_case_type_dict()),
         }
         for index in range(4)
     ]
@@ -122,7 +128,7 @@ def archived_applications():
 
 @pytest.fixture
 def mock_get_draft_applications(requests_mock):
-    drafts = draft_applications(standard_application_subtype_dict())
+    drafts = draft_applications(standard_application_case_type_dict())
 
     return requests_mock.get(
         f"/applications/?selected_filter=draft_applications",
@@ -136,7 +142,7 @@ def mock_get_draft_applications(requests_mock):
 
 @pytest.fixture
 def mock_get_draft_f680_applications(requests_mock):
-    drafts = draft_applications(f680_application_subtype_dict())
+    drafts = draft_applications(f680_application_case_type_dict())
 
     return requests_mock.get(
         f"/applications/?selected_filter=draft_applications",
@@ -150,7 +156,7 @@ def mock_get_draft_f680_applications(requests_mock):
 
 @pytest.fixture
 def mock_get_submitted_applications(requests_mock):
-    submitted = submitted_applications(standard_application_subtype_dict())
+    submitted = submitted_applications(standard_application_case_type_dict())
 
     return requests_mock.get(
         f"/applications/?selected_filter=submitted_applications",
@@ -164,7 +170,7 @@ def mock_get_submitted_applications(requests_mock):
 
 @pytest.fixture
 def mock_get_submitted_f680_applications(requests_mock):
-    submitted = submitted_applications(f680_application_subtype_dict())
+    submitted = submitted_applications(f680_application_case_type_dict())
 
     return requests_mock.get(
         f"/applications/?selected_filter=submitted_applications",
@@ -250,7 +256,7 @@ def test_get_applications(authorized_client, mock_get_submitted_applications):
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    assert len(get_applications(response)) == len(submitted_applications(standard_application_subtype_dict()))
+    assert len(get_applications(response)) == len(submitted_applications(standard_application_case_type_dict()))
 
 
 def test_get_draft_applications(authorized_client, mock_get_draft_applications):
@@ -261,7 +267,7 @@ def test_get_draft_applications(authorized_client, mock_get_draft_applications):
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, draft_headers, draft_applications(standard_application_subtype_dict()))
+    verify_application_data(response, draft_headers, draft_applications(standard_application_case_type_dict()))
 
 
 def test_get_draft_f680_applications(authorized_client, mock_get_draft_f680_applications):
@@ -272,7 +278,7 @@ def test_get_draft_f680_applications(authorized_client, mock_get_draft_f680_appl
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, draft_headers, draft_applications(f680_application_subtype_dict()))
+    verify_application_data(response, draft_headers, draft_applications(f680_application_case_type_dict()))
 
 
 def test_get_submitted_applications(authorized_client, mock_get_submitted_applications):
@@ -283,7 +289,7 @@ def test_get_submitted_applications(authorized_client, mock_get_submitted_applic
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, submitted_applications(standard_application_subtype_dict()))
+    verify_application_data(response, headers, submitted_applications(standard_application_case_type_dict()))
 
 
 def test_get_submitted_f680_applications(authorized_client, mock_get_submitted_f680_applications):
@@ -294,7 +300,7 @@ def test_get_submitted_f680_applications(authorized_client, mock_get_submitted_f
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, submitted_applications(f680_application_subtype_dict()))
+    verify_application_data(response, headers, submitted_applications(f680_application_case_type_dict()))
 
 
 def test_get_finalised_applications(authorized_client, mock_get_finalised_applications):
