@@ -161,7 +161,7 @@ class ProductDescription(BaseForm):
 
 class ProductHasSecurityClassification(BaseForm):
     class Layout:
-        TITLE = "Has the product been given a security classifcation by a UK MOD authority?"
+        TITLE = "Has the product been given a security classification by a UK MOD authority?"
         TITLE_AS_LABEL_FOR = "has_security_classification"
         SUBMIT_BUTTON_TEXT = "Continue"
 

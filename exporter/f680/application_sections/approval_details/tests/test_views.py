@@ -864,7 +864,7 @@ class TestProductInformationViews:
                                 "key": "has_security_classification",
                                 "answer": "Yes",
                                 "raw_answer": True,
-                                "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                                "question": "Has the product been given a security classification by a UK MOD authority?",
                                 "datatype": "boolean",
                             },
                             "prefix": {
