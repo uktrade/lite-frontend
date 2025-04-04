@@ -835,7 +835,7 @@ def test_siel_case_row(authorized_client, data_cases_search):
 
     case = data_cases_search["results"]["cases"][1]
 
-    case_row = soup.find(lambda tag: tag.get("id", "").find("siel") != -1)
+    case_row = soup.find(lambda tag: tag.get("id", "").find(f"{case['id']}") != -1)
 
     reference_code = case_row.find("a", {"id": f"case-{case['id']}"})
     assert case["reference_code"] in reference_code.text
@@ -899,7 +899,7 @@ def test_f680_case_row(authorized_client, data_cases_search):
 
     case = data_cases_search["results"]["cases"][2]
 
-    case_row = soup.find(lambda tag: tag.get("id", "").find("f680") != -1)
+    case_row = soup.find(lambda tag: tag.get("id", "").find(f"{case['id']}") != -1)
 
     reference_code = case_row.find("a", {"id": f"case-{case['id']}"})
     assert case["reference_code"] in reference_code.text
