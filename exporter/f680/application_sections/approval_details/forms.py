@@ -199,11 +199,13 @@ class ActionTakenToClassifyInfo(BaseForm):
 class ProductSecurityClassificationForm(BaseForm):
     class Layout:
         TITLE = "What is the maximum security classification given?"
+        SUBTITLE = "If an item has multiple security classifications, tell us the highest one."
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     prefix = forms.CharField(
         label="Enter a prefix (optional)",
         required=False,
+        help_text="For example, UK, NATO or OCCAR. Leave blank if you don’t have one.",
     )
     security_classification = forms.ChoiceField(
         choices=SecurityGrading.product_choices,
@@ -217,8 +219,8 @@ class ProductSecurityClassificationForm(BaseForm):
         required=False,
     )
     suffix = forms.CharField(
-        label="Enter a suffix (optional)",
-        help_text="For example, UK eyes only",
+        label="Enter any additional markings (optional)",
+        help_text="For example, handling instructions, descriptors or national caveats.  Leave blank if you do not have any.",
         required=False,
     )
     issuing_authority_name_address = forms.CharField(
@@ -282,6 +284,10 @@ class ProductSecurityClassificationForm(BaseForm):
             "issuing_authority_name_address",
             "reference",
             "date_of_issue",
+            HTML.details(
+                "Help with security classification, prefix and additional markings",
+                render_to_string("f680/forms/help_security_classification.html"),
+            ),
         )
 
 
