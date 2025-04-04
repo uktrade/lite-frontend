@@ -8,6 +8,8 @@ from core.auth.views import LoginRequiredMixin
 
 
 class NewECJUQueryView(LoginRequiredMixin, SingleFormView):
+    # TODO: LTD-6084 - Replace this view/form with the django view/form used by F680s
+
     def init(self, request, **kwargs):
         query_type = request.GET.get("query_type", ECJUQueryTypes.ECJU_QUERY)
         self.object_pk = kwargs["pk"]
