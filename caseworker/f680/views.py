@@ -15,7 +15,6 @@ from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import move_case_forward
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.cases.services import get_case, post_ecju_query
-from caseworker.f680.recommendation.services import get_case_recommendations
 from caseworker.f680.rules import OUTCOME_STATUSES
 from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.cases.helpers.case import CaseworkerMixin
