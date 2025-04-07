@@ -5,6 +5,10 @@ from crispy_forms_gds.layout import HTML
 
 from core.common.forms import BaseForm
 from core.forms.utils import coerce_str_to_bool
+from core.forms.layouts import (
+    ConditionalRadios,
+    ConditionalRadiosQuestion,
+)
 
 
 class ApplicationPresubmissionForm(BaseForm):
@@ -35,8 +39,30 @@ class ApplicationSubmissionForm(BaseForm):
         required=True,
     )
 
+    foi_reason = forms.CharField(
+        widget=forms.Textarea,
+        label=(
+            "Explain why the disclosure of information would be harmful to your interests. "
+            "While the Export Control Joint Unit (ECJU) will take your views into account, "
+            "they cannot guarantee that the information will not be made public."
+        ),
+        required=False,
+    )
+
+    def clean(self):
+        return self.add_required_to_conditional_text_field(
+            parent_field="agreed_to_foi",
+            parent_field_response=True,
+            required_field="foi_reason",
+            error_message="Non disclosure explanation cannot be blank",
+        )
+
     def get_layout_fields(self):
         return (
-            "agreed_to_foi",
+            ConditionalRadios(
+                "agreed_to_foi",
+                "Yes",
+                ConditionalRadiosQuestion("No", "foi_reason"),
+            ),
             HTML(render_to_string("f680/forms/declaration.html")),
         )
