@@ -341,6 +341,7 @@ def convert_party(party, application, editable):
 
         data["Document"] = document
 
+    data.pop("Clearance level")
     # Only display descriptors on third parties for non F680 applications
     if party["type"] != "third_party" and not data.get("Descriptors"):
         data.pop("Descriptors")
