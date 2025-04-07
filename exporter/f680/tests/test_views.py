@@ -687,19 +687,30 @@ class TestF680ApplicationDeclarationView:
         assert soup.find("a", {"id": "back-link"})["href"] == f680_summary_url_with_application
         assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Accept and submit"
 
+    @pytest.mark.parametrize(
+        "data, expected_error",
+        (
+            ({}, "If you agree to make the application details publicly available click yes"),
+            (
+                {
+                    "agreed_to_foi": True,
+                },
+                "Non disclosure explanation cannot be blank",
+            ),
+        ),
+    )
     def test_POST_f680_declaration_view_fail(
         self,
         authorized_client,
         f680_declaration_url_with_application,
+        data,
+        expected_error,
         mock_f680_application_get,
     ):
 
-        response = authorized_client.post(f680_declaration_url_with_application)
+        response = authorized_client.post(f680_declaration_url_with_application, data)
         soup = BeautifulSoup(response.content, "html.parser")
-        assert (
-            "If you agree to make the application details publicly available click yes"
-            in soup.find("div", {"class": "govuk-error-summary__body"}).text
-        )
+        assert expected_error in soup.find("div", {"class": "govuk-error-summary__body"}).text
 
     def test_POST_f680_declaration_view_success(
         self,
