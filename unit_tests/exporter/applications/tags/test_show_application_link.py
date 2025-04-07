@@ -80,11 +80,11 @@ from exporter.applications.templatetags.show_application_link import show_applic
         (
             {
                 "status": {"id": "00000000-0000-0000-0000-000000000004", "key": "submitted", "value": "Submitted"},
-                "id": "00000000-0000-0000-0000-000000000001",
+                "id": "00000000-0000-0000-0000-000000000008",
                 "name": "Application 8",
                 "case_type": {"reference": {"key": "export_licence"}},
             },
-            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000001/">Application 1</a>',
+            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000008/">Application 8</a>',
         ),
         (
             {
@@ -93,11 +93,11 @@ from exporter.applications.templatetags.show_application_link import show_applic
                     "key": "initial_checks",
                     "value": "Initial checks",
                 },
-                "id": "00000000-0000-0000-0000-000000000002",
+                "id": "00000000-0000-0000-0000-000000000009",
                 "name": "Application 9",
                 "case_type": {"reference": {"key": "export_licence"}},
             },
-            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000002/">Application 2</a>',
+            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000009/">Application 9</a>',
         ),
         (
             {
@@ -106,29 +106,29 @@ from exporter.applications.templatetags.show_application_link import show_applic
                     "key": "under_review",
                     "value": "Under review",
                 },
-                "id": "00000000-0000-0000-0000-000000000003",
+                "id": "00000000-0000-0000-0000-000000000010",
                 "name": "Application 10",
                 "case_type": {"reference": {"key": "export_licence"}},
             },
-            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000003/">Application 3</a>',
+            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000010/">Application 10</a>',
         ),
         (
             {
                 "status": {"id": "00000000-0000-0000-0000-000000000001", "key": "ogd_advice", "value": "OGD Advice"},
-                "id": "00000000-0000-0000-0000-000000000004",
+                "id": "00000000-0000-0000-0000-000000000011",
                 "name": "Application 11",
                 "case_type": {"reference": {"key": "export_licence"}},
             },
-            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000004/">Application 4</a>',
+            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000011/">Application 11</a>',
         ),
         (
             {
                 "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "Draft"},
-                "id": "00000000-0000-0000-0000-000000000005",
+                "id": "00000000-0000-0000-0000-000000000012",
                 "name": "Application 12",
                 "case_type": {"reference": {"key": "export_licence"}},
             },
-            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000005/task-list/">Application 5</a>',
+            '<a class="govuk-link govuk-link--no-visited-state app-icon-label" href="/applications/00000000-0000-0000-0000-000000000012/task-list/">Application 12</a>',
         ),
     ],
 )
