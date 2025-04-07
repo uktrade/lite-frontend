@@ -22,7 +22,6 @@ class Application(Munch):
 
     @property
     def sub_type(self):
-        raise Exception()
         return self["case_type"]["sub_type"]["key"]
 
     @property
