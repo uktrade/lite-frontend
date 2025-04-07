@@ -309,7 +309,6 @@ def convert_party(party, application, editable):
     data = {
         "Name": party["name"],
         "Type": party["sub_type_other"] if party["sub_type_other"] else party["sub_type"]["value"],
-        "Descriptors": party.get("descriptors"),
         "Address": get_address(party),
         "Website": convert_to_link(party["website"]),
     }
@@ -337,9 +336,6 @@ def convert_party(party, application, editable):
             )
 
         data["Document"] = document
-
-    if party["type"] != "third_party" and not data.get("Descriptors"):
-        data.pop("Descriptors")
 
     return data
 

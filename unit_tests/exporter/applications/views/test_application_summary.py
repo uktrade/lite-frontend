@@ -148,13 +148,12 @@ def test_application_summary_view(
             "definitions_lists": None,
             "tables": [
                 (
-                    [["#", "Name", "Type", "Descriptors", "Address", "Website", "Role", "Document"]],
+                    [["#", "Name", "Type", "Address", "Website", "Role", "Document"]],
                     [
                         [
                             "1.",
                             "Third party",
                             "Individual",
-                            "None",
                             "44, United Kingdom",
                             "N/A",
                             "Consultant",
