@@ -28,7 +28,17 @@ from caseworker.f680.recommendation.forms.forms import (
     ),
 )
 def test_entity_selection_form_valid(data, valid_status, errors):
-    release_requests = [{"id": "123465e5-4c80-4d0a-aef5-db94908b0417", "recipient": {"name": "Test entity"}}]
+    release_requests = [
+        {
+            "id": "123465e5-4c80-4d0a-aef5-db94908b0417",
+            "recipient": {
+                "name": "Test entity",
+                "country": {
+                    "name": "Australia",
+                },
+            },
+        }
+    ]
     form = EntitySelectionForm(data=data, release_requests=release_requests)
     assert form.is_valid() == valid_status
     if not valid_status:

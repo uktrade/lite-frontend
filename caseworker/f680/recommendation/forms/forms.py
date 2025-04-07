@@ -41,7 +41,10 @@ class EntitySelectionForm(BaseForm):
     )
 
     def __init__(self, release_requests, *args, **kwargs):
-        release_requests_choices = [Choice(rr["id"], rr["recipient"]["name"]) for rr in release_requests]
+        release_requests_choices = [
+            Choice(rr["id"], f'{rr["recipient"]["name"]}, {rr["recipient"]["country"]["name"]}')
+            for rr in release_requests
+        ]
 
         super().__init__(*args, **kwargs)
 
