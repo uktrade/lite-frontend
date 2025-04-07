@@ -314,13 +314,11 @@ def convert_party(party, application, editable):
         "Website": convert_to_link(party["website"]),
     }
 
-    if party["type"] == "end_user":
-        data["Signatory name"] = party.get("signatory_name_euu")
-
     if party["type"] == "third_party":
         data["Role"] = party.get("role_other") if party.get("role_other") else party.get("role").get("value")
 
     if party["type"] == "end_user":
+        data["Signatory name"] = party.get("signatory_name_euu")
         party_data = get_end_user_data(application, party, editable)
         data = dict(data, **party_data)
     else:
@@ -340,7 +338,6 @@ def convert_party(party, application, editable):
 
         data["Document"] = document
 
-    # Only display descriptors on third parties for non F680 applications
     if party["type"] != "third_party" and not data.get("Descriptors"):
         data.pop("Descriptors")
 
