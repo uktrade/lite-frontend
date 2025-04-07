@@ -13,6 +13,10 @@ from caseworker.f680.outcome.services import (
     get_outcomes,
     get_releases_with_no_outcome,
 )
+from caseworker.f680.outcome.services import (
+    get_outcomes,
+    get_releases_with_no_outcome,
+)
 
 
 RECOMMENDATION_STATUSES = [CaseStatusEnum.OGD_ADVICE]
