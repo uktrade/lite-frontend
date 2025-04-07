@@ -96,29 +96,6 @@ class F680DeclarationView(LoginRequiredMixin, F680FeatureRequiredMixin, F680Base
     form_class = ApplicationSubmissionForm
     template_name = "core/form.html"
 
-    def form_valid(self, form):
-        data = form.cleaned_data
-        self.patch_f680_application(data)
-        return super().form_valid(form)
-
-    @expect_status(
-        HTTPStatus.OK,
-        "Error updating F680 application",
-        "Unexpected error updating F680 application",
-    )
-    def patch_f680_application(self, data):
-        self.application["application"].update(data)
-        return patch_f680_application(self.request, self.application["id"], self.application)
-
-    @expect_status(
-        HTTPStatus.OK,
-        "Error submitting F680 application",
-        "Unexpected error submitting F680 application",
-        reraise_404=True,
-    )
-    def submit_f680_application(self, application_id):
-        return submit_f680_application(self.request, application_id)
-
     def get_back_link_url(self):
         return reverse("f680:summary", kwargs={"pk": self.application["id"]})
 
@@ -127,8 +104,21 @@ class F680DeclarationView(LoginRequiredMixin, F680FeatureRequiredMixin, F680Base
         context["back_link_url"] = self.get_back_link_url()
         return context
 
+    def form_valid(self, form):
+        data = form.cleaned_data
+        self.submit_f680_application(self.application["id"], data)
+        return super().form_valid(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error submitting F680 application",
+        "Unexpected error submitting F680 application",
+        reraise_404=True,
+    )
+    def submit_f680_application(self, application_id, data):
+        return submit_f680_application(self.request, application_id, data)
+
     def get_success_url(self):
-        self.submit_f680_application(self.application["id"])
         return reverse("applications:success_page", kwargs={"pk": self.application["id"]})
 
 
