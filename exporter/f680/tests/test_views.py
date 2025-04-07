@@ -400,7 +400,7 @@ def mock_application_post(requests_mock, data_f680_case):
 def mock_f680_application_submit(requests_mock, data_f680_case_complete_application):
     application_id = data_f680_case_complete_application["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/submit/")
-    return requests_mock.post(url=url, json=data_f680_case_complete_application)
+    return requests_mock.post(url=url, json={})
 
 
 @pytest.fixture
@@ -706,14 +706,15 @@ class TestF680ApplicationDeclarationView:
         authorized_client,
         f680_declaration_url_with_application,
         mock_f680_application_get_application_complete,
-        mock_patch_f680_application,
         mock_f680_application_submit,
         data_f680_case,
     ):
-        response = authorized_client.post(f680_declaration_url_with_application, data={"agreed_to_foi": True})
+        response = authorized_client.post(
+            f680_declaration_url_with_application, data={"agreed_to_foi": True, "foi_reason": "some reason"}
+        )
 
-        assert mock_patch_f680_application.called_once
-        assert mock_patch_f680_application.last_request.json()["application"]["agreed_to_foi"]
+        assert mock_f680_application_submit.called_once
+        assert mock_f680_application_submit.last_request.json() == {"agreed_to_foi": True, "foi_reason": "some reason"}
         assert response.status_code == 302
         assert response.url == reverse("applications:success_page", kwargs={"pk": data_f680_case["id"]})
 
