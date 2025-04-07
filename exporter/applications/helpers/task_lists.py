@@ -26,13 +26,11 @@ from exporter.organisation.roles.services import get_user_permissions
 def get_application_task_list(request, application, errors=None):
     user_permissions = get_user_permissions(request)
     additional_documents, _ = get_additional_documents(request, application["id"])
-    application_type = application.sub_type
     is_editing, edit_type = get_edit_type(application)
 
     context = {
         "strings": applications.StandardApplicationTaskList,
         "application": application,
-        "application_type": application_type,
         "is_editing": is_editing,
         "edit_type": edit_type,
         "licence_type": applications.ApplicationPage.Summary.Licence.STANDARD,

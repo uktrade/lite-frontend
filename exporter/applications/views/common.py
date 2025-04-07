@@ -66,7 +66,7 @@ from exporter.applications.services import (
 from exporter.applications.views.conditionals import is_indeterminate_export_licence_type_allowed
 from exporter.organisation.members.services import get_user
 
-from exporter.core.constants import HMRC, APPLICANT_EDITING
+from exporter.core.constants import APPLICANT_EDITING
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import (
     applications,
@@ -313,13 +313,11 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
             "activity": get_activity(request, self.application_id) or {},
             "application_history": get_application_history(self.request, self.application_id),
         }
+        if self.view_type == "case-notes":
+            context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
 
-        if self.application.sub_type != HMRC:
-            if self.view_type == "case-notes":
-                context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
-
-            if self.view_type == "ecju-queries":
-                context["open_queries"], context["closed_queries"] = get_application_ecju_queries(request, self.case_id)
+        if self.view_type == "ecju-queries":
+            context["open_queries"], context["closed_queries"] = get_application_ecju_queries(request, self.case_id)
 
         if self.view_type == "generated-documents":
             generated_documents, _ = get_case_generated_documents(request, self.application_id)

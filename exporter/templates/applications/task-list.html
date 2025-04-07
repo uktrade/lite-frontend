@@ -76,10 +76,8 @@
 						{% url 'applications:end_user' application.id as end_user_url %}
 						{% if application.export_type.value == 'Permanent' and application.sub_type == 'standard' %}
 							{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status %}
-						{% elif application.sub_type == 'open' and end_user_mandatory %}
-							{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents %}
 						{% else  %}
-							{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents optional=application_type|application_type_in_list:"END_USERS_OPTIONAL" %}
+							{% include "includes/task-list-item.html" with id="end_user" title=strings.END_USER url=end_user_url status=application.end_user|get_parties_status_optional_documents optional=False %}
 						{% endif %}
 					{% endif %}
 				{% endif %}
