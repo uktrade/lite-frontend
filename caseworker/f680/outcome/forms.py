@@ -73,7 +73,7 @@ class ApproveOutcomeForm(BaseForm):
     )
     conditions = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
-        label="Provisos",
+        label="Conditions",
         required=False,
     )
 
