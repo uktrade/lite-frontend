@@ -15,8 +15,8 @@ from caseworker.f680.recommendation.forms.forms import (
 from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
     clear_recommendation,
-    recommendations_by_current_user,
     get_case_recommendations,
+    recommendations_by_current_user,
     group_recommendations_by_team_and_users,
     post_recommendation,
 )
@@ -34,9 +34,9 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
         context_data = super().get_context_data(**kwargs)
         case_recommendations = get_case_recommendations(self.request, self.case)
         pending_recommendations = self.pending_recommendation_requests()
+        recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
 
         user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
-        recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
         outcomes, _ = get_hydrated_outcomes(self.request, self.case)
 
         return {

@@ -124,7 +124,7 @@
 
 	            	    	<tbody class="govuk-table__body" id="tbody-main">
 	            	    		{% for case in data.results.cases %}
-	            	    			{% include 'includes/case-row.html' with case=case %}
+									{% include 'includes/generic-case-row.html' with case=case %}
 	            	    		{% endfor %}
 	            	    	</tbody>
 	            	    </table>

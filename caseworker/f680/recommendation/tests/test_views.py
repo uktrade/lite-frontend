@@ -26,7 +26,9 @@ def setup(
     mock_denial_reasons,
     mock_footnote_details,
     mock_proviso,
+    settings,
 ):
+    settings.FEATURE_FLAG_ALLOW_F680 = True
     return
 
 

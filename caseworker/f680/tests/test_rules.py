@@ -208,7 +208,12 @@ class TestCanUserMoveF680CaseForwardRule:
     @mock.patch("caseworker.f680.rules.get_case_recommendations")
     @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
     def test_can_user_move_f680_case_forward_recommendation_status_no_recommendation_denied(
-        self, mock_get_pending_recommendations, mock_case_recommendations, mock_gov_user, data_fake_queue, data_assigned_case
+        self,
+        mock_get_pending_recommendations,
+        mock_case_recommendations,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
     ):
         mock_get_pending_recommendations.return_value = False
         mock_case_recommendations.return_value = []
@@ -228,7 +233,13 @@ class TestCanUserMoveF680CaseForwardRule:
     @mock.patch("caseworker.f680.rules.get_case_recommendations")
     @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
     def test_can_user_move_f680_case_forward_recommendation_status_granted(
-        self, mock_get_pending_recommendations, mock_case_recommendations, team, mock_gov_user, data_fake_queue, data_assigned_case
+        self,
+        mock_get_pending_recommendations,
+        mock_case_recommendations,
+        team,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
     ):
         mock_get_pending_recommendations.return_value = False
         mock_case_recommendations.return_value = [{"type": "approve", "team": team}]
@@ -241,7 +252,12 @@ class TestCanUserMoveF680CaseForwardRule:
     @mock.patch("caseworker.f680.rules.get_case_recommendations")
     @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
     def test_can_user_move_f680_case_forward_recommendation_status_mod_ecju_granted(
-        self, mock_get_pending_recommendations, mock_case_recommendations, mock_gov_user, data_fake_queue, data_assigned_case
+        self,
+        mock_get_pending_recommendations,
+        mock_case_recommendations,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
     ):
         mock_get_pending_recommendations.return_value = False
         mock_case_recommendations.return_value = []
