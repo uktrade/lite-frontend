@@ -4,6 +4,7 @@ from http import HTTPStatus
 from django.contrib import messages
 from django.shortcuts import redirect, reverse
 from django.utils.datastructures import OrderedSet
+from django.views.generic import View
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -13,7 +14,12 @@ from caseworker.f680.views import F680CaseworkerMixin
 from caseworker.f680.outcome import forms
 from caseworker.f680.outcome.constants import OutcomeSteps
 from caseworker.f680.outcome.payloads import OutcomePayloadBuilder
-from caseworker.f680.outcome.services import post_outcome, get_outcomes, get_releases_with_no_outcome
+from caseworker.f680.outcome.services import (
+    post_outcome,
+    get_outcomes,
+    delete_outcome,
+    get_releases_with_no_outcome,
+)
 from caseworker.f680.recommendation.services import get_case_recommendations
 
 
@@ -156,3 +162,23 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         if len(self.remaining_request_ids_without_outcome) == 0:
             return redirect(self.get_success_url())
         return redirect(reverse("cases:f680:outcome:decide_outcome", kwargs=self.kwargs))
+
+
+class ClearOutcome(LoginRequiredMixin, F680CaseworkerMixin, View):
+
+    @expect_status(
+        HTTPStatus.NO_CONTENT,
+        "Error clearing outcome",
+        "Unexpected error clearing outcome",
+    )
+    def delete_outcome(self, outcome_id):
+        return delete_outcome(self.request, self.case.id, outcome_id)
+
+    def post(self, request, **kwargs):
+        self.delete_outcome(self.kwargs["outcome_id"])
+        success_message = "Outcome cleared successfully"
+        messages.success(self.request, success_message, extra_tags="safe")
+        outcome_url = reverse(
+            "cases:f680:recommendation", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]}
+        )
+        return redirect(outcome_url)
