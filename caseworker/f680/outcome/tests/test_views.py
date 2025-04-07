@@ -394,12 +394,16 @@ class TestDecideOutcomeView:
                 "approval_types": ["training"],
                 "security_grading": "secret",
             },
+            follow=True,
         )
-        assert response.status_code == HTTPStatus.FOUND
-        assert response.url == reverse(
+        assert response.status_code == HTTPStatus.OK
+        assert response.redirect_chain[-1][0] == reverse(
             "cases:f680:recommendation",
             kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
         )
+        messages = [str(msg) for msg in response.context["messages"]]
+        assert messages == ["Outcomes for 3 security releases saved successfully"]
+
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
         assert request.json() == {
@@ -475,12 +479,15 @@ class TestDecideOutcomeView:
                 "approval_types": ["training"],
                 "security_grading": "secret",
             },
+            follow=True,
         )
-        assert response.status_code == HTTPStatus.FOUND
-        assert response.url == reverse(
+        assert response.status_code == HTTPStatus.OK
+        assert response.redirect_chain[-1][0] == reverse(
             "cases:f680:outcome:decide_outcome",
             kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
         )
+        messages = [str(msg) for msg in response.context["messages"]]
+        assert messages == ["Outcome saved successfully"]
 
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
