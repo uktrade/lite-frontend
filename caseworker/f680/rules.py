@@ -9,6 +9,10 @@ from caseworker.f680.recommendation.services import (
     get_case_recommendations,
     get_pending_recommendation_requests,
 )
+from caseworker.f680.outcome.services import (
+    get_outcomes,
+    get_releases_with_no_outcome,
+)
 
 
 RECOMMENDATION_STATUSES = [CaseStatusEnum.OGD_ADVICE]
@@ -86,10 +90,20 @@ def case_ready_for_outcome(request, case):
     return case["data"]["status"]["key"] in OUTCOME_STATUSES
 
 
+@rules.predicate
+def releases_without_outcome(request, case):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+    outcomes, _ = get_outcomes(request, case["id"])
+    releases_without_outcome, _ = get_releases_with_no_outcome(request, outcomes, case)
+    return len(releases_without_outcome) > 0
+
+
 rules.add_rule(
     "is_user_allowed_to_make_f680_recommendation", is_user_allocated & is_user_allowed_to_make_f680_recommendation
 )
 rules.add_rule("can_user_make_f680_recommendation", is_user_allocated & can_user_make_f680_recommendation)
 rules.add_rule("can_user_clear_f680_recommendation", is_user_allocated & can_user_clear_f680_recommendation)
-rules.add_rule("can_user_make_f680_outcome", is_user_allocated & case_ready_for_outcome)
+rules.add_rule("can_user_make_f680_outcome", is_user_allocated & case_ready_for_outcome & releases_without_outcome)
 rules.add_rule("can_user_move_f680_case_forward", is_user_allocated & f680_case_ready_for_move)

@@ -69,6 +69,23 @@ def mock_outcomes_single_outcome(requests_mock, data_outcomes, data_submitted_f6
 
 
 @pytest.fixture
+def mock_outcomes_no_outcome(requests_mock, data_submitted_f680_case):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/"
+    return requests_mock.get(url, json=[], status_code=200)
+
+
+@pytest.fixture
+def mock_outcomes_complete(requests_mock, data_outcomes, data_submitted_f680_case):
+    security_release_request_ids = [
+        release_request["id"]
+        for release_request in data_submitted_f680_case["case"]["data"]["security_release_requests"]
+    ]
+    data_outcomes[0]["security_release_requests"] = security_release_request_ids
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/"
+    return requests_mock.get(url, json=data_outcomes, status_code=200)
+
+
+@pytest.fixture
 def mock_f680_case_with_assigned_user(f680_case_id, requests_mock, data_submitted_f680_case, data_queue, mock_gov_user):
     data_submitted_f680_case["case"]["assigned_users"] = {data_queue["name"]: [mock_gov_user["user"]]}
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")

@@ -1,4 +1,5 @@
 import pytest
+import requests
 import rules
 
 from itertools import chain
@@ -49,6 +50,9 @@ def get_mock_request(user, queue):
     request = HttpRequest()
     request.lite_user = user
     request.queue = queue
+    # Must be added as client requests assume RequestsSessionMiddleware has run
+    request.requests_session = requests.Session()
+    request.session = {}
     return request
 
 
@@ -285,12 +289,23 @@ class TestCanUserMakeF680OutcomeRule:
 
         assert not rules.test_rule("can_user_make_f680_outcome", request, case)
 
-    def test_can_user_make_f680_outcome_permission_granted(self, mock_gov_user, data_fake_queue, data_assigned_case):
+    def test_can_user_make_f680_outcome_permission_granted(
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_no_outcome
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
 
         assert rules.test_rule("can_user_make_f680_outcome", request, case)
+
+    def test_can_user_make_f680_outcome_existing_outcome_denied(
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete
+    ):
+        case = data_assigned_case
+        case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
+        request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+
+        assert not rules.test_rule("can_user_make_f680_outcome", request, case)
 
     def test_can_user_make_f680_outcome_request_missing_attributes(
         self, mock_gov_user, data_fake_queue, data_unassigned_case
