@@ -232,37 +232,49 @@ def get_address(data):
     from {'address': {'address_line_1': '10 Downing St', ...}
     or {'address': '10 Downing St ...', 'country': {'name': United Kingdom'}}
     """
-    if data and "address" in data:
-        address = data["address"]
-        country = data.get("country")
+    if not data:
+        return ""
 
-        if "country" in address:
-            country = address.get("country")
+    if not isinstance(data, dict):
+        return ""
 
-        if isinstance(address, str):
-            if country:
-                return address + ", " + country["name"]
-            else:
-                return address
+    if "address" not in data:
+        return ""
 
-        if "address_line_1" in address:
-            address = [
-                address["address_line_1"],
-                address["address_line_2"],
-                address["city"],
-                address["region"],
-                address["postcode"],
-            ]
-        else:
-            address = [
-                address["address"],
-            ]
+    country = data.get("country")
+    address = data["address"]
 
-        if country:
-            address.append(country["name"])
+    if isinstance(address, str) and not country:
+        return address
 
-        return ", ".join([x for x in address if x])
-    return ""
+    if isinstance(address, str) and country:
+        return f"{address}, {country['name']}"
+
+    if not isinstance(address, dict):
+        return ""
+
+    if not address:
+        return ""
+
+    if "country" in address:
+        country = address["country"]
+
+    if "address" in address:
+        address_parts_keys = ["address"]
+    else:
+        address_parts_keys = [
+            "address_line_1",
+            "address_line_2",
+            "city",
+            "region",
+            "postcode",
+        ]
+
+    address_parts = [address[k] for k in address_parts_keys]
+    if country:
+        address_parts.append(country["name"])
+
+    return ", ".join(address_part for address_part in address_parts if address_part)
 
 
 @register.filter()
