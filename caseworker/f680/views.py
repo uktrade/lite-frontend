@@ -17,7 +17,7 @@ from caseworker.advice.services import move_case_forward
 from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
-from caseworker.cases.services import get_case, post_ecju_query
+from caseworker.cases.services import get_case, post_ecju_query, get_case_documents
 from caseworker.cases.views.queries import CloseQueryMixin
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.core.services import get_denial_reasons
@@ -97,6 +97,7 @@ class CaseDetailView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
             key: self.case["data"]["application"]["sections"].get(key, None) for key in application_section_order
         }
         context_data["application_sections"] = application_sections
+
         return context_data
 
 
@@ -184,3 +185,16 @@ class CloseECJUQueryView(LoginRequiredMixin, F680CaseworkerMixin, CloseQueryMixi
 
     def get_success_url(self):
         return reverse("cases:f680:ecju_queries", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+
+class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
+    template_name = "f680/case/supporting_documents.html"
+    current_tab = "supporting-documents"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["supporting_documents"] = get_case_documents(self.request, self.case_id)
+        return context
+
+    # def test_func(self):
+    #     return all([super().test_func(), rules.test_rule("can_user_attach_document", self.request, self.case)])

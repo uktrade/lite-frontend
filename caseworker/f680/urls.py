@@ -23,6 +23,11 @@ urlpatterns = [
         name="notes_and_timeline",
     ),
     path(
+        "supporting-documents/",
+        views.SupportingDocumentsView.as_view(),
+        name="supporting_documents",
+    ),
+    path(
         "recommendation/",
         recommendation_views.CaseRecommendationView.as_view(),
         name="recommendation",
