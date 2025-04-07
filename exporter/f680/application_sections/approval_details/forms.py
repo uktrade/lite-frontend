@@ -220,7 +220,7 @@ class ProductSecurityClassificationForm(BaseForm):
     )
     suffix = forms.CharField(
         label="Enter any additional markings (optional)",
-        help_text="For example, handling instructions, descriptors or national caveats.  Leave blank if you do not have any.",
+        help_text="For example, handling instructions, descriptors or national caveats. Leave blank if you do not have any.",
         required=False,
     )
     issuing_authority_name_address = forms.CharField(
