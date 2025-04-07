@@ -15,7 +15,6 @@ from .forms import ApplicationPresubmissionForm, ApplicationSubmissionForm
 
 from .services import (
     get_f680_application,
-    patch_f680_application,
     submit_f680_application,
 )
 
