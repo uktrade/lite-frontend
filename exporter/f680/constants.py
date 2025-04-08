@@ -22,7 +22,7 @@ class SecurityGrading:
         Choice(RESTRICTED, "Restricted"),
         Choice(CONFIDENTIAL, "Confidential"),
         Choice(SECRET, "Secret"),
-        Choice(TOP_SECRET, "Top secret"),
+        Choice(TOP_SECRET, "Top secret", divider="Or"),
         Choice(OTHER, "Other"),
     ]
 

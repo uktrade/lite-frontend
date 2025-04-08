@@ -786,7 +786,7 @@ def data_f680_submitted_application(data_f680_case):
                         "key": "has_security_classification",
                         "answer": "No",
                         "datatype": "boolean",
-                        "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                        "question": "Has the product been given a security classification by a UK MOD authority?",
                         "raw_answer": False,
                     },
                     "used_by_uk_armed_forces_info": {
