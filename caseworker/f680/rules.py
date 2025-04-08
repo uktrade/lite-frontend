@@ -74,10 +74,6 @@ def f680_case_ready_for_move(request, case):
         if team_recommendations_exist:
             return True
 
-        # TODO: Remove this once we get stop the case going to MOD-ECJU Review and combine
-        if team["alias"] == "MOD_ECJU":
-            return True
-
     return False
 
 
