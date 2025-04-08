@@ -26,7 +26,18 @@ class ApplicationSubmissionForm(BaseForm):
         SUBTITLE = render_to_string("f680/forms/subtitle_declaration.html")
         SUBMIT_BUTTON_TEXT = "Accept and submit"
 
-    # This follows the same structure as the SIELs applcation here exporter/applications/forms/declaration.py
+    # As per the SIELs applcation here exporter/applications/forms/declaration.py
+
+    # An old pplication question asked if the exporter would find an FOI harmful to their
+    # interests, but the variable name agreed_to_foi suggests the opposite,
+    # that they agree to have their application be made public under FOI.
+    # Maybe agreed_that_foi_harmful would be less confusing. Also,
+    # the new question asks if the exporter agrees to make their application
+    # publicly available, and the variable name should reflect that.
+
+    # False equating to Yes and True equating to No reflects the current SIELs functionality
+    # so it is presumed that some kind of upstream functionality relied on this so best to
+    # replicate rather than change at this point
     agreed_to_foi = forms.TypedChoiceField(
         choices=(
             (False, "Yes"),
