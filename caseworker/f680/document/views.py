@@ -2,11 +2,13 @@ import rules
 
 from http import HTTPStatus
 from urllib.parse import quote
+import rules
 
 from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.urls import reverse
 from django.views.generic import FormView
+from django.http import Http404
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -44,7 +46,6 @@ class F680DocumentMixin(F680CaseworkerMixin):
         filters = {"case_type": self.case.case_type["sub_type"]["key"], "decision": decisions}
         f680_letter_templates, _ = self.get_letter_templates_list(filters)
         return f680_letter_templates["results"]
-
 
 class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
     form_class = DocumentGenerationForm
@@ -96,6 +97,16 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
                 "visible_to_exporter": False,
             },
         )
+
+    def dispatch(self, request, *args, **kwargs):
+        dispatch = super().dispatch(request, *args, **kwargs)
+        template_id = str(self.kwargs["template_id"])
+        # Check to see if the letter template being generated is permissible
+        print(self.get_case_letter_templates())
+        template_allowed = bool([t for t in self.get_case_letter_templates() if t["id"] == template_id])
+        if not template_allowed:
+            raise Http404
+        return dispatch
 
     def form_valid(self, form):
         if "generate" not in self.request.POST:

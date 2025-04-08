@@ -56,6 +56,11 @@ def data_outcome_id():
 @pytest.fixture
 def data_outcomes(current_user, admin_team, data_submitted_f680_case, data_outcome_id):
     security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+    outcome_map = {
+        security_release_requests[0]["id"]: "approve",
+        security_release_requests[1]["id"]: "refuse",
+        security_release_requests[2]["id"]: "approve",
+    }
     return [
         {
             "id": data_outcome_id,

@@ -176,8 +176,24 @@ def mock_letter_template_approval_only(requests_mock, letter_templates_data):
     url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
     return requests_mock.get(url=url, json={"results": letter_templates_data[1:]})
 
+@pytest.fixture
+def mock_letter_template_refusal_only(requests_mock, letter_templates_data):
+    url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
+    return requests_mock.get(url=url, json={"results": [letter_templates_data[1]]})
+
 
 class TestF680GenerateDocument:
+
+    def test_GET_template_does_not_exist(
+        self,
+        authorized_client,
+        generate_document_url,
+        mock_preview_f680_letter_missing_template,
+        mock_outcomes_approve_refuse,
+        mock_letter_template_filter,
+    ):
+        response = authorized_client.get(generate_document_url)
+        assert response.status_code == 403
 
     def test_GET_success(
         self,
@@ -192,6 +208,19 @@ class TestF680GenerateDocument:
         response = authorized_client.get(generate_document_url)
         assert response.status_code == 200
         assert response.context["preview"] == data_preview_response["preview"]
+
+    def test_GET_success_approval_not_allowed(
+        self,
+        authorized_client,
+        generate_document_url,
+        mock_preview_f680_letter,
+        data_preview_response,
+        mock_f680_case_under_final_review,
+        mock_outcomes_complete_refusal,
+        mock_letter_template_refusal_only,
+    ):
+        response = authorized_client.get(generate_document_url)
+        assert response.status_code == 404
 
     def test_POST_preview_success(
         self,
