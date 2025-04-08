@@ -5,12 +5,20 @@ from http import HTTPStatus
 
 from core.auth.views import LoginRequiredMixin
 from core.wizard.conditionals import C
+from caseworker.f680.recommendation.conditionals import (
+    is_approving,
+    is_refusing,
+    denial_reasons_exist,
+    team_provisos_exist,
+)
 from caseworker.f680.recommendation.constants import RecommendationSteps
 from caseworker.f680.recommendation.forms.forms import (
-    BaseRecommendationForm,
+    BasicRecommendationConditionsForm,
+    BasicRecommendationRefusalReasonsForm,
     ClearRecommendationForm,
-    EntityConditionsRecommendationForm,
-    EntitySelectionForm,
+    EntityConditionsForm,
+    EntityRefusalReasonsForm,
+    EntitySelectionAndDecisionForm,
 )
 from caseworker.f680.recommendation.payloads import RecommendationPayloadBuilder
 from caseworker.f680.recommendation.services import (
@@ -86,34 +94,37 @@ class ClearRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, FormView)
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
 
-def team_provisos_exist(wizard):
-    return len(wizard.conditions["results"]) > 0
-
-
 class MakeRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     template_name = "f680/case/recommendation/form_wizard.html"
     current_tab = "recommendations"
 
     form_list = [
-        (RecommendationSteps.SELECT_ENTITIES, EntitySelectionForm),
-        (RecommendationSteps.RELEASE_REQUEST_PROVISOS, EntityConditionsRecommendationForm),
-        (RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS, BaseRecommendationForm),
+        (RecommendationSteps.ENTITIES_AND_DECISION, EntitySelectionAndDecisionForm),
+        (RecommendationSteps.RELEASE_REQUEST_PROVISOS, EntityConditionsForm),
+        (RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS, BasicRecommendationConditionsForm),
+        (RecommendationSteps.RELEASE_REQUEST_REFUSAL_REASONS, EntityRefusalReasonsForm),
+        (RecommendationSteps.RELEASE_REQUEST_NO_REFUSAL_REASONS, BasicRecommendationRefusalReasonsForm),
     ]
 
     condition_dict = {
-        RecommendationSteps.RELEASE_REQUEST_PROVISOS: C(team_provisos_exist),
-        RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS: ~C(team_provisos_exist),
+        RecommendationSteps.RELEASE_REQUEST_PROVISOS: C(is_approving) & C(team_provisos_exist),
+        RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS: C(is_approving) & ~C(team_provisos_exist),
+        RecommendationSteps.RELEASE_REQUEST_REFUSAL_REASONS: C(is_refusing) & C(denial_reasons_exist),
+        RecommendationSteps.RELEASE_REQUEST_NO_REFUSAL_REASONS: C(is_refusing) & ~C(denial_reasons_exist),
     }
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
 
-        if step == RecommendationSteps.SELECT_ENTITIES:
+        if step == RecommendationSteps.ENTITIES_AND_DECISION:
             pending_release_requests = self.pending_recommendation_requests()
             kwargs["release_requests"] = list(pending_release_requests.values())
 
         if step == RecommendationSteps.RELEASE_REQUEST_PROVISOS:
             kwargs["conditions"] = self.conditions
+
+        if step == RecommendationSteps.RELEASE_REQUEST_REFUSAL_REASONS:
+            kwargs["refusal_reasons"] = self.refusal_reasons
 
         return kwargs
 

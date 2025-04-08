@@ -29,9 +29,22 @@ class PicklistAdviceForm(forms.Form):
         return reasons_choices, reasons_text
 
 
+class PicklistRefusalForm(forms.Form):
+    def _picklist_to_choices(self, picklist_data):
+        reasons_choices = []
+        reasons_text = {}
+
+        for result in picklist_data:
+            key = "_".join(result.get("display_value").lower().split())
+            choice = Choice(key, result.get("display_value"))
+            reasons_choices.append(choice)
+            reasons_text[key] = result.get("description")
+        return reasons_choices, reasons_text
+
+
 class EntitySelectionAndDecisionForm(BaseForm):
     class Layout:
-        TITLE = "Select entities"
+        TITLE = "Select entities and decision"
 
     CHOICES = [
         ("approve", "Approve"),
@@ -85,12 +98,12 @@ class BasicRecommendationRefusalReasonsForm(BaseForm):
 
     refusal_reasons = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
-        label="Provisos",
+        label="Refusal reasons",
         required=False,
     )
 
     def get_layout_fields(self):
-        return ("conditions",)
+        return ("refusal_reasons",)
 
 
 class EntityConditionsForm(BaseForm, PicklistAdviceForm):
@@ -132,7 +145,7 @@ class EntityConditionsForm(BaseForm, PicklistAdviceForm):
         return (ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),)
 
 
-class EntityRefusalReasonsForm(BaseForm, PicklistAdviceForm):
+class EntityRefusalReasonsForm(BaseForm, PicklistRefusalForm):
     class Layout:
         TITLE = "Add refusal reasons for entities"
 
@@ -147,7 +160,7 @@ class EntityRefusalReasonsForm(BaseForm, PicklistAdviceForm):
         cleaned_data = super().clean()
         return {
             "refusal_reasons": "\n\n--------\n".join(
-                [cleaned_data[selected] for selected in cleaned_data["conditions"]]
+                [cleaned_data[selected] for selected in cleaned_data["refusal_reasons"]]
             ),
         }
 

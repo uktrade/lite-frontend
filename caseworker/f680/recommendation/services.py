@@ -88,8 +88,8 @@ def post_recommendation(request, case, data):
     json = [
         {
             "type": data["recommendation"],
-            "conditions": data["conditions"] if data["recommendation"] == RecommendationType.APPROVE else "",
-            "refusal_reasons": data["conditions"] if data["recommendation"] == RecommendationType.REFUSE else "",
+            "conditions": data.get("conditions", ""),
+            "refusal_reasons": data.get("refusal_reasons", ""),
             "security_release_request": release_request_id,
         }
         for release_request_id in data["release_requests"]
