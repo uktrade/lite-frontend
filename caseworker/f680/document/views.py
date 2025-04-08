@@ -31,9 +31,11 @@ class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        template_filter = {"case_type": self.case.case_type["sub_type"]["key"], "decision": "approve"}
-        letter_templates, _ = self.get_letter_templates_list(template_filter)
-        context_data["approval_templates"] = letter_templates["results"]
+
+        f680_letter_filter = {"case_type": self.case.case_type["sub_type"]["key"]}
+        f680_letter_templates, _ = self.get_letter_templates_list(f680_letter_filter)
+
+        context_data["letter_templates"] = f680_letter_templates["results"]
         context_data["case"] = self.case
         context_data["back_link_url"] = self.get_success_url()
         return context_data
