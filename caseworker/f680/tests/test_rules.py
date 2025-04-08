@@ -288,13 +288,21 @@ class TestCanUserMakeF680OutcomeRule:
 
         assert not rules.test_rule("can_user_make_f680_outcome", request, case)
 
-    def test_can_user_make_f680_outcome_request_missing_attributes(
+    def test_case_ready_for_outcome_request_missing_attributes(
         self, mock_gov_user, data_fake_queue, data_unassigned_case
     ):
         case = data_unassigned_case
         request = None
 
         assert not recommendation_rules.case_ready_for_outcome(request, case)
+
+    def test_releases_without_outcome_request_missing_attributes(
+        self, mock_gov_user, data_fake_queue, data_unassigned_case
+    ):
+        case = data_unassigned_case
+        request = None
+
+        assert not recommendation_rules.releases_without_outcome(request, case)
 
 
 class TestClearF680RecommendationRule:
