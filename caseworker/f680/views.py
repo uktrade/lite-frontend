@@ -193,8 +193,7 @@ class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateV
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["supporting_documents"] = get_case_documents(self.request, self.case_id)
+        documents, _ = get_application_documents(self.request, self.case_id)
+        breakpoint()
+        context["supporting_documents"] = documents
         return context
-
-    # def test_func(self):
-    #     return all([super().test_func(), rules.test_rule("can_user_attach_document", self.request, self.case)])

@@ -3,25 +3,9 @@
 
 
 {% block details %}
-<div class="lite-buttons-row">
-    {% load rules %}
-	{% test_rule 'can_user_attach_document' request case as can_user_attach_document %}
-	{% if can_user_attach_document %}
-		<a id="button-attach-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:attach_documents' queue.id case.id %}">
-			{% lcs 'cases.CasePage.DocumentsTab.ATTACH_DOCUMENT_BUTTON' %}
-		</a>
-	{% endif %}
-	{% test_rule 'can_user_generate_document' request case as can_user_generate_document %}
-	{% if can_user_generate_document %}
-		<a id="button-generate-document" role="button" draggable="false" class="govuk-button" href="{% url 'cases:generate_document' queue.id case.id %}">
-			{% lcs 'cases.CasePage.DocumentsTab.GENERATE_DOCUMENT_BUTTON' %}
-		</a>
-	{% endif %}
-</div>
-
-{% if case_documents %}
+{% if supporting_documents %}
 	<ol class="app-documents__list">
-		{% for document in case_documents %}
+		{% for document in supporting_documents %}
 			<li class="app-documents__item">
 				<div class="app-documents__item-preview">
 					{% svg 'document' %}
