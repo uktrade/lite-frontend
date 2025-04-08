@@ -194,6 +194,5 @@ class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateV
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         documents, _ = get_application_documents(self.request, self.case_id)
-        breakpoint()
-        context["supporting_documents"] = documents
+        context["supporting_documents"] = documents["results"]
         return context
