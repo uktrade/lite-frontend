@@ -29,15 +29,26 @@ class PicklistAdviceForm(forms.Form):
         return reasons_choices, reasons_text
 
 
-class EntitySelectionForm(BaseForm):
+class EntitySelectionAndDecisionForm(BaseForm):
     class Layout:
         TITLE = "Select entities"
+
+    CHOICES = [
+        ("approve", "Approve"),
+        ("refuse", "Refuse"),
+    ]
 
     release_requests = forms.MultipleChoiceField(
         label="",
         widget=forms.CheckboxSelectMultiple,
         choices=(),
         error_messages={"required": "Select entities to add recommendations"},
+    )
+    recommendation = forms.ChoiceField(
+        choices=CHOICES,
+        widget=forms.RadioSelect,
+        label="Select recommendation type",
+        error_messages={"required": "Select if you approve or refuse"},
     )
 
     def __init__(self, release_requests, *args, **kwargs):
@@ -51,23 +62,13 @@ class EntitySelectionForm(BaseForm):
         self.fields["release_requests"].choices = release_requests_choices
 
     def get_layout_fields(self):
-        return ("release_requests",)
+        return ("release_requests", "recommendation")
 
 
-class BaseRecommendationForm(BaseForm):
+class BasicRecommendationConditionsForm(BaseForm):
     class Layout:
-        TITLE = "Add recommendation"
+        TITLE = "Add conditions"
 
-    CHOICES = [
-        ("approve", "Approve"),
-        ("refuse", "Refuse"),
-    ]
-    recommendation = forms.ChoiceField(
-        choices=CHOICES,
-        widget=forms.RadioSelect,
-        label="Select recommendation type",
-        error_messages={"required": "Select if you approve or refuse"},
-    )
     conditions = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
         label="Provisos",
@@ -75,13 +76,27 @@ class BaseRecommendationForm(BaseForm):
     )
 
     def get_layout_fields(self):
-        return (
-            "recommendation",
-            "conditions",
-        )
+        return ("conditions",)
 
 
-class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationForm):
+class BasicRecommendationRefusalReasonsForm(BaseForm):
+    class Layout:
+        TITLE = "Add refusal reasons"
+
+    refusal_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7}),
+        label="Provisos",
+        required=False,
+    )
+
+    def get_layout_fields(self):
+        return ("conditions",)
+
+
+class EntityConditionsForm(BaseForm, PicklistAdviceForm):
+    class Layout:
+        TITLE = "Add conditions for entities"
+
     conditions = forms.MultipleChoiceField(
         label="Provisos",
         required=False,
@@ -92,7 +107,6 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
     def clean(self):
         cleaned_data = super().clean()
         return {
-            "recommendation": cleaned_data.get("recommendation", ""),
             "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
         }
 
@@ -115,10 +129,48 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
             )
 
     def get_layout_fields(self):
-        return (
-            "recommendation",
-            ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
+        return (ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),)
+
+
+class EntityRefusalReasonsForm(BaseForm, PicklistAdviceForm):
+    class Layout:
+        TITLE = "Add refusal reasons for entities"
+
+    refusal_reasons = forms.MultipleChoiceField(
+        label="Refusal reasons",
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        choices=(),
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return {
+            "refusal_reasons": "\n\n--------\n".join(
+                [cleaned_data[selected] for selected in cleaned_data["conditions"]]
+            ),
+        }
+
+    def __init__(self, refusal_reasons, *args, **kwargs):
+        refusal_reasons_choices, refusal_reasons_text = self._picklist_to_choices(refusal_reasons)
+
+        self.conditional_checkbox_choices = (
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in refusal_reasons_choices
         )
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["refusal_reasons"].choices = refusal_reasons_choices
+        for choices in refusal_reasons_choices:
+            self.fields[choices.value] = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3}),
+                label="Description",
+                required=False,
+                initial=refusal_reasons_text[choices.value],
+            )
+
+    def get_layout_fields(self):
+        return (ConditionalCheckboxes("refusal_reasons", *self.conditional_checkbox_choices),)
 
 
 class ClearRecommendationForm(BaseForm):
