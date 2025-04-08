@@ -1,9 +1,11 @@
 from http import HTTPStatus
 from urllib.parse import quote
+import rules
 
 from django.contrib import messages
 from django.urls import reverse
 from django.views.generic import FormView
+from django.http import Http404
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -16,10 +18,13 @@ from caseworker.f680.views import F680CaseworkerMixin
 from .forms import GenerateDocumentForm, DocumentGenerationForm
 
 
-class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
-    form_class = DocumentGenerationForm
-    template_name = "f680/document/all_documents.html"
-    current_tab = "recommendations"
+class F680DocumentMixin(F680CaseworkerMixin):
+
+    def dispatch(self, *args, **kwargs):
+        dispatch = super().dispatch(*args, **kwargs)
+        if not rules.test_rule("can_user_make_f680_outcome_letter", self.request, self.case):
+            raise Http404()
+        return dispatch
 
     @expect_status(
         HTTPStatus.OK,
@@ -29,13 +34,35 @@ class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     def get_letter_templates_list(self, filter):
         return get_letter_templates_list(self.request, filter)
 
-    def get_context_data(self, **kwargs):
-        context_data = super().get_context_data(**kwargs)
-
+    def get_case_letter_templates(self):
         f680_letter_filter = {"case_type": self.case.case_type["sub_type"]["key"]}
         f680_letter_templates, _ = self.get_letter_templates_list(f680_letter_filter)
+        return f680_letter_templates["results"]
 
-        context_data["letter_templates"] = f680_letter_templates["results"]
+    def get_case_filtered_letter_templates(self):
+        allowed_letter_generation = []
+        filtered_f680_letter_templates = []
+        f680_letter_templates = self.get_case_letter_templates()
+        if rules.test_rule("can_user_make_approval_f680_outcome_letter", self.request, self.case):
+            allowed_letter_generation.append("approve")
+        if rules.test_rule("can_user_make_refusal_f680_outcome_letter", self.request, self.case):
+            allowed_letter_generation.append("refuse")
+
+        for lt in f680_letter_templates:
+            for decision in lt["decisions"]:
+                if decision["name"]["key"] in allowed_letter_generation:
+                    filtered_f680_letter_templates.append(lt)
+        return filtered_f680_letter_templates
+
+
+class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
+    form_class = DocumentGenerationForm
+    template_name = "f680/document/all_documents.html"
+    current_tab = "recommendations"
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data["letter_templates"] = self.get_case_filtered_letter_templates()
         context_data["case"] = self.case
         context_data["back_link_url"] = self.get_success_url()
         return context_data
@@ -44,7 +71,7 @@ class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
         return reverse("cases:f680:details", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
 
 
-class F680GenerateDocument(LoginRequiredMixin, F680CaseworkerMixin, FormView):
+class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
     template_name = "f680/document/preview.html"
     form_class = GenerateDocumentForm
     current_tab = "recommendations"
@@ -78,6 +105,15 @@ class F680GenerateDocument(LoginRequiredMixin, F680CaseworkerMixin, FormView):
                 "visible_to_exporter": False,
             },
         )
+
+    def dispatch(self, request, *args, **kwargs):
+        dispatch = super().dispatch(request, *args, **kwargs)
+        template_id = str(self.kwargs["template_id"])
+        # Check to see if the letter template being generated is permissible
+        template_allowed = bool([t for t in self.get_case_filtered_letter_templates() if t["id"] == template_id])
+        if not template_allowed:
+            raise Http404
+        return dispatch
 
     def form_valid(self, form):
         if "generate" not in self.request.POST:

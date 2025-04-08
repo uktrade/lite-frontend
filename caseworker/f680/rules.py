@@ -86,7 +86,6 @@ def case_ready_for_outcome(request, case):
     user = get_logged_in_caseworker(request)
     if not user:
         return False
-
     return case["data"]["status"]["key"] in OUTCOME_STATUSES
 
 
@@ -100,6 +99,41 @@ def releases_without_outcome(request, case):
     return len(releases_without_outcome) > 0
 
 
+@rules.predicate
+def all_releases_decided(request, case):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+    outcomes, _ = get_outcomes(request, case["id"])
+    
+    releases_without_outcome, _ = get_releases_with_no_outcome(request, outcomes, case)
+    return len(releases_without_outcome) == 0
+
+
+@rules.predicate
+def release_has_approval(request, case):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+    outcomes, _ = get_outcomes(request, case["id"])
+    for outcome in outcomes:
+        if outcome["outcome"] == "approve":
+            return True
+    return False
+
+
+@rules.predicate
+def release_has_refusal(request, case):
+    user = get_logged_in_caseworker(request)
+    if not user:
+        return False
+    outcomes, _ = get_outcomes(request, case["id"])
+    for outcome in outcomes:
+        if outcome["outcome"] == "refuse":
+            return True
+    return False
+
+
 rules.add_rule(
     "is_user_allowed_to_make_f680_recommendation", is_user_allocated & is_user_allowed_to_make_f680_recommendation
 )
@@ -107,3 +141,12 @@ rules.add_rule("can_user_make_f680_recommendation", is_user_allocated & can_user
 rules.add_rule("can_user_clear_f680_recommendation", is_user_allocated & can_user_clear_f680_recommendation)
 rules.add_rule("can_user_make_f680_outcome", is_user_allocated & case_ready_for_outcome & releases_without_outcome)
 rules.add_rule("can_user_move_f680_case_forward", is_user_allocated & f680_case_ready_for_move)
+rules.add_rule("can_user_make_f680_outcome_letter", is_user_allocated & case_ready_for_outcome & all_releases_decided)
+rules.add_rule(
+    "can_user_make_approval_f680_outcome_letter",
+    is_user_allocated & case_ready_for_outcome & all_releases_decided & release_has_approval,
+)
+rules.add_rule(
+    "can_user_make_refusal_f680_outcome_letter",
+    is_user_allocated & case_ready_for_outcome & all_releases_decided & release_has_refusal,
+)
