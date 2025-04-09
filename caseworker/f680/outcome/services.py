@@ -26,3 +26,17 @@ def get_hydrated_outcomes(request, case):
         outcome["security_release_requests"] = release_requests
         outcomes.append(outcome)
     return outcomes, response.status_code
+
+
+def get_releases_with_no_outcome(request, existing_outcomes, case):
+    release_requests_with_outcome = set()
+    for outcome in existing_outcomes:
+        release_requests_with_outcome.update(outcome["security_release_requests"])
+    remaining_request_ids_without_outcome = set()
+    remaining_requests_without_outcome = []
+    for release_request in case.data["security_release_requests"]:
+        if release_request["id"] in release_requests_with_outcome:
+            continue
+        remaining_requests_without_outcome.append(release_request)
+        remaining_request_ids_without_outcome.add(release_request["id"])
+    return remaining_requests_without_outcome, remaining_request_ids_without_outcome

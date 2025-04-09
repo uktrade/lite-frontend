@@ -1,6 +1,7 @@
 from collections import defaultdict
 from http import HTTPStatus
 
+from django.contrib import messages
 from django.shortcuts import redirect, reverse
 from django.utils.datastructures import OrderedSet
 
@@ -12,7 +13,7 @@ from caseworker.f680.views import F680CaseworkerMixin
 from caseworker.f680.outcome import forms
 from caseworker.f680.outcome.constants import OutcomeSteps
 from caseworker.f680.outcome.payloads import OutcomePayloadBuilder
-from caseworker.f680.outcome.services import post_outcome, get_outcomes
+from caseworker.f680.outcome.services import post_outcome, get_outcomes, get_releases_with_no_outcome
 from caseworker.f680.recommendation.services import get_case_recommendations
 
 
@@ -50,16 +51,9 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
 
     def get_remaining_outcomes(self):
         existing_outcomes, _ = self.get_existing_outcomes()
-        release_requests_with_outcome = set()
-        for outcome in existing_outcomes:
-            release_requests_with_outcome.update(outcome["security_release_requests"])
-        remaining_request_ids_without_outcome = set()
-        remaining_requests_without_outcome = []
-        for release_request in self.case.data["security_release_requests"]:
-            if release_request["id"] in release_requests_with_outcome:
-                continue
-            remaining_requests_without_outcome.append(release_request)
-            remaining_request_ids_without_outcome.add(release_request["id"])
+        remaining_requests_without_outcome, remaining_request_ids_without_outcome = get_releases_with_no_outcome(
+            self.request, existing_outcomes, self.case
+        )
         return existing_outcomes, remaining_requests_without_outcome, remaining_request_ids_without_outcome
 
     def get_success_url(self):
@@ -151,7 +145,12 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
+        security_request_count = len(data["security_release_requests"])
         self.post_outcome(data)
+        success_message = f"Outcomes for {security_request_count} security releases saved successfully"
+        if security_request_count == 1:
+            success_message = "Outcome saved successfully"
+        messages.success(self.request, success_message)
         for request_id in data["security_release_requests"]:
             self.remaining_request_ids_without_outcome.remove(request_id)
         if len(self.remaining_request_ids_without_outcome) == 0:
