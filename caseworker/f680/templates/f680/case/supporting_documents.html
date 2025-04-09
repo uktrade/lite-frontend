@@ -13,19 +13,15 @@
 						{{ document.name|file_type }}
 					</span>
 				</div>
+				{{ document }}
+				{{ application }}
 				<div class="app-documents__item-details">
-					<a class="govuk-link--no-visited-state" {% if document.safe == True %}href="{% url 'cases:document' queue.id case.id document.metadata_id %}"{% endif %}>{{ document.name }}</a>
-					<p id="document-type" class="govuk-hint">{% if document.visible_to_exporter %}Visible to exporter - {% endif %}{{ document.type.value }}{% if document.type.value != "Auto Generated" %} by {{ document.user.first_name }} {{ document.user.last_name }}{% endif %} at {{ document.created_at|str_date }}</p>
+					<a class="govuk-link--no-visited-state" {% if document.safe == True %}href="{% url 'cases:f680:document' queue.id case.id document.id %}"{% endif %}>{{ document.name }}</a>
+					<p id="document-type" class="govuk-hint">Uploaded by exporter user at {{ document.created_at|str_date }}</p>
 					{% if document.description %}
 						<p class="govuk-body">
 							{{ document.description }}
 						</p>
-					{% endif %}
-					{% if document.type.key == generated_document_key %}
-						<form method="get" action="{% url 'cases:generate_document_regenerate' queue.id case.id document.id %}">
-							{% csrf_token %}
-							<button id="regenerate" type="submit" class="lite-button--link">{% lcs 'cases.AdditionalDocumentsPage.Document.REGENERATE_LINK' %}</button>
-						</form>
 					{% endif %}
 					{% if document.safe == False %}
 						<p class="govuk-label">{% lcs 'cases.AdditionalDocumentsPage.Document.INFECTED_LABEL' %}</p>

@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import rules
 
 from collections import OrderedDict
@@ -10,6 +11,9 @@ from django.views.generic import TemplateView, View, FormView
 from django.contrib.auth.mixins import UserPassesTestMixin
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
+from core.helpers import stream_document_response
+from core.services import stream_document
 
 from caseworker.activities.forms import NotesAndTimelineForm
 from caseworker.activities.mixins import NotesAndTimelineMixin
@@ -196,3 +200,17 @@ class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateV
         documents, _ = get_application_documents(self.request, self.case_id)
         context["supporting_documents"] = documents["results"]
         return context
+
+
+class SupportingDocumentStreamView(LoginRequiredMixin, F680CaseworkerMixin, View):
+    @expect_status(
+        HTTPStatus.OK,
+        "Error downloading document",
+        "Unexpected error downloading document",
+    )
+    def stream_document(self, request, pk):
+        return stream_document(request, pk=pk)
+
+    def get(self, request, **kwargs):
+        api_response, _ = self.stream_document(request, pk=kwargs["file_pk"])
+        return stream_document_response(api_response)
