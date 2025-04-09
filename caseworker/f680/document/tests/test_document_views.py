@@ -14,6 +14,8 @@ def setup(
     settings,
     mock_f680_case_with_assigned_user,
     mock_proviso,
+    mock_denial_reasons,
+    mock_get_case_recommendations,
 ):
     settings.FEATURE_FLAG_ALLOW_F680 = True
     return

@@ -55,6 +55,7 @@ class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
 
         self.conditions = get_picklists_list(request, type="proviso", disable_pagination=True, show_deactivated=False)
         self.refusal_reasons = get_denial_reasons(request)
+        self.pending_recommendations = get_pending_recommendation_requests(self.request, self.case, self.caseworker)
 
     def pending_recommendation_requests(self):
         return get_pending_recommendation_requests(self.request, self.case, self.caseworker)

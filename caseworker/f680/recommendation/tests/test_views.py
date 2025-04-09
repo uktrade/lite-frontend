@@ -8,9 +8,12 @@ from django.urls import reverse
 
 from caseworker.f680.recommendation.constants import RecommendationSteps, RecommendationType
 from caseworker.f680.recommendation.forms.forms import (
-    BaseRecommendationForm,
+    BasicRecommendationConditionsForm,
+    BasicRecommendationRefusalReasonsForm,
     ClearRecommendationForm,
-    EntityConditionsRecommendationForm,
+    EntityConditionsForm,
+    EntityRefusalReasonsForm,
+    EntitySelectionAndDecisionForm,
 )
 from core import client
 from core.constants import CaseStatusEnum
@@ -26,6 +29,7 @@ def setup(
     mock_denial_reasons,
     mock_footnote_details,
     mock_proviso,
+    mock_get_case_recommendations,
     settings,
 ):
     settings.FEATURE_FLAG_ALLOW_F680 = True
@@ -176,6 +180,7 @@ class TestF680MakeRecommendationView:
         data_submitted_f680_case,
         mock_f680_case,
         mock_proviso,
+        mock_denial_reasons,
         mock_post_recommendation,
         post_to_step,
         view_recommendation_url,
@@ -186,19 +191,19 @@ class TestF680MakeRecommendationView:
             item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
         ]
         response = post_to_step(
-            RecommendationSteps.SELECT_ENTITIES,
+            RecommendationSteps.ENTITIES_AND_DECISION,
             {
                 "release_requests": release_requests_ids,
+                "recommendation": RecommendationType.APPROVE,
             },
         )
         assert response.status_code == 200
         form = response.context["form"]
-        assert isinstance(form, EntityConditionsRecommendationForm)
+        assert isinstance(form, EntityConditionsForm)
 
         response = post_to_step(
             RecommendationSteps.RELEASE_REQUEST_PROVISOS,
             {
-                "recommendation": RecommendationType.APPROVE,
                 "conditions": ["no_release", "no_specifications"],
                 "no_specifications": "no specifications",
                 "no_release": "no release",
@@ -240,19 +245,19 @@ class TestF680MakeRecommendationView:
             item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
         ]
         response = post_to_step(
-            RecommendationSteps.SELECT_ENTITIES,
+            RecommendationSteps.ENTITIES_AND_DECISION,
             {
                 "release_requests": release_requests_ids[:2],
+                "recommendation": RecommendationType.APPROVE,
             },
         )
         assert response.status_code == 200
         form = response.context["form"]
-        assert isinstance(form, EntityConditionsRecommendationForm)
+        assert isinstance(form, EntityConditionsForm)
 
         response = post_to_step(
             RecommendationSteps.RELEASE_REQUEST_PROVISOS,
             {
-                "recommendation": RecommendationType.APPROVE,
                 "conditions": ["no_release", "no_specifications"],
                 "no_specifications": "no specifications",
                 "no_release": "no release",
@@ -296,19 +301,19 @@ class TestF680MakeRecommendationView:
             item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
         ]
         response = post_to_step(
-            RecommendationSteps.SELECT_ENTITIES,
+            RecommendationSteps.ENTITIES_AND_DECISION,
             {
                 "release_requests": release_requests_ids,
+                "recommendation": RecommendationType.APPROVE,
             },
         )
         assert response.status_code == 200
         form = response.context["form"]
-        assert isinstance(form, BaseRecommendationForm)
+        assert isinstance(form, BasicRecommendationConditionsForm)
 
         response = post_to_step(
             RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS,
             {
-                "recommendation": RecommendationType.APPROVE,
                 "conditions": "no release",
             },
         )
@@ -323,6 +328,55 @@ class TestF680MakeRecommendationView:
                 "type": RecommendationType.APPROVE,
                 "conditions": "no release",
                 "refusal_reasons": "",
+                "security_release_request": release_request_id,
+            }
+            for release_request_id in release_requests_ids
+        ]
+
+    @mock.patch("caseworker.f680.recommendation.services.get_case_recommendations")
+    def test_make_recommendation_post_no_denial_reasons(
+        self,
+        mock_case_recommendations,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_no_denial_reasons,
+        mock_post_recommendation,
+        post_to_step,
+        view_recommendation_url,
+        hydrated_recommendations,
+    ):
+        mock_case_recommendations.side_effect = [[], [], hydrated_recommendations]
+        release_requests_ids = [
+            item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        ]
+        response = post_to_step(
+            RecommendationSteps.ENTITIES_AND_DECISION,
+            {"release_requests": release_requests_ids, "recommendation": RecommendationType.REFUSE},
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, BasicRecommendationRefusalReasonsForm)
+
+        response = post_to_step(
+            RecommendationSteps.RELEASE_REQUEST_NO_REFUSAL_REASONS,
+            {
+                "refusal_reasons": "doesn't meet the criteria",
+            },
+        )
+        assert response.status_code == 302
+        assert response.url == view_recommendation_url
+
+        request = requests_mock.request_history.pop()
+        assert request.method == "POST"
+        assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
+        assert request.json() == [
+            {
+                "type": RecommendationType.REFUSE,
+                "conditions": "",
+                "refusal_reasons": "doesn't meet the criteria",
                 "security_release_request": release_request_id,
             }
             for release_request_id in release_requests_ids

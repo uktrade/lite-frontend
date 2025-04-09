@@ -41,7 +41,6 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         case_recommendations = get_case_recommendations(self.request, self.case)
-        pending_recommendations = self.pending_recommendation_requests()
         recommendations_by_team = group_recommendations_by_team_and_users(case_recommendations)
 
         user_recommendations = recommendations_by_current_user(self.request, self.case, self.caseworker)
@@ -53,7 +52,7 @@ class CaseRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, TemplateVi
             "title": f"View recommendation for this case - {self.case.reference_code} - {self.case.organisation['name']}",
             "user_recommendations": user_recommendations,
             "recommendations_by_team": recommendations_by_team,
-            "pending_recommendations": list(pending_recommendations.values()),
+            "pending_recommendations": list(self.pending_recommendations.values()),
             "outcomes": outcomes,
         }
 
@@ -117,7 +116,7 @@ class MakeRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
         kwargs = super().get_form_kwargs(step)
 
         if step == RecommendationSteps.ENTITIES_AND_DECISION:
-            pending_release_requests = self.pending_recommendation_requests()
+            pending_release_requests = self.pending_recommendations
             kwargs["release_requests"] = list(pending_release_requests.values())
 
         if step == RecommendationSteps.RELEASE_REQUEST_PROVISOS:

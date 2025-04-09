@@ -946,6 +946,12 @@ def mock_denial_reasons(requests_mock):
 
 
 @pytest.fixture
+def mock_no_denial_reasons(requests_mock):
+    url = client._build_absolute_uri("/static/denial-reasons/")
+    yield requests_mock.get(url=url, json={"denial_reasons": []})
+
+
+@pytest.fixture
 def mock_approval_reason(requests_mock):
     url = client._build_absolute_uri(
         "/picklist/?type=standard_advice&page=1&disable_pagination=True&show_deactivated=False"

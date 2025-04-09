@@ -2,9 +2,10 @@ import pytest
 
 from caseworker.f680.recommendation.constants import RecommendationType
 from caseworker.f680.recommendation.forms.forms import (
-    BaseRecommendationForm,
-    EntityConditionsRecommendationForm,
-    EntitySelectionForm,
+    BasicRecommendationConditionsForm,
+    EntityConditionsForm,
+    EntityRefusalReasonsForm,
+    EntitySelectionAndDecisionForm,
 )
 
 
@@ -16,18 +17,37 @@ from caseworker.f680.recommendation.forms.forms import (
             False,
             {
                 "release_requests": ["Select entities to add recommendations"],
+                "recommendation": ["Select if you approve or refuse"],
             },
         ),
         (
             {
                 "release_requests": ["123465e5-4c80-4d0a-aef5-db94908b0417"],
             },
+            False,
+            {
+                "recommendation": ["Select if you approve or refuse"],
+            },
+        ),
+        (
+            {
+                "release_requests": ["123465e5-4c80-4d0a-aef5-db94908b0417"],
+                "recommendation": RecommendationType.APPROVE,
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "release_requests": ["123465e5-4c80-4d0a-aef5-db94908b0417"],
+                "recommendation": RecommendationType.REFUSE,
+            },
             True,
             {},
         ),
     ),
 )
-def test_entity_selection_form_valid(data, valid_status, errors):
+def test_entity_selection_and_decision_form_valid(data, valid_status, errors):
     release_requests = [
         {
             "id": "123465e5-4c80-4d0a-aef5-db94908b0417",
@@ -39,7 +59,7 @@ def test_entity_selection_form_valid(data, valid_status, errors):
             },
         }
     ]
-    form = EntitySelectionForm(data=data, release_requests=release_requests)
+    form = EntitySelectionAndDecisionForm(data=data, release_requests=release_requests)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors == errors
@@ -49,32 +69,51 @@ def test_entity_selection_form_valid(data, valid_status, errors):
     "data, valid_status, errors",
     (
         (
-            {},
-            False,
             {
-                "recommendation": ["Select if you approve or refuse"],
-            },
-        ),
-        (
-            {
-                "recommendation": RecommendationType.APPROVE,
-                "conditions": "",
+                "conditions": [],
             },
             True,
             {},
         ),
         (
             {
-                "recommendation": RecommendationType.REFUSE,
-                "conditions": "",
+                "conditions": ["no_release"],
             },
             True,
             {},
         ),
     ),
 )
-def test_make_recommendation_form_valid(data, valid_status, errors):
-    form = EntityConditionsRecommendationForm(data=data, conditions={"results": []})
+def test_entity_conditions_form_valid(data, valid_status, errors):
+    conditions = [{"name": "no_release", "text": "No release"}]
+    form = EntityConditionsForm(data=data, conditions={"results": conditions})
+    assert form.is_valid() == valid_status
+    if not valid_status:
+        assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, valid_status, errors",
+    (
+        (
+            {
+                "refusal_reasons": [],
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "refusal_reasons": ['1'],
+            },
+            True,
+            {},
+        ),
+    ),
+)
+def test_entity_refusal_reasons_form_valid(data, valid_status, errors):
+    reasons = [{'id': '1', 'display_value': '1', 'description': 'does not meet criteria'}]
+    form = EntityRefusalReasonsForm(data=data, refusal_reasons=reasons)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors == errors
@@ -85,23 +124,12 @@ def test_make_recommendation_form_valid(data, valid_status, errors):
     (
         (
             {},
-            False,
-            {
-                "recommendation": ["Select if you approve or refuse"],
-            },
-        ),
-        (
-            {
-                "recommendation": RecommendationType.APPROVE,
-                "conditions": "",
-            },
             True,
             {},
         ),
         (
             {
-                "recommendation": RecommendationType.REFUSE,
-                "conditions": "",
+                "conditions": "No concerns",
             },
             True,
             {},
@@ -109,7 +137,7 @@ def test_make_recommendation_form_valid(data, valid_status, errors):
     ),
 )
 def test_make_recommendation_form_valid_no_provisos(data, valid_status, errors):
-    form = BaseRecommendationForm(data=data)
+    form = BasicRecommendationConditionsForm(data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors == errors
