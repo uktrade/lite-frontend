@@ -163,8 +163,12 @@ class TestF680RecommendationView:
         }
         response = authorized_client.get(url)
         assert response.status_code == 200
+
         assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
         assertTemplateUsed(response, "f680/case/recommendation/other-recommendations.html")
+        soup = BeautifulSoup(response.content, "html.parser")
+        clear_recommendation_button = soup.find(id="clear-recommendation-button")
+        assert clear_recommendation_button
 
 
 class TestF680MakeRecommendationView:
