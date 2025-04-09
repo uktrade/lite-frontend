@@ -77,42 +77,14 @@
 					{% endif %}
 				</div>
 			{% endif %}
-			{% if summary_page %}
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
-					{% if application.case_type.sub_type.key == 'hmrc' %}
-						{% lcs 'applications.ApplicationPage.Summary.QUERY' %}
-					{% else %}
-						{% lcs 'applications.ApplicationPage.Summary.LICENCE' %}
-					{% endif %}
+					{% lcs 'applications.ApplicationPage.Summary.LICENCE' %}
 				</dt>
 				<dd class="govuk-summary-list__value">
 					{{ application_type }}
 				</dd>
 			</div>
-			{% endif %}
-			<div class="govuk-summary-list__row">
-				<dt class="govuk-summary-list__key">
-					{% if summary_page %}
-						{% lcs 'applications.ApplicationPage.Summary.TYPE' %}
-					{% else %}
-						{% lcs 'applications.ApplicationSummaryPage.TYPE' %}
-					{% endif %}
-				</dt>
-				<dd class="govuk-summary-list__value">
-					{{ application.case_type.sub_type.value }}
-				</dd>
-			</div>
-			{% if application.goodstype_category.key %}
-				<div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-						{% lcs 'applications.ApplicationSummaryPage.OPEN_LICENCE_TYPE' %}
-					</dt>
-					<dd class="govuk-summary-list__value">
-						{{ application.goodstype_category.value }}
-					</dd>
-				</div>
-			{% endif %}
 			{% if summary_page %}
 				<div class="govuk-summary-list__row">
 					<dt class="govuk-summary-list__key">

@@ -69,7 +69,6 @@ from exporter.organisation.members.services import get_user
 from exporter.core.constants import APPLICANT_EDITING
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import (
-    applications,
     strings,
 )
 from lite_forms.generators import confirm_form
@@ -356,7 +355,7 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
                 "application": self.application,
                 "answers": {**convert_application_to_check_your_answers(self.application, is_summary=True)},
                 "summary_page": True,
-                "application_type": applications.ApplicationPage.Summary.Licence.STANDARD,
+                "application_type": self.application["case_type"]["reference"]["value"],
                 "notes": get_case_notes(self.request, self.case_id)["case_notes"],
                 "reference_code": get_reference_number_description(self.application),
             }
