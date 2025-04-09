@@ -55,6 +55,55 @@ def mock_POST_outcome(requests_mock, data_submitted_f680_case):
     return requests_mock.post(url, json={}, status_code=HTTPStatus.CREATED)
 
 
+@pytest.fixture
+def mock_get_case_recommendations_multiple(
+    requests_mock, data_submitted_f680_case, current_user, MOD_team1, MOD_team2, fcdo_team, recommendations
+):
+    security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+    recommendations.extend(
+        [
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "approve", "value": "Approve"},
+                "conditions": "No concerns",
+                "refusal_reasons": "",
+                "security_grading": {"key": "official", "value": "Official"},
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+                "user": current_user,
+                "team": MOD_team1,
+            },
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "approve", "value": "Approve"},
+                "conditions": "some concerns",
+                "refusal_reasons": "",
+                "security_grading": {"key": "official", "value": "Official"},
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+                "user": current_user,
+                "team": MOD_team2,
+            },
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "refuse", "value": "Refuse"},
+                "conditions": "",
+                "refusal_reasons": "some reasons",
+                "security_release_request": security_release_requests[0]["id"],
+                "security_grading": None,
+                "security_grading_other": "",
+                "user": current_user,
+                "team": fcdo_team,
+            },
+        ]
+    )
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.get(url, json=recommendations, status_code=200)
+
+
 class TestDecideOutcomeView:
 
     def test_GET_select_outcome(
@@ -264,6 +313,32 @@ class TestDecideOutcomeView:
         }
 
         assert response.context["selected_security_release_requests"][0] == expected_selected_security_release_requests
+
+    def test_POST_select_approve_outcome_conditions_aggregated(
+        self,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_no_outcomes,
+        post_to_step,
+        mock_get_case_recommendations_multiple,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        request_ids = [request["id"] for request in security_release_requests]
+        response = post_to_step(
+            OutcomeSteps.SELECT_OUTCOME,
+            {
+                "outcome": "approve",
+                "security_release_requests": request_ids,
+            },
+        )
+        assert response.status_code == HTTPStatus.OK
+        form = response.context["form"]
+        assert isinstance(form, forms.ApproveOutcomeForm)
+        # Expect a de-duplicated set of conditions
+        assert form.initial == {"conditions": "No concerns\r\n\r\nsome concerns"}
 
     def test_POST_select_outcome_bad_request(
         self,

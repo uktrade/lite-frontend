@@ -2,6 +2,7 @@ from collections import defaultdict
 from http import HTTPStatus
 
 from django.shortcuts import redirect, reverse
+from django.utils.datastructures import OrderedSet
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
@@ -72,6 +73,13 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
             return {"all_approval_types": self.case["data"]["security_release_requests"][0]["approval_types"]}
         return {}
 
+    def get_form_initial(self, step=None):
+        if step == OutcomeSteps.APPROVE:
+            all_security_release_requests = self.get_all_security_releases()
+            selected_security_release_requests = self.get_selected_security_releases(all_security_release_requests)
+            return {"conditions": self.get_aggregated_conditions(selected_security_release_requests)}
+        return {}
+
     def get_selected_security_releases(self, all_security_release_requests):
         select_outcome_data = self.storage.get_step_data(OutcomeSteps.SELECT_OUTCOME)
         if not select_outcome_data:
@@ -102,6 +110,15 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
             security_release_request["recommendations"] = recommendations_by_security_release[security_release_id]
             all_security_releases.append(security_release_request)
         return all_security_releases
+
+    def get_aggregated_conditions(self, security_release_requests):
+        conditions = OrderedSet()
+        for release_request in security_release_requests:
+            for recommendation in release_request["recommendations"]:
+                if not recommendation["conditions"]:
+                    continue
+                conditions.add(recommendation["conditions"])
+        return "\r\n\r\n".join(conditions)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
