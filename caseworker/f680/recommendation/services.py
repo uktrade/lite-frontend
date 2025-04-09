@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from core import client
-from caseworker.f680.recommendation.constants import RecommendationType
 
 
 def filter_current_user_recommendation(all_recommendation, user_id):
@@ -59,7 +58,15 @@ def recommendations_by_current_user(request, case, caseworker):
     recommendation = filter_current_user_recommendation(case_recommendations, caseworker_id)
     recommendation = filter_recommendation_by_team(recommendation, team_id)
     grouped_recommendation = group_recommendations_by_user(recommendation)
-    return grouped_recommendation.get(caseworker_id)
+    return grouped_recommendation.get(caseworker_id, [])
+
+
+def get_pending_recommendation_requests(request, case, caseworker):
+    recommendations = recommendations_by_current_user(request, case, caseworker)
+    completed_release_requests = [item["security_release_request"]["id"] for item in recommendations]
+    return {
+        rr["id"]: rr for rr in case["data"]["security_release_requests"] if rr["id"] not in completed_release_requests
+    }
 
 
 def get_case_recommendations(request, case):
@@ -79,14 +86,12 @@ def get_case_recommendations(request, case):
 def post_recommendation(request, case, data):
     json = [
         {
-            "type": item["recommendation"],
-            "conditions": item["conditions"] if item["recommendation"] == RecommendationType.APPROVE else "",
-            "refusal_reasons": item["conditions"] if item["recommendation"] == RecommendationType.REFUSE else "",
-            "security_grading": item["security_grading"],
-            "security_grading_other": item["security_grading_other"],
-            "security_release_request": item["security_release_request"],
+            "type": data["recommendation"],
+            "conditions": data.get("conditions", ""),
+            "refusal_reasons": data.get("refusal_reasons", ""),
+            "security_release_request": release_request_id,
         }
-        for item in data
+        for release_request_id in data["release_requests"]
     ]
     response = client.post(request, f"/caseworker/f680/{case['id']}/recommendation/", json)
     return response.json(), response.status_code

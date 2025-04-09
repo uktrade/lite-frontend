@@ -111,7 +111,7 @@
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:user_information:summary" pk=application.id %}">User information</a>
-                            {% if application.application.sections.user_information %}
+                            {% if application.application.sections.user_information.items %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
                             </div>

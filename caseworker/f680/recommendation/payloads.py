@@ -8,9 +8,9 @@ def get_cleaned_data(form):
 class RecommendationPayloadBuilder(MergingPayloadBuilder):
 
     def build(self, form_dict):
-        payload = []
+        payload = {}
         for _, form in form_dict.items():
             if form:
-                payload.append(get_cleaned_data(form))
+                payload.update(get_cleaned_data(form))
 
         return payload

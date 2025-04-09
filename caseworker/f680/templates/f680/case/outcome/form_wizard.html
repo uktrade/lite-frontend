@@ -1,0 +1,18 @@
+{% extends 'core/form-wizard.html' %}
+
+{% block before_form %}
+{% if selected_security_release_requests %}
+    <h2 class="govuk-heading-m">Selected Security Release Requests</h2>
+    {% include "f680/case/outcome/includes/security_release_request_details.html" with security_release_requests=selected_security_release_requests %}
+{% else %}
+    <h2 class="govuk-heading-m">Security release requests without outcome</h2>
+    {% include "f680/case/outcome/includes/security_release_request_details.html" with security_release_requests=all_security_release_requests %}
+{% endif %}
+{% endblock %}
+
+{% block right_side_panel %}
+<div class="govuk-grid-column-one-third">
+    <h2 class="govuk-heading-m">Product</h2>
+    {% include "f680/includes/product_table.html" with case=case queue_pk=queue_pk %}
+</div>
+{% endblock %}

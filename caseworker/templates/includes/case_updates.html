@@ -1,0 +1,26 @@
+<ul class="app-updates__list">
+    {% if case.activity_updates %}
+        {% for update in case.activity_updates %}
+            <li class="app-updates__item">
+                <div class="app-updates__action">
+                    {% if forloop.first %}
+                        Latest action
+                    {% else %}
+                        Previous action
+                    {% endif %}
+                </div>
+                <div class="app-updates__department">
+                    {% include 'activities/includes/activity-entry-user.html' with activity=update %} {{ update.created_at|to_datetime|date:"d F Y" }}
+                </div>
+                <div class="app-updates__activity">
+                    {% include 'activities/includes/activity-entry-activity.html' with activity=update %}
+                </div>
+                {% if update.additional_text %}
+                    <div class="app-updates__activity">
+                        {{ update.additional_text|linebreaksbr }}
+                    </div>
+                {% endif %}
+            </li>
+        {% endfor %}
+    {% endif %}
+</ul>

@@ -1,6 +1,5 @@
 import pytest
 
-from itertools import chain
 from requests.exceptions import HTTPError
 
 from bs4 import BeautifulSoup
@@ -20,6 +19,7 @@ def setup(
     mock_denial_reasons,
     mock_proviso,
     mock_footnote_details,
+    mock_get_case_recommendations,
     settings,
 ):
     settings.FEATURE_FLAG_ALLOW_F680 = True
@@ -60,6 +60,25 @@ def mock_case_sub_statuses(requests_mock, data_submitted_f680_case):
 
 
 @pytest.fixture
+def mock_get_ecju_queries(requests_mock, data_submitted_f680_case, data_ecju_queries_gov_serializer):
+    url = f"/cases/{data_submitted_f680_case['case']['id']}/ecju-queries/"
+    return requests_mock.get(url, json=data_ecju_queries_gov_serializer)
+
+
+@pytest.fixture
+def mock_post_new_ecju_query(requests_mock, data_submitted_f680_case, data_ecju_queries_gov_serializer):
+    url = f"/cases/{data_submitted_f680_case['case']['id']}/ecju-queries/"
+    return requests_mock.post(url, json={})
+
+
+@pytest.fixture
+def mock_put_close_ecju_query(requests_mock, data_submitted_f680_case, data_ecju_queries_gov_serializer):
+    query_id = data_ecju_queries_gov_serializer["ecju_queries"][0]["id"]
+    url = f"/cases/{data_submitted_f680_case['case']['id']}/ecju-queries/{query_id}/"
+    return requests_mock.put(url, json={"reason_for_closing_query": "closing query"})
+
+
+@pytest.fixture
 def f680_feature_flag_disabled(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
@@ -85,13 +104,11 @@ class TestCaseDetailView:
         assert "some name" in table_text
 
     @pytest.mark.parametrize(
-        "case_status, expected",
+        "case_status",
         (
-            chain(
-                ((status, False) for status in recommendation_rules.INFORMATIONAL_STATUSES),
-                ((status, True) for status in recommendation_rules.RECOMMENDATION_STATUSES),
-                ((status, True) for status in recommendation_rules.OUTCOME_STATUSES),
-            )
+            recommendation_rules.INFORMATIONAL_STATUSES
+            + recommendation_rules.RECOMMENDATION_STATUSES
+            + recommendation_rules.OUTCOME_STATUSES
         ),
     )
     def test_GET_case_recommendation_tab_status(
@@ -106,7 +123,6 @@ class TestCaseDetailView:
         queue_f680_cases_to_review,
         current_user,
         case_status,
-        expected,
     ):
         data_submitted_f680_case["case"]["data"]["status"]["key"] = case_status
         data_submitted_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [current_user]}
@@ -116,7 +132,7 @@ class TestCaseDetailView:
 
         soup = BeautifulSoup(response.content, "html.parser")
         recommendations_tab = soup.find(id="recommendations")
-        assert bool(recommendations_tab) is expected
+        assert bool(recommendations_tab) is True
 
     def test_GET_success_transformed_submitted_by(
         self,
@@ -254,7 +270,6 @@ class TestNotesAndTimelineView:
         mock_f680_case_activity,
         mock_f680_case_activity_filters,
     ):
-
         response = authorized_client.get(self.url)
         assert response.status_code == HTTPStatus.OK
 
@@ -283,3 +298,113 @@ class TestNotesAndTimelineView:
             "mentions": [{"user": self.gov_user_id}],
             "text": "Note text",
         }
+
+
+class TestECJUQueryView:
+
+    @pytest.fixture(autouse=True)
+    def _setup(
+        self, setup, data_queue, f680_case_id, mock_gov_users, mock_get_ecju_queries, data_ecju_queries_gov_serializer
+    ):
+        self.f680_case_id = f680_case_id
+        self.queue = data_queue
+        self.query = data_ecju_queries_gov_serializer["ecju_queries"][0]
+        self.url = reverse("cases:f680:ecju_queries", kwargs={"queue_pk": self.queue["id"], "pk": self.f680_case_id})
+        self.new_url = reverse(
+            "cases:f680:new_ecju_query", kwargs={"queue_pk": self.queue["id"], "pk": self.f680_case_id}
+        )
+        self.close_url = reverse(
+            "cases:f680:close_ecju_query",
+            kwargs={"queue_pk": self.queue["id"], "pk": self.f680_case_id, "query_pk": self.query["id"]},
+        )
+
+    def test_GET_list_success(self, authorized_client, mock_f680_case):
+        response = authorized_client.get(self.url)
+        assert response.status_code == HTTPStatus.OK
+
+    def test_GET_list_error_permission_denied(self, authorized_client, mock_f680_case, f680_feature_flag_disabled):
+        response = authorized_client.get(self.url)
+        assert response.status_code == HTTPStatus.FORBIDDEN
+
+    def test_GET_new_success(self, authorized_client, mock_f680_case_with_assigned_user):
+        response = authorized_client.get(self.new_url)
+        assert response.status_code == HTTPStatus.OK
+
+    def test_GET_error_permission_denied(self, authorized_client, mock_f680_case):
+        response = authorized_client.get(self.new_url)
+        assert response.status_code == HTTPStatus.FORBIDDEN
+
+    def test_GET_close_success(self, authorized_client, mock_f680_case_with_assigned_user):
+        response = authorized_client.get(self.close_url)
+        assert response.status_code == HTTPStatus.OK
+
+    def test_GET_close_error_query_not_found(self, authorized_client, mock_f680_case_with_assigned_user):
+        close_url = reverse(
+            "cases:f680:close_ecju_query",
+            kwargs={
+                "queue_pk": self.queue["id"],
+                "pk": self.f680_case_id,
+                "query_pk": "10000000-1000-1000-1000-000000000001",
+            },
+        )
+        response = authorized_client.get(close_url)
+        assert response.status_code == HTTPStatus.NOT_FOUND
+
+    def test_POST_new_query_success(
+        self,
+        authorized_client,
+        mock_f680_case_with_assigned_user,
+        mock_post_new_ecju_query,
+        mock_get_ecju_queries,
+        data_ecju_queries_gov_serializer,
+    ):
+        response = authorized_client.post(self.new_url, data={"question": "test question"})
+        assert response.status_code == HTTPStatus.FOUND
+
+        assert (
+            response.url == f"/queues/00000000-0000-0000-0000-000000000001/cases/{self.f680_case_id}/f680/ecju-queries/"
+        )
+        assert mock_post_new_ecju_query.called
+        assert mock_post_new_ecju_query.last_request.json() == {"query_type": "ecju_query", "question": "test question"}
+
+    def test_POST_new_query_form_error(
+        self, authorized_client, mock_f680_case_with_assigned_user, mock_post_new_ecju_query
+    ):
+        response = authorized_client.post(self.new_url, data={})
+        assert response.status_code == HTTPStatus.OK
+        assert response.context["form"].errors == {"question": ["This field is required."]}
+
+    def test_POST_close_query_form_error(
+        self, authorized_client, mock_f680_case_with_assigned_user, mock_put_close_ecju_query
+    ):
+        response = authorized_client.post(self.close_url, data={})
+        assert response.status_code == HTTPStatus.OK
+        assert response.context["form"].errors == {
+            "reason_for_closing_query": ["Enter a reason why you are closing the query"]
+        }
+
+    def test_POST_close_query_success(
+        self, authorized_client, mock_f680_case_with_assigned_user, mock_put_close_ecju_query, gov_uk_user_id
+    ):
+        response = authorized_client.get(self.close_url)
+        assert response.status_code == HTTPStatus.OK
+
+        response = authorized_client.post(
+            self.close_url, data={f'{self.query["id"]}-reason_for_closing_query': "closing query"}
+        )
+        assert response.status_code == HTTPStatus.FOUND
+
+        assert (
+            response.url == f"/queues/00000000-0000-0000-0000-000000000001/cases/{self.f680_case_id}/f680/ecju-queries/"
+        )
+        assert mock_put_close_ecju_query.called
+        assert mock_put_close_ecju_query.last_request.json() == {
+            "responded_by_user": gov_uk_user_id,
+            "response": "closing query",
+        }
+
+    def test_GET_not_logged_in(self, client):
+        expected_redirect_location = reverse("auth:login")
+        response = client.get(self.url)
+        assert response.status_code == HTTPStatus.FOUND
+        assert response.url.startswith(expected_redirect_location)

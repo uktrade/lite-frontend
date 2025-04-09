@@ -2,14 +2,17 @@ import pytest
 
 from bs4 import BeautifulSoup
 from pytest_django.asserts import assertTemplateUsed
+from unittest import mock
 
 from django.urls import reverse
 
-from caseworker.f680.recommendation.constants import RecommendationType
+from caseworker.f680.recommendation.constants import RecommendationSteps, RecommendationType
 from caseworker.f680.recommendation.forms.forms import (
-    BaseRecommendationForm,
+    BasicRecommendationConditionsForm,
+    BasicRecommendationRefusalReasonsForm,
     ClearRecommendationForm,
-    EntityConditionsRecommendationForm,
+    EntityConditionsForm,
+    EntityRefusalReasonsForm,
 )
 from core import client
 from core.constants import CaseStatusEnum
@@ -24,7 +27,11 @@ def setup(
     mock_approval_reason,
     mock_denial_reasons,
     mock_footnote_details,
+    mock_proviso,
+    mock_get_case_recommendations,
+    settings,
 ):
+    settings.FEATURE_FLAG_ALLOW_F680 = True
     return
 
 
@@ -62,6 +69,19 @@ def mock_clear_recommendations(requests_mock, data_submitted_f680_case):
     return requests_mock.delete(url, status_code=204)
 
 
+@pytest.fixture
+def hydrated_recommendations(data_submitted_f680_case, recommendations):
+    for item in recommendations:
+        release_id = item["security_release_request"]
+        item["security_release_request"] = next(
+            item
+            for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
+            if item["id"] == release_id
+        )
+
+    return recommendations
+
+
 class TestF680RecommendationView:
 
     def test_GET_recommendation_success(
@@ -71,6 +91,7 @@ class TestF680RecommendationView:
         current_user,
         mock_f680_case,
         mock_get_case_no_recommendations,
+        mock_outcomes_no_outcomes,
         f680_case_id,
         f680_reference_code,
         data_submitted_f680_case,
@@ -96,12 +117,40 @@ class TestF680RecommendationView:
             == f'/queues/{queue_f680_cases_to_review["id"]}/cases/{f680_case_id}/f680/recommendation/make-recommendation/'
         )
 
+    def test_GET_recommendation_success_with_outcome(
+        self,
+        authorized_client,
+        queue_f680_cases_to_review,
+        current_user,
+        mock_f680_case,
+        mock_get_case_no_recommendations,
+        mock_outcomes_single_outcome,
+        f680_case_id,
+        f680_reference_code,
+        data_submitted_f680_case,
+        data_outcomes,
+    ):
+        url = reverse(
+            "cases:f680:recommendation", kwargs={"queue_pk": queue_f680_cases_to_review["id"], "pk": f680_case_id}
+        )
+        data_submitted_f680_case["case"]["assigned_users"] = {
+            queue_f680_cases_to_review["name"]: [{"id": current_user["id"]}]
+        }
+        data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.OGD_ADVICE
+        response = authorized_client.get(url)
+        assert response.status_code == 200
+        assertTemplateUsed(response, "f680/case/recommendation/recommendation.html")
+        assert dict(response.context["case"]) == data_submitted_f680_case["case"]
+        assert len(response.context["outcomes"]) == 1
+        assert response.context["outcomes"][0]["id"] == data_outcomes[0]["id"]
+
     def test_GET_recommendation_page_existing_recommendation(
         self,
         authorized_client,
         queue_f680_cases_to_review,
         current_user,
         mock_f680_case,
+        mock_outcomes_no_outcomes,
         mock_get_case_recommendations,
         f680_case_id,
         data_submitted_f680_case,
@@ -120,60 +169,49 @@ class TestF680RecommendationView:
 
 class TestF680MakeRecommendationView:
 
-    def test_make_recommendation_post(
+    @mock.patch("caseworker.f680.recommendation.services.get_case_recommendations")
+    def test_make_recommendation_post_all_entities(
         self,
+        mock_case_recommendations,
         authorized_client,
         requests_mock,
         f680_case_id,
         data_submitted_f680_case,
-        make_recommendation_url,
         mock_f680_case,
-        mock_approval_reason,
         mock_proviso,
+        mock_denial_reasons,
         mock_post_recommendation,
         post_to_step,
         view_recommendation_url,
+        hydrated_recommendations,
     ):
-        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        mock_case_recommendations.side_effect = [[], [], hydrated_recommendations]
+        release_requests_ids = [
+            item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        ]
         response = post_to_step(
-            security_release_requests[0]["id"],
+            RecommendationSteps.ENTITIES_AND_DECISION,
             {
+                "release_requests": release_requests_ids,
                 "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
+            },
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, EntityConditionsForm)
+
+        response = post_to_step(
+            RecommendationSteps.RELEASE_REQUEST_PROVISOS,
+            {
                 "conditions": ["no_release", "no_specifications"],
+                "no_specifications": "no specifications",
                 "no_release": "no release",
-                "no_specifications": "no specifications",
-            },
-        )
-        assert response.status_code == 200
-        form = response.context["form"]
-        assert isinstance(form, EntityConditionsRecommendationForm)
-
-        response = post_to_step(
-            security_release_requests[1]["id"],
-            {
-                "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
-                "conditions": ["no_specifications"],
-                "no_specifications": "no specifications",
-            },
-        )
-        assert response.status_code == 200
-        form = response.context["form"]
-        assert isinstance(form, EntityConditionsRecommendationForm)
-
-        response = post_to_step(
-            security_release_requests[2]["id"],
-            {
-                "recommendation": RecommendationType.REFUSE,
-                "security_grading": "official",
-                "conditions": [],
             },
         )
         assert response.status_code == 302
         assert response.url == view_recommendation_url
 
-        request = requests_mock.request_history.pop()
+        request = requests_mock.last_request
         assert request.method == "POST"
         assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
         assert request.json() == [
@@ -181,73 +219,102 @@ class TestF680MakeRecommendationView:
                 "type": RecommendationType.APPROVE,
                 "conditions": "no release\n\n--------\nno specifications",
                 "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
-                "security_release_request": security_release_requests[0]["id"],
-            },
-            {
-                "type": RecommendationType.APPROVE,
-                "conditions": "no specifications",
-                "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
-                "security_release_request": security_release_requests[1]["id"],
-            },
-            {
-                "type": RecommendationType.REFUSE,
-                "conditions": "",
-                "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
-                "security_release_request": security_release_requests[2]["id"],
-            },
+                "security_release_request": release_request_id,
+            }
+            for release_request_id in release_requests_ids
         ]
 
-    def test_make_recommendation_post_no_team_provisos(
+    @mock.patch("caseworker.f680.recommendation.services.get_case_recommendations")
+    def test_make_recommendation_post_few_entities(
         self,
+        mock_pending_requests,
         authorized_client,
         requests_mock,
         f680_case_id,
         data_submitted_f680_case,
-        make_recommendation_url,
+        data_queue,
         mock_f680_case,
-        mock_approval_reason,
+        mock_proviso,
+        mock_denial_reasons,
+        mock_post_recommendation,
+        post_to_step,
+        hydrated_recommendations,
+    ):
+        mock_pending_requests.side_effect = [[], [], hydrated_recommendations[:2]]
+        release_requests_ids = [
+            item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        ]
+        response = post_to_step(
+            RecommendationSteps.ENTITIES_AND_DECISION,
+            {
+                "release_requests": release_requests_ids[:2],
+                "recommendation": RecommendationType.REFUSE,
+            },
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, EntityRefusalReasonsForm)
+
+        response = post_to_step(
+            RecommendationSteps.RELEASE_REQUEST_REFUSAL_REASONS,
+            {
+                "refusal_reasons": ["1", "2"],
+                "1": "one",
+                "2": "two",
+            },
+        )
+        assert response.status_code == 302
+        assert response.url == reverse(
+            "cases:f680:recommendation", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id}
+        )
+
+        request = requests_mock.last_request
+        assert request.method == "POST"
+        assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
+        assert request.json() == [
+            {
+                "type": RecommendationType.REFUSE,
+                "conditions": "",
+                "refusal_reasons": "one\n\n--------\ntwo",
+                "security_release_request": release_request_id,
+            }
+            for release_request_id in release_requests_ids[:2]
+        ]
+
+    @mock.patch("caseworker.f680.recommendation.services.get_case_recommendations")
+    def test_make_recommendation_post_no_team_provisos(
+        self,
+        mock_case_recommendations,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
         mock_no_provisos,
         mock_post_recommendation,
         post_to_step,
         view_recommendation_url,
+        hydrated_recommendations,
     ):
-        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        mock_case_recommendations.side_effect = [[], [], hydrated_recommendations]
+        release_requests_ids = [
+            item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        ]
         response = post_to_step(
-            security_release_requests[0]["id"],
+            RecommendationSteps.ENTITIES_AND_DECISION,
             {
+                "release_requests": release_requests_ids,
                 "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
+            },
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, BasicRecommendationConditionsForm)
+
+        response = post_to_step(
+            RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS,
+            {
                 "conditions": "no release",
-            },
-        )
-        assert response.status_code == 200
-        form = response.context["form"]
-        assert isinstance(form, BaseRecommendationForm)
-
-        response = post_to_step(
-            security_release_requests[1]["id"],
-            {
-                "recommendation": RecommendationType.APPROVE,
-                "security_grading": "official",
-                "conditions": "no specifications",
-            },
-        )
-        assert response.status_code == 200
-        form = response.context["form"]
-        assert isinstance(form, BaseRecommendationForm)
-
-        response = post_to_step(
-            security_release_requests[2]["id"],
-            {
-                "recommendation": RecommendationType.REFUSE,
-                "security_grading": "official",
-                "conditions": "",
             },
         )
         assert response.status_code == 302
@@ -261,26 +328,58 @@ class TestF680MakeRecommendationView:
                 "type": RecommendationType.APPROVE,
                 "conditions": "no release",
                 "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
-                "security_release_request": security_release_requests[0]["id"],
-            },
+                "security_release_request": release_request_id,
+            }
+            for release_request_id in release_requests_ids
+        ]
+
+    @mock.patch("caseworker.f680.recommendation.services.get_case_recommendations")
+    def test_make_recommendation_post_no_denial_reasons(
+        self,
+        mock_case_recommendations,
+        authorized_client,
+        requests_mock,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_no_denial_reasons,
+        mock_post_recommendation,
+        post_to_step,
+        view_recommendation_url,
+        hydrated_recommendations,
+    ):
+        mock_case_recommendations.side_effect = [[], [], hydrated_recommendations]
+        release_requests_ids = [
+            item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        ]
+        response = post_to_step(
+            RecommendationSteps.ENTITIES_AND_DECISION,
+            {"release_requests": release_requests_ids, "recommendation": RecommendationType.REFUSE},
+        )
+        assert response.status_code == 200
+        form = response.context["form"]
+        assert isinstance(form, BasicRecommendationRefusalReasonsForm)
+
+        response = post_to_step(
+            RecommendationSteps.RELEASE_REQUEST_NO_REFUSAL_REASONS,
             {
-                "type": RecommendationType.APPROVE,
-                "conditions": "no specifications",
-                "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
-                "security_release_request": security_release_requests[1]["id"],
+                "refusal_reasons": "doesn't meet the criteria",
             },
+        )
+        assert response.status_code == 302
+        assert response.url == view_recommendation_url
+
+        request = requests_mock.request_history.pop()
+        assert request.method == "POST"
+        assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
+        assert request.json() == [
             {
                 "type": RecommendationType.REFUSE,
                 "conditions": "",
-                "refusal_reasons": "",
-                "security_grading": "official",
-                "security_grading_other": "",
-                "security_release_request": security_release_requests[2]["id"],
-            },
+                "refusal_reasons": "doesn't meet the criteria",
+                "security_release_request": release_request_id,
+            }
+            for release_request_id in release_requests_ids
         ]
 
 
@@ -305,7 +404,7 @@ class TestF680MyRecommendationView:
 
         soup = BeautifulSoup(response.content, "html.parser")
         assert soup.find("h1", {"class": "govuk-heading-xl"}).text == "View recommendation"
-        assert soup.find("h2", {"class": "govuk-heading-m"}).text.strip() == "australia name [Official]"
+        assert soup.find("h2", {"class": "govuk-heading-m"}).text.strip() == "australia name"
         assert soup.find("div", {"class": "clearance-conditions"}).text == "No concerns"
         clear_recommendation_button = soup.find(id="clear-recommendation-button")
         assert clear_recommendation_button

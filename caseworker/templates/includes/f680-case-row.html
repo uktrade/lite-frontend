@@ -1,0 +1,128 @@
+{% load humanize %}
+{% load svg %}
+
+<tr class="govuk-table__row" id="{{ case.id }}">
+
+	{% if not queue.is_system_queue %}
+		<td class="govuk-table__cell govuk-table__cell--checkbox">
+			<div>
+				<input class="govuk-checkboxes__input" type="checkbox" name="cases" value="{{ case.id }}">
+				<label class="govuk-label govuk-checkboxes__label" for="{{ case.id }}">
+					<span class="govuk-visually-hidden"></span>
+				</label>
+			</div>
+		</td>
+	{% endif %}
+
+	<td class="govuk-table__cell govuk-table__cell--tight">
+		{% include 'includes/sla_query_details.html' with case=case %}
+	</td>
+
+	{# case info #}
+	<td class="govuk-table__cell">
+		{% include 'includes/case_info.html' with case=case %}
+	</td>
+
+	{# destinations #}
+	<td class="govuk-table__cell" data-customiser-key="destination">
+		<ol class="govuk-list destinations__list">
+			{% for rr in case.f680_data.security_release_requests %}
+				<li>
+					{{ rr.recipient.country.name }}
+				</li>
+			{% endfor %}
+		</ol>
+	</td>
+
+	{# 	Case allocation #}
+	<td class="govuk-table__cell expander" data-expander-visible-elems="3" data-customiser-key="case_allocation">
+		{% include 'includes/case_queue_assignments.html' with case=case %}
+	</td>
+	{# case recommendations #}
+	<td class="govuk-table__cell case-recommendation" data-customiser-key="case_recommendation">
+		{% include "includes/f680_recommendations.html" with case_recommendations=case.f680_data.recommendations %}
+	</td>
+    {# case updates #}
+	<td class="govuk-table__cell" data-customiser-key="case_updates">
+		{% include 'includes/case_updates.html' with case=case %}
+	</td>
+
+	{# Products #}
+	<td class="govuk-table__cell" data-customiser-key="products">
+		{{ case.f680_data.product.name }}
+	</td>
+
+    {# Users #}
+    <td class="govuk-table__cell" data-customiser-key="users">
+        <ol class="govuk-list app-users__list">
+            {% for rr in case.f680_data.security_release_requests %}
+                <li class="app-cles__item">
+                    {% if rr.recipient.type.key == "end-user"  %}
+                        <strong>End-user:</strong> {{ rr.recipient.name }}
+                    {% elif rr.recipient.type.key == "ultimate-end-user"  %}
+                        <strong>Ultimate end-user:</strong> {{ rr.recipient.name }}
+					{% elif rr.recipient.type.key == "third-party"  %}
+                        <strong>Third party:</strong> {{ rr.recipient.name }}
+					{% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </td>
+
+	{# CLEs #}
+	<td class="govuk-table__cell" data-customiser-key="control_list_entry">
+		NA
+	</td>
+
+	{# Report summaries #}
+	<td class="govuk-table__cell" data-customiser-key="report_summary">
+		NA
+	</td>
+
+	{# Regimes #}
+	<td class="govuk-table__cell" data-customiser-key="regime">
+		NA
+	</td>
+
+	{# Total value #}
+	<td class="govuk-table__cell" data-customiser-key="total_value">
+		NA
+	</td>
+
+	{# Queries #}
+	<td class="govuk-table__cell" data-customiser-key="queries">
+        {% if case.ecju_queries %}
+            <span class="app-ecju-queries"><a href="{% url 'cases:f680:ecju_queries' queue.id case.id %}" class="govuk-link govuk-link--no-visited-state">{{case.ecju_queries|length}} queries</a></span>
+        {% endif %}
+	</td>
+
+	{# Denial matches #}
+	<td class="govuk-table__cell" data-customiser-key="denial_matches">
+		NA
+	</td>
+
+	{# intended end use #}
+
+	<td class="govuk-table__cell" data-customiser-key="intended_end_use">
+		<ol class="govuk-list app-users__list">
+			{% for rr in case.f680_data.security_release_requests %}
+				<li class="app-cles__item">
+					<strong>{{ rr.recipient.name }}</strong>
+					<span class="app-intended-end-use">
+						{{ rr.intended_use }}
+					</span>
+				</li>
+			{% endfor %}
+		</ol>
+	</td>
+
+	{# application flags #}
+	<td class="govuk-table__cell lite-tablet-hide" data-customiser-key="flags">
+		{% if case.flags or case.destinations_flags or case.goods_flags %}
+			{% include 'includes/case-row-flags.html' with flags=case.flags destinations_flags=case.destinations_flags goods_flags=case.goods_flags %}
+		{% else %}
+			<p class="app-information-bar">No flags set</p>
+		{% endif %}
+	</td>
+
+</tr>

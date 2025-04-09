@@ -1,0 +1,35 @@
+<table class="govuk-table f680-product-table">
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+
+            <th scope="col" class="govuk-table__header">Name</th>
+            <th scope="col" class="govuk-table__header">Description</th>
+            <th scope="col" class="govuk-table__header">Security Grading</th>
+            <th scope="col" class="govuk-table__header">Security Grading Other</th>
+            <th scope="col" class="govuk-table__header">Application Details</th>
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        <tr class="govuk-table__row">
+            <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{case.data.product.name}}
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{case.data.product.description|linebreaksbr}}
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {{case.data.product.security_grading.value}}
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                {% if case.product.security_grading_other %}
+                    {{case.product.security_grading_other}}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+            <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
+                <a href="{% url 'cases:f680:details' queue_pk case.id %}#product_information" class="govuk-link govuk-link--no-visited-state">View full details</a>
+            </td>
+        </tr>
+    </tbody>
+</table>

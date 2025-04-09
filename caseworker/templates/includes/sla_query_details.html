@@ -1,0 +1,23 @@
+{% load svg %}
+
+<div class="app-cases__row__vertical-column">
+
+    {% include "includes/sla_display.html" with case=case %}
+
+    {% if not is_all_cases_queue %}
+        {% if case.is_recently_updated %}
+            <span
+                data-tooltip="{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
+                class="app-cases__row__icon app-cases__row__attention-needed">!</span>
+        {% endif %}
+    {% endif %}
+
+    {% if cases.results.is_work_queue %}
+        {% if case.has_open_queries %}
+        <div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
+            {% svg 'ecju-query' %}
+        </div>
+        {% endif %}
+    {% endif %}
+
+</div>

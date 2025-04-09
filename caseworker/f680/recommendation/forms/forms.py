@@ -7,8 +7,6 @@ from core.common.forms import BaseForm
 from core.forms.layouts import (
     ConditionalCheckboxes,
     ConditionalCheckboxesQuestion,
-    ConditionalRadios,
-    ConditionalRadiosQuestion,
 )
 
 
@@ -31,20 +29,33 @@ class PicklistAdviceForm(forms.Form):
         return reasons_choices, reasons_text
 
 
-class BaseRecommendationForm(BaseForm):
+class PicklistRefusalForm(forms.Form):
+    def _picklist_to_choices(self, picklist_data):
+        reasons_choices = []
+        reasons_text = {}
+
+        for result in picklist_data:
+            key = "_".join(result.get("display_value").lower().split())
+            choice = Choice(key, result.get("display_value"))
+            reasons_choices.append(choice)
+            reasons_text[key] = result.get("description")
+        return reasons_choices, reasons_text
+
+
+class EntitySelectionAndDecisionForm(BaseForm):
     class Layout:
-        TITLE = ""
+        TITLE = "Select entities and decision"
 
     CHOICES = [
         ("approve", "Approve"),
         ("refuse", "Refuse"),
     ]
-    security_release_choices = (
-        Choice("official", "Official"),
-        Choice("official-sensitive", "Official-Sensitive"),
-        Choice("secret", "Secret"),
-        Choice("top-secret", "Top Secret", divider="Or"),
-        Choice("other", "Other"),
+
+    release_requests = forms.MultipleChoiceField(
+        label="",
+        widget=forms.CheckboxSelectMultiple,
+        choices=(),
+        error_messages={"required": "Select entities to add recommendations"},
     )
     recommendation = forms.ChoiceField(
         choices=CHOICES,
@@ -52,52 +63,53 @@ class BaseRecommendationForm(BaseForm):
         label="Select recommendation type",
         error_messages={"required": "Select if you approve or refuse"},
     )
-    security_grading = forms.ChoiceField(
-        choices="",
-        label="Select security classification",
-        widget=forms.RadioSelect,
-        error_messages={"required": "Select the security classification"},
-    )
-    security_grading_other = forms.CharField(label="Enter the security classification", required=False)
+
+    def __init__(self, release_requests, *args, **kwargs):
+        release_requests_choices = [
+            Choice(rr["id"], f'{rr["recipient"]["name"]}, {rr["recipient"]["country"]["name"]}')
+            for rr in release_requests
+        ]
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["release_requests"].choices = release_requests_choices
+
+    def get_layout_fields(self):
+        return ("release_requests", "recommendation")
+
+
+class BasicRecommendationConditionsForm(BaseForm):
+    class Layout:
+        TITLE = "Add conditions"
+
     conditions = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
         label="Provisos",
         required=False,
     )
 
-    def __init__(self, release_request, *args, **kwargs):
-        self.conditional_radio_choices = [
-            (
-                ConditionalRadiosQuestion(choice.label, "security_grading_other")
-                if choice.value == "other"
-                else choice.label
-            )
-            for choice in self.security_release_choices
-        ]
+    def get_layout_fields(self):
+        return ("conditions",)
 
-        self.release_request = release_request
-        super().__init__(*args, **kwargs)
 
-        self.fields["security_grading"].choices = self.security_release_choices
+class BasicRecommendationRefusalReasonsForm(BaseForm):
+    class Layout:
+        TITLE = "Add refusal reasons"
 
-    def clean(self):
-        cleaned_data = super().clean()
-
-        return {
-            **cleaned_data,
-            "security_release_request": self.release_request["id"],
-        }
+    refusal_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 7}),
+        label="Refusal reasons",
+        required=False,
+    )
 
     def get_layout_fields(self):
-        return (
-            HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
-            "recommendation",
-            ConditionalRadios("security_grading", *self.conditional_radio_choices),
-            "conditions",
-        )
+        return ("refusal_reasons",)
 
 
-class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationForm):
+class EntityConditionsForm(BaseForm, PicklistAdviceForm):
+    class Layout:
+        TITLE = "Add conditions for entities"
+
     conditions = forms.MultipleChoiceField(
         label="Provisos",
         required=False,
@@ -108,16 +120,10 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
     def clean(self):
         cleaned_data = super().clean()
         return {
-            "recommendation": cleaned_data.get("recommendation", ""),
-            "security_grading": cleaned_data.get("security_grading", ""),
-            "security_grading_other": cleaned_data.get("security_grading_other", ""),
-            "security_release_request": self.release_request["id"],
             "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
         }
 
-    def __init__(self, *args, **kwargs):
-        conditions = kwargs.pop("proviso")
-
+    def __init__(self, conditions, *args, **kwargs):
         conditions_choices, conditions_text = self._picklist_to_choices(conditions)
 
         self.conditional_checkbox_choices = (
@@ -136,12 +142,48 @@ class EntityConditionsRecommendationForm(PicklistAdviceForm, BaseRecommendationF
             )
 
     def get_layout_fields(self):
-        return (
-            HTML.h1(f"Add recommendation for {self.release_request['recipient']['name']}"),
-            "recommendation",
-            ConditionalRadios("security_grading", *self.conditional_radio_choices),
-            ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
+        return (ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),)
+
+
+class EntityRefusalReasonsForm(BaseForm, PicklistRefusalForm):
+    class Layout:
+        TITLE = "Add refusal reasons for entities"
+
+    refusal_reasons = forms.MultipleChoiceField(
+        label="Refusal reasons",
+        widget=forms.CheckboxSelectMultiple,
+        choices=(),
+        error_messages={"required": "Select refusal reasons"},
+    )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return {
+            "refusal_reasons": "\n\n--------\n".join(
+                [cleaned_data[selected] for selected in cleaned_data.get("refusal_reasons", [])]
+            ),
+        }
+
+    def __init__(self, refusal_reasons, *args, **kwargs):
+        refusal_reasons_choices, refusal_reasons_text = self._picklist_to_choices(refusal_reasons)
+
+        self.conditional_checkbox_choices = (
+            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in refusal_reasons_choices
         )
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["refusal_reasons"].choices = refusal_reasons_choices
+        for choices in refusal_reasons_choices:
+            self.fields[choices.value] = forms.CharField(
+                widget=forms.Textarea(attrs={"rows": 3}),
+                label="Description",
+                required=False,
+                initial=refusal_reasons_text[choices.value],
+            )
+
+    def get_layout_fields(self):
+        return (ConditionalCheckboxes("refusal_reasons", *self.conditional_checkbox_choices),)
 
 
 class ClearRecommendationForm(BaseForm):

@@ -2,6 +2,7 @@ import pytest
 from bs4 import BeautifulSoup
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
+from unittest import mock
 
 from core import client
 from core.exceptions import ServiceError
@@ -86,17 +87,24 @@ def test_case_assignments_remove_user_GET_404(authorized_client, data_queue, dat
     assert response.status_code == 404
 
 
+@mock.patch("caseworker.f680.recommendation.services.get_case_recommendations")
 def test_f680_case_assignments_POST_remove_user_success(
+    mock_case_recommendations,
     authorized_client,
     data_queue,
     data_submitted_f680_case,
     mock_f680_case,
     data_f680_assignment,
     mock_f680_case_with_assignments,
+    mock_proviso,
+    mock_denial_reasons,
     mock_remove_f680_assignment,
     mock_queue,
+    settings,
 ):
+    mock_case_recommendations.return_value = []
 
+    settings.FEATURE_FLAG_ALLOW_F680 = True
     case = data_submitted_f680_case
     url = reverse("cases:remove-case-assignment", kwargs={"queue_pk": data_queue["id"], "pk": case["case"]["id"]})
     response = authorized_client.post(url, data={"assignment_id": str(data_f680_assignment["id"])}, follow=True)
@@ -329,6 +337,7 @@ def test_case_assign_me(
     mock_standard_case_activity_filters,
     mock_queue,
     mock_standard_case_assigned_queues,
+    mock_proviso,
 ):
     case = data_standard_case
     url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
@@ -352,7 +361,9 @@ def test_case_assign_me(
     assert "You have been successfully added as case adviser" in success_message.text
 
 
+@mock.patch("caseworker.f680.recommendation.services.get_case_recommendations")
 def test_f680_case_assign_me(
+    mock_case_recommendations,
     authorized_client,
     data_queue,
     data_submitted_f680_case,
@@ -361,7 +372,13 @@ def test_f680_case_assign_me(
     mock_add_assignment,
     mock_f680_case,
     mock_queue,
+    mock_proviso,
+    mock_denial_reasons,
+    settings,
 ):
+    mock_case_recommendations.return_value = []
+
+    settings.FEATURE_FLAG_ALLOW_F680 = True
     url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
     case_url = reverse(
         "cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]}
