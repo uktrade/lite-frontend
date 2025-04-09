@@ -21,11 +21,11 @@ from caseworker.advice.services import move_case_forward
 from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
-from caseworker.cases.services import get_case, post_ecju_query, get_case_documents
+from caseworker.cases.services import get_case, post_ecju_query, get_application_documents
+from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.cases.views.queries import CloseQueryMixin
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.core.services import get_denial_reasons
-from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.f680.recommendation.services import get_pending_recommendation_requests
 from caseworker.picklists.services import get_picklists_list
 from caseworker.queues.services import get_queue
@@ -195,9 +195,17 @@ class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateV
     template_name = "f680/case/supporting_documents.html"
     current_tab = "supporting-documents"
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error retreiving supporting documents",
+        "Unexpected error retreiving supporting documents",
+    )
+    def get_supporting_documents(self):
+        return get_application_documents(self.request, self.case_id)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        documents, _ = get_application_documents(self.request, self.case_id)
+        documents, _ = self.get_supporting_documents()
         context["supporting_documents"] = documents["results"]
         return context
 

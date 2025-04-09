@@ -13,13 +13,11 @@
 						{{ document.name|file_type }}
 					</span>
 				</div>
-				{{ document }}
-				{{ application }}
 				<div class="app-documents__item-details">
-					<a class="govuk-link--no-visited-state" {% if document.safe == True %}href="{% url 'cases:f680:document' queue.id case.id document.id %}"{% endif %}>{{ document.name }}</a>
-					<p id="document-type" class="govuk-hint">Uploaded by exporter user at {{ document.created_at|str_date }}</p>
+					<a id="document-name" class="govuk-link--no-visited-state" {% if document.safe == True %}href="{% url 'cases:f680:document' queue.id case.id document.id %}"{% endif %}>{{ document.name }}</a>
+					<p class="govuk-hint">Uploaded by {{ case.data.submitted_by }} at {{ document.created_at|str_date }}</p>
 					{% if document.description %}
-						<p class="govuk-body">
+						<p id="document-description" class="govuk-body">
 							{{ document.description }}
 						</p>
 					{% endif %}
