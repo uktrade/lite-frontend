@@ -7,6 +7,7 @@ app_name = "f680"
 
 urlpatterns = [
     path("<uuid:pk>/apply/", views.F680ApplicationSummaryView.as_view(), name="summary"),
+    path("<uuid:pk>/declaration/", views.F680DeclarationView.as_view(), name="declaration"),
     path("<uuid:pk>/summary/", views.F680SubmittedApplicationSummaryView.as_view(), name="submitted_summary"),
     path(
         "<uuid:pk>/summary/<str:type>/", views.F680SubmittedApplicationSummaryView.as_view(), name="submitted_summary"
