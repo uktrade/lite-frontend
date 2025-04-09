@@ -89,7 +89,7 @@ def get_permissible_statuses(request, case):
 
     # TODO: Make this list of dis-allowed caseworker-settable statuses driven
     # by the API
-    if case_type == CaseType.APPLICATION.value:
+    if case_type in [CaseType.APPLICATION.value, "security_clearance"]:
         case_type_applicable_statuses = [
             status
             for status in statuses
