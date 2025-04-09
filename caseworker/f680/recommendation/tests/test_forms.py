@@ -96,11 +96,9 @@ def test_entity_conditions_form_valid(data, valid_status, errors):
     "data, valid_status, errors",
     (
         (
-            {
-                "refusal_reasons": [],
-            },
-            True,
             {},
+            False,
+            {"refusal_reasons": ["Select refusal reasons"]},
         ),
         (
             {

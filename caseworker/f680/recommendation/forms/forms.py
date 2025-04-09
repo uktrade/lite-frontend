@@ -151,16 +151,16 @@ class EntityRefusalReasonsForm(BaseForm, PicklistRefusalForm):
 
     refusal_reasons = forms.MultipleChoiceField(
         label="Refusal reasons",
-        required=False,
         widget=forms.CheckboxSelectMultiple,
         choices=(),
+        error_messages={"required": "Select refusal reasons"},
     )
 
     def clean(self):
         cleaned_data = super().clean()
         return {
             "refusal_reasons": "\n\n--------\n".join(
-                [cleaned_data[selected] for selected in cleaned_data["refusal_reasons"]]
+                [cleaned_data[selected] for selected in cleaned_data.get("refusal_reasons", [])]
             ),
         }
 

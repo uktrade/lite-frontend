@@ -12,6 +12,7 @@ from caseworker.f680.recommendation.forms.forms import (
     BasicRecommendationRefusalReasonsForm,
     ClearRecommendationForm,
     EntityConditionsForm,
+    EntityRefusalReasonsForm,
 )
 from core import client
 from core.constants import CaseStatusEnum
@@ -234,6 +235,7 @@ class TestF680MakeRecommendationView:
         data_queue,
         mock_f680_case,
         mock_proviso,
+        mock_denial_reasons,
         mock_post_recommendation,
         post_to_step,
         hydrated_recommendations,
@@ -246,19 +248,19 @@ class TestF680MakeRecommendationView:
             RecommendationSteps.ENTITIES_AND_DECISION,
             {
                 "release_requests": release_requests_ids[:2],
-                "recommendation": RecommendationType.APPROVE,
+                "recommendation": RecommendationType.REFUSE,
             },
         )
         assert response.status_code == 200
         form = response.context["form"]
-        assert isinstance(form, EntityConditionsForm)
+        assert isinstance(form, EntityRefusalReasonsForm)
 
         response = post_to_step(
-            RecommendationSteps.RELEASE_REQUEST_PROVISOS,
+            RecommendationSteps.RELEASE_REQUEST_REFUSAL_REASONS,
             {
-                "conditions": ["no_release", "no_specifications"],
-                "no_specifications": "no specifications",
-                "no_release": "no release",
+                "refusal_reasons": ["1", "2"],
+                "1": "one",
+                "2": "two",
             },
         )
         assert response.status_code == 302
@@ -271,9 +273,9 @@ class TestF680MakeRecommendationView:
         assert request.path == f"/caseworker/f680/{f680_case_id}/recommendation/"
         assert request.json() == [
             {
-                "type": RecommendationType.APPROVE,
-                "conditions": "no release\n\n--------\nno specifications",
-                "refusal_reasons": "",
+                "type": RecommendationType.REFUSE,
+                "conditions": "",
+                "refusal_reasons": "one\n\n--------\ntwo",
                 "security_release_request": release_request_id,
             }
             for release_request_id in release_requests_ids[:2]
