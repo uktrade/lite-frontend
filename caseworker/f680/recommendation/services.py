@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from core import client
-from caseworker.f680.recommendation.constants import RecommendationType
 
 
 def filter_current_user_recommendation(all_recommendation, user_id):

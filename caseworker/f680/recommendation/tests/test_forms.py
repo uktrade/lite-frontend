@@ -104,7 +104,7 @@ def test_entity_conditions_form_valid(data, valid_status, errors):
         ),
         (
             {
-                "refusal_reasons": ['1'],
+                "refusal_reasons": ["1"],
             },
             True,
             {},
@@ -112,7 +112,7 @@ def test_entity_conditions_form_valid(data, valid_status, errors):
     ),
 )
 def test_entity_refusal_reasons_form_valid(data, valid_status, errors):
-    reasons = [{'id': '1', 'display_value': '1', 'description': 'does not meet criteria'}]
+    reasons = [{"id": "1", "display_value": "1", "description": "does not meet criteria"}]
     form = EntityRefusalReasonsForm(data=data, refusal_reasons=reasons)
     assert form.is_valid() == valid_status
     if not valid_status:

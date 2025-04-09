@@ -1,6 +1,5 @@
 import pytest
 
-from itertools import chain
 from requests.exceptions import HTTPError
 
 from bs4 import BeautifulSoup
@@ -105,13 +104,11 @@ class TestCaseDetailView:
         assert "some name" in table_text
 
     @pytest.mark.parametrize(
-        "case_status, expected",
+        "case_status",
         (
-            chain(
-                ((status, False) for status in recommendation_rules.INFORMATIONAL_STATUSES),
-                ((status, True) for status in recommendation_rules.RECOMMENDATION_STATUSES),
-                ((status, True) for status in recommendation_rules.OUTCOME_STATUSES),
-            )
+            recommendation_rules.INFORMATIONAL_STATUSES
+            + recommendation_rules.RECOMMENDATION_STATUSES
+            + recommendation_rules.OUTCOME_STATUSES
         ),
     )
     def test_GET_case_recommendation_tab_status(
@@ -126,7 +123,6 @@ class TestCaseDetailView:
         queue_f680_cases_to_review,
         current_user,
         case_status,
-        expected,
     ):
         data_submitted_f680_case["case"]["data"]["status"]["key"] = case_status
         data_submitted_f680_case["case"]["assigned_users"] = {queue_f680_cases_to_review["name"]: [current_user]}
@@ -136,7 +132,7 @@ class TestCaseDetailView:
 
         soup = BeautifulSoup(response.content, "html.parser")
         recommendations_tab = soup.find(id="recommendations")
-        assert bool(recommendations_tab) is expected
+        assert bool(recommendations_tab) is True
 
     def test_GET_success_transformed_submitted_by(
         self,

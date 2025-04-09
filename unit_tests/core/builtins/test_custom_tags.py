@@ -230,6 +230,14 @@ def test_subtract(num1, num2, expected):
 @pytest.mark.parametrize(
     "data,expected",
     [
+        ({}, ""),
+        (12345, ""),
+        ([], ""),
+        ({"no_address_key": "not an address"}, ""),
+        ("not a dict", ""),
+        ("not a dict with the word address in it", ""),
+        ({"address": []}, ""),
+        ({"address": {}}, ""),
         (
             {
                 "address": {
@@ -244,6 +252,17 @@ def test_subtract(num1, num2, expected):
             "42, Bakers street, San Jose, California, 42551, US",
         ),
         (
+            {"address": {"address": "42, Bakers street, San Jose, California, 42551, US"}},
+            "42, Bakers street, San Jose, California, 42551, US",
+        ),
+        (
+            {
+                "address": {"address": "42, Bakers street, San Jose, California, 42551"},
+                "country": {"name": "United States"},
+            },
+            "42, Bakers street, San Jose, California, 42551, United States",
+        ),
+        (
             {"address": "54, Bakers street, San Diego, California, 42551", "country": {"name": "United States"}},
             "54, Bakers street, San Diego, California, 42551, United States",
         ),
@@ -252,6 +271,12 @@ def test_subtract(num1, num2, expected):
                 "address": "54, Bakers street, San Diego, California, 42551",
             },
             "54, Bakers street, San Diego, California, 42551",
+        ),
+        (
+            {
+                "address": "this address has the word country in it",
+            },
+            "this address has the word country in it",
         ),
     ],
 )
