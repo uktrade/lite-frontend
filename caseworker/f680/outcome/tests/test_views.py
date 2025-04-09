@@ -17,8 +17,9 @@ def setup(
     mock_approval_reason,
     mock_denial_reasons,
     mock_footnote_details,
-    settings,
+    mock_proviso,
     mock_get_case_recommendations,
+    settings,
 ):
     settings.FEATURE_FLAG_ALLOW_F680 = True
     return
@@ -111,8 +112,6 @@ class TestDecideOutcomeView:
                     "created_at": "2021-10-16T23:48:39.486679+01:00",
                     "id": recommendations[0]["id"],
                     "refusal_reasons": "",
-                    "security_grading": {"key": "official", "value": "Official"},
-                    "security_grading_other": "",
                     "security_release_request_id": request_ids[0],
                     "team": {
                         "alias": None,
@@ -234,8 +233,6 @@ class TestDecideOutcomeView:
                     "created_at": "2021-10-16T23:48:39.486679+01:00",
                     "id": recommendations[0]["id"],
                     "refusal_reasons": "",
-                    "security_grading": {"key": "official", "value": "Official"},
-                    "security_grading_other": "",
                     "security_release_request_id": request_ids[0],
                     "team": {
                         "alias": None,

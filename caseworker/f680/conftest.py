@@ -29,12 +29,11 @@ def recommendations(current_user, admin_team, data_submitted_f680_case):
             "type": {"key": "approve", "value": "Approve"},
             "conditions": "No concerns",
             "refusal_reasons": "",
-            "security_grading": {"key": "official", "value": "Official"},
-            "security_grading_other": "",
-            "security_release_request": security_release_requests[0]["id"],
+            "security_release_request": release_request["id"],
             "user": current_user,
             "team": admin_team,
         }
+        for release_request in security_release_requests
     ]
 
 

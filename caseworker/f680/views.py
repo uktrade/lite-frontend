@@ -11,21 +11,21 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 
 from core.auth.views import LoginRequiredMixin
 
-from caseworker.advice.constants import AdviceLevel
-from caseworker.advice.services import move_case_forward
-from caseworker.core.constants import ALL_CASES_QUEUE_ID
-from caseworker.cases.services import get_case, post_ecju_query
-from caseworker.f680.rules import OUTCOME_STATUSES
-from caseworker.f680.forms import NewECJUQueryForm
-from caseworker.cases.helpers.case import CaseworkerMixin
-from caseworker.cases.helpers.ecju_queries import get_ecju_queries
-from caseworker.queues.services import get_queue
-from caseworker.users.services import get_gov_user
-
 from caseworker.activities.forms import NotesAndTimelineForm
 from caseworker.activities.mixins import NotesAndTimelineMixin
+from caseworker.advice.services import move_case_forward
 from caseworker.cases.forms.queries import CloseQueryForm
+from caseworker.cases.helpers.case import CaseworkerMixin
+from caseworker.cases.helpers.ecju_queries import get_ecju_queries
+from caseworker.cases.services import get_case, post_ecju_query
 from caseworker.cases.views.queries import CloseQueryMixin
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
+from caseworker.core.services import get_denial_reasons
+from caseworker.f680.forms import NewECJUQueryForm
+from caseworker.f680.recommendation.services import get_pending_recommendation_requests
+from caseworker.picklists.services import get_picklists_list
+from caseworker.queues.services import get_queue
+from caseworker.users.services import get_gov_user
 
 
 class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
@@ -53,8 +53,12 @@ class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
 
-    def get_recommendation_level(self, case):
-        return AdviceLevel.FINAL if case.status in OUTCOME_STATUSES else AdviceLevel.USER
+        self.conditions = get_picklists_list(request, type="proviso", disable_pagination=True, show_deactivated=False)
+        self.refusal_reasons = get_denial_reasons(request)
+        self.pending_recommendations = get_pending_recommendation_requests(self.request, self.case, self.caseworker)
+
+    def pending_recommendation_requests(self):
+        return get_pending_recommendation_requests(self.request, self.case, self.caseworker)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
