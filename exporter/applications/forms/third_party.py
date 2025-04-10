@@ -5,9 +5,8 @@ from exporter.applications.forms.parties import (
     party_website_form,
     party_address_form,
     party_type_form,
-    clearance_level_forms,
 )
-from exporter.core.constants import PERMANENT, F680
+from exporter.core.constants import PERMANENT
 from lite_content.lite_exporter_frontend.applications import ThirdPartyForm, PartyForm, PartyTypeForm
 from lite_forms.components import BackLink, RadioButtons, Form, Option, FormGroup, TextInput
 
@@ -19,7 +18,6 @@ role_option_list = {
     "consultant": ThirdPartyForm.Options.CONSULTANT,
     "contact": ThirdPartyForm.Options.CONTACT,
     "exporter": ThirdPartyForm.Options.EXPORTER,
-    "customer": ThirdPartyForm.Options.CUSTOMER,
 }
 
 
@@ -32,10 +30,8 @@ def _third_party_role_form(application, title, button, options, back_url):
     )
 
 
-def third_party_forms(request, application, strings, back_url, clearance_options=None):
+def third_party_forms(request, application, strings, back_url):
     form_options = role_option_list.copy()
-    if application["case_type"]["sub_type"]["key"] != F680:
-        form_options.pop("customer")
     export_type = application.get("export_type")
     if not export_type or export_type.get("key") == PERMANENT:
         del form_options["additional_end_user"]
@@ -48,9 +44,6 @@ def third_party_forms(request, application, strings, back_url, clearance_options
         party_name_form(strings.NAME_FORM_TITLE, strings.BUTTON),
         party_website_form(strings.WEBSITE_FORM_TITLE, strings.BUTTON),
     ]
-
-    if clearance_options:
-        forms.extend(clearance_level_forms(clearance_options, strings.BUTTON))
 
     forms.append(party_address_form(request, strings.ADDRESS_FORM_TITLE, strings.SUBMIT_BUTTON))
 
