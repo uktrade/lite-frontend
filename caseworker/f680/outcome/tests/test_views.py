@@ -465,7 +465,7 @@ class TestDecideOutcomeView:
         assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert form.errors == {
-            "security_grading": ["Select the security grading"],
+            "security_grading": ["Select the security release"],
             "approval_types": ["This field is required."],
         }
 
