@@ -100,6 +100,10 @@ Feature: I want to indicate the standard licence I want
     And I enter "Joe Bloggs" for signatory name
     And I select no and enter "reason" for end user document
     And I click on "Save and continue"
+    And I click on "Notes"
+    And I add a note "This is my note"
+    And I click "Post note"
+    And I click on "Save and continue"
     And I submit the application
     Then my answers are played back to me
     And I see "Standard Individual Export Licence" as the Licence
@@ -131,7 +135,7 @@ Feature: I want to indicate the standard licence I want
     And I see "No information added to this section." for "Consignee"
     And I see "No information added to this section." for "Third parties"
     And I see "No information added to this section." for "Supporting documents"
-    And I see "No information added to this section." for Notes
+    And I see "This is my note" for Notes
     When I click continue
     And I agree to the declaration
     Then application is submitted
@@ -231,6 +235,10 @@ Feature: I want to indicate the standard licence I want
     And I enter "Joe Bloggs" for signatory name
     And I select no and enter "reason" for end user document
     And I click on "Save and continue"
+    And I click on "Notes"
+    And I add a note "This is my note"
+    And I click "Post note"
+    And I click on "Save and continue"
     And I submit the application
     Then my answers are played back to me
     And I see "Standard Individual Export Licence" as the Licence
@@ -262,7 +270,7 @@ Feature: I want to indicate the standard licence I want
     And I see "No information added to this section." for "Consignee"
     And I see "No information added to this section." for "Third parties"
     And I see "No information added to this section." for "Supporting documents"
-    And I see "No information added to this section." for Notes
+    And I see "This is my note" for Notes
     When I click continue
     And I agree to the declaration
     Then application is submitted
