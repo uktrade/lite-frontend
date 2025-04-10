@@ -38,14 +38,14 @@ headers = [
 
 def standard_application_case_type_dict():
     return {
-        "reference": {"key": "siel", "value": "SIEL"},
+        "reference": {"key": "siel", "value": "Standard Individual Export Licence"},
         "sub_type": {"key": "standard", "value": "Standard Licence"},
     }
 
 
 def f680_application_case_type_dict():
     return {
-        "reference": {"key": "f680", "value": "F680"},
+        "reference": {"key": "f680", "value": "MOD F680 Clearance"},
         "sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"},
     }
 
@@ -226,7 +226,7 @@ def get_formatted_data(application):
             str_date(application["submitted_at"]) if application["submitted_at"] else str(application["submitted_at"])
         ),
         "updated_at": str_date(application["updated_at"]),
-        "case_type": application["case_type"]["sub_type"]["value"],
+        "case_type": application["case_type"]["reference"]["value"],
         "status": application["status"]["value"],
     }
 
@@ -247,7 +247,7 @@ def verify_application_data(response, headers, expected):
         application = get_formatted_data(item)
         for col_index, col in enumerate(columns):
             key = headers[col_index]["key"]
-            assert application[key] in col.text
+            assert application[key] == col.text.strip()
 
 
 def test_get_applications(authorized_client, mock_get_submitted_applications):
