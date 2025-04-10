@@ -1,5 +1,6 @@
-from django.conf import settings
 import rules
+
+from django.conf import settings
 
 from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import (

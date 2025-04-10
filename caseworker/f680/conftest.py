@@ -47,11 +47,6 @@ def mock_outcomes_no_outcomes(requests_mock, data_submitted_f680_case):
 @pytest.fixture
 def data_outcomes(current_user, admin_team, data_submitted_f680_case):
     security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
-    outcome_map = {
-        security_release_requests[0]["id"]: "approve",
-        security_release_requests[1]["id"]: "refuse",
-        security_release_requests[2]["id"]: "approve",
-    }
     return [
         {
             "id": "429c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE

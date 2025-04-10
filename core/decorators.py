@@ -9,6 +9,19 @@ from django.http import Http404
 from .exceptions import ServiceError
 
 
+def with_logged_in_caseworker(predicate_func):
+    @wraps(predicate_func)
+    def wrapper(request, *args, **kwargs):
+        try:
+            _ = request.lite_user
+        except AttributeError:
+            return False
+
+        return predicate_func(request, *args, **kwargs)
+
+    return wrapper
+
+
 def expect_status(expected_status, logger_message, error_message, reraise_404=False):
     def check_status(f):
         @wraps(f)

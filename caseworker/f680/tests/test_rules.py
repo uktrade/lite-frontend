@@ -302,7 +302,7 @@ class TestCanUserMakeF680OutcomeRule:
         case = data_unassigned_case
         request = None
 
-        assert not recommendation_rules.releases_without_outcome(request, case)
+        assert not recommendation_rules.releases_without_outcome_exist(request, case)
 
 
 class TestClearF680RecommendationRule:
@@ -336,10 +336,11 @@ class TestClearF680RecommendationRule:
         assert rules.test_rule("can_user_clear_f680_recommendation", request, data_assigned_case)
 
 
-class TestCanUserMakeF680LetterRule:
-        
+class TestCanUserMakeF680OutcomeLetterRule:
+
     def test_can_user_make_f680_outcome_letter_granted(
-        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete):
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
@@ -347,25 +348,26 @@ class TestCanUserMakeF680LetterRule:
         assert rules.test_rule("can_user_make_f680_outcome_letter", request, case)
 
     def test_can_user_make_f680_outcome_letter_wrong_status(
-        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete):
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.FINALISED
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
 
         assert not rules.test_rule("can_user_make_f680_outcome_letter", request, case)
 
-    
     def test_can_user_make_f680_outcome_letter_wrong_out_come_not_decided(
-        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_no_outcome):
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_no_outcome
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
 
         assert not rules.test_rule("can_user_make_f680_outcome_letter", request, case)
 
-    
     def test_can_user_make_f680_outcome_approval_letter_granted(
-        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete_approval):
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete_approval
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
@@ -373,7 +375,8 @@ class TestCanUserMakeF680LetterRule:
         assert rules.test_rule("can_user_make_approval_f680_outcome_letter", request, case)
 
     def test_can_user_make_f680_outcome_approval_letter_not_allowed(
-        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete_refusal):
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete_refusal
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
@@ -381,7 +384,8 @@ class TestCanUserMakeF680LetterRule:
         assert not rules.test_rule("can_user_make_approval_f680_outcome_letter", request, case)
 
     def test_can_user_make_f680_outcome_refusal_letter_granted(
-        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete_refusal):
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete_refusal
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
@@ -389,7 +393,8 @@ class TestCanUserMakeF680LetterRule:
         assert rules.test_rule("can_user_make_refusal_f680_outcome_letter", request, case)
 
     def test_can_user_make_f680_outcome_refusal_letter_not_allowed(
-        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete_approval):
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete_approval
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
