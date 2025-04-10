@@ -177,7 +177,7 @@ class ClearOutcome(LoginRequiredMixin, F680CaseworkerMixin, View):
     def post(self, request, **kwargs):
         self.delete_outcome(self.kwargs["outcome_id"])
         success_message = "Outcome cleared successfully"
-        messages.success(self.request, success_message, extra_tags="safe")
+        messages.success(self.request, success_message)
         outcome_url = reverse(
             "cases:f680:recommendation", kwargs={"queue_pk": self.kwargs["queue_pk"], "pk": self.kwargs["pk"]}
         )
