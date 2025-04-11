@@ -16,6 +16,6 @@ def patch_f680_application(request, application_id, json):
     return data.json(), data.status_code
 
 
-def submit_f680_application(request, application_id):
-    data = client.post(request, f"/exporter/f680/application/{application_id}/submit")
+def submit_f680_application(request, application_id, json):
+    data = client.post(request, f"/exporter/f680/application/{application_id}/submit", json)
     return data.json(), data.status_code

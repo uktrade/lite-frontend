@@ -11,7 +11,7 @@ from django.views.generic import FormView, TemplateView
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
-from .forms import ApplicationSubmissionForm
+from .forms import ApplicationPresubmissionForm, ApplicationSubmissionForm
 
 from .services import (
     get_f680_application,
@@ -40,10 +40,7 @@ class F680FeatureRequiredMixin(AccessMixin):
         return super().dispatch(request, *args, **kwargs)
 
 
-class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, FormView):
-    form_class = ApplicationSubmissionForm
-    template_name = "f680/summary.html"
-
+class F680BasePresubmissionMixin:
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
         self.application, _ = self.get_f680_application(kwargs["pk"])
@@ -62,17 +59,9 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
         context["application"] = self.application
         return context
 
-    @expect_status(
-        HTTPStatus.OK,
-        "Error submitting F680 application",
-        "Unexpected error submitting F680 application",
-        reraise_404=True,
-    )
-    def submit_f680_application(self, application_id):
-        return submit_f680_application(self.request, application_id)
-
     def all_sections_complete(self):
         # TODO: Think more about pre-submit validation as this is very barebones right now
+
         complete_sections = set(self.application["application"].get("sections", {}).keys())
         required_sections = set(
             [
@@ -91,9 +80,42 @@ class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F
             context_data = self.get_context_data(form=form)
             context_data["errors"] = {"missing_sections": ["Please complete all required sections"]}
             return self.render_to_response(context_data)
-
-        self.submit_f680_application(self.application["id"])
         return super().form_valid(form)
+
+
+class F680ApplicationSummaryView(LoginRequiredMixin, F680FeatureRequiredMixin, F680BasePresubmissionMixin, FormView):
+    form_class = ApplicationPresubmissionForm
+    template_name = "f680/summary.html"
+
+    def get_success_url(self):
+        return reverse("f680:declaration", kwargs={"pk": self.application["id"]})
+
+
+class F680DeclarationView(LoginRequiredMixin, F680FeatureRequiredMixin, F680BasePresubmissionMixin, FormView):
+    form_class = ApplicationSubmissionForm
+    template_name = "core/form.html"
+
+    def get_back_link_url(self):
+        return reverse("f680:summary", kwargs={"pk": self.application["id"]})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["back_link_url"] = self.get_back_link_url()
+        return context
+
+    def form_valid(self, form):
+        data = form.cleaned_data
+        self.submit_f680_application(self.application["id"], data)
+        return super().form_valid(form)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error submitting F680 application",
+        "Unexpected error submitting F680 application",
+        reraise_404=True,
+    )
+    def submit_f680_application(self, application_id, data):
+        return submit_f680_application(self.request, application_id, data)
 
     def get_success_url(self):
         return reverse("applications:success_page", kwargs={"pk": self.application["id"]})

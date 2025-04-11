@@ -39,7 +39,7 @@ class ApplyForALicencePage(BasePage):
     def click_export_licence(self, export_type):
         return self.driver.find_element(
             by=By.CSS_SELECTOR,
-            value=f"input[name=LICENCE_TYPE-application_type][value={export_type}]",
+            value=f"input[name=LICENCE_TYPE-licence_type][value={export_type}]",
         ).click()
 
     def select_types_of_clearance(self):
