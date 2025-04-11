@@ -11,6 +11,7 @@ from django.urls import reverse
 from http import HTTPStatus
 
 from core import client
+from core.exceptions import ServiceError
 from caseworker.f680 import rules as recommendation_rules
 
 
@@ -597,7 +598,7 @@ class TestCaseDocumentsView:
             "cases:f680:document", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id, "file_pk": file_pk}
         )
 
-        with pytest.raises(Exception) as error:
-            response = authorized_client.get(url)
+        with pytest.raises(ServiceError) as error:
+            authorized_client.get(url)
 
         assert str(error.value) == "Error downloading document"
