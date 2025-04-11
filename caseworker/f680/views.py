@@ -7,27 +7,37 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.views.generic import TemplateView, View, FormView
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 from core.auth.views import LoginRequiredMixin
 
 from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import move_case_forward
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
-from caseworker.cases.services import get_case
+from caseworker.cases.services import get_case, post_ecju_query
 from caseworker.f680.rules import OUTCOME_STATUSES
+from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.cases.helpers.case import CaseworkerMixin
+from caseworker.cases.helpers.ecju_queries import get_ecju_queries
 from caseworker.queues.services import get_queue
 from caseworker.users.services import get_gov_user
 
 from caseworker.activities.forms import NotesAndTimelineForm
 from caseworker.activities.mixins import NotesAndTimelineMixin
+from caseworker.cases.forms.queries import CloseQueryForm
+from caseworker.cases.views.queries import CloseQueryMixin
 
 
-class F680CaseworkerMixin(CaseworkerMixin):
+class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
     current_tab = None
 
-    def dispatch(self, request, *args, **kwargs):
+    def test_func(self):
+        return rules.test_rule("can_user_modify_f680", self.request)
 
+    def handle_no_permission(self):
+        raise PermissionDenied("Cannot modify or view F680s")
+
+    def dispatch(self, request, *args, **kwargs):
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
@@ -38,8 +48,12 @@ class F680CaseworkerMixin(CaseworkerMixin):
         self.security_release_requests = OrderedDict()
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
+        self.extra_setup(request)
 
         return super().dispatch(request, *args, **kwargs)
+
+    def extra_setup(self, request):
+        return
 
     def get_recommendation_level(self, case):
         return AdviceLevel.FINAL if case.status in OUTCOME_STATUSES else AdviceLevel.USER
@@ -55,6 +69,11 @@ class F680CaseworkerMixin(CaseworkerMixin):
         submitted_by = self.case["data"]["submitted_by"]
         if submitted_by and "first_name" in submitted_by:
             self.case["data"]["submitted_by"] = " ".join([submitted_by["first_name"], submitted_by["last_name"]])
+
+        # TODO: LTD-6075 - Implement a pattern for casetype-agnostic feature URLs
+        # This flag is used to select the relevant f680 url(s) within shared templates.
+        # Once LTD-6075 is implemented this should no longer be required.
+        context_data["is_f680"] = True
         return context_data
 
 
@@ -84,29 +103,26 @@ class CaseSummaryView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     current_tab = "application-summary"
 
 
-class MoveCaseForward(LoginRequiredMixin, View):
+class MoveCaseForward(LoginRequiredMixin, F680CaseworkerMixin, View):
 
-    def post(self, request, queue_pk, pk):
-        queue_pk = str(queue_pk)
-        case_pk = str(pk)
-        case = get_case(request, case_pk)
-        user_can_move_case = rules.test_rule("can_user_move_case_forward", self.request, case)
-        user_can_modify_f680 = rules.test_rule("can_user_modify_f680", self.request)
-        permission_granted = user_can_move_case and user_can_modify_f680
-        if not permission_granted:
-            raise PermissionDenied("Cannot move case forward")
+    def test_func(self):
+        return all([super().test_func(), rules.test_rule("can_user_move_case_forward", self.request, self.case)])
 
-        move_case_forward(request, case_pk, queue_pk)
+    def handle_no_permission(self):
+        raise PermissionDenied("Cannot move case forward")
 
-        all_cases_queue_url = reverse("cases:f680:details", kwargs={"queue_pk": ALL_CASES_QUEUE_ID, "pk": case_pk})
+    def post(self, request, **kwargs):
+        move_case_forward(request, self.case_id, str(self.queue_id))
+
+        all_cases_queue_url = reverse("cases:f680:details", kwargs={"queue_pk": ALL_CASES_QUEUE_ID, "pk": self.case_id})
         # WARNING: When changing this message be aware that the content is marked
         #   as safe. No user-supplied string should be injected in to it
         success_message = mark_safe(  # noqa: S308
-            f"<a href='{all_cases_queue_url}' class='govuk-link govuk-link--inverse'>{case.reference_code}</a>&nbsp;"
+            f"<a href='{all_cases_queue_url}' class='govuk-link govuk-link--inverse'>{self.case.reference_code}</a>&nbsp;"
             "was successfully moved forward"
         )
         messages.success(self.request, success_message, extra_tags="safe")
-        queue_url = reverse("queues:cases", kwargs={"queue_pk": queue_pk})
+        queue_url = reverse("queues:cases", kwargs={"queue_pk": self.queue_id})
         return redirect(queue_url)
 
 
@@ -117,3 +133,52 @@ class NotesAndTimelineView(LoginRequiredMixin, F680CaseworkerMixin, NotesAndTime
 
     def get_view_url(self):
         return reverse("cases:f680:notes_and_timeline", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+
+class ECJUQueryListView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
+    template_name = "f680/case/queries/list.html"
+    current_tab = "ecju-queries"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        open_ecju_queries, closed_ecju_queries = get_ecju_queries(self.request, self.case_id)
+        open_ecju_queries_with_forms = self.get_open_ecju_queries_with_forms(open_ecju_queries)
+        context["open_queries"] = open_ecju_queries_with_forms
+        context["closed_queries"] = closed_ecju_queries
+        return context
+
+    def get_open_ecju_queries_with_forms(self, open_ecju_queries):
+        open_ecju_queries_with_forms = []
+        for open_query in open_ecju_queries:
+            open_ecju_queries_with_forms.append((open_query, CloseQueryForm(prefix=str(open_query["id"]))))
+        return open_ecju_queries_with_forms
+
+
+class NewECJUQueryView(LoginRequiredMixin, F680CaseworkerMixin, FormView):
+    template_name = "f680/case/queries/new.html"
+    form_class = NewECJUQueryForm
+
+    def test_func(self):
+        return all([super().test_func(), rules.test_rule("can_user_add_an_ecju_query", self.request, self.case)])
+
+    def handle_no_permission(self):
+        raise PermissionDenied("Cannot add ecju query to F680")
+
+    def form_valid(self, form):
+        data = {"question": form.cleaned_data["question"], "query_type": "ecju_query"}
+        post_ecju_query(self.request, self.case_id, data)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("cases:f680:ecju_queries", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+
+class CloseECJUQueryView(LoginRequiredMixin, F680CaseworkerMixin, CloseQueryMixin, FormView):
+    form_class = CloseQueryForm
+    template_name = "f680/case/queries/close.html"
+
+    def test_func(self):
+        return all([super().test_func(), rules.test_rule("can_user_add_an_ecju_query", self.request, self.case)])
+
+    def get_success_url(self):
+        return reverse("cases:f680:ecju_queries", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})

@@ -1,0 +1,10 @@
+{% extends 'f680/case/base.html' %}
+{% load rules %}
+
+{% block details %}
+  {% test_rule 'can_user_add_an_ecju_query' request case as can_user_add_an_ecju_query %}
+  {% if can_user_add_an_ecju_query  %}
+    <a id="send-query" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:new_ecju_query' queue_pk case.id %}">Send a query to the exporter</a>
+  {% endif %}
+  {% include 'includes/queries_list.html' %}
+{% endblock %}
