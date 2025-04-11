@@ -22,9 +22,9 @@
 						</p>
 					{% endif %}
 					{% if document.safe == False %}
-						<p class="govuk-label">{% lcs 'cases.AdditionalDocumentsPage.Document.INFECTED_LABEL' %}</p>
+						<p class="govuk-label">Infected</p>
 					{% elif document.safe is None %}
-						<p class="govuk-label">{% lcs 'cases.AdditionalDocumentsPage.Document.PROCESSING_LABEL' %}</p>
+						<p class="govuk-label">Processing</p>
 					{% endif %}
 				</div>
 			</li>
