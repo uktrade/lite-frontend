@@ -157,6 +157,11 @@ def grant_licence(request, case_pk, json):
     return response.json(), response.status_code
 
 
+def finalise_case(request, case_pk, json):
+    response = client.put(request, f"/cases/{case_pk}/finalise/", json)
+    return response.json(), response.status_code
+
+
 def get_licence(request, case_pk):
     data = client.get(request, f"/cases/{case_pk}/licences/")
     return data.json(), data.status_code
@@ -295,6 +300,11 @@ def get_decisions(request):
 def post_generated_document(request, pk, json):
     data = client.post(request, f"/cases/{pk}/generated-documents/", json)
     return data.status_code
+
+
+def get_generated_documents(request, pk):
+    data = client.get(request, f"/cases/{pk}/generated-documents/")
+    return data.json(), data.status_code
 
 
 def get_generated_document_preview(request, pk, template, text, addressee):
