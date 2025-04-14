@@ -125,11 +125,7 @@ class SupportingDocumentsDeleteView(F680FeatureRequiredMixin, F680SupportingDocu
         "Unexpected error updating F680 application",
     )
     def delete_additional_document(self):
-        status_code = delete_additional_document(
-            self.request,
-            self.application_id,
-            self.document_id,
-        )
+        status_code = delete_additional_document(self.request, self.application_id, self.document_id)
 
         return {}, status_code
 

@@ -2,6 +2,7 @@ from core.common.forms import BaseForm
 from django import forms
 
 from core.file_handler import validate_mime_type
+from core.forms.utils import coerce_str_to_bool
 from exporter.core.constants import FileUploadFileTypes
 from exporter.core.forms import PotentiallyUnsafeClearableFileInput
 from django.template.loader import render_to_string
@@ -46,6 +47,7 @@ class F680DeleteSupportingDocument(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
+        coerce=coerce_str_to_bool,
         label="",
         widget=forms.RadioSelect,
         error_messages={
