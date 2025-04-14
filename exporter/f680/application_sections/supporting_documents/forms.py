@@ -34,3 +34,24 @@ class F680AttachSupportingDocument(BaseForm):
             "file",
             "description",
         )
+
+
+class F680DeleteSupportingDocument(BaseForm):
+    class Layout:
+        TITLE = "Confirm you want to delete the document"
+        TITLE_AS_LABEL_FOR = "confirm_delete"
+
+    confirm_delete = forms.TypedChoiceField(
+        choices=(
+            (True, "Yes"),
+            (False, "No"),
+        ),
+        label="",
+        widget=forms.RadioSelect,
+        error_messages={
+            "required": "Select yes if you wish to delete the selected document",
+        },
+    )
+
+    def get_layout_fields(self):
+        return ("confirm_delete",)
