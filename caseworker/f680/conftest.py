@@ -161,7 +161,7 @@ def mock_f680_case(f680_case_id, requests_mock, data_submitted_f680_case):
 
 
 @pytest.fixture
-def mock_f680_case_under_review(f680_case_id, requests_mock, data_submitted_f680_case):
+def mock_f680_case_under_final_review(f680_case_id, requests_mock, data_submitted_f680_case):
     url = client._build_absolute_uri(f"/cases/{f680_case_id}/")
     data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
     return requests_mock.get(url=url, json=data_submitted_f680_case)

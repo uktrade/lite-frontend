@@ -189,7 +189,7 @@ class TestF680GenerateDocument:
         generate_document_url,
         mock_preview_f680_letter,
         data_preview_response,
-        mock_f680_case_under_review,
+        mock_f680_case_under_final_review,
         mock_outcomes_approve_refuse,
         mock_letter_template_filter,
     ):
@@ -197,26 +197,13 @@ class TestF680GenerateDocument:
         assert response.status_code == 200
         assert response.context["preview"] == data_preview_response["preview"]
 
-    def test_GET_success_approval_not_allowed(
-        self,
-        authorized_client,
-        generate_document_url,
-        mock_preview_f680_letter,
-        data_preview_response,
-        mock_f680_case_under_review,
-        mock_outcomes_complete_refusal,
-        mock_letter_template_filter,
-    ):
-        response = authorized_client.get(generate_document_url)
-        assert response.status_code == 404
-
     def test_POST_preview_success(
         self,
         authorized_client,
         generate_document_url,
         mock_preview_f680_letter_with_customisation,
         data_preview_response_with_customisation_text,
-        mock_f680_case_under_review,
+        mock_f680_case_under_final_review,
         mock_outcomes_approve_refuse,
         mock_letter_template_filter,
         customisation_text,
@@ -235,7 +222,7 @@ class TestF680GenerateDocument:
         f680_case_id,
         customisation_text,
         f680_approval_template_id,
-        mock_f680_case_under_review,
+        mock_f680_case_under_final_review,
         mock_outcomes_approve_refuse,
         mock_letter_template_filter,
     ):
@@ -278,7 +265,7 @@ class TestAllDocumentsView:
         self,
         authorized_client,
         data_queue,
-        mock_f680_case_under_review,
+        mock_f680_case_under_final_review,
         mock_outcomes_approve_refuse,
         f680_case_id,
         f680_reference_code,
@@ -295,7 +282,12 @@ class TestAllDocumentsView:
                 "id": "68a17258-af0f-429e-922d-25945979fa6d",
                 "name": "F680 Approval",
                 "decisions": [{"name": {"key": OutcomeType.APPROVE}}],
-            }
+            },
+            {
+                "id": "98a37258-af0f-429e-922d-259459795a2d",
+                "name": "F680 Refusal",
+                "decisions": [{"name": {"key": OutcomeType.REFUSE}}],
+            },
         ]
 
     def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
@@ -307,7 +299,7 @@ class TestAllDocumentsView:
         self,
         authorized_client,
         data_queue,
-        mock_f680_case_under_review,
+        mock_f680_case_under_final_review,
         mock_outcomes_no_outcome,
         f680_case_id,
         f680_reference_code,
@@ -318,4 +310,4 @@ class TestAllDocumentsView:
     ):
 
         response = authorized_client.get(document_all_url)
-        assert response.status_code == 404
+        assert response.status_code == 403
