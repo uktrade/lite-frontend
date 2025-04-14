@@ -117,6 +117,7 @@ rules.add_rule("can_user_clear_f680_recommendation", is_user_allocated & can_use
 rules.add_rule(
     "can_user_make_f680_outcome", is_user_allocated & case_ready_for_outcome & releases_without_outcome_exist
 )
+rules.add_rule("can_user_clear_f680_outcome", is_user_allocated & case_ready_for_outcome)
 rules.add_rule("can_user_move_f680_case_forward", is_user_allocated & f680_case_ready_for_move)
 rules.add_rule("can_user_make_f680_outcome_letter", is_user_allocated & case_ready_for_outcome & all_releases_decided)
 rules.add_rule(

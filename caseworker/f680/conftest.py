@@ -45,11 +45,16 @@ def mock_outcomes_no_outcomes(requests_mock, data_submitted_f680_case):
 
 
 @pytest.fixture
-def data_outcomes(current_user, admin_team, data_submitted_f680_case):
+def data_outcome_id():
+    return "429c5596-fe8b-4540-988b-c37805cd08de"  # /PS-IGNORE
+
+
+@pytest.fixture
+def data_outcomes(current_user, admin_team, data_submitted_f680_case, data_outcome_id):
     security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
     return [
         {
-            "id": "429c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+            "id": data_outcome_id,
             "created_at": "2021-10-16T23:48:39.486679+01:00",
             "outcome": "approve",
             "conditions": "No concerns",
