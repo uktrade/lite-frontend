@@ -15,43 +15,12 @@
 	{% endif %}
 
 	<td class="govuk-table__cell govuk-table__cell--tight">
-		<div class="app-cases__row__vertical-column">
-
-			{% include "includes/sla_display.html" with case=case %}
-
-			{% if not is_all_cases_queue %}
-				{% if case.is_recently_updated %}
-					<span
-						data-tooltip="{% lcs 'cases.CasesListPage.NOT_UPDATED_RECENTLY' %}"
-						class="app-cases__row__icon app-cases__row__attention-needed">!</span>
-				{% endif %}
-			{% endif %}
-
-			{% if cases.results.is_work_queue %}
-				{% if case.has_open_queries %}
-				<div data-tooltip="{% lcs 'cases.CasesListPage.OPEN_TEAM_ECJU' %}" class="app-cases__row__icon">
-					{% svg 'ecju-query' %}
-				</div>
-				{% endif %}
-			{% endif %}
-
-		</div>
+		{% include 'includes/sla_query_details.html' with case=case %}
 	</td>
 
 	{# case info #}
 	<td class="govuk-table__cell">
-		<a class="govuk-link govuk-link--no-visited-state" id="case-{{ case.id }}" href="{% if case.case_type.sub_type.key == "f680_clearance" %}{% url 'cases:f680:details' queue.id case.id %}{% else %}{% url 'cases:case' queue.id case.id %}{% endif %}">
-			<span class="govuk-visually-hidden">View</span> {{ case.reference_code }}
-		</a>
-		<address>
-			<p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-				{{ case.organisation.name }}
-			</p>
-		</address>
-		<p class="govuk-tag govuk-tag--grey govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.status.value }}</p>
-		{% if case.sub_status %}
-			<div class="govuk-tag govuk-tag--blue govuk-!-margin-0 govuk-!-margin-top-2 app-case__status">{{ case.sub_status.name }}</div>
-		{% endif %}
+		{% include 'includes/case_info.html' with case=case %}
 	</td>
 
 	{# destinations #}
@@ -67,57 +36,7 @@
 
 	{# 	Case allocation #}
 	<td class="govuk-table__cell expander" data-expander-visible-elems="3" data-customiser-key="case_allocation">
-		<ul class="app-assignments__list expander__expand-list">
-			{% if case.case_officer.first_name and case.case_officer.last_name %}
-			   <li class="app-assignments__item expander__expand-list__item">
-				   <div class="app-assignments__user">
-						{{ case.case_officer.first_name  }} {{ case.case_officer.last_name}}
-				   </div>
-				   <div class="app-assignments__role">
-					   Licensing Unit case officer
-				   </div>
-			   </li>
-			{% else %}
-				<li class="app-assignments__item expander__expand-list__item">
-				   <div class="app-assignments__user">
-						Not allocated
-				   </div>
-				   <div class="app-assignments__role">
-					   Licensing Unit case officer
-				   </div>
-			   </li>
-			{% endif %}
-
-			{% if case.queue_assignments %}
-				{% for queue_id, assignment in case.queue_assignments.items %}
-                   {% if not assignment.assignees %}
-				   <li class="app-assignments__item expander__expand-list__item">
-					   <div class="app-assignments__user">
-                                Not allocated
-					   </div>
-					   <div class="app-assignments__team">
-						   {{ assignment.queue_name }}
-					   </div>
-				   </li>
-                   {% else %}
-                        {% for assignee in assignment.assignees %}
-				            <li class="app-assignments__item expander__expand-list__item">
-				                <div class="app-assignments__user">
-				             	    {% if assignee.first_name and assignee.last_name %}
-				             	     		{{ assignee.first_name }} {{ assignee.last_name }}
-				             	    {% else %}
-				             	     		{{ assignee.email }}
-				             	    {% endif %}
-				                </div>
-				                <div class="app-assignments__team">
-				             	   {{ assignment.queue_name }}
-				                </div>
-				            </li>
-                        {% endfor %}
-                   {% endif %}
-				{% endfor %}
-			{% endif %}
-		</ul>
+		{% include 'includes/case_queue_assignments.html' with case=case %}
 	</td>
 	{# case recommendations #}
 	<td class="govuk-table__cell case-recommendation" data-customiser-key="case_recommendation">
@@ -125,32 +44,7 @@
 	</td>
     {# case updates #}
 	<td class="govuk-table__cell" data-customiser-key="case_updates">
-		<ul class="app-updates__list">
-			{% if case.activity_updates %}
-				{% for update in case.activity_updates %}
-					<li class="app-updates__item">
-						<div class="app-updates__action">
-							{% if forloop.first %}
-								Latest action
-							{% else %}
-								Previous action
-							{% endif %}
-						</div>
-						<div class="app-updates__department">
-			                {% include 'activities/includes/activity-entry-user.html' with activity=update %} {{ update.created_at|to_datetime|date:"d F Y" }}
-						</div>
-						<div class="app-updates__activity">
-			                {% include 'activities/includes/activity-entry-activity.html' with activity=update %}
-						</div>
-						{% if update.additional_text %}
-							<div class="app-updates__activity">
-								{{ update.additional_text|linebreaksbr }}
-							</div>
-						{% endif %}
-					</li>
-				{% endfor %}
-			{% endif %}
-		</ul>
+		{% include 'includes/case_updates.html' with case=case %}
 	</td>
 
 	{# Products #}

@@ -1695,7 +1695,7 @@ def data_application_json(data_australia_release_id, data_france_release_id, dat
                         "key": "has_security_classification",
                         "answer": "Yes",
                         "datatype": "boolean",
-                        "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                        "question": "Has the product been given a security classification by a UK MOD authority?",
                         "raw_answer": True,
                     },
                     "prefix": {

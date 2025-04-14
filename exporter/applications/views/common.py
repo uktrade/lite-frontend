@@ -10,6 +10,7 @@ from django.views.generic import FormView, TemplateView
 from requests.exceptions import HTTPError
 from urllib.parse import urlencode
 
+from core.wizard.conditionals import C
 from core.wizard.views import BaseSessionWizardView
 
 from exporter.applications.constants import (
@@ -63,8 +64,9 @@ from exporter.applications.services import (
     post_appeal_document,
     get_appeal,
     create_application_amendment,
-    post_applications,
+    post_export_licence_application,
 )
+from exporter.applications.views.conditionals import is_indeterminate_export_licence_type_allowed
 from exporter.organisation.members.services import get_user
 
 from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType
@@ -637,6 +639,10 @@ class ExportLicenceView(LoginRequiredMixin, BaseSessionWizardView):
         (ExportLicenceSteps.TOLD_BY_AN_OFFICIAL, ToldByAnOfficialForm),
     ]
 
+    condition_dict = {
+        ExportLicenceSteps.LICENCE_TYPE: ~C(is_indeterminate_export_licence_type_allowed),
+    }
+
     def get_context_data(self, form, **kwargs):
         ctx = super().get_context_data(form, **kwargs)
 
@@ -650,16 +656,16 @@ class ExportLicenceView(LoginRequiredMixin, BaseSessionWizardView):
 
     @expect_status(
         HTTPStatus.CREATED,
-        "Error creating application",
-        "Unexpected error creating application",
+        "Error creating export licence application",
+        "Unexpected error creating export licence application",
     )
-    def post_applications(self, data):
-        return post_applications(self.request, data)
+    def post_export_licence_application(self, data):
+        return post_export_licence_application(self.request, data)
 
     def get_success_url(self):
         return reverse("applications:task_list", kwargs={"pk": self.application["id"]})
 
     def done(self, form_list, form_dict, **kwargs):
         data = self.get_payload(form_dict)
-        self.application, _ = self.post_applications(data)
+        self.application, _ = self.post_export_licence_application(data)
         return redirect(self.get_success_url())

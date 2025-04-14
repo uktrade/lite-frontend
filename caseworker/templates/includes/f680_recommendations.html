@@ -1,0 +1,14 @@
+<ul class="case-recommendation__list">
+    {% for item in case_recommendations %}
+        <li class="case-recommendation__item">
+            <div class="case-recommendation__team">{{ item.team }}</div>
+            <div class="case-recommendation__recommendation">
+                {% if item.type == 'approve' %}
+                    Approved
+                {% elif item.type == 'refuse' %}
+                    Refused
+                {% endif %}
+            </div>
+        </li>
+    {% endfor %}
+</ul>

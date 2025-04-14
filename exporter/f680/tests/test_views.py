@@ -6,7 +6,7 @@ from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
 
 from core import client
-from exporter.f680.forms import ApplicationSubmissionForm
+from exporter.f680.forms import ApplicationPresubmissionForm, ApplicationSubmissionForm
 
 
 @pytest.fixture(autouse=True)
@@ -170,7 +170,7 @@ def data_f680_submitted_application(data_f680_case):
                         "key": "has_security_classification",
                         "answer": "No",
                         "datatype": "boolean",
-                        "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                        "question": "Has the product been given a security classification by a UK MOD authority?",
                         "raw_answer": False,
                     },
                     "used_by_uk_armed_forces_info": {
@@ -269,7 +269,21 @@ def data_f680_case_complete_application(data_f680_case):
             "approval_type": {},
             "user_information": {},
             "product_information": {},
-        }
+        },
+    }
+    return data_f680_case
+
+
+@pytest.fixture
+def data_f680_case_complete_application_agree_to_foi(data_f680_case):
+    data_f680_case["application"] = {
+        "sections": {
+            "general_application_details": {},
+            "approval_type": {},
+            "user_information": {},
+            "product_information": {},
+        },
+        "agreed_to_foi": False,
     }
     return data_f680_case
 
@@ -306,6 +320,11 @@ def data_f680_case_application_history(data_f680_case):
 @pytest.fixture
 def f680_summary_url_with_application(data_f680_case):
     return reverse("f680:summary", kwargs={"pk": data_f680_case["id"]})
+
+
+@pytest.fixture
+def f680_declaration_url_with_application(data_f680_case):
+    return reverse("f680:declaration", kwargs={"pk": data_f680_case["id"]})
 
 
 @pytest.fixture
@@ -381,7 +400,21 @@ def mock_application_post(requests_mock, data_f680_case):
 def mock_f680_application_submit(requests_mock, data_f680_case_complete_application):
     application_id = data_f680_case_complete_application["id"]
     url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/submit/")
-    return requests_mock.post(url=url, json=data_f680_case_complete_application)
+    return requests_mock.post(url=url, json={})
+
+
+@pytest.fixture
+def mock_post_f680_application_declaration(requests_mock, data_f680_case_complete_application_agree_to_foi):
+    application_id = data_f680_case_complete_application_agree_to_foi["id"]
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/declaration/")
+    return requests_mock.post(url=url, json=data_f680_case_complete_application_agree_to_foi)
+
+
+@pytest.fixture
+def mock_patch_f680_application(requests_mock, data_f680_case):
+    application_id = data_f680_case["id"]
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
+    return requests_mock.patch(url=url, json=data_f680_case)
 
 
 @pytest.fixture
@@ -492,8 +525,7 @@ class TestF680ApplicationSummaryView:
         mock_f680_application_get,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
-
-        assert isinstance(response.context["form"], ApplicationSubmissionForm)
+        assert isinstance(response.context["form"], ApplicationPresubmissionForm)
         assertTemplateUsed(response, "f680/summary.html")
 
         content = BeautifulSoup(response.content, "html.parser")
@@ -509,7 +541,7 @@ class TestF680ApplicationSummaryView:
     ):
         response = authorized_client.get(f680_summary_url_with_application)
 
-        assert isinstance(response.context["form"], ApplicationSubmissionForm)
+        assert isinstance(response.context["form"], ApplicationPresubmissionForm)
         assertTemplateUsed(response, "f680/summary.html")
 
         content = BeautifulSoup(response.content, "html.parser")
@@ -599,9 +631,7 @@ class TestF680ApplicationSummaryView:
         )
 
         assert response.status_code == 302
-        assert response.url == reverse(
-            "applications:success_page", kwargs={"pk": data_f680_case_complete_application["id"]}
-        )
+        assert response.url == reverse("f680:declaration", kwargs={"pk": data_f680_case_complete_application["id"]})
 
     def test_post_f680_submission_form_fail_with_feature_flag_off(
         self,
@@ -638,6 +668,68 @@ class TestF680ApplicationSummaryView:
         )
 
 
+class TestF680ApplicationDeclarationView:
+    def test_GET_f680_declaration_view_success(
+        self,
+        authorized_client,
+        f680_declaration_url_with_application,
+        mock_f680_application_get,
+        f680_summary_url_with_application,
+    ):
+
+        response = authorized_client.get(f680_declaration_url_with_application)
+
+        assert isinstance(response.context["form"], ApplicationSubmissionForm)
+        assertTemplateUsed(response, "core/form.html")
+
+        soup = BeautifulSoup(response.content, "html.parser")
+        assert soup.find("h1").string == "Submit your application"
+        assert soup.find("a", {"id": "back-link"})["href"] == f680_summary_url_with_application
+        assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Accept and submit"
+
+    @pytest.mark.parametrize(
+        "data, expected_error",
+        (
+            ({}, "If you agree to make the application details publicly available click yes"),
+            (
+                {
+                    "agreed_to_foi": True,
+                },
+                "Non disclosure explanation cannot be blank",
+            ),
+        ),
+    )
+    def test_POST_f680_declaration_view_fail(
+        self,
+        authorized_client,
+        f680_declaration_url_with_application,
+        data,
+        expected_error,
+        mock_f680_application_get,
+    ):
+
+        response = authorized_client.post(f680_declaration_url_with_application, data)
+        soup = BeautifulSoup(response.content, "html.parser")
+        assert expected_error in soup.find("div", {"class": "govuk-error-summary__body"}).text
+
+    def test_POST_f680_declaration_view_success(
+        self,
+        authorized_client,
+        f680_declaration_url_with_application,
+        mock_f680_application_get_application_complete,
+        mock_f680_application_submit,
+        data_f680_case,
+    ):
+        response = authorized_client.post(
+            f680_declaration_url_with_application, data={"agreed_to_foi": True, "foi_reason": "some reason"}
+        )
+
+        assert mock_f680_application_submit.called_once
+        assert mock_f680_application_submit.last_request.json() == {"agreed_to_foi": True, "foi_reason": "some reason"}
+        assert response.status_code == 302
+        assert response.url == reverse("applications:success_page", kwargs={"pk": data_f680_case["id"]})
+
+
 class TestF680SubmittedApplicationSummaryView:
     def test_get_f680_summary_view_success(
         self,
@@ -649,7 +741,6 @@ class TestF680SubmittedApplicationSummaryView:
         data_f680_submitted_application,
     ):
         response = authorized_client.get(f680_submitted_application_summary_url_with_application)
-
         assert response.context["application_sections"] == data_f680_submitted_application["application"]["sections"]
 
         assert response.status_code == 200

@@ -1,4 +1,5 @@
 import pytest
+import requests
 import rules
 
 from itertools import chain
@@ -49,6 +50,9 @@ def get_mock_request(user, queue):
     request = HttpRequest()
     request.lite_user = user
     request.queue = queue
+    # Must be added as client requests assume RequestsSessionMiddleware has run
+    request.requests_session = requests.Session()
+    request.session = {}
     return request
 
 
@@ -106,26 +110,63 @@ class TestCanUserMakeF680RecommendationRule:
         assert not rules.test_rule("can_user_make_f680_recommendation", request, case)
 
     @mock.patch("caseworker.f680.rules.recommendations_by_current_user")
-    def test_can_user_make_f680_recommendation_user_allocated_existing_recommendation(
-        self, mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
+    @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
+    def test_with_existing_recommendation_no_pending(
+        self,
+        mock_get_pending_recommendations,
+        mock_get_my_recommendation,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
     ):
+        mock_get_pending_recommendations.return_value = False
         mock_get_my_recommendation.return_value = True
         request = get_mock_request(mock_gov_user["user"], data_fake_queue)
         assert not rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
 
     @mock.patch("caseworker.f680.rules.recommendations_by_current_user")
-    def test_can_user_make_f680_recommendation_user_allocated_incorrect_case_status(
-        self, mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
+    @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
+    def test_with_existing_recommendation_and_pending(
+        self,
+        mock_get_pending_recommendations,
+        mock_get_my_recommendation,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
     ):
+        mock_get_pending_recommendations.return_value = True
+        mock_get_my_recommendation.return_value = True
+        data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
+        request = get_mock_request(mock_gov_user["user"], data_fake_queue)
+        assert rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
+
+    @mock.patch("caseworker.f680.rules.recommendations_by_current_user")
+    @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
+    def test_can_user_make_f680_recommendation_user_allocated_incorrect_case_status(
+        self,
+        mock_get_pending_recommendations,
+        mock_get_my_recommendation,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
+    ):
+        mock_get_pending_recommendations.return_value = True
         mock_get_my_recommendation.return_value = True
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
         assert not rules.test_rule("can_user_make_f680_recommendation", request, data_assigned_case)
 
     @mock.patch("caseworker.f680.rules.recommendations_by_current_user")
+    @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
     def test_can_user_make_f680_recommendation_user_allocated(
-        self, mock_get_my_recommendation, mock_gov_user, data_fake_queue, data_assigned_case
+        self,
+        mock_get_pending_recommendations,
+        mock_get_my_recommendation,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
     ):
         mock_get_my_recommendation.return_value = False
+        mock_get_pending_recommendations.return_value = True
         data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
 
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
@@ -169,9 +210,16 @@ class TestCanUserMoveF680CaseForwardRule:
         assert rules.test_rule("can_user_move_f680_case_forward", request, case)
 
     @mock.patch("caseworker.f680.rules.get_case_recommendations")
+    @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
     def test_can_user_move_f680_case_forward_recommendation_status_no_recommendation_denied(
-        self, mock_case_recommendations, mock_gov_user, data_fake_queue, data_assigned_case
+        self,
+        mock_get_pending_recommendations,
+        mock_case_recommendations,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
     ):
+        mock_get_pending_recommendations.return_value = False
         mock_case_recommendations.return_value = []
         case = data_assigned_case
         data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
@@ -187,23 +235,19 @@ class TestCanUserMoveF680CaseForwardRule:
         ),
     )
     @mock.patch("caseworker.f680.rules.get_case_recommendations")
+    @mock.patch("caseworker.f680.rules.get_pending_recommendation_requests")
     def test_can_user_move_f680_case_forward_recommendation_status_granted(
-        self, mock_case_recommendations, team, mock_gov_user, data_fake_queue, data_assigned_case
+        self,
+        mock_get_pending_recommendations,
+        mock_case_recommendations,
+        team,
+        mock_gov_user,
+        data_fake_queue,
+        data_assigned_case,
     ):
+        mock_get_pending_recommendations.return_value = False
         mock_case_recommendations.return_value = [{"type": "approve", "team": team}]
         case = data_assigned_case
-        data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
-        request = get_allocated_request_user(mock_gov_user, data_fake_queue, team=team)
-
-        assert rules.test_rule("can_user_move_f680_case_forward", request, case)
-
-    @mock.patch("caseworker.f680.rules.get_case_recommendations")
-    def test_can_user_move_f680_case_forward_recommendation_status_mod_ecju_granted(
-        self, mock_case_recommendations, mock_gov_user, data_fake_queue, data_assigned_case
-    ):
-        mock_case_recommendations.return_value = []
-        case = data_assigned_case
-        team = {"id": MOD_ECJU, "alias": services.MOD_ECJU_TEAM}
         data_assigned_case.data["status"]["key"] = CaseStatusEnum.OGD_ADVICE
         request = get_allocated_request_user(mock_gov_user, data_fake_queue, team=team)
 
@@ -226,20 +270,39 @@ class TestCanUserMakeF680OutcomeRule:
 
         assert not rules.test_rule("can_user_make_f680_outcome", request, case)
 
-    def test_can_user_make_f680_outcome_permission_granted(self, mock_gov_user, data_fake_queue, data_assigned_case):
+    def test_can_user_make_f680_outcome_permission_granted(
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_no_outcome
+    ):
         case = data_assigned_case
         case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         request = get_allocated_request_user(mock_gov_user, data_fake_queue)
 
         assert rules.test_rule("can_user_make_f680_outcome", request, case)
 
-    def test_can_user_make_f680_outcome_request_missing_attributes(
+    def test_can_user_make_f680_outcome_existing_outcome_denied(
+        self, mock_gov_user, data_fake_queue, data_assigned_case, mock_outcomes_complete
+    ):
+        case = data_assigned_case
+        case.data["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
+        request = get_allocated_request_user(mock_gov_user, data_fake_queue)
+
+        assert not rules.test_rule("can_user_make_f680_outcome", request, case)
+
+    def test_case_ready_for_outcome_request_missing_attributes(
         self, mock_gov_user, data_fake_queue, data_unassigned_case
     ):
         case = data_unassigned_case
         request = None
 
         assert not recommendation_rules.case_ready_for_outcome(request, case)
+
+    def test_releases_without_outcome_request_missing_attributes(
+        self, mock_gov_user, data_fake_queue, data_unassigned_case
+    ):
+        case = data_unassigned_case
+        request = None
+
+        assert not recommendation_rules.releases_without_outcome(request, case)
 
 
 class TestClearF680RecommendationRule:

@@ -864,7 +864,7 @@ class TestProductInformationViews:
                                 "key": "has_security_classification",
                                 "answer": "Yes",
                                 "raw_answer": True,
-                                "question": "Has the product been given a security classifcation by a UK MOD authority?",
+                                "question": "Has the product been given a security classification by a UK MOD authority?",
                                 "datatype": "boolean",
                             },
                             "prefix": {
@@ -892,7 +892,7 @@ class TestProductInformationViews:
                                 "key": "suffix",
                                 "answer": "some suffix",
                                 "raw_answer": "some suffix",
-                                "question": "Enter a suffix (optional)",
+                                "question": "Enter any additional markings (optional)",
                                 "datatype": "string",
                             },
                             "issuing_authority_name_address": {
@@ -1057,7 +1057,6 @@ class TestProductInformationViews:
                                 "datatype": "string",
                             },
                         },
-                        "type": "single",
                         "fields_sequence": [
                             "product_name",
                             "product_description",
@@ -1090,6 +1089,7 @@ class TestProductInformationViews:
                             "is_used_by_uk_armed_forces",
                             "used_by_uk_armed_forces_info",
                         ],
+                        "type": "single",
                     }
                 },
             }

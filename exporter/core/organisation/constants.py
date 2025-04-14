@@ -17,7 +17,7 @@ class Validation:
 
     # English and Welsh companies have registration numbers that consist of 8 digits.
     # Companies registered in Scotland and Northern Ireland and those registered by the Financial Services Authority have a 1 or 2 character alphabetic prefix.
-    REGISTRATION_NUM_VALIDATION_REGEX = r"^((RC|NI|SC|FC)\d{6}|\d{8})$"
+    REGISTRATION_NUM_VALIDATION_REGEX = r"^((RC|NI|SC|FC|OC)\d{6}|\d{8})$"
 
     ADDRESS_LINE_MAX_LENGTH = 35
     UK_EORI_MAX_LENGTH = 17
