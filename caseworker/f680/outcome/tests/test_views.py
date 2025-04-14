@@ -1,12 +1,14 @@
 import pytest
 from http import HTTPStatus
 
+from dateutil.relativedelta import relativedelta
 from django.urls import reverse
+from django.utils import timezone
 
 from core import client
 from core.exceptions import ServiceError
 
-from caseworker.f680.outcome.constants import OutcomeSteps
+from caseworker.f680.outcome.constants import OutcomeSteps, SecurityReleaseOutcomeDuration
 from caseworker.f680.outcome import forms
 
 
@@ -271,11 +273,24 @@ class TestDecideOutcomeView:
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
                 "outcome": outcome,
                 "security_release_requests": request_ids,
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_end_date_0": validity_end_date.split("-")[2],
+                "validity_end_date_1": validity_end_date.split("-")[1],
+                "validity_end_date_2": validity_end_date.split("-")[0],
             },
         )
         assert response.status_code == HTTPStatus.OK
@@ -351,11 +366,24 @@ class TestDecideOutcomeView:
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
                 "outcome": "approve",
                 "security_release_requests": request_ids,
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_end_date_0": validity_end_date.split("-")[2],
+                "validity_end_date_1": validity_end_date.split("-")[1],
+                "validity_end_date_2": validity_end_date.split("-")[0],
             },
         )
         assert response.status_code == HTTPStatus.OK
@@ -385,6 +413,8 @@ class TestDecideOutcomeView:
         assert form.errors == {
             "outcome": ["Select if you approve or refuse"],
             "security_release_requests": ["This field is required."],
+            "validity_start_date": ["Enter the validity start date"],
+            "validity_end_date": ["Enter the validity end date"],
         }
 
     def test_POST_approve(
@@ -400,11 +430,24 @@ class TestDecideOutcomeView:
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
                 "outcome": "approve",
                 "security_release_requests": request_ids,
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_end_date_0": validity_end_date.split("-")[2],
+                "validity_end_date_1": validity_end_date.split("-")[1],
+                "validity_end_date_2": validity_end_date.split("-")[0],
             },
         )
         assert response.status_code == HTTPStatus.OK
@@ -434,6 +477,8 @@ class TestDecideOutcomeView:
             "approval_types": ["training"],
             "security_grading": "secret",
             "security_release_requests": request_ids,
+            "validity_start_date": validity_start_date,
+            "validity_end_date": validity_end_date,
         }
 
     def test_POST_approve_bad_request(
@@ -449,11 +494,24 @@ class TestDecideOutcomeView:
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
                 "outcome": "approve",
                 "security_release_requests": request_ids,
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_end_date_0": validity_end_date.split("-")[2],
+                "validity_end_date_1": validity_end_date.split("-")[1],
+                "validity_end_date_2": validity_end_date.split("-")[0],
             },
         )
         assert response.status_code == HTTPStatus.OK
@@ -466,7 +524,7 @@ class TestDecideOutcomeView:
         form = response.context["form"]
         assert form.errors == {
             "security_grading": ["Select the security release"],
-            "approval_types": ["This field is required."],
+            "approval_types": ["Select approval types"],
         }
 
     def test_POST_partial_approve(
@@ -483,11 +541,24 @@ class TestDecideOutcomeView:
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         # Only approve for one ID
         request_ids = [security_release_requests[0]["id"]]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
                 "outcome": "approve",
                 "security_release_requests": request_ids,
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_end_date_0": validity_end_date.split("-")[2],
+                "validity_end_date_1": validity_end_date.split("-")[1],
+                "validity_end_date_2": validity_end_date.split("-")[0],
             },
         )
         assert response.status_code == HTTPStatus.OK
@@ -517,6 +588,8 @@ class TestDecideOutcomeView:
             "approval_types": ["training"],
             "security_grading": "secret",
             "security_release_requests": request_ids,
+            "validity_start_date": validity_start_date,
+            "validity_end_date": validity_end_date,
         }
 
     def test_POST_refuse(
@@ -531,11 +604,24 @@ class TestDecideOutcomeView:
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
                 "outcome": "refuse",
                 "security_release_requests": request_ids,
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_end_date_0": validity_end_date.split("-")[2],
+                "validity_end_date_1": validity_end_date.split("-")[1],
+                "validity_end_date_2": validity_end_date.split("-")[0],
             },
         )
         assert response.status_code == HTTPStatus.OK
@@ -553,6 +639,8 @@ class TestDecideOutcomeView:
             "outcome": "refuse",
             "refusal_reasons": "my reasons",
             "security_release_requests": request_ids,
+            "validity_start_date": validity_start_date,
+            "validity_end_date": validity_end_date,
         }
 
     def test_POST_refuse_bad_request(
@@ -567,11 +655,24 @@ class TestDecideOutcomeView:
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
                 "outcome": "refuse",
                 "security_release_requests": request_ids,
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_end_date_0": validity_end_date.split("-")[2],
+                "validity_end_date_1": validity_end_date.split("-")[1],
+                "validity_end_date_2": validity_end_date.split("-")[0],
             },
         )
         assert response.status_code == HTTPStatus.OK
@@ -583,7 +684,7 @@ class TestDecideOutcomeView:
         assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert form.errors == {
-            "refusal_reasons": ["This field is required."],
+            "refusal_reasons": ["Enter refusal reasons"],
         }
 
 

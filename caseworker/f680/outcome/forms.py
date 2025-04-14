@@ -1,6 +1,14 @@
 from django import forms
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
 
-from core.common.forms import BaseForm
+from core.common.forms import BaseForm, CustomErrorDateInputField
+from caseworker.f680.outcome.constants import SecurityReleaseOutcomeDuration
+
+from core.common.validators import (
+    FutureDateValidator,
+    RelativeDeltaDateValidator,
+)
 
 
 class SelectOutcomeForm(BaseForm):
@@ -23,6 +31,62 @@ class SelectOutcomeForm(BaseForm):
         label="Select outcome",
         error_messages={"required": "Select if you approve or refuse"},
     )
+    validity_start_date = CustomErrorDateInputField(
+        label="Validity start date",
+        help_text="For example 25 2 2025",
+        require_all_fields=False,
+        initial=timezone.now().date(),
+        error_messages={
+            "required": "Enter the validity start date",
+            "incomplete": "Enter the validity start date",
+            "invalid": "Validity start date must be a real date",
+            "day": {
+                "incomplete": "Validity start date must include a day",
+                "invalid": "Validity start date must be a real date",
+            },
+            "month": {
+                "incomplete": "Validity start date must include a month",
+                "invalid": "Validity start date must be a real §§   date",
+            },
+            "year": {
+                "incomplete": "Validity start date must include a year",
+                "invalid": "Validity start date must be a real date",
+            },
+        },
+        validators=[
+            FutureDateValidator("Validity start date must be from today or in the future", include_today=True),
+        ],
+    )
+    validity_end_date = CustomErrorDateInputField(
+        label="Validity end date",
+        help_text="For example 25 2 2027",
+        require_all_fields=False,
+        initial=timezone.now().date()
+        + relativedelta(
+            months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+        ),
+        error_messages={
+            "required": "Enter the validity end date",
+            "incomplete": "Enter the validity end date",
+            "invalid": "Validity end date must be a real date",
+            "day": {
+                "incomplete": "Validity end date must include a day",
+                "invalid": "Validity end date must be a real date",
+            },
+            "month": {
+                "incomplete": "Validity end date must include a month",
+                "invalid": "Validity end date must be a real §§   date",
+            },
+            "year": {
+                "incomplete": "Validity end date must include a year",
+                "invalid": "Validity end date must be a real date",
+            },
+        },
+        validators=[
+            FutureDateValidator("Validity end date must be in the future"),
+            RelativeDeltaDateValidator("Validity end date must be within 2 years", years=2),
+        ],
+    )
 
     def __init__(self, security_release_requests, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -34,10 +98,30 @@ class SelectOutcomeForm(BaseForm):
             for request in security_release_requests
         )
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        validity_start_date = cleaned_data.get("validity_start_date", None)
+        validity_end_date = cleaned_data.get("validity_end_date", None)
+
+        if validity_start_date and validity_end_date:
+            diff = relativedelta(validity_end_date, validity_start_date)
+            diff_months = diff.years * 12 + diff.months
+            if diff_months < SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS:
+                self.add_error("validity_end_date", "Outcome validity is less than 2 years")
+
+        return {
+            **cleaned_data,
+            "validity_start_date": validity_start_date.isoformat() if validity_start_date else "",
+            "validity_end_date": validity_end_date.isoformat() if validity_end_date else "",
+        }
+
     def get_layout_fields(self):
         return (
             "security_release_requests",
             "outcome",
+            "validity_start_date",
+            "validity_end_date",
         )
 
 
@@ -70,6 +154,7 @@ class ApproveOutcomeForm(BaseForm):
             ("through_life_support", "Through life support"),
             ("supply", "Supply"),
         ),
+        error_messages={"required": "Select approval types"},
     )
     conditions = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
@@ -101,6 +186,7 @@ class RefuseOutcomeForm(BaseForm):
         widget=forms.Textarea(attrs={"rows": 7}),
         label="Refusal reasons",
         required=True,
+        error_messages={"required": "Enter refusal reasons"},
     )
 
     def get_layout_fields(self):

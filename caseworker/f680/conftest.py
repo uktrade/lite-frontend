@@ -1,6 +1,10 @@
 import pytest
 
+from django.utils import timezone
+from dateutil.relativedelta import relativedelta
+
 from core import client
+from caseworker.f680.outcome.constants import SecurityReleaseOutcomeDuration
 
 
 @pytest.fixture
@@ -63,6 +67,13 @@ def data_outcomes(current_user, admin_team, data_submitted_f680_case, data_outco
             "security_release_requests": [security_release_requests[0]["id"]],
             "user": current_user,
             "team": admin_team,
+            "validity_start_date": timezone.now().date().isoformat(),
+            "validity_end_date": (
+                timezone.now().date()
+                + relativedelta(
+                    months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+                )
+            ).isoformat(),
         }
     ]
 
