@@ -5,6 +5,7 @@ from requests.exceptions import HTTPError
 
 from core import client
 from core.exceptions import ServiceError
+from caseworker.f680.outcome.constants import OutcomeType
 
 
 @pytest.fixture(autouse=True)
@@ -155,8 +156,12 @@ def document_all_url(f680_case_id, data_queue):
 @pytest.fixture
 def letter_templates_data(f680_approval_template_id, f680_refusal_template_id):
     return [
-        {"id": f680_approval_template_id, "name": "F680 Approval", "decisions": [{"name": {"key": "approve"}}]},
-        {"id": f680_refusal_template_id, "name": "F680 Refusal", "decisions": [{"name": {"key": "refuse"}}]},
+        {
+            "id": f680_approval_template_id,
+            "name": "F680 Approval",
+            "decisions": [{"name": {"key": OutcomeType.APPROVE}}],
+        },
+        {"id": f680_refusal_template_id, "name": "F680 Refusal", "decisions": [{"name": {"key": OutcomeType.REFUSE}}]},
     ]
 
 
@@ -289,7 +294,7 @@ class TestAllDocumentsView:
             {
                 "id": "68a17258-af0f-429e-922d-25945979fa6d",
                 "name": "F680 Approval",
-                "decisions": [{"name": {"key": "approve"}}],
+                "decisions": [{"name": {"key": OutcomeType.APPROVE}}],
             }
         ]
 

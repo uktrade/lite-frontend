@@ -13,6 +13,7 @@ from core.decorators import expect_status
 from caseworker.cases.services import get_generated_document_preview, post_generated_document
 from caseworker.letter_templates.services import get_letter_templates_list
 
+from caseworker.f680.outcome.constants import OutcomeType
 from caseworker.f680.views import F680CaseworkerMixin
 
 from .forms import GenerateDocumentForm, DocumentGenerationForm
@@ -44,9 +45,9 @@ class F680DocumentMixin(F680CaseworkerMixin):
         filtered_f680_letter_templates = []
         f680_letter_templates = self.get_case_letter_templates()
         if rules.test_rule("can_user_make_approval_f680_outcome_letter", self.request, self.case):
-            allowed_letter_generation.append("approve")
+            allowed_letter_generation.append(OutcomeType.APPROVE)
         if rules.test_rule("can_user_make_refusal_f680_outcome_letter", self.request, self.case):
-            allowed_letter_generation.append("refuse")
+            allowed_letter_generation.append(OutcomeType.REFUSE)
 
         for lt in f680_letter_templates:
             for decision in lt["decisions"]:
