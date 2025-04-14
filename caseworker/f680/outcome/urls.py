@@ -11,4 +11,9 @@ urlpatterns = [
         views.DecideOutcome.as_view(),
         name="decide_outcome",
     ),
+    path(
+        "clear-outcome/<uuid:outcome_id>/",
+        views.ClearOutcome.as_view(),
+        name="clear_outcome",
+    ),
 ]
