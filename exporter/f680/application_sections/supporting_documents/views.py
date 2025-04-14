@@ -84,6 +84,8 @@ class SupportingDocumentsAddView(F680FeatureRequiredMixin, F680SupportingDocumen
 class SupportingDocumentsDeleteView(F680FeatureRequiredMixin, F680SupportingDocumentsMixin, FormView):
     form_class = F680DeleteSupportingDocument
     template_name = "core/form.html"
+    section = "supporting_documents"
+    section_label = "Supporting Documents"
 
     def setup(self, request, *args, **kwargs):
         super().setup(request, *args, **kwargs)
@@ -97,22 +99,25 @@ class SupportingDocumentsDeleteView(F680FeatureRequiredMixin, F680SupportingDocu
         context["back_link_url"] = self.get_back_link_url()
         return context
 
-    # @expect_status(
-    #     HTTPStatus.OK,
-    #     "Error updating F680 supporting documents",
-    #     "Unexpected error updating F680 supporting documents",
-    # )
-    # def update_supporting_application_documents(self):
-    #     self.supporting_documents, _ = self.get_f680_supporting_documents(self.application_id)
-    #     supporting_documents_data = [
-    #         {"id": doc["id"], "file": doc.get("name", ""), "description": doc.get("description", "")}
-    #         for doc in self.supporting_documents["results"]
-    #     ]
-    #     current_application = self.application.get("application", {})
-    #     section_payload = F680DictPayloadBuilder().build(
-    #         self.section, self.section_label, current_application, supporting_documents_data
-    #     )
-    #     return self.patch_f680_application(section_payload)
+    @expect_status(
+        HTTPStatus.OK,
+        "Error updating F680 supporting documents",
+        "Unexpected error updating F680 supporting documents",
+    )
+    def update_supporting_application_documents(self):
+        supporting_documents, _ = self.get_f680_supporting_documents(self.application_id)
+
+        supporting_documents_data = [
+            {"id": doc["id"], "file": doc.get("name", ""), "description": doc.get("description", "")}
+            for doc in supporting_documents["results"]
+            if doc["id"] != self.document_id
+        ]
+
+        current_application = self.application.get("application", {})
+        section_payload = F680DictPayloadBuilder().build(
+            self.section, self.section_label, current_application, supporting_documents_data
+        )
+        return self.patch_f680_application(section_payload)
 
     @expect_status(
         HTTPStatus.NO_CONTENT,
@@ -131,7 +136,7 @@ class SupportingDocumentsDeleteView(F680FeatureRequiredMixin, F680SupportingDocu
     def form_valid(self, form):
         data = form.cleaned_data
         if data.get("confirm_delete", False):
-            # self.update_supporting_application_documents()
+            self.update_supporting_application_documents()
             self.delete_additional_document()
         return super().form_valid(form)
 
