@@ -555,7 +555,7 @@ class TestCaseDocumentsView:
 
         url = reverse("cases:f680:supporting_documents", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
 
-        with pytest.raises(Exception) as error:
+        with pytest.raises(ServiceError) as error:
             authorized_client.get(url)
 
         assert str(error.value) == "Error retreiving supporting documents"
