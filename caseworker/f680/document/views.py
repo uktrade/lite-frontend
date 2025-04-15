@@ -75,7 +75,7 @@ class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("cases:f680:detail", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+        return reverse("cases:f680:details", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
 
 
 class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
@@ -142,7 +142,7 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
 
     def get_success_url(self, *args, **kwargs):
         # TODO: Redirect the user to the landing screen when we have a document
-        return reverse("cases:f680:details", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
+        return reverse("cases:f680:document:all", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
     def get_text(self, form):
         text = None
