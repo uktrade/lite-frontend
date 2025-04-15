@@ -71,7 +71,7 @@ def data_outcomes(current_user, admin_team, data_submitted_f680_case, data_outco
             "validity_end_date": (
                 timezone.now().date()
                 + relativedelta(
-                    months=+SecurityReleaseOutcomeDuration.DEFAULT_DURATION_MONTHS,
+                    months=+SecurityReleaseOutcomeDuration.MONTHS_24,
                 )
             ).isoformat(),
         }

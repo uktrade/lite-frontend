@@ -5,4 +5,10 @@ class OutcomeSteps:
 
 
 class SecurityReleaseOutcomeDuration:
-    DEFAULT_DURATION_MONTHS = 24
+    MONTHS_24 = 24
+    MONTHS_48 = 48
+
+    choices = [
+        (MONTHS_24, "24 months"),
+        (MONTHS_48, "48 months"),
+    ]

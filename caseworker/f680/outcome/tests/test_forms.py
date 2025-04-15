@@ -5,7 +5,6 @@ from freezegun import freeze_time
 from caseworker.f680.outcome.forms import SelectOutcomeForm, ApproveOutcomeForm, RefuseOutcomeForm
 
 
-@freeze_time("2025-04-14")
 @pytest.mark.parametrize(
     "data, valid_status, errors",
     (
@@ -15,8 +14,6 @@ from caseworker.f680.outcome.forms import SelectOutcomeForm, ApproveOutcomeForm,
             {
                 "security_release_requests": ["This field is required."],
                 "outcome": ["Select if you approve or refuse"],
-                "validity_start_date": ["Enter the validity start date"],
-                "validity_end_date": ["Enter the validity end date"],
             },
         ),
         (
@@ -26,76 +23,15 @@ from caseworker.f680.outcome.forms import SelectOutcomeForm, ApproveOutcomeForm,
             False,
             {
                 "outcome": ["Select if you approve or refuse"],
-                "validity_start_date": ["Enter the validity start date"],
-                "validity_end_date": ["Enter the validity end date"],
             },
         ),
         (
             {
                 "security_release_requests": ["123465e5-4c80-4d0a-aef5-db94908b0417"],
                 "outcome": "approve",
-            },
-            False,
-            {
-                "validity_start_date": ["Enter the validity start date"],
-                "validity_end_date": ["Enter the validity end date"],
-            },
-        ),
-        (
-            {
-                "security_release_requests": ["123465e5-4c80-4d0a-aef5-db94908b0417"],
-                "outcome": "approve",
-                "validity_start_date_0": "01",
-                "validity_start_date_1": "05",
-                "validity_start_date_2": "2024",
-                "validity_end_date_0": "01",
-                "validity_end_date_1": "05",
-                "validity_end_date_2": "2026",
-            },
-            False,
-            {"validity_start_date": ["Validity start date must be from today or in the future"]},
-        ),
-        (
-            {
-                "security_release_requests": ["123465e5-4c80-4d0a-aef5-db94908b0417"],
-                "outcome": "approve",
-                "validity_start_date_0": "14",
-                "validity_start_date_1": "04",
-                "validity_start_date_2": "2025",
-                "validity_end_date_0": "14",
-                "validity_end_date_1": "04",
-                "validity_end_date_2": "2027",
             },
             True,
             {},
-        ),
-        (
-            {
-                "security_release_requests": ["123465e5-4c80-4d0a-aef5-db94908b0417"],
-                "outcome": "approve",
-                "validity_start_date_0": "14",
-                "validity_start_date_1": "04",
-                "validity_start_date_2": "2025",
-                "validity_end_date_0": "14",
-                "validity_end_date_1": "01",
-                "validity_end_date_2": "2027",
-            },
-            False,
-            {"validity_end_date": ["Outcome validity is less than 2 years"]},
-        ),
-        (
-            {
-                "security_release_requests": ["123465e5-4c80-4d0a-aef5-db94908b0417"],
-                "outcome": "approve",
-                "validity_start_date_0": "14",
-                "validity_start_date_1": "04",
-                "validity_start_date_2": "2025",
-                "validity_end_date_0": "14",
-                "validity_end_date_1": "01",
-                "validity_end_date_2": "2028",
-            },
-            False,
-            {"validity_end_date": ["Validity end date must be within 2 years"]},
         ),
     ),
 )
@@ -118,6 +54,7 @@ def test_select_outcome_form_valid(data, valid_status, errors):
         assert form.errors == errors
 
 
+@freeze_time("2025-04-15")
 @pytest.mark.parametrize(
     "data, valid_status, errors",
     (
@@ -127,6 +64,8 @@ def test_select_outcome_form_valid(data, valid_status, errors):
             {
                 "security_grading": ["Select the security release"],
                 "approval_types": ["Select approval types"],
+                "validity_start_date": ["Enter the validity start date"],
+                "validity_period": ["Select validity period"],
             },
         ),
         (
@@ -137,12 +76,87 @@ def test_select_outcome_form_valid(data, valid_status, errors):
             False,
             {
                 "approval_types": ["Select approval types"],
+                "validity_start_date": ["Enter the validity start date"],
+                "validity_period": ["Select validity period"],
             },
         ),
         (
             {
                 "security_grading": "official",
                 "approval_types": ["initial_discussion_or_promoting", "demonstration_overseas"],
+                "validity_start_date_0": "15",
+                "validity_start_date_1": "04",
+                "validity_start_date_2": "2025",
+            },
+            False,
+            {
+                "validity_period": ["Select validity period"],
+            },
+        ),
+        (
+            {
+                "security_grading": "official",
+                "approval_types": ["initial_discussion_or_promoting", "demonstration_overseas"],
+                "validity_start_date_0": "10",
+                "validity_start_date_1": "04",
+                "validity_start_date_2": "2025",
+                "validity_period": "24",
+            },
+            False,
+            {
+                "validity_start_date": ["Validity start date must be from today or in the future"],
+            },
+        ),
+        (
+            {
+                "security_grading": "official",
+                "approval_types": ["initial_discussion_or_promoting", "demonstration_overseas"],
+                "validity_start_date_0": "31",
+                "validity_start_date_1": "04",
+                "validity_start_date_2": "2025",
+                "validity_period": "24",
+            },
+            False,
+            {
+                "validity_start_date": ["Validity start date must be a real date"],
+            },
+        ),
+        (
+            {
+                "security_grading": "official",
+                "approval_types": ["initial_discussion_or_promoting", "demonstration_overseas"],
+                "validity_start_date_0": "15",
+                "validity_start_date_1": "15",
+                "validity_start_date_2": "2025",
+                "validity_period": "24",
+            },
+            False,
+            {
+                "validity_start_date": ["Validity start date must be a real date"],
+            },
+        ),
+        (
+            {
+                "security_grading": "official",
+                "approval_types": ["initial_discussion_or_promoting", "demonstration_overseas"],
+                "validity_start_date_0": "15",
+                "validity_start_date_1": "04",
+                "validity_start_date_2": "20250",
+                "validity_period": "24",
+            },
+            False,
+            {
+                "validity_start_date": ["Validity start date must be a real date"],
+            },
+        ),
+        (
+            {
+                "security_grading": "official",
+                "approval_types": ["initial_discussion_or_promoting", "demonstration_overseas"],
+                "validity_start_date_0": "15",
+                "validity_start_date_1": "04",
+                "validity_start_date_2": "2025",
+                "validity_period": "48",
             },
             True,
             {},
