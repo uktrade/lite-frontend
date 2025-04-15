@@ -15,6 +15,7 @@ class F680AttachSupportingDocument(BaseForm):
 
     file = forms.FileField(
         label=FileUploadFileTypes.UPLOAD_GUIDANCE_TEXT,
+        help_text="<strong>Do not attach a document that’s rated above OFFICIAL-SENSITIVE</strong>",
         error_messages={
             "required": "Select a supporting document",
         },
