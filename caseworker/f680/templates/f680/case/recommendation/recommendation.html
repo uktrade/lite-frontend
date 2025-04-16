@@ -26,6 +26,14 @@
 
         {% if user_recommendations and not pending_recommendations %}
             <h1 class="govuk-heading-xl">View recommendation</h1>
+
+            {% test_rule 'can_user_clear_f680_recommendation' request case as can_user_clear_f680_recommendation %}
+            {% if can_user_clear_f680_recommendation %}
+              <a id="clear-recommendation-button" role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:f680:clear_recommendation' queue_pk case.id %}">
+                  Clear recommendation
+              </a>
+            {% endif %}
+
             {% for recommendation in user_recommendations %}
                 {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
             {% endfor %}

@@ -1,11 +1,17 @@
 import pytest
+
+from freezegun import freeze_time
 from http import HTTPStatus
 
+from dateutil.relativedelta import relativedelta
 from django.urls import reverse
+from django.utils import timezone
 
-from caseworker.f680.outcome.constants import OutcomeSteps
-from caseworker.f680.outcome import forms
 from core import client
+from core.exceptions import ServiceError
+
+from caseworker.f680.outcome.constants import OutcomeSteps, SecurityReleaseOutcomeDuration
+from caseworker.f680.outcome import forms
 
 
 @pytest.fixture(autouse=True)
@@ -31,6 +37,14 @@ def decide_outcome_url(data_queue, f680_case_id):
 
 
 @pytest.fixture
+def clear_outcome_url(data_queue, f680_case_id, data_outcome_id):
+    return reverse(
+        "cases:f680:outcome:clear_outcome",
+        kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id, "outcome_id": data_outcome_id},
+    )
+
+
+@pytest.fixture
 def post_to_step(post_to_step_factory, decide_outcome_url):
     return post_to_step_factory(decide_outcome_url)
 
@@ -53,6 +67,24 @@ def mock_outcomes_no_outcomes(requests_mock, data_submitted_f680_case):
 def mock_POST_outcome(requests_mock, data_submitted_f680_case):
     url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/"
     return requests_mock.post(url, json={}, status_code=HTTPStatus.CREATED)
+
+
+@pytest.fixture
+def mock_DELETE_outcome(requests_mock, data_submitted_f680_case, data_outcome_id):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/{data_outcome_id}/"
+    return requests_mock.delete(url, status_code=HTTPStatus.NO_CONTENT)
+
+
+@pytest.fixture
+def mock_DELETE_outcome_outcome_missing(requests_mock, data_submitted_f680_case, data_outcome_id):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/{data_outcome_id}/"
+    return requests_mock.delete(url, status_code=HTTPStatus.NOT_FOUND)
+
+
+@pytest.fixture
+def mock_DELETE_outcome_server_error(requests_mock, data_submitted_f680_case, data_outcome_id):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/{data_outcome_id}/"
+    return requests_mock.delete(url, json={"error": "error"}, status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
 
 
 @pytest.fixture
@@ -109,7 +141,6 @@ class TestDecideOutcomeView:
     def test_GET_select_outcome(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -196,7 +227,6 @@ class TestDecideOutcomeView:
     def test_GET_select_outcome_existing_outcome(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -234,7 +264,6 @@ class TestDecideOutcomeView:
     def test_POST_select_outcome(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -317,7 +346,6 @@ class TestDecideOutcomeView:
     def test_POST_select_approve_outcome_conditions_aggregated(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -343,7 +371,6 @@ class TestDecideOutcomeView:
     def test_POST_select_outcome_bad_request(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -364,10 +391,10 @@ class TestDecideOutcomeView:
             "security_release_requests": ["This field is required."],
         }
 
+    @freeze_time("2025-04-15")
     def test_POST_approve(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         data_queue,
@@ -378,6 +405,13 @@ class TestDecideOutcomeView:
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.MONTHS_48,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
@@ -393,6 +427,10 @@ class TestDecideOutcomeView:
                 "conditions": "my conditions",
                 "approval_types": ["training"],
                 "security_grading": "secret",
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_period": SecurityReleaseOutcomeDuration.MONTHS_48,
             },
             follow=True,
         )
@@ -412,12 +450,13 @@ class TestDecideOutcomeView:
             "approval_types": ["training"],
             "security_grading": "secret",
             "security_release_requests": request_ids,
+            "validity_start_date": validity_start_date,
+            "validity_end_date": validity_end_date,
         }
 
     def test_POST_approve_bad_request(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         data_queue,
@@ -444,14 +483,16 @@ class TestDecideOutcomeView:
         assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert form.errors == {
-            "security_grading": ["Select the security grading"],
-            "approval_types": ["This field is required."],
+            "security_grading": ["Select the security release"],
+            "approval_types": ["Select approval types"],
+            "validity_start_date": ["Enter the validity start date"],
+            "validity_period": ["Select validity period"],
         }
 
+    @freeze_time("2025-04-15")
     def test_POST_partial_approve(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         data_queue,
@@ -463,6 +504,13 @@ class TestDecideOutcomeView:
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         # Only approve for one ID
         request_ids = [security_release_requests[0]["id"]]
+        validity_start_date = timezone.now().date().isoformat()
+        validity_end_date = (
+            timezone.now().date()
+            + relativedelta(
+                months=+SecurityReleaseOutcomeDuration.MONTHS_24,
+            )
+        ).isoformat()
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
@@ -478,6 +526,10 @@ class TestDecideOutcomeView:
                 "conditions": "my conditions",
                 "approval_types": ["training"],
                 "security_grading": "secret",
+                "validity_start_date_0": validity_start_date.split("-")[2],
+                "validity_start_date_1": validity_start_date.split("-")[1],
+                "validity_start_date_2": validity_start_date.split("-")[0],
+                "validity_period": SecurityReleaseOutcomeDuration.MONTHS_24,
             },
             follow=True,
         )
@@ -497,12 +549,13 @@ class TestDecideOutcomeView:
             "approval_types": ["training"],
             "security_grading": "secret",
             "security_release_requests": request_ids,
+            "validity_start_date": validity_start_date,
+            "validity_end_date": validity_end_date,
         }
 
     def test_POST_refuse(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -539,7 +592,6 @@ class TestDecideOutcomeView:
     def test_POST_refuse_bad_request(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -565,5 +617,57 @@ class TestDecideOutcomeView:
         assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert form.errors == {
-            "refusal_reasons": ["This field is required."],
+            "refusal_reasons": ["Enter refusal reasons"],
         }
+
+
+class TestClearOutcome:
+
+    def test_POST_outcome_missing(
+        self,
+        authorized_client,
+        data_queue,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_single_outcome,
+        clear_outcome_url,
+        data_outcome_id,
+        mock_DELETE_outcome_outcome_missing,
+    ):
+        with pytest.raises(ServiceError):
+            response = authorized_client.post(clear_outcome_url)
+        assert mock_DELETE_outcome_outcome_missing.call_count == 1
+
+    def test_POST_api_error(
+        self,
+        authorized_client,
+        data_queue,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_single_outcome,
+        clear_outcome_url,
+        data_outcome_id,
+        mock_DELETE_outcome_server_error,
+    ):
+        with pytest.raises(ServiceError):
+            response = authorized_client.post(clear_outcome_url)
+        assert mock_DELETE_outcome_server_error.call_count == 1
+
+    def test_POST_success(
+        self,
+        authorized_client,
+        data_queue,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_single_outcome,
+        clear_outcome_url,
+        data_outcome_id,
+        mock_DELETE_outcome,
+    ):
+        response = authorized_client.post(clear_outcome_url)
+        assert response.status_code == HTTPStatus.FOUND
+        assert response.url == reverse(
+            "cases:f680:recommendation",
+            kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
+        )
+        assert mock_DELETE_outcome.call_count == 1

@@ -4,7 +4,9 @@ from django.urls import reverse
 from requests.exceptions import HTTPError
 
 from core import client
+from core.constants import CaseStatusEnum
 from core.exceptions import ServiceError
+from caseworker.f680.outcome.constants import OutcomeType
 
 
 @pytest.fixture(autouse=True)
@@ -24,6 +26,11 @@ def setup(
 @pytest.fixture
 def f680_approval_template_id():
     return "68a17258-af0f-429e-922d-25945979fa6d"
+
+
+@pytest.fixture
+def f680_refusal_template_id():
+    return "98a37258-af0f-429e-922d-259459795a2d"
 
 
 @pytest.fixture
@@ -105,7 +112,6 @@ def mock_preview_f680_letter_api_error(
         [
             f"pk={f680_case_id}",
             f"template={f680_approval_template_id}",
-            f"text={customisation_text}",
         ]
     )
     return requests_mock.get(
@@ -143,22 +149,45 @@ def generate_document_url(f680_case_id, f680_approval_template_id, data_queue):
 
 
 @pytest.fixture
-def mock_letter_template_filter(requests_mock, f680_approval_template_id):
-    url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance&decision=approve")
-    data = {"results": [{"id": f680_approval_template_id, "name": "F680 Approval", "decisions": []}]}
-    return requests_mock.get(url=url, json=data)
+def document_all_url(f680_case_id, data_queue):
+    return reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+
+
+@pytest.fixture
+def letter_templates_data(f680_approval_template_id, f680_refusal_template_id):
+    return [
+        {
+            "id": f680_approval_template_id,
+            "name": "F680 Approval",
+            "decisions": [{"name": {"key": OutcomeType.APPROVE}}],
+        },
+        {"id": f680_refusal_template_id, "name": "F680 Refusal", "decisions": [{"name": {"key": OutcomeType.REFUSE}}]},
+    ]
+
+
+@pytest.fixture
+def mock_letter_template_filter(requests_mock, letter_templates_data):
+    url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
+    return requests_mock.get(url=url, json={"results": letter_templates_data})
+
+
+@pytest.fixture
+def mock_letter_template_approval_only(requests_mock, letter_templates_data):
+    url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
+    return requests_mock.get(url=url, json={"results": letter_templates_data[1:]})
 
 
 class TestF680GenerateDocument:
 
-    def test_GET_template_does_not_exist(
-        self, authorized_client, generate_document_url, mock_preview_f680_letter_missing_template
-    ):
-        response = authorized_client.get(generate_document_url)
-        assert response.status_code == 404
-
     def test_GET_success(
-        self, authorized_client, generate_document_url, mock_preview_f680_letter, data_preview_response
+        self,
+        authorized_client,
+        generate_document_url,
+        mock_preview_f680_letter,
+        data_preview_response,
+        mock_f680_case_under_final_review,
+        mock_outcomes_approve_refuse,
+        mock_letter_template_filter,
     ):
         response = authorized_client.get(generate_document_url)
         assert response.status_code == 200
@@ -170,6 +199,9 @@ class TestF680GenerateDocument:
         generate_document_url,
         mock_preview_f680_letter_with_customisation,
         data_preview_response_with_customisation_text,
+        mock_f680_case_under_final_review,
+        mock_outcomes_approve_refuse,
+        mock_letter_template_filter,
         customisation_text,
     ):
         response = authorized_client.post(generate_document_url, {"preview": "", "text": customisation_text})
@@ -186,6 +218,9 @@ class TestF680GenerateDocument:
         f680_case_id,
         customisation_text,
         f680_approval_template_id,
+        mock_f680_case_under_final_review,
+        mock_outcomes_approve_refuse,
+        mock_letter_template_filter,
     ):
         response = authorized_client.post(generate_document_url, {"generate": "", "text": customisation_text})
         assert response.status_code == 302
@@ -199,22 +234,32 @@ class TestF680GenerateDocument:
         }
 
     def test_POST_preview_api_error(
-        self, authorized_client, generate_document_url, mock_preview_f680_letter_api_error, customisation_text
+        self,
+        authorized_client,
+        generate_document_url,
+        data_submitted_f680_case,
+        mock_preview_f680_letter_api_error,
+        mock_outcomes_complete,
+        customisation_text,
     ):
+        data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         with pytest.raises(ServiceError):
-            response = authorized_client.post(generate_document_url, {"preview": "", "text": customisation_text})
+            authorized_client.get(generate_document_url, {"preview": "", "text": customisation_text})
         assert mock_preview_f680_letter_api_error.call_count == 1
 
     def test_POST_generate_api_error(
         self,
         authorized_client,
         generate_document_url,
+        data_submitted_f680_case,
         mock_generate_f680_letter_api_error,
         data_queue,
         f680_case_id,
+        mock_outcomes_complete,
         customisation_text,
         f680_approval_template_id,
     ):
+        data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         with pytest.raises(ServiceError):
             response = authorized_client.post(generate_document_url, {"generate": "", "text": customisation_text})
         assert mock_generate_f680_letter_api_error.call_count == 1
@@ -226,18 +271,49 @@ class TestAllDocumentsView:
         self,
         authorized_client,
         data_queue,
-        mock_f680_case,
+        mock_f680_case_under_final_review,
+        mock_outcomes_approve_refuse,
         f680_case_id,
         f680_reference_code,
         data_submitted_f680_case,
         mock_letter_template_filter,
+        letter_templates_data,
     ):
         url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
         assert response.status_code == 200
         assert dict(response.context["case"]) == data_submitted_f680_case["case"]
+        assert response.context["letter_templates"] == [
+            {
+                "id": "68a17258-af0f-429e-922d-25945979fa6d",
+                "name": "F680 Approval",
+                "decisions": [{"name": {"key": OutcomeType.APPROVE}}],
+            },
+            {
+                "id": "98a37258-af0f-429e-922d-259459795a2d",
+                "name": "F680 Refusal",
+                "decisions": [{"name": {"key": OutcomeType.REFUSE}}],
+            },
+        ]
 
     def test_GET_no_case_404(self, authorized_client, data_queue, missing_case_id, mock_missing_case):
         url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": missing_case_id})
         with pytest.raises(HTTPError, match="404"):
             authorized_client.get(url)
+
+    def test_GET_letter_gen_no_allowed(
+        self,
+        authorized_client,
+        data_queue,
+        mock_f680_case_under_final_review,
+        mock_outcomes_no_outcome,
+        f680_case_id,
+        f680_reference_code,
+        data_submitted_f680_case,
+        mock_letter_template_filter,
+        letter_templates_data,
+        document_all_url,
+    ):
+
+        response = authorized_client.get(document_all_url)
+        assert response.status_code == 403

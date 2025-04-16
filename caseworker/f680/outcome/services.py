@@ -1,3 +1,5 @@
+from json.decoder import JSONDecodeError
+
 from core import client
 
 
@@ -9,6 +11,15 @@ def post_outcome(request, case_id, data):
 def get_outcomes(request, case_id):
     response = client.get(request, f"/caseworker/f680/{case_id}/outcome/")
     return response.json(), response.status_code
+
+
+def delete_outcome(request, case_id, outcome_id):
+    response = client.delete(request, f"/caseworker/f680/{case_id}/outcome/{outcome_id}/")
+    try:
+        body = response.json()
+    except JSONDecodeError:
+        body = None
+    return body, response.status_code
 
 
 def get_hydrated_outcomes(request, case):
@@ -24,6 +35,7 @@ def get_hydrated_outcomes(request, case):
         for release_request_id in outcome["security_release_request_ids"]:
             release_requests.append(security_release_requests_by_id[release_request_id])
         outcome["security_release_requests"] = release_requests
+
         outcomes.append(outcome)
     return outcomes, response.status_code
 

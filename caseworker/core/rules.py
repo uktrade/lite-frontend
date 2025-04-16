@@ -1,6 +1,8 @@
-from django.conf import settings
 import rules
 
+from django.conf import settings
+
+from core.decorators import with_logged_in_caseworker
 from caseworker.advice.constants import AdviceLevel
 from caseworker.advice.services import (
     GOODS_NOT_LISTED_ID,
@@ -40,20 +42,18 @@ def has_available_sub_statuses(request, case):
 
 
 @rules.predicate
+@with_logged_in_caseworker
 def is_user_case_officer(request, case):
-    user = get_logged_in_caseworker(request)
-    if not user:
-        return False
+    user = request.lite_user
 
     case_officer = case["case_officer"]
     return case_officer is not None and user and user["id"] == case_officer.get("id")
 
 
 @rules.predicate
+@with_logged_in_caseworker
 def is_user_assigned(request, case):
-    user = get_logged_in_caseworker(request)
-    if not user:
-        return False
+    user = request.lite_user
 
     if user and case["assigned_users"]:
         # Loop through all queues to check if user is assigned
@@ -79,10 +79,9 @@ def is_user_in_tau_team(request):
 
 
 @rules.predicate
+@with_logged_in_caseworker
 def is_user_in_lu_team(request):
-    user = get_logged_in_caseworker(request)
-    if not user:
-        return False
+    user = request.lite_user
     return user and user.get("team", {}).get("id") == LICENSING_UNIT_TEAM_ID
 
 
@@ -136,20 +135,15 @@ def is_case_finalised_and_licence_editable(request, licence):
 
 
 @rules.predicate
+@with_logged_in_caseworker
 def is_case_caseworker_operable(request, case):
-    caseworker = get_logged_in_caseworker(request)
-    if not caseworker:
-        return False
-
     return case.status in get_caseworker_operable_case_statuses(request)
 
 
 @rules.predicate
+@with_logged_in_caseworker
 def user_is_not_final_adviser(request, case):
-
-    caseworker = get_logged_in_caseworker(request)
-    if not caseworker:
-        return False
+    caseworker = request.lite_user
 
     case_officer = case["case_officer"]
     case_officer = {case_officer.get("id", {})} if case_officer else set()
@@ -160,11 +154,9 @@ def user_is_not_final_adviser(request, case):
 
 
 @rules.predicate
+@with_logged_in_caseworker
 def user_not_yet_countersigned(request, case):
-
-    caseworker = get_logged_in_caseworker(request)
-    if not caseworker:
-        return False
+    caseworker = request.lite_user
 
     countersigners = get_countersigners_decision_advice(case, caseworker)
 
@@ -183,8 +175,9 @@ def is_organisation_active(request, organisation):
 
 
 @rules.predicate
+@with_logged_in_caseworker
 def is_super_user(request):
-    user = get_logged_in_caseworker(request)
+    user = request.lite_user
     return user.get("role", {}).get("id") == SUPER_USER_ROLE_ID
 
 

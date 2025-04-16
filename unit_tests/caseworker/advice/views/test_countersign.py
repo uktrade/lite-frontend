@@ -690,7 +690,7 @@ def user_not_allowed_to_countersign(response):
 
 
 @patch("caseworker.advice.views.mixins.get_gov_user")
-@patch("caseworker.core.rules.get_logged_in_caseworker")
+@patch("caseworker.users.middleware.get_gov_user")
 def test_case_officer_cannot_countersign_as_licensing_manager(
     mock_caseworker,
     mock_get_gov_user,
@@ -704,7 +704,7 @@ def test_case_officer_cannot_countersign_as_licensing_manager(
     test that the same user cannot countersign as licensing manager
     """
     mock_get_gov_user.return_value = ({"user": LU_case_officer}, None)
-    mock_caseworker.return_value = LU_case_officer
+    mock_caseworker.return_value = ({"user": LU_case_officer}, 200)
 
     response = authorized_client.get(case_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
@@ -713,7 +713,7 @@ def test_case_officer_cannot_countersign_as_licensing_manager(
 
 
 @patch("caseworker.advice.views.mixins.get_gov_user")
-@patch("caseworker.core.rules.get_logged_in_caseworker")
+@patch("caseworker.users.middleware.get_gov_user")
 def test_licensing_manager_countersigner_not_same_as_case_officer(
     mock_caseworker,
     mock_get_gov_user,
@@ -728,7 +728,7 @@ def test_licensing_manager_countersigner_not_same_as_case_officer(
     who gives final recommendation, this test ensures they are not the same users
     """
     mock_get_gov_user.return_value = ({"user": LU_licensing_manager}, None)
-    mock_caseworker.return_value = LU_licensing_manager
+    mock_caseworker.return_value = ({"user": LU_licensing_manager}, 200)
 
     response = authorized_client.get(case_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
@@ -742,7 +742,7 @@ def test_licensing_manager_countersigner_not_same_as_case_officer(
 
 # Senior Licensing manager tests
 @patch("caseworker.advice.views.mixins.get_gov_user")
-@patch("caseworker.core.rules.get_logged_in_caseworker")
+@patch("caseworker.users.middleware.get_gov_user")
 def test_case_officer_cannot_countersign_as_senior_licensing_manager(
     mock_caseworker,
     mock_get_gov_user,
@@ -756,7 +756,7 @@ def test_case_officer_cannot_countersign_as_senior_licensing_manager(
     test that the same user cannot countersign as senior licensing manager
     """
     mock_get_gov_user.return_value = ({"user": LU_case_officer}, None)
-    mock_caseworker.return_value = LU_case_officer
+    mock_caseworker.return_value = ({"user": LU_case_officer}, 200)
 
     response = authorized_client.get(case_senior_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
@@ -765,7 +765,7 @@ def test_case_officer_cannot_countersign_as_senior_licensing_manager(
 
 
 @patch("caseworker.advice.views.mixins.get_gov_user")
-@patch("caseworker.core.rules.get_logged_in_caseworker")
+@patch("caseworker.users.middleware.get_gov_user")
 def test_licensing_manager_cannot_countersign_as_senior_licensing_manager(
     mock_caseworker,
     mock_get_gov_user,
@@ -779,7 +779,7 @@ def test_licensing_manager_cannot_countersign_as_senior_licensing_manager(
     test that the same user cannot countersign as senior licensing manager
     """
     mock_get_gov_user.return_value = ({"user": LU_licensing_manager}, None)
-    mock_caseworker.return_value = LU_licensing_manager
+    mock_caseworker.return_value = ({"user": LU_licensing_manager}, 200)
 
     response = authorized_client.get(case_senior_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
@@ -788,7 +788,7 @@ def test_licensing_manager_cannot_countersign_as_senior_licensing_manager(
 
 
 @patch("caseworker.advice.views.mixins.get_gov_user")
-@patch("caseworker.core.rules.get_logged_in_caseworker")
+@patch("caseworker.users.middleware.get_gov_user")
 def test_senior_manager_countersigner_not_same_as_case_officer_or_countersigner(
     mock_caseworker,
     mock_get_gov_user,
@@ -804,7 +804,7 @@ def test_senior_manager_countersigner_not_same_as_case_officer_or_countersigner(
     this test ensures they are not the same users
     """
     mock_get_gov_user.return_value = ({"user": LU_senior_licensing_manager}, None)
-    mock_caseworker.return_value = LU_senior_licensing_manager
+    mock_caseworker.return_value = ({"user": LU_senior_licensing_manager}, 200)
 
     response = authorized_client.get(case_senior_licensing_manager_countersign_queue_url)
     assert response.status_code == 200
