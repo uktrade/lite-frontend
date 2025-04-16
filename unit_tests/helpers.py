@@ -1,6 +1,7 @@
 from importlib import import_module, reload
 import sys
 
+from collections import defaultdict
 from datetime import datetime
 
 from django.utils import timezone
@@ -39,3 +40,10 @@ def get_rows(table):
             cells.append(row_cell.text)
         rows.append(cells)
     return rows
+
+
+def sort_request_history(request_history):
+    history = defaultdict(list)
+    for request in request_history:
+        history[request.path].append(request)
+    return history

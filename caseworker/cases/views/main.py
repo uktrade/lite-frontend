@@ -28,7 +28,6 @@ from core.helpers import (
     stream_document_response,
 )
 from core.services import stream_document
-from core.application_manifests.helpers import get_caseworker_manifest_for_case
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import (
     CasePage,
@@ -381,24 +380,21 @@ class ChangeStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["case"] = self.case
+        context["back_url"] = self.get_success_url()
         return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-
         statuses = get_permissible_statuses(self.request, self.case)
         status_choices = [(status["key"], status["value"]) for status in statuses]
         kwargs["statuses"] = status_choices
-
         return kwargs
 
     def get_initial(self):
         initial = super().get_initial()
-
         status = self.case["data"].get("status")
         if status:
             initial["status"] = status["key"]
-
         return initial
 
     @expect_status(
@@ -414,8 +410,7 @@ class ChangeStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        manifest = get_caseworker_manifest_for_case(self.case)
-        return manifest.urls.get_detail_view_url(case_id=self.case.id, queue_pk=self.kwargs["queue_pk"])
+        return self.case.manifest.urls.get_detail_view_url(case_id=self.case.id, queue_pk=self.kwargs["queue_pk"])
 
 
 class ChangeSubStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
