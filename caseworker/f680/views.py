@@ -1,3 +1,4 @@
+from http import HTTPStatus
 import rules
 
 from collections import OrderedDict
@@ -10,6 +11,9 @@ from django.views.generic import TemplateView, View, FormView
 from django.contrib.auth.mixins import UserPassesTestMixin
 
 from core.auth.views import LoginRequiredMixin
+from core.decorators import expect_status
+from core.helpers import stream_document_response
+from core.services import stream_document
 
 from caseworker.activities.forms import NotesAndTimelineForm
 from caseworker.activities.mixins import NotesAndTimelineMixin
@@ -17,11 +21,11 @@ from caseworker.advice.services import move_case_forward
 from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
-from caseworker.cases.services import get_case, post_ecju_query
+from caseworker.cases.services import get_case, post_ecju_query, get_application_documents
+from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.cases.views.queries import CloseQueryMixin
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
 from caseworker.core.services import get_denial_reasons
-from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.f680.recommendation.services import get_pending_recommendation_requests
 from caseworker.picklists.services import get_picklists_list
 from caseworker.queues.services import get_queue
@@ -97,6 +101,7 @@ class CaseDetailView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
             key: self.case["data"]["application"]["sections"].get(key, None) for key in application_section_order
         }
         context_data["application_sections"] = application_sections
+
         return context_data
 
 
@@ -184,3 +189,36 @@ class CloseECJUQueryView(LoginRequiredMixin, F680CaseworkerMixin, CloseQueryMixi
 
     def get_success_url(self):
         return reverse("cases:f680:ecju_queries", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+
+class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
+    template_name = "f680/case/supporting_documents.html"
+    current_tab = "supporting-documents"
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error retreiving supporting documents",
+        "Unexpected error retreiving supporting documents",
+    )
+    def get_supporting_documents(self):
+        return get_application_documents(self.request, self.case_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        documents, _ = self.get_supporting_documents()
+        context["supporting_documents"] = documents["results"]
+        return context
+
+
+class SupportingDocumentStreamView(LoginRequiredMixin, F680CaseworkerMixin, View):
+    @expect_status(
+        HTTPStatus.OK,
+        "Error downloading document",
+        "Unexpected error downloading document",
+    )
+    def stream_document(self, request, pk):
+        return stream_document(request, pk=pk)
+
+    def get(self, request, **kwargs):
+        api_response, _ = self.stream_document(request, pk=kwargs["file_pk"])
+        return stream_document_response(api_response)
