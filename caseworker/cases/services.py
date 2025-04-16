@@ -302,11 +302,6 @@ def post_generated_document(request, pk, json):
     return data.status_code
 
 
-def get_generated_documents(request, pk):
-    data = client.get(request, f"/cases/{pk}/generated-documents/")
-    return data.json(), data.status_code
-
-
 def get_generated_document_preview(request, pk, template, text, addressee):
     params = convert_parameters_to_query_params(locals())
     data = client.get(request, f"/cases/{pk}/generated-documents/preview/" + params)
