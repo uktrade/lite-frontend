@@ -1,5 +1,3 @@
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from json.decoder import JSONDecodeError
 
 from core import client
@@ -37,11 +35,6 @@ def get_hydrated_outcomes(request, case):
         for release_request_id in outcome["security_release_request_ids"]:
             release_requests.append(security_release_requests_by_id[release_request_id])
         outcome["security_release_requests"] = release_requests
-
-        validity_start_date = datetime.strptime(outcome["validity_start_date"], "%Y-%m-%d").date()
-        validity_end_date = datetime.strptime(outcome["validity_end_date"], "%Y-%m-%d").date()
-        diff = relativedelta(validity_end_date, validity_start_date)
-        outcome["validity_period"] = diff.years * 12 + diff.months
 
         outcomes.append(outcome)
     return outcomes, response.status_code

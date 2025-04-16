@@ -74,6 +74,7 @@ def data_outcomes(current_user, admin_team, data_submitted_f680_case, data_outco
                     months=+SecurityReleaseOutcomeDuration.MONTHS_24,
                 )
             ).isoformat(),
+            "validity_period": int(SecurityReleaseOutcomeDuration.MONTHS_24),
         }
     ]
 

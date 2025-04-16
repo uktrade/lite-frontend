@@ -135,7 +135,7 @@ class ApproveOutcomeForm(BaseForm):
 
         if validity_start_date and validity_period:
             duration = int(validity_period)
-            validity_end_date = validity_start_date + relativedelta(months=+duration)
+            validity_end_date = validity_start_date + relativedelta(months=duration)
 
         return {
             **cleaned_data,
