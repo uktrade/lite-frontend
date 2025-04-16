@@ -176,6 +176,7 @@ def mock_letter_template_approval_only(requests_mock, letter_templates_data):
     url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
     return requests_mock.get(url=url, json={"results": letter_templates_data[1:]})
 
+
 @pytest.fixture
 def mock_letter_template_refusal_only(requests_mock, letter_templates_data):
     url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
@@ -380,7 +381,7 @@ class TestAllDocumentsView:
         authorized_client,
         data_queue,
         f680_case_id,
-        mock_f680_case_under_review,
+        mock_f680_case_under_final_review,
         mock_outcomes_approve_refuse,
         mock_letter_template_filter,
         letter_templates_data,
@@ -401,7 +402,7 @@ class TestAllDocumentsView:
         authorized_client,
         data_queue,
         f680_case_id,
-        mock_f680_case_under_review,
+        mock_f680_case_under_final_review,
         mock_outcomes_approve_refuse,
         mock_letter_template_filter,
         letter_templates_data,
