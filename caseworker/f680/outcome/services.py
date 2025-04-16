@@ -35,6 +35,7 @@ def get_hydrated_outcomes(request, case):
         for release_request_id in outcome["security_release_request_ids"]:
             release_requests.append(security_release_requests_by_id[release_request_id])
         outcome["security_release_requests"] = release_requests
+
         outcomes.append(outcome)
     return outcomes, response.status_code
 
