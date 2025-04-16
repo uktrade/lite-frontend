@@ -4,6 +4,11 @@ class OutcomeSteps:
     REFUSE = "refuse"
 
 
+class OutcomeType:
+    APPROVE = "approve"
+    REFUSE = "refuse"
+
+
 class SecurityReleaseOutcomeDuration:
     MONTHS_24 = 24
     MONTHS_48 = 48

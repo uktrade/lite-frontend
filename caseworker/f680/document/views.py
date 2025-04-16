@@ -1,7 +1,10 @@
+import rules
+
 from http import HTTPStatus
 from urllib.parse import quote
 
 from django.contrib import messages
+from django.http import HttpResponseForbidden
 from django.urls import reverse
 from django.views.generic import FormView
 
@@ -9,17 +12,22 @@ from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
 from caseworker.cases.services import get_generated_document_preview, post_generated_document
+from caseworker.core.views import handler403
 from caseworker.letter_templates.services import get_letter_templates_list
 
+from caseworker.f680.outcome.services import get_outcomes
 from caseworker.f680.views import F680CaseworkerMixin
 
 from .forms import GenerateDocumentForm, DocumentGenerationForm
 
 
-class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
-    form_class = DocumentGenerationForm
-    template_name = "f680/document/all_documents.html"
-    current_tab = "recommendations"
+class F680DocumentMixin(F680CaseworkerMixin):
+
+    def test_func(self):
+        return all([super().test_func(), rules.test_rule("can_user_make_f680_outcome_letter", self.request, self.case)])
+
+    def handle_no_permission(self):
+        return handler403(self.request, HttpResponseForbidden)
 
     @expect_status(
         HTTPStatus.OK,
@@ -29,11 +37,23 @@ class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
     def get_letter_templates_list(self, filter):
         return get_letter_templates_list(self.request, filter)
 
+    def get_case_letter_templates(self):
+        """Return letter templates that correspond to the case outcomes"""
+        outcomes, _ = get_outcomes(self.request, self.case.id)
+        decisions = list({item["outcome"] for item in outcomes})
+        filters = {"case_type": self.case.case_type["sub_type"]["key"], "decision": decisions}
+        f680_letter_templates, _ = self.get_letter_templates_list(filters)
+        return f680_letter_templates["results"]
+
+
+class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
+    form_class = DocumentGenerationForm
+    template_name = "f680/document/all_documents.html"
+    current_tab = "recommendations"
+
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        template_filter = {"case_type": self.case.case_type["sub_type"]["key"], "decision": "approve"}
-        letter_templates, _ = self.get_letter_templates_list(template_filter)
-        context_data["approval_templates"] = letter_templates["results"]
+        context_data["letter_templates"] = self.get_case_letter_templates()
         context_data["case"] = self.case
         context_data["back_link_url"] = self.get_success_url()
         return context_data
@@ -42,7 +62,7 @@ class AllDocuments(LoginRequiredMixin, F680CaseworkerMixin, FormView):
         return reverse("cases:f680:details", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
 
 
-class F680GenerateDocument(LoginRequiredMixin, F680CaseworkerMixin, FormView):
+class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
     template_name = "f680/document/preview.html"
     form_class = GenerateDocumentForm
     current_tab = "recommendations"
