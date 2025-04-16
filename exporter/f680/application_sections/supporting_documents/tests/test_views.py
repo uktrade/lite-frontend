@@ -4,7 +4,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 
 from core import client
-from exporter.f680.application_sections.supporting_documents.forms import F680AttachSupportingDocument
+from exporter.f680.application_sections.supporting_documents.forms import (
+    F680AttachSupportingDocument,
+    F680DeleteSupportingDocument,
+)
 
 
 @pytest.fixture()
@@ -94,6 +97,29 @@ def f680_application_supporting_documents_attach_missing_url(missing_application
     )
 
 
+@pytest.fixture
+def mock_f680_application_patch(requests_mock, data_f680_case):
+    application_id = data_f680_case["id"]
+    url = client._build_absolute_uri(f"/exporter/f680/application/{application_id}/")
+    return requests_mock.get(url=url, json=data_f680_case)
+
+
+@pytest.fixture
+def mock_f680_application_delete_success(requests_mock, data_f680_case, document_data):
+    application_id = data_f680_case["id"]
+    document_id = document_data[0]["id"]
+    url = client._build_absolute_uri(f"/applications/{application_id}/documents/{document_id}/")
+    return requests_mock.delete(url=url, status_code=204, json={})
+
+
+@pytest.fixture
+def f680_application_supporting_documents_delete_url(data_f680_case, document_data):
+    return reverse(
+        "f680:supporting_documents:delete",
+        kwargs={"pk": data_f680_case["id"], "document_id": document_data[0]["id"]},
+    )
+
+
 class TestSupportingDocumentsView:
 
     def test_GET_no_application_404(
@@ -127,7 +153,7 @@ class TestSupportingDocumentsView:
         table = soup.find("table", {"id": "table-supporting-documents"})
         download_link = table.find("a", {"class": "govuk-link"})["href"]
         assert [th.text for th in table.find_all("th")] == ["Name", "Description", "Action"]
-        assert [td.text.strip() for td in table.find_all("td")] == ["sample_doc.pdf", "my item", ""]
+        assert [td.text.strip() for td in table.find_all("td")] == ["sample_doc.pdf", "my item", "Remove"]
 
         assert header.text == "Supporting Documents"
         assert download_link == f"/applications/{application_id}/additional-document/{document_id}/download"
@@ -294,4 +320,85 @@ class TestSupportingDocumentsAttachView:
         assert response.url == reverse(
             "f680:supporting_documents:add",
             kwargs={"pk": application_id},
+        )
+
+
+class TestSupportingDocumentsDeleteView:
+    def test_GET_success(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        mock_f680_supporting_documents_get,
+        f680_application_supporting_documents_delete_url,
+        data_f680_case,
+    ):
+        response = authorized_client.get(f680_application_supporting_documents_delete_url)
+        assert response.status_code == 200
+        assert response.context["back_link_url"] == reverse(
+            "f680:supporting_documents:add", kwargs={"pk": data_f680_case["id"]}
+        )
+        assert isinstance(response.context["form"], F680DeleteSupportingDocument)
+
+    def test_POST_delete_document_with_errors(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        mock_f680_supporting_documents_get,
+        f680_application_supporting_documents_delete_url,
+        beautiful_soup,
+    ):
+        data = {}
+        response = authorized_client.post(f680_application_supporting_documents_delete_url, data)
+
+        content = beautiful_soup(response.content)
+        error_text = content.find("span", {"id": "id_confirm_delete_1_error"}).text.strip()
+
+        assert response.status_code == 200
+        assert error_text == "Error: Select yes if you wish to delete the selected document"
+
+    def test_POST_delete_document_with_no_confirmation(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        mock_f680_supporting_documents_get,
+        f680_application_supporting_documents_delete_url,
+        data_f680_case,
+    ):
+        data = {"confirm_delete": False}
+        response = authorized_client.post(f680_application_supporting_documents_delete_url, data)
+
+        assert response.status_code == 302
+        assert response.url == reverse(
+            "f680:supporting_documents:add",
+            kwargs={"pk": data_f680_case["id"]},
+        )
+
+    def test_POST_delete_document_success(
+        self,
+        authorized_client,
+        mock_f680_application_get,
+        mock_f680_supporting_documents_get,
+        f680_application_supporting_documents_delete_url,
+        data_f680_case,
+        mock_patch_f680_application,
+        mock_f680_application_patch,
+        mock_f680_application_delete_success,
+    ):
+        data = {"confirm_delete": True}
+        response = authorized_client.post(f680_application_supporting_documents_delete_url, data)
+
+        assert mock_f680_application_patch.called_once
+        assert mock_patch_f680_application.last_request.json() == {
+            "application": {
+                "name": "F680 Test 1",
+                "sections": {
+                    "supporting_documents": {"label": "Supporting Documents", "items": [], "type": "multiple"}
+                },
+            }
+        }
+
+        assert response.status_code == 302
+        assert response.url == reverse(
+            "f680:supporting_documents:add",
+            kwargs={"pk": data_f680_case["id"]},
         )

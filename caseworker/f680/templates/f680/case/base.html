@@ -20,6 +20,9 @@
             <a id="ecju-queries" href="{% url 'cases:f680:ecju_queries' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "ecju-queries" %}lite-tabs__tab--selected{% endif %}">
                 Queries
             </a>
+            <a id="supporting-documents" href="{% url 'cases:f680:supporting_documents' queue_pk case.id %}" class="lite-tabs__tab {% if current_tab == "supporting-documents" %}lite-tabs__tab--selected{% endif %}">
+                Documents
+            </a>
         </div>
     </div>
 </div>

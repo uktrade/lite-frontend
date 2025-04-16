@@ -23,6 +23,12 @@ urlpatterns = [
         name="notes_and_timeline",
     ),
     path(
+        "supporting-documents/",
+        views.SupportingDocumentsView.as_view(),
+        name="supporting_documents",
+    ),
+    path("supporting-documents/<str:file_pk>/", views.SupportingDocumentStreamView.as_view(), name="document"),
+    path(
         "recommendation/",
         recommendation_views.CaseRecommendationView.as_view(),
         name="recommendation",
