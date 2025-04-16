@@ -24,7 +24,7 @@ from .forms import GenerateDocumentForm, DocumentGenerationForm
 class F680DocumentMixin(F680CaseworkerMixin):
 
     def test_func(self):
-        return rules.test_rule("can_user_make_f680_outcome_letter", self.request, self.case)
+        return all([super().test_func(), rules.test_rule("can_user_make_f680_outcome_letter", self.request, self.case)])
 
     def handle_no_permission(self):
         return handler403(self.request, HttpResponseForbidden)
