@@ -1,9 +1,10 @@
-from http import HTTPStatus
-from urllib.parse import quote
 import rules
 
+from http import HTTPStatus
+from urllib.parse import quote
+
 from django.contrib import messages
-from django.http import Http404, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 from django.urls import reverse
 from django.views.generic import FormView
 
@@ -22,12 +23,11 @@ from .forms import GenerateDocumentForm, DocumentGenerationForm
 
 class F680DocumentMixin(F680CaseworkerMixin):
 
-    def dispatch(self, *args, **kwargs):
-        dispatch = super().dispatch(*args, **kwargs)
-        if not rules.test_rule("can_user_make_f680_outcome_letter", self.request, self.case):
-            return handler403(self.request, HttpResponseForbidden)
+    def test_func(self):
+        return rules.test_rule("can_user_make_f680_outcome_letter", self.request, self.case)
 
-        return dispatch
+    def handle_no_permission(self):
+        return handler403(self.request, HttpResponseForbidden)
 
     @expect_status(
         HTTPStatus.OK,
@@ -96,15 +96,6 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
                 "visible_to_exporter": False,
             },
         )
-
-    def dispatch(self, request, *args, **kwargs):
-        dispatch = super().dispatch(request, *args, **kwargs)
-        template_id = str(self.kwargs["template_id"])
-        # Check to see if the letter template being generated is permissible
-        template_allowed = bool([t for t in self.get_case_letter_templates() if t["id"] == template_id])
-        if not template_allowed:
-            raise Http404
-        return dispatch
 
     def form_valid(self, form):
         if "generate" not in self.request.POST:

@@ -4,6 +4,7 @@ from django.urls import reverse
 from requests.exceptions import HTTPError
 
 from core import client
+from core.constants import CaseStatusEnum
 from core.exceptions import ServiceError
 from caseworker.f680.outcome.constants import OutcomeType
 
@@ -111,7 +112,6 @@ def mock_preview_f680_letter_api_error(
         [
             f"pk={f680_case_id}",
             f"template={f680_approval_template_id}",
-            f"text={customisation_text}",
         ]
     )
     return requests_mock.get(
@@ -179,16 +179,6 @@ def mock_letter_template_approval_only(requests_mock, letter_templates_data):
 
 class TestF680GenerateDocument:
 
-    def test_GET_template_does_not_exist(
-        self,
-        authorized_client,
-        generate_document_url,
-        mock_preview_f680_letter_missing_template,
-        mock_outcomes_approve_refuse,
-    ):
-        response = authorized_client.get(generate_document_url)
-        assert response.status_code == 404
-
     def test_GET_success(
         self,
         authorized_client,
@@ -202,19 +192,6 @@ class TestF680GenerateDocument:
         response = authorized_client.get(generate_document_url)
         assert response.status_code == 200
         assert response.context["preview"] == data_preview_response["preview"]
-
-    def test_GET_template_not_allowed(
-        self,
-        authorized_client,
-        generate_document_url,
-        mock_preview_f680_letter,
-        data_preview_response,
-        mock_f680_case_under_final_review,
-        mock_outcomes_complete_refusal,
-        mock_letter_template_approval_only,
-    ):
-        response = authorized_client.get(generate_document_url)
-        assert response.status_code == 404
 
     def test_POST_preview_success(
         self,
@@ -257,22 +234,32 @@ class TestF680GenerateDocument:
         }
 
     def test_POST_preview_api_error(
-        self, authorized_client, generate_document_url, mock_preview_f680_letter_api_error, customisation_text
+        self,
+        authorized_client,
+        generate_document_url,
+        data_submitted_f680_case,
+        mock_preview_f680_letter_api_error,
+        mock_outcomes_complete,
+        customisation_text,
     ):
+        data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         with pytest.raises(ServiceError):
-            response = authorized_client.post(generate_document_url, {"preview": "", "text": customisation_text})
+            authorized_client.get(generate_document_url, {"preview": "", "text": customisation_text})
         assert mock_preview_f680_letter_api_error.call_count == 1
 
     def test_POST_generate_api_error(
         self,
         authorized_client,
         generate_document_url,
+        data_submitted_f680_case,
         mock_generate_f680_letter_api_error,
         data_queue,
         f680_case_id,
+        mock_outcomes_complete,
         customisation_text,
         f680_approval_template_id,
     ):
+        data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         with pytest.raises(ServiceError):
             response = authorized_client.post(generate_document_url, {"generate": "", "text": customisation_text})
         assert mock_generate_f680_letter_api_error.call_count == 1
