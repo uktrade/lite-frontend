@@ -299,6 +299,29 @@ class TestF680GenerateDocument:
         assert mock_generate_f680_letter_api_error.call_count == 1
 
 
+@pytest.fixture
+def data_finalise_response(f680_case_id):
+    return {"case": f680_case_id, "licence": ""}
+
+
+@pytest.fixture
+def mock_finalise_success(f680_case_id, requests_mock, data_finalise_response):
+    return requests_mock.put(
+        client._build_absolute_uri(f"/cases/{f680_case_id}/finalise/"),
+        json=data_finalise_response,
+        status_code=201,
+    )
+
+
+@pytest.fixture
+def mock_finalise_api_error(f680_case_id, requests_mock):
+    return requests_mock.put(
+        client._build_absolute_uri(f"/cases/{f680_case_id}/finalise/"),
+        json={"error": "error"},
+        status_code=500,
+    )
+
+
 class TestAllDocumentsView:
 
     def test_GET_success(
@@ -352,19 +375,40 @@ class TestAllDocumentsView:
         response = authorized_client.get(document_all_url)
         assert response.status_code == 403
 
-    def test_POST_(
+    def test_POST_finalise_success(
         self,
         authorized_client,
         data_queue,
-        mock_f680_case_under_review,
-        mock_outcomes_no_outcome,
         f680_case_id,
-        f680_reference_code,
-        data_submitted_f680_case,
+        mock_f680_case_under_review,
+        mock_outcomes_approve_refuse,
         mock_letter_template_filter,
         letter_templates_data,
         document_all_url,
+        mock_finalise_success,
     ):
 
-        response = authorized_client.get(document_all_url)
-        assert response.status_code == 404
+        response = authorized_client.post(document_all_url)
+        assert response.status_code == 302
+        assert response.url == reverse(
+            "cases:f680:details",
+            kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id},
+        )
+        assert mock_finalise_success.call_count == 1
+
+    def test_POST_finalise_api_error(
+        self,
+        authorized_client,
+        data_queue,
+        f680_case_id,
+        mock_f680_case_under_review,
+        mock_outcomes_approve_refuse,
+        mock_letter_template_filter,
+        letter_templates_data,
+        document_all_url,
+        mock_finalise_api_error,
+    ):
+
+        with pytest.raises(ServiceError):
+            response = authorized_client.post(document_all_url)
+        assert mock_finalise_api_error.call_count == 1
