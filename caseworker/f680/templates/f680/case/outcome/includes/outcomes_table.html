@@ -21,6 +21,8 @@
                 {% for security_release in outcome.security_release_requests %}
                     {{security_release.recipient.name}}, {{security_release.recipient.country.name}}<br/>
                 {% endfor %}
+                <br><br>
+                Valid from {{ outcome.validity_start_date|parse_date|date:"d-m-Y" }} for {{ outcome.validity_period }} months
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                 {{outcome.outcome|capfirst}}
