@@ -22,6 +22,10 @@
         {% if outcomes %}
             <h1 class="govuk-heading-xl">Outcomes</h1>
             {% include "f680/case/outcome/includes/outcomes_table.html" with outcomes=outcomes %}
+            {% test_rule 'can_user_make_f680_outcome_letter' request case as can_user_make_f680_outcome_letter %}
+            {% if can_user_make_f680_outcome_letter %}
+                <a id="generate-outcome-letter-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:document:all' queue_pk case.id %}">Generate letters</a>
+            {% endif %}
         {% endif %}
 
         {% if user_recommendations and not pending_recommendations %}

@@ -90,7 +90,6 @@ def releases_without_outcome_exist(request, case):
 @with_logged_in_caseworker
 def all_releases_decided(request, case):
     outcomes, _ = get_outcomes(request, case["id"])
-
     releases_without_outcome, _ = get_releases_with_no_outcome(request, outcomes, case)
     return len(releases_without_outcome) == 0
 
