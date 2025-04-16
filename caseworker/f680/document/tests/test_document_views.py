@@ -253,10 +253,13 @@ class TestF680GenerateDocument:
     ):
         response = authorized_client.post(generate_document_url, {"generate": "", "text": customisation_text})
         assert response.status_code == 302
-        assert response.url == reverse("cases:f680:details", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        assert response.url == reverse(
+            "cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id}
+        )
         assert mock_generate_f680_letter.call_count == 1
         assert mock_generate_f680_letter.last_request.json() == {
             "addressee": None,
+            "advice_type": "approve",
             "template": f680_approval_template_id,
             "text": customisation_text,
             "visible_to_exporter": False,
@@ -270,6 +273,7 @@ class TestF680GenerateDocument:
         mock_preview_f680_letter_api_error,
         mock_outcomes_complete,
         customisation_text,
+        mock_letter_template_filter,
     ):
         data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         with pytest.raises(ServiceError):
@@ -287,6 +291,7 @@ class TestF680GenerateDocument:
         mock_outcomes_complete,
         customisation_text,
         f680_approval_template_id,
+        mock_letter_template_filter,
     ):
         data_submitted_f680_case["case"]["data"]["status"]["key"] = CaseStatusEnum.UNDER_FINAL_REVIEW
         with pytest.raises(ServiceError):
@@ -346,3 +351,20 @@ class TestAllDocumentsView:
 
         response = authorized_client.get(document_all_url)
         assert response.status_code == 403
+
+    def test_POST_(
+        self,
+        authorized_client,
+        data_queue,
+        mock_f680_case_under_review,
+        mock_outcomes_no_outcome,
+        f680_case_id,
+        f680_reference_code,
+        data_submitted_f680_case,
+        mock_letter_template_filter,
+        letter_templates_data,
+        document_all_url,
+    ):
+
+        response = authorized_client.get(document_all_url)
+        assert response.status_code == 404
