@@ -4,20 +4,13 @@ from django import forms
 from core.common.forms import BaseForm
 
 
-class DocumentGenerationForm(BaseForm):
+class FinaliseForm(BaseForm):
 
     class Layout:
         TITLE = ""
-        SUBMIT_BUTTON_TEXT = "Save and publish to exporter"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        SUBMIT_BUTTON_TEXT = "Finalise and publish to exporter"
 
     def get_layout_fields(self):
-        return ()
-
-    def get_layout_actions(self):
-        # Prevent the standard submit button being shown
         return []
 
 

@@ -1,5 +1,3 @@
-import rules
-
 from http import HTTPStatus
 from urllib.parse import quote
 
@@ -7,18 +5,20 @@ from django.contrib import messages
 from django.http import HttpResponseForbidden
 from django.urls import reverse
 from django.views.generic import FormView
+from django.http import Http404
+import rules
 
 from core.auth.views import LoginRequiredMixin
 from core.decorators import expect_status
 
-from caseworker.cases.services import get_generated_document_preview, post_generated_document
+from caseworker.cases.services import get_generated_document_preview, post_generated_document, finalise_case
 from caseworker.core.views import handler403
 from caseworker.letter_templates.services import get_letter_templates_list
 
 from caseworker.f680.outcome.services import get_outcomes
 from caseworker.f680.views import F680CaseworkerMixin
 
-from .forms import GenerateDocumentForm, DocumentGenerationForm
+from .forms import GenerateDocumentForm, FinaliseForm
 
 
 class F680DocumentMixin(F680CaseworkerMixin):
@@ -47,16 +47,31 @@ class F680DocumentMixin(F680CaseworkerMixin):
 
 
 class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
-    form_class = DocumentGenerationForm
+    form_class = FinaliseForm
     template_name = "f680/document/all_documents.html"
     current_tab = "recommendations"
+
+    @expect_status(
+        HTTPStatus.CREATED,
+        "Error finalising case",
+        "Unexpected error finalising case",
+    )
+    def finalise(self):
+        return finalise_case(self.request, self.case["id"], json={})
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         context_data["letter_templates"] = self.get_case_letter_templates()
-        context_data["case"] = self.case
-        context_data["back_link_url"] = self.get_success_url()
+        context_data["back_link_url"] = reverse(
+            "cases:f680:recommendation", kwargs={"pk": self.case_id, "queue_pk": self.queue_id}
+        )
         return context_data
+
+    def form_valid(self, form):
+        self.finalise()
+        success_message = "F680 finalised successfully"
+        messages.success(self.request, success_message)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse("cases:f680:details", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
@@ -86,6 +101,12 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         "Unexpected error generating document",
     )
     def generate_document(self, template_id, text):
+        advice_type = None
+        template_decisions = [decision["name"]["key"] for decision in self.template["decisions"]]
+        if "approve" in template_decisions:
+            advice_type = "approve"
+        if "refuse" in template_decisions:
+            advice_type = "refuse"
         return None, post_generated_document(
             self.request,
             self.case_id,
@@ -94,8 +115,18 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
                 "text": text,
                 "addressee": None,
                 "visible_to_exporter": False,
+                "advice_type": advice_type,
             },
         )
+
+    def extra_setup(self, request):
+        super().extra_setup(request)
+        template_id = str(self.kwargs["template_id"])
+        # Check to see if the letter template being generated is permissible
+        try:
+            self.template = [t for t in self.get_case_letter_templates() if t["id"] == template_id][0]
+        except IndexError:
+            raise Http404
 
     def form_valid(self, form):
         if "generate" not in self.request.POST:
@@ -110,7 +141,7 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
 
     def get_success_url(self, *args, **kwargs):
         # TODO: Redirect the user to the landing screen when we have a document
-        return reverse("cases:f680:details", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
+        return reverse("cases:f680:document:all", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
     def get_text(self, form):
         text = None
