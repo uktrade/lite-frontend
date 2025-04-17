@@ -54,8 +54,8 @@ class ApproveOutcomeForm(BaseForm):
     security_grading = forms.ChoiceField(
         choices=security_grading_choices,
         widget=forms.RadioSelect,
-        label="Select security grading",
-        error_messages={"required": "Select the security grading"},
+        label="Select security release",
+        error_messages={"required": "Select the security release"},
     )
     approval_types = forms.MultipleChoiceField(
         label="Approval types",
@@ -73,7 +73,7 @@ class ApproveOutcomeForm(BaseForm):
     )
     conditions = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
-        label="Provisos",
+        label="Conditions",
         required=False,
     )
 

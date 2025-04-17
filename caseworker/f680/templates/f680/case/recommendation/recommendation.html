@@ -15,8 +15,8 @@
 
         {% test_rule 'can_user_make_f680_recommendation' request case as can_user_make_f680_recommendation %}
         {% if can_user_make_f680_recommendation %}
-            <br>
             <a id="make-recommendation-button" draggable="false" class="govuk-button govuk-button--primary" href="{% url 'cases:f680:make_recommendation' queue_pk case.id %}">Make recommendation</a>
+            <br>
         {% endif %}
 
         {% if outcomes %}
@@ -24,17 +24,27 @@
             {% include "f680/case/outcome/includes/outcomes_table.html" with outcomes=outcomes %}
         {% endif %}
 
-        {% if user_recommendations %}
-            <br>
+        {% if user_recommendations and not pending_recommendations %}
             <h1 class="govuk-heading-xl">View recommendation</h1>
+
+            {% test_rule 'can_user_clear_f680_recommendation' request case as can_user_clear_f680_recommendation %}
+            {% if can_user_clear_f680_recommendation %}
+              <a id="clear-recommendation-button" role="button" draggable="false" class="govuk-button govuk-button--secondary" href="{% url 'cases:f680:clear_recommendation' queue_pk case.id %}">
+                  Clear recommendation
+              </a>
+            {% endif %}
+
             {% for recommendation in user_recommendations %}
                 {% include "f680/case/recommendation/recommendation_details.html" with recommendation=recommendation %}
             {% endfor %}
         {% endif %}
 
+        {% if user_recommendations and pending_recommendations %}
+            {% include "f680/includes/recommendations_table.html" with pending_recommendations=pending_recommendations user_recommendations=user_recommendations %}
+        {% endif %}
+
         {% if recommendations_by_team %}
             {% include "f680/case/recommendation/other-recommendations.html" with recommendations_by_team=recommendations_by_team %}
-
         {% endif %}
     </main>
 </div>

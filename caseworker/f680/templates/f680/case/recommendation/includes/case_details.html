@@ -1,63 +1,91 @@
-{% load static advice_tags %}
-
-    {% with product=case.data.product %}
-        <h2 class="govuk-heading-m">Case details</h2>
-        <details class="govuk-details" data-module="govuk-details">
-          <summary class="govuk-details__summary">
-              <span class="govuk-details__summary-text">Products</span>
-          </summary>
-          <div class="govuk-details__text">
+{% with product=case.data.product %}
+    <h2 class="govuk-heading-m">Case details</h2>
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">Products</span>
+        </summary>
+        <div class="govuk-details__text">
             <table id="table-nlr-products" class="govuk-table">
-              <tbody class="govuk-table__body">
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell govuk-!-font-weight-bold">Name</td>
-                  <td class="govuk-table__cell">
-                    {{ product.name}}
-                </td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <td class="govuk-table__cell govuk-!-font-weight-bold">Description</td>
-                    <td class="govuk-table__cell">
-                      {{ product.description }}
-                  </td>
-                  </tr>
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell govuk-!-font-weight-bold">Name</td>
+                        <td class="govuk-table__cell">
+                            {{ product.name}}
+                        </td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell govuk-!-font-weight-bold">Description</td>
+                        <td class="govuk-table__cell">
+                            {{ product.description }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-          </div>
-        </details>
+        </div>
+    </details>
 
-        <details class="govuk-details" data-module="govuk-details">
-          <summary class="govuk-details__summary">
+    <details class="govuk-details" data-module="govuk-details">
+        <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text">Destinations</span>
-          </summary>
-          <div class="govuk-details__text">
-            <table id="table-nlr-products" class="govuk-table">
-              <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                  <th scope="col" class="govuk-table__header">Country</th>
-                  <th scope="col" class="govuk-table__header">Type</th>
-                  <th scope="col" class="govuk-table__header">Name</th>
-                  <th scope="col" class="govuk-table__header">Security grading</th>
-                </tr>
-              </thead>
-              <tbody class="govuk-table__body">
-                {% for rr in security_release_requests %}
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell">
-                    <strong>{{ rr.recipient.country.name }}</strong><br>
-                    <ol>
-                      {% for item in rr.approval_types %}
-                          <li>{{ item }}</li>
-                      {% endfor %}
-                    </ol>
-                  </td>
-                  <td class="govuk-table__cell">{{ rr.recipient.type.value }}</td>
-                  <td class="govuk-table__cell">{{ rr.recipient.name }}</td>
-                  <td class="govuk-table__cell">{{ rr.security_grading.value }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </details>
-    {% endwith %}
+        </summary>
+        <div class="govuk-details__text">
+            {% for release_request in security_release_requests %}
+                <div class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            {{ release_request.recipient.country.name }}
+                        </h2>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                          <div class="govuk-summary-list__row">
+                              <dt class="govuk-summary-list__key">
+                                  Name
+                              </dt>
+                              <dd class="govuk-summary-list__value">
+                                  {{ release_request.recipient.name }}
+                              </dd>
+                          </div>
+                          <div class="govuk-summary-list__row">
+                              <dt class="govuk-summary-list__key">
+                                  Type
+                              </dt>
+                              <dd class="govuk-summary-list__value">
+                                  {{ release_request.recipient.type.value }}
+                              </dd>
+                          </div>
+                          <div class="govuk-summary-list__row">
+                              <dt class="govuk-summary-list__key">
+                                  Security grading
+                              </dt>
+                              <dd class="govuk-summary-list__value">
+                                  {{ release_request.security_grading.value }}
+                              </dd>
+                          </div>
+                          <div class="govuk-summary-list__row">
+                              <dt class="govuk-summary-list__key">
+                                  Approval types
+                              </dt>
+                              <dd class="govuk-summary-list__value">
+                                  <ol>
+                                      {% for item in release_request.approval_types %}
+                                          <li>{{ item }}</li>
+                                      {% endfor %}
+                                  </ol>
+                              </dd>
+                          </div>
+                          <div class="govuk-summary-list__row">
+                              <dt class="govuk-summary-list__key">
+                                  Intended use
+                              </dt>
+                              <dd class="govuk-summary-list__value">
+                                  {{ release_request.intended_use }}
+                              </dd>
+                          </div>
+                        </dl>
+                      </div>
+                  </div>
+            {% endfor %}
+        </div>
+    </details>
+{% endwith %}

@@ -88,3 +88,31 @@ def test_user_can_edit_quantity_value(settings, rf, data_standard_case, status, 
 
     request = rf.get("/")
     assert rules.test_rule("can_edit_quantity_value", request, application) is expected
+
+
+@pytest.mark.parametrize(
+    "user_organisation, allowed_organisations_feature, expected",
+    (
+        ("12345", ["12345", "98765", "56757"], True),
+        ("", ["12345", "98765", "56757"], False),
+        ("99999", [], False),
+        (None, [], False),
+    ),
+)
+def test_can_exporter_apply_for_indeterminate_export_licence_type(
+    rf,
+    client,
+    user_organisation,
+    allowed_organisations_feature,
+    expected,
+    settings,
+):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = allowed_organisations_feature
+
+    request = rf.get("/")
+    request.session = client.session
+    session = request.session
+    session["organisation"] = user_organisation
+    session.save()
+
+    assert rules.test_rule("can_exporter_apply_for_indeterminate_export_licence_type", request) is expected

@@ -3,9 +3,11 @@ from http import HTTPStatus
 
 from django.urls import reverse
 
+from core import client
+from core.exceptions import ServiceError
+
 from caseworker.f680.outcome.constants import OutcomeSteps
 from caseworker.f680.outcome import forms
-from core import client
 
 
 @pytest.fixture(autouse=True)
@@ -17,6 +19,8 @@ def setup(
     mock_approval_reason,
     mock_denial_reasons,
     mock_footnote_details,
+    mock_proviso,
+    mock_get_case_recommendations,
     settings,
 ):
     settings.FEATURE_FLAG_ALLOW_F680 = True
@@ -26,6 +30,14 @@ def setup(
 @pytest.fixture
 def decide_outcome_url(data_queue, f680_case_id):
     return reverse("cases:f680:outcome:decide_outcome", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+
+
+@pytest.fixture
+def clear_outcome_url(data_queue, f680_case_id, data_outcome_id):
+    return reverse(
+        "cases:f680:outcome:clear_outcome",
+        kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id, "outcome_id": data_outcome_id},
+    )
 
 
 @pytest.fixture
@@ -53,17 +65,84 @@ def mock_POST_outcome(requests_mock, data_submitted_f680_case):
     return requests_mock.post(url, json={}, status_code=HTTPStatus.CREATED)
 
 
+@pytest.fixture
+def mock_DELETE_outcome(requests_mock, data_submitted_f680_case, data_outcome_id):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/{data_outcome_id}/"
+    return requests_mock.delete(url, status_code=HTTPStatus.NO_CONTENT)
+
+
+@pytest.fixture
+def mock_DELETE_outcome_outcome_missing(requests_mock, data_submitted_f680_case, data_outcome_id):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/{data_outcome_id}/"
+    return requests_mock.delete(url, status_code=HTTPStatus.NOT_FOUND)
+
+
+@pytest.fixture
+def mock_DELETE_outcome_server_error(requests_mock, data_submitted_f680_case, data_outcome_id):
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/outcome/{data_outcome_id}/"
+    return requests_mock.delete(url, json={"error": "error"}, status_code=HTTPStatus.INTERNAL_SERVER_ERROR)
+
+
+@pytest.fixture
+def mock_get_case_recommendations_multiple(
+    requests_mock, data_submitted_f680_case, current_user, MOD_team1, MOD_team2, fcdo_team, recommendations
+):
+    security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+    recommendations.extend(
+        [
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "approve", "value": "Approve"},
+                "conditions": "No concerns",
+                "refusal_reasons": "",
+                "security_grading": {"key": "official", "value": "Official"},
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+                "user": current_user,
+                "team": MOD_team1,
+            },
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "approve", "value": "Approve"},
+                "conditions": "some concerns",
+                "refusal_reasons": "",
+                "security_grading": {"key": "official", "value": "Official"},
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+                "user": current_user,
+                "team": MOD_team2,
+            },
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "refuse", "value": "Refuse"},
+                "conditions": "",
+                "refusal_reasons": "some reasons",
+                "security_release_request": security_release_requests[0]["id"],
+                "security_grading": None,
+                "security_grading_other": "",
+                "user": current_user,
+                "team": fcdo_team,
+            },
+        ]
+    )
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.get(url, json=recommendations, status_code=200)
+
+
 class TestDecideOutcomeView:
 
     def test_GET_select_outcome(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
         mock_outcomes_no_outcomes,
         decide_outcome_url,
+        recommendations,
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         expected_security_release_request_choices = [
@@ -82,11 +161,68 @@ class TestDecideOutcomeView:
             response.context["form"].fields["security_release_requests"].choices
             == expected_security_release_request_choices
         )
+        assert response.context["selected_security_release_requests"] == []
+        expected_all_security_release_requests = {
+            "approval_types": ["demonstration_overseas", "training"],
+            "id": request_ids[0],
+            "intended_use": "australia intended use",
+            "product_id": data_submitted_f680_case["case"]["data"]["product"]["id"],
+            "recipient": {
+                "address": "australia address",
+                "country": {
+                    "id": "AU",
+                    "is_eu": False,
+                    "name": "Australia",
+                    "report_name": "",
+                    "type": "gov.uk Country",
+                },
+                "id": data_submitted_f680_case["case"]["data"]["security_release_requests"][0]["recipient"]["id"],
+                "name": "australia name",
+                "role": {"key": "consultant", "value": "Consultant"},
+                "role_other": None,
+                "type": {"key": "third-party", "value": "Third party"},
+            },
+            "recommendations": [
+                {
+                    "conditions": "No concerns",
+                    "created_at": "2021-10-16T23:48:39.486679+01:00",
+                    "id": recommendations[0]["id"],
+                    "refusal_reasons": "",
+                    "security_release_request_id": request_ids[0],
+                    "team": {
+                        "alias": None,
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "is_ogd": False,
+                        "name": "Admin",
+                        "part_of_ecju": None,
+                    },
+                    "type": {"key": "approve", "value": "Approve"},
+                    "user": {
+                        "email": "test.user@example.com",  # /PS-IGNORE
+                        "first_name": "Test",
+                        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
+                        "last_name": "User",
+                        "role_name": "Super User",
+                        "status": "Active",
+                        "team": {
+                            "alias": None,
+                            "id": "00000000-0000-0000-0000-000000000001",
+                            "is_ogd": False,
+                            "name": "Admin",
+                            "part_of_ecju": None,
+                        },
+                    },
+                }
+            ],
+            "security_grading": {"key": "secret", "value": "Secret"},
+            "security_grading_other": "",
+        }
+
+        assert response.context["all_security_release_requests"][0] == expected_all_security_release_requests
 
     def test_GET_select_outcome_existing_outcome(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -124,7 +260,6 @@ class TestDecideOutcomeView:
     def test_POST_select_outcome(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -132,6 +267,7 @@ class TestDecideOutcomeView:
         post_to_step,
         outcome,
         expected_form_class,
+        recommendations,
     ):
         security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
         request_ids = [request["id"] for request in security_release_requests]
@@ -145,11 +281,92 @@ class TestDecideOutcomeView:
         assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert isinstance(form, expected_form_class)
+        expected_selected_security_release_requests = {
+            "approval_types": ["demonstration_overseas", "training"],
+            "id": request_ids[0],
+            "intended_use": "australia intended use",
+            "product_id": data_submitted_f680_case["case"]["data"]["product"]["id"],
+            "recipient": {
+                "address": "australia address",
+                "country": {
+                    "id": "AU",
+                    "is_eu": False,
+                    "name": "Australia",
+                    "report_name": "",
+                    "type": "gov.uk Country",
+                },
+                "id": data_submitted_f680_case["case"]["data"]["security_release_requests"][0]["recipient"]["id"],
+                "name": "australia name",
+                "role": {"key": "consultant", "value": "Consultant"},
+                "role_other": None,
+                "type": {"key": "third-party", "value": "Third party"},
+            },
+            "recommendations": [
+                {
+                    "conditions": "No concerns",
+                    "created_at": "2021-10-16T23:48:39.486679+01:00",
+                    "id": recommendations[0]["id"],
+                    "refusal_reasons": "",
+                    "security_release_request_id": request_ids[0],
+                    "team": {
+                        "alias": None,
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "is_ogd": False,
+                        "name": "Admin",
+                        "part_of_ecju": None,
+                    },
+                    "type": {"key": "approve", "value": "Approve"},
+                    "user": {
+                        "email": "test.user@example.com",  # /PS-IGNORE
+                        "first_name": "Test",
+                        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
+                        "last_name": "User",
+                        "role_name": "Super User",
+                        "status": "Active",
+                        "team": {
+                            "alias": None,
+                            "id": "00000000-0000-0000-0000-000000000001",
+                            "is_ogd": False,
+                            "name": "Admin",
+                            "part_of_ecju": None,
+                        },
+                    },
+                }
+            ],
+            "security_grading": {"key": "secret", "value": "Secret"},
+            "security_grading_other": "",
+        }
+
+        assert response.context["selected_security_release_requests"][0] == expected_selected_security_release_requests
+
+    def test_POST_select_approve_outcome_conditions_aggregated(
+        self,
+        authorized_client,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_no_outcomes,
+        post_to_step,
+        mock_get_case_recommendations_multiple,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        request_ids = [request["id"] for request in security_release_requests]
+        response = post_to_step(
+            OutcomeSteps.SELECT_OUTCOME,
+            {
+                "outcome": "approve",
+                "security_release_requests": request_ids,
+            },
+        )
+        assert response.status_code == HTTPStatus.OK
+        form = response.context["form"]
+        assert isinstance(form, forms.ApproveOutcomeForm)
+        # Expect a de-duplicated set of conditions
+        assert form.initial == {"conditions": "No concerns\r\n\r\nsome concerns"}
 
     def test_POST_select_outcome_bad_request(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -173,7 +390,6 @@ class TestDecideOutcomeView:
     def test_POST_approve(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         data_queue,
@@ -200,12 +416,16 @@ class TestDecideOutcomeView:
                 "approval_types": ["training"],
                 "security_grading": "secret",
             },
+            follow=True,
         )
-        assert response.status_code == HTTPStatus.FOUND
-        assert response.url == reverse(
+        assert response.status_code == HTTPStatus.OK
+        assert response.redirect_chain[-1][0] == reverse(
             "cases:f680:recommendation",
             kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
         )
+        messages = [str(msg) for msg in response.context["messages"]]
+        assert messages == ["Outcomes for 3 security releases saved successfully"]
+
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
         assert request.json() == {
@@ -219,7 +439,6 @@ class TestDecideOutcomeView:
     def test_POST_approve_bad_request(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         data_queue,
@@ -246,14 +465,13 @@ class TestDecideOutcomeView:
         assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
         assert form.errors == {
-            "security_grading": ["Select the security grading"],
+            "security_grading": ["Select the security release"],
             "approval_types": ["This field is required."],
         }
 
     def test_POST_partial_approve(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         data_queue,
@@ -281,12 +499,15 @@ class TestDecideOutcomeView:
                 "approval_types": ["training"],
                 "security_grading": "secret",
             },
+            follow=True,
         )
-        assert response.status_code == HTTPStatus.FOUND
-        assert response.url == reverse(
+        assert response.status_code == HTTPStatus.OK
+        assert response.redirect_chain[-1][0] == reverse(
             "cases:f680:outcome:decide_outcome",
             kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
         )
+        messages = [str(msg) for msg in response.context["messages"]]
+        assert messages == ["Outcome saved successfully"]
 
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
@@ -301,7 +522,6 @@ class TestDecideOutcomeView:
     def test_POST_refuse(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -338,7 +558,6 @@ class TestDecideOutcomeView:
     def test_POST_refuse_bad_request(
         self,
         authorized_client,
-        requests_mock,
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
@@ -366,3 +585,55 @@ class TestDecideOutcomeView:
         assert form.errors == {
             "refusal_reasons": ["This field is required."],
         }
+
+
+class TestClearOutcome:
+
+    def test_POST_outcome_missing(
+        self,
+        authorized_client,
+        data_queue,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_single_outcome,
+        clear_outcome_url,
+        data_outcome_id,
+        mock_DELETE_outcome_outcome_missing,
+    ):
+        with pytest.raises(ServiceError):
+            response = authorized_client.post(clear_outcome_url)
+        assert mock_DELETE_outcome_outcome_missing.call_count == 1
+
+    def test_POST_api_error(
+        self,
+        authorized_client,
+        data_queue,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_single_outcome,
+        clear_outcome_url,
+        data_outcome_id,
+        mock_DELETE_outcome_server_error,
+    ):
+        with pytest.raises(ServiceError):
+            response = authorized_client.post(clear_outcome_url)
+        assert mock_DELETE_outcome_server_error.call_count == 1
+
+    def test_POST_success(
+        self,
+        authorized_client,
+        data_queue,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_single_outcome,
+        clear_outcome_url,
+        data_outcome_id,
+        mock_DELETE_outcome,
+    ):
+        response = authorized_client.post(clear_outcome_url)
+        assert response.status_code == HTTPStatus.FOUND
+        assert response.url == reverse(
+            "cases:f680:recommendation",
+            kwargs={"queue_pk": data_queue["id"], "pk": data_submitted_f680_case["case"]["id"]},
+        )
+        assert mock_DELETE_outcome.call_count == 1

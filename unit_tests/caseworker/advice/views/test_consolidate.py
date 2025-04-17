@@ -422,9 +422,9 @@ def test_view_consolidate_refuse_outcome(
         "Refusal criteria",
     ]
     assert get_rows(table) == [
-        ["Abu Dhabi", "Consignee", "Consignee", "All", "five a, five b"],
-        ["United Kingdom", "End-user", "End User", "All", "five a, five b"],
-        ["United Kingdom", "Third party", "Third party", "All", "five a, five b"],
+        ["Abu Dhabi", "Consignee", "Consignee", "All", "5a, 5b"],
+        ["United Kingdom", "End-user", "End User", "All", "5a, 5b"],
+        ["United Kingdom", "Third party", "Third party", "All", "5a, 5b"],
     ]
 
 
