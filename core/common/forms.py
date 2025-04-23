@@ -1,5 +1,6 @@
-from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.choices import Choice
+from crispy_forms_gds.fields import DateInputField
+from crispy_forms_gds.helper import FormHelper
 from crispy_forms_gds.layout import (
     Div,
     Fieldset,
@@ -8,6 +9,7 @@ from crispy_forms_gds.layout import (
     Size,
     Submit,
 )
+from django.core.exceptions import ValidationError
 from django import forms
 
 
@@ -123,3 +125,40 @@ class MultipleFileField(forms.FileField):
         single_file_clean = super().clean
         result = [single_file_clean(d, initial) for d in data]
         return result
+
+
+class CustomErrorDateInputField(DateInputField):
+    def __init__(self, error_messages, **kwargs):
+        super().__init__(**kwargs)
+
+        self.custom_messages = {}
+
+        for key, field in zip(["day", "month", "year"], self.fields):
+            field_error_messages = error_messages.pop(key)
+            field.error_messages["incomplete"] = field_error_messages["incomplete"]
+
+            regex_validator = field.validators[0]
+            regex_validator.message = field_error_messages["invalid"]
+
+            self.custom_messages[key] = field_error_messages
+
+        self.error_messages = error_messages
+
+    def compress(self, data_list):
+        try:
+            return super().compress(data_list)
+        except ValidationError as e:
+            # These are the error strings that come back from the datetime
+            # library that then get bundled into a ValidationError from the
+            # parent.
+            # In this case the best we can do is to match on these strings
+            # and then give back the error message that makes the most sense.
+            # If we fail to find a matching message we will still give back a
+            # user friendly message.
+            if e.message == "day is out of range for month":
+                raise ValidationError(self.custom_messages["day"]["invalid"])
+            if e.message == "month must be in 1..12":
+                raise ValidationError(self.custom_messages["month"]["invalid"])
+            if e.message == f"year {data_list[2]} is out of range":
+                raise ValidationError(self.custom_messages["year"]["invalid"])
+            raise ValidationError(self.error_messages["invalid"])

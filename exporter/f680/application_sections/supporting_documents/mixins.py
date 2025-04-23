@@ -37,4 +37,4 @@ class F680SupportingDocumentsMixin:
         "Unexpected error updating F680 application",
     )
     def patch_f680_application(self, data):
-        return patch_f680_application(self.request, self.application["id"], data)
+        return patch_f680_application(self.request, self.application_id, data)

@@ -255,6 +255,8 @@ class FileUploadTest(TestCase):
             "text/xml",
             "text/plain",
             "text/csv",
+            "text/rtf",
+            "text/msword",
             "image/jpeg",
             "image/png",
             "image/tiff",

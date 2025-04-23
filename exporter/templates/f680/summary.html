@@ -132,7 +132,7 @@
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:supporting_documents:add" pk=application.id %}">Supporting Documents</a>
-                            {% if application.application.sections.supporting_documents %}
+                            {% if application.application.sections.supporting_documents.items %}
                             <div class="lite-tag lite-tag--blue">
                                 Completed
                             </div>
@@ -146,7 +146,7 @@
                     <li class="lite-task-list__item">
                         <div class="lite-task-list__item-header">
                             <a class="govuk-link govuk-link--no-visited-state" href="{% url "f680:additional_information:notes_wizard" pk=application.id %}">Notes for case officers</a>
-                            {% if application.application.sections.notes_for_case_officers.fields.0.answer %}
+                            {% if application.application.sections.notes_for_case_officers.fields.note.answer %}
                                 <div class="lite-tag lite-tag--blue">
                                     Completed
                                 </div>

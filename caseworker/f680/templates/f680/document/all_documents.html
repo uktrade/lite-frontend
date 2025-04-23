@@ -13,13 +13,16 @@
                         <th scope="col" class="govuk-table__header">Actions</th>
                     </tr>
                 </thead>
+
                 <tbody class="govuk-table__body">
+                    {% for letter_template in letter_templates %}
                         <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">{{approval_templates.0.name}}</td>
+                                <td class="govuk-table__cell">{{letter_template.name}}</td>
                                 <td class="govuk-table__cell">
-                                    <a class="govuk-button govuk-button--primary" href="{% url "cases:f680:document:generate" queue_pk=queue_id pk=case.id template_id=approval_templates.0.id %}">Generate</a>
+                                    <a class="govuk-button govuk-button--primary" href="{% url "cases:f680:document:generate" queue_pk=queue_id pk=case.id template_id=letter_template.id %}">Generate</a>
                                 </td>
                         </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </section>

@@ -9,7 +9,7 @@
 {% block body %}
 	<div class="lite-app-bar">
 		<div class="lite-app-bar__content">
-			<h1 class="govuk-heading-l">Supporting Documents</h1>
+			<h1 class="govuk-heading-l">{% block title %}Supporting Documents{% endblock %}</h1>
 		</div>
 	</div>
 	<div class="govuk-grid-row">
@@ -38,7 +38,11 @@
                     <td class="govuk-table__cell">
 						{{ supporting_document.description|default_na }}
 					</td>
-					<td class="govuk-table__cell"></td>
+					<td class="govuk-table__cell">
+						<a href="{% url "f680:supporting_documents:delete" pk=application.id document_id=supporting_document.id %}" id="document_delete" class='govuk-link govuk-link--no-visited-state'>
+							Remove
+						</a>
+					</td>
 				</tr>
 				{% endfor %}
 			</tbody>

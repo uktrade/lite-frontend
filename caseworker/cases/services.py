@@ -157,6 +157,11 @@ def grant_licence(request, case_pk, json):
     return response.json(), response.status_code
 
 
+def finalise_case(request, case_pk, json):
+    response = client.put(request, f"/cases/{case_pk}/finalise/", json)
+    return response.json(), response.status_code
+
+
 def get_licence(request, case_pk):
     data = client.get(request, f"/cases/{case_pk}/licences/")
     return data.json(), data.status_code
@@ -385,4 +390,9 @@ def get_licence_details(request, licence_pk):
 def update_licence_details(request, licence_pk, data):
     response = client.patch(request, f"/licences/licence_details/{licence_pk}", data)
     response.raise_for_status()
+    return response.json(), response.status_code
+
+
+def get_application_documents(request, application_pk):
+    response = client.get(request, f"/caseworker/applications/{application_pk}/supporting-document/")
     return response.json(), response.status_code
