@@ -1,0 +1,10 @@
+from core.application_manifests.base import BaseManifest
+from core.application_manifests.contants import ManifestType
+from core.application_manifests.registry import application_manifest_registry
+
+from .application_urls import StandardApplicationCaseworkerUrls
+
+
+@application_manifest_registry.register(ManifestType.CASEWORKER_STANDARD_APPLICATION.value)
+class StandardApplicationCaseworkerManifest(BaseManifest):
+    urls = StandardApplicationCaseworkerUrls
