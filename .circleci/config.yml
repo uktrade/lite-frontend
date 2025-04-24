@@ -71,7 +71,7 @@ commands:
           at: ~/repo/tmp
       - restore_cache:
           keys:
-            - pipenv-cache-repo-dir-v1-{{ checksum "Pipfile.lock" }}
+            - pipenv-cache-repo-dir-v2-{{ checksum "Pipfile.lock" }}
       - run: pipenv install --dev --deploy
       - run: git submodule update --init
 
@@ -82,7 +82,7 @@ commands:
           at: ~/repo/tmp
       - restore_cache:
           keys:
-            - pipenv-cache-circleci-dir-v1-{{ checksum "Pipfile.lock" }}
+            - pipenv-cache-circleci-dir-v2-{{ checksum "Pipfile.lock" }}
       - run: pipenv install --dev --deploy
       - run: git submodule update --init
 
