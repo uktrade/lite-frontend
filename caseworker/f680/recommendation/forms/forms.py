@@ -212,7 +212,7 @@ class EntityRefusalReasonsForm(BaseForm, PicklistRefusalForm):
                 widget=forms.Textarea(attrs={"rows": 3}),
                 label="Description",
                 required=False,
-                initial=refusal_reasons_text[choices.value],
+                initial=f"Criteria {choices.value}: {refusal_reasons_text[choices.value]}",
             )
 
     def get_layout_fields(self):
