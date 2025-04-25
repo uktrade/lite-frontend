@@ -164,19 +164,55 @@ def letter_templates_data(f680_approval_template_id, f680_refusal_template_id):
 @pytest.fixture
 def mock_letter_template_filter(requests_mock, letter_templates_data):
     url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
-    return requests_mock.get(url=url, json={"results": letter_templates_data})
+    return requests_mock.get(url=url, json=letter_templates_data)
 
 
 @pytest.fixture
 def mock_letter_template_approval_only(requests_mock, letter_templates_data):
     url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
-    return requests_mock.get(url=url, json={"results": letter_templates_data[1:]})
+    return requests_mock.get(url=url, json=[letter_templates_data[0]])
 
 
 @pytest.fixture
 def mock_letter_template_refusal_only(requests_mock, letter_templates_data):
     url = client._build_absolute_uri(f"/caseworker/letter_templates/?case_type=f680_clearance")
-    return requests_mock.get(url=url, json={"results": [letter_templates_data[1]]})
+    return requests_mock.get(url=url, json=letter_templates_data[1:])
+
+
+@pytest.fixture
+def outcome_documents_data(f680_approval_template_id, f680_refusal_template_id):
+    return [
+        {
+            "id": "20cc5252-acb9-491f-9d6e-d2050f93540b",
+            "template": f680_approval_template_id,
+            "name": "F680-Approval.pdf",
+            "visible_to_exporter": False,
+        },
+        {
+            "id": "b2318ff0-6071-4f10-9d64-0713e7846c97",
+            "template": f680_refusal_template_id,
+            "name": "F680-Refusal.pdf",
+            "visible_to_exporter": False,
+        },
+    ]
+
+
+@pytest.fixture
+def mock_get_outcome_documents(requests_mock, f680_case_id, outcome_documents_data):
+    url = client._build_absolute_uri(f"/caseworker/f680/{f680_case_id}/outcome_document/")
+    return requests_mock.get(url=url, json=outcome_documents_data)
+
+
+@pytest.fixture
+def mock_get_outcome_documents_approval(requests_mock, f680_case_id, outcome_documents_data):
+    url = client._build_absolute_uri(f"/caseworker/f680/{f680_case_id}/outcome_document/")
+    return requests_mock.get(url=url, json=outcome_documents_data[:1])
+
+
+@pytest.fixture
+def mock_get_outcome_refusal(requests_mock, f680_case_id, outcome_documents_data):
+    url = client._build_absolute_uri(f"/caseworker/f680/{f680_case_id}/outcome_document/")
+    return requests_mock.get(url=url, json=outcome_documents_data[-1])
 
 
 class TestF680GenerateDocument:
@@ -329,21 +365,34 @@ class TestAllDocumentsView:
         data_submitted_f680_case,
         mock_letter_template_filter,
         letter_templates_data,
+        mock_get_outcome_documents,
     ):
         url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
         response = authorized_client.get(url)
         assert response.status_code == 200
         assert dict(response.context["case"]) == data_submitted_f680_case["case"]
-        assert response.context["letter_templates"] == [
+        assert response.context["outcome_template_documents"] == [
             {
                 "id": "68a17258-af0f-429e-922d-25945979fa6d",
                 "name": "F680 Approval",
                 "decisions": [{"name": {"key": OutcomeType.APPROVE}}],
+                "document": {
+                    "id": "20cc5252-acb9-491f-9d6e-d2050f93540b",
+                    "template": "68a17258-af0f-429e-922d-25945979fa6d",
+                    "name": "F680-Approval.pdf",
+                    "visible_to_exporter": False,
+                },
             },
             {
                 "id": "98a37258-af0f-429e-922d-259459795a2d",
                 "name": "F680 Refusal",
                 "decisions": [{"name": {"key": OutcomeType.REFUSE}}],
+                "document": {
+                    "id": "b2318ff0-6071-4f10-9d64-0713e7846c97",
+                    "template": "98a37258-af0f-429e-922d-259459795a2d",
+                    "name": "F680-Refusal.pdf",
+                    "visible_to_exporter": False,
+                },
             },
         ]
 
@@ -380,6 +429,7 @@ class TestAllDocumentsView:
         letter_templates_data,
         document_all_url,
         mock_finalise_success,
+        mock_get_outcome_documents,
     ):
 
         response = authorized_client.post(document_all_url)
@@ -389,6 +439,27 @@ class TestAllDocumentsView:
             kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id},
         )
         assert mock_finalise_success.call_count == 1
+
+    def test_POST_finalise_docs_not_completed(
+        self,
+        authorized_client,
+        data_queue,
+        f680_case_id,
+        mock_f680_case_under_final_review,
+        mock_outcomes_approve_refuse,
+        mock_letter_template_filter,
+        letter_templates_data,
+        document_all_url,
+        mock_finalise_success,
+        mock_get_outcome_documents_approval,
+    ):
+
+        response = authorized_client.post(document_all_url)
+        assert response.status_code == 200
+        assert response.context["form"].errors["__all__"] == [
+            "Click generate for all letters. Finalise and publish to exporter can only be done once all letters have been generated."
+        ]
+        assert mock_finalise_success.call_count == 0
 
     def test_POST_finalise_api_error(
         self,
@@ -401,8 +472,67 @@ class TestAllDocumentsView:
         letter_templates_data,
         document_all_url,
         mock_finalise_api_error,
+        mock_get_outcome_documents,
     ):
 
         with pytest.raises(ServiceError):
             response = authorized_client.post(document_all_url)
         assert mock_finalise_api_error.call_count == 1
+
+    @pytest.mark.parametrize(
+        "update_data, expected_values, expected_hrefs",
+        (
+            [
+                {"visable_to_exporter": False},
+                ["F680 Approval", "Generated", "Regenerate"],
+                [
+                    "documents/20cc5252-acb9-491f-9d6e-d2050f93540b/",
+                    "f680/document/68a17258-af0f-429e-922d-25945979fa6d/generate/",
+                ],
+            ],
+            [
+                {"visable_to_exporter": True},
+                ["F680 Approval", "Sent", ""],
+                ["documents/20cc5252-acb9-491f-9d6e-d2050f93540b/"],
+            ],
+            [
+                {"template": "12345"},
+                ["F680 Approval", "Ready", "Generate"],
+                ["f680/document/68a17258-af0f-429e-922d-25945979fa6d/generate/"],
+            ],
+        ),
+    )
+    def test_GET_document_table(
+        self,
+        authorized_client,
+        requests_mock,
+        data_queue,
+        mock_f680_case_under_final_review,
+        mock_outcomes_approve_refuse,
+        f680_case_id,
+        f680_reference_code,
+        data_submitted_f680_case,
+        mock_letter_template_approval_only,
+        beautiful_soup,
+        update_data,
+        expected_values,
+        expected_hrefs,
+        outcome_documents_data,
+    ):
+        post_document_url = f"/caseworker/f680/{f680_case_id}/outcome_document/"
+        approval_data = outcome_documents_data[:1]
+        approval_data[0].update(update_data)
+
+        requests_mock.get(url=post_document_url, json=approval_data, status_code=200)
+
+        url = reverse("cases:f680:document:all", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        response = authorized_client.get(url)
+
+        assert response.status_code == 200
+
+        soup = beautiful_soup(response.content)
+        table = soup.find(id="table-final-documents")
+        hrefs = [a["href"].split(f"/cases/{f680_case_id}/")[1] for a in table.find_all("a")]
+
+        assert [td.text.strip() for td in table.find_all("td")] == expected_values
+        assert hrefs == expected_hrefs

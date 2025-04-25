@@ -14,7 +14,7 @@ from caseworker.cases.services import get_generated_document_preview, post_gener
 from caseworker.core.views import handler403
 from caseworker.letter_templates.services import get_letter_templates_list
 
-from caseworker.f680.outcome.services import get_outcomes
+from caseworker.f680.outcome.services import get_outcome_documents, get_outcome_documents_templated_list, get_outcomes
 from caseworker.f680.views import F680CaseworkerMixin
 
 from .forms import GenerateDocumentForm, FinaliseForm
@@ -36,13 +36,26 @@ class F680DocumentMixin(F680CaseworkerMixin):
     def get_letter_templates_list(self, filter):
         return get_letter_templates_list(self.request, filter)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error getting outcome documents",
+        "Unexpected error outcome documents",
+    )
+    def get_outcome_documents(self, case_id):
+        return get_outcome_documents(self.request, case_id)
+
     def get_case_letter_templates(self):
         """Return letter templates that correspond to the case outcomes"""
         outcomes, _ = get_outcomes(self.request, self.case.id)
         decisions = list({item["outcome"] for item in outcomes})
         filters = {"case_type": self.case.case_type["sub_type"]["key"], "decision": decisions}
         f680_letter_templates, _ = self.get_letter_templates_list(filters)
-        return f680_letter_templates["results"]
+        return f680_letter_templates
+
+    def get_outcome_templated_documents(self):
+        letter_templates = self.get_case_letter_templates()
+        outcome_documents, _ = self.get_outcome_documents(self.case_id)
+        return get_outcome_documents_templated_list(letter_templates, outcome_documents)
 
 
 class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
@@ -60,13 +73,21 @@ class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data["letter_templates"] = self.get_case_letter_templates()
+        context_data["outcome_template_documents"] = self.get_outcome_templated_documents()
         context_data["back_link_url"] = reverse(
             "cases:f680:recommendation", kwargs={"pk": self.case_id, "queue_pk": self.queue_id}
         )
         return context_data
 
     def form_valid(self, form):
+        if self.get_outcomes_templates_with_no_documents():
+            form.add_error(
+                None,
+                [
+                    "Click generate for all letters. Finalise and publish to exporter can only be done once all letters have been generated."
+                ],
+            )
+            return super().form_invalid(form)
         self.finalise()
         success_message = "F680 finalised successfully"
         messages.success(self.request, success_message)
@@ -74,6 +95,10 @@ class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
 
     def get_success_url(self):
         return reverse("cases:f680:details", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
+
+    def get_outcomes_templates_with_no_documents(self):
+        get_outcome_templated_documents = self.get_outcome_templated_documents()
+        return [t for t in get_outcome_templated_documents if t.get("document") is None]
 
 
 class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):

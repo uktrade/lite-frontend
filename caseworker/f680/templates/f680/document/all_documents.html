@@ -10,16 +10,48 @@
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
                         <th scope="col" class="govuk-table__header">Name</th>
+                        <th scope="col" class="govuk-table__header">Status</th>
                         <th scope="col" class="govuk-table__header">Actions</th>
                     </tr>
                 </thead>
-
+                {% for error in form.non_field_errors %}
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                        <li>
+                            {{ error }}
+                        </li>
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
                 <tbody class="govuk-table__body">
-                    {% for letter_template in letter_templates %}
-                        <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">{{letter_template.name}}</td>
+                    {% for outcome_template_document in outcome_template_documents %}
+                    <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                {% if outcome_template_document.document %}
+                                    <a class="govuk-link" href="{% url 'cases:document' queue_id case.id outcome_template_document.document.id %}">
+                                        {{outcome_template_document.name}}
+                                    </a>
+                                {% else %}
+                                    {{outcome_template_document.name}}
+                                {% endif %}
+                            </td>
+                            <td class="govuk-table__cell">
+                                {% if outcome_template_document.document and outcome_template_document.document.visable_to_exporter %}
+                                    Sent
+                                {% elif  outcome_template_document.document %}
+                                    Generated
+                                {% else %}
+                                    Ready
+                                {% endif %}
+                            </td>
                                 <td class="govuk-table__cell">
-                                    <a class="govuk-button govuk-button--primary" href="{% url "cases:f680:document:generate" queue_pk=queue_id pk=case.id template_id=letter_template.id %}">Generate</a>
+                                    {% if not outcome_template_document.document.visable_to_exporter %}
+                                        <a class="govuk-button govuk-button--secondary" href="{% url "cases:f680:document:generate" queue_pk=queue_id pk=case.id template_id=outcome_template_document.id %}">
+                                            {% if outcome_template_document.document %} Regenerate {% else %} Generate {% endif %}
+                                        </a>
+                                    {% endif %}
                                 </td>
                         </tr>
                     {% endfor %}

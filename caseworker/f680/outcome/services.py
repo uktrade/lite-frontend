@@ -52,3 +52,17 @@ def get_releases_with_no_outcome(request, existing_outcomes, case):
         remaining_requests_without_outcome.append(release_request)
         remaining_request_ids_without_outcome.add(release_request["id"])
     return remaining_requests_without_outcome, remaining_request_ids_without_outcome
+
+
+def get_outcome_documents(request, case_id):
+    response = client.get(request, f"/caseworker/f680/{case_id}/outcome_document/")
+    return response.json(), response.status_code
+
+
+def get_outcome_documents_templated_list(letter_templates, outcome_docs):
+    outcome_documents_templated_list = letter_templates.copy()
+    for outcome_documents_template in outcome_documents_templated_list:
+        for outcome_doc in outcome_docs:
+            if outcome_documents_template["id"] == outcome_doc["template"]:
+                outcome_documents_template["document"] = outcome_doc
+    return outcome_documents_templated_list
