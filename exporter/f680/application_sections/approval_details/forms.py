@@ -492,14 +492,14 @@ class ProductRatedUnderMTCR(BaseForm):
 
 class ProductMANPADs(BaseForm):
     class Layout:
-        TITLE = "Do you believe the item is a man-portable air defence system (MANPAD)?"
+        TITLE = "Do you believe the item is a man-portable air defence system (MANPADS)?"
         TITLE_AS_LABEL_FOR = "is_item_manpad"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_manpad = forms.ChoiceField(
         choices=(
-            Choice("yes", "Yes, the product is a MANPAD"),
-            Choice("no", "No, the product is not a MANPAD", divider="Or"),
+            Choice("yes", "Yes, the product is a MANPADS"),
+            Choice("no", "No, the product is not a MANPADS", divider="Or"),
             Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
@@ -511,7 +511,7 @@ class ProductMANPADs(BaseForm):
         return (
             "is_item_manpad",
             HTML.details(
-                "Help with MANPADs",
+                "Help with MANPADS",
                 render_to_string("f680/forms/help_manpads.html"),
             ),
         )
