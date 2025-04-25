@@ -1,4 +1,5 @@
 import pytest
+import uuid
 import io
 
 from django.http import StreamingHttpResponse
@@ -444,9 +445,25 @@ def supporting_document(data_f680_case):
 def document_data(data_f680_case):
     return [
         {
-            "id": "a66ebfb3-72c8-4a63-82f6-0519830729ce",  # /PS-IGNORE
+            "id": str(uuid.uuid4()),  # /PS-IGNORE
             "name": "sample_doc.pdf",
             "s3_key": "sample_doc.pdf",
+            "description": "my item",
+            "size": 18,
+            "safe": True,
+            "document_type": None,
+            "application": data_f680_case["id"],
+        },
+    ]
+
+
+@pytest.fixture
+def generated_document_data(data_f680_case):
+    return [
+        {
+            "id": str(uuid.uuid4()),  # /PS-IGNORE
+            "name": "application_letter.pdf",
+            "s3_key": "application_letter.pdf",
             "description": "my item",
             "size": 18,
             "safe": True,
@@ -466,6 +483,13 @@ def document_data_json(document_data):
 
 
 @pytest.fixture
+def generated_document_data_json(generated_document_data):
+    return {
+        "documents": generated_document_data,
+    }
+
+
+@pytest.fixture
 def mock_get_supporting_documents(requests_mock, data_queue, f680_case_id):
     url = client._build_absolute_uri(f"/queues/{data_queue}/cases/{f680_case_id}/f680/supporting-documents/")
     return requests_mock.get(url=url, json={"results": document_data})
@@ -481,6 +505,18 @@ def mock_get_supporting_documents_failure(requests_mock, data_queue, f680_case_i
 def mock_f680_supporting_documents_get(requests_mock, f680_case_id, document_data_json):
     url = client._build_absolute_uri(f"/caseworker/applications/{f680_case_id}/supporting-document/")
     return requests_mock.get(url=url, json=document_data_json)
+
+
+@pytest.fixture
+def mock_f680_generated_documents_get(requests_mock, f680_case_id, generated_document_data_json):
+    url = client._build_absolute_uri(f"/cases/{f680_case_id}/documents/")
+    return requests_mock.get(url=url, json=generated_document_data_json)
+
+
+@pytest.fixture
+def mock_f680_generated_documents_get_fail(requests_mock, f680_case_id):
+    url = client._build_absolute_uri(f"/cases/{f680_case_id}/documents/")
+    return requests_mock.get(url=url, status_code=400, json={})
 
 
 @pytest.fixture
@@ -522,7 +558,9 @@ class TestCaseDocumentsView:
         mock_get_supporting_documents,
         mock_f680_case_with_submitted_by,
         mock_f680_supporting_documents_get,
+        mock_f680_generated_documents_get,
         document_data,
+        generated_document_data,
     ):
 
         url = reverse("cases:f680:supporting_documents", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
@@ -532,7 +570,7 @@ class TestCaseDocumentsView:
         response = authorized_client.get(url)
 
         assert response.status_code == 200
-        assert response.context["supporting_documents"] == document_data
+        assert response.context["supporting_documents"] == document_data + generated_document_data
 
         content = BeautifulSoup(response.content, "html.parser")
 
@@ -543,7 +581,7 @@ class TestCaseDocumentsView:
         )
         assert content.find(id="document-description").text.strip() == "my item"
 
-    def test_GET_documents_for_case_failure(
+    def test_GET_uploaded_supporting_documents_for_case_fail(
         self,
         authorized_client,
         data_queue,
@@ -551,6 +589,7 @@ class TestCaseDocumentsView:
         mock_get_supporting_documents_failure,
         mock_f680_case_with_submitted_by,
         mock_f680_supporting_documents_get_failure,
+        mock_f680_generated_documents_get,
     ):
 
         url = reverse("cases:f680:supporting_documents", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
@@ -558,7 +597,25 @@ class TestCaseDocumentsView:
         with pytest.raises(ServiceError) as error:
             authorized_client.get(url)
 
-        assert str(error.value) == "Error retreiving supporting documents"
+        assert str(error.value) == "Error retreiving uploaded supporting documents"
+
+    def test_GET_uploaded_generated_documents_for_case_fail(
+        self,
+        authorized_client,
+        data_queue,
+        f680_case_id,
+        mock_get_supporting_documents,
+        mock_f680_case_with_submitted_by,
+        mock_f680_supporting_documents_get,
+        mock_f680_generated_documents_get_fail,
+    ):
+
+        url = reverse("cases:f680:supporting_documents", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+
+        with pytest.raises(ServiceError) as error:
+            authorized_client.get(url)
+
+        assert str(error.value) == "Error retreiving generated documents"
 
     def test_GET_stream_document_for_case_success(
         self,
