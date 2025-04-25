@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from urllib.parse import quote
 
 from django.contrib import messages
 from django.http import HttpResponseForbidden
@@ -78,7 +77,7 @@ class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
 
 
 class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
-    template_name = "f680/document/preview.html"
+    template_name = "f680/core/base_form.html"
     form_class = GenerateDocumentForm
     current_tab = "recommendations"
 
@@ -88,11 +87,11 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         "Unexpected error generating document preview",
         reraise_404=True,
     )
-    def get_generated_document_preview(self, template_id, text):
+    def get_generated_document_preview(self, template_id):
         # TODO: Use of get_generated_document_preview service helper should
         #   be replaced with something that doesn't require text to be quoted
         return get_generated_document_preview(
-            self.request, self.case_id, template=template_id, text=text, addressee=None
+            self.request, self.case_id, template=template_id, text=None, addressee=None
         )
 
     @expect_status(
@@ -100,7 +99,7 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         "Error generating document",
         "Unexpected error generating document",
     )
-    def generate_document(self, template_id, text):
+    def generate_document(self, template_id):
         advice_type = None
         template_decisions = [decision["name"]["key"] for decision in self.template["decisions"]]
         if "approve" in template_decisions:
@@ -112,7 +111,6 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
             self.case_id,
             {
                 "template": template_id,
-                "text": text,
                 "addressee": None,
                 "visible_to_exporter": False,
                 "advice_type": advice_type,
@@ -128,13 +126,13 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         except IndexError:
             raise Http404
 
-    def form_valid(self, form):
-        if "generate" not in self.request.POST:
-            # Just show the preview screen again if the user has clicked preview
-            return self.form_invalid(form)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["cancel_url"] = self.get_success_url()
+        return kwargs
 
-        # TODO: Think about a payload builder
-        self.generate_document(str(self.kwargs["template_id"]), form.cleaned_data["text"])
+    def form_valid(self, form):
+        self.generate_document(str(self.kwargs["template_id"]))
         success_message = "Generated document successfully"
         messages.success(self.request, success_message)
         return super().form_valid(form)
@@ -143,21 +141,10 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         # TODO: Redirect the user to the landing screen when we have a document
         return reverse("cases:f680:document:all", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
-    def get_text(self, form):
-        text = None
-        # The form can be submitted to preview the latest customisation text
-        #   In that case we should retrieve the text from the form for the preview
-        #   This can be determined by interrogating form.is_bound
-        if form.is_bound:
-            text = quote(form.cleaned_data.get("text", ""))
-        return text
-
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(**kwargs)
         template_id = str(self.kwargs["template_id"])
-        form = context_data["form"]
-        text = self.get_text(form)
-        preview_response, _ = self.get_generated_document_preview(template_id=template_id, text=text)
+        preview_response, _ = self.get_generated_document_preview(template_id=template_id)
         context_data.update(
             {
                 "preview": preview_response["preview"],
