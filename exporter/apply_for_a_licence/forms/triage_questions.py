@@ -46,10 +46,9 @@ class LicenceTypeForm(FieldsetForm):
             ),
             Choice(
                 LicenceType.F680,
-                "Security Approval",
-                hint="Select if you need approval to give classified products or information to non-UK organisations, "
-                "governments and individuals. This includes F680 approval. You should apply for security approval "
-                "before you apply for a licence.",
+                "Form 680 (F680) security approval",
+                hint="Select if you need approval to share classified items with non-UK entities. You should apply "
+                "for security approval before you apply for  an export licence.",
             ),
             Choice(
                 LicenceType.TRANSHIPMENT,
