@@ -250,14 +250,14 @@ class TestApprovalDetailsView:
                                 "key": "demonstration_in_uk",
                                 "answer": "details",
                                 "raw_answer": "details",
-                                "question": "Explain what you are demonstrating and why",
+                                "question": "Explain what you're demonstrating in the UK and why",
                                 "datatype": "string",
                             },
                             "demonstration_overseas": {
                                 "key": "demonstration_overseas",
                                 "answer": "details",
                                 "raw_answer": "details",
-                                "question": "Explain what you are demonstrating and why",
+                                "question": "Explain what you're demonstrating overseas and why",
                                 "datatype": "string",
                             },
                             "approval_details_text": {
@@ -268,13 +268,13 @@ class TestApprovalDetailsView:
                                 "datatype": "string",
                             },
                         },
-                        "type": "single",
                         "fields_sequence": [
                             "approval_choices",
                             "demonstration_in_uk",
                             "demonstration_overseas",
                             "approval_details_text",
                         ],
+                        "type": "single",
                     }
                 },
             }

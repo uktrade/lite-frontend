@@ -63,7 +63,7 @@ class ApprovalTypeForm(BaseForm):
     )
 
     demonstration_in_uk = forms.CharField(
-        label="Explain what you are demonstrating and why",
+        label="Explain what you're demonstrating in the UK and why",
         help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
         # Required is set to False here but added in clean method as these textboxes only appear when
@@ -72,7 +72,7 @@ class ApprovalTypeForm(BaseForm):
     )
 
     demonstration_overseas = forms.CharField(
-        label="Explain what you are demonstrating and why",
+        label="Explain what you're demonstrating overseas and why",
         help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
         # Required is set to False here but added in clean method as these textboxes only appear when
@@ -112,7 +112,7 @@ class ApprovalTypeForm(BaseForm):
             F680ConditionalCheckboxes("approval_choices", *self.conditional_checkbox_choices),
             "approval_details_text",
             HTML.details(
-                "Help with exceptional circumstances",
+                "Help with approval types",
                 render_to_string("f680/forms/help_with_approval_type.html"),
             ),
         )
