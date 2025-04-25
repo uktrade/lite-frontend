@@ -172,7 +172,15 @@ class CaseDataMixin:
 
     @property
     def queue_pk(self):
-        return self.kwargs.get("queue_pk") or self.request.session["default_queue"]
+        url_queue_pk = self.kwargs.get("queue_pk")
+        if url_queue_pk:
+            return url_queue_pk
+
+        session_queue_pk = self.request.session.get("default_queue")
+        if session_queue_pk:
+            return session_queue_pk
+
+        return ALL_CASES_QUEUE_ID
 
 
 class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
