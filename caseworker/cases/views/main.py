@@ -28,7 +28,7 @@ from core.helpers import (
     stream_document_response,
 )
 from core.services import stream_document
-
+from core.application_manifests.helpers import get_caseworker_manifest_for_case
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import (
     CasePage,
@@ -414,14 +414,8 @@ class ChangeStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse(
-            "cases:case",
-            kwargs={
-                "queue_pk": self.kwargs["queue_pk"],
-                "pk": self.case.id,
-                "tab": "details",
-            },
-        )
+        manifest = get_caseworker_manifest_for_case(self.case)
+        return manifest.urls.get_detail_view_url(case_id=self.case.id, queue_pk=self.kwargs["queue_pk"])
 
 
 class ChangeSubStatus(LoginRequiredMixin, SuccessMessageMixin, FormView):

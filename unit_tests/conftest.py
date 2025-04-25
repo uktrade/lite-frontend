@@ -1875,7 +1875,7 @@ def data_submitted_f680_case(
                 "id": "00000000-0000-0000-0000-000000000007",
                 "reference": {"key": "f680", "value": "MOD F680 Clearance"},
                 "sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"},
-                "type": {"key": "application", "value": "Application"},
+                "type": {"key": "security_clearance", "value": "Security Clearance"},
             },
             "copy_of": None,
             "countersign_advice": [],

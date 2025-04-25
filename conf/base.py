@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "rules.apps.AutodiscoverRulesConfig",
     "extra_views",
     "cacheops",
+    "core.application_manifests",
 ]
 
 
