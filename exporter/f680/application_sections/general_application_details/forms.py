@@ -21,7 +21,8 @@ class ApplicationNameForm(BaseForm):
 
     name = forms.CharField(
         label="",
-        help_text="Give the application a reference name so you can refer back to it when needed",
+        help_text="Give the application a reference name so you can refer back to it when"
+        " needed. The name does not need to be long or descriptive - it’s only for you.",
         error_messages={"required": "Enter an application name"},
     )
 
