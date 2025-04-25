@@ -425,7 +425,6 @@ class ProductIncludeCryptography(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        help_text="We need to know about any items classified as Defence Articles or Technical Data.",
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
@@ -455,7 +454,7 @@ class ProductIncludeCryptography(BaseForm):
                 "No",
             ),
             HTML.details(
-                "Help with security features",
+                "Help with information security features",
                 render_to_string("f680/forms/help_security_features.html"),
             ),
         )
