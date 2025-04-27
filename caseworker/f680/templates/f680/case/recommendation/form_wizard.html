@@ -1,7 +1,13 @@
 {% extends 'core/form-wizard.html' %}
+{% load static %}
 
 {% block right_side_panel %}
     <div class="govuk-grid-column-one-third">
         {% include "f680/case/recommendation/includes/case_details.html" with case=case security_release_requests=security_release_requests %}
     </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script src="{% static 'refusal-review-consolidate.js' %}" type="text/javascript"></script>
 {% endblock %}
