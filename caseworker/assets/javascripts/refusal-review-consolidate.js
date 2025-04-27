@@ -8,4 +8,4 @@ const initDenialReasons = (element_id) => {
 };
 
 initDenialReasons("id_denial_reasons");
-initDenialReasons("id_release_request_refusal_reasons-denial_reasons");
+initDenialReasons("id_release_request_refusal_reasons-refusal_reasons");

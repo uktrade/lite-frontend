@@ -1,7 +1,8 @@
 from django import forms
+from django.utils.html import format_html
 
 from crispy_forms_gds.choices import Choice
-from crispy_forms_gds.layout import HTML, Submit
+from crispy_forms_gds.layout import Field, HTML, Submit
 
 from core.common.forms import BaseForm
 from core.forms.layouts import (
@@ -151,39 +152,49 @@ class EntityRefusalReasonsForm(BaseForm, PicklistRefusalForm):
 
     refusal_reasons = forms.MultipleChoiceField(
         label="Refusal reasons",
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.SelectMultiple(),
         choices=(),
-        error_messages={"required": "Select refusal reasons"},
+        error_messages={"required": "Enter refusal reasons"},
+        help_text=format_html(
+            f'Select all <a class="govuk-link" '
+            f'href="https://questions-statements.parliament.uk/written-statements/detail/2021-12-08/hcws449" '
+            f'target="_blank">refusal criteria (opens in a new tab)</a> that apply'
+        ),
+    )
+
+    custom_reasons = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 5}),
+        label="Additional refusal reasons text (optional)",
+        required=False,
     )
 
     def clean(self):
         cleaned_data = super().clean()
-        return {
-            "refusal_reasons": "\n\n--------\n".join(
-                [cleaned_data[selected] for selected in cleaned_data.get("refusal_reasons", [])]
-            ),
-        }
-
-    def __init__(self, refusal_reasons, *args, **kwargs):
-        refusal_reasons_choices, refusal_reasons_text = self._picklist_to_choices(refusal_reasons)
-
-        self.conditional_checkbox_choices = (
-            ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in refusal_reasons_choices
+        refusal_reasons = "\n\n--------\n".join(
+            [
+                f"Criteria {selected}: {self.refusal_reasons_text[selected]}"
+                for selected in cleaned_data.get("refusal_reasons", [])
+            ]
         )
+
+        if custom_reasons := cleaned_data.get("custom_reasons", ""):
+            refusal_reasons += "\n\n--------\n" + custom_reasons
+
+        return {"refusal_reasons": refusal_reasons}
+
+    def __init__(self, denial_reasons_choices, refusal_reasons, *args, **kwargs):
+        _, refusal_reasons_text = self._picklist_to_choices(refusal_reasons)
+        self.refusal_reasons_text = refusal_reasons_text
 
         super().__init__(*args, **kwargs)
 
-        self.fields["refusal_reasons"].choices = refusal_reasons_choices
-        for choices in refusal_reasons_choices:
-            self.fields[choices.value] = forms.CharField(
-                widget=forms.Textarea(attrs={"rows": 3}),
-                label="Description",
-                required=False,
-                initial=refusal_reasons_text[choices.value],
-            )
+        self.fields["refusal_reasons"].choices = denial_reasons_choices
 
     def get_layout_fields(self):
-        return (ConditionalCheckboxes("refusal_reasons", *self.conditional_checkbox_choices),)
+        return (
+            Field("refusal_reasons", context={"label_size": "govuk-label--s"}),
+            "custom_reasons",
+        )
 
 
 class ClearRecommendationForm(BaseForm):
