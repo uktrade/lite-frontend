@@ -21,7 +21,8 @@ class ApplicationNameForm(BaseForm):
 
     name = forms.CharField(
         label="",
-        help_text="Give the application a reference name so you can refer back to it when needed",
+        help_text="Give the application a reference name so you can refer back to it when"
+        " needed. The name does not need to be long or descriptive - it’s only for you.",
         error_messages={"required": "Enter an application name"},
     )
 
@@ -56,14 +57,14 @@ class PreviousApplicationsForm(BaseForm):
         SUBMIT_BUTTON_TEXT = "Continue"
 
     previous_application_ecju_reference = forms.CharField(
-        label="What is the ECJU reference number?",
+        label="What are the ECJU reference numbers?",
+        widget=forms.Textarea(attrs={"rows": "2"}),
+        help_text="You can add multiple reference numbers. Separate them with a comma. For example, MODF2025/0001, MODF2025/0002, F680/2025/0001234.",
         error_messages={"required": "Enter a reference number"},
     )
     previous_application_details = forms.CharField(
-        label="Can you provide more detail?",
-        help_text="For example if the products have been previously agreed or refused to the "
-        "end-user or country.  Or if its for the same goods but to different destinations.  "
-        "If possible provide the export trade licence number",
+        label="Describe any differences in this application",
+        help_text="We need to know if anything has changed from your previous applications to this one.",
         widget=forms.Textarea(attrs={"rows": "5"}),
         error_messages={"required": "Enter details about the previous applications"},
     )
