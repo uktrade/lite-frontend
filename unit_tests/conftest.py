@@ -1779,7 +1779,7 @@ def data_application_json(data_australia_release_id, data_france_release_id, dat
                         "key": "is_item_manpad",
                         "answer": "Don't know",
                         "datatype": "string",
-                        "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
+                        "question": "Do you believe the item is a man-portable air defence system (MANPADS)?",
                         "raw_answer": "dont_know",
                     },
                     "is_mod_electronic_data_shared": {
