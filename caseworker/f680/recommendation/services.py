@@ -87,6 +87,8 @@ def post_recommendation(request, case, data):
     json = [
         {
             "type": data["recommendation"],
+            "security_grading": data.get("security_grading", ""),
+            "security_grading_other": data.get("security_grading_other", ""),
             "conditions": data.get("conditions", ""),
             "refusal_reasons": data.get("refusal_reasons", ""),
             "security_release_request": release_request_id,
