@@ -371,12 +371,12 @@ class TestAllDocumentsView:
         response = authorized_client.get(url)
         assert response.status_code == 200
         assert dict(response.context["case"]) == data_submitted_f680_case["case"]
-        assert response.context["outcome_template_documents"] == [
+        assert response.context["required_outcome_documents"] == [
             {
                 "id": "68a17258-af0f-429e-922d-25945979fa6d",
                 "name": "F680 Approval",
                 "decisions": [{"name": {"key": OutcomeType.APPROVE}}],
-                "document": {
+                "generated_document": {
                     "id": "20cc5252-acb9-491f-9d6e-d2050f93540b",
                     "template": "68a17258-af0f-429e-922d-25945979fa6d",
                     "name": "F680-Approval.pdf",
@@ -387,7 +387,7 @@ class TestAllDocumentsView:
                 "id": "98a37258-af0f-429e-922d-259459795a2d",
                 "name": "F680 Refusal",
                 "decisions": [{"name": {"key": OutcomeType.REFUSE}}],
-                "document": {
+                "generated_document": {
                     "id": "b2318ff0-6071-4f10-9d64-0713e7846c97",
                     "template": "98a37258-af0f-429e-922d-259459795a2d",
                     "name": "F680-Refusal.pdf",
@@ -483,7 +483,7 @@ class TestAllDocumentsView:
         "update_data, expected_values, expected_hrefs",
         (
             [
-                {"visable_to_exporter": False},
+                {"visible_to_exporter": False},
                 ["F680 Approval", "Generated", "Regenerate"],
                 [
                     "documents/20cc5252-acb9-491f-9d6e-d2050f93540b/",
@@ -491,7 +491,7 @@ class TestAllDocumentsView:
                 ],
             ],
             [
-                {"visable_to_exporter": True},
+                {"visible_to_exporter": True},
                 ["F680 Approval", "Sent", ""],
                 ["documents/20cc5252-acb9-491f-9d6e-d2050f93540b/"],
             ],

@@ -26,30 +26,30 @@
                 </div>
                 {% endfor %}
                 <tbody class="govuk-table__body">
-                    {% for outcome_template_document in outcome_template_documents %}
+                    {% for required_outcome_document in required_outcome_documents %}
                     <tr class="govuk-table__row">
                             <td class="govuk-table__cell">
-                                {% if outcome_template_document.document %}
-                                    <a class="govuk-link" href="{% url 'cases:document' queue_id case.id outcome_template_document.document.id %}">
-                                        {{outcome_template_document.name}}
+                                {% if required_outcome_document.generated_document %}
+                                    <a class="govuk-link" href="{% url 'cases:document' queue_id case.id required_outcome_document.generated_document.id %}">
+                                        {{required_outcome_document.name}}
                                     </a>
                                 {% else %}
-                                    {{outcome_template_document.name}}
+                                    {{required_outcome_document.name}}
                                 {% endif %}
                             </td>
                             <td class="govuk-table__cell">
-                                {% if outcome_template_document.document and outcome_template_document.document.visable_to_exporter %}
+                                {% if required_outcome_document.generated_document and required_outcome_document.generated_document.visible_to_exporter %}
                                     Sent
-                                {% elif  outcome_template_document.document %}
+                                {% elif  required_outcome_document.generated_document %}
                                     Generated
                                 {% else %}
                                     Ready
                                 {% endif %}
                             </td>
                                 <td class="govuk-table__cell">
-                                    {% if not outcome_template_document.document.visable_to_exporter %}
-                                        <a class="govuk-button govuk-button--secondary" href="{% url "cases:f680:document:generate" queue_pk=queue_id pk=case.id template_id=outcome_template_document.id %}">
-                                            {% if outcome_template_document.document %} Regenerate {% else %} Generate {% endif %}
+                                    {% if not required_outcome_document.generated_document.visible_to_exporter %}
+                                        <a class="govuk-button govuk-button--secondary" href="{% url "cases:f680:document:generate" queue_pk=queue_id pk=case.id template_id=required_outcome_document.id %}">
+                                            {% if required_outcome_document.generated_document %} Regenerate {% else %} Generate {% endif %}
                                         </a>
                                     {% endif %}
                                 </td>

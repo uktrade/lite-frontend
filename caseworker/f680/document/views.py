@@ -14,7 +14,7 @@ from caseworker.cases.services import get_generated_document_preview, post_gener
 from caseworker.core.views import handler403
 from caseworker.letter_templates.services import get_letter_templates_list
 
-from caseworker.f680.outcome.services import get_outcome_documents, get_outcome_documents_templated_list, get_outcomes
+from caseworker.f680.outcome.services import get_outcome_documents, get_required_outcome_documents, get_outcomes
 from caseworker.f680.views import F680CaseworkerMixin
 
 from .forms import GenerateDocumentForm, FinaliseForm
@@ -52,10 +52,10 @@ class F680DocumentMixin(F680CaseworkerMixin):
         f680_letter_templates, _ = self.get_letter_templates_list(filters)
         return f680_letter_templates
 
-    def get_outcome_templated_documents(self):
+    def get_required_outcome_documents(self):
         letter_templates = self.get_case_letter_templates()
         outcome_documents, _ = self.get_outcome_documents(self.case_id)
-        return get_outcome_documents_templated_list(letter_templates, outcome_documents)
+        return get_required_outcome_documents(letter_templates, outcome_documents)
 
 
 class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
@@ -73,14 +73,14 @@ class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data["outcome_template_documents"] = self.get_outcome_templated_documents()
+        context_data["required_outcome_documents"] = self.get_required_outcome_documents()
         context_data["back_link_url"] = reverse(
             "cases:f680:recommendation", kwargs={"pk": self.case_id, "queue_pk": self.queue_id}
         )
         return context_data
 
     def form_valid(self, form):
-        if self.get_outcomes_templates_with_no_documents():
+        if self.get_required_outcome_documents_with_no_documents():
             form.add_error(
                 None,
                 [
@@ -96,9 +96,9 @@ class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
     def get_success_url(self):
         return reverse("cases:f680:details", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
 
-    def get_outcomes_templates_with_no_documents(self):
-        get_outcome_templated_documents = self.get_outcome_templated_documents()
-        return [t for t in get_outcome_templated_documents if t.get("document") is None]
+    def get_required_outcome_documents_with_no_documents(self):
+        required_outcome_documents = self.get_required_outcome_documents()
+        return [t for t in required_outcome_documents if t.get("generated_document") is None]
 
 
 class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):

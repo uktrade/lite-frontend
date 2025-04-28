@@ -59,10 +59,10 @@ def get_outcome_documents(request, case_id):
     return response.json(), response.status_code
 
 
-def get_outcome_documents_templated_list(letter_templates, outcome_docs):
-    outcome_documents_templated_list = letter_templates.copy()
-    for outcome_documents_template in outcome_documents_templated_list:
+def get_required_outcome_documents(letter_templates, outcome_docs):
+    required_outcome_documents = letter_templates.copy()
+    for required_outcome_document in required_outcome_documents:
         for outcome_doc in outcome_docs:
-            if outcome_documents_template["id"] == outcome_doc["template"]:
-                outcome_documents_template["document"] = outcome_doc
-    return outcome_documents_templated_list
+            if required_outcome_document["id"] == outcome_doc["template"]:
+                required_outcome_document["generated_document"] = outcome_doc
+    return required_outcome_documents
