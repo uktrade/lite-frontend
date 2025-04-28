@@ -21,7 +21,7 @@ from caseworker.advice.services import move_case_forward
 from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.helpers.case import CaseworkerMixin
 from caseworker.cases.helpers.ecju_queries import get_ecju_queries
-from caseworker.cases.services import get_case, post_ecju_query, get_application_documents
+from caseworker.cases.services import get_case, post_ecju_query, get_application_documents, get_case_documents
 from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.cases.views.queries import CloseQueryMixin
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
@@ -197,16 +197,26 @@ class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateV
 
     @expect_status(
         HTTPStatus.OK,
-        "Error retreiving supporting documents",
-        "Unexpected error retreiving supporting documents",
+        "Error retreiving uploaded supporting documents",
+        "Unexpected error retreiving uploaded supporting documents",
     )
-    def get_supporting_documents(self):
+    def get_exporter_uploaded_supporting_documents(self):
         return get_application_documents(self.request, self.case_id)
+
+    @expect_status(
+        HTTPStatus.OK,
+        "Error retreiving generated documents",
+        "Unexpected error retreiving generated documents",
+    )
+    def get_caseworker_generated_documents(self):
+        return get_case_documents(self.request, self.case_id)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        documents, _ = self.get_supporting_documents()
-        context["supporting_documents"] = documents["results"]
+        uploaded_documents, _ = self.get_exporter_uploaded_supporting_documents()
+        generated_documents, _ = self.get_caseworker_generated_documents()
+        documents = uploaded_documents["results"] + generated_documents["documents"]
+        context["supporting_documents"] = documents
         return context
 
 
