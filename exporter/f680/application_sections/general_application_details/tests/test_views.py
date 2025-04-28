@@ -100,14 +100,14 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                         "key": "previous_application_ecju_reference",
                         "answer": "123456",
                         "raw_answer": "123456",
-                        "question": "What is the ECJU reference number?",
+                        "question": "What are the ECJU reference numbers?",
                         "datatype": "string",
                     },
                     "previous_application_details": {
                         "key": "previous_application_details",
                         "answer": "some info",
                         "raw_answer": "some info",
-                        "question": "Can you provide more detail?",
+                        "question": "Describe any differences in this application",
                         "datatype": "string",
                     },
                     "is_exceptional_circumstances": {
@@ -397,14 +397,14 @@ class TestGeneralApplicationDetailsView:
                                 "key": "previous_application_ecju_reference",
                                 "answer": "123456",
                                 "raw_answer": "123456",
-                                "question": "What is the ECJU reference number?",
+                                "question": "What are the ECJU reference numbers?",
                                 "datatype": "string",
                             },
                             "previous_application_details": {
                                 "key": "previous_application_details",
                                 "answer": "some info",
                                 "raw_answer": "some info",
-                                "question": "Can you provide more detail?",
+                                "question": "Describe any differences in this application",
                                 "datatype": "string",
                             },
                             "is_exceptional_circumstances": {
