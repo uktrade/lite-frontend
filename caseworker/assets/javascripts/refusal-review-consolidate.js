@@ -1,7 +1,7 @@
 import MultiSelector from "core/multi-selector";
 
-const initDenialReasons = (element_id) => {
-  const denialReasonField = document.getElementById(element_id);
+const initDenialReasons = (elementId) => {
+  const denialReasonField = document.getElementById(elementId);
   if (!denialReasonField) return;
   const multiSelector = new MultiSelector(denialReasonField);
   multiSelector.init();
