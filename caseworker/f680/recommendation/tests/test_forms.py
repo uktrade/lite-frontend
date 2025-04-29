@@ -2,7 +2,7 @@ import pytest
 
 from caseworker.f680.recommendation.constants import RecommendationType
 from caseworker.f680.recommendation.forms.forms import (
-    BasicRecommendationConditionsForm,
+    BasicRecommendationForm,
     EntityConditionsForm,
     EntityRefusalReasonsForm,
     EntitySelectionAndDecisionForm,
@@ -72,11 +72,14 @@ def test_entity_selection_and_decision_form_valid(data, valid_status, errors):
             {
                 "conditions": [],
             },
-            True,
-            {},
+            False,
+            {
+                "security_grading": ["Select the security classification"],
+            },
         ),
         (
             {
+                "security_grading": "official",
                 "conditions": ["no_release"],
             },
             True,
@@ -122,11 +125,14 @@ def test_entity_refusal_reasons_form_valid(data, valid_status, errors):
     (
         (
             {},
-            True,
-            {},
+            False,
+            {
+                "security_grading": ["Select the security classification"],
+            },
         ),
         (
             {
+                "security_grading": "official",
                 "conditions": "No concerns",
             },
             True,
@@ -135,7 +141,7 @@ def test_entity_refusal_reasons_form_valid(data, valid_status, errors):
     ),
 )
 def test_make_recommendation_form_valid_no_provisos(data, valid_status, errors):
-    form = BasicRecommendationConditionsForm(data=data)
+    form = BasicRecommendationForm(data=data)
     assert form.is_valid() == valid_status
     if not valid_status:
         assert form.errors == errors
