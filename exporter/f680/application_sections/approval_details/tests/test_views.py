@@ -122,7 +122,7 @@ def force_product_under_itar(goto_product_step, post_to_product_step):
     goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
     post_to_product_step(
         FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-        {"is_controlled_under_itar": True, "controlled_info": "some info"},
+        {"is_controlled_under_itar": ["controlled_under_itar", "controlled_info"], "controlled_info": "some info"},
     )
 
 
@@ -425,7 +425,10 @@ class TestProductInformationViews:
             ),
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-                {"is_controlled_under_itar": True, "controlled_info": "some info"},
+                {
+                    "is_controlled_under_itar": ["controlled_under_itar", "controlled_info"],
+                    "controlled_info": "some info",
+                },
                 forms.ProductControlledUnderItarDetails,
             ),
             (
@@ -666,12 +669,12 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
                 {},
-                {"is_controlled_under_itar": ["Select yes if the foreign technology is controlled under ITAR"]},
+                {"is_controlled_under_itar": ["Select how the foreign technology is controlled"]},
             ),
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
                 {
-                    "is_controlled_under_itar": False,
+                    "is_controlled_under_itar": ["controlled_info"],
                 },
                 {
                     "controlled_info": [
@@ -788,7 +791,7 @@ class TestProductInformationViews:
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-            {"is_controlled_under_itar": True, "controlled_info": "some info"},
+            {"is_controlled_under_itar": ["controlled_under_itar", "controlled_info"], "controlled_info": "some info"},
         )
         response = post_to_product_step(
             FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR_DETAILS,
@@ -925,10 +928,13 @@ class TestProductInformationViews:
                             },
                             "is_controlled_under_itar": {
                                 "key": "is_controlled_under_itar",
-                                "answer": "Yes, it's controlled under  ITAR",
-                                "raw_answer": True,
-                                "question": "Is the technology or information controlled under the US International Traffic in Arms Regulations (ITAR)?",
-                                "datatype": "boolean",
+                                "answer": [
+                                    "It's controlled under the US International Traffic in Arms Regulations (ITAR)",
+                                    "It's controlled under different regulations",
+                                ],
+                                "raw_answer": ["controlled_under_itar", "controlled_info"],
+                                "question": "How is foreign technology or information controlled?",
+                                "datatype": "list",
                             },
                             "controlled_info": {
                                 "key": "controlled_info",
@@ -1037,8 +1043,8 @@ class TestProductInformationViews:
                             },
                             "email_address": {
                                 "key": "email_address",
-                                "answer": "test@test.com",  # /PS-IGNORE
-                                "raw_answer": "test@test.com",  # /PS-IGNORE
+                                "answer": "test@test.com",
+                                "raw_answer": "test@test.com",
                                 "question": "Email address",
                                 "datatype": "string",
                             },
@@ -1232,7 +1238,7 @@ class TestProductInformationViews:
         goto_product_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR)
         response = post_to_product_step(
             FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-            {"is_controlled_under_itar": False, "controlled_info": "some info"},
+            {"is_controlled_under_itar": ["controlled_info"], "controlled_info": "some info"},
         )
         assert response.status_code == 200
         assert isinstance(response.context["form"], forms.ProductIncludeCryptography)
@@ -1273,7 +1279,7 @@ class TestProductInformationViews:
         (
             (
                 FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR,
-                {"is_controlled_under_itar": False, "controlled_info": ""},
+                {"is_controlled_under_itar": ["controlled_info"], "controlled_info": ""},
                 "controlled_info",
                 ["Information on how the foreign technology or information is controlled cannot be blank"],
             ),

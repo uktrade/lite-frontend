@@ -314,22 +314,32 @@ class ProductForeignTechOrSharedInformation(BaseForm):
 
 class ProductControlledUnderItar(BaseForm):
     class Layout:
-        TITLE = (
-            "Is the technology or information controlled under the US International Traffic in Arms Regulations (ITAR)?"
-        )
+        TITLE = "How is foreign technology or information controlled?"
         TITLE_AS_LABEL_FOR = "is_controlled_under_itar"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    is_controlled_under_itar = forms.TypedChoiceField(
-        choices=(
-            (True, "Yes, it's controlled under  ITAR"),
-            (False, "No"),
-        ),
-        help_text="We need to know about any items classified as Defence Articles or Technical Data.",
+    class ControlledChoices(TextChoices):
+        CONTROLLED_UNDER_ITAR = (
+            "controlled_under_itar",
+            "It's controlled under the US International Traffic in Arms Regulations (ITAR)",
+        )
+        CONTORLLED_UNDER_DIFFERENT_REGULATIONS = (
+            "controlled_info",
+            "It's controlled under different regulations",
+        )
+
+    ControlledChoices = (
+        TextChoice(ControlledChoices.CONTROLLED_UNDER_ITAR),
+        TextChoice(ControlledChoices.CONTORLLED_UNDER_DIFFERENT_REGULATIONS),
+    )
+
+    is_controlled_under_itar = forms.MultipleChoiceField(
         label="",
-        widget=forms.RadioSelect,
-        coerce=coerce_str_to_bool,
-        error_messages={"required": "Select yes if the foreign technology is controlled under ITAR"},
+        choices=(),
+        error_messages={
+            "required": "Select how the foreign technology is controlled",
+        },
+        widget=forms.CheckboxSelectMultiple(),
     )
 
     controlled_info = forms.CharField(
@@ -339,25 +349,33 @@ class ProductControlledUnderItar(BaseForm):
             "Include countries classification levels and reference numbers."
             "  You can upload supporting documents later in your application"
         ),
-        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
+        # Required is set to False here but added in clean method
         required=False,
     )
 
     def clean(self):
-        return self.add_required_to_conditional_text_field(
-            parent_field="is_controlled_under_itar",
-            parent_field_response=False,
-            required_field="controlled_info",
-            error_message="Information on how the foreign technology or information is controlled cannot be blank",
+        required_field = "controlled_info"
+        cleaned_data = super().clean()
+        controlled_choices = cleaned_data.get("is_controlled_under_itar", [])
+        for choice in controlled_choices:
+            required_field_data = cleaned_data.get(choice, False)
+            if choice == required_field and not required_field_data:
+                self.add_error(
+                    choice, "Information on how the foreign technology or information is controlled cannot be blank"
+                )
+
+        return cleaned_data
+
+    def __init__(self, *args, **kwargs):
+        self.conditional_checkbox_choices = (
+            F680ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in self.ControlledChoices
         )
+        super().__init__(*args, **kwargs)
+        self.fields["is_controlled_under_itar"].choices = self.ControlledChoices
 
     def get_layout_fields(self):
         return (
-            ConditionalRadios(
-                "is_controlled_under_itar",
-                "Yes, it's controlled under  ITAR",
-                ConditionalRadiosQuestion("No", "controlled_info"),
-            ),
+            F680ConditionalCheckboxes("is_controlled_under_itar", *self.conditional_checkbox_choices),
             HTML.details(
                 "Help with ITAR",
                 render_to_string("f680/forms/help_ITAR.html"),
