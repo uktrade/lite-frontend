@@ -37,7 +37,7 @@ def is_foreign_tech_or_information_shared(wizard):
 
 def is_controlled_under_itar(wizard):
     cleaned_data = wizard.get_cleaned_data_for_step(FormSteps.PRODUCT_CONTROLLED_UNDER_ITAR) or {}
-    return cleaned_data.get("is_controlled_under_itar", False)
+    return "controlled_under_itar" in cleaned_data.get("is_controlled_under_itar", [])
 
 
 def has_mod_sponsor(wizard):
