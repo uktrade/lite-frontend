@@ -74,10 +74,14 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         return {}
 
     def get_form_initial(self, step=None):
+        all_security_release_requests = self.get_all_security_releases()
+        selected_security_release_requests = self.get_selected_security_releases(all_security_release_requests)
         if step == OutcomeSteps.APPROVE:
-            all_security_release_requests = self.get_all_security_releases()
-            selected_security_release_requests = self.get_selected_security_releases(all_security_release_requests)
             return {"conditions": self.get_aggregated_conditions(selected_security_release_requests)}
+
+        if step == OutcomeSteps.REFUSE:
+            return {"refusal_reasons": self.get_aggregated_refusal_reasons(selected_security_release_requests)}
+
         return {}
 
     def get_selected_security_releases(self, all_security_release_requests):
@@ -119,6 +123,15 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
                     continue
                 conditions.add(recommendation["conditions"])
         return "\r\n\r\n".join(conditions)
+
+    def get_aggregated_refusal_reasons(self, security_release_requests):
+        refusal_reasons = OrderedSet()
+        for release_request in security_release_requests:
+            for recommendation in release_request["recommendations"]:
+                if not recommendation["refusal_reasons"]:
+                    continue
+                refusal_reasons.add(recommendation["refusal_reasons"])
+        return "\r\n\r\n".join(refusal_reasons)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
