@@ -281,9 +281,9 @@ def mock_f680_application_get_existing_data(requests_mock, data_f680_case):
                     },
                     "is_item_manpad": {
                         "key": "is_item_manpad",
-                        "answer": "No, the product is not a MANPAD",
+                        "answer": "No, the product is not a MANPADS",
                         "raw_answer": "no",
-                        "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
+                        "question": "Do you believe the item is a man-portable air defence system (MANPADS)?",
                         "datatype": "string",
                     },
                     "is_mod_electronic_data_shared": {

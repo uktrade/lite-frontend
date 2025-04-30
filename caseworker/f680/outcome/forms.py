@@ -88,7 +88,7 @@ class ApproveOutcomeForm(BaseForm):
         label="Validity start date",
         help_text="For example 25 2 2025",
         require_all_fields=False,
-        initial=timezone.now().date(),
+        initial=timezone.now,
         error_messages={
             "required": "Enter the validity start date",
             "incomplete": "Enter the validity start date",

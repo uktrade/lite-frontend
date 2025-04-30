@@ -25,6 +25,10 @@ class Application(Munch):
         return self["case_type"]["sub_type"]["key"]
 
     @property
+    def type(self):
+        return self["case_type"]["type"]["key"]
+
+    @property
     def sub_type_value(self):
         return self["case_type"]["sub_type"]["value"]
 
