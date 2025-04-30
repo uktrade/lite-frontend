@@ -370,6 +370,11 @@ def i_delete_the_application(driver):  # noqa
     )
 
 
+@when(parsers.parse('I add a note "{note}"'))
+def add_a_note(driver, note):
+    driver.find_element(by=By.ID, value="input-case-note").send_keys(note)
+
+
 @when("I add a note to the draft application")  # noqa
 def add_a_note_to_draft_application(driver, context):  # noqa
     enter_case_note_text(driver, context)
@@ -696,9 +701,9 @@ def check_party_section_text(driver, no_info_text, party_type):
     assert no_info_text == answers_page.get_party_section_text(party_type)
 
 
-@then(parsers.parse('I see "{no_info_text}" for Notes'))
-def check_notes(driver, no_info_text):
-    assert no_info_text == CheckYourAnswers(driver).get_notes_text()
+@then(parsers.parse('I see "{note_text}" for Notes'))
+def check_notes(driver, note_text):
+    assert note_text == CheckYourAnswers(driver).get_notes_text()
 
 
 @then("I see a banner reminding me to add serial numbers")

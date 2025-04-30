@@ -192,6 +192,8 @@ ACCEPTED_FILE_UPLOAD_MIME_TYPES = env.list(
         "text/xml",
         "text/plain",
         "text/csv",
+        "text/rtf",
+        "text/msword",
         "image/jpeg",
         "image/png",
         "image/tiff",

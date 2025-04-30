@@ -88,7 +88,7 @@
     {% elif type == 'ecju-queries' %}
         {% include "includes/ecju-queries.html" with object_type="application" case_id=application.id %}
     {% elif type == 'generated-documents' %}
-        {% include "core/ecju-generated-documents.html" %}
+        {% include "core/ecju-generated-documents.html" with case_id=application.id %}
     {% elif type == 'activity' %}
         {% include "f680/includes/activity.html" %}
     {% endif %}

@@ -13,6 +13,6 @@
 		{% endblock %}
 	</h1>
 	<span class="govuk-hint govuk-!-margin-bottom-6">{% lcs 'applications.ApplicationNotesPage.DESCRIPTION' %}</span>
-
-	{% include "includes/case-notes.html" %}
+	{% url "applications:task_list" application.id as return_url %}
+	{% include "includes/case-notes.html" with return_url=return_url %}
 {% endblock %}

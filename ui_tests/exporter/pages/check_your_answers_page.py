@@ -44,6 +44,7 @@ class CheckYourAnswers(BasePage):
         return party_summary.text
 
     def get_notes_text(self):
-        return self.driver.find_element(
-            by=By.XPATH, value=f"//h2[contains(text(), 'Notes')]//following-sibling::p"
-        ).text
+        table = self.driver.find_element(
+            by=By.XPATH, value=f"//h2[contains(text(), 'Notes')]//following-sibling::table"
+        )
+        return table.find_elements(by=By.CSS_SELECTOR, value=".govuk-table__cell")[2].text
