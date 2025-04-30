@@ -41,9 +41,9 @@
 				{% endfor %}
 			</tbody>
 		</table>
-        <a href="{% url 'f680:user_information:wizard' application.id %}" role='button' draggable='false' class='govuk-button'>Add a new entity</a>
+        <a href="{% url 'f680:user_information:wizard' application.id %}" role='button' draggable='false' class='govuk-button govuk-button--secondary'>Add a new entity</a>
         <p>
-            <a href="{% url "f680:summary" application.id %}" role='button' draggable='false' class='govuk-link govuk-link--no-visited-state'>Save and continue</a>
+            <a href="{% url "f680:summary" application.id %}" role='button' draggable='false' class='govuk-button'>Save and continue</a>
         </p>
 
     </div>

@@ -63,7 +63,7 @@ class ApprovalTypeForm(BaseForm):
     )
 
     demonstration_in_uk = forms.CharField(
-        label="Explain what you are demonstrating and why",
+        label="Explain what you're demonstrating in the UK and why",
         help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
         # Required is set to False here but added in clean method as these textboxes only appear when
@@ -72,7 +72,7 @@ class ApprovalTypeForm(BaseForm):
     )
 
     demonstration_overseas = forms.CharField(
-        label="Explain what you are demonstrating and why",
+        label="Explain what you're demonstrating overseas and why",
         help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
         # Required is set to False here but added in clean method as these textboxes only appear when
@@ -112,7 +112,7 @@ class ApprovalTypeForm(BaseForm):
             F680ConditionalCheckboxes("approval_choices", *self.conditional_checkbox_choices),
             "approval_details_text",
             HTML.details(
-                "Help with exceptional circumstances",
+                "Help with approval types",
                 render_to_string("f680/forms/help_with_approval_type.html"),
             ),
         )
@@ -443,7 +443,6 @@ class ProductIncludeCryptography(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        help_text="We need to know about any items classified as Defence Articles or Technical Data.",
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
@@ -473,7 +472,7 @@ class ProductIncludeCryptography(BaseForm):
                 "No",
             ),
             HTML.details(
-                "Help with security features",
+                "Help with information security features",
                 render_to_string("f680/forms/help_security_features.html"),
             ),
         )
@@ -511,14 +510,14 @@ class ProductRatedUnderMTCR(BaseForm):
 
 class ProductMANPADs(BaseForm):
     class Layout:
-        TITLE = "Do you believe the item is a man-portable air defence system (MANPAD)?"
+        TITLE = "Do you believe the item is a man-portable air defence system (MANPADS)?"
         TITLE_AS_LABEL_FOR = "is_item_manpad"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_manpad = forms.ChoiceField(
         choices=(
-            Choice("yes", "Yes, the product is a MANPAD"),
-            Choice("no", "No, the product is not a MANPAD", divider="Or"),
+            Choice("yes", "Yes, the product is a MANPADS"),
+            Choice("no", "No, the product is not a MANPADS", divider="Or"),
             Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
@@ -530,7 +529,7 @@ class ProductMANPADs(BaseForm):
         return (
             "is_item_manpad",
             HTML.details(
-                "Help with MANPADs",
+                "Help with MANPADS",
                 render_to_string("f680/forms/help_manpads.html"),
             ),
         )
