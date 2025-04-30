@@ -183,9 +183,10 @@ class EntityRefusalReasonsForm(BaseForm, PicklistRefusalForm):
     class Layout:
         TITLE = "Add refusal reasons for entities"
 
+    # The class name is used in js to convert this field into an autocomplete
     refusal_reasons = forms.MultipleChoiceField(
         label="Refusal reasons",
-        widget=forms.SelectMultiple(),
+        widget=forms.SelectMultiple(attrs={"class": "lite-refusal-reasons-autocomplete"}),
         choices=(),
         error_messages={"required": "Enter refusal reasons"},
         help_text=format_html(

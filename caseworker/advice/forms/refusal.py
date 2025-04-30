@@ -20,8 +20,9 @@ def get_refusal_advice_form_factory(advice, denial_reasons_choices, refusal_reas
 
 
 class RefusalAdviceForm(PicklistAdviceForm):
+    # The class name is used in js to convert this field into an autocomplete
     denial_reasons = forms.MultipleChoiceField(
-        widget=forms.SelectMultiple(),
+        widget=forms.SelectMultiple(attrs={"class": "lite-refusal-reasons-autocomplete"}),
         label="What is the refusal criteria?",
         help_text=format_html(
             f'Select all <a class="govuk-link" '
