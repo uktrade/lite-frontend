@@ -40,8 +40,8 @@ class PicklistRefusalForm(forms.Form):
         reasons_text = {}
 
         for result in picklist_data:
-            key = "_".join(result.get("display_value").lower().split())
-            choice = Choice(key, result.get("display_value"))
+            key = "_".join(result.get("id").split())
+            choice = Choice(key, result.get("id"))
             reasons_choices.append(choice)
             reasons_text[key] = result.get("description")
         return reasons_choices, reasons_text
