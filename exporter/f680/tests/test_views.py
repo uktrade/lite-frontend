@@ -7,6 +7,8 @@ from pytest_django.asserts import assertTemplateUsed
 
 from core import client
 from exporter.f680.forms import ApplicationPresubmissionForm, ApplicationSubmissionForm
+from http import HTTPStatus
+from unit_tests.helpers import sort_request_history
 
 
 @pytest.fixture(autouse=True)
@@ -248,18 +250,25 @@ def mock_post_case_notes_error(requests_mock, data_f680_case):
     )
 
 
-@pytest.fixture()
+@pytest.fixture
+def mock_f680_create_amendment(requests_mock, data_f680_case_complete_application):
+    application_id = data_f680_case_complete_application["id"]
+    url = client._build_absolute_uri(f"/applications/{application_id}/amendment/")
+    return requests_mock.post(url=url, json={"id": "11111111-1111-1111-1111-111111111111"}, status_code=201)
+
+
+@pytest.fixture
 def unset_f680_feature_flag(settings):
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
-@pytest.fixture()
+@pytest.fixture
 def unset_f680_allowed_organisation(settings, organisation_pk):
     settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = ["12345"]
     settings.FEATURE_FLAG_ALLOW_F680 = False
 
 
-@pytest.fixture()
+@pytest.fixture
 def set_f680_allowed_organisation(settings, organisation_pk):
     settings.FEATURE_FLAG_F680_ALLOWED_ORGANISATIONS = [organisation_pk]
     settings.FEATURE_FLAG_ALLOW_F680 = False
@@ -274,7 +283,7 @@ class TestF680ApplyForALicence:
         mock_application_post,
     ):
         response = authorized_client.post(apply_for_a_licence_url, data={"licence_type": "f680"})
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url == f680_summary_url_with_application
         assert mock_application_post.called_once
         assert mock_application_post.last_request.json() == {"application": {}}
@@ -320,10 +329,10 @@ class TestF680ApplicationSummaryView:
         app_pk = str(uuid4())
         client_uri = client._build_absolute_uri(f"/exporter/f680/application/{app_pk}/")
 
-        requests_mock.get(client_uri, json={}, status_code=404)
+        requests_mock.get(client_uri, json={}, status_code=HTTPStatus.NOT_FOUND)
 
         response = authorized_client.get(reverse("f680:summary", kwargs={"pk": app_pk}))
-        assert response.status_code == 404
+        assert response.status_code == HTTPStatus.NOT_FOUND
 
     def test_get_f680_summary_view_fail_with_feature_flag_off(
         self,
@@ -333,7 +342,7 @@ class TestF680ApplicationSummaryView:
         unset_f680_feature_flag,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.context[0].get("title") == "Forbidden"
         assert (
             "You are not authorised to use the F680 Security Clearance application feature"
@@ -348,7 +357,7 @@ class TestF680ApplicationSummaryView:
         unset_f680_allowed_organisation,
     ):
         response = authorized_client.get(f680_summary_url_with_application)
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.context[0].get("title") == "Forbidden"
         assert (
             "You are not authorised to use the F680 Security Clearance application feature"
@@ -365,7 +374,7 @@ class TestF680ApplicationSummaryView:
             f680_summary_url_with_application,
         )
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.context["errors"] == {"missing_sections": ["Please complete all required sections"]}
 
     def test_post_f680_submission_form_partially_complete_returns_errors(
@@ -378,7 +387,7 @@ class TestF680ApplicationSummaryView:
             f680_summary_url_with_application,
         )
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert response.context["errors"] == {"missing_sections": ["Please complete all required sections"]}
 
     def test_post_f680_submission_form_success(
@@ -393,7 +402,7 @@ class TestF680ApplicationSummaryView:
             f680_summary_url_with_application,
         )
 
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url == reverse("f680:declaration", kwargs={"pk": data_f680_case_complete_application["id"]})
 
     def test_post_f680_submission_form_fail_with_feature_flag_off(
@@ -489,7 +498,7 @@ class TestF680ApplicationDeclarationView:
 
         assert mock_f680_application_submit.called_once
         assert mock_f680_application_submit.last_request.json() == {"agreed_to_foi": True, "foi_reason": "some reason"}
-        assert response.status_code == 302
+        assert response.status_code == HTTPStatus.FOUND
         assert response.url == reverse("applications:success_page", kwargs={"pk": data_f680_case["id"]})
 
 
@@ -506,7 +515,7 @@ class TestF680SubmittedApplicationSummaryView:
         response = authorized_client.get(f680_submitted_application_summary_url_with_application)
         assert response.context["application_sections"] == data_f680_submitted_application["application"]["sections"]
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
 
     def test_get_f680_summary_view_success_case_notes(
         self,
@@ -525,7 +534,7 @@ class TestF680SubmittedApplicationSummaryView:
         case_notes_title = content.find("label", {"id": "case-notes-title"}).text
         return_url = content.find("a", {"id": "case-notes-return-url"}).get("href")
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert case_notes_title == "Add a note"
         assert return_url == f"/f680/{application_id}/summary/"
 
@@ -545,7 +554,7 @@ class TestF680SubmittedApplicationSummaryView:
 
         queries_text = content.find("p", {"id": "queries-info"}).text
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert "There are no ECJU queries on this application." in queries_text
 
     def test_get_f680_summary_view_success_ecju_documents(
@@ -563,7 +572,7 @@ class TestF680SubmittedApplicationSummaryView:
         content = BeautifulSoup(response.content, "html.parser")
         document_info_text = content.find("p", {"id": "documents-info"}).text
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert "There are no ECJU documents for this product." in document_info_text
 
     def test_post_f680_summary_view_success_case_notes(
@@ -586,7 +595,7 @@ class TestF680SubmittedApplicationSummaryView:
         )
 
         assert mock_post_case_notes.last_request.json() == {"text": "Note text"}
-        assert post_response.status_code == 302
+        assert post_response.status_code == HTTPStatus.FOUND
         assert post_response.url == f"/f680/{application_id}/summary/case-notes/"
 
     def test_post_f680_summary_view_case_notes_with_wrong_type_raises_404(
@@ -607,12 +616,11 @@ class TestF680SubmittedApplicationSummaryView:
             f680_submitted_application_summary_url_with_application_ecju_documents, data=note_json
         )
 
-        assert post_response.status_code == 404
+        assert post_response.status_code == HTTPStatus.NOT_FOUND
 
     def test_post_case_notes_error(
         self,
         authorized_client,
-        requests_mock,
         data_f680_submitted_application,
         f680_submitted_application_summary_url_with_application_case_notes,
         mock_f680_application_get_submitted_application,
@@ -631,5 +639,38 @@ class TestF680SubmittedApplicationSummaryView:
         content = BeautifulSoup(response.content, "html.parser")
         error_text = content.find("p", {"class": "govuk-body"}).text
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK
         assert "Unexpected error creating case note" in error_text
+
+    def test_GET_major_edit_confirm_view(
+        self,
+        authorized_client,
+        mock_f680_application_get_submitted_application,
+        data_f680_submitted_application,
+    ):
+        app_pk = data_f680_submitted_application["id"]
+
+        response = authorized_client.get(reverse("applications:major_edit_confirm", kwargs={"pk": app_pk}))
+        assert response.status_code == HTTPStatus.OK
+        content = BeautifulSoup(response.content, "html.parser")
+        heading_element = content.find("h1")
+        assert heading_element.text == "Are you sure you want to open your application for editing?"
+
+    def test_POST_major_edit_confirm_view(
+        self,
+        requests_mock,
+        authorized_client,
+        mock_f680_application_get_submitted_application,
+        data_f680_submitted_application,
+        mock_f680_create_amendment,
+    ):
+        app_pk = data_f680_submitted_application["id"]
+
+        response = authorized_client.post(reverse("applications:major_edit_confirm", kwargs={"pk": app_pk}))
+        assert response.status_code == HTTPStatus.FOUND
+        assert response.url == reverse("f680:summary", kwargs={"pk": "11111111-1111-1111-1111-111111111111"})
+
+        full_history = sort_request_history(requests_mock.request_history)
+        history = full_history[f"/applications/{app_pk}/amendment/"][0]
+        assert history.method == "POST"
+        assert history.json() == {}
