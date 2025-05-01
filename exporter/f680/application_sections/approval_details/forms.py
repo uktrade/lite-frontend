@@ -345,8 +345,8 @@ class ProductControlledUnderItar(BaseForm):
     controlled_info = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 5}),
         label=(
-            "Explain how the technology or information is controlled."
-            "Include countries classification levels and reference numbers."
+            "Explain how the technology or information is controlled. "
+            "Include countries, classification levels and reference numbers."
             "  You can upload supporting documents later in your application"
         ),
         # Required is set to False here but added in clean method

@@ -1,5 +1,9 @@
 from munch import Munch
 
+from caseworker.core.constants import ALL_CASES_QUEUE_ID
+from core.application_manifests.contants import ServiceType
+from core.application_manifests.registry import application_manifest_registry
+
 
 class Slice:
     def __init__(self, file, title=None):
@@ -8,6 +12,11 @@ class Slice:
 
 
 class Case(Munch):
+
+    @property
+    def manifest(self):
+        return application_manifest_registry.get_manifest(ServiceType.CASEWORKER.value, self.type)
+
     @property
     def organisation(self):
         return self.data["organisation"]
@@ -56,3 +65,21 @@ class Case(Munch):
                 destinations += self.data.get("third_parties")
 
         return destinations
+
+    @property
+    def amendment_of_url(self):
+        if self["amendment_of"]:
+            return self.manifest.urls.get_detail_view_url(
+                queue_pk=ALL_CASES_QUEUE_ID,
+                case_id=self["amendment_of"]["id"],
+            )
+        return ""
+
+    @property
+    def superseded_by_url(self):
+        if self["superseded_by"] and self["superseded_by"].get("reference_code"):
+            return self.manifest.urls.get_detail_view_url(
+                queue_pk=ALL_CASES_QUEUE_ID,
+                case_id=self["superseded_by"]["id"],
+            )
+        return ""

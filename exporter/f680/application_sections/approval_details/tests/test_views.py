@@ -940,7 +940,7 @@ class TestProductInformationViews:
                                 "key": "controlled_info",
                                 "answer": "some info",
                                 "raw_answer": "some info",
-                                "question": "Explain how the technology or information is controlled.Include countries classification levels and reference numbers.  You can upload supporting documents later in your application",
+                                "question": "Explain how the technology or information is controlled. Include countries, classification levels and reference numbers.  You can upload supporting documents later in your application",
                                 "datatype": "string",
                             },
                             "controlled_information": {

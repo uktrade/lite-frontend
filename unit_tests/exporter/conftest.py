@@ -687,7 +687,17 @@ def mock_get_survey(requests_mock, survey_id):
 def mock_get_application(requests_mock, application_pk, application_reference_number):
     return requests_mock.get(
         client._build_absolute_uri(f"/applications/{application_pk}"),
-        json={"id": application_pk, "reference_code": application_reference_number, "status": "submitted"},
+        json={
+            "id": application_pk,
+            "reference_code": application_reference_number,
+            "status": "submitted",
+            "case_type": {
+                "id": "00000000-0000-0000-0000-000000000004",
+                "reference": {"key": "siel", "value": "Standard Individual Export Licence"},
+                "type": {"key": "application", "value": "Application"},
+                "sub_type": {"key": "standard", "value": "Standard Licence"},
+            },
+        },
         status_code=200,
     )
 
