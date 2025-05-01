@@ -5,7 +5,7 @@ const initDenialReasons = (className) => {
   if (denialReasonFields.length == 0) return;
 
   for (let field of denialReasonFields) {
-    let fieldParent = field.parent;
+    let _ = field.parent;
     const multiSelector = new MultiSelector(field);
     multiSelector.init();
   }
