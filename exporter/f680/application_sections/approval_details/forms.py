@@ -63,7 +63,7 @@ class ApprovalTypeForm(BaseForm):
     )
 
     demonstration_in_uk = forms.CharField(
-        label="Explain what you are demonstrating and why",
+        label="Explain what you're demonstrating in the UK and why",
         help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
         # Required is set to False here but added in clean method as these textboxes only appear when
@@ -72,7 +72,7 @@ class ApprovalTypeForm(BaseForm):
     )
 
     demonstration_overseas = forms.CharField(
-        label="Explain what you are demonstrating and why",
+        label="Explain what you're demonstrating overseas and why",
         help_text="Explain what materials will be involved and if you'll use a substitute product",
         widget=forms.Textarea(attrs={"rows": 5}),
         # Required is set to False here but added in clean method as these textboxes only appear when
@@ -112,7 +112,7 @@ class ApprovalTypeForm(BaseForm):
             F680ConditionalCheckboxes("approval_choices", *self.conditional_checkbox_choices),
             "approval_details_text",
             HTML.details(
-                "Help with exceptional circumstances",
+                "Help with approval types",
                 render_to_string("f680/forms/help_with_approval_type.html"),
             ),
         )
@@ -314,22 +314,32 @@ class ProductForeignTechOrSharedInformation(BaseForm):
 
 class ProductControlledUnderItar(BaseForm):
     class Layout:
-        TITLE = (
-            "Is the technology or information controlled under the US International Traffic in Arms Regulations (ITAR)?"
-        )
+        TITLE = "How is foreign technology or information controlled?"
         TITLE_AS_LABEL_FOR = "is_controlled_under_itar"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    is_controlled_under_itar = forms.TypedChoiceField(
-        choices=(
-            (True, "Yes, it's controlled under  ITAR"),
-            (False, "No"),
-        ),
-        help_text="We need to know about any items classified as Defence Articles or Technical Data.",
+    class ControlledChoices(TextChoices):
+        CONTROLLED_UNDER_ITAR = (
+            "controlled_under_itar",
+            "It's controlled under the US International Traffic in Arms Regulations (ITAR)",
+        )
+        CONTORLLED_UNDER_DIFFERENT_REGULATIONS = (
+            "controlled_info",
+            "It's controlled under different regulations",
+        )
+
+    ControlledChoices = (
+        TextChoice(ControlledChoices.CONTROLLED_UNDER_ITAR),
+        TextChoice(ControlledChoices.CONTORLLED_UNDER_DIFFERENT_REGULATIONS),
+    )
+
+    is_controlled_under_itar = forms.MultipleChoiceField(
         label="",
-        widget=forms.RadioSelect,
-        coerce=coerce_str_to_bool,
-        error_messages={"required": "Select yes if the foreign technology is controlled under ITAR"},
+        choices=(),
+        error_messages={
+            "required": "Select how the foreign technology is controlled",
+        },
+        widget=forms.CheckboxSelectMultiple(),
     )
 
     controlled_info = forms.CharField(
@@ -339,25 +349,33 @@ class ProductControlledUnderItar(BaseForm):
             "Include countries classification levels and reference numbers."
             "  You can upload supporting documents later in your application"
         ),
-        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
+        # Required is set to False here but added in clean method
         required=False,
     )
 
     def clean(self):
-        return self.add_required_to_conditional_text_field(
-            parent_field="is_controlled_under_itar",
-            parent_field_response=False,
-            required_field="controlled_info",
-            error_message="Information on how the foreign technology or information is controlled cannot be blank",
+        required_field = "controlled_info"
+        cleaned_data = super().clean()
+        controlled_choices = cleaned_data.get("is_controlled_under_itar", [])
+        for choice in controlled_choices:
+            required_field_data = cleaned_data.get(choice, False)
+            if choice == required_field and not required_field_data:
+                self.add_error(
+                    choice, "Information on how the foreign technology or information is controlled cannot be blank"
+                )
+
+        return cleaned_data
+
+    def __init__(self, *args, **kwargs):
+        self.conditional_checkbox_choices = (
+            F680ConditionalCheckboxesQuestion(choices.label, choices.value) for choices in self.ControlledChoices
         )
+        super().__init__(*args, **kwargs)
+        self.fields["is_controlled_under_itar"].choices = self.ControlledChoices
 
     def get_layout_fields(self):
         return (
-            ConditionalRadios(
-                "is_controlled_under_itar",
-                "Yes, it's controlled under  ITAR",
-                ConditionalRadiosQuestion("No", "controlled_info"),
-            ),
+            F680ConditionalCheckboxes("is_controlled_under_itar", *self.conditional_checkbox_choices),
             HTML.details(
                 "Help with ITAR",
                 render_to_string("f680/forms/help_ITAR.html"),
@@ -425,7 +443,6 @@ class ProductIncludeCryptography(BaseForm):
             (True, "Yes"),
             (False, "No"),
         ),
-        help_text="We need to know about any items classified as Defence Articles or Technical Data.",
         label="",
         widget=forms.RadioSelect,
         coerce=coerce_str_to_bool,
@@ -455,7 +472,7 @@ class ProductIncludeCryptography(BaseForm):
                 "No",
             ),
             HTML.details(
-                "Help with security features",
+                "Help with information security features",
                 render_to_string("f680/forms/help_security_features.html"),
             ),
         )
@@ -493,14 +510,14 @@ class ProductRatedUnderMTCR(BaseForm):
 
 class ProductMANPADs(BaseForm):
     class Layout:
-        TITLE = "Do you believe the item is a man-portable air defence system (MANPAD)?"
+        TITLE = "Do you believe the item is a man-portable air defence system (MANPADS)?"
         TITLE_AS_LABEL_FOR = "is_item_manpad"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
     is_item_manpad = forms.ChoiceField(
         choices=(
-            Choice("yes", "Yes, the product is a MANPAD"),
-            Choice("no", "No, the product is not a MANPAD", divider="Or"),
+            Choice("yes", "Yes, the product is a MANPADS"),
+            Choice("no", "No, the product is not a MANPADS", divider="Or"),
             Choice("dont_know", "Don't know"),
         ),
         widget=forms.RadioSelect,
@@ -512,7 +529,7 @@ class ProductMANPADs(BaseForm):
         return (
             "is_item_manpad",
             HTML.details(
-                "Help with MANPADs",
+                "Help with MANPADS",
                 render_to_string("f680/forms/help_manpads.html"),
             ),
         )

@@ -6,9 +6,13 @@ from unittest import mock
 
 from django.urls import reverse
 
-from caseworker.f680.recommendation.constants import RecommendationSteps, RecommendationType
+from caseworker.f680.recommendation.constants import (
+    RecommendationSteps,
+    RecommendationType,
+    RecommendationSecurityGrading,
+)
 from caseworker.f680.recommendation.forms.forms import (
-    BasicRecommendationConditionsForm,
+    BasicRecommendationForm,
     BasicRecommendationRefusalReasonsForm,
     ClearRecommendationForm,
     EntityConditionsForm,
@@ -207,6 +211,7 @@ class TestF680MakeRecommendationView:
         response = post_to_step(
             RecommendationSteps.RELEASE_REQUEST_PROVISOS,
             {
+                "security_grading": "official",
                 "conditions": ["no_release", "no_specifications"],
                 "no_specifications": "no specifications",
                 "no_release": "no release",
@@ -221,6 +226,8 @@ class TestF680MakeRecommendationView:
         assert request.json() == [
             {
                 "type": RecommendationType.APPROVE,
+                "security_grading": RecommendationSecurityGrading.OFFICIAL,
+                "security_grading_other": "",
                 "conditions": "no release\n\n--------\nno specifications",
                 "refusal_reasons": "",
                 "security_release_request": release_request_id,
@@ -278,6 +285,8 @@ class TestF680MakeRecommendationView:
         assert request.json() == [
             {
                 "type": RecommendationType.REFUSE,
+                "security_grading": "",
+                "security_grading_other": "",
                 "conditions": "",
                 "refusal_reasons": "one\n\n--------\ntwo",
                 "security_release_request": release_request_id,
@@ -313,11 +322,12 @@ class TestF680MakeRecommendationView:
         )
         assert response.status_code == 200
         form = response.context["form"]
-        assert isinstance(form, BasicRecommendationConditionsForm)
+        assert isinstance(form, BasicRecommendationForm)
 
         response = post_to_step(
             RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS,
             {
+                "security_grading": RecommendationSecurityGrading.OFFICIAL,
                 "conditions": "no release",
             },
         )
@@ -330,6 +340,8 @@ class TestF680MakeRecommendationView:
         assert request.json() == [
             {
                 "type": RecommendationType.APPROVE,
+                "security_grading": RecommendationSecurityGrading.OFFICIAL,
+                "security_grading_other": "",
                 "conditions": "no release",
                 "refusal_reasons": "",
                 "security_release_request": release_request_id,
@@ -379,6 +391,8 @@ class TestF680MakeRecommendationView:
         assert request.json() == [
             {
                 "type": RecommendationType.REFUSE,
+                "security_grading": "",
+                "security_grading_other": "",
                 "conditions": "",
                 "refusal_reasons": "doesn't meet the criteria",
                 "security_release_request": release_request_id,

@@ -751,7 +751,7 @@ def data_f680_submitted_application(data_f680_case):
                         "key": "is_item_manpad",
                         "answer": "Don't know",
                         "datatype": "string",
-                        "question": "Do you believe the item is a man-portable air defence system (MANPAD)?",
+                        "question": "Do you believe the item is a man-portable air defence system (MANPADS)?",
                         "raw_answer": "dont_know",
                     },
                     "actions_to_classify": {

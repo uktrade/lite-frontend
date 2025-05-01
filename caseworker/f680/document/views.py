@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from urllib.parse import quote
 
 from django.contrib import messages
 from django.http import HttpResponseForbidden
@@ -15,7 +14,7 @@ from caseworker.cases.services import get_generated_document_preview, post_gener
 from caseworker.core.views import handler403
 from caseworker.letter_templates.services import get_letter_templates_list
 
-from caseworker.f680.outcome.services import get_outcomes
+from caseworker.f680.outcome.services import get_outcome_documents, get_required_outcome_documents, get_outcomes
 from caseworker.f680.views import F680CaseworkerMixin
 
 from .forms import GenerateDocumentForm, FinaliseForm
@@ -37,13 +36,26 @@ class F680DocumentMixin(F680CaseworkerMixin):
     def get_letter_templates_list(self, filter):
         return get_letter_templates_list(self.request, filter)
 
+    @expect_status(
+        HTTPStatus.OK,
+        "Error getting outcome documents",
+        "Unexpected error outcome documents",
+    )
+    def get_outcome_documents(self, case_id):
+        return get_outcome_documents(self.request, case_id)
+
     def get_case_letter_templates(self):
         """Return letter templates that correspond to the case outcomes"""
         outcomes, _ = get_outcomes(self.request, self.case.id)
         decisions = list({item["outcome"] for item in outcomes})
         filters = {"case_type": self.case.case_type["sub_type"]["key"], "decision": decisions}
         f680_letter_templates, _ = self.get_letter_templates_list(filters)
-        return f680_letter_templates["results"]
+        return f680_letter_templates
+
+    def get_required_outcome_documents(self):
+        letter_templates = self.get_case_letter_templates()
+        outcome_documents, _ = self.get_outcome_documents(self.case_id)
+        return get_required_outcome_documents(letter_templates, outcome_documents)
 
 
 class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
@@ -61,13 +73,21 @@ class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data["letter_templates"] = self.get_case_letter_templates()
+        context_data["required_outcome_documents"] = self.get_required_outcome_documents()
         context_data["back_link_url"] = reverse(
             "cases:f680:recommendation", kwargs={"pk": self.case_id, "queue_pk": self.queue_id}
         )
         return context_data
 
     def form_valid(self, form):
+        if self.get_required_outcome_documents_with_no_documents():
+            form.add_error(
+                None,
+                [
+                    "Click generate for all letters. Finalise and publish to exporter can only be done once all letters have been generated."
+                ],
+            )
+            return super().form_invalid(form)
         self.finalise()
         success_message = "F680 finalised successfully"
         messages.success(self.request, success_message)
@@ -76,9 +96,13 @@ class AllDocuments(LoginRequiredMixin, F680DocumentMixin, FormView):
     def get_success_url(self):
         return reverse("cases:f680:details", kwargs={"pk": self.case_id, "queue_pk": self.queue_id})
 
+    def get_required_outcome_documents_with_no_documents(self):
+        required_outcome_documents = self.get_required_outcome_documents()
+        return [t for t in required_outcome_documents if t.get("generated_document") is None]
+
 
 class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
-    template_name = "f680/document/preview.html"
+    template_name = "f680/core/base_form.html"
     form_class = GenerateDocumentForm
     current_tab = "recommendations"
 
@@ -88,11 +112,11 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         "Unexpected error generating document preview",
         reraise_404=True,
     )
-    def get_generated_document_preview(self, template_id, text):
+    def get_generated_document_preview(self, template_id):
         # TODO: Use of get_generated_document_preview service helper should
         #   be replaced with something that doesn't require text to be quoted
         return get_generated_document_preview(
-            self.request, self.case_id, template=template_id, text=text, addressee=None
+            self.request, self.case_id, template=template_id, text=None, addressee=None
         )
 
     @expect_status(
@@ -100,7 +124,7 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         "Error generating document",
         "Unexpected error generating document",
     )
-    def generate_document(self, template_id, text):
+    def generate_document(self, template_id):
         advice_type = None
         template_decisions = [decision["name"]["key"] for decision in self.template["decisions"]]
         if "approve" in template_decisions:
@@ -112,7 +136,6 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
             self.case_id,
             {
                 "template": template_id,
-                "text": text,
                 "addressee": None,
                 "visible_to_exporter": False,
                 "advice_type": advice_type,
@@ -128,13 +151,13 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         except IndexError:
             raise Http404
 
-    def form_valid(self, form):
-        if "generate" not in self.request.POST:
-            # Just show the preview screen again if the user has clicked preview
-            return self.form_invalid(form)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["cancel_url"] = self.get_success_url()
+        return kwargs
 
-        # TODO: Think about a payload builder
-        self.generate_document(str(self.kwargs["template_id"]), form.cleaned_data["text"])
+    def form_valid(self, form):
+        self.generate_document(str(self.kwargs["template_id"]))
         success_message = "Generated document successfully"
         messages.success(self.request, success_message)
         return super().form_valid(form)
@@ -143,21 +166,10 @@ class F680GenerateDocument(LoginRequiredMixin, F680DocumentMixin, FormView):
         # TODO: Redirect the user to the landing screen when we have a document
         return reverse("cases:f680:document:all", kwargs={"queue_pk": self.queue_id, "pk": self.case_id})
 
-    def get_text(self, form):
-        text = None
-        # The form can be submitted to preview the latest customisation text
-        #   In that case we should retrieve the text from the form for the preview
-        #   This can be determined by interrogating form.is_bound
-        if form.is_bound:
-            text = quote(form.cleaned_data.get("text", ""))
-        return text
-
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(**kwargs)
         template_id = str(self.kwargs["template_id"])
-        form = context_data["form"]
-        text = self.get_text(form)
-        preview_response, _ = self.get_generated_document_preview(template_id=template_id, text=text)
+        preview_response, _ = self.get_generated_document_preview(template_id=template_id)
         context_data.update(
             {
                 "preview": preview_response["preview"],

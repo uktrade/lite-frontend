@@ -13,7 +13,7 @@ from caseworker.f680.recommendation.conditionals import (
 )
 from caseworker.f680.recommendation.constants import RecommendationSteps
 from caseworker.f680.recommendation.forms.forms import (
-    BasicRecommendationConditionsForm,
+    BasicRecommendationForm,
     BasicRecommendationRefusalReasonsForm,
     ClearRecommendationForm,
     EntityConditionsForm,
@@ -100,7 +100,7 @@ class MakeRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
     form_list = [
         (RecommendationSteps.ENTITIES_AND_DECISION, EntitySelectionAndDecisionForm),
         (RecommendationSteps.RELEASE_REQUEST_PROVISOS, EntityConditionsForm),
-        (RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS, BasicRecommendationConditionsForm),
+        (RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS, BasicRecommendationForm),
         (RecommendationSteps.RELEASE_REQUEST_REFUSAL_REASONS, EntityRefusalReasonsForm),
         (RecommendationSteps.RELEASE_REQUEST_NO_REFUSAL_REASONS, BasicRecommendationRefusalReasonsForm),
     ]
