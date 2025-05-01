@@ -16,7 +16,7 @@ class CaseStatusEnum:
     APPEAL_FINAL_REVIEW = "appeal_final_review"
     APPEAL_REVIEW = "appeal_review"
     APPLICANT_EDITING = "applicant_editing"
-    CHANGE_INTIAL_REVIEW = "change_initial_review"
+    CHANGE_INITIAL_REVIEW = "change_initial_review"
     CHANGE_UNDER_FINAL_REVIEW = "change_under_final_review"
     CHANGE_UNDER_REVIEW = "change_under_review"
     CLC = "clc_review"
@@ -45,6 +45,10 @@ class CaseStatusEnum:
     UNDER_REVIEW = "under_review"
     WITHDRAWN = "withdrawn"
     SUPERSEDED_BY_EXPORTER_EDIT = "superseded_by_exporter_edit"
+
+    OGD_CONSOLIDATION = "ogd_consolidation"
+    FINAL_REVIEW_COUNTERSIGN = "final_review_countersign"
+    FINAL_REVIEW_SECOND_COUNTERSIGN = "final_review_second_countersign"
 
     @classmethod
     def base_query_statuses(cls):

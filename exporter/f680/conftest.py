@@ -15,17 +15,21 @@ def data_f680_case(data_organisation):
         },
         "submitted_at": None,
         "submitted_by": None,
+        "name": "Test F680 Application",
+        "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "Draft"},
         "case_type": {
             "id": "00000000-0000-0000-0000-000000000007",
             "reference": {"key": "f680", "value": "MOD F680 Clearance"},
-            "type": {"key": "security_clearance", "value": "Security Clearance"},
             "sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"},
+            "type": {"key": "security_clearance", "value": "Security Clearance"},
         },
     }
 
 
 @pytest.fixture
 def data_f680_submitted_application(data_f680_case):
+    data_f680_case["reference_code"] = "F680/2025/0000001"
+    data_f680_case["status"] = {"id": "00000000-0000-0000-0000-000000000001", "key": "submitted", "value": "Submitted"}
     data_f680_case["application"] = {
         "sections": {
             "general_application_details": {

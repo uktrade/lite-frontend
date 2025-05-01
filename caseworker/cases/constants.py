@@ -9,22 +9,27 @@ class PartyType:
 
 
 class CaseType(Enum):
+    # Types
     APPLICATION = "application"
-    QUERY = "query"
     REGISTRATION = "registration"
+    QUERY = "query"
+    COMPLIANCE = "compliance"
+    SECURITY_CLEARANCE = "security_clearance"
+
+    # Sub Types
     STANDARD = "standard"
     OPEN = "open"
-    HMRC = "hmrc"
-    # The case_type_reference for HMRC
-    HMRC_REFERENCE = "cre"
-    GOODS = "goods"
-    END_USER_ADVISORY = "end_user_advisory"
-    EXHIBITION = "exhibition_clearance"
-    GIFTING = "gifting_clearance"
     F680 = "f680_clearance"
-    COMPLIANCE = "compliance"
     COMPLIANCE_SITE = "compliance_site"
     COMPLIANCE_VISIT = "compliance_visit"
+    END_USER_ADVISORY = "end_user_advisory"
+    GOODS = "goods"
+    HMRC = "hmrc"
+    EXHIBITION = "exhibition_clearance"
+    GIFTING = "gifting_clearance"
+
+    # The case_type_reference for HMRC
+    HMRC_REFERENCE = "cre"
 
     @classmethod
     def is_mod(cls, case_type):
