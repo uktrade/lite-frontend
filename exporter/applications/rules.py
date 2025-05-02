@@ -63,6 +63,9 @@ def can_invoke_major_editable(request, application):
 
 @rules.predicate
 def is_organisation_in_indeterminate_export_licence_type_cohort(request):
+    if "*" in settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS:
+        return True
+
     return (
         request.session["organisation"] in settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS
     )
