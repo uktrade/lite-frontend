@@ -246,20 +246,6 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
         }
 
     def get_standard_application(self):
-        self.slices = [
-            Slices.GOODS,
-            Slices.DESTINATIONS,
-            conditional(self.case.data["denial_matches"], Slices.DENIAL_MATCHES),
-            conditional(self.case.data["sanction_matches"], Slices.SANCTION_MATCHES),
-            conditional(self.case.data["end_user"], Slices.END_USER_DOCUMENTS),
-            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
-            Slices.LOCATIONS,
-            Slices.SECURITY_APPROVALS,
-            Slices.END_USE_DETAILS,
-            Slices.SUPPORTING_DOCUMENTS,
-            Slices.FREEDOM_OF_INFORMATION,
-            conditional(self.case.data["appeal"], Slices.APPEAL_DETAILS),
-        ]
         self.additional_context = self.get_advice_additional_context()
 
     def is_only_on_post_circ_queue(self):
@@ -369,6 +355,22 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
             for queue_detail in self.case.queue_details:
                 queue_detail["days_on_queue_elapsed"] = (timezone.now() - parse(queue_detail["joined_queue_at"])).days
 
+    def get_slices(self):
+        return [
+            Slices.GOODS,
+            Slices.DESTINATIONS,
+            conditional(self.case.data["denial_matches"], Slices.DENIAL_MATCHES),
+            conditional(self.case.data["sanction_matches"], Slices.SANCTION_MATCHES),
+            conditional(self.case.data["end_user"], Slices.END_USER_DOCUMENTS),
+            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
+            Slices.LOCATIONS,
+            Slices.SECURITY_APPROVALS,
+            Slices.END_USE_DETAILS,
+            Slices.SUPPORTING_DOCUMENTS,
+            Slices.FREEDOM_OF_INFORMATION,
+            conditional(self.case.data["appeal"], Slices.APPEAL_DETAILS),
+        ]
+
     def get(self, request, *args, **kwargs):
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
@@ -379,6 +381,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
         self._transform_data()
 
         self.tabs = self.get_tabs()
+        self.slices = self.get_slices()
         self.get_standard_application()
 
         return render(request, "case/case.html", self.get_context())
