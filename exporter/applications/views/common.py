@@ -359,7 +359,7 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
             {
                 "case_id": self.application_id,
                 "application": self.application,
-                "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
+                "answers": {**convert_application_to_check_your_answers(self.application, is_summary=True)},
                 "summary_page": True,
                 "application_type": self.application["case_type"]["reference"]["value"],
                 "notes": get_case_notes(self.request, self.case_id)["case_notes"],
