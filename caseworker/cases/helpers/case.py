@@ -254,10 +254,8 @@ class CaseView(CaseworkerMixin, TemplateView):
 
         self._transform_data()
 
-        if hasattr(self, "get_" + self.case.sub_type + "_" + self.case.type):
-            getattr(self, "get_" + self.case.sub_type + "_" + self.case.type)()
-        else:
-            getattr(self, "get_" + self.case.sub_type)()
+        self.get_standard_application()
+
         return render(request, "case/case.html", self.get_context())
 
 
