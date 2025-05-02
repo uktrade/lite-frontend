@@ -66,30 +66,28 @@
 {% endif %}
 
 {% if summary_page %}
-	{% if application.case_type.sub_type.key != "hmrc" %}
-		<h2 class="govuk-heading-m">{% lcs "applications.ApplicationPage.Summary.Notes.TITLE" %}</h2>
-		{% if notes %}
-			<table class="govuk-table">
-				<thead class="govuk-table__head">
+	<h2 class="govuk-heading-m">{% lcs "applications.ApplicationPage.Summary.Notes.TITLE" %}</h2>
+	{% if notes %}
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">#</th>
+					<th scope="col" class="govuk-table__header">{% lcs "applications.ApplicationPage.Summary.Notes.USER" %}</th>
+					<th scope="col" class="govuk-table__header">{% lcs "applications.ApplicationPage.Summary.Notes.NOTE" %}</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% for item in notes %}
 					<tr class="govuk-table__row">
-						<th scope="col" class="govuk-table__header">#</th>
-						<th scope="col" class="govuk-table__header">{% lcs "applications.ApplicationPage.Summary.Notes.USER" %}</th>
-						<th scope="col" class="govuk-table__header">{% lcs "applications.ApplicationPage.Summary.Notes.NOTE" %}</th>
+						<td class="govuk-table__cell govuk-table__cell--line-number">{{ forloop.counter }}.</td>
+						<td class="govuk-table__cell">{{ item.user.first_name }} {{ item.user.last_name }}</td>
+						<td class="govuk-table__cell">{{ item.text|linebreaksbr|default_na }}</td>
 					</tr>
-				</thead>
-				<tbody class="govuk-table__body">
-					{% for item in notes %}
-						<tr class="govuk-table__row">
-							<td class="govuk-table__cell govuk-table__cell--line-number">{{ forloop.counter }}.</td>
-							<td class="govuk-table__cell">{{ item.user.first_name }} {{ item.user.last_name }}</td>
-							<td class="govuk-table__cell">{{ item.text|linebreaksbr|default_na }}</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</table>
-		{% else %}
-			<p class="govuk-caption-m">{% lcs "applications.ApplicationPage.NO_INFORMATION_PROVIDED" %}</p>
-		{% endif %}
+				{% endfor %}
+			</tbody>
+		</table>
+	{% else %}
+		<p class="govuk-caption-m">{% lcs "applications.ApplicationPage.NO_INFORMATION_PROVIDED" %}</p>
 	{% endif %}
 	<hr class="app-check-your-answers-separator">
 
