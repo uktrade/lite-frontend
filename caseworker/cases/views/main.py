@@ -245,9 +245,6 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
             "blocking_flags": blocking_flags,
         }
 
-    def get_standard_application(self):
-        self.additional_context = self.get_advice_additional_context()
-
     def is_only_on_post_circ_queue(self):
         queue_alias = tuple(queue.get("alias") for queue in self.case.queue_details)
         return self.is_lu_user() and queue_alias == (LU_POST_CIRC_FINALISE_QUEUE_ALIAS,)
@@ -382,7 +379,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
 
         self.tabs = self.get_tabs()
         self.slices = self.get_slices()
-        self.get_standard_application()
+        self.additional_context = self.get_advice_additional_context()
 
         return render(request, "case/case.html", self.get_context())
 
