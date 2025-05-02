@@ -175,12 +175,6 @@ def get_applications(response):
 
 def get_formatted_data(application):
     """Returns formatted data of required fields for each application"""
-    sub_type = application["case_type"]["sub_type"]
-    if sub_type:
-        case_type = sub_type["value"]
-    else:
-        case_type = ""
-
     return {
         "name": application["name"],
         "exporter_user_notification_count": "",
@@ -190,7 +184,7 @@ def get_formatted_data(application):
             str_date(application["submitted_at"]) if application["submitted_at"] else str(application["submitted_at"])
         ),
         "updated_at": str_date(application["updated_at"]),
-        "case_type": case_type,
+        "case_type": application["case_type"]["reference"]["value"],
         "status": application["status"]["value"],
     }
 
