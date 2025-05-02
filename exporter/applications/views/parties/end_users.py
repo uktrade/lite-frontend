@@ -36,7 +36,6 @@ from exporter.applications.services import (
 from exporter.applications.views.parties.base import CopyParties
 from exporter.applications.helpers.parties import party_requires_ec3_document
 from exporter.core.constants import (
-    OPEN,
     SetPartyFormSteps,
     PartyDocumentType,
     DOCUMENT_TYPE_PARAM_ENGLISH_TRANSLATION,
@@ -233,12 +232,6 @@ class CopyEndUserView(SetEndUserView):
     def get_form_initial(self, step):
         initial = copy_party(request=self.request, pk=str(self.kwargs["pk"]), party_pk=str(self.kwargs["obj_pk"]))
         return initial
-
-    def get_success_url(self, party_id):
-        if self.application.sub_type == OPEN:
-            return reverse("applications:end_user", kwargs={"pk": self.kwargs["pk"]})
-
-        return super().get_success_url(party_id)
 
 
 class PartyContextMixin:

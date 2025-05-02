@@ -6,8 +6,6 @@ from django.views.generic import TemplateView
 
 from exporter.applications.forms.parties import party_create_new_or_copy_existing_form
 from exporter.applications.services import get_application, get_existing_parties, copy_party
-from exporter.core.constants import F680
-from exporter.core.services import get_pv_gradings
 from lite_content.lite_exporter_frontend.applications import AddPartyForm, CopyExistingPartyPage
 from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import form_page, error_page
@@ -71,8 +69,6 @@ class SetParty(MultiFormView):
     def init(self, request, **kwargs):
         self.object_pk = kwargs["pk"]
         self.application = get_application(request, self.object_pk)
-        has_clearance = self.application["case_type"]["sub_type"]["key"] == F680
-        clearance_options = get_pv_gradings(request, convert_to_options=True) if has_clearance else None
 
         if self.party_type == "end_user":
             self.forms = self.form(
@@ -80,7 +76,6 @@ class SetParty(MultiFormView):
                 self.application,
                 self.strings,
                 self.back_url,
-                clearance_options=clearance_options,
                 is_end_user=True,
             )
         else:
@@ -89,7 +84,6 @@ class SetParty(MultiFormView):
                 self.application,
                 self.strings,
                 self.back_url,
-                clearance_options=clearance_options,
             )
 
         self.data = {"type": self.party_type}
@@ -173,15 +167,12 @@ class CopyAndSetParty(SetParty):
         self.data = copy_party(request=request, pk=self.object_pk, party_pk=kwargs["obj_pk"])
         self.data["type"] = self.party_type
 
-        has_clearance = self.application["case_type"]["sub_type"]["key"] == F680
-        clearance_options = get_pv_gradings(request, convert_to_options=True) if has_clearance else None
         if self.party_type == "end_user":
             self.forms = self.form(
                 request,
                 self.application,
                 self.strings,
                 self.back_url,
-                clearance_options=clearance_options,
                 is_end_user=True,
             )
         else:
@@ -190,5 +181,4 @@ class CopyAndSetParty(SetParty):
                 self.application,
                 self.strings,
                 self.back_url,
-                clearance_options=clearance_options,
             )
