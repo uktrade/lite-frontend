@@ -166,13 +166,6 @@ class CaseTabsMixin:
 
 
 class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
-    case_id = None
-    case = None
-    queue_id = None
-    queue = None
-    permissions = None
-    additional_context = {}
-
     def get_advice_additional_context(self):
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
         current_advice_level = ["user"]
