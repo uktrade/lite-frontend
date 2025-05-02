@@ -124,6 +124,7 @@ class MakeRecommendationView(LoginRequiredMixin, F680CaseworkerMixin, BaseSessio
 
         if step == RecommendationSteps.RELEASE_REQUEST_REFUSAL_REASONS:
             kwargs["refusal_reasons"] = self.refusal_reasons
+            kwargs["denial_reasons_choices"] = self.denial_reasons_choices
 
         return kwargs
 
