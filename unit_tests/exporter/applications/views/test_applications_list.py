@@ -36,25 +36,38 @@ headers = [
 ]
 
 
-def standard_application_subtype_dict():
-    return {"key": "standard", "value": "Standard Licence"}
+def standard_application_case_type_dict():
+    return {
+        "reference": {"key": "siel", "value": "Standard Individual Export Licence"},
+        "sub_type": {"key": "standard", "value": "Standard Licence"},
+    }
 
 
-def f680_application_subtype_dict():
-    return {"key": "f680_clearance", "value": "MOD F680 Clearance"}
+def f680_application_case_type_dict():
+    return {
+        "reference": {"key": "f680", "value": "MOD F680 Clearance"},
+        "sub_type": {"key": "f680_clearance", "value": "MOD F680 Clearance"},
+    }
 
 
-def base_application_data(index, subtype):
+def export_licence_case_type_dict():
+    return {
+        "reference": {"key": "export_licence", "value": "Export Licence"},
+        "sub_type": None,
+    }
+
+
+def base_application_data(index, case_type):
     return {
         "id": str(uuid4()),
         "name": f"Application{index}",
         "export_type": {"key": "permanent", "value": "Permanent"},
         "exporter_user_notification_count": 0,
-        "case_type": {"sub_type": subtype},
+        "case_type": case_type,
     }
 
 
-def draft_applications(subtype):
+def draft_applications(case_type):
     return [
         {
             "status": {"id": "00000000-0000-0000-0000-000000000000", "key": "draft", "value": "Draft"},
@@ -62,13 +75,13 @@ def draft_applications(subtype):
             "submitted_by": "",
             "submitted_at": None,
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, subtype),
+            **base_application_data(index, case_type),
         }
         for index in range(5)
     ]
 
 
-def submitted_applications(subtype):
+def submitted_applications(case_type):
     status_list = [
         {"id": "00000000-0000-0000-0000-000000000004", "key": "submitted", "value": "Submitted"},
         {"id": "00000000-0000-0000-0000-000000000003", "key": "initial_checks", "value": "Initial checks"},
@@ -82,13 +95,13 @@ def submitted_applications(subtype):
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, subtype),
+            **base_application_data(index, case_type),
         }
         for index in range(len(status_list))
     ]
 
 
-def finalised_applications():
+def finalised_applications(case_type):
     return [
         {
             "status": {"id": "00000000-0000-0000-0000-000000000009", "key": "finalised", "value": "Finalised"},
@@ -96,13 +109,13 @@ def finalised_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, standard_application_subtype_dict()),
+            **base_application_data(index, case_type),
         }
         for index in range(8)
     ]
 
 
-def archived_applications():
+def archived_applications(case_type):
     return [
         {
             "status": {
@@ -114,80 +127,31 @@ def archived_applications():
             "submitted_by": "Exporter user",
             "submitted_at": datetime.now().isoformat(),
             "updated_at": datetime.now().isoformat(),
-            **base_application_data(index, standard_application_subtype_dict()),
+            **base_application_data(index, case_type),
         }
         for index in range(4)
     ]
 
 
 @pytest.fixture
-def mock_get_draft_applications(requests_mock):
-    drafts = draft_applications(standard_application_subtype_dict())
+def mock_get_applications_factory(requests_mock):
+    def _mock_get_applications_factory(status_type_dict, case_type_dict_func, selected_filter=None):
+        drafts = status_type_dict(case_type_dict_func())
 
-    return requests_mock.get(
-        f"/applications/?selected_filter=draft_applications",
-        json={
-            "count": len(drafts),
-            "total_pages": 1,
-            "results": drafts,
-        },
-    )
+        url = "/applications/"
+        if selected_filter:
+            url = f"{url}?selected_filter={selected_filter}"
 
+        return requests_mock.get(
+            url,
+            json={
+                "count": len(drafts),
+                "total_pages": 1,
+                "results": drafts,
+            },
+        )
 
-@pytest.fixture
-def mock_get_draft_f680_applications(requests_mock):
-    drafts = draft_applications(f680_application_subtype_dict())
-
-    return requests_mock.get(
-        f"/applications/?selected_filter=draft_applications",
-        json={
-            "count": len(drafts),
-            "total_pages": 1,
-            "results": drafts,
-        },
-    )
-
-
-@pytest.fixture
-def mock_get_submitted_applications(requests_mock):
-    submitted = submitted_applications(standard_application_subtype_dict())
-
-    return requests_mock.get(
-        f"/applications/?selected_filter=submitted_applications",
-        json={
-            "count": len(submitted),
-            "total_pages": 1,
-            "results": submitted,
-        },
-    )
-
-
-@pytest.fixture
-def mock_get_submitted_f680_applications(requests_mock):
-    submitted = submitted_applications(f680_application_subtype_dict())
-
-    return requests_mock.get(
-        f"/applications/?selected_filter=submitted_applications",
-        json={
-            "count": len(submitted),
-            "total_pages": 1,
-            "results": submitted,
-        },
-    )
-
-
-@pytest.fixture
-def mock_get_finalised_applications(requests_mock):
-    finalised = finalised_applications()
-
-    return requests_mock.get(
-        f"/applications/?selected_filter=finalised_applications",
-        json={
-            "count": len(finalised),
-            "total_pages": 1,
-            "results": finalised,
-        },
-    )
+    return _mock_get_applications_factory
 
 
 @pytest.fixture
@@ -211,6 +175,12 @@ def get_applications(response):
 
 def get_formatted_data(application):
     """Returns formatted data of required fields for each application"""
+    sub_type = application["case_type"]["sub_type"]
+    if sub_type:
+        case_type = sub_type["value"]
+    else:
+        case_type = ""
+
     return {
         "name": application["name"],
         "exporter_user_notification_count": "",
@@ -220,7 +190,7 @@ def get_formatted_data(application):
             str_date(application["submitted_at"]) if application["submitted_at"] else str(application["submitted_at"])
         ),
         "updated_at": str_date(application["updated_at"]),
-        "case_type": application["case_type"]["sub_type"]["value"],
+        "case_type": case_type,
         "status": application["status"]["value"],
     }
 
@@ -241,19 +211,39 @@ def verify_application_data(response, headers, expected):
         application = get_formatted_data(item)
         for col_index, col in enumerate(columns):
             key = headers[col_index]["key"]
-            assert application[key] in col.text
+            assert application[key] == col.text.strip()
 
 
-def test_get_applications(authorized_client, mock_get_submitted_applications):
+@pytest.mark.parametrize(
+    "case_type_dict",
+    (
+        standard_application_case_type_dict,
+        f680_application_case_type_dict,
+        export_licence_case_type_dict,
+    ),
+)
+def test_get_applications(authorized_client, mock_get_applications_factory, case_type_dict):
+    mock_get_applications_factory(submitted_applications, case_type_dict)
+
     url = reverse("applications:applications")
     response = authorized_client.get(url)
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    assert len(get_applications(response)) == len(submitted_applications(standard_application_subtype_dict()))
+    assert len(get_applications(response)) == len(submitted_applications(standard_application_case_type_dict()))
 
 
-def test_get_draft_applications(authorized_client, mock_get_draft_applications):
+@pytest.mark.parametrize(
+    "case_type_dict",
+    (
+        standard_application_case_type_dict,
+        f680_application_case_type_dict,
+        export_licence_case_type_dict,
+    ),
+)
+def test_get_draft_applications(authorized_client, mock_get_applications_factory, case_type_dict):
+    mock_get_applications_factory(draft_applications, case_type_dict, "draft_applications")
+
     query_params = {"selected_filter": "draft_applications"}
     url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
 
@@ -261,21 +251,20 @@ def test_get_draft_applications(authorized_client, mock_get_draft_applications):
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, draft_headers, draft_applications(standard_application_subtype_dict()))
+    verify_application_data(response, draft_headers, draft_applications(case_type_dict()))
 
 
-def test_get_draft_f680_applications(authorized_client, mock_get_draft_f680_applications):
-    query_params = {"selected_filter": "draft_applications"}
-    url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
+@pytest.mark.parametrize(
+    "case_type_dict",
+    (
+        standard_application_case_type_dict,
+        f680_application_case_type_dict,
+        export_licence_case_type_dict,
+    ),
+)
+def test_get_submitted_applications(authorized_client, mock_get_applications_factory, case_type_dict):
+    mock_get_applications_factory(submitted_applications, case_type_dict, "submitted_applications")
 
-    response = authorized_client.get(url)
-    assert response.status_code == 200
-
-    assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, draft_headers, draft_applications(f680_application_subtype_dict()))
-
-
-def test_get_submitted_applications(authorized_client, mock_get_submitted_applications):
     query_params = {"selected_filter": "submitted_applications"}
     url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
 
@@ -283,21 +272,20 @@ def test_get_submitted_applications(authorized_client, mock_get_submitted_applic
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, submitted_applications(standard_application_subtype_dict()))
+    verify_application_data(response, headers, submitted_applications(case_type_dict()))
 
 
-def test_get_submitted_f680_applications(authorized_client, mock_get_submitted_f680_applications):
-    query_params = {"selected_filter": "submitted_applications"}
-    url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
+@pytest.mark.parametrize(
+    "case_type_dict",
+    (
+        standard_application_case_type_dict,
+        f680_application_case_type_dict,
+        export_licence_case_type_dict,
+    ),
+)
+def test_get_finalised_applications(authorized_client, mock_get_applications_factory, case_type_dict):
+    mock_get_applications_factory(finalised_applications, case_type_dict, "finalised_applications")
 
-    response = authorized_client.get(url)
-    assert response.status_code == 200
-
-    assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, submitted_applications(f680_application_subtype_dict()))
-
-
-def test_get_finalised_applications(authorized_client, mock_get_finalised_applications):
     query_params = {"selected_filter": "finalised_applications"}
     url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
 
@@ -305,10 +293,20 @@ def test_get_finalised_applications(authorized_client, mock_get_finalised_applic
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, finalised_applications())
+    verify_application_data(response, headers, finalised_applications(case_type_dict()))
 
 
-def test_get_archived_applications(authorized_client, mock_get_archived_applications):
+@pytest.mark.parametrize(
+    "case_type_dict",
+    (
+        standard_application_case_type_dict,
+        f680_application_case_type_dict,
+        export_licence_case_type_dict,
+    ),
+)
+def test_get_archived_applications(authorized_client, mock_get_applications_factory, case_type_dict):
+    mock_get_applications_factory(archived_applications, case_type_dict, "archived_applications")
+
     query_params = {"selected_filter": "archived_applications"}
     url = reverse("applications:applications") + f"?{urlencode(query_params, doseq=True)}"
 
@@ -316,4 +314,4 @@ def test_get_archived_applications(authorized_client, mock_get_archived_applicat
     assert response.status_code == 200
 
     assertTemplateUsed(response, "applications/applications.html")
-    verify_application_data(response, headers, archived_applications())
+    verify_application_data(response, headers, archived_applications(case_type_dict()))
