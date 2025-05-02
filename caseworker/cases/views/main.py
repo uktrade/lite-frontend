@@ -10,7 +10,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
 from django.shortcuts import (
     redirect,
-    render,
 )
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -166,6 +165,8 @@ class CaseTabsMixin:
 
 
 class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
+    template_name = "case/case.html"
+
     def get_advice_additional_context(self):
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
         current_advice_level = ["user"]
@@ -281,7 +282,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
             open_ecju_queries_with_forms.append((open_query, CloseQueryForm(prefix=str(open_query["id"]))))
         return open_ecju_queries_with_forms
 
-    def get_context_data(self):
+    def get_context_data(self, *args, **kwargs):
         open_ecju_queries, closed_ecju_queries = get_ecju_queries(self.request, self.case_id)
         open_ecju_queries_with_forms = self.get_open_ecju_queries_with_forms(open_ecju_queries)
         user_assigned_queues = get_user_case_queues(self.request, self.case_id)[0]
@@ -292,7 +293,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
             and not self.is_tau_user()
         )
 
-        context = super().get_context_data()
+        context = super().get_context_data(*args, **kwargs)
         default_tab = "quick-summary"
         current_tab = default_tab if self.kwargs["tab"] == "default" else self.kwargs["tab"]
         show_actions_column = False
@@ -368,7 +369,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
         self.slices = self.get_slices()
         self.additional_context = self.get_advice_additional_context()
 
-        return render(request, "case/case.html", self.get_context_data())
+        return super().get(request, *args, **kwargs)
 
 
 class CaseNotes(TemplateView):
