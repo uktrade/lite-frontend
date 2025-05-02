@@ -171,8 +171,6 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
     queue_id = None
     queue = None
     permissions = None
-    tabs = None
-    slices = None
     additional_context = {}
 
     def get_advice_additional_context(self):
@@ -291,10 +289,6 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
         return open_ecju_queries_with_forms
 
     def get_context(self):
-        if not self.tabs:
-            self.tabs = []
-        if not self.slices:
-            self.slices = []
         open_ecju_queries, closed_ecju_queries = get_ecju_queries(self.request, self.case_id)
         open_ecju_queries_with_forms = self.get_open_ecju_queries_with_forms(open_ecju_queries)
         user_assigned_queues = get_user_case_queues(self.request, self.case_id)[0]
