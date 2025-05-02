@@ -281,7 +281,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
             open_ecju_queries_with_forms.append((open_query, CloseQueryForm(prefix=str(open_query["id"]))))
         return open_ecju_queries_with_forms
 
-    def get_context(self):
+    def get_context_data(self):
         open_ecju_queries, closed_ecju_queries = get_ecju_queries(self.request, self.case_id)
         open_ecju_queries_with_forms = self.get_open_ecju_queries_with_forms(open_ecju_queries)
         user_assigned_queues = get_user_case_queues(self.request, self.case_id)[0]
@@ -368,7 +368,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
         self.slices = self.get_slices()
         self.additional_context = self.get_advice_additional_context()
 
-        return render(request, "case/case.html", self.get_context())
+        return render(request, "case/case.html", self.get_context_data())
 
 
 class CaseNotes(TemplateView):
