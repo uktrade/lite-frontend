@@ -35,7 +35,6 @@ from lite_content.lite_internal_frontend.cases import (
     Manage,
 )
 
-from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
@@ -66,7 +65,6 @@ from caseworker.cases.services import (
     get_licence_details,
     update_licence_details,
 )
-from caseworker.compliance.services import get_compliance_licences
 from caseworker.cases.services import get_case_basic_details
 from caseworker.core.objects import Tab
 from caseworker.core.services import get_status_properties, get_permissible_statuses
@@ -103,15 +101,10 @@ class CaseTabsMixin:
             Tabs.LICENCES,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
+            self.get_notes_and_timelines_tab(),
+            self.get_assessment_tab(),
+            self.get_advice_tab(),
         ]
-
-        return tabs
-
-    def get_standard_application_tabs(self):
-        tabs = self.get_tabs()
-        tabs.append(self.get_notes_and_timelines_tab())
-        tabs.append(self.get_assessment_tab())
-        tabs.append(self.get_advice_tab())
 
         return tabs
 
@@ -212,30 +205,7 @@ class CaseDetail(CaseTabsMixin, CaseView):
             "blocking_flags": blocking_flags,
         }
 
-    def get_open_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
-        self.slices = [
-            Slices.GOODS,
-            Slices.DESTINATIONS,
-            Slices.OPEN_APP_PARTIES,
-            Slices.SANCTION_MATCHES,
-            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
-            Slices.LOCATIONS,
-            *conditional(
-                self.case.data["goodstype_category"]["key"] != "cryptographic",
-                [Slices.END_USE_DETAILS, Slices.ROUTE_OF_GOODS],
-                [],
-            ),
-            Slices.SUPPORTING_DOCUMENTS,
-            conditional(self.case.data["export_type"]["key"] == "temporary", Slices.TEMPORARY_EXPORT_DETAILS),
-        ]
-
-        self.additional_context = self.get_advice_additional_context()
-
     def get_standard_application(self):
-        self.tabs = self.get_standard_application_tabs()
         self.slices = [
             Slices.GOODS,
             Slices.DESTINATIONS,
@@ -251,85 +221,6 @@ class CaseDetail(CaseTabsMixin, CaseView):
             conditional(self.case.data["appeal"], Slices.APPEAL_DETAILS),
         ]
         self.additional_context = self.get_advice_additional_context()
-
-    def get_hmrc_application(self):
-        self.slices = [
-            conditional(self.case.data["reasoning"], Slices.HMRC_NOTE),
-            Slices.GOODS,
-            Slices.DESTINATIONS,
-            Slices.LOCATIONS,
-            Slices.SUPPORTING_DOCUMENTS,
-        ]
-        self.additional_context = self.get_advice_additional_context()
-
-    def get_exhibition_clearance_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
-        self.slices = [
-            Slices.EXHIBITION_DETAILS,
-            Slices.GOODS,
-            Slices.LOCATIONS,
-            Slices.SUPPORTING_DOCUMENTS,
-        ]
-        self.additional_context = self.get_advice_additional_context()
-
-    def get_gifting_clearance_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
-        self.slices = [Slices.GOODS, Slices.DESTINATIONS, Slices.LOCATIONS, Slices.SUPPORTING_DOCUMENTS]
-        self.additional_context = self.get_advice_additional_context()
-
-    def get_f680_clearance_application(self):
-        self.tabs = self.get_tabs()
-        self.additional_context = self.get_advice_additional_context()
-
-    def get_end_user_advisory_query(self):
-        self.slices = [Slices.END_USER_DETAILS]
-
-    def get_open_registration(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.slices = [Slices.OPEN_GENERAL_LICENCE]
-
-    def get_compliance_site(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.COMPLIANCE_LICENCES)
-        self.slices = [Slices.COMPLIANCE_VISITS, Slices.OPEN_LICENCE_RETURNS]
-        filters = FiltersBar(
-            [
-                TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),
-            ]
-        )
-        self.additional_context = {
-            "data": get_compliance_licences(
-                self.request,
-                self.case.id,
-                self.request.GET.get("reference", ""),
-                self.request.GET.get("page", 1),
-            ),
-            "licences_filters": filters,
-        }
-
-    def get_compliance_visit(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.COMPLIANCE_LICENCES)
-        self.slices = [Slices.COMPLIANCE_VISIT_DETAILS]
-        filters = FiltersBar(
-            [
-                TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),
-            ]
-        )
-        self.additional_context = {
-            "data": get_compliance_licences(
-                self.request,
-                self.case.data["site_case_id"],
-                self.request.GET.get("reference", ""),
-                self.request.GET.get("page", 1),
-            ),
-            "licences_filters": filters,
-        }
 
 
 class CaseNotes(TemplateView):

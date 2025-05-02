@@ -254,6 +254,7 @@ class CaseView(CaseworkerMixin, TemplateView):
 
         self._transform_data()
 
+        self.tabs = self.get_tabs()
         self.get_standard_application()
 
         return render(request, "case/case.html", self.get_context())
