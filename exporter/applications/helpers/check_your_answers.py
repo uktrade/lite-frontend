@@ -122,7 +122,7 @@ def _convert_standard_application(application, editable=False, is_summary=False)
     if old_locations:
         converted[strings.ROUTE_OF_GOODS] = _get_route_of_goods(application)
         converted[strings.GOODS_LOCATIONS] = _convert_goods_locations(application["goods_locations"])
-        if _is_application_export_type_temporary(application):
+        if is_application_export_type_temporary(application):
             converted[strings.TEMPORARY_EXPORT_DETAILS] = _get_temporary_export_details(application)
     else:
         product_location = {"Product location and journey": _get_product_location_and_journey(application)}
@@ -167,7 +167,7 @@ def _convert_open_application(application, editable=False):
                     application
                 ),
             }
-            if _is_application_export_type_temporary(application)
+            if is_application_export_type_temporary(application)
             else {}
         ),
         **(
@@ -483,7 +483,7 @@ def _get_end_use_details(application):
 
 
 def _get_temporary_export_details(application):
-    if _is_application_export_type_temporary(application):
+    if is_application_export_type_temporary(application):
         fields = [
             ("temp_export_details", applications.TemporaryExportDetails.CheckYourAnswers.TEMPORARY_EXPORT_DETAILS),
             (
@@ -708,7 +708,7 @@ def get_total_goods_value(goods: list):
     return total_value
 
 
-def _is_application_export_type_temporary(application):
+def is_application_export_type_temporary(application):
     return application.get("export_type").get("key") == TEMPORARY
 
 

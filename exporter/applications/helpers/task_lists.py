@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from exporter.applications.constants import OielLicenceTypes
-from exporter.applications.helpers.check_your_answers import _is_application_export_type_temporary
+from exporter.applications.helpers.check_your_answers import is_application_export_type_temporary
 from exporter.applications.helpers.parties import party_requires_ec3_document
 from exporter.applications.helpers.task_list_sections import (
     get_reference_number_description,
@@ -93,7 +93,7 @@ def get_application_task_list(request, application, errors=None):
     if application_type == STANDARD:
         context["reference_number_description"] = get_reference_number_description(application)
         context["route_of_goods"] = get_route_of_goods(application)
-        if _is_application_export_type_temporary(application):
+        if is_application_export_type_temporary(application):
             context["temporary_export_details"] = get_temporary_export_details(application)
     elif application_type == OPEN:
         context["countries"] = [
@@ -101,7 +101,7 @@ def get_application_task_list(request, application, errors=None):
             for country_entry in get_application_countries_and_contract_types(request, application["id"])["countries"]
         ]
         context["goodstypes"] = application["goods_types"]
-        if _is_application_export_type_temporary(application):
+        if is_application_export_type_temporary(application):
             context["temporary_export_details"] = get_temporary_export_details(application)
         goods_types = application.get("goods_types")
         if goods_types:
