@@ -356,7 +356,9 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
             conditional(self.case.data["appeal"], Slices.APPEAL_DETAILS),
         ]
 
-    def get(self, request, *args, **kwargs):
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
         self.case_id = str(kwargs["pk"])
         self.case = get_case(request, self.case_id)
         self.queue_id = kwargs["queue_pk"]
@@ -368,8 +370,6 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
         self.tabs = self.get_tabs()
         self.slices = self.get_slices()
         self.additional_context = self.get_advice_additional_context()
-
-        return super().get(request, *args, **kwargs)
 
 
 class CaseNotes(TemplateView):
