@@ -1,10 +1,7 @@
 from django.shortcuts import render
 
 from exporter.applications.constants import OielLicenceTypes
-from exporter.applications.helpers.check_your_answers import (
-    _is_application_export_type_temporary,
-    get_application_type_string,
-)
+from exporter.applications.helpers.check_your_answers import _is_application_export_type_temporary
 from exporter.applications.helpers.parties import party_requires_ec3_document
 from exporter.applications.helpers.task_list_sections import (
     get_reference_number_description,
@@ -67,7 +64,7 @@ def get_application_task_list(request, application, errors=None):
         "application_type": application_type,
         "is_editing": is_editing,
         "edit_type": edit_type,
-        "licence_type": get_application_type_string(application),
+        "licence_type": application["case_type"]["reference"]["value"],
         "errors": errors,
     }
 

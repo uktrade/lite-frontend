@@ -15,7 +15,6 @@ from exporter.core.constants import (
     TEMPORARY,
     PERMANENT,
     CaseTypes,
-    APPLICATION_TYPE_STRINGS,
     PartyDocumentType,
 )
 from core.constants import GoodsTypeCategory, SecurityClassifiedApprovalsType
@@ -757,13 +756,3 @@ def is_open_application_with_end_user(application):
 
 def _convert_goods_categories(goods_categories):
     return (", ".join([x["value"] for x in goods_categories]),)
-
-
-def get_application_type_string(application):
-    application_type = application.case_type["sub_type"]["key"]
-    if application.case_type["reference"]["key"] == CaseTypes.SITL:
-        return applications.ApplicationPage.Summary.Licence.TRANSHIPMENT
-    elif application.case_type["reference"]["key"] == CaseTypes.SICL:
-        return applications.ApplicationPage.Summary.Licence.TRADE_CONTROL
-    else:
-        return APPLICATION_TYPE_STRINGS[application_type]
