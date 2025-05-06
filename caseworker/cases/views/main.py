@@ -1,15 +1,18 @@
-from core.constants import LicenceStatusEnum
 import rules
 
+from dateutil.parser import parse
+from decimal import Decimal
 from logging import getLogger
-
 from http import HTTPStatus
 
 from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404
-from django.shortcuts import redirect
+from django.shortcuts import (
+    redirect,
+)
 from django.urls import reverse, reverse_lazy
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.views.generic import (
     FormView,
@@ -21,6 +24,11 @@ from requests.exceptions import HTTPError
 
 from core.auth.views import LoginRequiredMixin
 from core.builtins.custom_tags import filter_advice_by_level
+from core.constants import (
+    CaseStatusEnum,
+    LicenceStatusEnum,
+    SecurityClassifiedApprovalsType,
+)
 from core.decorators import expect_status
 from core.exceptions import APIError
 from core.helpers import (
@@ -30,12 +38,12 @@ from core.helpers import (
 from core.services import stream_document
 from lite_content.lite_internal_frontend import cases
 from lite_content.lite_internal_frontend.cases import (
+    ApplicationPage,
     CasePage,
     DoneWithCaseOnQueueForm,
     Manage,
 )
 
-from lite_forms.components import FiltersBar, TextInput
 from lite_forms.generators import error_page, form_page
 from lite_forms.helpers import conditional
 from lite_forms.views import SingleFormView
@@ -44,13 +52,24 @@ from caseworker.advice.services import get_advice_tab_context
 from caseworker.cases.forms.attach_documents import attach_documents_form
 from caseworker.cases.forms.change_status import ChangeStatusForm
 from caseworker.cases.forms.change_sub_status import ChangeSubStatusForm
-from caseworker.cases.forms.change_licence_status import ChangeLicenceStatusConfirmationForm, ChangeLicenceStatusForm
+from caseworker.cases.forms.change_licence_status import (
+    ChangeLicenceStatusConfirmationForm,
+    ChangeLicenceStatusForm,
+)
 from caseworker.cases.forms.done_with_case import done_with_case_form
 from caseworker.cases.forms.move_case import move_case_form
+from caseworker.cases.forms.queries import CloseQueryForm
 from caseworker.cases.forms.reissue_ogl_form import reissue_ogl_confirmation_form
 from caseworker.cases.forms.rerun_routing_rules import rerun_routing_rules_confirmation_form
 import caseworker.cases.helpers.advice as advice_helpers
-from caseworker.cases.helpers.case import CaseView, Tabs, Slices
+from caseworker.cases.helpers.case import (
+    CaseworkerMixin,
+    LU_POST_CIRC_FINALISE_QUEUE_ALIAS,
+    Slices,
+    Tabs,
+)
+from caseworker.cases.helpers.ecju_queries import get_ecju_queries
+from caseworker.cases.helpers.licence import get_latest_licence_status
 from caseworker.cases.services import (
     get_case,
     post_case_notes,
@@ -65,11 +84,20 @@ from caseworker.cases.services import (
     put_case_sub_status,
     get_licence_details,
     update_licence_details,
+    get_case_documents,
+    get_case_additional_contacts,
+    get_activity_filters,
+    get_case_basic_details,
+    get_user_case_queues,
 )
-from caseworker.compliance.services import get_compliance_licences
-from caseworker.cases.services import get_case_basic_details
+from caseworker.core.constants import GENERATED_DOCUMENT
+from caseworker.core.helpers import generate_activity_filters
 from caseworker.core.objects import Tab
-from caseworker.core.services import get_status_properties, get_permissible_statuses
+from caseworker.core.services import (
+    get_permissible_statuses,
+    get_status_properties,
+    get_user_permissions,
+)
 from caseworker.core.constants import Permission
 from caseworker.queues.services import get_queue
 from caseworker.tau.utils import get_tau_tab_url_name
@@ -103,15 +131,10 @@ class CaseTabsMixin:
             Tabs.LICENCES,
             Tabs.ECJU_QUERIES,
             Tabs.DOCUMENTS,
+            self.get_notes_and_timelines_tab(),
+            self.get_assessment_tab(),
+            self.get_advice_tab(),
         ]
-
-        return tabs
-
-    def get_standard_application_tabs(self):
-        tabs = self.get_tabs()
-        tabs.append(self.get_notes_and_timelines_tab())
-        tabs.append(self.get_assessment_tab())
-        tabs.append(self.get_advice_tab())
 
         return tabs
 
@@ -141,7 +164,9 @@ class CaseTabsMixin:
         )
 
 
-class CaseDetail(CaseTabsMixin, CaseView):
+class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
+    template_name = "case/case.html"
+
     def get_advice_additional_context(self):
         status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
         current_advice_level = ["user"]
@@ -212,31 +237,111 @@ class CaseDetail(CaseTabsMixin, CaseView):
             "blocking_flags": blocking_flags,
         }
 
-    def get_open_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
-        self.slices = [
-            Slices.GOODS,
-            Slices.DESTINATIONS,
-            Slices.OPEN_APP_PARTIES,
-            Slices.SANCTION_MATCHES,
-            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
-            Slices.LOCATIONS,
-            *conditional(
-                self.case.data["goodstype_category"]["key"] != "cryptographic",
-                [Slices.END_USE_DETAILS, Slices.ROUTE_OF_GOODS],
-                [],
-            ),
-            Slices.SUPPORTING_DOCUMENTS,
-            conditional(self.case.data["export_type"]["key"] == "temporary", Slices.TEMPORARY_EXPORT_DETAILS),
-        ]
+    def is_only_on_post_circ_queue(self):
+        queue_alias = tuple(queue.get("alias") for queue in self.case.queue_details)
+        return self.is_lu_user() and queue_alias == (LU_POST_CIRC_FINALISE_QUEUE_ALIAS,)
 
-        self.additional_context = self.get_advice_additional_context()
+    def get_goods_summary(self):
+        goods_summary = {
+            "names": list(),
+            "cles": set(),
+            "regimes": set(),
+            "report_summaries": set(),
+            "total_value": 0,
+        }
+        for good in self.case.goods:
+            goods_summary["cles"].update(list(cle["rating"] for cle in good["control_list_entries"]))
+            goods_summary["regimes"].update(list(regime["name"] for regime in good["regime_entries"]))
+            goods_summary["names"].append(good["good"]["name"])
+            if "report_summary_subject" in good and good["report_summary_subject"]:
+                report_summary = good["report_summary_subject"]["name"]
+                if "report_summary_prefix" in good and good["report_summary_prefix"]:
+                    report_summary = f"{good['report_summary_prefix']['name']} {report_summary}"
+                goods_summary["report_summaries"].add(report_summary)
+            # support legacy report_summary field until it is removed
+            elif good.get("report_summary"):
+                goods_summary["report_summaries"].add(good["report_summary"])
 
-    def get_standard_application(self):
-        self.tabs = self.get_standard_application_tabs()
-        self.slices = [
+            goods_summary["total_value"] += Decimal(good["value"])
+        return goods_summary
+
+    def get_destination_countries(self):
+        destination_countries = set()
+        all_parties = self.case.data.get("ultimate_end_users", []) + self.case.data.get("third_parties", [])
+        if self.case.data.get("end_user"):
+            all_parties.append(self.case.data["end_user"])
+        if self.case.data.get("consignee"):
+            all_parties.append(self.case.data["consignee"])
+        for party in all_parties:
+            destination_countries.add(party["country"]["name"])
+        return destination_countries
+
+    def get_open_ecju_queries_with_forms(self, open_ecju_queries):
+        open_ecju_queries_with_forms = []
+        for open_query in open_ecju_queries:
+            open_ecju_queries_with_forms.append((open_query, CloseQueryForm(prefix=str(open_query["id"]))))
+        return open_ecju_queries_with_forms
+
+    def get_context_data(self, *args, **kwargs):
+        open_ecju_queries, closed_ecju_queries = get_ecju_queries(self.request, self.case_id)
+        open_ecju_queries_with_forms = self.get_open_ecju_queries_with_forms(open_ecju_queries)
+        user_assigned_queues = get_user_case_queues(self.request, self.case_id)[0]
+        status_props, _ = get_status_properties(self.request, self.case.data["status"]["key"])
+        can_set_done = (
+            status_props["is_terminal"]
+            and self.case.data["status"]["key"] != CaseStatusEnum.APPLICANT_EDITING
+            and not self.is_tau_user()
+        )
+
+        context = super().get_context_data(*args, **kwargs)
+        default_tab = "quick-summary"
+        current_tab = default_tab if self.kwargs["tab"] == "default" else self.kwargs["tab"]
+        show_actions_column = False
+        for licence in self.case.licences:
+            if rules.test_rule("can_licence_status_be_changed", self.request, licence):
+                show_actions_column = True
+                break
+
+        return {
+            **context,
+            "tabs": self.tabs if self.tabs else self.get_tabs(),
+            "current_tab": current_tab,
+            "slices": [Slices.SUMMARY, *self.slices],
+            "case": self.case,
+            "queue": self.queue,
+            "is_system_queue": self.queue["is_system_queue"],
+            "goods_summary": self.get_goods_summary(),
+            "destination_countries": self.get_destination_countries(),
+            "user_assigned_queues": user_assigned_queues,
+            "case_documents": get_case_documents(self.request, self.case_id)[0]["documents"],
+            "open_queries": open_ecju_queries_with_forms,
+            "closed_queries": closed_ecju_queries,
+            "additional_contacts": get_case_additional_contacts(self.request, self.case_id),
+            "permissions": self.permissions,
+            "is_tau_user": self.is_tau_user(),
+            "hide_im_done": self.is_tau_user() or self.is_only_on_post_circ_queue(),
+            "can_set_done": can_set_done
+            and (self.queue["is_system_queue"] and user_assigned_queues)
+            or not self.queue["is_system_queue"],
+            "generated_document_key": GENERATED_DOCUMENT,
+            "permissible_statuses": get_permissible_statuses(self.request, self.case),
+            "filters": generate_activity_filters(get_activity_filters(self.request, self.case_id), ApplicationPage),
+            "is_terminal": status_props["is_terminal"],
+            "security_classified_approvals_types": SecurityClassifiedApprovalsType,
+            "user": self.caseworker,
+            "show_actions_column": show_actions_column,
+            "licence_status": get_latest_licence_status(self.case),
+            **self.additional_context,
+        }
+
+    def _transform_data(self):
+        self.case.total_days_elapsed = (timezone.now() - parse(self.case.submitted_at)).days
+        if self.case.queue_details:
+            for queue_detail in self.case.queue_details:
+                queue_detail["days_on_queue_elapsed"] = (timezone.now() - parse(queue_detail["joined_queue_at"])).days
+
+    def get_slices(self):
+        return [
             Slices.GOODS,
             Slices.DESTINATIONS,
             conditional(self.case.data["denial_matches"], Slices.DENIAL_MATCHES),
@@ -250,86 +355,21 @@ class CaseDetail(CaseTabsMixin, CaseView):
             Slices.FREEDOM_OF_INFORMATION,
             conditional(self.case.data["appeal"], Slices.APPEAL_DETAILS),
         ]
+
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+
+        self.case_id = str(kwargs["pk"])
+        self.case = get_case(request, self.case_id)
+        self.queue_id = kwargs["queue_pk"]
+        self.queue = get_queue(request, self.queue_id)
+        self.permissions = get_user_permissions(self.request)
+
+        self._transform_data()
+
+        self.tabs = self.get_tabs()
+        self.slices = self.get_slices()
         self.additional_context = self.get_advice_additional_context()
-
-    def get_hmrc_application(self):
-        self.slices = [
-            conditional(self.case.data["reasoning"], Slices.HMRC_NOTE),
-            Slices.GOODS,
-            Slices.DESTINATIONS,
-            Slices.LOCATIONS,
-            Slices.SUPPORTING_DOCUMENTS,
-        ]
-        self.additional_context = self.get_advice_additional_context()
-
-    def get_exhibition_clearance_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
-        self.slices = [
-            Slices.EXHIBITION_DETAILS,
-            Slices.GOODS,
-            Slices.LOCATIONS,
-            Slices.SUPPORTING_DOCUMENTS,
-        ]
-        self.additional_context = self.get_advice_additional_context()
-
-    def get_gifting_clearance_application(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.tabs.append(Tabs.ADVICE)
-        self.slices = [Slices.GOODS, Slices.DESTINATIONS, Slices.LOCATIONS, Slices.SUPPORTING_DOCUMENTS]
-        self.additional_context = self.get_advice_additional_context()
-
-    def get_f680_clearance_application(self):
-        self.tabs = self.get_tabs()
-        self.additional_context = self.get_advice_additional_context()
-
-    def get_end_user_advisory_query(self):
-        self.slices = [Slices.END_USER_DETAILS]
-
-    def get_open_registration(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.LICENCES)
-        self.slices = [Slices.OPEN_GENERAL_LICENCE]
-
-    def get_compliance_site(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.COMPLIANCE_LICENCES)
-        self.slices = [Slices.COMPLIANCE_VISITS, Slices.OPEN_LICENCE_RETURNS]
-        filters = FiltersBar(
-            [
-                TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),
-            ]
-        )
-        self.additional_context = {
-            "data": get_compliance_licences(
-                self.request,
-                self.case.id,
-                self.request.GET.get("reference", ""),
-                self.request.GET.get("page", 1),
-            ),
-            "licences_filters": filters,
-        }
-
-    def get_compliance_visit(self):
-        self.tabs = self.get_tabs()
-        self.tabs.insert(1, Tabs.COMPLIANCE_LICENCES)
-        self.slices = [Slices.COMPLIANCE_VISIT_DETAILS]
-        filters = FiltersBar(
-            [
-                TextInput(name="reference", title=cases.CasePage.LicenceFilters.REFERENCE),
-            ]
-        )
-        self.additional_context = {
-            "data": get_compliance_licences(
-                self.request,
-                self.case.data["site_case_id"],
-                self.request.GET.get("reference", ""),
-                self.request.GET.get("page", 1),
-            ),
-            "licences_filters": filters,
-        }
 
 
 class CaseNotes(TemplateView):

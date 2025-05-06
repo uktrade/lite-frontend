@@ -186,7 +186,7 @@ class TAUMixin(CaseTabsMixin):
 
         context.update(
             {
-                "tabs": self.get_standard_application_tabs(),
+                "tabs": self.get_tabs(),
                 "current_tab": get_tau_tab_url_name(),
             }
         )
