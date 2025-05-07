@@ -25,7 +25,7 @@ from caseworker.cases.services import get_case, post_ecju_query, get_application
 from caseworker.f680.forms import NewECJUQueryForm
 from caseworker.cases.views.queries import CloseQueryMixin
 from caseworker.core.constants import ALL_CASES_QUEUE_ID
-from caseworker.core.services import get_denial_reasons
+from caseworker.core.services import get_denial_reasons, get_permissible_statuses, group_denial_reasons
 from caseworker.f680.recommendation.services import get_pending_recommendation_requests
 from caseworker.picklists.services import get_picklists_list
 from caseworker.queues.services import get_queue
@@ -59,6 +59,7 @@ class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
 
         self.conditions = get_picklists_list(request, type="proviso", disable_pagination=True, show_deactivated=False)
         self.refusal_reasons = get_denial_reasons(request)
+        self.denial_reasons_choices = group_denial_reasons(self.refusal_reasons)
         self.pending_recommendations = get_pending_recommendation_requests(self.request, self.case, self.caseworker)
 
     def pending_recommendation_requests(self):
@@ -101,13 +102,18 @@ class CaseDetailView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
             key: self.case["data"]["application"]["sections"].get(key, None) for key in application_section_order
         }
         context_data["application_sections"] = application_sections
-
+        context_data["permissible_statuses"] = get_permissible_statuses(self.request, self.case)
         return context_data
 
 
 class CaseSummaryView(LoginRequiredMixin, F680CaseworkerMixin, TemplateView):
     template_name = "f680/case/summary.html"
     current_tab = "application-summary"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["permissible_statuses"] = get_permissible_statuses(self.request, self.case)
+        return context
 
 
 class MoveCaseForward(LoginRequiredMixin, F680CaseworkerMixin, View):

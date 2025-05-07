@@ -10,7 +10,7 @@ from django.utils import timezone
 from core import client
 from core.exceptions import ServiceError
 
-from caseworker.f680.outcome.constants import OutcomeSteps, SecurityReleaseOutcomeDuration
+from caseworker.f680.outcome.constants import OutcomeSteps, OutcomeType, SecurityReleaseOutcomeDuration
 from caseworker.f680.outcome import forms
 
 
@@ -124,6 +124,55 @@ def mock_get_case_recommendations_multiple(
                 "type": {"key": "refuse", "value": "Refuse"},
                 "conditions": "",
                 "refusal_reasons": "some reasons",
+                "security_release_request": security_release_requests[0]["id"],
+                "security_grading": None,
+                "security_grading_other": "",
+                "user": current_user,
+                "team": fcdo_team,
+            },
+        ]
+    )
+    url = f"/caseworker/f680/{data_submitted_f680_case['case']['id']}/recommendation/"
+    return requests_mock.get(url, json=recommendations, status_code=200)
+
+
+@pytest.fixture
+def mock_get_case_refuse_recommendations_multiple(
+    requests_mock, data_submitted_f680_case, current_user, MOD_team1, MOD_team2, fcdo_team, recommendations
+):
+    security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+    recommendations.extend(
+        [
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "refuse", "value": "Refuse"},
+                "conditions": "",
+                "refusal_reasons": "Criteria 1: one\n\n--------\nCriteria 5a: five",
+                "security_grading": None,
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+                "user": current_user,
+                "team": MOD_team1,
+            },
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "refuse", "value": "Refuse"},
+                "conditions": "",
+                "refusal_reasons": "Criteria 1: one\n\n--------\nCriteria 5a: five",
+                "security_grading": None,
+                "security_grading_other": "",
+                "security_release_request": security_release_requests[0]["id"],
+                "user": current_user,
+                "team": MOD_team2,
+            },
+            {
+                "created_at": "2021-10-16T23:48:39.486679+01:00",
+                "id": "529c5596-fe8b-4540-988b-c37805cd08de",  # /PS-IGNORE
+                "type": {"key": "refuse", "value": "Refuse"},
+                "conditions": "",
+                "refusal_reasons": "Criteria 1: one\n\n--------\nCriteria 5a: five\n\n--------\nmore reasons",
                 "security_release_request": security_release_requests[0]["id"],
                 "security_grading": None,
                 "security_grading_other": "",
@@ -358,7 +407,7 @@ class TestDecideOutcomeView:
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
-                "outcome": "approve",
+                "outcome": OutcomeType.APPROVE,
                 "security_release_requests": request_ids,
             },
         )
@@ -367,6 +416,33 @@ class TestDecideOutcomeView:
         assert isinstance(form, forms.ApproveOutcomeForm)
         # Expect a de-duplicated set of conditions
         assert form.initial == {"conditions": "No concerns\r\n\r\nsome concerns"}
+
+    def test_POST_select_refuse_outcome_reasons_aggregated(
+        self,
+        authorized_client,
+        f680_case_id,
+        data_submitted_f680_case,
+        mock_f680_case,
+        mock_outcomes_no_outcomes,
+        post_to_step,
+        mock_get_case_refuse_recommendations_multiple,
+    ):
+        security_release_requests = data_submitted_f680_case["case"]["data"]["security_release_requests"]
+        request_ids = [request["id"] for request in security_release_requests]
+        response = post_to_step(
+            OutcomeSteps.SELECT_OUTCOME,
+            {
+                "outcome": OutcomeType.REFUSE,
+                "security_release_requests": request_ids,
+            },
+        )
+        assert response.status_code == HTTPStatus.OK
+        form = response.context["form"]
+        assert isinstance(form, forms.RefuseOutcomeForm)
+        # Expect a de-duplicated set of refusal reasons
+        assert form.initial == {
+            "refusal_reasons": "Criteria 1: one\n\n--------\nCriteria 5a: five\r\n\r\nCriteria 1: one\n\n--------\nCriteria 5a: five\n\n--------\nmore reasons"
+        }
 
     def test_POST_select_outcome_bad_request(
         self,
@@ -415,7 +491,7 @@ class TestDecideOutcomeView:
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
-                "outcome": "approve",
+                "outcome": OutcomeType.APPROVE,
                 "security_release_requests": request_ids,
             },
         )
@@ -445,7 +521,7 @@ class TestDecideOutcomeView:
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
         assert request.json() == {
-            "outcome": "approve",
+            "outcome": OutcomeType.APPROVE,
             "conditions": "my conditions",
             "approval_types": ["training"],
             "security_grading": "secret",
@@ -470,7 +546,7 @@ class TestDecideOutcomeView:
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
-                "outcome": "approve",
+                "outcome": OutcomeType.APPROVE,
                 "security_release_requests": request_ids,
             },
         )
@@ -514,7 +590,7 @@ class TestDecideOutcomeView:
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
-                "outcome": "approve",
+                "outcome": OutcomeType.APPROVE,
                 "security_release_requests": request_ids,
             },
         )
@@ -544,7 +620,7 @@ class TestDecideOutcomeView:
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
         assert request.json() == {
-            "outcome": "approve",
+            "outcome": OutcomeType.APPROVE,
             "conditions": "my conditions",
             "approval_types": ["training"],
             "security_grading": "secret",
@@ -568,7 +644,7 @@ class TestDecideOutcomeView:
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
-                "outcome": "refuse",
+                "outcome": OutcomeType.REFUSE,
                 "security_release_requests": request_ids,
             },
         )
@@ -584,7 +660,7 @@ class TestDecideOutcomeView:
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
         assert request.json() == {
-            "outcome": "refuse",
+            "outcome": OutcomeType.REFUSE,
             "refusal_reasons": "my reasons",
             "security_release_requests": request_ids,
         }
@@ -604,7 +680,7 @@ class TestDecideOutcomeView:
         response = post_to_step(
             OutcomeSteps.SELECT_OUTCOME,
             {
-                "outcome": "refuse",
+                "outcome": OutcomeType.REFUSE,
                 "security_release_requests": request_ids,
             },
         )

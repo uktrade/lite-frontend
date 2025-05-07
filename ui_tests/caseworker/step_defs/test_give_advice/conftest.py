@@ -2,6 +2,11 @@ import time
 
 from pytest_bdd import when, then, parsers
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+
+from django.conf import settings
 
 from tests_common import functions
 from ui_tests.caseworker.pages.assign_flags_to_case import CaseFlagsPages
@@ -46,11 +51,17 @@ def click_add_licence_condition(driver):  # noqa
 
 @when(parsers.parse('I select refusal criteria "{criteria}"'))
 def select_refusal_criteria(driver, criteria):  # noqa
-    functions.select_multi_select_options(
-        driver,
-        "#div_id_denial_reasons .lite-autocomplete__input",
-        [c.strip() for c in criteria.split(",")],
-    )
+    criteria_codes = [c.strip() for c in criteria.split(",")]
+
+    for code in criteria_codes:
+        element = driver.find_element(by=By.CLASS_NAME, value="lite-autocomplete__input")
+        element.send_keys(code)
+        element.send_keys(Keys.ENTER)
+        WebDriverWait(driver, 30 * settings.E2E_WAIT_MULTIPLIER).until(
+            expected_conditions.presence_of_element_located(
+                (By.XPATH, f"//span[@class='selected-options__option-text' and contains(text(), '{code}')]")
+            ),
+        )
 
 
 @when(parsers.parse('I select countries "{countries}"'))

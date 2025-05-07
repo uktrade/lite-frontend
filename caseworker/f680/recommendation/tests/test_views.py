@@ -272,6 +272,7 @@ class TestF680MakeRecommendationView:
                 "refusal_reasons": ["1", "2"],
                 "1": "one",
                 "2": "two",
+                "custom_reasons": "Additional refusal reasons",
             },
         )
         assert response.status_code == 302
@@ -288,7 +289,7 @@ class TestF680MakeRecommendationView:
                 "security_grading": "",
                 "security_grading_other": "",
                 "conditions": "",
-                "refusal_reasons": "one\n\n--------\ntwo",
+                "refusal_reasons": "Criteria 1: one\n\n--------\nCriteria 2: two\n\n--------\nAdditional refusal reasons",
                 "security_release_request": release_request_id,
             }
             for release_request_id in release_requests_ids[:2]

@@ -2,6 +2,8 @@ from munch import Munch
 
 from exporter.core.constants import APPLICANT_EDITING
 from core.builtins.custom_tags import str_date
+from core.application_manifests.contants import ServiceType
+from core.application_manifests.registry import application_manifest_registry
 
 
 class Tab:
@@ -12,6 +14,10 @@ class Tab:
 
 
 class Application(Munch):
+    @property
+    def manifest(self):
+        return application_manifest_registry.get_manifest(ServiceType.EXPORTER.value, self.type)
+
     @property
     def type_reference(self):
         return self["case_type"]["reference"]["key"]

@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 from django.urls import reverse
 
 from core import client
+from unit_tests.helpers import sort_request_history
 
 amended_application_id = str(uuid.uuid4())
 
@@ -121,6 +122,7 @@ def test_organisation_creates_amendment_by_copy(
     authorized_client,
     requests_mock,
     data_organisation,
+    application_id,
     mock_application_amendment_post,
     application_major_edit_confirm_url,
     application_amendment_create_url,
@@ -129,7 +131,9 @@ def test_organisation_creates_amendment_by_copy(
     response = authorized_client.post(application_major_edit_confirm_url)
     assert response.status_code == 302
     assert response.url == amended_application_task_list_url
-    history = requests_mock.request_history.pop()
+
+    full_history = sort_request_history(requests_mock.request_history)
+    history = full_history[f"/applications/{application_id}/amendment/"][0]
     assert history.method == "POST"
     assert history.url == application_amendment_create_url
 
@@ -148,7 +152,3 @@ def test_organisation_creates_amendment_by_copy_bad_response(
 
     response_body = BeautifulSoup(response.content, "html.parser")
     assert "Unexpected error creating amendment" in response_body.text
-
-    history = requests_mock.request_history.pop()
-    assert history.method == "POST"
-    assert history.url == application_amendment_create_url

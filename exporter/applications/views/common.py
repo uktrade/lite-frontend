@@ -91,10 +91,10 @@ class ApplicationMixin(LoginRequiredMixin):
         return get_application(self.request, self.application_id)
 
     def get_application_detail_url(self):
-        return reverse("applications:application", kwargs={"pk": self.application_id})
+        return self.application.manifest.urls.get_application_detail_url(pk=self.application_id)
 
     def get_application_task_list_url(self, pk):
-        return reverse("applications:task_list", kwargs={"pk": pk})
+        return self.application.manifest.urls.get_application_task_list_url(pk=pk)
 
 
 class ApplicationsList(LoginRequiredMixin, FormView):
@@ -438,22 +438,16 @@ class Submit(LoginRequiredMixin, TemplateView):
         return render(request, "applications/submit.html", context)
 
 
-class ApplicationSubmitSuccessPage(LoginRequiredMixin, FormView):
+class ApplicationSubmitSuccessPage(ApplicationMixin, FormView):
 
     template_name = "applications/application-submit-success.html"
     form_class = HCSATminiform
-
-    def get_application_url(self):
-        return reverse(
-            "applications:application",
-            kwargs={"pk": self.kwargs["pk"]},
-        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context["form_title"] = "Application submitted"
-        context["back_link_url"] = self.get_application_url()
+        context["back_link_url"] = self.get_application_detail_url()
         application_id = self.kwargs["pk"]
         application = get_application(self.request, application_id)
 
