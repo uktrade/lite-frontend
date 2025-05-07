@@ -235,6 +235,24 @@ class CaseDetail(CaseTabsMixin, CaseView):
 
         self.additional_context = self.get_advice_additional_context()
 
+    def get_export_licence_application(self):
+        self.tabs = self.get_standard_application_tabs()
+        self.slices = [
+            Slices.GOODS,
+            Slices.DESTINATIONS,
+            conditional(self.case.data["denial_matches"], Slices.DENIAL_MATCHES),
+            conditional(self.case.data["sanction_matches"], Slices.SANCTION_MATCHES),
+            conditional(self.case.data["end_user"], Slices.END_USER_DOCUMENTS),
+            conditional(self.case.data["inactive_parties"], Slices.DELETED_ENTITIES),
+            Slices.LOCATIONS,
+            Slices.SECURITY_APPROVALS,
+            Slices.END_USE_DETAILS,
+            Slices.SUPPORTING_DOCUMENTS,
+            Slices.FREEDOM_OF_INFORMATION,
+            conditional(self.case.data["appeal"], Slices.APPEAL_DETAILS),
+        ]
+        self.additional_context = self.get_advice_additional_context()
+
     def get_standard_application(self):
         self.tabs = self.get_standard_application_tabs()
         self.slices = [

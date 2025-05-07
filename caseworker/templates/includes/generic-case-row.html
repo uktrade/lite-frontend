@@ -1,4 +1,4 @@
-{% if case.case_type.reference.key in 'siel,oiel' %}
+{% if case.case_type.reference.key in 'siel,oiel,export_licence' %}
 	{% include 'includes/siel-case-row.html' with case=case %}
 {% elif case.case_type.reference.key == 'f680' %}
 	{% include 'includes/f680-case-row.html' with case=case %}

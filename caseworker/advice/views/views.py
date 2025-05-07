@@ -669,7 +669,7 @@ class ViewConsolidatedAdviceView(AdviceView, FormView):
         if user_team_alias == services.LICENSING_UNIT_TEAM:
             rejected_lu_countersignature = self.rejected_countersign_advice()
             lu_countersign_required = self.get_lu_countersign_required(rejected_lu_countersignature)
-            finalise_case = not (lu_countersign_required or rejected_lu_countersignature)
+            finalise_case = True
 
         refusal_note = [advice for advice in consolidated_advice if advice["is_refusal_note"]]
 

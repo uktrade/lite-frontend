@@ -22,7 +22,7 @@ class Case(Munch):
 
     @property
     def sub_type(self):
-        return self["case_type"]["sub_type"]["key"]
+        return self["case_type"].get("sub_type", {}).get("key")
 
     @property
     def reference(self):

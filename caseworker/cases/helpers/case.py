@@ -253,7 +253,6 @@ class CaseView(CaseworkerMixin, TemplateView):
         self.permissions = get_user_permissions(self.request)
 
         self._transform_data()
-
         if hasattr(self, "get_" + self.case.sub_type + "_" + self.case.type):
             getattr(self, "get_" + self.case.sub_type + "_" + self.case.type)()
         else:

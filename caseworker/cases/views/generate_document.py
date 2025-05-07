@@ -171,7 +171,6 @@ class PreviewDocument(LoginRequiredMixin, TemplateView):
         )
         if status_code == 400:
             return generate_document_error_page()
-
         return render(
             self.request,
             "generated-documents/preview.html",
