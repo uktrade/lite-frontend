@@ -2,7 +2,7 @@ from cacheops import cached
 from collections import defaultdict
 from django.conf import settings
 
-from caseworker.advice.services import LICENSING_UNIT_TEAM
+from caseworker.advice.constants import LICENSING_UNIT_TEAM, MOD_ECJU
 from caseworker.cases.constants import CaseType
 from caseworker.core.constants import CONTROL_LIST_ENTRIES_CACHE_TIMEOUT
 from caseworker.users.services import get_gov_user
@@ -83,15 +83,25 @@ def get_permissible_statuses(request, case):
     """Get a list of case statuses permissible for the user's role."""
     user, _ = get_gov_user(request, str(request.session["lite_api_user_id"]))
     user_permissible_statuses = user["user"]["role"]["statuses"]
-    statuses, _ = get_statuses(request)
-    case_type = case["case_type"]["type"]["key"]
-    case_type_applicable_statuses = []
+    user_team_alias = user["user"]["team"]["id"]
+    permissible_statuses = []
 
-    # TODO: Make this list of dis-allowed caseworker-settable statuses driven
-    # by the API
-    if case_type == CaseType.APPLICATION.value:
-        case_type_applicable_statuses = [
-            status
+    # TODO: Make this list of dis-allowed caseworker-settable statuses driven by the API
+    if case.type == CaseType.SECURITY_CLEARANCE.value:
+        permissible_statuses = [
+            CaseStatusEnum.SUBMITTED,
+            CaseStatusEnum.OGD_ADVICE,
+            CaseStatusEnum.UNDER_FINAL_REVIEW,
+            CaseStatusEnum.WITHDRAWN,
+            CaseStatusEnum.REOPENED_FOR_CHANGES,
+        ]
+        if user_team_alias == MOD_ECJU:
+            permissible_statuses.append(CaseStatusEnum.FINALISED)
+
+    elif case.type == CaseType.APPLICATION.value:
+        statuses, _ = get_statuses(request)
+        permissible_statuses = [
+            status["key"]
             for status in statuses
             if status["key"]
             not in [
@@ -107,13 +117,12 @@ def get_permissible_statuses(request, case):
             ]
         ]
 
-        user_team_alias = user["user"]["team"].get("alias")
-        # Allow LU users to set Finalised status as required for Appeals
-        if user_team_alias and user_team_alias == LICENSING_UNIT_TEAM:
-            finalised_status = [status for status in statuses if status["key"] == CaseStatusEnum.FINALISED]
-            case_type_applicable_statuses.extend(finalised_status)
-
-    return [status for status in case_type_applicable_statuses if status in user_permissible_statuses]
+        if user_team_alias == LICENSING_UNIT_TEAM:
+            permissible_statuses.append(CaseStatusEnum.FINALISED)
+    filtered_statuses = [
+        status_dict for status_dict in user_permissible_statuses if status_dict["key"] in permissible_statuses
+    ]
+    return sorted(filtered_statuses, key=lambda status: status["priority"])
 
 
 def get_status_properties(request, status):

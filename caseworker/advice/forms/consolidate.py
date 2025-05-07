@@ -83,7 +83,7 @@ class LUConsolidateRefusalForm(forms.Form):
     )
 
     denial_reasons = forms.MultipleChoiceField(
-        widget=forms.SelectMultiple(),
+        widget=forms.SelectMultiple(attrs={"class": "lite-refusal-reasons-autocomplete"}),
         label="What is the refusal criteria?",
         help_text=format_html(
             f'Select all <a class="govuk-link" '

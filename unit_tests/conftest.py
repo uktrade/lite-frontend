@@ -1129,6 +1129,8 @@ def data_standard_case(
                 "sub_status": None,
             },
             "next_review_date": None,
+            "amendment_of": None,
+            "superseded_by": None,
             "licences": [
                 {
                     "id": "2d001261-4369-49ba-7928-7ada66aa5cee",

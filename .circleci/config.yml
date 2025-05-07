@@ -169,8 +169,13 @@ commands:
             replace-existing: true
       - browser-tools/install-chromedriver
       - run:
-            name: "Install dependencies"
-            command: pip3 install pipenv
+          name: "Install Python 3.9"
+          command: |
+            pyenv install -v 3.9.18
+            pyenv global 3.9.18
+      - run:
+          name: "Install dependencies"
+          command: pip3 install pipenv
       - setup_code_e2e
       - build_api_image:
           api_branch: <<parameters.api_branch>>

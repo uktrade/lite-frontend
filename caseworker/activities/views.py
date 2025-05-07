@@ -41,6 +41,6 @@ class NotesAndTimeline(LoginRequiredMixin, CaseTabsMixin, CaseworkerMixin, Notes
             **context,
             "case": self.case,
             "queue": self.queue,
-            "tabs": self.get_standard_application_tabs(),
+            "tabs": self.get_tabs(),
             "current_tab": "cases:activities:notes-and-timeline",
         }
