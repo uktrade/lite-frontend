@@ -9,7 +9,7 @@ def draft_summary(draft):
     return Summary(
         values={
             strings.applications.ApplicationSummaryPage.REFERENCE_NAME: draft["name"],
-            strings.applications.ApplicationSummaryPage.TYPE: draft.sub_type_value,
+            strings.applications.ApplicationSummaryPage.TYPE: draft.type_reference_value,
             strings.applications.ApplicationSummaryPage.CREATED_AT: draft.created_at,
         },
         classes=["govuk-summary-list--no-border"],
