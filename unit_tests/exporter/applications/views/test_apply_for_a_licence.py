@@ -13,6 +13,11 @@ from exporter.applications.forms.common import (
 )
 
 
+@pytest.fixture(autouse=True)
+def default_settings(settings):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = []
+
+
 @pytest.fixture()
 def apply_for_a_licence_start_url():
     return reverse("apply_for_a_licence:start")

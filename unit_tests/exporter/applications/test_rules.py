@@ -97,6 +97,10 @@ def test_user_can_edit_quantity_value(settings, rf, data_standard_case, status, 
         ("", ["12345", "98765", "56757"], False),
         ("99999", [], False),
         (None, [], False),
+        ("12345", ["*"], True),
+        ("", ["*"], True),
+        ("99999", ["*"], True),
+        (None, ["*"], True),
     ),
 )
 def test_can_exporter_apply_for_indeterminate_export_licence_type(
