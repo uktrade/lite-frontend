@@ -4,7 +4,7 @@ from collections import OrderedDict
 from typing import List, Dict
 
 from caseworker.cases.objects import Case
-from caseworker.core.constants import APPLICATION_CASE_TYPES, Permission, CLEARANCE_CASE_TYPES, AdviceType
+from caseworker.core.constants import Permission, AdviceType
 from core.builtins.custom_tags import filter_advice_by_level, filter_advice_by_id, filter_advice_by_user
 
 SINGULAR_ENTITIES = ["end_user", "consignee"]
@@ -118,15 +118,10 @@ def flatten_advice_data(request, case: Case, items: List[Dict], level):
     return filtered_advice[0]
 
 
-def check_user_permitted_to_give_final_advice(case_type, permissions):
+def check_user_permitted_to_give_final_advice(permissions):
     """Check if the user is permitted to give final advice on the case based on their
     permissions and the case type."""
-    if case_type in APPLICATION_CASE_TYPES and Permission.MANAGE_LICENCE_FINAL_ADVICE.value in permissions:
-        return True
-    elif case_type in CLEARANCE_CASE_TYPES and Permission.MANAGE_CLEARANCE_FINAL_ADVICE.value in permissions:
-        return True
-    else:
-        return False
+    return Permission.MANAGE_LICENCE_FINAL_ADVICE.value in permissions
 
 
 def can_advice_be_finalised(case):
