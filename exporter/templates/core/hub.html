@@ -84,7 +84,7 @@
 				<div class="app-tile">
 					<h2 class="govuk-!-margin-top-0">
 						<a href="{% url 'applications:applications' %}" class="app-tile__heading" id="link-applications">
-							<p>{% lcs 'hub.Tiles.APPLICATIONS' %}</p>{% if notifications.notifications.application %}<span id="applications-notifications" class="lite-notification-bubble"><span class="govuk-visually-hidden"> (</span>{{ notifications.notifications.application }} <span class="govuk-visually-hidden">notifications)</span></span>{% endif %}
+							<p>{% lcs 'hub.Tiles.APPLICATIONS' %}</p>{% if application_notification_count %}<span id="applications-notifications" class="lite-notification-bubble"><span class="govuk-visually-hidden"> (</span>{{ application_notification_count }} <span class="govuk-visually-hidden">notifications)</span></span>{% endif %}
 						</a>
 					</h2>
 					<p class="app-tile__body">Find drafts, make edits and view the status of submitted applications.</p>

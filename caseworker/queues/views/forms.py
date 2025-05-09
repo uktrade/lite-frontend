@@ -128,6 +128,7 @@ class CasesFiltersForm(forms.Form):
         super().__init__(*args, **kwargs)
 
         case_status_choices = self.get_field_choices(filters_data, "statuses")
+        case_type_choices = self.get_field_choices(filters_data, "case_types")
         case_sub_status_choices = self.get_field_choices(filters_data, "sub_statuses")
         gov_user_choices = [("", "Select"), ("not_assigned", "Not assigned")] + [
             (choice["id"], choice["full_name"]) for choice in filters_data["gov_users"]
@@ -163,6 +164,12 @@ class CasesFiltersForm(forms.Form):
         self.fields["status"] = forms.ChoiceField(
             choices=case_status_choices,
             label="Case status",
+            required=False,
+        )
+
+        self.fields["case_type"] = forms.ChoiceField(
+            choices=case_type_choices,
+            label="Case type",
             required=False,
         )
 
@@ -238,6 +245,7 @@ class CasesFiltersForm(forms.Form):
 
         case_filters = [
             "case_reference",
+            "case_type",
             "status",
             "sub_status",
             Field("case_officer", css_class="single-select-filter"),

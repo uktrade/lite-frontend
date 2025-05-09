@@ -32,10 +32,7 @@ from exporter.applications.forms.common import (
     ApplicationNameForm,
     ToldByAnOfficialForm,
 )
-from exporter.applications.helpers.check_your_answers import (
-    convert_application_to_check_your_answers,
-    get_application_type_string,
-)
+from exporter.applications.helpers.check_your_answers import convert_application_to_check_your_answers
 from exporter.applications.helpers.summaries import draft_summary
 from exporter.applications.helpers.task_list_sections import get_reference_number_description
 from exporter.applications.helpers.task_lists import get_application_task_list
@@ -69,7 +66,7 @@ from exporter.applications.services import (
 from exporter.applications.views.conditionals import is_indeterminate_export_licence_type_allowed
 from exporter.organisation.members.services import get_user
 
-from exporter.core.constants import HMRC, APPLICANT_EDITING, NotificationType
+from exporter.core.constants import APPLICANT_EDITING
 from exporter.core.services import get_organisation
 from lite_content.lite_exporter_frontend import strings
 from lite_forms.generators import confirm_form
@@ -283,13 +280,7 @@ class ApplicationTaskList(LoginRequiredMixin, TemplateView):
         if status_code != HTTPStatus.OK:
             return get_application_task_list(request, application, errors=data.get("errors"))
 
-        if application.sub_type not in [NotificationType.EUA, NotificationType.GOODS]:
-            # All other application types direct to the summary page
-            return HttpResponseRedirect(reverse_lazy("applications:summary", kwargs={"pk": application_id}))
-        else:
-            # Redirect to the success page to prevent the user going back after the Post
-            # Follows this pattern: https://en.wikipedia.org/wiki/Post/Redirect/Get
-            return HttpResponseRedirect(reverse_lazy("applications:success_page", kwargs={"pk": application_id}))
+        return redirect("applications:summary", pk=application_id)
 
 
 class ApplicationDetail(LoginRequiredMixin, TemplateView):
@@ -319,13 +310,11 @@ class ApplicationDetail(LoginRequiredMixin, TemplateView):
             "activity": get_activity(request, self.application_id) or {},
             "application_history": get_application_history(self.request, self.application_id),
         }
+        if self.view_type == "case-notes":
+            context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
 
-        if self.application.sub_type != HMRC:
-            if self.view_type == "case-notes":
-                context["notes"] = get_case_notes(request, self.case_id)["case_notes"]
-
-            if self.view_type == "ecju-queries":
-                context["open_queries"], context["closed_queries"] = get_application_ecju_queries(request, self.case_id)
+        if self.view_type == "ecju-queries":
+            context["open_queries"], context["closed_queries"] = get_application_ecju_queries(request, self.case_id)
 
         if self.view_type == "generated-documents":
             generated_documents, _ = get_case_generated_documents(request, self.application_id)
@@ -362,9 +351,9 @@ class ApplicationSummary(LoginRequiredMixin, TemplateView):
             {
                 "case_id": self.application_id,
                 "application": self.application,
-                "answers": {**convert_application_to_check_your_answers(self.application, summary=True)},
+                "answers": {**convert_application_to_check_your_answers(self.application, is_summary=True)},
                 "summary_page": True,
-                "application_type": get_application_type_string(self.application),
+                "application_type": self.application["case_type"]["reference"]["value"],
                 "notes": get_case_notes(self.request, self.case_id)["case_notes"],
                 "reference_code": get_reference_number_description(self.application),
             }
