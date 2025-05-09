@@ -905,10 +905,10 @@ def test_f680_case_row(authorized_client, data_cases_search):
     assert case["reference_code"] in reference_code.text
 
     actual_destinations = extract_destinations(case_row)
-    expected_destinations = [
-        rr["recipient"]["country"]["name"] for rr in case["f680_data"]["security_release_requests"]
-    ]
-    assert actual_destinations == expected_destinations
+    expected_destinations = list(
+        {rr["recipient"]["country"]["name"] for rr in case["f680_data"]["security_release_requests"]}
+    )
+    assert sorted(actual_destinations) == sorted(expected_destinations)
 
     case_advisors = extract_f680_case_advisors(case_row)
     expected_case_advisors = []

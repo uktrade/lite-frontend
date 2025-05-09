@@ -284,12 +284,25 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
             goods_summary["total_value"] += Decimal(good["value"])
         return goods_summary
 
+    def transform_f680_data(self, case):
+        if case["case_type"]["reference"]["key"] != "f680":
+            return
+
+        f680_data = case.get("f680_data", {})
+        f680_data["unique_destinations"] = sorted(
+            {rr["recipient"]["country"]["name"] for rr in case["f680_data"]["security_release_requests"]}
+        )
+
+        case["f680_data"] = f680_data
+
     def transform_case(self, case):
         case["unique_destinations"] = self._transform_destinations(case)
         case["queue_assignments"] = self._transform_queue_assignments(case)
         case["activity_updates"] = self._transform_activity_updates(case)
         case["goods_summary"] = self._transform_goods(case)
         case["submitted_at"] = parser.parse(case["submitted_at"])
+
+        self.transform_f680_data(case)
 
     def get_initial(self):
         return self.get_params()
