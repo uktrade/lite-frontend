@@ -221,7 +221,8 @@ class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateV
         context = super().get_context_data(**kwargs)
         uploaded_documents, _ = self.get_exporter_uploaded_supporting_documents()
         generated_documents, _ = self.get_caseworker_generated_documents()
-        documents = uploaded_documents["results"] + generated_documents["documents"]
+
+        documents = uploaded_documents + generated_documents["documents"]
         context["supporting_documents"] = documents
         return context
 
