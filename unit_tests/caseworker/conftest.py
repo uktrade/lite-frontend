@@ -538,6 +538,26 @@ def data_cases_search(filter_data):
                                 "intended_use": "Day to day use",
                                 "product_id": "a16bd788-44af-4d2b-9dd6-91e8ab3f1ecc",  # /PS-IGNORE
                             },
+                            {
+                                "id": "b78527c4-208f-476a-b406-05d57020d712",  # /PS-IGNORE
+                                "recipient": {
+                                    "id": "254b76d1-8c2d-4634-8603-8d67fd071120",  # /PS-IGNORE
+                                    "name": "Entity3",
+                                    "address": "Melbourne",
+                                    "country": {
+                                        "id": "AU",
+                                        "name": "Australia",
+                                    },
+                                    "type": {"key": "end-user", "value": "End-user"},
+                                    "role": None,
+                                    "role_other": None,
+                                },
+                                "security_grading": {"key": "official", "value": "Official"},
+                                "security_grading_other": None,
+                                "approval_types": ["demonstration_overseas", "training"],
+                                "intended_use": "Day to day use",
+                                "product_id": "a16bd788-44af-4d2b-9dd6-91e8ab3f1ecc",  # /PS-IGNORE
+                            },
                         ],
                         "recommendations": [
                             {"team": "OGD Team1", "type": "approve", "recipient": "Entity1"},

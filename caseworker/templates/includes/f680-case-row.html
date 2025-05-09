@@ -26,9 +26,9 @@
 	{# destinations #}
 	<td class="govuk-table__cell" data-customiser-key="destination">
 		<ol class="govuk-list destinations__list">
-			{% for rr in case.f680_data.security_release_requests %}
+			{% for item in case.f680_data.unique_destinations %}
 				<li>
-					{{ rr.recipient.country.name }}
+					{{ item }}
 				</li>
 			{% endfor %}
 		</ol>
@@ -104,16 +104,18 @@
 	{# intended end use #}
 
 	<td class="govuk-table__cell" data-customiser-key="intended_end_use">
-		<ol class="govuk-list app-users__list">
-			{% for rr in case.f680_data.security_release_requests %}
-				<li class="app-cles__item">
-					<strong>{{ rr.recipient.name }}</strong>
-					<span class="app-intended-end-use">
-						{{ rr.intended_use }}
-					</span>
-				</li>
-			{% endfor %}
-		</ol>
+		<span data-max-length="200">
+			<ol class="govuk-list app-users__list">
+				{% for rr in case.f680_data.security_release_requests %}
+					<li class="app-cles__item">
+						<strong>{{ rr.recipient.name }}</strong>
+						<span class="app-intended-end-use">
+							{{ rr.intended_use }}
+						</span>
+					</li>
+				{% endfor %}
+			</ol>
+		</span>
 	</td>
 
 	{# application flags #}
