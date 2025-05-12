@@ -107,7 +107,6 @@ Feature: I want to indicate the standard licence I want
     And I submit the application
     Then my answers are played back to me
     And I see "Standard Individual Export Licence" as the Licence
-    And I see "Standard Licence" as the type
     And I see "application1" as reference name
     And I see "No" as informed to apply
     And I see "Great Britain" as product journey origin
@@ -242,7 +241,6 @@ Feature: I want to indicate the standard licence I want
     And I submit the application
     Then my answers are played back to me
     And I see "Standard Individual Export Licence" as the Licence
-    And I see "Standard Licence" as the type
     And I see "application1" as reference name
     And I see "No" as informed to apply
     And I see "Great Britain" as product journey origin

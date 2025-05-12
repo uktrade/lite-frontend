@@ -240,9 +240,9 @@ def test_get_security_approvals(security_data, expected):
     assert actual == expected
 
 
-def test_convert_standard_application_has_security_approvals(application, settings):
+def test_convert_standard_application_has_security_approvals(application):
     test_application = Application(application)
-    actual = check_your_answers._convert_standard_application(test_application)
+    actual = check_your_answers.convert_application_to_check_your_answers(test_application)
     assert "Do you have a security approval?" in actual.keys()
 
 
