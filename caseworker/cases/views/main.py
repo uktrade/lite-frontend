@@ -180,9 +180,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
 
         final_advice = filter_advice_by_level(self.case["advice"], "final")
 
-        if final_advice and advice_helpers.check_user_permitted_to_give_final_advice(
-            self.case.data["case_type"]["sub_type"]["key"], self.permissions
-        ):
+        if final_advice and advice_helpers.check_user_permitted_to_give_final_advice(self.permissions):
             current_advice_level += ["final"]
 
         if (
