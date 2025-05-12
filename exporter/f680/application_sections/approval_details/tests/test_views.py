@@ -407,7 +407,7 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
                 {
-                    "prefix": "some prefix",
+                    "prefix": "UK",
                     "security_classification": "unclassified",
                     "suffix": "some suffix",
                     "issuing_authority_name_address": "some address",
@@ -513,10 +513,10 @@ class TestProductInformationViews:
             ),
             (
                 FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {},
                 {
-                    "security_classification": "unclassified",
-                },
-                {
+                    "security_classification": ["Select a security classification"],
+                    "prefix": ["Select a prefix"],
                     "issuing_authority_name_address": ["Enter who issued the security classification"],
                     "reference": ["Enter a reference"],
                     "date_of_issue": ["Enter the date of issue"],
@@ -525,10 +525,33 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
                 {
+                    "security_classification": "unclassified",
+                },
+                {
+                    "issuing_authority_name_address": ["Enter who issued the security classification"],
+                    "prefix": ["Select a prefix"],
+                    "reference": ["Enter a reference"],
+                    "date_of_issue": ["Enter the date of issue"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
                     "security_classification": "other",
+                    "prefix": "other",
                 },
                 {
                     "other_security_classification": ["Security classification cannot be blank"],
+                    "other_prefix": ["Prefix cannot be blank"],
+                },
+            ),
+            (
+                FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
+                {
+                    "prefix": "other",
+                },
+                {
+                    "other_prefix": ["Prefix cannot be blank"],
                 },
             ),
             (
@@ -774,7 +797,7 @@ class TestProductInformationViews:
             post_to_product_step(
                 FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
                 {
-                    "prefix": "some prefix",
+                    "prefix": "UK",
                     "security_classification": "unclassified",
                     "suffix": "some suffix",
                     "issuing_authority_name_address": "some address",
@@ -872,14 +895,21 @@ class TestProductInformationViews:
                             },
                             "prefix": {
                                 "key": "prefix",
-                                "answer": "some prefix",
-                                "raw_answer": "some prefix",
-                                "question": "Enter a prefix (optional)",
+                                "answer": "UK",
+                                "raw_answer": "UK",
+                                "question": "Select a prefix",
+                                "datatype": "string",
+                            },
+                            "other_prefix": {
+                                "key": "other_prefix",
+                                "answer": "",
+                                "raw_answer": "",
+                                "question": "Enter a prefix",
                                 "datatype": "string",
                             },
                             "security_classification": {
                                 "key": "security_classification",
-                                "answer": "Unclassified",
+                                "answer": "UNCLASSIFIED",
                                 "raw_answer": "unclassified",
                                 "question": "Select security classification",
                                 "datatype": "string",
@@ -1068,6 +1098,7 @@ class TestProductInformationViews:
                             "product_description",
                             "has_security_classification",
                             "prefix",
+                            "other_prefix",
                             "security_classification",
                             "other_security_classification",
                             "suffix",
