@@ -55,6 +55,7 @@ class Home(TemplateView):
             "organisation": organisation,
             "user_data": user,
             "notifications": notifications,
+            "application_notification_count": self.get_application_notification_count(notifications),
             "missing_serials_count": require_serials_count,
             "missing_serials_id": require_serials_ids[0] if require_serials_ids else None,
             "existing": existing,
@@ -65,6 +66,10 @@ class Home(TemplateView):
         }
 
         return render(request, "core/hub.html", context)
+
+    def get_application_notification_count(self, notifications):
+        notification_data = notifications.get("notifications", {})
+        return notification_data.get("application", 0) + notification_data.get("security_clearance", 0)
 
 
 class RegisterAnOrganisationConfirmation(TemplateView):

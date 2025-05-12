@@ -26,9 +26,6 @@
 				<tr class="govuk-table__row">
 					<th class="govuk-table__header" scope="col">{% lcs 'applications.ThirdPartiesPage.Variables.NAME' %}</th>
 					<th class="govuk-table__header" scope="col">{% lcs 'applications.ThirdPartiesPage.Variables.TYPE' %}</th>
-					{% if has_clearance %}
-						<th class="govuk-table__header" scope="col">{% lcs 'applications.ThirdPartiesPage.Variables.CLEARANCE_LEVEL' %}</th>
-					{% endif %}
 					{% if third_parties|list_has_property:'descriptors' %}
 						<th class="govuk-table__header" scope="col">{% lcs 'applications.ThirdPartiesPage.Variables.DESCRIPTORS' %}</th>
 					{% endif %}
@@ -51,9 +48,6 @@
 								{{ third_party.sub_type.value }}
 							{% endif %}
 						</td>
-						{% if has_clearance %}
-							<td class="govuk-table__cell">{{ third_party.clearance_level.value|default_na }}</td>
-						{% endif %}
 						{% if third_parties|list_has_property:'descriptors' %}
 							<td class="govuk-table__cell">{{ third_party.descriptors|default_na }}</td>
 						{% endif %}

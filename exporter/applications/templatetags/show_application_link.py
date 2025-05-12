@@ -8,14 +8,16 @@ register = template.Library()
 
 @register.simple_tag
 def show_application_link(application, template="show_application_link.html"):
-    application_type = application["case_type"]["sub_type"]["key"]
+    application_type = application["case_type"]["reference"]["key"]
     is_draft_or_editable = application["status"]["key"] in ["draft", "applicant_editing"]
 
     link_mapping = {
-        ("f680_clearance", True): "f680:summary",
-        ("f680_clearance", False): "f680:submitted_summary",
-        ("standard", True): "applications:task_list",
-        ("standard", False): "applications:application",
+        ("f680", True): "f680:summary",
+        ("f680", False): "f680:submitted_summary",
+        ("siel", True): "applications:task_list",
+        ("siel", False): "applications:application",
+        ("export_licence", True): "applications:task_list",
+        ("export_licence", False): "applications:application",
     }
 
     link_url = link_mapping.get((application_type, is_draft_or_editable), None)

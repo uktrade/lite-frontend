@@ -1,12 +1,11 @@
-from django.urls import reverse_lazy
+from django.urls import reverse
 from django.views.generic import TemplateView
 
-from exporter.applications.forms.end_use_details import end_use_details_form, intended_end_use_form
+from exporter.applications.forms.end_use_details import end_use_details_form
 from exporter.applications.services import put_end_use_details, get_application
-from exporter.core.constants import F680
 from lite_content.lite_exporter_frontend import generic
-from lite_content.lite_exporter_frontend.applications import EndUseDetails as strings, F680ClearanceTaskList
-from lite_forms.views import SummaryListFormView, SingleFormView
+from lite_content.lite_exporter_frontend.applications import EndUseDetails as strings
+from lite_forms.views import SummaryListFormView
 
 from core.auth.views import LoginRequiredMixin
 
@@ -15,7 +14,7 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
     def dispatch(self, request, *args, **kwargs):
         self.object_pk = kwargs["pk"]
         self.application = get_application(request, self.object_pk)
-        self.success_url = reverse_lazy("applications:task_list", kwargs={"pk": self.object_pk}) + "#end_use_details"
+        self.success_url = reverse("applications:task_list", kwargs={"pk": self.object_pk}) + "#end_use_details"
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -27,34 +26,6 @@ class EndUseDetails(LoginRequiredMixin, TemplateView):
         return form_view.post(request, **kwargs)
 
     def _get_form_view(self, request, **kwargs):
-        if self.application.sub_type == F680:
-            return self._get_single_form_view(request, **kwargs)
-        else:
-            return self._get_summary_list_form_view(request, **kwargs)
-
-    def _get_single_form_view(self, request, **kwargs):
-        # Construct an override init method for the class instance
-        def init(request, **kwargs):
-            pass
-
-        single_form_view = SingleFormView()
-        single_form_view.init = init
-        single_form_view.request = request
-        single_form_view.kwargs = kwargs
-
-        single_form_view.object_pk = self.object_pk
-        single_form_view.form = intended_end_use_form(
-            caption=F680ClearanceTaskList.END_USE_DETAILS, back_link=self.success_url
-        )
-        single_form_view.action = put_end_use_details
-        single_form_view.success_url = self.success_url
-        single_form_view.data = (
-            {"intended_end_use": self.application.intended_end_use} if self.application.intended_end_use else {}
-        )
-
-        return single_form_view
-
-    def _get_summary_list_form_view(self, request, **kwargs):
         # Construct an override init method for the class instance
         def init(request, **kwargs):
             pass
