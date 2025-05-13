@@ -6,6 +6,7 @@
 {% if supporting_documents %}
 	<ol class="app-documents__list">
 		{% for document in supporting_documents %}
+
 			<li class="app-documents__item">
 				<div class="app-documents__item-preview">
 					{% svg 'document' %}
@@ -15,7 +16,8 @@
 				</div>
 				<div class="app-documents__item-details">
 					<a id="document-name" class="govuk-link--no-visited-state" {% if document.safe == True %}href="{% url 'cases:f680:document' queue.id case.id document.id %}"{% endif %}>{{ document.name }}</a>
-					<p class="govuk-hint">Uploaded by {{ case.data.submitted_by }} at {{ document.created_at|str_date }}</p>
+					<p class="govuk-hint">
+						{% if document.visible_to_exporter %}Visible to exporter -{% endif %} {% if document.type.key == "GENERATED" %}Auto Generated{% else %}Uploaded{% endif %} at {{ document.created_at|str_date }}</p>
 					{% if document.description %}
 						<p id="document-description" class="govuk-body">
 							{{ document.description }}
