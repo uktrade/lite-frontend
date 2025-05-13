@@ -6,7 +6,7 @@ from crispy_forms_gds.layout.content import HTML
 
 from core.common.forms import BaseForm
 
-from exporter.f680.constants import SecurityGrading
+from exporter.f680.constants import SecurityGrading, SecurityGradingPrefix
 
 from core.forms.layouts import (
     ConditionalRadios,
@@ -149,10 +149,16 @@ class SecurityGradingForm(BaseForm):
         TITLE = "What is the security grading of the information or products you want to release to this entity"
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    prefix = forms.CharField(
-        label="Enter a prefix (optional)",
+    prefix = forms.ChoiceField(
+        choices=SecurityGradingPrefix.prefix_choices,
+        label="Select a prefix",
+        widget=forms.RadioSelect,
+        error_messages={"required": "Select a prefix"},
+    )
+    other_prefix = forms.CharField(
+        label="Enter a prefix",
+        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
         required=False,
-        help_text="For example, UK, NATO or OCCAR. Leave blank if you don’t have one.",
     )
 
     security_classification = forms.ChoiceField(
@@ -175,14 +181,26 @@ class SecurityGradingForm(BaseForm):
     )
 
     def clean(self):
-        return self.add_required_to_conditional_text_field(
-            parent_field="security_classification",
-            parent_field_response="other",
-            required_field="other_security_classification",
-            error_message="Security classification cannot be blank",
-        )
+        cleaned_data = super().clean()
+        conditional_text_field_data = {
+            "security_classification": "Security classification cannot be blank",
+            "prefix": "Prefix cannot be blank",
+        }
+
+        for field, error_message in conditional_text_field_data.items():
+            self.add_required_to_conditional_text_field(
+                parent_field=field,
+                parent_field_response="other",
+                required_field=f"other_{field}",
+                error_message=error_message,
+            )
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
+        self.prefix_conditional_radio_choices = [
+            (ConditionalRadiosQuestion(choice.label, "other_prefix") if choice.value == "other" else choice.label)
+            for choice in SecurityGradingPrefix.prefix_choices
+        ]
         self.conditional_radio_choices = [
             (
                 ConditionalRadiosQuestion(choice.label, "other_security_classification")
@@ -192,6 +210,7 @@ class SecurityGradingForm(BaseForm):
             for choice in SecurityGrading.security_release_choices
         ]
         super().__init__(*args, **kwargs)
+        self.fields["prefix"].choices = SecurityGradingPrefix.prefix_choices
         self.fields["security_classification"].choices = SecurityGrading.security_release_choices
 
     def get_layout_fields(self):
