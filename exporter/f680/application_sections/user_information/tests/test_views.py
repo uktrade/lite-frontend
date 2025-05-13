@@ -207,7 +207,7 @@ class TestUserInformationView:
             (
                 FormSteps.SECURITY_GRADING,
                 {
-                    "prefix": "some prefix",
+                    "prefix": "UK",
                     "security_classification": "official",
                     "suffix": "some suffix",
                 },
@@ -254,7 +254,17 @@ class TestUserInformationView:
             (
                 FormSteps.SECURITY_GRADING,
                 {},
-                {"security_classification": ["Select a security classification"]},
+                {"security_classification": ["Select a security classification"], "prefix": ["Select a prefix"]},
+            ),
+            (
+                FormSteps.SECURITY_GRADING,
+                {"prefix": "other"},
+                {"other_prefix": ["Prefix cannot be blank"]},
+            ),
+            (
+                FormSteps.SECURITY_GRADING,
+                {"security_classification": "other"},
+                {"other_security_classification": ["Security classification cannot be blank"]},
             ),
             (
                 FormSteps.INTENDED_END_USE,
@@ -322,7 +332,7 @@ class TestUserInformationView:
         response = post_to_step(
             FormSteps.SECURITY_GRADING,
             {
-                "prefix": "some prefix",
+                "prefix": "UK",
                 "security_classification": "secret",
                 "suffix": "some suffix",
             },
@@ -388,14 +398,21 @@ class TestUserInformationView:
                                     },
                                     "prefix": {
                                         "key": "prefix",
-                                        "answer": "some prefix",
-                                        "raw_answer": "some prefix",
-                                        "question": "Enter a prefix (optional)",
+                                        "answer": "UK",
+                                        "raw_answer": "UK",
+                                        "question": "Select a prefix",
+                                        "datatype": "string",
+                                    },
+                                    "other_prefix": {
+                                        "key": "other_prefix",
+                                        "answer": "",
+                                        "raw_answer": "",
+                                        "question": "Enter a prefix",
                                         "datatype": "string",
                                     },
                                     "security_classification": {
                                         "key": "security_classification",
-                                        "answer": "Secret",
+                                        "answer": "SECRET",
                                         "raw_answer": "secret",
                                         "question": "Select security classification",
                                         "datatype": "string",
@@ -429,6 +446,7 @@ class TestUserInformationView:
                                     "address",
                                     "country",
                                     "prefix",
+                                    "other_prefix",
                                     "security_classification",
                                     "other_security_classification",
                                     "suffix",
@@ -487,7 +505,7 @@ class TestUserInformationView:
         response = post_to_step(
             FormSteps.SECURITY_GRADING,
             {
-                "prefix": "some prefix",
+                "prefix": "UK",
                 "security_classification": "secret",
                 "suffix": "some suffix",
             },
@@ -551,14 +569,21 @@ class TestUserInformationView:
                 },
                 "prefix": {
                     "key": "prefix",
-                    "answer": "some prefix",
-                    "raw_answer": "some prefix",
-                    "question": "Enter a prefix (optional)",
+                    "answer": "UK",
+                    "raw_answer": "UK",
+                    "question": "Select a prefix",
+                    "datatype": "string",
+                },
+                "other_prefix": {
+                    "key": "other_prefix",
+                    "answer": "",
+                    "raw_answer": "",
+                    "question": "Enter a prefix",
                     "datatype": "string",
                 },
                 "security_classification": {
                     "key": "security_classification",
-                    "answer": "Secret",
+                    "answer": "SECRET",
                     "raw_answer": "secret",
                     "question": "Select security classification",
                     "datatype": "string",
@@ -592,6 +617,7 @@ class TestUserInformationView:
                 "address",
                 "country",
                 "prefix",
+                "other_prefix",
                 "security_classification",
                 "other_security_classification",
                 "suffix",
