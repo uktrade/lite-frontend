@@ -264,18 +264,20 @@ class ProductSecurityClassificationForm(BaseForm):
     )
 
     def clean(self):
-        self.add_required_to_conditional_text_field(
-            parent_field="security_classification",
-            parent_field_response="other",
-            required_field="other_security_classification",
-            error_message="Security classification cannot be blank",
-        )
-        self.add_required_to_conditional_text_field(
-            parent_field="prefix",
-            parent_field_response="other",
-            required_field="other_prefix",
-            error_message="Prefix cannot be blank",
-        )
+        cleaned_data = super().clean()
+        conditional_text_field_data = {
+            "security_classification": "Security classification cannot be blank",
+            "prefix": "Security classification cannot be blank",
+        }
+
+        for field, error_message in conditional_text_field_data.items():
+            self.add_required_to_conditional_text_field(
+                parent_field=field,
+                parent_field_response="other",
+                required_field=f"other_{field}",
+                error_message=error_message,
+            )
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
         self.prefix_conditional_radio_choices = [
