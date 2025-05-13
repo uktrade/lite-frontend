@@ -429,6 +429,8 @@ def _convert_document(party, document_type, application_id, editable):
 def get_total_goods_value(goods: list):
     total_value = 0
     for good in goods:
+        if not good["value"]:
+            continue
         total_value += Decimal(good["value"])
     return total_value
 
