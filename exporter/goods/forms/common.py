@@ -563,11 +563,17 @@ class ProductQuantityAndValueForm(BaseForm):
         min_value=Decimal("0.01"),
         widget=forms.TextInput,
     )
+    no_set_quantities_or_value = forms.BooleanField(
+        help_text="For example, if this export related to a long-term project or repeat business",
+        label="Or, no set quantities or value",
+        required=False,
+    )
 
     def get_layout_fields(self):
         return (
             Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
+            "no_set_quantities_or_value",
         )
 
 
