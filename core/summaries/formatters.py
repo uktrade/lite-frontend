@@ -473,6 +473,7 @@ FIREARM_ON_APPLICATION_FORMATTERS = {
     "is-deactivated": yesno,
     "deactivated-date": date_formatter("j F Y"),
     "is-proof-standards": yesno,
+    "no-set-quantities-or-value": yesno,
     "total-value": money_formatter,
     "has-serial-numbers": model_choices_formatter(SerialChoices),
 }
@@ -499,6 +500,7 @@ FIREARM_ON_APPLICATION_LABELS = {
     "deactivated-date": "When was the item deactivated?",
     "is-proof-standards": "Has the item been deactivated to UK proof house standards?",
     "is-proof-standards-comments": "Describe who deactivated the product and to what standard it was done",
+    "no-set-quantities-or-value": "No set quantities or value",
     "number-of-items": "Number of items",
     "total-value": "Total value",
     "has-serial-numbers": "Will each product have a serial number or other identification marking?",
