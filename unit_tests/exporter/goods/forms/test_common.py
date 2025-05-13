@@ -335,7 +335,12 @@ def test_firearm_product_document_upload_form_validation(data, files, is_valid, 
 @pytest.mark.parametrize(
     "data, is_valid, errors",
     (
-        ({}, False, {"number_of_items": ["Enter the number of items"], "value": ["Enter the total value"]}),
+        ({}, False, {"__all__": ["Enter either the quantity and value, or select 'no set quantities or values'"]}),
+        (
+            {"no_set_quantities_or_value": True},
+            True,
+            {},
+        ),
         (
             {"number_of_items": "not a number", "value": "100.00"},
             False,

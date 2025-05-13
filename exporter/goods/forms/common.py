@@ -8,6 +8,7 @@ from crispy_forms_gds.layout import (
 )
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -585,6 +586,23 @@ class ProductQuantityAndValueForm(BaseForm):
                 css_class="govuk-!-margin-top-8",
             ),
         )
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if cleaned_data["no_set_quantities_or_value"]:
+            for optional_field in ["number_of_items", "value"]:
+                del self.errors[optional_field]
+
+        if all(
+            not cleaned_data.get(field_name)
+            for field_name in ["number_of_items", "value", "no_set_quantities_or_value"]
+        ):
+            for optional_field in ["number_of_items", "value"]:
+                del self.errors[optional_field]
+            raise ValidationError("Enter either the quantity and value, or select 'no set quantities or values'")
+
+        return cleaned_data
 
 
 class ProductUnitQuantityAndValueForm(BaseForm):
