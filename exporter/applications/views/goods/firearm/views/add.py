@@ -70,6 +70,7 @@ from .conditionals import (
     has_application_rfd_certificate,
     has_organisation_firearm_act_document,
     has_organisation_rfd_certificate,
+    has_quantity_and_value,
     is_certificate_required,
     is_deactivated,
     is_product_category_made_before_1938,
@@ -360,7 +361,8 @@ class AddGoodFirearmToApplication(
         AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED: is_onward_exported,
         AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED: is_onward_exported,
         AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD: is_deactivated,
-        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: is_serial_numbers_available,
+        AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING: has_quantity_and_value,
+        AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS: C(has_quantity_and_value) & C(is_serial_numbers_available),
     }
 
     def get_form_kwargs(self, step=None):

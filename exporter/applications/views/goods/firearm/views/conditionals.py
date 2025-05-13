@@ -109,6 +109,11 @@ def is_deactivated(wizard):
     return is_deactivated.get("is_deactivated", False)
 
 
+def has_quantity_and_value(wizard):
+    quantity_and_value_data = wizard.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE)
+    return not quantity_and_value_data.get("no_set_quantities_or_value", False)
+
+
 def is_serial_numbers_available(wizard):
     serial_numbers_available_data = wizard.get_cleaned_data_for_step(
         AddGoodFirearmToApplicationSteps.SERIAL_IDENTIFICATION_MARKING

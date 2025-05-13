@@ -121,6 +121,9 @@ def get_deactivation_details_payload(form):
 
 
 def get_quantity_and_value_payload(form):
+    if form.cleaned_data.get("no_set_quantities_or_value"):
+        return {}
+
     return {
         "firearm_details": {
             "number_of_items": form.cleaned_data["number_of_items"],
