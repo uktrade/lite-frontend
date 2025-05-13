@@ -1,7 +1,11 @@
 from datetime import datetime
 from decimal import Decimal
 
-from crispy_forms_gds.layout import Field, HTML
+from crispy_forms_gds.layout import (
+    Div,
+    Field,
+    HTML,
+)
 
 from django import forms
 from django.db import models
@@ -573,7 +577,13 @@ class ProductQuantityAndValueForm(BaseForm):
         return (
             Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
-            "no_set_quantities_or_value",
+            Div(
+                Field(
+                    "no_set_quantities_or_value",
+                    template="gds/layout/single_checkbox_field.html",
+                ),
+                css_class="govuk-!-margin-top-8",
+            ),
         )
 
 
