@@ -267,7 +267,7 @@ class ProductSecurityClassificationForm(BaseForm):
         cleaned_data = super().clean()
         conditional_text_field_data = {
             "security_classification": "Security classification cannot be blank",
-            "prefix": "Security classification cannot be blank",
+            "prefix": "Prefix cannot be blank",
         }
 
         for field, error_message in conditional_text_field_data.items():
@@ -293,8 +293,8 @@ class ProductSecurityClassificationForm(BaseForm):
             for choice in SecurityGrading.product_choices
         ]
         super().__init__(*args, **kwargs)
-        self.fields["security_classification"].choices = SecurityGrading.product_choices
         self.fields["prefix"].choices = SecurityGradingPrefix.prefix_choices
+        self.fields["security_classification"].choices = SecurityGrading.product_choices
 
     def get_layout_fields(self):
         return (
