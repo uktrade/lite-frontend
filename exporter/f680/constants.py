@@ -6,9 +6,9 @@ class ApprovalTypeSteps:
 
 
 class SecurityGradingPrefix:
-    UK = "UK"
-    NATO = "NATO"
-    OCCAR = "OCCAR"
+    UK = "uk"
+    NATO = "nato"
+    OCCAR = "occar"
     OTHER = "other"
 
     prefix_choices = [
