@@ -215,7 +215,7 @@ class SecurityGradingForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            "prefix",
+            ConditionalRadios("prefix", *self.prefix_conditional_radio_choices),
             ConditionalRadios("security_classification", *self.conditional_radio_choices),
             "suffix",
             HTML.details(
