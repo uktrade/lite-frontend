@@ -407,7 +407,7 @@ class TestProductInformationViews:
             (
                 FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
                 {
-                    "prefix": "UK",
+                    "prefix": "uk",
                     "security_classification": "unclassified",
                     "suffix": "some suffix",
                     "issuing_authority_name_address": "some address",
@@ -797,7 +797,7 @@ class TestProductInformationViews:
             post_to_product_step(
                 FormSteps.PRODUCT_SECURITY_CLASSIFICATION_DETAILS,
                 {
-                    "prefix": "UK",
+                    "prefix": "uk",
                     "security_classification": "unclassified",
                     "suffix": "some suffix",
                     "issuing_authority_name_address": "some address",
@@ -896,7 +896,7 @@ class TestProductInformationViews:
                             "prefix": {
                                 "key": "prefix",
                                 "answer": "UK",
-                                "raw_answer": "UK",
+                                "raw_answer": "uk",
                                 "question": "Select a prefix",
                                 "datatype": "string",
                             },

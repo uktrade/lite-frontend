@@ -207,7 +207,7 @@ class TestUserInformationView:
             (
                 FormSteps.SECURITY_GRADING,
                 {
-                    "prefix": "UK",
+                    "prefix": "uk",
                     "security_classification": "official",
                     "suffix": "some suffix",
                 },
@@ -332,7 +332,7 @@ class TestUserInformationView:
         response = post_to_step(
             FormSteps.SECURITY_GRADING,
             {
-                "prefix": "UK",
+                "prefix": "uk",
                 "security_classification": "secret",
                 "suffix": "some suffix",
             },
@@ -399,7 +399,7 @@ class TestUserInformationView:
                                     "prefix": {
                                         "key": "prefix",
                                         "answer": "UK",
-                                        "raw_answer": "UK",
+                                        "raw_answer": "uk",
                                         "question": "Select a prefix",
                                         "datatype": "string",
                                     },
@@ -505,7 +505,7 @@ class TestUserInformationView:
         response = post_to_step(
             FormSteps.SECURITY_GRADING,
             {
-                "prefix": "UK",
+                "prefix": "uk",
                 "security_classification": "secret",
                 "suffix": "some suffix",
             },
@@ -570,7 +570,7 @@ class TestUserInformationView:
                 "prefix": {
                     "key": "prefix",
                     "answer": "UK",
-                    "raw_answer": "UK",
+                    "raw_answer": "uk",
                     "question": "Select a prefix",
                     "datatype": "string",
                 },
