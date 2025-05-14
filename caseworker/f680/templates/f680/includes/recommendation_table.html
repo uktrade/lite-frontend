@@ -3,9 +3,8 @@
 		<tr class="govuk-table__row">
 			<th scope="col" class="govuk-table__header">Team</th>
 			<th scope="col" class="govuk-table__header">Recommendation</th>
-			<th scope="col" class="govuk-table__header">Security grading</th>
-			<th scope="col" class="govuk-table__header">Conditions</th>
-			<th scope="col" class="govuk-table__header">Refusal reasons</th>
+			<th scope="col" class="govuk-table__header">Recommended release</th>
+            <th scope="col" class="govuk-table__header">Conditions/Refusal reasons</th>
 		</tr>
 	</thead>
 	<tbody class="govuk-table__body">
@@ -17,27 +16,31 @@
 			<td class="govuk-table__cell govuk-table__cell--max-width-200">
                 {{recommendation.type.value}}
 			</td>
-			<td class="govuk-table__cell govuk-table__cell--max-width-200 ">
+			<td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                 {% if recommendation.security_grading %}
                     {{recommendation.security_grading.value}}
                 {% else %}
                     -
                 {% endif %}
 			</td>
-			<td class="govuk-table__cell govuk-table__cell--max-width-600 govuk-table__cell--min-width-300">
-                {% if recommendation.conditions %}
-                    {{recommendation.conditions|linebreaksbr}}
-                {% else %}
-                    -
-                {% endif %}
-			</td>
-			<td class="govuk-table__cell govuk-table__cell--max-width-600 govuk-table__cell--min-width-300">
-                {% if recommendation.refusal_reasons %}
-                    {{recommendation.refusal_reasons|linebreaksbr}}
-                {% else %}
-                    -
-                {% endif %}
-			</td>
+            <td class="govuk-table__cell govuk-table__cell--max-width-600 ">
+                <details class="govuk-details" data-module="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+                            {% if recommendation.type.key == 'approve' %}
+                                Conditions
+                            {% else %}
+                                Refusal reasons
+                            {% endif %}
+                        </span>
+                    </summary>
+                        {% if recommendation.type.key == 'approve' %}
+                            {{ recommendation.conditions|linebreaks }}
+                        {% elif recommendation.type.key == 'refuse' %}
+                            {{ recommendation.refusal_reasons|linebreaks }}
+                        {% endif %}
+                </details>
+            </td>
         </tr>
         {% endfor %}
 	</tbody>

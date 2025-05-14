@@ -1,11 +1,5 @@
 {% for security_release_request in security_release_requests %}
-    <details class="govuk-details" data-module="govuk-details">
-        <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text govuk-!-font-weight-bold">
-                {{security_release_request.recipient.name}}
-            </span>
-        </summary>
-        {% include "f680/includes/security_release_request_table.html" with security_release_requests=security_release_request|force_list case=case queue_pk=queue_pk %}
-        {% include "f680/includes/recommendation_table.html" with recommendations=security_release_request.recommendations case=case queue_pk=queue_pk %}
-    </details>
+    <h3 class="govuk-heading-m">{{security_release_request.recipient.name}}</h2>
+    {% include "f680/includes/security_release_request_table.html" with security_release_requests=security_release_request|force_list case=case queue_pk=queue_pk %}
+    {% include "f680/includes/recommendation_table.html" with recommendations=security_release_request.recommendations case=case queue_pk=queue_pk %}
 {% endfor %}

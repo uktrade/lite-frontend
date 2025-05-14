@@ -33,17 +33,25 @@ def is_refuse_selected(wizard):
     return cleaned_data.get("outcome") == "refuse"
 
 
+def is_automatic_group_not_chosen(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP) or {}
+    is_automatic_group_chosen = bool(cleaned_data.get("security_release_requests"))
+    return not is_automatic_group_chosen
+
+
 class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
     template_name = "f680/case/outcome/form_wizard.html"
     current_tab = "recommendations"
 
     form_list = [
+        (OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP, forms.ChooseAutomaticOutcomeGroup),
         (OutcomeSteps.SELECT_OUTCOME, forms.SelectOutcomeForm),
         (OutcomeSteps.APPROVE, forms.ApproveOutcomeForm),
         (OutcomeSteps.REFUSE, forms.RefuseOutcomeForm),
     ]
 
     condition_dict = {
+        OutcomeSteps.SELECT_OUTCOME: is_automatic_group_not_chosen,
         OutcomeSteps.APPROVE: is_approve_selected,
         OutcomeSteps.REFUSE: is_refuse_selected,
     }
@@ -66,7 +74,7 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
     def get_form_kwargs(self, step=None):
-        if step == OutcomeSteps.SELECT_OUTCOME:
+        if step == OutcomeSteps.SELECT_OUTCOME or step == OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP:
             return {"security_release_requests": self.remaining_requests_without_outcome}
         if step == OutcomeSteps.APPROVE:
             # Restrict approval type choices to those requested in the application
