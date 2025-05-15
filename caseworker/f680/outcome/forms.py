@@ -1,3 +1,4 @@
+from collections import defaultdict
 from django import forms
 from django.utils import timezone
 from dateutil.relativedelta import relativedelta
@@ -8,6 +9,53 @@ from caseworker.f680.outcome.constants import SecurityReleaseOutcomeDuration
 from core.common.validators import (
     FutureDateValidator,
 )
+
+
+class ChooseAutomaticOutcomeGroup(BaseForm):
+    class Layout:
+        TITLE = "Choose an automatic outcome group"
+
+    outcome_group = forms.ChoiceField(
+        label="Select outcome group",
+        required=True,
+        widget=forms.RadioSelect,
+        choices=(),
+    )
+    OUTCOME_CHOICES = [
+        ("approve", "Approve"),
+        ("refuse", "Refuse"),
+    ]
+    outcome = forms.ChoiceField(
+        choices=OUTCOME_CHOICES,
+        widget=forms.RadioSelect,
+        label="Select outcome",
+        error_messages={"required": "Select if you approve or refuse"},
+    )
+
+    def __init__(self, security_release_requests, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        proposed_outcome_groups = self.group_security_releases(security_release_requests)
+        self.fields["outcome_group"].choices = ()
+
+    def group_security_releases(self, security_release_requests):
+        grouped_security_releases = defaultdict(list)
+        for release_request in security_release_requests:
+            unique_recommendation_decisions = {
+                recommendation["recommendation"] for recommendation in security_release_request["recommendations"]
+            }
+            requested_grading = release_request["security_grading"]
+            if "refuse" in unique_recommendation_decisions:
+                group_key = f"{requested_grading}-refuse"
+            else:
+                group_key = f"{requested_grading}-approve"
+            grouped_security_releases[group_key].append(release_request)
+        return grouped_security_releases
+
+    def get_layout_fields(self):
+        return (
+            "security_release_requests",
+            "outcome",
+        )
 
 
 class SelectOutcomeForm(BaseForm):

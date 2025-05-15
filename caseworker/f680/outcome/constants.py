@@ -1,4 +1,5 @@
 class OutcomeSteps:
+    CHOOSE_AUTOMATIC_OUTCOME_GROUP = "choose_automatic_outcome_group"
     SELECT_OUTCOME = "select_outcome"
     APPROVE = "approve"
     REFUSE = "refuse"
