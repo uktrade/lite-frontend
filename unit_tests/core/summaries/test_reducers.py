@@ -550,6 +550,7 @@ def test_firearm_on_application_reducer(mocker):
         "firearm_details": {
             "number_of_items": 2,
         },
+        "quantity": 2,
         "value": "14.44",
     }
     good_on_application_documents = {
