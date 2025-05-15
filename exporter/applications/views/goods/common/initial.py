@@ -59,6 +59,11 @@ def get_onward_incorporated_initial_data(good_details):
 
 
 def get_quantity_and_value_initial_data(good_on_application):
+    if not good_on_application["quantity"] and not good_on_application["value"]:
+        return {
+            "no_set_quantities_or_value": True,
+        }
+
     return {
         "number_of_items": int(good_on_application["quantity"]),
         "value": good_on_application["value"],

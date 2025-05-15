@@ -752,12 +752,16 @@ def test_add_firearm_to_application_end_to_end_no_set_quantities_or_values(
             "date_of_deactivation": "2007-11-12",
             "is_deactivated_to_standard": True,
             "not_deactivated_to_standard_comments": "",
+            "number_of_items": None,
         },
         "is_onward_exported": True,
         "is_onward_altered_processed": True,
         "is_onward_altered_processed_comments": "processed comments",
         "is_onward_incorporated": True,
         "is_onward_incorporated_comments": "incorporated comments",
+        "quantity": None,
+        "unit": None,
+        "value": None,
     }
 
 

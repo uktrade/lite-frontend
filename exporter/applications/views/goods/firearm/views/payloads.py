@@ -121,14 +121,16 @@ def get_deactivation_details_payload(form):
 
 
 def get_quantity_and_value_payload(form):
-    if form.cleaned_data.get("no_set_quantities_or_value"):
-        return {}
+    payload = common_get_quantity_and_value_payload(form)
+
+    if "quantity" not in payload:
+        return payload
 
     return {
         "firearm_details": {
-            "number_of_items": form.cleaned_data["number_of_items"],
+            "number_of_items": form.cleaned_data.get("number_of_items"),
         },
-        **common_get_quantity_and_value_payload(form),
+        **payload,
     }
 
 
