@@ -188,3 +188,5 @@ exporter/assets/built
 
 # merge backup files
 *.orig
+
+test-results

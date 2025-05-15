@@ -108,3 +108,22 @@ exporter-e2e-selenium-test:
 
 build-exporter:
 	$(docker-e2e-exporter) build
+
+
+playwright_run_tests_docker: ## Run end to end tests in a container
+	docker compose run -it --rm playwright-runner sh ./end_to_end_tests/playwright/scripts/run_tests.sh $(ARGUMENTS)
+
+playwright_run_tests: ## Run end to end tests on local machine
+	sh ./end_to_end_tests/playwright/scripts/run_tests.sh $(ARGUMENTS)
+
+playwright_run_tests_in_debug_mode: ## Run end to end tests in debug mode on local machine
+	sh ./end_to_end_tests/playwright/scripts/run_tests_debug_mode.sh
+
+playwright_write_exporter_test: ## Write a new exporter test
+	sh ./end_to_end_tests/playwright/scripts/write_exporter_test.sh
+
+playwright_write_caseworker_test: ## Write a new caseworker test
+	sh ./end_to_end_tests/playwright/scripts/write_caseworker_test.sh
+
+playwright_show_trace: ## View test trace
+	sh ./end_to_end_tests/playwright/scripts/view_test_trace.sh $(ARGUMENTS)
