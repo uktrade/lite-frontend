@@ -436,7 +436,7 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
 
     summary = ()
 
-    summary += quantity_and_value_reducer(good_on_application, firearm_details)
+    summary += quantity_and_value_reducer(good_on_application)
     summary += firearms_act_section1_reducer(firearm_details, good_on_application_documents)
     summary += firearms_act_section2_reducer(firearm_details, good_on_application_documents)
     summary += year_of_manufacture_reducer(firearm_details)
@@ -447,12 +447,12 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
     return summary
 
 
-def quantity_and_value_reducer(good_on_application, firearm_details):
-    if not firearm_details["number_of_items"] and not good_on_application["value"]:
+def quantity_and_value_reducer(good_on_application):
+    if not good_on_application["value"]:
         return (("no-set-quantities-or-value", True),)
 
     summary = (
-        ("number-of-items", firearm_details["number_of_items"]),
+        ("number-of-items", good_on_application["quantity"]),
         ("total-value", Decimal(good_on_application["value"])),
     )
 
@@ -675,10 +675,8 @@ def material_reducer(good):
 
 
 def complete_item_on_application_reducer(good_on_application):
-    summary = (
-        ("number-of-items", good_on_application["quantity"]),
-        ("total-value", Decimal(good_on_application["value"])),
-    )
+    summary = ()
+    summary += quantity_and_value_reducer(good_on_application)
     summary += is_onward_exported_reducer(good_on_application)
     return summary
 
@@ -694,10 +692,8 @@ def material_on_application_reducer(good_on_application):
 
 
 def component_accessory_on_application_reducer(good_on_application):
-    summary = (
-        ("number-of-items", good_on_application["quantity"]),
-        ("total-value", Decimal(good_on_application["value"])),
-    )
+    summary = ()
+    summary += quantity_and_value_reducer(good_on_application)
     summary += is_onward_exported_reducer(good_on_application)
     return summary
 
@@ -752,9 +748,7 @@ def designed_for_military_use_reducer(good):
 
 
 def technology_on_application_reducer(good_on_application):
-    summary = (
-        ("number-of-items", good_on_application["quantity"]),
-        ("total-value", Decimal(good_on_application["value"])),
-    )
+    summary = ()
+    summary += quantity_and_value_reducer(good_on_application)
     summary += is_onward_exported_reducer(good_on_application)
     return summary
