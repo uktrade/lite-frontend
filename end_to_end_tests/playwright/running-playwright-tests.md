@@ -5,6 +5,12 @@ Running `make playwright_run_tests` or `make playwright_run_tests_docker` will r
 
 `end_to_end_tests/playwright/example.env` provides defaults for all required environment variables.
 
+Create your own copy of the .env
+```bash
+cp end_to_end_tests/playwright/example.env end_to_end_tests/playwright/.env
+```
+Make sure the users with the email addresses specified exist on your local install.
+
 The tests can only be run when Staff-SSO and GOV.UK One Login are disabled.
 
 The tests can be run locally or in a container.
