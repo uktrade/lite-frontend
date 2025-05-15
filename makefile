@@ -1,12 +1,9 @@
 ARGUMENTS = $(filter-out $@,$(MAKECMDGOALS)) $(filter-out --,$(MAKEFLAGS))
 
-ifdef CI
-	docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
-	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
-else
-	docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
-	docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
-endif
+
+docker-e2e-caseworker = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.caseworker.yml
+docker-e2e-exporter = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml
+docker-e2e = docker-compose -p lite -f docker-compose.base.yml -f docker-compose.api.yml -f docker-compose.exporter.yml -f docker-compose.caseworker.yml
 
 wait-for-caseworker = dockerize -wait http://caseworker:8200/healthcheck -timeout 10m -wait-retry-interval 5s
 wait-for-exporter = dockerize -wait http://exporter:8300/healthcheck -timeout 10m -wait-retry-interval 5s
@@ -92,6 +89,12 @@ start-caseworker:
 stop-caseworker:
 	$(docker-e2e-caseworker) down --remove-orphans
 
+start-e2e:
+	$(docker-e2e) $(start-command)
+
+stop-e2e:
+	$(docker-e2e) down --remove-orphans
+
 start-exporter:
 	$(docker-e2e-exporter) $(start-command)
 
@@ -106,9 +109,12 @@ exporter-e2e-selenium-test:
 	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
 	$(docker-e2e-exporter) exec exporter bash -c '$(wait-for-exporter)' && PIPENV_DOTENV_LOCATION=exporter.env pipenv run pytest --circleci-parallelize --headless --chrome-binary-location=/usr/bin/google-chrome -vv --gherkin-terminal-reporter --junitxml=test_results/output.xml ./ui_tests/exporter
 
+e2e-playwright:
+	@echo "*** Requires starting the exporter stack, which can be started running: 'make start-exporter' ***"
+	$(docker-e2e) exec exporter bash -c '$(wait-for-exporter)' && pipenv run sh ./end_to_end_tests/playwright/scripts/run_tests.sh
+
 build-exporter:
 	$(docker-e2e-exporter) build
-
 
 playwright_run_tests_docker: ## Run end to end tests in a container
 	docker compose run -it --rm playwright-runner sh ./end_to_end_tests/playwright/scripts/run_tests.sh $(ARGUMENTS)
@@ -130,3 +136,12 @@ playwright_show_trace: ## View test trace
 
 playwright_install: ## Install playwright locally
 	sh ./end_to_end_tests/playwright/scripts/install_playwright.sh
+
+wait_caseworker: ## Install playwright locally
+	dockerize -wait http://caseworker:8200/healthcheck -timeout 10m -wait-retry-interval 5s
+
+wait_exporter: ## Install playwright locally
+	dockerize -wait http://exporter:8300/healthcheck -timeout 10m -wait-retry-interval 5s
+
+docker_debug: ## Install playwright locally
+	docker ps

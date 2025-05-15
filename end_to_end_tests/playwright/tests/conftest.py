@@ -37,6 +37,11 @@ class PlaywrightTestCase:
         self.page.get_by_label("Email").click()
         self.page.get_by_label("Email").fill(self.env_config.exporter_email)
         self.page.get_by_role("button", name="Continue").click()
+        if self.page.url.endswith("/register-name/"):
+            self.page.get_by_label("First name").fill("TEST")  # /PS-IGNORE
+            self.page.get_by_label("Last name").fill("USER")  # /PS-IGNORE
+            self.page.get_by_role("button", name="Continue").click()
+
         self.page.get_by_label("Archway Communications").check()
         self.page.get_by_role("button", name="Continue").click()
 

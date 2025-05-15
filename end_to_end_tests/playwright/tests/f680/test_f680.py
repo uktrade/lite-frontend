@@ -127,8 +127,6 @@ class TestF680(PlaywrightTestCase):
 
     def manage_f680_application(self):
         self.page.goto(self.env_config.caseworker_url)
-        self.page.locator("#link-profile").click()
-        self.page.get_by_role("link", name="Change Team").click()
 
         # MOD- ECJU / Default Queue
         self.caseworker_super_user_change_teams(
@@ -137,7 +135,7 @@ class TestF680(PlaywrightTestCase):
 
         self.page.get_by_role("link", name="All cases (Click to change").click()
         self.page.get_by_role("link", name="F680 Cases to review").click()
-        self.page.get_by_role("link", name=self.app_reference_code).click()
+        self.page.locator(f"#case-{self.app_pk}").click()
 
         assert_page_url(self.page, f"/cases/{self.app_pk}/f680/details/")
         self.page.get_by_role("button", name="Allocate to me").click()
@@ -150,7 +148,29 @@ class TestF680(PlaywrightTestCase):
 
         self.page.get_by_role("link", name="All cases (Click to change").click()
         self.page.get_by_role("link", name="MOD-CapProt cases to review").click()
-        self.page.get_by_role("link", name=self.app_reference_code).click()
+        self.page.locator(f"#case-{self.app_pk}").click()
+        assert_page_url(self.page, f"/cases/{self.app_pk}/f680/details/")
+        self.page.get_by_role("button", name="Allocate to me").click()
+
+        self.page.get_by_role("link", name="Recommendations").click()
+        self.page.get_by_role("link", name="Make recommendation").click()
+        self.page.get_by_label("TEST-USER1, Abu Dhabi").check()
+        self.page.get_by_label("Approve").check()
+        self.page.get_by_role("button", name="Continue").click()
+        self.page.get_by_label("Secret", exact=True).check()
+        self.page.get_by_label("Provisos").click()
+        self.page.get_by_label("Provisos").fill("SECRET PROVISOS")
+        self.page.get_by_role("button", name="Continue").click()
+        self.page.get_by_role("button", name="Move case forward").click()
+
+        # MOD - DI / Default Queue
+        self.caseworker_super_user_change_teams(
+            "2e5fab3c-4599-432e-9540-74ccfafb18ee", "00000000-0000-0000-0000-000000000001"  # /PS-IGNORE
+        )
+
+        self.page.get_by_role("link", name="All cases (Click to change").click()
+        self.page.get_by_role("link", name="MOD-DI Indirect cases to review").click()
+        self.page.locator(f"#case-{self.app_pk}").click()
         assert_page_url(self.page, f"/cases/{self.app_pk}/f680/details/")
         self.page.get_by_role("button", name="Allocate to me").click()
 
@@ -172,8 +192,8 @@ class TestF680(PlaywrightTestCase):
 
         self.page.get_by_role("link", name="All cases (Click to change").click()
         self.page.get_by_role("link", name="MOD-DSR cases to review").click()
+        self.page.locator(f"#case-{self.app_pk}").click()
 
-        self.page.get_by_role("link", name=self.app_reference_code).click()
         assert_page_url(self.page, f"/cases/{self.app_pk}/f680/details/")
         self.page.get_by_role("button", name="Allocate to me").click()
 
@@ -195,7 +215,7 @@ class TestF680(PlaywrightTestCase):
 
         self.page.get_by_role("link", name="All cases (Click to change").click()
         self.page.get_by_role("link", name="F680 Cases under final review").click()
-        self.page.get_by_role("link", name=self.app_reference_code).click()
+        self.page.locator(f"#case-{self.app_pk}").click()
         assert_page_url(self.page, f"/cases/{self.app_pk}/f680/details/")
         self.page.get_by_role("button", name="Allocate to me").click()
         self.page.get_by_role("link", name="Recommendation").click()

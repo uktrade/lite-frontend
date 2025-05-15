@@ -2,4 +2,4 @@
 
 pipenv install --dev
 pipenv install --categories end-to-end-packages
-pipenv run python -m playwright install --with-deps chromium
+pipenv run python -m playwright install
