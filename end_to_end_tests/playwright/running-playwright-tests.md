@@ -17,7 +17,7 @@ make playwright_run_tests_docker
 
 To run locally
 ```bash
-make install_playwright
+make playwright_install
 make playwright_run_tests
 ```
 
