@@ -2,6 +2,6 @@
 
 echo "Write new Caseworker test"
 set -a
-source playwright/.env
+source end_to_end_tests/playwright/.env
 python -m playwright codegen $CASEWORKER_URL --target python-pytest
 set +a
