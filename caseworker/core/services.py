@@ -2,7 +2,7 @@ from cacheops import cached
 from collections import defaultdict
 from django.conf import settings
 
-from caseworker.advice.constants import LICENSING_UNIT_TEAM, MOD_ECJU
+from caseworker.advice.constants import LICENSING_UNIT_TEAM
 from caseworker.cases.constants import CaseType
 from caseworker.core.constants import CONTROL_LIST_ENTRIES_CACHE_TIMEOUT
 from caseworker.users.services import get_gov_user
@@ -95,8 +95,6 @@ def get_permissible_statuses(request, case):
             CaseStatusEnum.WITHDRAWN,
             CaseStatusEnum.REOPENED_FOR_CHANGES,
         ]
-        if user_team_alias == MOD_ECJU:
-            permissible_statuses.append(CaseStatusEnum.FINALISED)
 
     elif case.type == CaseType.APPLICATION.value:
         statuses, _ = get_statuses(request)
