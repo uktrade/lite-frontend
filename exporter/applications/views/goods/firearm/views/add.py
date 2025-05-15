@@ -367,9 +367,13 @@ class AddGoodFirearmToApplication(
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
+
         if step == AddGoodFirearmToApplicationSteps.SERIAL_NUMBERS:
             quantity_step_data = self.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE)
             kwargs["number_of_items"] = quantity_step_data["number_of_items"]
+
+        if step == AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE:
+            kwargs["request"] = self.request
 
         return kwargs
 

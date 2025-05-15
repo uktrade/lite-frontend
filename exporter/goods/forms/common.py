@@ -23,6 +23,8 @@ from core.file_handler import validate_mime_type
 from core.forms.utils import coerce_str_to_bool
 
 from core.common.forms import BaseForm, FieldsetForm
+
+from exporter.applications.rules import is_organisation_in_indeterminate_export_licence_type_cohort
 from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.services import (
     get_control_list_entries,
@@ -574,21 +576,37 @@ class ProductQuantityAndValueForm(BaseForm):
         required=False,
     )
 
+    def __init__(self, request=None, *args, **kwargs):
+        self.can_select_no_set_quantities_or_value = is_organisation_in_indeterminate_export_licence_type_cohort(
+            request
+        )
+
+        super().__init__(*args, **kwargs)
+
     def get_layout_fields(self):
-        return (
+        layout_fields = (
             Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
-            Div(
-                Field(
-                    "no_set_quantities_or_value",
-                    template="gds/layout/single_checkbox_field.html",
-                ),
-                css_class="govuk-!-margin-top-8",
-            ),
         )
+
+        if self.can_select_no_set_quantities_or_value:
+            layout_fields += (
+                Div(
+                    Field(
+                        "no_set_quantities_or_value",
+                        template="gds/layout/single_checkbox_field.html",
+                    ),
+                    css_class="govuk-!-margin-top-8",
+                ),
+            )
+
+        return layout_fields
 
     def clean(self):
         cleaned_data = super().clean()
+
+        if not self.can_select_no_set_quantities_or_value:
+            return cleaned_data
 
         if cleaned_data["no_set_quantities_or_value"]:
             for optional_field in ["number_of_items", "value"]:
