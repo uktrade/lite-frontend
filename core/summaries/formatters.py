@@ -473,7 +473,6 @@ FIREARM_ON_APPLICATION_FORMATTERS = {
     "is-deactivated": yesno,
     "deactivated-date": date_formatter("j F Y"),
     "is-proof-standards": yesno,
-    "no-set-quantities-or-value": just("Yes"),
     "total-value": money_formatter,
     "has-serial-numbers": model_choices_formatter(SerialChoices),
 }
@@ -500,7 +499,8 @@ FIREARM_ON_APPLICATION_LABELS = {
     "deactivated-date": "When was the item deactivated?",
     "is-proof-standards": "Has the item been deactivated to UK proof house standards?",
     "is-proof-standards-comments": "Describe who deactivated the product and to what standard it was done",
-    "no-set-quantities-or-value": "No set quantities or value",
+    "no-set-quantities": "Number of items",
+    "no-set-values": "Total value",
     "number-of-items": "Number of items",
     "total-value": "Total value",
     "has-serial-numbers": "Will each product have a serial number or other identification marking?",
@@ -550,7 +550,6 @@ COMPLETE_ITEM_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
-    "no-set-quantities-or-value": just("Yes"),
     "number-of-items": integer,
     "total-value": money_formatter,
 }
@@ -562,7 +561,8 @@ COMPLETE_ITEM_ON_APPLICATION_LABELS = {
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
     "is-incorporated-comments": "Describe what you are incorporating the product into",
     "is-deactivated": "Has the product been deactivated?",
-    "no-set-quantities-or-value": "No set quantities or value",
+    "no-set-quantities": "Number of items",
+    "no-set-values": "Total value",
     "number-of-items": "Number of items",
     "total-value": "Total value",
 }
@@ -593,7 +593,6 @@ MATERIAL_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
-    "no-set-quantities-or-value": just("Yes"),
     "total-value": money_formatter,
 }
 
@@ -604,7 +603,8 @@ MATERIAL_ON_APPLICATION_LABELS = {
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
     "is-incorporated-comments": "Describe what you are incorporating the product into",
     "is-deactivated": "Has the product been deactivated?",
-    "no-set-quantities-or-value": "No set quantities or value",
+    "no-set-quantities": "Number of items",
+    "no-set-values": "Total value",
     "unit": "Unit of measurement",
     "quantity": "Quantity",
     "total-value": "Total value",
@@ -663,7 +663,6 @@ TECHNOLOGY_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
-    "no-set-quantities-or-value": just("Yes"),
     "total-value": money_formatter,
     "number-of-items": integer,
 }
@@ -675,7 +674,8 @@ TECHNOLOGY_ON_APPLICATION_LABELS = {
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
     "is-incorporated-comments": "Describe what you are incorporating the product into",
     "is-deactivated": "Has the product been deactivated?",
-    "no-set-quantities-or-value": "No set quantities or value",
+    "no-set-quantities": "Number of items",
+    "no-set-values": "Total value",
     "number-of-items": "Number of items",
     "total-value": "Total value",
 }
@@ -707,7 +707,6 @@ COMPONENT_ACCESSORY_ON_APPLICATION_FORMATTERS = {
     "is-onward-exported": yesno,
     "is-altered": yesno,
     "is-incorporated": yesno,
-    "no-set-quantities-or-value": just("Yes"),
     "number-of-items": integer,
     "total-value": money_formatter,
 }
@@ -719,7 +718,8 @@ COMPONENT_ACCESSORY_ON_APPLICATION_LABELS = {
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
     "is-incorporated-comments": "Describe what you are incorporating the product into",
     "is-deactivated": "Has the product been deactivated?",
-    "no-set-quantities-or-value": "No set quantities or value",
+    "no-set-quantities": "Number of items",
+    "no-set-values": "Total value",
     "number-of-items": "Number of items",
     "total-value": "Total value",
 }

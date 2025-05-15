@@ -448,17 +448,21 @@ def firearm_on_application_reducer(good_on_application, good_on_application_docu
 
 
 def quantity_and_value_reducer(good_on_application):
-    if not good_on_application["value"]:
-        return (("no-set-quantities-or-value", True),)
+    summary = ()
 
     quantity = good_on_application["quantity"]
-    if good_on_application["unit"]["key"] == "NAR":
-        quantity = int(quantity)
+    if quantity is None:
+        summary += (("no-set-quantities", "No set quantities"),)
+    else:
+        if good_on_application["unit"]["key"] == "NAR":
+            quantity = int(quantity)
+        summary += (("number-of-items", quantity),)
 
-    summary = (
-        ("number-of-items", quantity),
-        ("total-value", Decimal(good_on_application["value"])),
-    )
+    value = good_on_application["value"]
+    if not value:
+        summary += (("no-set-values", "No set values"),)
+    else:
+        summary += (("total-value", Decimal(value)),)
 
     return summary
 
