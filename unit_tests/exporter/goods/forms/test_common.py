@@ -335,6 +335,53 @@ def test_firearm_product_document_upload_form_validation(data, files, is_valid, 
 @pytest.mark.parametrize(
     "data, is_valid, errors",
     (
+        (
+            {"number_of_items": "not a number", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be a number, like 16"]},
+        ),
+        (
+            {"number_of_items": "1.5", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be a number, like 16"]},
+        ),
+        (
+            {"number_of_items": "0", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be 1 or more"]},
+        ),
+        (
+            {"number_of_items": "1", "value": "not a number"},
+            False,
+            {"value": ["Total value must be a number, like 16.32"]},
+        ),
+        ({"number_of_items": "1", "value": "0"}, False, {"value": ["Total value must be 0.01 or more"]}),
+        (
+            {"number_of_items": "1", "value": "16.12345"},
+            False,
+            {"value": ["Total value must not be more than 2 decimals"]},
+        ),
+        (
+            {"number_of_items": "1", "value": "16"},
+            True,
+            {},
+        ),
+        (
+            {"number_of_items": "1", "value": "16.32"},
+            True,
+            {},
+        ),
+    ),
+)
+def test_product_quantity_and_value_form_validation(data, is_valid, errors):
+    form = ProductQuantityAndValueForm(data=data)
+    assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
         ({}, False, {"__all__": ["Enter either the quantity and value, or select 'no set quantities or values'"]}),
         (
             {"no_set_quantities_or_value": True},
@@ -379,8 +426,15 @@ def test_firearm_product_document_upload_form_validation(data, files, is_valid, 
         ),
     ),
 )
-def test_product_quantity_and_value_form_validation(data, is_valid, errors):
-    form = ProductQuantityAndValueForm(data=data)
+def test_product_quantity_and_value_form_validation_single_user_journey(
+    rf, authorized_client, settings, data, is_valid, errors
+):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = ["*"]
+
+    request = rf.get("/")
+    request.session = authorized_client.session
+
+    form = ProductQuantityAndValueForm(request=request, data=data)
     assert form.is_valid() == is_valid
     assert form.errors == errors
 

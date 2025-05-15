@@ -577,9 +577,12 @@ class ProductQuantityAndValueForm(BaseForm):
     )
 
     def __init__(self, request=None, *args, **kwargs):
-        self.can_select_no_set_quantities_or_value = is_organisation_in_indeterminate_export_licence_type_cohort(
-            request
-        )
+        if request:
+            self.can_select_no_set_quantities_or_value = is_organisation_in_indeterminate_export_licence_type_cohort(
+                request
+            )
+        else:
+            self.can_select_no_set_quantities_or_value = False
 
         super().__init__(*args, **kwargs)
 

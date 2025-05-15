@@ -661,7 +661,10 @@ def test_add_firearm_to_application_end_to_end_no_set_quantities_or_values(
     good_on_application,
     goto_step,
     post_to_step,
+    settings,
 ):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = "*"
+
     requests_mock.get(
         f"/goods/{expected_good_data['id']}/documents/",
         json={},

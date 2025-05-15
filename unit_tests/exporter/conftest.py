@@ -728,3 +728,8 @@ def mock_exporter_control_list_entries_get(requests_mock):
     return requests_mock.get(
         url=url, json=[{"rating": "ML1a", "text": "some text"}, {"rating": "ML22b", "text": "some text"}]
     )
+
+
+@pytest.fixture
+def default_feature_flags(settings):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = []
