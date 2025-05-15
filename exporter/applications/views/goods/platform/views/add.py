@@ -155,6 +155,10 @@ class AddGoodCompleteItemToApplication(
 
     def get_form_kwargs(self, step=None):
         kwargs = super().get_form_kwargs(step)
+
+        if step == AddGoodCompleteItemToApplicationSteps.QUANTITY_AND_VALUE:
+            kwargs["request"] = self.request
+
         return kwargs
 
     def get_success_url(self):

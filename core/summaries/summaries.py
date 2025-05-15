@@ -530,6 +530,7 @@ COMPLETE_ITEM_ON_APPLICATION_FIELDS = (
     "is-altered-comments",
     "is-incorporated",
     "is-incorporated-comments",
+    "no-set-quantities-or-value",
     "number-of-items",
     "total-value",
 )
@@ -619,6 +620,7 @@ TECHNOLOGY_ON_APPLICATION_FIELDS = (
     "is-altered-comments",
     "is-incorporated",
     "is-incorporated-comments",
+    "no-set-quantities-or-value",
     "number-of-items",
     "total-value",
 )
@@ -663,6 +665,7 @@ COMPONENT_ACCESSORY_ON_APPLICATION_FIELDS = (
     "is-altered-comments",
     "is-incorporated",
     "is-incorporated-comments",
+    "no-set-quantities-or-value",
     "number-of-items",
     "total-value",
 )
