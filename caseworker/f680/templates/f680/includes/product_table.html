@@ -5,7 +5,6 @@
             <th scope="col" class="govuk-table__header">Name</th>
             <th scope="col" class="govuk-table__header">Description</th>
             <th scope="col" class="govuk-table__header">Security Grading</th>
-            <th scope="col" class="govuk-table__header">Security Grading Other</th>
             <th scope="col" class="govuk-table__header">Application Details</th>
         </tr>
     </thead>
@@ -18,14 +17,7 @@
                 {{case.data.product.description|linebreaksbr}}
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
-                {{case.data.product.security_grading.value}}
-            </td>
-            <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
-                {% if case.data.product.security_grading_other %}
-                    {{case.data.product.security_grading_other}}
-                {% else %}
-                    -
-                {% endif %}
+                {{case.data.product.security_grading_final}}
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                 <a href="{% url 'cases:f680:details' queue_pk case.id %}#product_information" class="govuk-link govuk-link--no-visited-state">View full details</a>
