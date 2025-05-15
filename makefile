@@ -127,3 +127,6 @@ playwright_write_caseworker_test: ## Write a new caseworker test
 
 playwright_show_trace: ## View test trace
 	pipenv run sh ./end_to_end_tests/playwright/scripts/view_test_trace.sh $(ARGUMENTS)
+
+playwright_install: ## Install playwright locally
+	sh ./end_to_end_tests/playwright/scripts/install_playwright.sh
