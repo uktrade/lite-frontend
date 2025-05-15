@@ -611,12 +611,14 @@ class ProductQuantityAndValueForm(BaseForm):
         if not self.can_select_no_set_quantities_or_value:
             return cleaned_data
 
+        has_values = []
         if cleaned_data["no_set_quantities_or_value"]:
             for optional_field in ["number_of_items", "value"]:
-                if optional_field in cleaned_data:
-                    del cleaned_data[optional_field]
+                has_values.append(cleaned_data.get(optional_field, None))
                 if optional_field in self.errors:
                     del self.errors[optional_field]
+            if any(has_values):
+                raise ValidationError("Enter either the quantity and value, or select 'no set quantities or values'")
             return cleaned_data
 
         if all(not cleaned_data.get(field_name) for field_name in ["number_of_items", "value"]):
