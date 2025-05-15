@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views.generic import FormView
 from core.decorators import expect_status
 from exporter.applications.services import (
+    get_application,
     get_survey,
     update_survey_feedback,
 )
@@ -23,12 +24,29 @@ class HCSATApplicationPage(LoginRequiredMixin, FormView):
             kwargs={"pk": self.kwargs["pk"]},
         )
 
+    @property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context["form_title"] = "Application submitted"
         context["back_link_url"] = self.get_application_url()
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        title = "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?"
+
+        if self.application["case_type"]["reference"]["key"] == "f680":
+            title = (
+                "Overall, how would you rate your experience with the 'apply for F680 security approval' service today?"
+            )
+
+        kwargs["title"] = title
+
+        return kwargs
 
     @expect_status(
         HTTPStatus.OK,
@@ -58,4 +76,12 @@ class HCSATApplicationPage(LoginRequiredMixin, FormView):
         form_data["user_journey"] = "APPLICATION_SUBMISSION"
         form_data["satisfaction_rating"] = self.survey.get("satisfaction_rating")
         self.update_survey_feedback(self.request, self.survey.get("id"), form_data)
-        return render(self.request, "feedback/hcsat_thanks.html")
+        case_type_reference = self.application["case_type"]["reference"]["key"]
+        context = {
+            "case_type": case_type_reference,
+            "service_name": "apply for a standard individual export licence (SIEL)",
+        }
+        if case_type_reference == "f680":
+            context["service_name"] = "apply for F680 security approval"
+
+        return render(self.request, "feedback/hcsat_thanks.html", context=context)
