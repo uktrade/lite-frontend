@@ -8,7 +8,7 @@ from core.forms.layouts import StarRadioSelect
 
 class HCSATminiform(forms.Form):
     class Layout:
-        TITLE = "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?"
+        TITLE = ""
 
     RECOMMENDATION_CHOICES = [
         ("VERY_DISSATISFIED", "Very dissatisfied"),
@@ -27,10 +27,11 @@ class HCSATminiform(forms.Form):
     )
 
     def get_title(self):
-        return self.Layout.TITLE
+        return self.title
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, title, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.title = title
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
@@ -106,12 +107,11 @@ class HCSATApplicationForm(HCSATminiform):
         max_length=1200,
     )
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, title, *args, **kwargs):
+        super().__init__(title, *args, **kwargs)
+        self.title = title
         legend_size = "m"
-        self.fields["satisfaction_rating"].help_text = (
-            "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?"
-        )
+        self.fields["satisfaction_rating"].help_text = title
 
         self.helper = FormHelper()
         self.helper.layout = Layout(

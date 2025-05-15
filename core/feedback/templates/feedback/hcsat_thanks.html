@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-	<div class="govuk-panel govuk-panel--confirmation lite-panel">
+	<div class="govuk-panel govuk-panel--confirmation lite-panel" data-case_type="{{ case_type }}">
 		<h1 id="registration-confirmation-value" class="govuk-panel__title">
 			Feedback submitted successfully
 		</h1>
@@ -16,7 +16,7 @@
         <h2 class="govuk-heading-m">Thanks for your feedback. It has been successfully submitted.</h2>
         <h3 class="govuk-heading-s">What happens next?</h3>
         <p class="govuk-body">
-            We've sent your responses to the 'apply for a standard individual export licence (SIEL)' team.
+            We've sent your responses to the {{ service_name }} team.
             They will store this data and use it to improve the customer experience of the service.
         </p>
 

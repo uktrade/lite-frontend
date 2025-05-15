@@ -1,8 +1,10 @@
 import pytest
 from django.urls import reverse
-from exporter.applications.forms.hcsat import HCSATminiform
+from exporter.applications.forms.hcsat import HCSATApplicationForm
 from pytest_django.asserts import assertTemplateUsed
 from bs4 import BeautifulSoup
+
+from core import client
 
 
 @pytest.fixture
@@ -11,8 +13,11 @@ def survey_id():
 
 
 @pytest.fixture
-def hcsat_url(survey_id, application_pk):
-    return reverse("applications:application-hcsat", kwargs={"sid": survey_id, "pk": application_pk})
+def hcsat_url():
+    def _hcsat_url(survey_id, application_id):
+        return reverse("applications:application-hcsat", kwargs={"sid": survey_id, "pk": application_id})
+
+    return _hcsat_url
 
 
 @pytest.fixture
@@ -21,8 +26,13 @@ def application_pk(data_standard_case):
 
 
 @pytest.fixture
-def application_url(application_pk):
+def siel_application_url(application_pk):
     return reverse("applications:application", kwargs={"pk": application_pk})
+
+
+@pytest.fixture
+def f680_application_url(data_submitted_f680_case):
+    return reverse("applications:application", kwargs={"pk": data_submitted_f680_case["case"]["id"]})
 
 
 @pytest.fixture
@@ -45,24 +55,49 @@ def setup(mock_get_application):
     yield
 
 
+@pytest.mark.parametrize(
+    "application, application_url, expected_form_title",
+    [
+        (
+            "data_standard_case",
+            "siel_application_url",
+            "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?",
+        ),
+        (
+            "data_submitted_f680_case",
+            "f680_application_url",
+            "Overall, how would you rate your experience with the 'apply for F680 security approval' service today?",
+        ),
+    ],
+)
 def test_hcsat_view(
     authorized_client,
     hcsat_url,
-    application_url,
     mock_get_survey,
+    survey_id,
+    requests_mock,
+    application,
+    application_url,
+    expected_form_title,
+    request,
 ):
-    response = authorized_client.get(hcsat_url)
+    application = request.getfixturevalue(application)
+    application_id = application["case"]["id"]
+    requests_mock.get(client._build_absolute_uri(f"/applications/{application_id}"), json=application["case"])
 
+    url = hcsat_url(survey_id, application_id)
+    response = authorized_client.get(url)
     assert response.status_code == 200
 
-    assert isinstance(response.context["form"], HCSATminiform)
+    assert isinstance(response.context["form"], HCSATApplicationForm)
+    assert response.context["form"].title == expected_form_title
     assertTemplateUsed(response, "applications/hcsat_form.html")
 
     soup = BeautifulSoup(response.content, "html.parser")
 
     # content
     assert soup.find("h1").string.strip() == "Give feedback on this service"
-    assert soup.find("a", {"class": "govuk-back-link"})["href"] == application_url
+    assert soup.find("a", {"class": "govuk-back-link"})["href"] == request.getfixturevalue(application_url)
 
     # form exists
     assert soup.find("input", {"id": "submit-id-submit"})["value"] == "Submit feedback"
@@ -71,11 +106,24 @@ def test_hcsat_view(
     assert mock_get_survey.called_once
 
 
+@pytest.mark.parametrize("application", ["data_standard_case", "data_submitted_f680_case"])
 def test_post_survey_feedback(
-    authorized_client, hcsat_url, survey_id, mock_update_survey, mock_get_survey, application_pk
+    authorized_client,
+    hcsat_url,
+    survey_id,
+    mock_update_survey,
+    mock_get_survey,
+    requests_mock,
+    application,
+    request,
 ):
+    application = request.getfixturevalue(application)
+    application_id = application["case"]["id"]
+    requests_mock.get(client._build_absolute_uri(f"/applications/{application_id}"), json=application["case"])
+
+    url = hcsat_url(survey_id, application_id)
     response = authorized_client.post(
-        hcsat_url, data={"satisfaction_rating": "NEITHER", "user_journey": "APPLICATION_SUBMISSION"}
+        url, data={"satisfaction_rating": "NEITHER", "user_journey": "APPLICATION_SUBMISSION"}
     )
     assert response.status_code == 200
     soup = BeautifulSoup(response.content, "html.parser")
@@ -99,8 +147,11 @@ def test_post_survey_feedback(
     }
 
 
-def test_post_survey_feedback_invalid(authorized_client, hcsat_url, mock_get_survey, mock_update_survey):
-    response = authorized_client.post(hcsat_url, data={})
+def test_post_survey_feedback_invalid(
+    authorized_client, application_pk, survey_id, hcsat_url, mock_get_survey, mock_update_survey
+):
+    url = hcsat_url(survey_id, application_pk)
+    response = authorized_client.post(url, data={})
 
     assert response.status_code == 200
     assert mock_get_survey.called_once
