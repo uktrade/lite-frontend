@@ -91,8 +91,15 @@ def convert_goods_on_application(application, goods_on_application, is_exhibitio
         if is_exhibition:
             item["Product type"] = good_on_application["other_item_type"] or good_on_application["item_type"]
         else:
-            item["Quantity"] = pluralise_quantity(good_on_application)
-            item["Value"] = f"£{good_on_application['value']}"
+            if good_on_application["quantity"] is None:
+                item["Quantity"] = "N/A"
+            else:
+                item["Quantity"] = pluralise_quantity(good_on_application)
+
+            if good_on_application["value"] is None:
+                item["Value"] = "N/A"
+            else:
+                item["Value"] = f"£{good_on_application['value']}"
         if requires_actions(application, good_on_application):
             update_serial_numbers_url = reverse(
                 "applications:update_serial_numbers",
