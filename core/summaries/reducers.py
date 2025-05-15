@@ -451,8 +451,12 @@ def quantity_and_value_reducer(good_on_application):
     if not good_on_application["value"]:
         return (("no-set-quantities-or-value", True),)
 
+    quantity = good_on_application["quantity"]
+    if good_on_application["unit"]["key"] == "NAR":
+        quantity = int(quantity)
+
     summary = (
-        ("number-of-items", good_on_application["quantity"]),
+        ("number-of-items", quantity),
         ("total-value", Decimal(good_on_application["value"])),
     )
 
