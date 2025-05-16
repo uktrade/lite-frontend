@@ -622,6 +622,8 @@ TECHNOLOGY_ON_APPLICATION_FIELDS = (
     "is-altered-comments",
     "is-incorporated",
     "is-incorporated-comments",
+    "no-set-quantities",
+    "no-set-values",
     "number-of-items",
     "total-value",
 )
