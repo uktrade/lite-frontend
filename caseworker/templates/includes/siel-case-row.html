@@ -127,13 +127,8 @@
 
 	{# intended end use #}
 	<td class="govuk-table__cell" data-customiser-key="intended_end_use">
-        <span class="app-intended-end-use">
-        {% if case.intended_end_use %}
-            {{case.intended_end_use|truncatechars:200}}
-        {% endif %}
-        {% if case.intended_end_use|length > 200 %}
-            <a href="{% url 'cases:case' queue.id case.id %}details/#end-use-details" class="govuk-link govuk-link--no-visited-state">See more</a>
-        {% endif %}
+        <span data-max-length="200" class="app-intended-end-use">
+            {{ case.intended_end_use }}
         </span>
 	</td>
 

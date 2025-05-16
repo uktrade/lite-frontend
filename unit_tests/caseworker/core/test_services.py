@@ -6,7 +6,7 @@ from caseworker.cases.objects import Case
 from caseworker.cases.constants import CaseType
 from core.constants import CaseStatusEnum
 from core import client
-from caseworker.advice.constants import LICENSING_UNIT_TEAM, MOD_ECJU
+from caseworker.advice.constants import LICENSING_UNIT_TEAM
 
 
 def test_group_denial_reasons():
@@ -161,32 +161,5 @@ def test_get_permissible_statuses_for_f680(mock_request, mock_gov_user, data_sta
         CaseStatusEnum.OGD_ADVICE,
         CaseStatusEnum.UNDER_FINAL_REVIEW,
         CaseStatusEnum.WITHDRAWN,
-        CaseStatusEnum.REOPENED_FOR_CHANGES,
-    }
-
-
-def test_get_permissible_statuses_for_f680_mod_ecju_team(
-    mock_request, data_standard_case, requests_mock, gov_uk_user_id, mock_case_statuses
-):
-    data_standard_case["case"]["case_type"]["type"]["key"] = CaseType.SECURITY_CLEARANCE.value
-    data = {
-        "user": {
-            "role": {"statuses": mock_case_statuses["statuses"]},
-            "team": {"id": MOD_ECJU},
-        }
-    }
-    url = client._build_absolute_uri("/gov-users/")
-    requests_mock.get(url=f"{url}me/", json=data)
-    requests_mock.get(url=re.compile(f"{url}{gov_uk_user_id}/"), json=data)
-
-    statuses = get_permissible_statuses(mock_request, Case(data_standard_case["case"]))
-    assert len(statuses) == 6
-    status_keys = [status_dict["key"] for status_dict in statuses]
-    assert set(status_keys) == {
-        CaseStatusEnum.SUBMITTED,
-        CaseStatusEnum.OGD_ADVICE,
-        CaseStatusEnum.UNDER_FINAL_REVIEW,
-        CaseStatusEnum.WITHDRAWN,
-        CaseStatusEnum.FINALISED,
         CaseStatusEnum.REOPENED_FOR_CHANGES,
     }

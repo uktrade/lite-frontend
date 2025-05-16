@@ -27,16 +27,20 @@ class StartPage:
     BREADCRUMBS = [
         ["Home", "https://gov.uk"],
         ["Business and enterprise", "https://www.gov.uk/topic/business-enterprise"],
-        ["Trade restrictions on exports", "https://www.gov.uk/topic/business-enterprise/importing-exporting"],
+        [
+            "Trade restrictions on exports",
+            "https://www.gov.uk/topic/business-enterprise/importing-exporting",
+        ],
     ]
 
 
 class StartPageGovUK:
-    TITLE = "Apply for a standard individual export licence (SIEL)"
+    TITLE = "Apply to export controlled goods."
     BULLET_POINTS = [
-        "apply for a SIEL to export goods or products",
+        "apply for a standard individual export licence (SIEL) to export goods or products",
+        "apply for a form 680 (F680) security approval",
         "edit or check an application",
-        "view your existing SIELs",
+        "view your existing SIELs and F680s",
     ]
     DESCRIPTION = "Use this service to:"
     SIGN_IN_BUTTON = "Start now >"
@@ -47,7 +51,10 @@ class StartPageGovUK:
     BREADCRUMBS = [
         ["Home", "https://gov.uk"],
         ["Business and enterprise", "https://www.gov.uk/topic/business-enterprise"],
-        ["Trade restrictions on exports", "https://www.gov.uk/topic/business-enterprise/importing-exporting"],
+        [
+            "Trade restrictions on exports",
+            "https://www.gov.uk/topic/business-enterprise/importing-exporting",
+        ],
     ]
 
 

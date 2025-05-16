@@ -22,7 +22,7 @@ def setup(
     mock_case,
     mock_approval_reason,
     mock_denial_reasons,
-    mock_proviso,
+    mock_f680_proviso,
     mock_footnote_details,
     mock_get_case_recommendations,
     settings,
@@ -453,6 +453,7 @@ def document_data(data_f680_case):
             "safe": True,
             "document_type": None,
             "application": data_f680_case["id"],
+            "created_at": "2023-11-30T17:30:17.479098Z",
         },
     ]
 
@@ -467,19 +468,12 @@ def generated_document_data(data_f680_case):
             "description": "my item",
             "size": 18,
             "safe": True,
-            "document_type": None,
+            "type": {"key": "GENERATED"},
+            "visible_to_exporter": True,
             "application": data_f680_case["id"],
+            "created_at": "2022-11-30T17:00:17.479098Z",
         },
     ]
-
-
-@pytest.fixture
-def document_data_json(document_data):
-    return {
-        "count": 1,
-        "total_pages": 1,
-        "results": document_data,
-    }
 
 
 @pytest.fixture
@@ -492,7 +486,7 @@ def generated_document_data_json(generated_document_data):
 @pytest.fixture
 def mock_get_supporting_documents(requests_mock, data_queue, f680_case_id):
     url = client._build_absolute_uri(f"/queues/{data_queue}/cases/{f680_case_id}/f680/supporting-documents/")
-    return requests_mock.get(url=url, json={"results": document_data})
+    return requests_mock.get(url=url, json=document_data)
 
 
 @pytest.fixture
@@ -502,9 +496,9 @@ def mock_get_supporting_documents_failure(requests_mock, data_queue, f680_case_i
 
 
 @pytest.fixture
-def mock_f680_supporting_documents_get(requests_mock, f680_case_id, document_data_json):
+def mock_f680_supporting_documents_get(requests_mock, f680_case_id, document_data):
     url = client._build_absolute_uri(f"/caseworker/applications/{f680_case_id}/supporting-document/")
-    return requests_mock.get(url=url, json=document_data_json)
+    return requests_mock.get(url=url, json=document_data)
 
 
 @pytest.fixture
@@ -520,7 +514,7 @@ def mock_f680_generated_documents_get_fail(requests_mock, f680_case_id):
 
 
 @pytest.fixture
-def mock_f680_supporting_documents_get_failure(requests_mock, f680_case_id, document_data_json):
+def mock_f680_supporting_documents_get_failure(requests_mock, f680_case_id):
     url = client._build_absolute_uri(f"/caseworker/applications/{f680_case_id}/supporting-document/")
     return requests_mock.get(url=url, status_code=400, json={})
 
@@ -580,6 +574,49 @@ class TestCaseDocumentsView:
             == f"/queues/{queue_id}/cases/{f680_case_id}/f680/supporting-documents/{document_data_id}/"
         )
         assert content.find(id="document-description").text.strip() == "my item"
+
+    def test_GET_documents_check_document_details(
+        self,
+        authorized_client,
+        data_queue,
+        f680_case_id,
+        mock_get_supporting_documents,
+        mock_f680_case_with_submitted_by,
+        mock_f680_supporting_documents_get,
+        mock_f680_generated_documents_get,
+        document_data,
+        generated_document_data,
+        beautiful_soup,
+    ):
+
+        url = reverse("cases:f680:supporting_documents", kwargs={"queue_pk": data_queue["id"], "pk": f680_case_id})
+        document_data_id = document_data[0]["id"]
+        generated_document_data_id = generated_document_data[0]["id"]
+        queue_id = data_queue["id"]
+
+        response = authorized_client.get(url)
+
+        assert response.status_code == 200
+
+        soup = beautiful_soup(response.content)
+
+        document_names_hrefs = [d["href"] for d in soup.findAll(id="document-name")]
+        document_names = [d.text for d in soup.findAll(id="document-name")]
+
+        expected_hrefs = [
+            f"/queues/{queue_id}/cases/{f680_case_id}/f680/supporting-documents/{document_data_id}/",
+            f"/queues/{queue_id}/cases/{f680_case_id}/f680/supporting-documents/{generated_document_data_id}/",
+        ]
+
+        assert document_names == ["sample_doc.pdf", "application_letter.pdf"]
+        assert document_names_hrefs == expected_hrefs
+
+        govuk_hint_details = [d.p.text.strip() for d in soup.findAll("div", {"class": "app-documents__item-details"})]
+
+        assert govuk_hint_details == [
+            "Uploaded at 5:30pm 30 November 2023",
+            "Visible to exporter - Auto Generated at 5:00pm 30 November 2022",
+        ]
 
     def test_GET_uploaded_supporting_documents_for_case_fail(
         self,
