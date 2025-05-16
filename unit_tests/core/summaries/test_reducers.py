@@ -551,6 +551,7 @@ def test_firearm_on_application_reducer(mocker):
             "number_of_items": 2,
         },
         "quantity": 2,
+        "unit": {"key": "NAR"},
         "value": "14.44",
     }
     good_on_application_documents = {
@@ -586,17 +587,17 @@ def test_firearm_on_application_reducer(mocker):
 
 
 def test_complete_item_on_application_reducer(mocker):
-
     mock_is_onward_exported_reducer = mocker.patch(
         "core.summaries.reducers.is_onward_exported_reducer",
         return_value=(),
     )
     good_on_application = {
         "quantity": "6",
+        "unit": {"key": "NAR"},
         "value": "14.44",
     }
     assert complete_item_on_application_reducer(good_on_application) == (
-        ("number-of-items", "6"),
+        ("number-of-items", 6),
         ("total-value", Decimal("14.44")),
     )
     mock_is_onward_exported_reducer.assert_called_with(
@@ -612,10 +613,11 @@ def test_component_accessory_on_application_reducer(mocker):
     )
     good_on_application = {
         "quantity": "6",
+        "unit": {"key": "NAR"},
         "value": "14.44",
     }
     assert component_accessory_on_application_reducer(good_on_application) == (
-        ("number-of-items", "6"),
+        ("number-of-items", 6),
         ("total-value", Decimal("14.44")),
     )
     mock_is_onward_exported_reducer.assert_called_with(
@@ -624,7 +626,6 @@ def test_component_accessory_on_application_reducer(mocker):
 
 
 def test_material_on_application_reducer(mocker):
-
     mock_is_onward_exported_reducer = mocker.patch(
         "core.summaries.reducers.is_onward_exported_reducer",
         return_value=(),
