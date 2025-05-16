@@ -561,6 +561,8 @@ COMPLETE_ITEM_ON_APPLICATION_LABELS = {
     "is-incorporated": "Will the product be incorporated into another item before it is onward exported?",
     "is-incorporated-comments": "Describe what you are incorporating the product into",
     "is-deactivated": "Has the product been deactivated?",
+    "no-set-quantities": "Number of items",
+    "no-set-values": "Total value",
     "number-of-items": "Number of items",
     "total-value": "Total value",
 }
