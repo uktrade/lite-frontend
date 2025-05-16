@@ -72,7 +72,9 @@
                 <tr class="govuk-table__row">
                   <td class="govuk-table__cell govuk-!-font-weight-bold">Quantity</td>
                   <td class="govuk-table__cell">
-                    {% if good.unit.value == 'Items' %}
+                    {% if good.quantity is None %}
+                      N/A
+                    {% elif good.unit.value == 'Items' %}
                       {{ good.quantity|floatformat:"0" }} {{ good.unit.value }}
                     {% else %}
                       {{ good.quantity }} {{ good.unit.value }}

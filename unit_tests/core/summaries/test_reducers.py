@@ -32,10 +32,13 @@ from core.summaries.reducers import (
     security_features_reducer,
     serial_numbers_reducer,
     technology_reducer,
+    technology_on_application_reducer,
     uses_information_security_reducer,
     year_of_manufacture_reducer,
     component_accessory_reducer,
     component_accessory_on_application_reducer,
+    number_of_items_reducer,
+    total_value_reducer,
 )
 
 
@@ -520,30 +523,62 @@ def test_has_product_document_reducer(good, output):
     assert has_product_document_reducer(good) == output
 
 
+@pytest.mark.parametrize(
+    "good_on_application, expected",
+    (
+        ({"quantity": 5, "unit": {"key": "NAR"}}, (("number-of-items", 5),)),
+        ({"quantity": 5.0, "unit": {"key": "GRM"}}, (("number-of-items", 5.0),)),
+        ({"quantity": 5.0, "unit": {"key": "NAR"}}, (("number-of-items", 5),)),
+        ({"quantity": None}, (("no-set-quantities", "No set quantities"),)),
+    ),
+)
+def test_number_of_items_reducer(good_on_application, expected):
+    assert number_of_items_reducer(good_on_application) == expected
+
+
+@pytest.mark.parametrize(
+    "good_on_application, expected",
+    (
+        ({"value": "1.0"}, (("total-value", Decimal("1.0")),)),
+        ({"value": None}, (("no-set-values", "No set values"),)),
+    ),
+)
+def test_total_value_reducer(good_on_application, expected):
+    assert total_value_reducer(good_on_application) == expected
+
+
 def test_firearm_on_application_reducer(mocker):
+    mock_number_of_items_reducer = mocker.patch(
+        "core.summaries.reducers.number_of_items_reducer",
+        return_value=(("number-of-items", "number_of_items"),),
+    )
+    mock_total_value_reducer = mocker.patch(
+        "core.summaries.reducers.total_value_reducer",
+        return_value=(("total-value", "total_value"),),
+    )
     mock_firearms_act_section1_reducer = mocker.patch(
         "core.summaries.reducers.firearms_act_section1_reducer",
-        return_value=(),
+        return_value=(("firearms-act-section-1", "firearms_act_section1"),),
     )
     mock_firearms_act_section2_reducer = mocker.patch(
         "core.summaries.reducers.firearms_act_section2_reducer",
-        return_value=(),
+        return_value=(("firearms-act-section2", "firearms_act_section2"),),
     )
     mock_year_of_manufacture_reducer = mocker.patch(
         "core.summaries.reducers.year_of_manufacture_reducer",
-        return_value=(),
+        return_value=(("year-of-manufacture", "year_of_manufacture"),),
     )
     mock_is_onward_exported_reducer = mocker.patch(
         "core.summaries.reducers.is_onward_exported_reducer",
-        return_value=(),
+        return_value=(("is-onward-exported", "is_onward_exported"),),
     )
     mock_is_deactivated_reducer = mocker.patch(
         "core.summaries.reducers.is_deactivated_reducer",
-        return_value=(),
+        return_value=(("is-deactivated-reducer", "is_deactivated_reducer"),),
     )
     mock_serial_numbers_reducer = mocker.patch(
         "core.summaries.reducers.serial_numbers_reducer",
-        return_value=(),
+        return_value=(("serial-numbers", "serial_numbers"),),
     )
 
     good_on_application = {
@@ -559,9 +594,18 @@ def test_firearm_on_application_reducer(mocker):
     }
 
     assert firearm_on_application_reducer(good_on_application, good_on_application_documents) == (
-        ("number-of-items", 2),
-        ("total-value", Decimal("14.44")),
+        ("number-of-items", "number_of_items"),
+        ("total-value", "total_value"),
+        ("firearms-act-section-1", "firearms_act_section1"),
+        ("firearms-act-section2", "firearms_act_section2"),
+        ("year-of-manufacture", "year_of_manufacture"),
+        ("is-onward-exported", "is_onward_exported"),
+        ("is-deactivated-reducer", "is_deactivated_reducer"),
+        ("serial-numbers", "serial_numbers"),
     )
+
+    mock_number_of_items_reducer.assert_called_with(good_on_application)
+    mock_total_value_reducer.assert_called_with(good_on_application)
     mock_firearms_act_section1_reducer.assert_called_with(
         good_on_application["firearm_details"],
         good_on_application_documents,
@@ -585,18 +629,32 @@ def test_firearm_on_application_reducer(mocker):
 
 
 def test_complete_item_on_application_reducer(mocker):
-
+    mock_number_of_items_reducer = mocker.patch(
+        "core.summaries.reducers.number_of_items_reducer",
+        return_value=(("number-of-items", "number_of_items"),),
+    )
+    mock_total_value_reducer = mocker.patch(
+        "core.summaries.reducers.total_value_reducer",
+        return_value=(("total-value", "total_value"),),
+    )
     mock_is_onward_exported_reducer = mocker.patch(
         "core.summaries.reducers.is_onward_exported_reducer",
-        return_value=(),
+        return_value=(("is-onward-exporter", "is_onward_exporter"),),
     )
     good_on_application = {
         "quantity": "6",
         "value": "14.44",
     }
     assert complete_item_on_application_reducer(good_on_application) == (
-        ("number-of-items", "6"),
-        ("total-value", Decimal("14.44")),
+        ("number-of-items", "number_of_items"),
+        ("total-value", "total_value"),
+        ("is-onward-exporter", "is_onward_exporter"),
+    )
+    mock_number_of_items_reducer.assert_called_with(
+        good_on_application,
+    )
+    mock_total_value_reducer.assert_called_with(
+        good_on_application,
     )
     mock_is_onward_exported_reducer.assert_called_with(
         good_on_application,
@@ -604,18 +662,32 @@ def test_complete_item_on_application_reducer(mocker):
 
 
 def test_component_accessory_on_application_reducer(mocker):
-
+    mock_number_of_items_reducer = mocker.patch(
+        "core.summaries.reducers.number_of_items_reducer",
+        return_value=(("number-of-items", "number_of_items"),),
+    )
+    mock_total_value_reducer = mocker.patch(
+        "core.summaries.reducers.total_value_reducer",
+        return_value=(("total-value", "total_value"),),
+    )
     mock_is_onward_exported_reducer = mocker.patch(
         "core.summaries.reducers.is_onward_exported_reducer",
-        return_value=(),
+        return_value=(("is-onward-exporter", "is_onward_exporter"),),
     )
     good_on_application = {
         "quantity": "6",
         "value": "14.44",
     }
     assert component_accessory_on_application_reducer(good_on_application) == (
-        ("number-of-items", "6"),
-        ("total-value", Decimal("14.44")),
+        ("number-of-items", "number_of_items"),
+        ("total-value", "total_value"),
+        ("is-onward-exporter", "is_onward_exporter"),
+    )
+    mock_number_of_items_reducer.assert_called_with(
+        good_on_application,
+    )
+    mock_total_value_reducer.assert_called_with(
+        good_on_application,
     )
     mock_is_onward_exported_reducer.assert_called_with(
         good_on_application,
@@ -637,6 +709,39 @@ def test_material_on_application_reducer(mocker):
         ("unit", "Gram(s)"),
         ("quantity", "6"),
         ("total-value", Decimal("14.44")),
+    )
+    mock_is_onward_exported_reducer.assert_called_with(
+        good_on_application,
+    )
+
+
+def test_technology_on_application_reducer(mocker):
+    mock_number_of_items_reducer = mocker.patch(
+        "core.summaries.reducers.number_of_items_reducer",
+        return_value=(("number-of-items", "number_of_items"),),
+    )
+    mock_total_value_reducer = mocker.patch(
+        "core.summaries.reducers.total_value_reducer",
+        return_value=(("total-value", "total_value"),),
+    )
+    mock_is_onward_exported_reducer = mocker.patch(
+        "core.summaries.reducers.is_onward_exported_reducer",
+        return_value=(("is-onward-exporter", "is_onward_exporter"),),
+    )
+    good_on_application = {
+        "quantity": "6",
+        "value": "14.44",
+    }
+    assert technology_on_application_reducer(good_on_application) == (
+        ("number-of-items", "number_of_items"),
+        ("total-value", "total_value"),
+        ("is-onward-exporter", "is_onward_exporter"),
+    )
+    mock_number_of_items_reducer.assert_called_with(
+        good_on_application,
+    )
+    mock_total_value_reducer.assert_called_with(
+        good_on_application,
     )
     mock_is_onward_exported_reducer.assert_called_with(
         good_on_application,
@@ -914,6 +1019,10 @@ def test_is_deactivated_reducer(firearm_details, output):
                 ("has-serial-numbers", SerialChoices.NOT_AVAILABLE.value),
                 ("no-identification-markings-details", "No markings"),
             ),
+        ),
+        (
+            {"serial_numbers_available": None},
+            (),
         ),
     ),
 )

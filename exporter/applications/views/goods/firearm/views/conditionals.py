@@ -133,3 +133,8 @@ def is_firearm_certificate_invalid(wizard):
     )
 
     return is_rfd_valid_data.get("is_rfd_certificate_valid") is False
+
+
+def has_quantity_and_value(wizard):
+    quantity_and_value_data = wizard.get_cleaned_data_for_step(AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE)
+    return not quantity_and_value_data.get("no_set_quantities_or_value", False)
