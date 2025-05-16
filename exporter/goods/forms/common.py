@@ -1,9 +1,14 @@
 from datetime import datetime
 from decimal import Decimal
 
-from crispy_forms_gds.layout import Field, HTML
+from crispy_forms_gds.layout import (
+    Div,
+    Field,
+    HTML,
+)
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.template.loader import render_to_string
 from django.urls import reverse
@@ -18,6 +23,8 @@ from core.file_handler import validate_mime_type
 from core.forms.utils import coerce_str_to_bool
 
 from core.common.forms import BaseForm, FieldsetForm
+
+from exporter.applications.rules import is_organisation_in_indeterminate_export_licence_type_cohort
 from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.services import (
     get_control_list_entries,
@@ -549,6 +556,7 @@ class ProductQuantityAndValueForm(BaseForm):
             "min_value": "Number of items must be 1 or more",
         },
         min_value=1,
+        required=False,
         widget=forms.TextInput,
     )
     value = forms.DecimalField(
@@ -560,15 +568,69 @@ class ProductQuantityAndValueForm(BaseForm):
             "min_value": "Total value must be 0.01 or more",
         },
         label="Total value",
+        required=False,
         min_value=Decimal("0.01"),
         widget=forms.TextInput,
     )
+    no_set_quantities_or_value = forms.BooleanField(
+        help_text="For example, if this export related to a long-term project or repeat business",
+        label="Or, no set quantities or value",
+        required=False,
+    )
+
+    def __init__(self, *args, request=None, **kwargs):
+        self.request = request
+
+        super().__init__(*args, **kwargs)
+
+    def alter_fields(self):
+        if self.request and is_organisation_in_indeterminate_export_licence_type_cohort(self.request):
+            return
+
+        self.fields["number_of_items"].required = True
+        self.fields["value"].required = True
+        del self.fields["no_set_quantities_or_value"]
 
     def get_layout_fields(self):
-        return (
+        layout_fields = (
             Field("number_of_items", css_class="govuk-input--width-10 input-force-default-width"),
             Prefixed("£", "value", css_class="govuk-input--width-10 input-force-default-width"),
         )
+
+        if "no_set_quantities_or_value" in self.fields:
+            layout_fields += (
+                Div(
+                    Field(
+                        "no_set_quantities_or_value",
+                        template="gds/layout/single_checkbox_field.html",
+                    ),
+                    css_class="govuk-!-margin-top-8",
+                ),
+            )
+
+        return layout_fields
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        if "no_set_quantities_or_value" not in self.fields:
+            return cleaned_data
+
+        field_values = [cleaned_data.get(field_name) for field_name in self.fields]
+        all_empty = all(not value for value in field_values)
+        all_filled = all(value for value in field_values)
+        if all_empty or all_filled:
+            raise ValidationError("Enter either the quantity and value, or select 'no set quantities or values'")
+
+        if not cleaned_data["no_set_quantities_or_value"]:
+            required_fields = ["number_of_items", "value"]
+            for required_field in required_fields:
+                if required_field not in cleaned_data:
+                    continue
+                if cleaned_data[required_field] is None:
+                    self.add_error(required_field, self.fields[required_field].error_messages["required"])
+
+        return cleaned_data
 
 
 class ProductUnitQuantityAndValueForm(BaseForm):
