@@ -647,18 +647,32 @@ def test_complete_item_on_application_reducer(mocker):
 
 
 def test_component_accessory_on_application_reducer(mocker):
-
+    mock_number_of_items_reducer = mocker.patch(
+        "core.summaries.reducers.number_of_items_reducer",
+        return_value=(("number-of-items", "number_of_items"),),
+    )
+    mock_total_value_reducer = mocker.patch(
+        "core.summaries.reducers.total_value_reducer",
+        return_value=(("total-value", "total_value"),),
+    )
     mock_is_onward_exported_reducer = mocker.patch(
         "core.summaries.reducers.is_onward_exported_reducer",
-        return_value=(),
+        return_value=(("is-onward-exporter", "is_onward_exporter"),),
     )
     good_on_application = {
         "quantity": "6",
         "value": "14.44",
     }
     assert component_accessory_on_application_reducer(good_on_application) == (
-        ("number-of-items", "6"),
-        ("total-value", Decimal("14.44")),
+        ("number-of-items", "number_of_items"),
+        ("total-value", "total_value"),
+        ("is-onward-exporter", "is_onward_exporter"),
+    )
+    mock_number_of_items_reducer.assert_called_with(
+        good_on_application,
+    )
+    mock_total_value_reducer.assert_called_with(
+        good_on_application,
     )
     mock_is_onward_exported_reducer.assert_called_with(
         good_on_application,

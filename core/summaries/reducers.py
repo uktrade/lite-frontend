@@ -702,11 +702,12 @@ def material_on_application_reducer(good_on_application):
 
 
 def component_accessory_on_application_reducer(good_on_application):
-    summary = (
-        ("number-of-items", good_on_application["quantity"]),
-        ("total-value", Decimal(good_on_application["value"])),
-    )
+    summary = ()
+
+    summary += number_of_items_reducer(good_on_application)
+    summary += total_value_reducer(good_on_application)
     summary += is_onward_exported_reducer(good_on_application)
+
     return summary
 
 
