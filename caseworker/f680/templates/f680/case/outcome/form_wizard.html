@@ -1,12 +1,14 @@
 {% extends 'core/form-wizard.html' %}
 
 {% block before_form %}
-{% if selected_security_release_requests %}
-    <h2 class="govuk-heading-m">Selected Security Release Requests</h2>
-    {% include "f680/case/outcome/includes/security_release_request_details.html" with security_release_requests=selected_security_release_requests %}
-{% else %}
-    <h2 class="govuk-heading-m">Security release requests without outcome</h2>
-    {% include "f680/case/outcome/includes/security_release_request_details.html" with security_release_requests=all_security_release_requests %}
+{% if wizard.steps.current != "choose_automatic_outcome_group" %}
+    {% if selected_security_release_requests %}
+        <h2 class="govuk-heading-m">Selected Security Release Requests</h2>
+        {% include "f680/case/outcome/includes/security_release_request_details.html" with security_release_requests=selected_security_release_requests %}
+    {% else %}
+        <h2 class="govuk-heading-m">Security release requests without outcome</h2>
+        {% include "f680/case/outcome/includes/security_release_request_details.html" with security_release_requests=all_security_release_requests %}
+    {% endif %}
 {% endif %}
 {% endblock %}
 

@@ -1,6 +1,6 @@
-from collections import defaultdict
 from django import forms
 from django.utils import timezone
+from django.utils.safestring import mark_safe
 from dateutil.relativedelta import relativedelta
 
 from core.common.forms import BaseForm, CustomErrorDateInputField
@@ -21,41 +21,78 @@ class ChooseAutomaticOutcomeGroup(BaseForm):
         widget=forms.RadioSelect,
         choices=(),
     )
-    OUTCOME_CHOICES = [
-        ("approve", "Approve"),
-        ("refuse", "Refuse"),
-    ]
-    outcome = forms.ChoiceField(
-        choices=OUTCOME_CHOICES,
-        widget=forms.RadioSelect,
-        label="Select outcome",
-        error_messages={"required": "Select if you approve or refuse"},
-    )
 
     def __init__(self, security_release_requests, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        proposed_outcome_groups = self.group_security_releases(security_release_requests)
-        self.fields["outcome_group"].choices = ()
+        self.proposed_outcome_groups = self.group_security_releases(security_release_requests)
+        self.fields["outcome_group"].choices = self.get_outcome_group_choices()
+
+    def get_outcome_group_choices(self):
+        choices = [
+            (
+                group_key,
+                mark_safe(  # noqa
+                    f"<strong>{group['decision'].title()}</strong><br/><strong>Requested release: {group['requested_grading']}</strong><br/>"
+                    + "<br/>".join(
+                        [
+                            f"{rr['recipient']['name']} - {rr['recipient']['country']['name']}"
+                            for rr in group["security_release_requests"]
+                        ]
+                    )
+                ),
+            )
+            for group_key, group in self.proposed_outcome_groups.items()
+        ]
+        choices.append(
+            (
+                "custom",
+                mark_safe("<strong>Choose a group manually</strong>"),  # noqa
+            )
+        )
+        return choices
 
     def group_security_releases(self, security_release_requests):
-        grouped_security_releases = defaultdict(list)
+        grouped_security_releases = {}
         for release_request in security_release_requests:
             unique_recommendation_decisions = {
-                recommendation["recommendation"] for recommendation in security_release_request["recommendations"]
+                recommendation["type"]["key"] for recommendation in release_request["recommendations"]
             }
-            requested_grading = release_request["security_grading"]
+            requested_grading = release_request["security_grading"]["key"]
+
             if "refuse" in unique_recommendation_decisions:
-                group_key = f"{requested_grading}-refuse"
+                decision = "refuse"
             else:
-                group_key = f"{requested_grading}-approve"
-            grouped_security_releases[group_key].append(release_request)
+                decision = "approve"
+
+            group_key = f"{requested_grading}-{decision}"
+
+            try:
+                grouped_security_releases[group_key]["security_release_requests"].append(release_request)
+            except KeyError:
+                grouped_security_releases[group_key] = {
+                    "security_release_requests": [release_request],
+                    "decision": decision,
+                    "requested_grading": release_request["security_grading"]["value"],
+                }
+
         return grouped_security_releases
 
+    def clean(self):
+        cleaned_data = super().clean()
+
+        selected_outcome_group_key = cleaned_data["outcome_group"]
+        if selected_outcome_group_key == "custom":
+            return cleaned_data
+
+        outcome_group = self.proposed_outcome_groups[selected_outcome_group_key]
+        return {
+            **cleaned_data,
+            "security_release_requests": [rr["id"] for rr in outcome_group["security_release_requests"]],
+            "outcome": outcome_group["decision"],
+        }
+
     def get_layout_fields(self):
-        return (
-            "security_release_requests",
-            "outcome",
-        )
+        return ("outcome_group",)
 
 
 class SelectOutcomeForm(BaseForm):
