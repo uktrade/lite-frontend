@@ -30,6 +30,13 @@ def get_part_number_payload(form):
 
 
 def get_quantity_and_value_payload(form):
+    if form.cleaned_data.get("no_set_quantities_or_value"):
+        return {
+            "unit": None,
+            "quantity": None,
+            "value": None,
+        }
+
     return {
         "unit": "NAR",
         "quantity": str(form.cleaned_data["number_of_items"]),

@@ -127,6 +127,70 @@ def test_add_technology_to_application_end_to_end(
     }
 
 
+def test_add_technology_to_application_end_to_end_no_set_quantities_or_values(
+    requests_mock,
+    expected_good_data,
+    mock_good_on_application_post,
+    application,
+    good_on_application,
+    goto_step,
+    post_to_step,
+    settings,
+):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = ["*"]
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        {"is_onward_exported": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
+        {"no_set_quantities_or_value": True},
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:technology_on_application_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["good"]["id"],
+        },
+    )
+
+    assert mock_good_on_application_post.last_request.json() == {
+        "is_onward_exported": True,
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "processed comments",
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "incorporated comments",
+        "good_id": expected_good_data["id"],
+        "is_good_incorporated": False,
+        "quantity": None,
+        "unit": None,
+        "value": None,
+    }
+
+
 def test_add_technology_to_application_end_to_end_handles_service_error(
     requests_mock,
     expected_good_data,

@@ -87,7 +87,7 @@ def test_application_summary_view(
                 (
                     [["#", "Name", "Part number", "Control list entries", "Quantity", "Value"]],
                     [
-                        ["1.", "p1", "44", "ML1a, ML22b", "444.0 gram(s)", "£444.00"],
+                        ["1.", "p1", "44", "ML1a, ML22b", "2 items", "£444.00"],
                         ["2.", "p2", "44", "N/A", "444.0 gram(s)", "£444.00"],
                     ],
                 )

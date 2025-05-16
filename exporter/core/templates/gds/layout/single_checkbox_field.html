@@ -1,0 +1,24 @@
+{% load i18n crispy_forms_field crispy_forms_gds %}
+
+<{% if tag %}{{ tag }}{% else %}div{% endif %} id="div_{{ field.auto_id }}" class="govuk-form-group {% if form_show_errors%}{% if field.errors %} govuk-form-group--error{% endif %}{% endif %}{% if wrapper_class %} {{ wrapper_class }}{% endif %}{% if field.css_classes %} {{ field.css_classes }}{% endif %}">
+    {% if error_text_inline %}
+        {% include 'gds/layout/field_errors.html' %}
+    {% else %}
+        {% include 'gds/layout/field_errors_block.html' %}
+    {% endif %}
+    <div class="govuk-checkboxes{% if checkboxes_small %} govuk-checkboxes--small{% endif %}">
+        <div class="govuk-checkboxes__item">
+            {% crispy_gds_field field %}
+            <label class="govuk-label govuk-checkboxes__label" for="{{ field.id_for_label }}">
+                {{ field.label|safe }}
+            </label>
+            {% if field.help_text %}
+                {% if help_text_inline %}
+                    <span id="{{ field.auto_id }}_hint" class="govuk-hint govuk-checkboxes__hint">{{ field.help_text|safe }}</span>
+                {% else %}
+                    <div id="{{ field.auto_id }}_hint" class="govuk-hint govuk-checkboxes__hint">{{ field.help_text|safe }}</div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</{% if tag %}{{ tag }}{% else %}div{% endif %}>

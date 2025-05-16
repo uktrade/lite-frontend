@@ -22,6 +22,8 @@ class BaseForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.alter_fields()
+
         self.helper = FormHelper()
         for field in self.fields.values():
             if isinstance(field, forms.FileField):
@@ -49,6 +51,9 @@ class BaseForm(forms.Form):
                 css_class="govuk-button-group",
             ),
         )
+
+    def alter_fields(self):
+        pass
 
     def get_title(self):
         return self.Layout.TITLE

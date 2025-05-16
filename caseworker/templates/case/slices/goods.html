@@ -64,7 +64,13 @@
 						</td>
 						<td class="govuk-table__cell govuk-table__cell--max-width-400 {% if show_advice %}lite-!-no-border{% endif %}">
 							<span class="govuk-table__header" aria-hidden="false">Quantity</span>
-							<span id="quantity-value" data-max-length="200">{{ good|pluralise_quantity }}</span>
+							<span id="quantity-value" data-max-length="200">
+								{% if good.quantity is not None %}
+									{{ good|pluralise_quantity }}
+								{% else %}
+									N/A
+								{% endif %}
+							</span>
 						</td>
 						{% if case.goods.0.item_type %}
 							<td class="govuk-table__cell {% if show_advice %}lite-!-no-border{% endif %}">

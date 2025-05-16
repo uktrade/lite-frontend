@@ -281,7 +281,7 @@ class Cases(LoginRequiredMixin, CaseDataMixin, FormView):
                 if good["report_summary_prefix"]:
                     report_summary = f"{good['report_summary_prefix']} {report_summary}"
                 goods_summary["report_summaries"].add(report_summary)
-            goods_summary["total_value"] += Decimal(good["value"])
+            goods_summary["total_value"] += Decimal(good["value"] or 0)
         return goods_summary
 
     def transform_f680_data(self, case):

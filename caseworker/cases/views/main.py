@@ -260,7 +260,7 @@ class CaseDetail(CaseTabsMixin, CaseworkerMixin, TemplateView):
             elif good.get("report_summary"):
                 goods_summary["report_summaries"].add(good["report_summary"])
 
-            goods_summary["total_value"] += Decimal(good["value"])
+            goods_summary["total_value"] += Decimal(good["value"] or 0)
         return goods_summary
 
     def get_destination_countries(self):

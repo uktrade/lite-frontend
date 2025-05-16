@@ -79,7 +79,7 @@ def test_good_on_application_display_quantity(data_good_on_application, quantity
 
     html = render_to_string("case/slices/goods.html", context)
     soup = BeautifulSoup(html, "html.parser")
-    actual_quantity = soup.find(id="quantity-value").text
+    actual_quantity = soup.find(id="quantity-value").text.strip()
     assert expected_value == actual_quantity
 
 

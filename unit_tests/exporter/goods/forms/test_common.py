@@ -332,6 +332,46 @@ def test_firearm_product_document_upload_form_validation(data, files, is_valid, 
     assert form.errors == errors
 
 
+def test_product_quantity_and_value_form_fields(render_form, beautiful_soup):
+    form = ProductQuantityAndValueForm()
+    assert list(form.fields.keys()) == ["number_of_items", "value"]
+
+    rendered = render_form(form)
+    soup = beautiful_soup(rendered)
+    rendered_fields = [input["name"] for input in soup.select("input:not([type=submit]):not([type=hidden])")]
+    assert rendered_fields == ["number_of_items", "value"]
+
+
+def test_product_quantity_and_value_form_fields_with_request(rf, authorized_client, render_form, beautiful_soup):
+    request = rf.get("/")
+    request.session = authorized_client.session
+
+    form = ProductQuantityAndValueForm(request=request)
+    assert list(form.fields.keys()) == ["number_of_items", "value"]
+
+    rendered = render_form(form)
+    soup = beautiful_soup(rendered)
+    rendered_fields = [input["name"] for input in soup.select("input:not([type=submit]):not([type=hidden])")]
+    assert rendered_fields == ["number_of_items", "value"]
+
+
+def test_product_quantity_and_value_form_fields_with_request_feature_switch_on(
+    rf, authorized_client, settings, organisation_pk, render_form, beautiful_soup
+):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = [organisation_pk]
+
+    request = rf.get("/")
+    request.session = authorized_client.session
+
+    form = ProductQuantityAndValueForm(request=request)
+    assert list(form.fields.keys()) == ["number_of_items", "value", "no_set_quantities_or_value"]
+
+    rendered = render_form(form)
+    soup = beautiful_soup(rendered)
+    rendered_fields = [input["name"] for input in soup.select("input:not([type=submit]):not([type=hidden])")]
+    assert rendered_fields == ["number_of_items", "value", "no_set_quantities_or_value"]
+
+
 @pytest.mark.parametrize(
     "data, is_valid, errors",
     (
@@ -377,6 +417,81 @@ def test_firearm_product_document_upload_form_validation(data, files, is_valid, 
 def test_product_quantity_and_value_form_validation(data, is_valid, errors):
     form = ProductQuantityAndValueForm(data=data)
     assert form.is_valid() == is_valid
+    assert form.errors == errors
+
+
+@pytest.mark.parametrize(
+    "data, is_valid, errors",
+    (
+        ({}, False, {"__all__": ["Enter either the quantity and value, or select 'no set quantities or values'"]}),
+        (
+            {"number_of_items": "1", "value": "16", "no_set_quantities_or_value": True},
+            False,
+            {"__all__": ["Enter either the quantity and value, or select 'no set quantities or values'"]},
+        ),
+        (
+            {"no_set_quantities_or_value": True},
+            True,
+            {},
+        ),
+        (
+            {"number_of_items": "not a number", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be a number, like 16"]},
+        ),
+        (
+            {"number_of_items": "1.5", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be a number, like 16"]},
+        ),
+        (
+            {"number_of_items": "0", "value": "100.00"},
+            False,
+            {"number_of_items": ["Number of items must be 1 or more"]},
+        ),
+        (
+            {"number_of_items": "1", "value": "not a number"},
+            False,
+            {"value": ["Total value must be a number, like 16.32"]},
+        ),
+        ({"number_of_items": "1", "value": "0"}, False, {"value": ["Total value must be 0.01 or more"]}),
+        (
+            {"number_of_items": "1", "value": "16.12345"},
+            False,
+            {"value": ["Total value must not be more than 2 decimals"]},
+        ),
+        (
+            {"number_of_items": "1", "value": "16"},
+            True,
+            {},
+        ),
+        (
+            {"number_of_items": "1", "value": "16.32"},
+            True,
+            {},
+        ),
+        (
+            {"number_of_items": "1"},
+            False,
+            {"value": ["Enter the total value"]},
+        ),
+        (
+            {"value": "16"},
+            False,
+            {"number_of_items": ["Enter the number of items"]},
+        ),
+    ),
+)
+def test_product_quantity_and_value_form_validation_single_user_journey(
+    rf, authorized_client, settings, data, is_valid, errors
+):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = ["*"]
+
+    request = rf.get("/")
+    request.session = authorized_client.session
+
+    form = ProductQuantityAndValueForm(request=request, data=data)
+    assert form.is_valid() == is_valid, form.errors
     assert form.errors == errors
 
 
