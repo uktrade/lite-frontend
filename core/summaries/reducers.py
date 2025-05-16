@@ -431,14 +431,32 @@ def rfd_reducer(is_user_rfd, organisation_documents):
     return summary
 
 
+def number_of_items_reducer(good_on_application):
+    quantity = good_on_application["quantity"]
+    if quantity is None:
+        return (("no-set-quantities", "No set quantities"),)
+
+    if good_on_application["unit"]["key"] == "NAR":
+        quantity = int(quantity)
+
+    return (("number-of-items", quantity),)
+
+
+def total_value_reducer(good_on_application):
+    value = good_on_application["value"]
+    if not value:
+        return (("no-set-values", "No set values"),)
+
+    return (("total-value", Decimal(value)),)
+
+
 def firearm_on_application_reducer(good_on_application, good_on_application_documents):
     firearm_details = good_on_application["firearm_details"]
 
-    summary = (
-        ("number-of-items", firearm_details["number_of_items"]),
-        ("total-value", Decimal(good_on_application["value"])),
-    )
+    summary = ()
 
+    summary += number_of_items_reducer(good_on_application)
+    summary += total_value_reducer(good_on_application)
     summary += firearms_act_section1_reducer(firearm_details, good_on_application_documents)
     summary += firearms_act_section2_reducer(firearm_details, good_on_application_documents)
     summary += year_of_manufacture_reducer(firearm_details)
@@ -529,6 +547,9 @@ def is_deactivated_reducer(firearm_details):
 
 
 def serial_numbers_reducer(firearm_details):
+    if firearm_details["serial_numbers_available"] is None:
+        return ()
+
     summary = (("has-serial-numbers", firearm_details["serial_numbers_available"]),)
 
     if firearm_details["serial_numbers_available"] in [SerialChoices.AVAILABLE, SerialChoices.LATER]:

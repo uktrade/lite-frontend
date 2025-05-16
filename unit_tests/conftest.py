@@ -906,8 +906,8 @@ def data_standard_case(
                             "archive_history": [],
                         },
                         "application": "8fb76bed-fd45-4293-95b8-eda9468aa254",
-                        "quantity": 444.0,
-                        "unit": {"key": "GRM", "value": "Gram(s)"},
+                        "quantity": 2,
+                        "unit": {"key": "NAR", "value": "Items"},
                         "value": "444.00",
                         "is_good_incorporated": False,
                         "flags": [],
@@ -2774,7 +2774,7 @@ def standard_complete_item_expected_product_on_application_summary():
         ),
         (
             "number-of-items",
-            "444",
+            "2",
             "Number of items",
         ),
         (
@@ -2917,7 +2917,7 @@ def standard_component_accessory_expected_product_on_application_summary():
         ),
         (
             "number-of-items",
-            "444",
+            "2",
             "Number of items",
         ),
         (
@@ -3047,12 +3047,12 @@ def standard_material_expected_product_on_application_summary():
         ),
         (
             "unit",
-            "Gram(s)",
+            "Items",
             "Unit of measurement",
         ),
         (
             "quantity",
-            444.0,
+            2,
             "Quantity",
         ),
         (
@@ -3204,7 +3204,7 @@ def standard_technology_expected_product_on_application_summary():
         ),
         (
             "number-of-items",
-            "444",
+            "2",
             "Number of items",
         ),
         (

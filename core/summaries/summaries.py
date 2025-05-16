@@ -488,6 +488,8 @@ FIREARM_ON_APPLICATION_FIELDS = (
     "deactivated-date",
     "is-proof-standards",
     "is-proof-standards-comments",
+    "no-set-quantities",
+    "no-set-values",
     "number-of-items",
     "total-value",
     "has-serial-numbers",

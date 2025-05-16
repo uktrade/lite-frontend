@@ -499,6 +499,8 @@ FIREARM_ON_APPLICATION_LABELS = {
     "deactivated-date": "When was the item deactivated?",
     "is-proof-standards": "Has the item been deactivated to UK proof house standards?",
     "is-proof-standards-comments": "Describe who deactivated the product and to what standard it was done",
+    "no-set-quantities": "Number of items",
+    "no-set-values": "Total value",
     "number-of-items": "Number of items",
     "total-value": "Total value",
     "has-serial-numbers": "Will each product have a serial number or other identification marking?",
