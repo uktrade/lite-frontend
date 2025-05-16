@@ -573,7 +573,7 @@ class ProductQuantityAndValueForm(BaseForm):
         widget=forms.TextInput,
     )
     no_set_quantities_or_value = forms.BooleanField(
-        help_text="For example, if this export related to a long-term project or repeat business",
+        help_text="For example, if this export relates to a long-term project or repeat business",
         label="Or, no set quantities or value",
         required=False,
     )
