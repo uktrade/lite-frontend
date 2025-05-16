@@ -36,7 +36,7 @@ class SecurityGrading:
         Choice(RESTRICTED, "RESTRICTED"),
         Choice(CONFIDENTIAL, "CONFIDENTIAL"),
         Choice(SECRET, "SECRET"),
-        Choice(TOP_SECRET, "TOP-SECRET", divider="Or"),
+        Choice(TOP_SECRET, "TOP SECRET", divider="Or"),
         Choice(OTHER, "Other"),
     ]
 
@@ -44,6 +44,6 @@ class SecurityGrading:
         Choice(OFFICIAL, "OFFICIAL"),
         Choice(OFFICIAL_SENSITIVE, "OFFICIAL-SENSITIVE"),
         Choice(SECRET, "SECRET"),
-        Choice(TOP_SECRET, "TOP-SECRET", divider="Or"),
+        Choice(TOP_SECRET, "TOP SECRET", divider="Or"),
         Choice(OTHER, "Other"),
     ]
