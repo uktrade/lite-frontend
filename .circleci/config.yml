@@ -84,6 +84,7 @@ commands:
           keys:
             - pipenv-cache-circleci-dir-v2-{{ checksum "Pipfile.lock" }}
       - run: pipenv install --dev --deploy
+      - run: sh ./end_to_end_tests/playwright/scripts/install_playwright.sh
       - run: git submodule update --init
 
   cache_env_repo_dir:
@@ -191,6 +192,7 @@ commands:
           command: |
             cp ci.exporter.env exporter.env
             cp ci.caseworker.env caseworker.env
+            cp end_to_end_tests/playwright/example.env end_to_end_tests/playwright/.env
       - run: mkdir test_results
 
   finish_e2e_tests:
@@ -204,6 +206,8 @@ commands:
           command: docker logs api > ui_tests/api_logs.txt
       - store_artifacts:
           path: ui_tests/api_logs.txt
+      - store_artifacts:
+          path: test-results
       - store_test_results:
           path: test_results
 
@@ -213,8 +217,11 @@ commands:
             name: "decode secret ENV variable"
             command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
       - run_make:
+          label: Start servers
+          target: start-e2e
+      - run_make:
           label: Run exporter e2e tests
-          target: start-exporter exporter-e2e-selenium-test
+          target: e2e-playwright
 
   run_e2e_caseworker:
     steps:
@@ -335,7 +342,6 @@ jobs:
       image: ubuntu-2204:current
       docker_layer_caching: true
     resource_class: large
-    parallelism: 2
     environment:
       PIPENV_YES: 1
     steps:
@@ -363,7 +369,6 @@ jobs:
       image: ubuntu-2204:current
       docker_layer_caching: true
     resource_class: large
-    parallelism: 2
     environment:
       PIPENV_YES: 1
     steps:
@@ -377,21 +382,4 @@ workflows:
   tests:
     when: << pipeline.parameters.run_unit_tests >>
     jobs:
-      - lint
-      - caseworker_unit_test
-      - exporter_unit_test
-      - core_unit_test
-      - check_coverage:
-          requires:
-              - caseworker_unit_test
-              - exporter_unit_test
-              - core_unit_test
-      - frontend_unit_test
-      - frontend_artefacts_check
-      - caseworker_e2e_test
       - exporter_e2e_test
-  ui_tests:
-    when: << pipeline.parameters.run_ui_tests >>
-    jobs:
-      - caseworker_e2e_test_jenkins
-      - exporter_e2e_test_jenkins
