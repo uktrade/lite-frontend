@@ -279,7 +279,7 @@ def test_add_firearm_to_application_end_to_end_no_firearm_certificate(
             "date_of_deactivation": "2007-11-12",
             "is_deactivated_to_standard": True,
             "not_deactivated_to_standard_comments": "",
-            "number_of_items": 2,
+            "number_of_items": "2",
             "serial_numbers_available": "AVAILABLE",
             "no_identification_markings_details": "",
             "serial_numbers": ["s111", "s222"],
@@ -471,7 +471,7 @@ def test_add_firearm_to_application_end_to_end_firearm_certificate(
             "date_of_deactivation": "2007-11-12",
             "is_deactivated_to_standard": True,
             "not_deactivated_to_standard_comments": "",
-            "number_of_items": 2,
+            "number_of_items": "2",
             "section_certificate_date_of_expiry": certificate_expiry_date.isoformat(),
             "section_certificate_missing": False,
             "section_certificate_number": "12345",
@@ -635,7 +635,7 @@ def test_firearm_category_made_before_1938_end_to_end(
             "date_of_deactivation": "2007-11-12",
             "is_deactivated_to_standard": True,
             "not_deactivated_to_standard_comments": "",
-            "number_of_items": 2,
+            "number_of_items": "2",
             "serial_numbers_available": "AVAILABLE",
             "no_identification_markings_details": "",
             "serial_numbers": ["s111", "s222"],
@@ -650,6 +650,121 @@ def test_firearm_category_made_before_1938_end_to_end(
         "quantity": "2",
         "unit": "NAR",
         "value": "16.32",
+    }
+
+
+def test_add_firearm_to_application_end_to_end_no_set_quantities_or_values(
+    requests_mock,
+    expected_good_data,
+    mock_good_on_application_post,
+    application,
+    good_on_application,
+    goto_step,
+    post_to_step,
+    settings,
+):
+    settings.FEATURE_FLAG_INDETERMINATE_EXPORT_LICENCE_TYPE_ALLOWED_ORGANISATIONS = "*"
+
+    requests_mock.get(
+        f"/goods/{expected_good_data['id']}/documents/",
+        json={},
+    )
+
+    goto_step(AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938)
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.MADE_BEFORE_1938,
+        {"is_made_before_1938": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmYearOfManufactureForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.YEAR_OF_MANUFACTURE,
+        {"year_of_manufacture": 1937},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], ProductOnwardExportedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_EXPORTED,
+        {"is_onward_exported": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], ProductOnwardAlteredProcessedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_ALTERED_PROCESSED,
+        {"is_onward_altered_processed": True, "is_onward_altered_processed_comments": "processed comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], ProductOnwardIncorporatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.ONWARD_INCORPORATED,
+        {"is_onward_incorporated": True, "is_onward_incorporated_comments": "incorporated comments"},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmIsDeactivatedForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED,
+        {"is_deactivated": True},
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], FirearmDeactivationDetailsForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.IS_DEACTIVATED_TO_STANDARD,
+        {
+            "date_of_deactivation_0": "12",
+            "date_of_deactivation_1": "11",
+            "date_of_deactivation_2": "2007",
+            "is_deactivated_to_standard": True,
+        },
+    )
+    assert response.status_code == 200
+    assert not response.context["form"].errors
+    assert isinstance(response.context["form"], ProductQuantityAndValueForm)
+
+    response = post_to_step(
+        AddGoodFirearmToApplicationSteps.QUANTITY_AND_VALUE,
+        {"no_set_quantities_or_value": True},
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse(
+        "applications:product_on_application_summary",
+        kwargs={
+            "pk": application["id"],
+            "good_on_application_pk": good_on_application["good"]["id"],
+        },
+    )
+    assert mock_good_on_application_post.last_request.json() == {
+        "good_id": expected_good_data["id"],
+        "is_good_incorporated": True,
+        "firearm_details": {
+            "is_made_before_1938": True,
+            "year_of_manufacture": 1937,
+            "is_deactivated": True,
+            "date_of_deactivation": "2007-11-12",
+            "is_deactivated_to_standard": True,
+            "not_deactivated_to_standard_comments": "",
+            "number_of_items": None,
+        },
+        "is_onward_exported": True,
+        "is_onward_altered_processed": True,
+        "is_onward_altered_processed_comments": "processed comments",
+        "is_onward_incorporated": True,
+        "is_onward_incorporated_comments": "incorporated comments",
+        "quantity": None,
+        "unit": None,
+        "value": None,
     }
 
 
