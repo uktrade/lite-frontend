@@ -33,6 +33,7 @@ class HCSATApplicationPage(LoginRequiredMixin, FormView):
 
         context["form_title"] = "Application submitted"
         context["back_link_url"] = self.get_application_url()
+        context["case_type"] = self.application["case_type"]["reference"]["key"]
         return context
 
     def get_form_kwargs(self):

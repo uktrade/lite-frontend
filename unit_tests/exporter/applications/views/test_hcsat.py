@@ -56,14 +56,16 @@ def setup(mock_get_application):
 
 
 @pytest.mark.parametrize(
-    "application, application_url, expected_form_title",
+    "case_type_reference, application, application_url, expected_form_title",
     [
         (
+            "siel",
             "data_standard_case",
             "siel_application_url",
             "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?",
         ),
         (
+            "f680",
             "data_submitted_f680_case",
             "f680_application_url",
             "Overall, how would you rate your experience with the 'apply for F680 security approval' service today?",
@@ -76,6 +78,7 @@ def test_hcsat_view(
     mock_get_survey,
     survey_id,
     requests_mock,
+    case_type_reference,
     application,
     application_url,
     expected_form_title,
@@ -96,6 +99,8 @@ def test_hcsat_view(
     soup = BeautifulSoup(response.content, "html.parser")
 
     # content
+    element = soup.find("h1", attrs={"data-case_type": True})
+    assert element["data-case_type"] == case_type_reference
     assert soup.find("h1").string.strip() == "Give feedback on this service"
     assert soup.find("a", {"class": "govuk-back-link"})["href"] == request.getfixturevalue(application_url)
 
