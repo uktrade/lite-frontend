@@ -106,7 +106,21 @@ def test_hcsat_view(
     assert mock_get_survey.called_once
 
 
-@pytest.mark.parametrize("application", ["data_standard_case", "data_submitted_f680_case"])
+@pytest.mark.parametrize(
+    "case_type_reference, application, expected_text",
+    [
+        (
+            "siel",
+            "data_standard_case",
+            "We've sent your responses to the apply for a standard individual export licence (SIEL) team",
+        ),
+        (
+            "f680",
+            "data_submitted_f680_case",
+            "We've sent your responses to the apply for F680 security approval team",
+        ),
+    ],
+)
 def test_post_survey_feedback(
     authorized_client,
     hcsat_url,
@@ -114,7 +128,9 @@ def test_post_survey_feedback(
     mock_update_survey,
     mock_get_survey,
     requests_mock,
+    case_type_reference,
     application,
+    expected_text,
     request,
 ):
     application = request.getfixturevalue(application)
@@ -129,8 +145,12 @@ def test_post_survey_feedback(
     soup = BeautifulSoup(response.content, "html.parser")
 
     # content
+    element = soup.find("div", attrs={"data-case_type": True})
+    assert element["data-case_type"] == case_type_reference
     assert soup.find("h1").string.strip() == "Feedback submitted successfully"
     assert soup.find("a", {"class": "govuk-button--start"})["href"] == reverse("core:home")
+    element = soup.findAll("p", {"class": "govuk-body"})[-1]
+    assert expected_text in element.text.strip()
 
     assert mock_get_survey.called_once
 

@@ -36,7 +36,7 @@
 
 	<input type="hidden" id="user_id" value="{{ request.session.lite_api_user_id }}">
 
-	<body class="govuk-template__body ">
+	<body class="govuk-template__body " data-case_type="{{ case_type }}">
 		{% google_tag_manager_noscript %}
 		<script nonce="{{ request.csp_nonce }}">
 			document.body.className = (

@@ -29,9 +29,9 @@ class HCSATminiform(forms.Form):
     def get_title(self):
         return self.title
 
-    def __init__(self, title, *args, **kwargs):
+    def __init__(self, service_name, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.title = title
+        self.title = f"Overall, how would you rate your experience with the '{service_name}' service today?"
         self.helper = FormHelper()
         self.helper.layout = Layout(
             Fieldset(
@@ -107,11 +107,11 @@ class HCSATApplicationForm(HCSATminiform):
         max_length=1200,
     )
 
-    def __init__(self, title, *args, **kwargs):
-        super().__init__(title, *args, **kwargs)
-        self.title = title
+    def __init__(self, service_name, *args, **kwargs):
+        super().__init__(service_name, *args, **kwargs)
         legend_size = "m"
-        self.fields["satisfaction_rating"].help_text = title
+        help_text = f"Overall, how would you rate your experience with the '{service_name}' service today?"
+        self.fields["satisfaction_rating"].help_text = help_text
 
         self.helper = FormHelper()
         self.helper.layout = Layout(

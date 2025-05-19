@@ -37,16 +37,10 @@ class HCSATApplicationPage(LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        title = "Overall, how would you rate your experience with the 'apply for a standard individual export licence (SIEL)' service today?"
-
-        if self.application["case_type"]["reference"]["key"] == "f680":
-            title = (
-                "Overall, how would you rate your experience with the 'apply for F680 security approval' service today?"
-            )
-
-        kwargs["title"] = title
-
-        return kwargs
+        return {
+            **kwargs,
+            "service_name": self.application.manifest.service_name,
+        }
 
     @expect_status(
         HTTPStatus.OK,
@@ -79,9 +73,7 @@ class HCSATApplicationPage(LoginRequiredMixin, FormView):
         case_type_reference = self.application["case_type"]["reference"]["key"]
         context = {
             "case_type": case_type_reference,
-            "service_name": "apply for a standard individual export licence (SIEL)",
+            "service_name": self.application.manifest.service_name,
         }
-        if case_type_reference == "f680":
-            context["service_name"] = "apply for F680 security approval"
 
         return render(self.request, "feedback/hcsat_thanks.html", context=context)
