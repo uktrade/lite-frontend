@@ -35,7 +35,7 @@ class StartPage:
 
 
 class StartPageGovUK:
-    TITLE = "Apply to export controlled goods."
+    TITLE = "Apply to export controlled goods"
     BULLET_POINTS = [
         "apply for a standard individual export licence (SIEL) to export goods or products",
         "apply for a form 680 (F680) security approval",
