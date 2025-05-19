@@ -9,6 +9,7 @@ from django.urls import reverse
 from caseworker.f680.recommendation.constants import (
     RecommendationSteps,
     RecommendationType,
+    RecommendationSecurityGradingPrefix,
     RecommendationSecurityGrading,
 )
 from caseworker.f680.recommendation.forms.forms import (
@@ -82,7 +83,6 @@ def hydrated_recommendations(data_submitted_f680_case, recommendations):
             for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
             if item["id"] == release_id
         )
-
     return recommendations
 
 
@@ -197,6 +197,7 @@ class TestF680MakeRecommendationView:
         release_requests_ids = [
             item["id"] for item in data_submitted_f680_case["case"]["data"]["security_release_requests"]
         ]
+
         response = post_to_step(
             RecommendationSteps.ENTITIES_AND_DECISION,
             {
@@ -211,6 +212,7 @@ class TestF680MakeRecommendationView:
         response = post_to_step(
             RecommendationSteps.RELEASE_REQUEST_PROVISOS,
             {
+                "security_grading_prefix": "nato",
                 "security_grading": "official",
                 "conditions": ["no_release", "no_specifications"],
                 "no_specifications": "no specifications",
@@ -328,6 +330,7 @@ class TestF680MakeRecommendationView:
         response = post_to_step(
             RecommendationSteps.RELEASE_REQUEST_NO_PROVISOS,
             {
+                "security_grading_prefix": RecommendationSecurityGradingPrefix.NATO,
                 "security_grading": RecommendationSecurityGrading.OFFICIAL,
                 "conditions": "no release",
             },

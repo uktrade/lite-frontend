@@ -203,8 +203,9 @@ class EntityConditionsForm(BasicRecommendationForm, PicklistAdviceForm):
 
     def clean(self):
         cleaned_data = super().clean()
-
         return {
+            "security_grading_prefix": cleaned_data.get("security_grading_prefix", ""),
+            "security_grading_prefix_other": cleaned_data.get("security_grading_prefix_other", ""),
             "security_grading": cleaned_data.get("security_grading", ""),
             "security_grading_other": cleaned_data.get("security_grading_other", ""),
             "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
@@ -212,6 +213,7 @@ class EntityConditionsForm(BasicRecommendationForm, PicklistAdviceForm):
 
     def get_layout_fields(self):
         return (
+            ConditionalRadios("security_grading_prefix", *self.prefix_conditional_radio_choices),
             ConditionalRadios("security_grading", *self.conditional_radio_choices),
             ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
         )
