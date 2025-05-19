@@ -58,10 +58,18 @@
                             {{ good_on_application.good.item_category.value }}
 						</td>
 						<td class="govuk-table__cell">
-							{{ good_on_application.quantity|floatformat:3 }}
+							{% if good_on_application.quantity is not None %}
+								{{ good_on_application.quantity|floatformat:3 }}
+							{% else %}
+								N/A
+							{% endif %}
 						</td>
 						<td class="govuk-table__cell">
-							£{{ good_on_application.value|intcomma }}
+							{% if good_on_application.value is not None %}
+								£{{ good_on_application.value|intcomma }}
+							{% else %}
+								N/A
+							{% endif %}
 						</td>
 						{% test_rule 'can_edit_quantity_value' request application as can_edit_quantity_value %}
 						{% if can_edit_quantity_value %}
