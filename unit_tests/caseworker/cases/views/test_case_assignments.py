@@ -96,7 +96,7 @@ def test_f680_case_assignments_POST_remove_user_success(
     mock_f680_case,
     data_f680_assignment,
     mock_f680_case_with_assignments,
-    mock_proviso,
+    mock_f680_proviso,
     mock_denial_reasons,
     mock_remove_f680_assignment,
     mock_queue,
@@ -337,7 +337,7 @@ def test_case_assign_me(
     mock_standard_case_activity_filters,
     mock_queue,
     mock_standard_case_assigned_queues,
-    mock_proviso,
+    mock_f680_proviso,
 ):
     case = data_standard_case
     url = reverse("queues:case_assignment_assign_to_me", kwargs={"pk": data_queue["id"]})
@@ -372,7 +372,7 @@ def test_f680_case_assign_me(
     mock_add_assignment,
     mock_f680_case,
     mock_queue,
-    mock_proviso,
+    mock_f680_proviso,
     mock_denial_reasons,
     settings,
 ):

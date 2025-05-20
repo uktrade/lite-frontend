@@ -57,7 +57,9 @@ class F680CaseworkerMixin(UserPassesTestMixin, CaseworkerMixin):
         for rr in self.case["data"]["security_release_requests"]:
             self.security_release_requests[rr["id"]] = rr
 
-        self.conditions = get_picklists_list(request, type="proviso", disable_pagination=True, show_deactivated=False)
+        self.conditions = get_picklists_list(
+            request, type="f680_proviso", disable_pagination=True, show_deactivated=False
+        )
         self.refusal_reasons = get_denial_reasons(request)
         self.denial_reasons_choices = group_denial_reasons(self.refusal_reasons)
         self.pending_recommendations = get_pending_recommendation_requests(self.request, self.case, self.caseworker)
@@ -221,7 +223,8 @@ class SupportingDocumentsView(LoginRequiredMixin, F680CaseworkerMixin, TemplateV
         context = super().get_context_data(**kwargs)
         uploaded_documents, _ = self.get_exporter_uploaded_supporting_documents()
         generated_documents, _ = self.get_caseworker_generated_documents()
-        documents = uploaded_documents["results"] + generated_documents["documents"]
+
+        documents = uploaded_documents + generated_documents["documents"]
         context["supporting_documents"] = documents
         return context
 
