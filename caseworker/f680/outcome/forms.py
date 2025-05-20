@@ -3,6 +3,7 @@ from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 
 from core.common.forms import BaseForm, CustomErrorDateInputField
+from caseworker.f680.recommendation.constants import RecommendationSecurityGradingPrefix, RecommendationSecurityGrading
 from caseworker.f680.outcome.constants import SecurityReleaseOutcomeDuration
 
 from core.common.validators import (
@@ -36,7 +37,7 @@ class SelectOutcomeForm(BaseForm):
         self.fields["security_release_requests"].choices = (
             [
                 request["id"],
-                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading']['value']}",
+                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading_final']}",
             ]
             for request in security_release_requests
         )

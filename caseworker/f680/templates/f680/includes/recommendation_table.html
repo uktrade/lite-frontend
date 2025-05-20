@@ -18,8 +18,8 @@
                 {{recommendation.type.value}}
 			</td>
 			<td class="govuk-table__cell govuk-table__cell--max-width-200 ">
-                {% if recommendation.security_grading %}
-                    {{recommendation.security_grading.value}}
+                {% if recommendation.security_grading_final %}
+                    {{recommendation.security_grading_final}}
                 {% else %}
                     -
                 {% endif %}
