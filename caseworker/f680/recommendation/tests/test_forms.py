@@ -74,11 +74,36 @@ def test_entity_selection_and_decision_form_valid(data, valid_status, errors):
             },
             False,
             {
+                "security_grading_prefix": ["Select a prefix"],
                 "security_grading": ["Select the security classification"],
             },
         ),
         (
             {
+                "security_grading_prefix": "other",
+                "security_grading": "other",
+                "conditions": ["no_release"],
+            },
+            False,
+            {
+                "security_grading_other": ["Security classification cannot be blank"],
+                "security_grading_prefix_other": ["Prefix cannot be blank"],
+            },
+        ),
+        (
+            {
+                "security_grading_prefix": "other",
+                "security_grading_prefix_other": "Some prefix",
+                "security_grading": "other",
+                "security_grading_other": "Some classification",
+                "conditions": ["no_release"],
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "security_grading_prefix": "nato",
                 "security_grading": "official",
                 "conditions": ["no_release"],
             },
@@ -132,11 +157,36 @@ def test_entity_refusal_reasons_form_valid(data, valid_status, errors):
             {},
             False,
             {
+                "security_grading_prefix": ["Select a prefix"],
                 "security_grading": ["Select the security classification"],
             },
         ),
         (
             {
+                "security_grading_prefix": "other",
+                "security_grading": "other",
+                "conditions": "No concerns",
+            },
+            False,
+            {
+                "security_grading_other": ["Security classification cannot be blank"],
+                "security_grading_prefix_other": ["Prefix cannot be blank"],
+            },
+        ),
+        (
+            {
+                "security_grading_prefix": "other",
+                "security_grading_other": "Some classifciation",
+                "security_grading_prefix_other": "Some prefix",
+                "security_grading": "other",
+                "conditions": "No concerns",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "security_grading_prefix": "uk",
                 "security_grading": "official",
                 "conditions": "No concerns",
             },

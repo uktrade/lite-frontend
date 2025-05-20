@@ -267,6 +267,8 @@ class TestDecideOutcomeView:
                     },
                 }
             ],
+            "security_grading_prefix": {"key": "nato", "value": "NATO"},
+            "security_grading_prefix_other": "",
             "security_grading": {"key": "secret", "value": "Secret"},
             "security_grading_other": "",
         }
@@ -386,6 +388,8 @@ class TestDecideOutcomeView:
                     },
                 }
             ],
+            "security_grading_prefix": {"key": "nato", "value": "NATO"},
+            "security_grading_prefix_other": "",
             "security_grading": {"key": "secret", "value": "Secret"},
             "security_grading_other": "",
         }
