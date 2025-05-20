@@ -2,7 +2,6 @@ from datetime import datetime, date
 
 from django.urls import reverse
 
-from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.finalise_case import approve_licence_form
 from caseworker.cases.services import get_application_default_duration
 from caseworker.core.constants import Permission
@@ -69,7 +68,6 @@ def reissue_finalise_form(request, licence, case, queue_pk):
     form = approve_licence_form(
         queue_pk=queue_pk,
         case_id=case["id"],
-        is_open_licence=case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value,
         editable_duration=helpers.has_permission(request, Permission.MANAGE_LICENCE_DURATION),
         goods=licence["goods_on_licence"],
         goods_html="components/goods-licence-reissue-list.html",
@@ -82,7 +80,6 @@ def finalise_form(request, case, goods, queue_pk):
     form = approve_licence_form(
         queue_pk=queue_pk,
         case_id=case["id"],
-        is_open_licence=case.data["case_type"]["sub_type"]["key"] == CaseType.OPEN.value,
         editable_duration=helpers.has_permission(request, Permission.MANAGE_LICENCE_DURATION),
         goods=goods,
         goods_html="components/goods-licence-list.html",

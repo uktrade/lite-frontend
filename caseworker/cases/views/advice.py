@@ -6,7 +6,6 @@ from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
-from caseworker.cases.constants import CaseType
 from caseworker.cases.forms.advice import (
     finalise_goods_countries_form,
     generate_documents_form,
@@ -27,7 +26,6 @@ from caseworker.cases.services import (
     get_licence,
     get_finalise_application_goods,
     post_good_countries_decisions,
-    get_open_licence_decision,
 )
 from core.builtins.custom_tags import filter_advice_by_level
 from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, GenerateGoodsDecisionForm
@@ -138,19 +136,17 @@ class Finalise(LoginRequiredMixin, TemplateView):
     """
 
     @staticmethod
-    def _get_goods(request, pk, case_type):
+    def _get_goods(request, pk):
         goods = []
-        if case_type == CaseType.STANDARD.value:
-            goods, status_code = get_finalise_application_goods(request, pk)
-            if status_code != HTTPStatus.OK:
-                return error_page(request, FinaliseLicenceForm.GOODS_ERROR)
-            goods = goods["goods"]
+        goods, status_code = get_finalise_application_goods(request, pk)
+        if status_code != HTTPStatus.OK:
+            return error_page(request, FinaliseLicenceForm.GOODS_ERROR)
+        goods = goods["goods"]
         return goods
 
     def get(self, request, *args, **kwargs):
         case = get_case(request, str(kwargs["pk"]))
         case_id = case["id"]
-        case_type = case.data["case_type"]["sub_type"]["key"]
         final_advice = filter_advice_by_level(case["advice"], "final")
 
         # For no licence required advice items we have recorded their decision as ‘approve’
@@ -165,13 +161,9 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
         approve = False
         all_nlr = False
-        is_case_open = case_type == CaseType.OPEN.value
 
-        if is_case_open:
-            approve = get_open_licence_decision(request, str(kwargs["pk"])) == "approve"
-        else:
-            approve = any([item == "approve" or item == "proviso" for item in advice_items_with_goods])
-            all_nlr = all(item == "no_licence_required" for item in advice_items_with_goods)
+        approve = any([item == "approve" or item == "proviso" for item in advice_items_with_goods])
+        all_nlr = all(item == "no_licence_required" for item in advice_items_with_goods)
 
         if approve:
             any_nlr = any([item == "no_licence_required" for item in advice_items_with_goods])
@@ -181,7 +173,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
             if licence:
                 form, form_data = reissue_finalise_form(request, licence, case, kwargs["queue_pk"])
             else:
-                goods = self._get_goods(request, str(kwargs["pk"]), case_type)
+                goods = self._get_goods(request, str(kwargs["pk"]))
                 form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
             return form_page(
                 request,
@@ -201,7 +193,6 @@ class Finalise(LoginRequiredMixin, TemplateView):
                 deny_licence_form(
                     kwargs["queue_pk"],
                     case_id,
-                    is_case_open,
                     all_nlr,
                 ),
             )
@@ -223,7 +214,7 @@ class Finalise(LoginRequiredMixin, TemplateView):
             if licence:
                 form, form_data = reissue_finalise_form(request, licence, case, kwargs["queue_pk"])
             else:
-                goods = self._get_goods(request, str(kwargs["pk"]), case.data["case_type"]["sub_type"]["key"])
+                goods = self._get_goods(request, str(kwargs["pk"]))
                 form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
 
             return form_page(request, form, data=form_data, errors=res.json()["errors"], extra_data={"case": case})

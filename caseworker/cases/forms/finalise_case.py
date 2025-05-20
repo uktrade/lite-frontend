@@ -5,7 +5,7 @@ from lite_forms.components import Form, TextInput, BackLink, DateInput, Label, H
 from lite_forms.helpers import conditional
 
 
-def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, goods, goods_html):
+def approve_licence_form(queue_pk, case_id, editable_duration, goods, goods_html):
     return Form(
         title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.APPROVE_TITLE,
         questions=[
@@ -32,21 +32,14 @@ def approve_licence_form(queue_pk, case_id, is_open_licence, editable_duration, 
             ),
         ],
         container="case",
-        back_link=conditional(
-            is_open_licence,
-            BackLink(
-                url=reverse_lazy("cases:finalise_goods_countries", kwargs={"queue_pk": queue_pk, "pk": case_id}),
-                text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
-            ),
-            BackLink(
-                url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
-                text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
-            ),
+        back_link=BackLink(
+            url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
+            text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
         ),
     )
 
 
-def deny_licence_form(queue_pk, case_id, is_open_licence, nlr):
+def deny_licence_form(queue_pk, case_id, nlr):
     if nlr:
         description = "You'll be informing the exporter that no licence is required"
     else:
@@ -55,15 +48,8 @@ def deny_licence_form(queue_pk, case_id, is_open_licence, nlr):
     return Form(
         title=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.FINALISE_TITLE,
         questions=[Label(description), HiddenField(name="action", value="refuse")],
-        back_link=conditional(
-            is_open_licence,
-            BackLink(
-                url=reverse_lazy("cases:finalise_goods_countries", kwargs={"queue_pk": queue_pk, "pk": case_id}),
-                text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_DECISION_MATRIX_BUTTON,
-            ),
-            BackLink(
-                url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
-                text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
-            ),
+        back_link=BackLink(
+            url=reverse_lazy("cases:case", kwargs={"queue_pk": queue_pk, "pk": case_id, "tab": "final-advice"}),
+            text=lite_content.lite_internal_frontend.advice.FinaliseLicenceForm.Actions.BACK_TO_ADVICE_BUTTON,
         ),
     )
