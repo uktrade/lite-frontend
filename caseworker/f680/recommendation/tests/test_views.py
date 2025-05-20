@@ -228,6 +228,8 @@ class TestF680MakeRecommendationView:
         assert request.json() == [
             {
                 "type": RecommendationType.APPROVE,
+                "security_grading_prefix": RecommendationSecurityGradingPrefix.NATO,
+                "security_grading_prefix_other": "",
                 "security_grading": RecommendationSecurityGrading.OFFICIAL,
                 "security_grading_other": "",
                 "conditions": "no release\n\n--------\nno specifications",
@@ -288,6 +290,8 @@ class TestF680MakeRecommendationView:
         assert request.json() == [
             {
                 "type": RecommendationType.REFUSE,
+                "security_grading_prefix": "",
+                "security_grading_prefix_other": "",
                 "security_grading": "",
                 "security_grading_other": "",
                 "conditions": "",
@@ -344,6 +348,8 @@ class TestF680MakeRecommendationView:
         assert request.json() == [
             {
                 "type": RecommendationType.APPROVE,
+                "security_grading_prefix": RecommendationSecurityGradingPrefix.NATO,
+                "security_grading_prefix_other": "",
                 "security_grading": RecommendationSecurityGrading.OFFICIAL,
                 "security_grading_other": "",
                 "conditions": "no release",
@@ -395,6 +401,8 @@ class TestF680MakeRecommendationView:
         assert request.json() == [
             {
                 "type": RecommendationType.REFUSE,
+                "security_grading_prefix": "",
+                "security_grading_prefix_other": "",
                 "security_grading": "",
                 "security_grading_other": "",
                 "conditions": "",
