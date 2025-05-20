@@ -3,7 +3,6 @@ from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 
 from core.common.forms import BaseForm, CustomErrorDateInputField
-from caseworker.f680.recommendation.constants import RecommendationSecurityGradingPrefix, RecommendationSecurityGrading
 from caseworker.f680.outcome.constants import SecurityReleaseOutcomeDuration
 
 from core.common.validators import (
