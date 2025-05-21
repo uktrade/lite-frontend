@@ -109,7 +109,7 @@ class BasicRecommendationForm(BaseForm):
 
     conditions = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
-        label="Provisos",
+        label="Conditions",
         required=False,
     )
 
@@ -178,7 +178,7 @@ class EntityConditionsForm(BasicRecommendationForm, PicklistAdviceForm):
         TITLE = "Add conditions for entities"
 
     conditions = forms.MultipleChoiceField(
-        label="Provisos",
+        label="Conditions",
         required=False,
         widget=forms.CheckboxSelectMultiple,
         choices=(),
