@@ -131,7 +131,9 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
                     grouped_recommendations[recommendation["team"]["name"]][group_key] = {
                         "entities": [release_request],
                         "recommendation": recommendation["type"]["value"],
-                        "security_grading": recommendation["security_grading"]["value"],
+                        "security_grading": (
+                            recommendation["security_grading"]["value"] if recommendation["security_grading"] else None
+                        ),
                         "conditions": recommendation["conditions"],
                         "refusal_reasons": recommendation["refusal_reasons"],
                     }
