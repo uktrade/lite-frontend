@@ -24,7 +24,9 @@ class ChooseAutomaticOutcomeGroup(BaseForm):
 
     def __init__(self, security_release_requests, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.proposed_outcome_groups = self.group_security_releases(security_release_requests)
+        # team_groupings = self.get_team_groupings(security_release_requests)
+        # self.proposed_outcome_groups = self.group_security_releases(security_release_requests, team_groupings)
+        self.proposed_outcome_groups = self.get_team_groupings(security_release_requests)
         self.fields["outcome_group"].choices = self.get_outcome_group_choices()
 
     def get_outcome_group_choices(self):
@@ -32,7 +34,7 @@ class ChooseAutomaticOutcomeGroup(BaseForm):
             (
                 group_key,
                 mark_safe(  # noqa
-                    f"<strong>{group['decision'].title()}</strong><br/><strong>Requested release: {group['requested_grading']}</strong><br/>"
+                    f"<strong>{group['decision'].title()}</strong><br/>"
                     + "<br/>".join(
                         [
                             f"{rr['recipient']['name']} - {rr['recipient']['country']['name']}"
@@ -51,37 +53,57 @@ class ChooseAutomaticOutcomeGroup(BaseForm):
         )
         return choices
 
-    def group_security_releases(self, security_release_requests):
-        grouped_security_releases = {}
+    def get_team_groupings(self, security_release_requests):
+        recommendation_groupings = {}
         for release_request in security_release_requests:
-            unique_recommendation_decisions = {
-                recommendation["type"]["key"] for recommendation in release_request["recommendations"]
-            }
-            requested_grading = release_request["security_grading"]["key"]
+            for recommendation in release_request["recommendations"]:
+                decision_key = (
+                    "refuse" if recommendation["type"]["key"] == "refuse" else recommendation["security_grading"]["key"]
+                )
+                text_hash = (
+                    hash(recommendation["refusal_reasons"])
+                    if decision_key == "refuse"
+                    else hash(recommendation["conditions"])
+                )
+                team = recommendation["team"]["name"]
+                group_key = f"{team}-{decision_key}-{text_hash}"
+                try:
+                    recommendation_groupings[release_request["id"]]["groups"].append(group_key)
+                    recommendation_groupings[release_request["id"]]["decisions"].add(decision_key)
+                except KeyError:
+                    recommendation_groupings[release_request["id"]] = {
+                        "groups": [group_key],
+                        "decisions": {decision_key},
+                    }
 
-            if "refuse" in unique_recommendation_decisions:
-                decision = "refuse"
-            else:
-                decision = "approve"
+        requests_by_group = {
+            request_id: {"group_key": "-".join(sorted(grouping["groups"])), "decisions": grouping["decisions"]}
+            for request_id, grouping in recommendation_groupings.items()
+        }
+        requests_by_id = {request["id"]: request for request in security_release_requests}
 
-            group_key = f"{requested_grading}-{decision}"
-
+        groups = {}
+        for request_id, group in requests_by_group.items():
+            group_key = group["group_key"]
             try:
-                grouped_security_releases[group_key]["security_release_requests"].append(release_request)
+                groups[group_key]["security_release_requests"].append(requests_by_id[request_id])
+                groups[group_key]["decisions"] = groups[group_key]["decisions"].union(group["decisions"])
             except KeyError:
-                grouped_security_releases[group_key] = {
-                    "security_release_requests": [release_request],
-                    "decision": decision,
-                    "requested_grading": release_request["security_grading"]["value"],
+                groups[group_key] = {
+                    "security_release_requests": [requests_by_id[request_id]],
+                    "decisions": group["decisions"],
                 }
 
-        return grouped_security_releases
+        return {
+            request_id: {**group, "decision": "refuse" if "refuse" in group["decisions"] else "approve"}
+            for request_id, group in groups.items()
+        }
 
     def clean(self):
         cleaned_data = super().clean()
 
-        selected_outcome_group_key = cleaned_data["outcome_group"]
-        if selected_outcome_group_key == "custom":
+        selected_outcome_group_key = cleaned_data.get("outcome_group")
+        if selected_outcome_group_key in ("custom", None):
             return cleaned_data
 
         outcome_group = self.proposed_outcome_groups[selected_outcome_group_key]

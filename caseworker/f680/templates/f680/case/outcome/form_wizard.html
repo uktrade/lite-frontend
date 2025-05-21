@@ -2,12 +2,32 @@
 
 {% block before_form %}
 {% if wizard.steps.current != "choose_automatic_outcome_group" %}
-    {% if selected_security_release_requests %}
-        <h2 class="govuk-heading-m">Selected Security Release Requests</h2>
-        {% include "f680/case/outcome/includes/security_release_request_details.html" with security_release_requests=selected_security_release_requests %}
-    {% else %}
-        <h2 class="govuk-heading-m">Security release requests without outcome</h2>
-        {% include "f680/case/outcome/includes/security_release_request_details.html" with security_release_requests=all_security_release_requests %}
+    {% if grouped_recommendations %}
+        <h2 class="govuk-heading-m">Grouped recommendations</h2>
+        {% for team, recommendation_groups in grouped_recommendations.items %}
+            {% for recommendation_group in recommendation_groups.values %}
+                <h4 class="govuk-heading-m">{{team}} - group {{forloop.counter}}</h2>
+                {% include "f680/includes/security_release_request_table.html" with security_release_requests=recommendation_group.entities %}
+                <h3 class="govuk-!-font-weight-bold govuk-body govuk-!-padding-2 govuk-!-margin-bottom-0 app-advice-recommendation-heading {% if recommendation_group.recommendation == "Approve" %}app-bg-colour--green{% else %}app-bg-colour--red{% endif %}">
+                    {{recommendation_group.recommendation}}
+                    {% if recommendation_group.security_grading %}
+                    <br/>Recommended grading: {{recommendation_group.security_grading}}
+                    {% endif %}
+                </h3>
+                {% if recommendation_group.conditions and recommendation_group.recommendation == "Approve" %}
+                <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 recommendation-and-decision">
+                    <h4 class="govuk-heading-m">Conditions:</h4>
+                    {{recommendation_group.conditions|linebreaks}}
+                </div>
+                {% endif %}
+                {% if recommendation_group.refusal_reasons and recommendation_group.recommendation == "Refuse" %}
+                <div class="govuk-!-padding-4 govuk-!-margin-bottom-2 recommendation-and-decision">
+                    <h4 class="govuk-heading-m">Refusal reasons:</h4>
+                    {{recommendation_group.refusal_reasons|linebreaks}}
+                </div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
     {% endif %}
 {% endif %}
 {% endblock %}

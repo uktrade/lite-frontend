@@ -114,6 +114,29 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
             if security_release_request["id"] in selected_security_release_ids
         ]
 
+    def get_grouped_recommendations(self, selected_security_release_requests):
+        grouped_recommendations = defaultdict(dict)
+        for release_request in selected_security_release_requests:
+            for recommendation in release_request["recommendations"]:
+                is_refuse = recommendation["type"]["key"] == "refuse"
+                decision_key = "refuse" if is_refuse else recommendation["security_grading"]["key"]
+                text = recommendation["refusal_reasons"] if is_refuse else recommendation["conditions"]
+                text_key = hash(text)
+                group_key = f"{decision_key}-{text_key}"
+                try:
+                    grouped_recommendations[recommendation["team"]["name"]][group_key]["entities"].append(
+                        release_request
+                    )
+                except KeyError:
+                    grouped_recommendations[recommendation["team"]["name"]][group_key] = {
+                        "entities": [release_request],
+                        "recommendation": recommendation["type"]["value"],
+                        "security_grading": recommendation["security_grading"]["value"],
+                        "conditions": recommendation["conditions"],
+                        "refusal_reasons": recommendation["refusal_reasons"],
+                    }
+        return dict(grouped_recommendations)
+
     def get_all_security_releases(self):
         recommendations_by_security_release = defaultdict(list)
         for recommendation in self.case_recommendations:
@@ -173,6 +196,10 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         context["selected_security_release_requests"] = self.get_selected_security_releases(
             all_security_release_requests
         )
+        if context["selected_security_release_requests"]:
+            context["grouped_recommendations"] = self.get_grouped_recommendations(
+                context["selected_security_release_requests"]
+            )
         return context
 
     @expect_status(
