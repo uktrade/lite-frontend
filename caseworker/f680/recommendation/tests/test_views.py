@@ -32,7 +32,7 @@ def setup(
     mock_approval_reason,
     mock_denial_reasons,
     mock_footnote_details,
-    mock_proviso,
+    mock_f680_proviso,
     mock_get_case_recommendations,
     settings,
 ):
@@ -310,7 +310,7 @@ class TestF680MakeRecommendationView:
         f680_case_id,
         data_submitted_f680_case,
         mock_f680_case,
-        mock_no_provisos,
+        mock_no_f680_provisos,
         mock_post_recommendation,
         post_to_step,
         view_recommendation_url,
