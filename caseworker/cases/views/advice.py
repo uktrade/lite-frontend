@@ -4,7 +4,7 @@ from datetime import date, datetime
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 
 from caseworker.advice.views.mixins import CaseContextMixin
 from caseworker.cases.forms.advice import (
@@ -136,17 +136,15 @@ class FinaliseGoodsCountries(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
 
 
-class Finalise(LoginRequiredMixin, CaseContextMixin, TemplateView):
+class Finalise(LoginRequiredMixin, CaseContextMixin, FormView):
     """
     Finalise a case and change the case status to finalised
     """
 
     template_name = "case/finalise.html"
-
-    form_class = ApproveLicenceForm
     formset_class = GoodQuantityValueForm
 
-    def get_initial_data(self):
+    def get_initial(self):
         if self.licence:
             start_date = datetime.strptime(self.licence["start_date"], "%Y-%m-%d")
             duration = self.licence["duration"]
@@ -159,11 +157,11 @@ class Finalise(LoginRequiredMixin, CaseContextMixin, TemplateView):
             "duration": duration,
         }
 
-    def get_context(self, **kwargs):
-        context = super().get_context()
-        final_advice = filter_advice_by_level(self.case["advice"], "final")
+    def get_form(self):
         licence_data, _ = get_licence(self.request, str(self.case.id))
         self.licence = licence_data.get("licence")
+        form_kwargs = self.get_form_kwargs()
+        final_advice = filter_advice_by_level(self.case["advice"], "final")
         data = {}
         # For no licence required advice items we have recorded their decision as ‘approve’
         # but their ‘good_id’ has been set to ‘None’ so it is best to filter out
@@ -181,41 +179,52 @@ class Finalise(LoginRequiredMixin, CaseContextMixin, TemplateView):
             "all_nlr": all(item == "no_licence_required" for item in advice_items_with_goods),
             "has_proviso": any([item == "proviso" for item in advice_items_with_goods]),
         }
-        data["editable_duration"] = helpers.has_permission(self.request, Permission.MANAGE_LICENCE_DURATION)
+        form_kwargs["editable_duration"] = helpers.has_permission(self.request, Permission.MANAGE_LICENCE_DURATION)
 
         if case_data["approve"]:
-            data["initial"] = self.get_initial_data()
-            # If there are licenced goods, we want to use the reissue goods flow.
             if self.licence:
-                self.form_class = ReissueLicenceForm
+                return ReissueLicenceForm(**form_kwargs)
             else:
-                self.form_class = ApproveLicenceForm
+                return ApproveLicenceForm(**form_kwargs)
         else:
-            self.form_class = DenyLicenceForm
+            return DenyLicenceForm(**form_kwargs)
 
-        context["form"] = self.form_class(**data)
+    def get_context(self, **kwargs):
+        context = super().get_context(**kwargs)
         context["goods"] = self.case.goods
         context["formset"] = get_formset(self.formset_class, len(self.case.goods), initial=self.case.goods)
-        context["title"] = f"{self.form_class.DOCUMENT_TITLE}"
         return context
 
-    def post(self, request, *args, **kwargs):
-        context = self.get_context_data()
+    def format_formset_data(self, goods, formset_data):
+        data = {}
+        for index, good in enumerate(goods):
+            # given an api change this could/should look like:
+            # {"<ID>":{"quantity":x,"value":y}}
+            data[f'quantity-{good["id"]}'] = good["id"]
+            data[f'value-{good["id"]}'] = formset_data[index]["value"]
+        return data
+
+    def form_valid(self, form):
+        context = self.get_context()
         goods = context["goods"]
-        formset = get_formset(self.formset_class, len(goods), data=request.POST)
-        form = self.form_class(data=request.POST)
+        formset = get_formset(self.formset_class, len(goods), data=self.request.POST)
 
-        if formset.is_valid() and form.is_valid():
+        if formset.is_valid():
             # format data to be sent and send
+            data = {
+                "case_type": form.cleaned_data["case_type"],
+                "duration": form.cleaned_data["duration"],
+                "day": form.cleaned_data["date"].day,
+                "month": form.cleaned_data["date"].month,
+                "year": form.cleaned_data["date"].year,
+            }
+            data.update(self.format_formset_data(goods, formset.cleaned_data))
 
-            res = finalise_application(request, self.case.id, formset.cleaned_data)
+            finalise_application(self.request, self.case.id, data)
+        return super().form_valid(form)
 
-        return redirect(
-            reverse_lazy(
-                "cases:finalise_documents",
-                kwargs=kwargs,
-            )
-        )
+    def get_success_url(self):
+        return reverse("cases:finalise_documents", kwargs=self.kwargs)
 
 
 class FinaliseGenerateDocuments(LoginRequiredMixin, SingleFormView):

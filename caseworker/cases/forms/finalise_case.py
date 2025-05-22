@@ -80,7 +80,9 @@ class ApproveLicenceForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         # todo make use of editable
-        editable_duration = kwargs.pop("editable_duration")
+        editable_duration = kwargs.get("editable_duration")
+        if editable_duration:
+            del kwargs["editable_duration"]
         super().__init__(*args, **kwargs)
         if editable_duration:
             self.fields["duration"].disabled = False
