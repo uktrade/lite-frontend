@@ -21,6 +21,7 @@ class NewPicklistForm:
     FOOTNOTES = "Create a reporting footnote"
     LETTER_PARAGRAPH = "Create a letter paragraph"
     PROVISO = "Create a licence condition"
+    F680_PROVISO = "Create a F680 proviso"
     REPORT_SUMMARY = "Create a report summary"
     STANDARD_ADVICE = "Create an approval reason"
     BACK_LINK = "Back to templates"
@@ -67,3 +68,4 @@ class PicklistCategory:
     REPORT_SUMMARIES = "Report summaries"
     STANDARD_ADVICE = "Standard Advice"
     FOOTNOTES = "Reporting footnotes"
+    F680_PROVISO = "F680 provisos"

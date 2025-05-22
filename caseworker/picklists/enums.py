@@ -15,6 +15,7 @@ class PicklistCategories:
     report_summary = Picklist(PicklistCategory.REPORT_SUMMARIES, "report_summary")
     standard_advice = Picklist(PicklistCategory.STANDARD_ADVICE, "standard_advice")
     footnotes = Picklist(PicklistCategory.FOOTNOTES, "footnotes")
+    f680_proviso = Picklist(PicklistCategory.F680_PROVISO, "f680_proviso")
 
     @classmethod
     def all(cls):
@@ -27,4 +28,5 @@ class PicklistCategories:
             cls.report_summary,
             cls.standard_advice,
             cls.footnotes,
+            cls.f680_proviso,
         ]

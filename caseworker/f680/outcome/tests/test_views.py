@@ -23,7 +23,7 @@ def setup(
     mock_approval_reason,
     mock_denial_reasons,
     mock_footnote_details,
-    mock_proviso,
+    mock_f680_proviso,
     mock_get_case_recommendations,
     settings,
 ):

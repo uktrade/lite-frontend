@@ -2,6 +2,7 @@ import pytest
 import re
 
 from bs4 import BeautifulSoup
+from decimal import Decimal
 from django.urls import reverse
 
 from core import client
@@ -153,6 +154,15 @@ def test_add_serial_numbers_link(application, data_good_on_application):
         assert '<span class="govuk-visually-hidden">Actions</a>' not in actual[0]
 
 
+def test_convert_goods_on_application_no_quantities_or_values(application, data_good_on_application):
+    data_good_on_application["quantity"] = None
+    data_good_on_application["value"] = None
+
+    actual = check_your_answers.convert_goods_on_application(application, [data_good_on_application])
+    assert actual[0]["Quantity"] == "N/A"
+    assert actual[0]["Value"] == "N/A"
+
+
 def test_actions_column_is_balanced_across_rows(application, data_good_on_application):
     with_serial_numbers = {
         **data_good_on_application,
@@ -267,3 +277,8 @@ def test_application_detail_shows_correct_cles(
     for index, good_on_application in enumerate(application["goods"]):
         expected_cles = ", ".join(item["rating"] for item in good_on_application["control_list_entries"])
         assert expected_cles == products_cles[index]
+
+
+def test_total_goods_value():
+    goods = [{"value": "5.5"}, {"value": 2}, {"value": None}]
+    assert check_your_answers.get_total_goods_value(goods) == Decimal("7.5")
