@@ -1,35 +1,41 @@
 from collections import defaultdict
-from http import HTTPStatus
+from datetime import date, datetime
 
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView
 
+from caseworker.advice.views.mixins import CaseContextMixin
 from caseworker.cases.forms.advice import (
     finalise_goods_countries_form,
     generate_documents_form,
-    reissue_finalise_form,
-    finalise_form,
 )
-from caseworker.cases.forms.finalise_case import deny_licence_form
+from caseworker.cases.forms.finalise_case import (
+    ApproveLicenceForm,
+    DenyLicenceForm,
+    GoodQuantityValueForm,
+    ReissueLicenceForm,
+    get_formset,
+)
 from caseworker.cases.services import (
     coalesce_user_advice,
     coalesce_team_advice,
     clear_team_advice,
     clear_final_advice,
+    get_application_default_duration,
     get_case,
     finalise_application,
     get_good_countries_decisions,
     grant_licence,
     get_final_decision_documents,
     get_licence,
-    get_finalise_application_goods,
     post_good_countries_decisions,
 )
+from caseworker.core import helpers
+from caseworker.core.constants import Permission
 from core.builtins.custom_tags import filter_advice_by_level
-from lite_content.lite_internal_frontend.advice import FinaliseLicenceForm, GenerateGoodsDecisionForm
-from lite_forms.generators import form_page, error_page
+from lite_content.lite_internal_frontend.advice import GenerateGoodsDecisionForm
 from lite_forms.views import SingleFormView
 
 from core.auth.views import LoginRequiredMixin
@@ -130,25 +136,35 @@ class FinaliseGoodsCountries(LoginRequiredMixin, SingleFormView):
         self.success_url = reverse_lazy("cases:finalise", kwargs={"queue_pk": kwargs["queue_pk"], "pk": self.object_pk})
 
 
-class Finalise(LoginRequiredMixin, TemplateView):
+class Finalise(LoginRequiredMixin, CaseContextMixin, TemplateView):
     """
     Finalise a case and change the case status to finalised
     """
 
-    @staticmethod
-    def _get_goods(request, pk):
-        goods = []
-        goods, status_code = get_finalise_application_goods(request, pk)
-        if status_code != HTTPStatus.OK:
-            return error_page(request, FinaliseLicenceForm.GOODS_ERROR)
-        goods = goods["goods"]
-        return goods
+    template_name = "case/finalise.html"
 
-    def get(self, request, *args, **kwargs):
-        case = get_case(request, str(kwargs["pk"]))
-        case_id = case["id"]
-        final_advice = filter_advice_by_level(case["advice"], "final")
+    form_class = ApproveLicenceForm
+    formset_class = GoodQuantityValueForm
 
+    def get_initial_data(self):
+        if self.licence:
+            start_date = datetime.strptime(self.licence["start_date"], "%Y-%m-%d")
+            duration = self.licence["duration"]
+        else:
+            start_date = date.today()
+            duration = get_application_default_duration(self.request, str(self.case.id))
+
+        return {
+            "date": start_date,
+            "duration": duration,
+        }
+
+    def get_context(self, **kwargs):
+        context = super().get_context()
+        final_advice = filter_advice_by_level(self.case["advice"], "final")
+        licence_data, _ = get_licence(self.request, str(self.case.id))
+        self.licence = licence_data.get("licence")
+        data = {}
         # For no licence required advice items we have recorded their decision as ‘approve’
         # but their ‘good_id’ has been set to ‘None’ so it is best to filter out
         # these advice items.
@@ -157,72 +173,47 @@ class Finalise(LoginRequiredMixin, TemplateView):
 
         # Reuse advice has no good associated with it so we need to find tout if there is
         # any on the application to decide whether to use the refuse or nlr flow
-        refuse_advice = any([item["type"]["key"] == "refuse" for item in final_advice])
 
-        approve = False
-        all_nlr = False
+        case_data = {
+            "refuse_advice": any([item["type"]["key"] == "refuse" for item in final_advice]),
+            "approve": any([item == "approve" or item == "proviso" for item in advice_items_with_goods]),
+            "any_nlr": any([item == "no_licence_required" for item in advice_items_with_goods]),
+            "all_nlr": all(item == "no_licence_required" for item in advice_items_with_goods),
+            "has_proviso": any([item == "proviso" for item in advice_items_with_goods]),
+        }
+        data["editable_duration"] = helpers.has_permission(self.request, Permission.MANAGE_LICENCE_DURATION)
 
-        approve = any([item == "approve" or item == "proviso" for item in advice_items_with_goods])
-        all_nlr = all(item == "no_licence_required" for item in advice_items_with_goods)
-
-        if approve:
-            any_nlr = any([item == "no_licence_required" for item in advice_items_with_goods])
-            licence_data, _ = get_licence(request, str(kwargs["pk"]))
-            licence = licence_data.get("licence")
+        if case_data["approve"]:
+            data["initial"] = self.get_initial_data()
             # If there are licenced goods, we want to use the reissue goods flow.
-            if licence:
-                form, form_data = reissue_finalise_form(request, licence, case, kwargs["queue_pk"])
+            if self.licence:
+                self.form_class = ReissueLicenceForm
             else:
-                goods = self._get_goods(request, str(kwargs["pk"]))
-                form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
-            return form_page(
-                request,
-                form,
-                data=form_data,
-                extra_data={
-                    "any_nlr": any_nlr,
-                    "case": case,
-                    "has_proviso": any([item == "proviso" for item in advice_items_with_goods]),
-                },
-            )
+                self.form_class = ApproveLicenceForm
         else:
-            if refuse_advice:
-                all_nlr = False
-            return form_page(
-                request,
-                deny_licence_form(
-                    kwargs["queue_pk"],
-                    case_id,
-                    all_nlr,
-                ),
-            )
+            self.form_class = DenyLicenceForm
+
+        context["form"] = self.form_class(**data)
+        context["goods"] = self.case.goods
+        context["formset"] = get_formset(self.formset_class, len(self.case.goods), initial=self.case.goods)
+        context["title"] = f"{self.form_class.DOCUMENT_TITLE}"
+        return context
 
     def post(self, request, *args, **kwargs):
-        case = get_case(request, str(kwargs["pk"]))
-        application_id = case.data.get("id")
-        data = request.POST.copy()
+        context = self.get_context_data()
+        goods = context["goods"]
+        formset = get_formset(self.formset_class, len(goods), data=request.POST)
+        form = self.form_class(data=request.POST)
 
-        res = finalise_application(request, application_id, data)
-        licence_data, _ = get_licence(request, str(kwargs["pk"]))
-        licence = licence_data.get("licence")
+        if formset.is_valid() and form.is_valid():
+            # format data to be sent and send
 
-        if res.status_code == HTTPStatus.FORBIDDEN:
-            return error_page(request, "You do not have permission.")
-
-        if res.status_code != HTTPStatus.OK:
-            # If there are licenced goods, we want to use the reissue goods flow.
-            if licence:
-                form, form_data = reissue_finalise_form(request, licence, case, kwargs["queue_pk"])
-            else:
-                goods = self._get_goods(request, str(kwargs["pk"]))
-                form, form_data = finalise_form(request, case, goods, kwargs["queue_pk"])
-
-            return form_page(request, form, data=form_data, errors=res.json()["errors"], extra_data={"case": case})
+            res = finalise_application(request, self.case.id, formset.cleaned_data)
 
         return redirect(
             reverse_lazy(
                 "cases:finalise_documents",
-                kwargs={"queue_pk": kwargs["queue_pk"], "pk": case["id"]},
+                kwargs=kwargs,
             )
         )
 

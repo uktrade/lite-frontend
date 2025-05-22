@@ -1,0 +1,125 @@
+{% extends 'layouts/case.html' %}
+
+{% load crispy_forms_tags crispy_forms_gds static %}
+
+{% block back_link %}
+    <a class="app-case__form-wrapper__back-link" href="{{ back_url }}" id="back-link">Back</a>
+{% endblock %}
+
+
+{% block two_thirds %}
+    {% if errors %}
+        {% include "forms-errors.html" %}
+    {% endif %}
+
+    <form action="{{ form_action_url }}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% error_summary form %}
+
+        <div class="govuk-body">
+            {% crispy form %}
+            {{ formset.management_form|crispy }}
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.CLC_COLUMN' %}</th>
+                            <th class="govuk-table__header" scope="col">Name</th>
+                            <th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.DECISION_COLUMN' %}</th>
+                            <th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.LICENCED_QTY_COLUMN' %}</th>
+                            <th class="govuk-table__header" scope="col">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.LICENCED_VALUE_COLUMN' %}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        {% for good in goods %}
+                            {% with index=forloop.counter0 %}
+                                {% with form=formset|index:index %}
+                                    {% if good.advice.type.key == 'approve' and has_proviso %}
+                                        {# "approve with proviso" takes priority over "approve" #}
+                                    {% elif good.advice.type.key != 'no_licence_required' %}
+                                        <tr class="govuk-table__row">
+                                            <td class="govuk-table__cell">
+                                                {% if good.is_good_controlled is not None %}
+                                                    {% include 'includes/control-list-entries.html' with control_list_entries=good.control_list_entries %}
+                                                {% else %}
+                                                    {% include 'includes/control-list-entries.html' with control_list_entries=good.good.control_list_entries %}
+                                                {% endif %}
+                                            </td>
+                                            <td class="govuk-table__cell">
+                                                <p class="govuk-body govuk-!-font-weight-bold">
+                                                    {{ good.good.name }}
+                                                </p>
+                                                {% if good.good.name %}<br>{% endif %}
+                                                {{ good.good.description }}
+                                            </td>
+                                            <td class="govuk-table__cell">
+                                                <p class="govuk-body govuk-!-font-weight-bold">
+                                                    {% if good.advice.type.key == 'proviso' %}
+                                                        Approve with proviso
+                                                    {% else %}
+                                                        {{ good.advice.type.value }}
+                                                    {% endif %}
+                                                </p>
+                                                <p>{{ good.advice.text }}<br></p>
+                                                {% if good.advice.proviso %}
+                                                    <p>{% lcs 'advice.FinaliseLicenceForm.GoodsTable.PROVISO_TEXT' %}</p>
+                                                    {{ good.advice.proviso|linebreaks }}
+                                                {% endif %}
+                                            </td>
+                                            <td class="govuk-table__cell">
+                                                {{form.quantity}}
+                                                <br>
+                                                <span class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %}{{ good.quantity }} {{ good.unit.value }}</span>
+                                            </td>
+                                            <td class="govuk-table__cell">
+                                                <div class="lite-currency-input">
+                                                    <div class="lite-currency-input__symbol {% if error %}lite-currency--error{% endif %}" aria-hidden="true">£</div>
+                                                    {{form.value}}
+                                                </div>
+                                                <span class="govuk-hint govuk-!-margin-0">{% lcs 'advice.FinaliseLicenceForm.GoodsTable.APPLIED_FOR_TEXT' %}£{{ good.value }}
+                                                {% if good.value and good.quantity %}
+                                                    {% with value_per_item=good.value|divide:good.quantity %}
+                                                        {% if value_per_item %}(£{{ value_per_item|floatformat:2 }} per unit){% endif %}
+                                                    {% endwith %}
+                                                {% endif %}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endwith %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                {% if any_nlr %}
+                <table class="govuk-table">
+                    <caption class="govuk-table__caption govuk-table__caption--m">No licence required</caption>
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th class="govuk-table__header" scope="col">Name</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for good in data %}
+                            {% if good.advice.type.key == 'no_licence_required' %}
+                                <td class="govuk-table__cell">
+                                    {{ good.good.name }}{% if good.good.name %}<br>{% endif %}
+                                    {{ good.good.description }}
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% endif %}
+
+                {% block javascript %}
+                    <script src="{% static 'javascripts/update-total-value.js' %}"></script>
+                {% endblock %}
+            <div class="form-actions">
+                <input type="submit" name="submit" value="Submit" class="govuk-button" id="submit-id-submit">
+            </div>
+        </div>
+    </form>
+{% endblock %}
