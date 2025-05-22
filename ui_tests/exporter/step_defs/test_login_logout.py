@@ -20,7 +20,7 @@ def click_the_logout_link(driver):
 @then("I am taken to the GOV UK page")
 def taken_to_the_gov_uk_page(driver):
     heading = driver.find_element(by=By.CSS_SELECTOR, value="h1").text.strip()
-    assert heading == "Apply to export controlled goods."
+    assert heading == "Apply to export controlled goods"
 
     SIGN_IN_BUTTON_ID = "button-sign-in"
     sign_in_button = driver.find_element(by=By.ID, value=SIGN_IN_BUTTON_ID)
