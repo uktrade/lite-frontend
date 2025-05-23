@@ -386,7 +386,7 @@ jobs:
     steps:
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_caseworker
+      - run_selenium_caseworker_tests
       - finish_e2e_tests
 
   exporter_e2e_test_jenkins:
@@ -400,7 +400,7 @@ jobs:
     steps:
       - prepare_e2e_tests:
           api_branch: << pipeline.parameters.api_git_tag >>
-      - run_e2e_exporter
+      - run_selenium_exporter_tests
       - finish_e2e_tests
 
 workflows:
