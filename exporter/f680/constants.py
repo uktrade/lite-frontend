@@ -5,6 +5,20 @@ class ApprovalTypeSteps:
     APPROVAL_TYPE = "APPROVAL_TYPE"
 
 
+class SecurityGradingPrefix:
+    UK = "uk"
+    NATO = "nato"
+    OCCAR = "occar"
+    OTHER = "other"
+
+    prefix_choices = [
+        Choice(UK, "UK"),
+        Choice(NATO, "NATO"),
+        Choice(OCCAR, "OCCAR", divider="Or"),
+        Choice(OTHER, "Other"),
+    ]
+
+
 class SecurityGrading:
     UNCLASSIFIED = "unclassified"
     OFFICIAL = "official"
@@ -16,20 +30,20 @@ class SecurityGrading:
     OTHER = "other"
 
     product_choices = [
-        Choice(UNCLASSIFIED, "Unclassified"),
-        Choice(OFFICIAL, "Official"),
-        Choice(OFFICIAL_SENSITIVE, "Official-sensitive"),
-        Choice(RESTRICTED, "Restricted"),
-        Choice(CONFIDENTIAL, "Confidential"),
-        Choice(SECRET, "Secret"),
-        Choice(TOP_SECRET, "Top secret", divider="Or"),
+        Choice(UNCLASSIFIED, "UNCLASSIFIED"),
+        Choice(OFFICIAL, "OFFICIAL"),
+        Choice(OFFICIAL_SENSITIVE, "OFFICIAL-SENSITIVE"),
+        Choice(RESTRICTED, "RESTRICTED"),
+        Choice(CONFIDENTIAL, "CONFIDENTIAL"),
+        Choice(SECRET, "SECRET"),
+        Choice(TOP_SECRET, "TOP SECRET", divider="Or"),
         Choice(OTHER, "Other"),
     ]
 
     security_release_choices = [
-        Choice(OFFICIAL, "Official"),
-        Choice(OFFICIAL_SENSITIVE, "Official-sensitive"),
-        Choice(SECRET, "Secret"),
-        Choice(TOP_SECRET, "Top secret", divider="Or"),
+        Choice(OFFICIAL, "OFFICIAL"),
+        Choice(OFFICIAL_SENSITIVE, "OFFICIAL-SENSITIVE"),
+        Choice(SECRET, "SECRET"),
+        Choice(TOP_SECRET, "TOP SECRET", divider="Or"),
         Choice(OTHER, "Other"),
     ]
