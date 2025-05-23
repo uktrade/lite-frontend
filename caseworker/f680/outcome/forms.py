@@ -10,8 +10,6 @@ from core.common.validators import (
     FutureDateValidator,
 )
 from core.forms.layouts import (
-    ConditionalCheckboxes,
-    ConditionalCheckboxesQuestion,
     ConditionalRadios,
     ConditionalRadiosQuestion,
 )
