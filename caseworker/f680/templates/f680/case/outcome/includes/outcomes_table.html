@@ -30,8 +30,8 @@
                 {{outcome.outcome|capfirst}}
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
-                {% if outcome.security_grading %}
-                    {{outcome.security_grading|capfirst}}
+                {% if outcome.security_grading_final %}
+                    {{outcome.security_grading_final|capfirst}}
                 {% else %}
                     -
                 {% endif %}

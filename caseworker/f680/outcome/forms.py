@@ -4,9 +4,14 @@ from dateutil.relativedelta import relativedelta
 
 from core.common.forms import BaseForm, CustomErrorDateInputField
 from caseworker.f680.outcome.constants import SecurityReleaseOutcomeDuration
+from caseworker.f680.recommendation.constants import RecommendationSecurityGradingPrefix, RecommendationSecurityGrading
 
 from core.common.validators import (
     FutureDateValidator,
+)
+from core.forms.layouts import (
+    ConditionalRadios,
+    ConditionalRadiosQuestion,
 )
 
 
@@ -52,18 +57,23 @@ class ApproveOutcomeForm(BaseForm):
     class Layout:
         TITLE = "Approve"
 
-    security_grading_choices = (
-        ("official", "Official"),
-        ("official-sensitive", "Official-Sensitive"),
-        ("secret", "Secret"),
-        ("top-secret", "Top Secret"),
+    security_grading_prefix = forms.ChoiceField(
+        choices=RecommendationSecurityGradingPrefix.prefix_choices,
+        label="Select a prefix",
+        widget=forms.RadioSelect,
+        required=False,
+    )
+    security_grading_prefix_other = forms.CharField(
+        label="Enter a prefix",
+        required=False,
     )
     security_grading = forms.ChoiceField(
-        choices=security_grading_choices,
+        choices=RecommendationSecurityGrading.choices,
         widget=forms.RadioSelect,
         label="Select security release",
         error_messages={"required": "Select the security release"},
     )
+    security_grading_other = forms.CharField(label="Enter the security classification", required=False)
     approval_types = forms.MultipleChoiceField(
         label="Approval types",
         required=True,
@@ -119,12 +129,30 @@ class ApproveOutcomeForm(BaseForm):
     )
 
     def __init__(self, all_approval_types, *args, **kwargs):
+        self.prefix_conditional_radio_choices = [
+            (
+                ConditionalRadiosQuestion(choice.label, "security_grading_prefix_other")
+                if choice.value == "other"
+                else choice.label
+            )
+            for choice in RecommendationSecurityGradingPrefix.prefix_choices
+        ]
+        self.conditional_radio_choices = [
+            (
+                ConditionalRadiosQuestion(choice.label, "security_grading_other")
+                if choice.value == "other"
+                else choice.label
+            )
+            for choice in RecommendationSecurityGrading.choices
+        ]
         super().__init__(*args, **kwargs)
         approval_type_choices = []
         for choice_key, choice_value in self.fields["approval_types"].choices:
             if choice_key in all_approval_types:
                 approval_type_choices.append((choice_key, choice_value))
         self.fields["approval_types"].choices = approval_type_choices
+        self.fields["security_grading_prefix"].choices = RecommendationSecurityGradingPrefix.prefix_choices
+        self.fields["security_grading"].choices = RecommendationSecurityGrading.choices
 
     def clean(self):
         cleaned_data = super().clean()
@@ -145,7 +173,8 @@ class ApproveOutcomeForm(BaseForm):
 
     def get_layout_fields(self):
         return (
-            "security_grading",
+            ConditionalRadios("security_grading_prefix", *self.prefix_conditional_radio_choices),
+            ConditionalRadios("security_grading", *self.conditional_radio_choices),
             "approval_types",
             "validity_start_date",
             "validity_period",

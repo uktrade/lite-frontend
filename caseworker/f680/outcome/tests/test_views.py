@@ -505,6 +505,7 @@ class TestDecideOutcomeView:
             {
                 "conditions": "my conditions",
                 "approval_types": ["training"],
+                "security_grading_prefix": "uk",
                 "security_grading": "secret",
                 "validity_start_date_0": validity_start_date.split("-")[2],
                 "validity_start_date_1": validity_start_date.split("-")[1],
@@ -523,12 +524,16 @@ class TestDecideOutcomeView:
 
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
+
         assert request.json() == {
-            "outcome": OutcomeType.APPROVE,
-            "conditions": "my conditions",
-            "approval_types": ["training"],
-            "security_grading": "secret",
             "security_release_requests": request_ids,
+            "outcome": OutcomeType.APPROVE,
+            "security_grading_prefix": "uk",
+            "security_grading_prefix_other": "",
+            "security_grading": "secret",
+            "security_grading_other": "",
+            "approval_types": ["training"],
+            "conditions": "my conditions",
             "validity_start_date": validity_start_date,
             "validity_end_date": validity_end_date,
         }
@@ -604,6 +609,7 @@ class TestDecideOutcomeView:
             {
                 "conditions": "my conditions",
                 "approval_types": ["training"],
+                "security_grading_prefix": "nato",
                 "security_grading": "secret",
                 "validity_start_date_0": validity_start_date.split("-")[2],
                 "validity_start_date_1": validity_start_date.split("-")[1],
@@ -622,12 +628,16 @@ class TestDecideOutcomeView:
 
         assert mock_POST_outcome.call_count == 1
         request = mock_POST_outcome.request_history.pop()
+
         assert request.json() == {
-            "outcome": OutcomeType.APPROVE,
-            "conditions": "my conditions",
-            "approval_types": ["training"],
-            "security_grading": "secret",
             "security_release_requests": request_ids,
+            "outcome": OutcomeType.APPROVE,
+            "security_grading_prefix": "nato",
+            "security_grading_prefix_other": "",
+            "security_grading": "secret",
+            "security_grading_other": "",
+            "approval_types": ["training"],
+            "conditions": "my conditions",
             "validity_start_date": validity_start_date,
             "validity_end_date": validity_end_date,
         }
