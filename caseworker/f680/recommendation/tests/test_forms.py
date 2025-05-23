@@ -79,6 +79,18 @@ def test_entity_selection_and_decision_form_valid(data, valid_status, errors):
         ),
         (
             {
+                "security_grading_prefix": "other",
+                "security_grading_prefix_other": "Some prefix",
+                "security_grading": "other",
+                "security_grading_other": "Some classification",
+                "conditions": ["no_release"],
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "security_grading_prefix": "nato",
                 "security_grading": "official",
                 "conditions": ["no_release"],
             },
@@ -137,6 +149,18 @@ def test_entity_refusal_reasons_form_valid(data, valid_status, errors):
         ),
         (
             {
+                "security_grading_prefix": "other",
+                "security_grading_other": "Some classifciation",
+                "security_grading_prefix_other": "Some prefix",
+                "security_grading": "other",
+                "conditions": "No concerns",
+            },
+            True,
+            {},
+        ),
+        (
+            {
+                "security_grading_prefix": "uk",
                 "security_grading": "official",
                 "conditions": "No concerns",
             },

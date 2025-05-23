@@ -39,7 +39,7 @@ def test_select_outcome_form_valid(data, valid_status, errors):
     release_requests = [
         {
             "id": "123465e5-4c80-4d0a-aef5-db94908b0417",
-            "security_grading": {"key": "official", "value": "Official"},
+            "security_grading_final": "UK OFFICIAL",
             "recipient": {
                 "name": "Test entity",
                 "country": {

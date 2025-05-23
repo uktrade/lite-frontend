@@ -201,7 +201,7 @@ class TestDecideOutcomeView:
         expected_security_release_request_choices = [
             [
                 request["id"],
-                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading']['value']}",
+                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading_final']}",
             ]
             for request in security_release_requests
         ]
@@ -216,61 +216,63 @@ class TestDecideOutcomeView:
         )
         assert response.context["selected_security_release_requests"] == []
         expected_all_security_release_requests = {
-            "approval_types": ["demonstration_overseas", "training"],
             "id": request_ids[0],
-            "intended_use": "australia intended use",
-            "product_id": data_submitted_f680_case["case"]["data"]["product"]["id"],
             "recipient": {
+                "id": data_submitted_f680_case["case"]["data"]["security_release_requests"][0]["recipient"]["id"],
+                "name": "australia name",
                 "address": "australia address",
                 "country": {
                     "id": "AU",
-                    "is_eu": False,
                     "name": "Australia",
-                    "report_name": "",
                     "type": "gov.uk Country",
+                    "is_eu": False,
+                    "report_name": "",
                 },
-                "id": data_submitted_f680_case["case"]["data"]["security_release_requests"][0]["recipient"]["id"],
-                "name": "australia name",
+                "type": {"key": "third-party", "value": "Third party"},
                 "role": {"key": "consultant", "value": "Consultant"},
                 "role_other": None,
-                "type": {"key": "third-party", "value": "Third party"},
             },
+            "security_grading_prefix": {"key": "nato", "value": "NATO"},
+            "security_grading_prefix_other": "",
+            "security_grading": {"key": "secret", "value": "SECRET"},
+            "security_grading_other": "",
+            "security_grading_final": "NATO SECRET",
+            "approval_types": ["demonstration_overseas", "training"],
+            "intended_use": "australia intended use",
+            "product_id": "67271217-7e55-4345-9db4-31de1bfe4066",
             "recommendations": [
                 {
-                    "conditions": "No concerns",
                     "created_at": "2021-10-16T23:48:39.486679+01:00",
                     "id": recommendations[0]["id"],
-                    "refusal_reasons": "",
-                    "security_release_request_id": request_ids[0],
-                    "team": {
-                        "alias": None,
-                        "id": "00000000-0000-0000-0000-000000000001",
-                        "is_ogd": False,
-                        "name": "Admin",
-                        "part_of_ecju": None,
-                    },
                     "type": {"key": "approve", "value": "Approve"},
+                    "conditions": "No concerns",
+                    "refusal_reasons": "",
                     "user": {
-                        "email": "test.user@example.com",  # /PS-IGNORE
+                        "email": "test.user@example.com",
                         "first_name": "Test",
-                        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
+                        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
                         "last_name": "User",
                         "role_name": "Super User",
                         "status": "Active",
                         "team": {
-                            "alias": None,
                             "id": "00000000-0000-0000-0000-000000000001",
+                            "alias": None,
                             "is_ogd": False,
                             "name": "Admin",
                             "part_of_ecju": None,
                         },
                     },
+                    "team": {
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "alias": None,
+                        "is_ogd": False,
+                        "name": "Admin",
+                        "part_of_ecju": None,
+                    },
+                    "security_release_request_id": request_ids[0],
                 }
             ],
-            "security_grading": {"key": "secret", "value": "Secret"},
-            "security_grading_other": "",
         }
-
         assert response.context["all_security_release_requests"][0] == expected_all_security_release_requests
 
     def test_GET_select_outcome_existing_outcome(
@@ -288,12 +290,11 @@ class TestDecideOutcomeView:
         expected_security_release_request_choices = [
             [
                 request["id"],
-                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading']['value']}",
+                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading_final']}",
             ]
             for request in security_release_requests
             if request["id"] != existing_outcome_id
         ]
-        request_ids = [request["id"] for request in security_release_requests]
         response = authorized_client.get(decide_outcome_url)
         assert response.status_code == HTTPStatus.OK
         form = response.context["form"]
@@ -335,61 +336,63 @@ class TestDecideOutcomeView:
         form = response.context["form"]
         assert isinstance(form, expected_form_class)
         expected_selected_security_release_requests = {
-            "approval_types": ["demonstration_overseas", "training"],
             "id": request_ids[0],
-            "intended_use": "australia intended use",
-            "product_id": data_submitted_f680_case["case"]["data"]["product"]["id"],
             "recipient": {
+                "id": data_submitted_f680_case["case"]["data"]["security_release_requests"][0]["recipient"]["id"],
+                "name": "australia name",
                 "address": "australia address",
                 "country": {
                     "id": "AU",
-                    "is_eu": False,
                     "name": "Australia",
-                    "report_name": "",
                     "type": "gov.uk Country",
+                    "is_eu": False,
+                    "report_name": "",
                 },
-                "id": data_submitted_f680_case["case"]["data"]["security_release_requests"][0]["recipient"]["id"],
-                "name": "australia name",
+                "type": {"key": "third-party", "value": "Third party"},
                 "role": {"key": "consultant", "value": "Consultant"},
                 "role_other": None,
-                "type": {"key": "third-party", "value": "Third party"},
             },
+            "security_grading_prefix": {"key": "nato", "value": "NATO"},
+            "security_grading_prefix_other": "",
+            "security_grading": {"key": "secret", "value": "SECRET"},
+            "security_grading_other": "",
+            "security_grading_final": "NATO SECRET",
+            "approval_types": ["demonstration_overseas", "training"],
+            "intended_use": "australia intended use",
+            "product_id": data_submitted_f680_case["case"]["data"]["product"]["id"],
             "recommendations": [
                 {
-                    "conditions": "No concerns",
                     "created_at": "2021-10-16T23:48:39.486679+01:00",
-                    "id": recommendations[0]["id"],
-                    "refusal_reasons": "",
-                    "security_release_request_id": request_ids[0],
-                    "team": {
-                        "alias": None,
-                        "id": "00000000-0000-0000-0000-000000000001",
-                        "is_ogd": False,
-                        "name": "Admin",
-                        "part_of_ecju": None,
-                    },
+                    "id": "429c5596-fe8b-4540-988b-c37805cd08de",
                     "type": {"key": "approve", "value": "Approve"},
+                    "conditions": "No concerns",
+                    "refusal_reasons": "",
                     "user": {
-                        "email": "test.user@example.com",  # /PS-IGNORE
+                        "email": "test.user@example.com",
                         "first_name": "Test",
-                        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",  # /PS-IGNORE
+                        "id": "2a43805b-c082-47e7-9188-c8b3e1a83cb0",
                         "last_name": "User",
                         "role_name": "Super User",
                         "status": "Active",
                         "team": {
-                            "alias": None,
                             "id": "00000000-0000-0000-0000-000000000001",
+                            "alias": None,
                             "is_ogd": False,
                             "name": "Admin",
                             "part_of_ecju": None,
                         },
                     },
+                    "team": {
+                        "id": "00000000-0000-0000-0000-000000000001",
+                        "alias": None,
+                        "is_ogd": False,
+                        "name": "Admin",
+                        "part_of_ecju": None,
+                    },
+                    "security_release_request_id": request_ids[0],
                 }
             ],
-            "security_grading": {"key": "secret", "value": "Secret"},
-            "security_grading_other": "",
         }
-
         assert response.context["selected_security_release_requests"][0] == expected_selected_security_release_requests
 
     def test_POST_select_approve_outcome_conditions_aggregated(

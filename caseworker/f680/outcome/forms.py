@@ -36,7 +36,7 @@ class SelectOutcomeForm(BaseForm):
         self.fields["security_release_requests"].choices = (
             [
                 request["id"],
-                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading']['value']}",
+                f"{request['recipient']['name']} - {request['recipient']['country']['name']} - {request['security_grading_final']}",
             ]
             for request in security_release_requests
         )

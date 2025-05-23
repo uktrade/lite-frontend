@@ -17,7 +17,11 @@
                 {{case.data.product.description|linebreaksbr}}
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
-                {{case.data.product.security_grading_final}}
+                {% if case.data.product.security_grading_final %}
+                    {{case.data.product.security_grading_final}}
+                {% else %}
+                    -
+                {% endif %}
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                 <a href="{% url 'cases:f680:details' queue_pk case.id %}#product_information" class="govuk-link govuk-link--no-visited-state">View full details</a>

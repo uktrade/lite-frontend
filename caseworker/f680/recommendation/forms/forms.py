@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from crispy_forms_gds.choices import Choice
 from crispy_forms_gds.layout import Field, HTML, Submit
 
-from caseworker.f680.recommendation.constants import RecommendationSecurityGrading
+from caseworker.f680.recommendation.constants import RecommendationSecurityGradingPrefix, RecommendationSecurityGrading
 
 from core.common.forms import BaseForm
 from core.forms.layouts import (
@@ -87,6 +87,17 @@ class BasicRecommendationForm(BaseForm):
     class Layout:
         TITLE = "Add conditions"
 
+    security_grading_prefix = forms.ChoiceField(
+        choices=RecommendationSecurityGradingPrefix.prefix_choices,
+        label="Select a prefix",
+        widget=forms.RadioSelect,
+        required=False,
+    )
+    security_grading_prefix_other = forms.CharField(
+        label="Enter a prefix",
+        required=False,
+    )
+
     security_grading = forms.ChoiceField(
         choices="",
         label="Select security classification",
@@ -97,11 +108,19 @@ class BasicRecommendationForm(BaseForm):
 
     conditions = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 7}),
-        label="Provisos",
+        label="Conditions",
         required=False,
     )
 
     def __init__(self, *args, **kwargs):
+        self.prefix_conditional_radio_choices = [
+            (
+                ConditionalRadiosQuestion(choice.label, "security_grading_prefix_other")
+                if choice.value == "other"
+                else choice.label
+            )
+            for choice in RecommendationSecurityGradingPrefix.prefix_choices
+        ]
         self.conditional_radio_choices = [
             (
                 ConditionalRadiosQuestion(choice.label, "security_grading_other")
@@ -112,11 +131,12 @@ class BasicRecommendationForm(BaseForm):
         ]
 
         super().__init__(*args, **kwargs)
-
+        self.fields["security_grading_prefix"].choices = RecommendationSecurityGradingPrefix.prefix_choices
         self.fields["security_grading"].choices = RecommendationSecurityGrading.choices
 
     def get_layout_fields(self):
         return (
+            ConditionalRadios("security_grading_prefix", *self.prefix_conditional_radio_choices),
             ConditionalRadios("security_grading", *self.conditional_radio_choices),
             "conditions",
         )
@@ -141,7 +161,7 @@ class EntityConditionsForm(BasicRecommendationForm, PicklistAdviceForm):
         TITLE = "Add conditions for entities"
 
     conditions = forms.MultipleChoiceField(
-        label="Provisos",
+        label="Conditions",
         required=False,
         widget=forms.CheckboxSelectMultiple,
         choices=(),
@@ -167,6 +187,8 @@ class EntityConditionsForm(BasicRecommendationForm, PicklistAdviceForm):
     def clean(self):
         cleaned_data = super().clean()
         return {
+            "security_grading_prefix": cleaned_data.get("security_grading_prefix", ""),
+            "security_grading_prefix_other": cleaned_data.get("security_grading_prefix_other", ""),
             "security_grading": cleaned_data.get("security_grading", ""),
             "security_grading_other": cleaned_data.get("security_grading_other", ""),
             "conditions": "\n\n--------\n".join([cleaned_data[selected] for selected in cleaned_data["conditions"]]),
@@ -174,6 +196,7 @@ class EntityConditionsForm(BasicRecommendationForm, PicklistAdviceForm):
 
     def get_layout_fields(self):
         return (
+            ConditionalRadios("security_grading_prefix", *self.prefix_conditional_radio_choices),
             ConditionalRadios("security_grading", *self.conditional_radio_choices),
             ConditionalCheckboxes("conditions", *self.conditional_checkbox_choices),
         )

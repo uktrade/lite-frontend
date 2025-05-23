@@ -15,6 +15,20 @@ class RecommendationSteps:
     RELEASE_REQUEST_NO_REFUSAL_REASONS = "release_request_no_refusal_reasons"
 
 
+class RecommendationSecurityGradingPrefix:
+    UK = "uk"
+    NATO = "nato"
+    OCCAR = "occar"
+    OTHER = "other"
+
+    prefix_choices = [
+        Choice(UK, "UK"),
+        Choice(NATO, "NATO"),
+        Choice(OCCAR, "OCCAR", divider="Or"),
+        Choice(OTHER, "Other"),
+    ]
+
+
 class RecommendationSecurityGrading:
     OFFICIAL = "official"
     OFFICIAL_SENSITIVE = "official-sensitive"
@@ -23,9 +37,9 @@ class RecommendationSecurityGrading:
     OTHER = "other"
 
     choices = (
-        Choice(OFFICIAL, "Official"),
-        Choice(OFFICIAL_SENSITIVE, "Official-Sensitive"),
-        Choice(SECRET, "Secret"),
-        Choice(TOP_SECRET, "Top Secret", divider="Or"),
+        Choice(OFFICIAL, "OFFICIAL"),
+        Choice(OFFICIAL_SENSITIVE, "OFFICIAL-SENSITIVE"),
+        Choice(SECRET, "SECRET"),
+        Choice(TOP_SECRET, "TOP SECRET", divider="Or"),
         Choice(OTHER, "Other"),
     )
