@@ -19,7 +19,7 @@ from core.forms.utils import coerce_str_to_bool
 
 from exporter.core.forms import CustomErrorDateInputField
 from exporter.core.validators import PastDateValidator
-from exporter.f680.constants import SecurityGrading
+from exporter.f680.constants import SecurityGrading, SecurityGradingPrefix
 
 from exporter.core.organisation.validators import validate_phone
 
@@ -202,11 +202,18 @@ class ProductSecurityClassificationForm(BaseForm):
         SUBTITLE = "If an item has multiple security classifications, tell us the highest one."
         SUBMIT_BUTTON_TEXT = "Save and continue"
 
-    prefix = forms.CharField(
-        label="Enter a prefix (optional)",
-        required=False,
-        help_text="For example, UK, NATO or OCCAR. Leave blank if you don’t have one.",
+    prefix = forms.ChoiceField(
+        choices=SecurityGradingPrefix.prefix_choices,
+        label="Select a prefix",
+        widget=forms.RadioSelect,
+        error_messages={"required": "Select a prefix"},
     )
+    other_prefix = forms.CharField(
+        label="Enter a prefix",
+        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
+        required=False,
+    )
+
     security_classification = forms.ChoiceField(
         choices=SecurityGrading.product_choices,
         label="Select security classification",
@@ -257,15 +264,27 @@ class ProductSecurityClassificationForm(BaseForm):
     )
 
     def clean(self):
-        return self.add_required_to_conditional_text_field(
-            parent_field="security_classification",
-            parent_field_response="other",
-            required_field="other_security_classification",
-            error_message="Security classification cannot be blank",
-        )
+        cleaned_data = super().clean()
+        conditional_text_field_data = {
+            "security_classification": "Security classification cannot be blank",
+            "prefix": "Prefix cannot be blank",
+        }
+
+        for field, error_message in conditional_text_field_data.items():
+            self.add_required_to_conditional_text_field(
+                parent_field=field,
+                parent_field_response="other",
+                required_field=f"other_{field}",
+                error_message=error_message,
+            )
+        return cleaned_data
 
     def __init__(self, *args, **kwargs):
-        self.conditional_radio_choices = [
+        self.prefix_conditional_radio_choices = [
+            (ConditionalRadiosQuestion(choice.label, "other_prefix") if choice.value == "other" else choice.label)
+            for choice in SecurityGradingPrefix.prefix_choices
+        ]
+        self.security_classification_conditional_radio_choices = [
             (
                 ConditionalRadiosQuestion(choice.label, "other_security_classification")
                 if choice.value == "other"
@@ -274,12 +293,13 @@ class ProductSecurityClassificationForm(BaseForm):
             for choice in SecurityGrading.product_choices
         ]
         super().__init__(*args, **kwargs)
+        self.fields["prefix"].choices = SecurityGradingPrefix.prefix_choices
         self.fields["security_classification"].choices = SecurityGrading.product_choices
 
     def get_layout_fields(self):
         return (
-            "prefix",
-            ConditionalRadios("security_classification", *self.conditional_radio_choices),
+            ConditionalRadios("prefix", *self.prefix_conditional_radio_choices),
+            ConditionalRadios("security_classification", *self.security_classification_conditional_radio_choices),
             "suffix",
             "issuing_authority_name_address",
             "reference",

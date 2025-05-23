@@ -6,7 +6,6 @@
             <th scope="col" class="govuk-table__header">Recipient Address</th>
             <th scope="col" class="govuk-table__header">Recipient Country</th>
             <th scope="col" class="govuk-table__header">Recipient Type</th>
-            <th scope="col" class="govuk-table__header">Security Grading Other</th>
             <th scope="col" class="govuk-table__header">Approval Types</th>
             <th scope="col" class="govuk-table__header">Intended use</th>
             <th scope="col" class="govuk-table__header">Application Details</th>
@@ -16,7 +15,7 @@
         {% for release_request in security_release_requests %}
         <tr class="govuk-table__row">
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
-                {{release_request.security_grading.value}}
+                {{release_request.security_grading_final}}
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                 {{release_request.recipient.name}}
@@ -29,13 +28,6 @@
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                 {{release_request.recipient.type.value}}
-            </td>
-            <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
-                {% if release_request.security_grading_other %}
-                    {{release_request.security_grading_other}}
-                {% else %}
-                    -
-                {% endif %}
             </td>
             <td class="govuk-table__cell govuk-table__cell--max-width-400 ">
                 {% for approval_type in release_request.approval_types %}
