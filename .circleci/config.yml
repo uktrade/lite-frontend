@@ -191,6 +191,7 @@ commands:
           command: |
             cp ci.exporter.env exporter.env
             cp ci.caseworker.env caseworker.env
+            cp end_to_end_tests/playwright/example.env end_to_end_tests/playwright/.env
       - run: mkdir test_results
 
   finish_e2e_tests:
@@ -206,21 +207,35 @@ commands:
           path: ui_tests/api_logs.txt
       - store_test_results:
           path: test_results
+      - store_artifacts:
+          path: test-results
 
-  run_e2e_exporter:
+  run_selenium_exporter_tests:
     steps:
       - run:
-            name: "decode secret ENV variable"
-            command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
+          name: "decode secret ENV variable"
+          command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
       - run_make:
-          label: Run exporter e2e tests
+          label: Run exporter selenium tests
           target: start-exporter exporter-e2e-selenium-test
 
-  run_e2e_caseworker:
+  run_selenium_caseworker_tests:
     steps:
       - run_make:
-          label: Run caseworker e2e tests
+          label: Run caseworker selenium tests
           target: start-caseworker caseworker-e2e-selenium-test
+
+  run_playwright_tests:
+    steps:
+      - run:
+          name: "decode secret ENV variable"
+          command: echo 'export EXPORTER_AUTHBROKER_CLIENT_SECRET="$(echo $EXPORTER_AUTHBROKER_CLIENT_SECRET_BASE64 | base64 -d)"' >> $BASH_ENV
+      - run_make:
+          label: Start servers
+          target: start-e2e
+      - run_make:
+          label: Run playwright tests
+          target: e2e-playwright
 
 ###############################################################################
 # Jobs
@@ -316,7 +331,7 @@ jobs:
       - run: npm run build_all
       - run: git diff --exit-code
 
-  caseworker_e2e_test:
+  selenium_caseworker_e2e_tests:
     machine:
       image: ubuntu-2204:current
       docker_layer_caching: true
@@ -327,10 +342,10 @@ jobs:
     steps:
       - prepare_e2e_tests:
           api_branch: auto
-      - run_e2e_caseworker
+      - run_selenium_caseworker_tests
       - finish_e2e_tests
 
-  exporter_e2e_test:
+  selenium_exporter_e2e_tests:
     machine:
       image: ubuntu-2204:current
       docker_layer_caching: true
@@ -341,7 +356,23 @@ jobs:
     steps:
       - prepare_e2e_tests:
           api_branch: auto
-      - run_e2e_exporter
+      - run_selenium_exporter_tests
+      - finish_e2e_tests
+
+  playwright_e2e_tests:
+    machine:
+      image: ubuntu-2204:current
+      docker_layer_caching: true
+    resource_class: large
+    environment:
+      PIPENV_YES: 1
+    steps:
+      - prepare_e2e_tests:
+          api_branch: auto
+      - run:
+          name: Install playwright
+          command: sh ./end_to_end_tests/playwright/scripts/install_playwright.sh
+      - run_playwright_tests
       - finish_e2e_tests
 
   caseworker_e2e_test_jenkins:
@@ -388,8 +419,9 @@ workflows:
               - core_unit_test
       - frontend_unit_test
       - frontend_artefacts_check
-      - caseworker_e2e_test
-      - exporter_e2e_test
+      - selenium_caseworker_e2e_tests
+      - selenium_exporter_e2e_tests
+      - playwright_e2e_tests
   ui_tests:
     when: << pipeline.parameters.run_ui_tests >>
     jobs:

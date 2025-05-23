@@ -84,5 +84,13 @@ cryptography = "~=43.0.1"
 django-cacheops = "~=7.0.2"
 ordered-set = "==4.1.0"
 
+[end-to-end-packages]
+playwright="==1.52.0"
+pydantic-settings="~=2.1.0"
+pydantic="~=2.5.2"
+pytest-playwright="~=0.5.2"
+pytest-xdist="~=3.5.0"
+pytest="~=7.4.3"
+
 [requires]
 python_version = "3.9"
