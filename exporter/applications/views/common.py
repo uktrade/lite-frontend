@@ -443,6 +443,7 @@ class ApplicationSubmitSuccessPage(ApplicationMixin, FormView):
         if application.status in ["draft", "applicant_editing"]:
             raise Http404
         context["reference_code"] = application["reference_code"]
+        context["case_type"] = application["case_type"]["reference"]["key"]
 
         context["links"] = {
             "View your list of applications": reverse_lazy("applications:applications"),
@@ -451,6 +452,13 @@ class ApplicationSubmitSuccessPage(ApplicationMixin, FormView):
         }
 
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return {
+            **kwargs,
+            "service_name": self.application.manifest.service_name,
+        }
 
     @expect_status(
         HTTPStatus.CREATED,
@@ -462,6 +470,7 @@ class ApplicationSubmitSuccessPage(ApplicationMixin, FormView):
 
     def form_valid(self, form):
         data = form.cleaned_data.copy()
+        data["case_type"] = self.application["case_type"]["id"]
         data["user_journey"] = "APPLICATION_SUBMISSION"
         survey, _ = self.post_survey_feedback(self.request, data)
         self.survey_id = survey["id"]

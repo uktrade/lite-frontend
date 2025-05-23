@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-	<div class="govuk-panel govuk-panel--confirmation lite-panel {% if animated %}lite-panel--confirmation{% endif %} {% if request.GET.animate %}lite-spinner{% endif %}">
+	<div class="govuk-panel govuk-panel--confirmation lite-panel {% if animated %}lite-panel--confirmation{% endif %} {% if request.GET.animate %}lite-spinner{% endif %}", data-case_type="{{ case_type }}">
 		<h1 id="registration-confirmation-value" class="govuk-panel__title">
 			Application submitted
 		</h1>

@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class="govuk-panel__title">
+    <h1 class="govuk-panel__title" data-case_type="{{ case_type }}">
         Give feedback on this service
     </h1>
     {% crispy form %}

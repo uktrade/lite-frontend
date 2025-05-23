@@ -7,4 +7,5 @@ from .application_urls import F680ExporterUrls
 
 @application_manifest_registry.register(ManifestType.EXPORTER_F680.value)
 class F680ExporterManifest(BaseManifest):
+    service_name = "apply for F680 security approval"
     urls = F680ExporterUrls

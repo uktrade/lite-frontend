@@ -18,7 +18,7 @@ from exporter.applications.forms.hcsat import HCSATminiform, HCSATApplicationFor
     ),
 )
 def test_hcsatmini_form(data, is_valid, errors):
-    form = HCSATminiform(data=data)
+    form = HCSATminiform(service_name="apply for SIEL", data=data)
     assert form.is_valid() is is_valid
     assert form.errors == errors
 
@@ -39,6 +39,6 @@ def test_hcsatmini_form(data, is_valid, errors):
     ),
 )
 def test_hcsat_form(data, is_valid, errors):
-    form = HCSATApplicationForm(data=data)
+    form = HCSATApplicationForm(service_name="apply for F680", data=data)
     assert form.is_valid() is is_valid
     assert form.errors == errors

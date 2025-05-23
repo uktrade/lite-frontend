@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views.generic import FormView
 from core.decorators import expect_status
 from exporter.applications.services import (
+    get_application,
     get_survey,
     update_survey_feedback,
 )
@@ -23,12 +24,24 @@ class HCSATApplicationPage(LoginRequiredMixin, FormView):
             kwargs={"pk": self.kwargs["pk"]},
         )
 
+    @property
+    def application(self):
+        return get_application(self.request, self.kwargs["pk"])
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         context["form_title"] = "Application submitted"
         context["back_link_url"] = self.get_application_url()
+        context["case_type"] = self.application["case_type"]["reference"]["key"]
         return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        return {
+            **kwargs,
+            "service_name": self.application.manifest.service_name,
+        }
 
     @expect_status(
         HTTPStatus.OK,
@@ -58,4 +71,10 @@ class HCSATApplicationPage(LoginRequiredMixin, FormView):
         form_data["user_journey"] = "APPLICATION_SUBMISSION"
         form_data["satisfaction_rating"] = self.survey.get("satisfaction_rating")
         self.update_survey_feedback(self.request, self.survey.get("id"), form_data)
-        return render(self.request, "feedback/hcsat_thanks.html")
+        case_type_reference = self.application["case_type"]["reference"]["key"]
+        context = {
+            "case_type": case_type_reference,
+            "service_name": self.application.manifest.service_name,
+        }
+
+        return render(self.request, "feedback/hcsat_thanks.html", context=context)
