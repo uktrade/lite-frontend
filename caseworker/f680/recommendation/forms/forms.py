@@ -91,11 +91,10 @@ class BasicRecommendationForm(BaseForm):
         choices=RecommendationSecurityGradingPrefix.prefix_choices,
         label="Select a prefix",
         widget=forms.RadioSelect,
-        error_messages={"required": "Select a prefix"},
+        required=False,
     )
     security_grading_prefix_other = forms.CharField(
         label="Enter a prefix",
-        # Required is set to False here but added in clean method via add_required_to_conditional_text_field
         required=False,
     )
 
@@ -134,22 +133,6 @@ class BasicRecommendationForm(BaseForm):
         super().__init__(*args, **kwargs)
         self.fields["security_grading_prefix"].choices = RecommendationSecurityGradingPrefix.prefix_choices
         self.fields["security_grading"].choices = RecommendationSecurityGrading.choices
-
-    def clean(self):
-        cleaned_data = super().clean()
-        conditional_text_field_data = {
-            "security_grading": "Security classification cannot be blank",
-            "security_grading_prefix": "Prefix cannot be blank",
-        }
-
-        for field, error_message in conditional_text_field_data.items():
-            self.add_required_to_conditional_text_field(
-                parent_field=field,
-                parent_field_response="other",
-                required_field=f"{field}_other",
-                error_message=error_message,
-            )
-        return cleaned_data
 
     def get_layout_fields(self):
         return (
