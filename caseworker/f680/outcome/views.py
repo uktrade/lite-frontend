@@ -24,13 +24,25 @@ from caseworker.f680.recommendation.services import get_case_recommendations
 
 
 def is_approve_selected(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step(OutcomeSteps.SELECT_OUTCOME) or {}
+    cleaned_data = {
+        **wizard.get_cleaned_data_for_step(OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP),
+        **wizard.get_cleaned_data_for_step(OutcomeSteps.SELECT_OUTCOME),
+    }
     return cleaned_data.get("outcome") == "approve"
 
 
 def is_refuse_selected(wizard):
-    cleaned_data = wizard.get_cleaned_data_for_step(OutcomeSteps.SELECT_OUTCOME) or {}
+    cleaned_data = {
+        **wizard.get_cleaned_data_for_step(OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP),
+        **wizard.get_cleaned_data_for_step(OutcomeSteps.SELECT_OUTCOME),
+    }
     return cleaned_data.get("outcome") == "refuse"
+
+
+def is_automatic_group_not_chosen(wizard):
+    cleaned_data = wizard.get_cleaned_data_for_step(OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP) or {}
+    is_automatic_group_chosen = bool(cleaned_data.get("security_release_requests"))
+    return not is_automatic_group_chosen
 
 
 class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardView):
@@ -38,12 +50,14 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
     current_tab = "recommendations"
 
     form_list = [
+        (OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP, forms.ChooseAutomaticOutcomeGroup),
         (OutcomeSteps.SELECT_OUTCOME, forms.SelectOutcomeForm),
         (OutcomeSteps.APPROVE, forms.ApproveOutcomeForm),
         (OutcomeSteps.REFUSE, forms.RefuseOutcomeForm),
     ]
 
     condition_dict = {
+        OutcomeSteps.SELECT_OUTCOME: is_automatic_group_not_chosen,
         OutcomeSteps.APPROVE: is_approve_selected,
         OutcomeSteps.REFUSE: is_refuse_selected,
     }
@@ -66,7 +80,7 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         return reverse("cases:f680:recommendation", kwargs=self.kwargs)
 
     def get_form_kwargs(self, step=None):
-        if step == OutcomeSteps.SELECT_OUTCOME:
+        if step == OutcomeSteps.SELECT_OUTCOME or step == OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP:
             return {"security_release_requests": self.remaining_requests_without_outcome}
         if step == OutcomeSteps.APPROVE:
             # Restrict approval type choices to those requested in the application
@@ -75,26 +89,55 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
 
     def get_form_initial(self, step=None):
         all_security_release_requests = self.get_all_security_releases()
-        selected_security_release_requests = self.get_selected_security_releases(all_security_release_requests)
-        if step == OutcomeSteps.APPROVE:
-            return {"conditions": self.get_aggregated_conditions(selected_security_release_requests)}
+        if step in (OutcomeSteps.APPROVE, OutcomeSteps.REFUSE):
+            selected_security_release_requests = self.get_selected_security_releases(all_security_release_requests)
+            if step == OutcomeSteps.APPROVE:
+                return {
+                    "conditions": self.get_aggregated_conditions(selected_security_release_requests),
+                    "security_grading": self.get_lowest_security_grading(selected_security_release_requests),
+                }
 
-        if step == OutcomeSteps.REFUSE:
-            return {"refusal_reasons": self.get_aggregated_refusal_reasons(selected_security_release_requests)}
+            if step == OutcomeSteps.REFUSE:
+                return {"refusal_reasons": self.get_aggregated_refusal_reasons(selected_security_release_requests)}
 
         return {}
 
     def get_selected_security_releases(self, all_security_release_requests):
-        select_outcome_data = self.storage.get_step_data(OutcomeSteps.SELECT_OUTCOME)
-        if not select_outcome_data:
-            return []
+        cleaned_data = self.get_cleaned_data_for_step(OutcomeSteps.CHOOSE_AUTOMATIC_OUTCOME_GROUP)
+        if cleaned_data.get("outcome_group") == "custom":
+            cleaned_data = self.get_cleaned_data_for_step(OutcomeSteps.SELECT_OUTCOME)
 
-        selected_security_release_ids = select_outcome_data.getlist("select_outcome-security_release_requests")
+        selected_security_release_ids = cleaned_data.get("security_release_requests", [])
         return [
             security_release_request
             for security_release_request in all_security_release_requests
             if security_release_request["id"] in selected_security_release_ids
         ]
+
+    def get_grouped_recommendations(self, selected_security_release_requests):
+        grouped_recommendations = defaultdict(dict)
+        for release_request in selected_security_release_requests:
+            for recommendation in release_request["recommendations"]:
+                is_refuse = recommendation["type"]["key"] == "refuse"
+                decision_key = "refuse" if is_refuse else recommendation["security_grading"]["key"]
+                text = recommendation["refusal_reasons"] if is_refuse else recommendation["conditions"]
+                text_key = hash(text)
+                group_key = f"{decision_key}-{text_key}"
+                try:
+                    grouped_recommendations[recommendation["team"]["name"]][group_key]["entities"].append(
+                        release_request
+                    )
+                except KeyError:
+                    grouped_recommendations[recommendation["team"]["name"]][group_key] = {
+                        "entities": [release_request],
+                        "recommendation": recommendation["type"]["value"],
+                        "security_grading": (
+                            recommendation["security_grading"]["value"] if recommendation["security_grading"] else None
+                        ),
+                        "conditions": recommendation["conditions"],
+                        "refusal_reasons": recommendation["refusal_reasons"],
+                    }
+        return dict(grouped_recommendations)
 
     def get_all_security_releases(self):
         recommendations_by_security_release = defaultdict(list)
@@ -133,6 +176,20 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
                 refusal_reasons.add(recommendation["refusal_reasons"])
         return "\r\n\r\n".join(refusal_reasons)
 
+    def get_lowest_security_grading(self, security_release_requests):
+        ordered_gradings = list(dict(forms.ApproveOutcomeForm.security_grading_choices).keys())
+        lowest_grading_index = len(ordered_gradings) - 1
+        for release_request in security_release_requests:
+            for recommendation in release_request["recommendations"]:
+                recommendation_grading = (recommendation["security_grading"] or {}).get("key")
+                if not recommendation_grading:
+                    continue
+                grading_index = ordered_gradings.index(recommendation_grading)
+                if grading_index < lowest_grading_index:
+                    lowest_grading_index = grading_index
+
+        return ordered_gradings[lowest_grading_index]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["back_link_url"] = reverse("cases:f680:recommendation", kwargs=self.kwargs)
@@ -141,6 +198,10 @@ class DecideOutcome(LoginRequiredMixin, F680CaseworkerMixin, BaseSessionWizardVi
         context["selected_security_release_requests"] = self.get_selected_security_releases(
             all_security_release_requests
         )
+        if context["selected_security_release_requests"]:
+            context["grouped_recommendations"] = self.get_grouped_recommendations(
+                context["selected_security_release_requests"]
+            )
         return context
 
     @expect_status(
